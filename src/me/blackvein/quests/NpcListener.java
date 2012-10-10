@@ -62,7 +62,7 @@ public class NpcListener implements Listener{
 
                                             for(int i : q.itemIds){
                                                 if (q.removeItems.get(i) == true)
-                                                    Quests.removeItem(player, new ItemStack(Material.getMaterial(i), q.itemAmounts.get(q.itemIds.indexOf(i))));
+                                                    Quests.removeItem(player.getInventory(), Material.getMaterial(i), q.itemAmounts.get(q.itemIds.indexOf(i)));
                                             }
 
                                             player.sendMessage(ChatColor.GREEN + "Quest accepted: " + q.name);

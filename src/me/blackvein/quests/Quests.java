@@ -579,7 +579,7 @@ public class Quests extends JavaPlugin {
 
                                                             for(int i : quest.itemIds){
                                                                 if (quest.removeItems.get(quest.itemIds.indexOf(i)) == true)
-                                                                    removeItem(((Player) sender), new ItemStack(Material.getMaterial(i), quest.itemAmounts.get(quest.itemIds.indexOf(i))));
+                                                                    removeItem(((Player) sender).getInventory(), Material.getMaterial(i), quest.itemAmounts.get(quest.itemIds.indexOf(i)));
                                                             }
 
                                                             sender.sendMessage(ChatColor.GREEN + "Quest accepted: " + quest.name);
@@ -1344,17 +1344,17 @@ public class Quests extends JavaPlugin {
 
                     if (config.contains("quests." + s + ".requirements.item-ids")) {
                         quest.itemIds = config.getIntegerList("quests." + s + ".requirements.item-ids");
-
+                        
                         if(config.getIntegerList("quests." + s + ".requirements.item-amounts") == null)
                             failedToLoad = true;
                         else
                             quest.itemAmounts = config.getIntegerList("quests." + s + ".requirements.item-amounts");
-
+                        
                         if(config.getBooleanList("quests." + s + ".requirements.remove-items").isEmpty())
                             failedToLoad = true;
                         else
                             quest.removeItems = config.getBooleanList("quests." + s + ".requirements.remove-items");
-
+                            
                     }
 
                     if (config.contains("quests." + s + ".requirements.money")) {
@@ -2064,7 +2064,7 @@ public class Quests extends JavaPlugin {
                 }
 
             }
-
+            
             if(failedToLoad == true)
                 log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + s + "\". Skipping.");
 
@@ -2682,30 +2682,43 @@ public class Quests extends JavaPlugin {
 
     }
 
-    public static void removeItem(Player p, ItemStack i){
-
-        PlayerInventory inv = p.getInventory();
-        int amountLeft = i.getAmount();
-
-        for(ItemStack stack : inv.getContents()){
-
-            if(stack.getType().equals(i.getType())){
-
-                if(stack.getAmount() <= i.getAmount()){
-                    amountLeft -= stack.getAmount();
-                    i.setType(null);
-                }else{
-                    i.setAmount(stack.getAmount() - amountLeft);
-                    amountLeft = 0;
-                }
-
-                if(amountLeft == 0)
-                    break;
-
+    public static boolean removeItem(Inventory inventory, Material type, int amount) {
+        
+        HashMap<Integer, ? extends ItemStack> allItems = inventory.all(type);
+        HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
+        int foundAmount = 0;
+        for (Map.Entry<Integer, ? extends ItemStack> item : allItems.entrySet()) {
+            
+            if (item.getValue().getAmount() >= amount - foundAmount) {
+                removeFrom.put(item.getKey(), amount - foundAmount);
+                foundAmount = amount;
+            } else {
+                foundAmount += item.getValue().getAmount();
+                removeFrom.put(item.getKey(), item.getValue().getAmount());
             }
-
+            if (foundAmount >= amount) {
+                break;
+            }
+                
         }
-
+        
+        if (foundAmount == amount) {
+            
+            for (Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
+                
+                ItemStack item = inventory.getItem(toRemove.getKey());
+                if (item.getAmount() - toRemove.getValue() <= 0) {
+                    inventory.clear(toRemove.getKey());
+                } else {
+                    item.setAmount(item.getAmount() - toRemove.getValue());
+                    inventory.setItem(toRemove.getKey(), item);
+                }
+                
+            }
+            return true;
+            
+        }
+        return false;
     }
 
 }
