@@ -354,28 +354,26 @@ public class PlayerListener implements Listener {
                         Projectile p = (Projectile) damager;
                         if(p.getShooter() instanceof Player){
 
-                            try{
                                 Player player = (Player) p.getShooter();
-                                Quester quester = plugin.getQuester(player.getName());
-                                if(quester.hasObjective("killMob"))
-                                    quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
-                            }catch(Exception e){
-                                //Do nothing, killer is an NPC
-                            }
+                                if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
+                                
+                                    Quester quester = plugin.getQuester(player.getName());
+                                    if(quester.hasObjective("killMob"))
+                                        quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
 
+                                }
                         }
 
                     }else if(damager instanceof Player){
 
-                        try{
+                        if(plugin.citizens.getNPCRegistry().isNPC(damager) == false){
+                            
                             Player player = (Player) damager;
                             Quester quester = plugin.getQuester(player.getName());
                             if(quester.hasObjective("killMob"))
                                 quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
-                        }catch (Exception e){
-                            //Do nothing, killer is an NPC
-                        }
 
+                        }
                     }
 
                 }
@@ -402,19 +400,26 @@ public class PlayerListener implements Listener {
                         if(p.getShooter() instanceof Player){
 
                             Player player = (Player) p.getShooter();
-                            Quester quester = plugin.getQuester(player.getName());
-                            if(quester.hasObjective("killPlayer"))
-                                quester.killPlayer(evt.getEntity().getName());
+                            if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
+                                
+                                Quester quester = plugin.getQuester(player.getName());
+                                if(quester.hasObjective("killPlayer"))
+                                    quester.killPlayer(evt.getEntity().getName());
+                            
+                            }
 
                         }
 
                     }else if(damager instanceof Player){
 
                         Player player = (Player) damager;
-                        Quester quester = plugin.getQuester(player.getName());
-                        if(quester.hasObjective("killPlayer"))
-                            quester.killPlayer(evt.getEntity().getName());
+                        if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
+                        
+                            Quester quester = plugin.getQuester(player.getName());
+                            if(quester.hasObjective("killPlayer"))
+                                quester.killPlayer(evt.getEntity().getName());
 
+                        }
                     }
 
                 }
@@ -483,11 +488,16 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent evt){
 
-        Quester quester = plugin.getQuester(evt.getPlayer().getName());
-        if(quester.hasObjective("reachLocation")){
+        if(plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer()) == false){
+        
+            Quester quester = plugin.getQuester(evt.getPlayer().getName());
 
-            quester.reachLocation(evt.getTo());
+            if(quester.hasObjective("reachLocation")){
 
+                quester.reachLocation(evt.getTo());
+
+            }
+        
         }
 
     }
