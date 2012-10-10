@@ -1344,17 +1344,17 @@ public class Quests extends JavaPlugin {
 
                     if (config.contains("quests." + s + ".requirements.item-ids")) {
                         quest.itemIds = config.getIntegerList("quests." + s + ".requirements.item-ids");
-                        
+
                         if(config.getIntegerList("quests." + s + ".requirements.item-amounts") == null)
                             failedToLoad = true;
                         else
                             quest.itemAmounts = config.getIntegerList("quests." + s + ".requirements.item-amounts");
-                        
+
                         if(config.getBooleanList("quests." + s + ".requirements.remove-items").isEmpty())
                             failedToLoad = true;
                         else
                             quest.removeItems = config.getBooleanList("quests." + s + ".requirements.remove-items");
-                            
+
                     }
 
                     if (config.contains("quests." + s + ".requirements.money")) {
@@ -2064,7 +2064,7 @@ public class Quests extends JavaPlugin {
                 }
 
             }
-            
+
             if(failedToLoad == true)
                 log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + s + "\". Skipping.");
 
