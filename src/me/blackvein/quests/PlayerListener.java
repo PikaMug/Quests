@@ -73,15 +73,21 @@ public class PlayerListener implements Listener {
                                                 quester.currentStage = q.stages.getFirst();
                                                 quester.addEmpties();
                                                 quester.isTalking = false;
-                                                if(q.moneyReq > 0){
+                                                if (q.moneyReq > 0) {
                                                     Quests.economy.withdrawPlayer(quester.name, q.moneyReq);
                                                 }
-                                                player.sendMessage(ChatColor.GREEN + "Quest accepted: " + q.name);
-                                                player.sendMessage("");
-                                                player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
-                                                for(String s : quester.getObjectives()){
-                                                    player.sendMessage(s);
+
+                                                for(int i : q.itemIds){
+                                                    if (q.removeItems.get(q.itemIds.indexOf(i)) == true)
+                                                        Quests.removeItem(player.getInventory(), Material.getMaterial(i), q.itemAmounts.get(q.itemIds.indexOf(i)));
                                                 }
+
+                                                            player.sendMessage(ChatColor.GREEN + "Quest accepted: " + q.name);
+                                                            player.sendMessage("");
+                                                            player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
+                                                            for (String s : quester.getObjectives()) {
+                                                                player.sendMessage(s);
+                                                            }
 
                                             }else {
 
@@ -356,7 +362,7 @@ public class PlayerListener implements Listener {
 
                                 Player player = (Player) p.getShooter();
                                 if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
-                                
+
                                     Quester quester = plugin.getQuester(player.getName());
                                     if(quester.hasObjective("killMob"))
                                         quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
@@ -367,7 +373,7 @@ public class PlayerListener implements Listener {
                     }else if(damager instanceof Player){
 
                         if(plugin.citizens.getNPCRegistry().isNPC(damager) == false){
-                            
+
                             Player player = (Player) damager;
                             Quester quester = plugin.getQuester(player.getName());
                             if(quester.hasObjective("killMob"))
@@ -401,11 +407,11 @@ public class PlayerListener implements Listener {
 
                             Player player = (Player) p.getShooter();
                             if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
-                                
+
                                 Quester quester = plugin.getQuester(player.getName());
                                 if(quester.hasObjective("killPlayer"))
                                     quester.killPlayer(evt.getEntity().getName());
-                            
+
                             }
 
                         }
@@ -414,7 +420,7 @@ public class PlayerListener implements Listener {
 
                         Player player = (Player) damager;
                         if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
-                        
+
                             Quester quester = plugin.getQuester(player.getName());
                             if(quester.hasObjective("killPlayer"))
                                 quester.killPlayer(evt.getEntity().getName());
@@ -489,7 +495,7 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent evt){
 
         if(plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer()) == false){
-        
+
             Quester quester = plugin.getQuester(evt.getPlayer().getName());
 
             if(quester.hasObjective("reachLocation")){
@@ -497,7 +503,7 @@ public class PlayerListener implements Listener {
                 quester.reachLocation(evt.getTo());
 
             }
-        
+
         }
 
     }
