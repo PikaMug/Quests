@@ -1335,22 +1335,60 @@ public class Quests extends JavaPlugin {
                 if(config.contains("quests." + s + ".redo-delay")){
                         quest.redoDelay = config.getInt("quests." + s + ".redo-delay");
                 }
-                quest.name = parseString(config.getString("quests." + s + ".name"), quest);
-                quest.description = parseString(config.getString("quests." + s + ".ask-message"), quest);
-                quest.finished = parseString(config.getString("quests." + s + ".finish-message"), quest);
+                
+                if(config.contains("quests." + s + ".name"))
+                    quest.name = parseString(config.getString("quests." + s + ".name"), quest);
+                else{
+                    log.severe(ChatColor.GOLD + "[Quests] Quest block \'" + ChatColor.DARK_PURPLE + s + ChatColor.GOLD + "\' is missing " + ChatColor.RED + "name:");
+                    continue;
+                }
+                
+                if(config.contains("quests." + s + ".ask-message"))
+                    quest.description = parseString(config.getString("quests." + s + ".ask-message"), quest);
+                else{
+                    log.severe(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "ask-message:");
+                    continue;
+                }
+                
+                if(config.contains("quests." + s + ".finish-message"))
+                    quest.finished = parseString(config.getString("quests." + s + ".finish-message"), quest);
+                else{
+                    log.severe(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "finish-message:");
+                    continue;
+                }
 
                 if (config.contains("quests." + s + ".requirements")) {
 
-                    quest.failRequirements = parseString(config.getString("quests." + s + ".requirements.fail-requirement-message"), quest);
-
+                    if(config.contains("quests." + s + ".requirements.fail-requirement-message"))
+                        quest.failRequirements = parseString(config.getString("quests." + s + ".requirements.fail-requirement-message"), quest);
+                    else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "fail-requirement-message:");
+                        continue;
+                    }
+                    
                     if (config.contains("quests." + s + ".requirements.item-ids")) {
-                        quest.itemIds = config.getIntegerList("quests." + s + ".requirements.item-ids");
-
-                        if(config.getIntegerList("quests." + s + ".requirements.item-amounts") == null)
-                            failedToLoad = true;
-                        else
-                            quest.itemAmounts = config.getIntegerList("quests." + s + ".requirements.item-amounts");
-
+                        
+                        if(Quests.checkList(config.getList("quests." + s + ".requirements.item-ids"), Integer.class))
+                            quest.itemIds = config.getIntegerList("quests." + s + ".requirements.item-ids");
+                        else{
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            continue;
+                        }
+                        
+                        if(config.contains("quests." + s + ".requirements.item-amounts")){
+                            
+                            if(Quests.checkList(config.getList("quests." + s + ".requirements.item-amounts"), Integer.class))
+                                quest.itemAmounts = config.getIntegerList("quests." + s + ".requirements.item-amounts");
+                            else{
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            }
+                            
+                        }else{
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts:");
+                            continue;
+                        }
+                        
+                        
                         if(config.getBooleanList("quests." + s + ".requirements.remove-items").isEmpty())
                             failedToLoad = true;
                         else
@@ -2721,5 +2759,22 @@ public class Quests extends JavaPlugin {
         }
         return false;
     }
+    
+    public static boolean checkList(List<?> list, Class c){
+          
+        if(list == null)
+            return false;
+        
+        for(Object o : list){
+
+            if(c.isAssignableFrom(o.getClass()) == false)
+                return false;
+
+        }
+        
+        return true;
+        
+    }
+    
 
 }
