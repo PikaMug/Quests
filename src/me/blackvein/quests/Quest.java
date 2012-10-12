@@ -34,7 +34,7 @@ public class Quest {
     List<Integer> itemAmounts = new LinkedList<Integer>();
     List<Boolean> removeItems = new LinkedList<Boolean>();
 
-    List<Quest> neededQuests = new LinkedList<Quest>();
+    List<String> neededQuests = new LinkedList<String>();
 
     List<String> permissionReqs = new LinkedList<String>();
 
@@ -142,12 +142,12 @@ public class Quest {
 
         Player player = plugin.getServer().getPlayerExact(q.name);
         q.reset();
-        q.completedQuests.add(this);
+        q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (None)";
         player.sendMessage(plugin.parseString(finished, q.currentQuest));
         Quests.economy.depositPlayer(q.name, moneyReward);
         if(redoDelay > -1)
-            q.completedTimes.put(this, System.currentTimeMillis());
+            q.completedTimes.put(this.name, System.currentTimeMillis());
 
         for(ItemStack i : itemRewards){
             Quests.addItem(player, i);

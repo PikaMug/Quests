@@ -225,7 +225,7 @@ public class Quests extends JavaPlugin {
 
         if (cmd.getName().equalsIgnoreCase("quest")) {
 
-            if (cs instanceof Player){
+            if (cs instanceof Player) {
 
                 if (((Player) cs).hasPermission("quests.quest")) {
 
@@ -290,11 +290,11 @@ public class Quests extends JavaPlugin {
 
                                 cs.sendMessage(ChatColor.GOLD + "- " + quest.name + " -");
                                 cs.sendMessage(" ");
-                                if(quest.redoDelay > -1){
+                                if (quest.redoDelay > -1) {
 
-                                    if(quest.redoDelay == 0){
+                                    if (quest.redoDelay == 0) {
                                         cs.sendMessage(ChatColor.DARK_AQUA + "Redoable");
-                                    }else {
+                                    } else {
                                         cs.sendMessage(ChatColor.DARK_AQUA + "Redoable every " + ChatColor.AQUA + getTime(quest.redoDelay) + ChatColor.DARK_AQUA + ".");
                                     }
 
@@ -311,14 +311,15 @@ public class Quests extends JavaPlugin {
 
                                     cs.sendMessage(ChatColor.GOLD + "Requirements");
 
-                                    if(quest.permissionReqs.isEmpty() == false) {
+                                    if (quest.permissionReqs.isEmpty() == false) {
 
-                                        for(String perm : quest.permissionReqs){
+                                        for (String perm : quest.permissionReqs) {
 
-                                            if(permission.has(player, perm))
+                                            if (permission.has(player, perm)) {
                                                 cs.sendMessage(ChatColor.GREEN + "Permission: " + perm);
-                                            else
+                                            } else {
                                                 cs.sendMessage(ChatColor.RED + "Permission: " + perm);
+                                            }
 
                                         }
 
@@ -368,12 +369,12 @@ public class Quests extends JavaPlugin {
 
                                     if (quest.neededQuests.isEmpty() == false) {
 
-                                        for (Quest q : quest.neededQuests) {
+                                        for (String s : quest.neededQuests) {
 
-                                            if (quester.completedQuests.contains(q)) {
-                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + "Complete " + ChatColor.DARK_PURPLE + q.name);
+                                            if (quester.completedQuests.contains(s)) {
+                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + "Complete " + ChatColor.DARK_PURPLE + s);
                                             } else {
-                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + "Complete " + ChatColor.DARK_PURPLE + q.name);
+                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + "Complete " + ChatColor.DARK_PURPLE + s);
                                             }
 
                                         }
@@ -548,19 +549,19 @@ public class Quests extends JavaPlugin {
                                             cs.sendMessage(ChatColor.YELLOW + "You must speak to " + ChatColor.DARK_PURPLE + quest.npcStart.getName() + ChatColor.YELLOW + " to start this Quest.");
                                         } else if (quest.blockStart != null) {
                                             cs.sendMessage(ChatColor.DARK_PURPLE + quest.name + ChatColor.YELLOW + " may not be started via command.");
-                                        }else {
+                                        } else {
 
                                             boolean takeable = true;
-                                            if(quester.completedQuests.contains(quest)){
+                                            if (quester.completedQuests.contains(quest)) {
 
-                                                if(quester.getDifference(quest) > 0){
+                                                if (quester.getDifference(quest) > 0) {
                                                     cs.sendMessage(ChatColor.YELLOW + "You may not take " + ChatColor.AQUA + quest.name + ChatColor.YELLOW + " again for another " + ChatColor.DARK_PURPLE + getTime(quester.getDifference(quest)) + ChatColor.YELLOW + ".");
                                                     takeable = false;
                                                 }
 
                                             }
 
-                                            if(takeable == true){
+                                            if (takeable == true) {
                                                 LinkedList<Option> options = new LinkedList<Option>();
                                                 Option yes = new Option("Yes", new Runnable() {
 
@@ -577,8 +578,8 @@ public class Quests extends JavaPlugin {
                                                                 economy.withdrawPlayer(quester.name, quest.moneyReq);
                                                             }
 
-                                                            for(int i : quest.itemIds){
-                                                                if (quest.removeItems.get(quest.itemIds.indexOf(i)) == true){
+                                                            for (int i : quest.itemIds) {
+                                                                if (quest.removeItems.get(quest.itemIds.indexOf(i)) == true) {
                                                                     removeItem(((Player) sender).getInventory(), Material.getMaterial(i), quest.itemAmounts.get(quest.itemIds.indexOf(i)));
                                                                 }
                                                             }
@@ -707,12 +708,12 @@ public class Quests extends JavaPlugin {
                         } else {
 
                             completed = ChatColor.DARK_PURPLE + "";
-                            for (Quest q : quester.completedQuests) {
+                            for (String s : quester.completedQuests) {
 
-                                if (quester.completedQuests.indexOf(q) < (quester.completedQuests.size() - 1)) {
-                                    completed = completed + q.name + ", ";
+                                if (quester.completedQuests.indexOf(s) < (quester.completedQuests.size() - 1)) {
+                                    completed = completed + s + ", ";
                                 } else {
-                                    completed = completed + q.name;
+                                    completed = completed + s;
                                 }
 
                             }
@@ -826,8 +827,9 @@ public class Quests extends JavaPlugin {
             if (cs instanceof Player || args.length == 1 && args[0].equalsIgnoreCase("reload")) {
 
                 Player player = null;
-                if(cs instanceof Player)
+                if (cs instanceof Player) {
                     player = (Player) cs;
+                }
 
                 if (args.length == 0) {
 
@@ -1239,7 +1241,7 @@ public class Quests extends JavaPlugin {
         loadQuests();
         loadConfig();
 
-        for(Quester quester : questers){
+        for (Quester quester : questers) {
             quester.checkQuest();
         }
 
@@ -1322,147 +1324,182 @@ public class Quests extends JavaPlugin {
                 failedToLoad = false;
 
                 if (config.contains("quests." + s + ".npc-giver-id")) {
-                    quest.npcStart = citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id"));
-                    questNPCs.add(citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
+
+                    if(citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")) != null){
+
+                        quest.npcStart = citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id"));
+                        questNPCs.add(citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
+
+                    }else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED +  "npc-giver-id: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid NPC id!");
+                        continue;
+                    }
+
                 }
 
-                if(config.contains("quests." + s + ".block-start")){
+                if (config.contains("quests." + s + ".block-start")) {
 
-                    quest.blockStart = getLocation(config.getString("quests." + s + ".block-start"));
+                    Location location = getLocation(config.getString("quests." + s + ".block-start"));
+                    if(location != null)
+                        quest.blockStart = location;
+                    else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED +  "block-start: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                        log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                        continue;
+                    }
 
                 }
 
-                if(config.contains("quests." + s + ".redo-delay")){
+                if (config.contains("quests." + s + ".redo-delay")) {
+
+                    if (config.getInt("quests." + s + ".redo-delay", -999) != -999) {
                         quest.redoDelay = config.getInt("quests." + s + ".redo-delay");
+                    } else {
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "redo-delay: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        continue;
+                    }
+
                 }
-                
-                if(config.contains("quests." + s + ".name"))
+
+                if (config.contains("quests." + s + ".name")) {
                     quest.name = parseString(config.getString("quests." + s + ".name"), quest);
-                else{
+                } else {
                     log.severe(ChatColor.GOLD + "[Quests] Quest block \'" + ChatColor.DARK_PURPLE + s + ChatColor.GOLD + "\' is missing " + ChatColor.RED + "name:");
                     continue;
                 }
-                
-                if(config.contains("quests." + s + ".ask-message"))
+
+                if (config.contains("quests." + s + ".ask-message")) {
                     quest.description = parseString(config.getString("quests." + s + ".ask-message"), quest);
-                else{
+                } else {
                     log.severe(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "ask-message:");
                     continue;
                 }
-                
-                if(config.contains("quests." + s + ".finish-message"))
+
+                if (config.contains("quests." + s + ".finish-message")) {
                     quest.finished = parseString(config.getString("quests." + s + ".finish-message"), quest);
-                else{
+                } else {
                     log.severe(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "finish-message:");
                     continue;
                 }
 
                 if (config.contains("quests." + s + ".requirements")) {
 
-                    if(config.contains("quests." + s + ".requirements.fail-requirement-message"))
+                    if (config.contains("quests." + s + ".requirements.fail-requirement-message")) {
                         quest.failRequirements = parseString(config.getString("quests." + s + ".requirements.fail-requirement-message"), quest);
-                    else{
+                    } else {
                         log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "fail-requirement-message:");
                         continue;
                     }
-                    
+
                     if (config.contains("quests." + s + ".requirements.item-ids")) {
-                        
-                        if(Quests.checkList(config.getList("quests." + s + ".requirements.item-ids"), Integer.class))
+
+                        if (Quests.checkList(config.getList("quests." + s + ".requirements.item-ids"), Integer.class)) {
                             quest.itemIds = config.getIntegerList("quests." + s + ".requirements.item-ids");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             continue;
                         }
-                        
-                        if(config.contains("quests." + s + ".requirements.item-amounts")){
-                            
-                            if(Quests.checkList(config.getList("quests." + s + ".requirements.item-amounts"), Integer.class))
+
+                        if (config.contains("quests." + s + ".requirements.item-amounts")) {
+
+                            if (Quests.checkList(config.getList("quests." + s + ".requirements.item-amounts"), Integer.class)) {
                                 quest.itemAmounts = config.getIntegerList("quests." + s + ".requirements.item-amounts");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts:");
                             continue;
                         }
-                        
-                        
-                        if(config.contains("quests." + s + ".requirements.item-amounts")){
-                            
-                            if(Quests.checkList(config.getList("quests." + s + ".requirements.remove-items"), Boolean.class))
+
+
+                        if (config.contains("quests." + s + ".requirements.remove-items")) {
+
+                            if (Quests.checkList(config.getList("quests." + s + ".requirements.remove-items"), Boolean.class)) {
                                 quest.removeItems = config.getBooleanList("quests." + s + ".requirements.remove-items");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "remove-items: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of true/false values!");
                                 continue;
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "remove-items:");
                             continue;
                         }
                     }
 
                     if (config.contains("quests." + s + ".requirements.money")) {
-                        
-                        if(config.getInt("quests." + s + ".requirements.money", -999) != -999)
+
+                        if (config.getInt("quests." + s + ".requirements.money", -999) != -999) {
                             quest.moneyReq = config.getInt("quests." + s + ".requirements.money");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "money: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                             continue;
                         }
-                        
+
                     }
 
                     if (config.contains("quests." + s + ".requirements.quest-points")) {
-                        
-                        if(config.getInt("quests." + s + ".requirements.quest-points", -999) != -999)
+
+                        if (config.getInt("quests." + s + ".requirements.quest-points", -999) != -999) {
                             quest.questPointsReq = config.getInt("quests." + s + ".requirements.quest-points");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-points: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                             continue;
                         }
-                        
+
                     }
 
                     if (config.contains("quests." + s + ".requirements.quests")) {
-                        
-                        List<String> names = config.getStringList("quests." + s + ".requirements.quests");
 
-                        boolean failed = false;
-                        
-                        for (String name : names) {
+                        if (Quests.checkList(config.getList("quests." + s + ".requirements.quests"), String.class)) {
 
-                            boolean done = false;
-                            for (Quest q : quests) {
+                            List<String> names = config.getStringList("quests." + s + ".requirements.quests");
 
-                                if (q.name.equalsIgnoreCase(name)) {
-                                    quest.neededQuests.add(q);
-                                    done = true;
+                            boolean failed = false;
+
+                            for (String name : names) {
+
+                                boolean done = false;
+                                for (String string : section1.getKeys(false)) {
+
+                                    if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+                                        quest.neededQuests.add(name);
+                                        done = true;
+                                        break;
+                                    }
+
+                                }
+
+                                if (!done) {
+                                    failed = true;
                                     break;
                                 }
 
                             }
-                            
-                            if(!done){
-                                failed = true;
-                                break;
+
+                            if (failed) {
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quests: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of Quest names!");
+                                log.severe(ChatColor.RED + "Make sure you are using the Quest " + ChatColor.DARK_RED + "name: " + ChatColor.RED + "values, and not the block names.");
+                                continue;
                             }
 
-                        }
-                        
-                        if(failed){
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quests: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of Quest names!");
-                            log.severe(ChatColor.RED + "Make sure you are using the Quest " + ChatColor.DARK_RED + "name: " + ChatColor.RED + "values, and not the block names.");
                             continue;
                         }
 
                     }
 
-                    if(config.contains("quests." + s + ".requirements.permissions")) {
+                    if (config.contains("quests." + s + ".requirements.permissions")) {
 
-                        quest.permissionReqs = config.getStringList("quests." + s + ".requirements.permissions");
+                        if (Quests.checkList(config.getList("quests." + s + ".requirements.permissions"), String.class)) {
+                            quest.permissionReqs = config.getStringList("quests." + s + ".requirements.permissions");
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "permissions: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of permissions!");
+                            continue;
+                        }
 
                     }
 
@@ -1510,57 +1547,57 @@ public class Quests extends JavaPlugin {
                     //Denizen script load
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
-                        
-                        if(denizen.getScriptEngine().helper.getScript("quests." + s + ".stages.ordered." + s2 + ".script-to-run").isEmpty() == false){
+
+                        if (denizen.getScriptEngine().helper.getScript("quests." + s + ".stages.ordered." + s2 + ".script-to-run").isEmpty() == false) {
                             trigger = new QuestTaskTrigger();
                             stage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
-                        }else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "script-to-run: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a Denizen script!");
                             stageFailed = true;
                             break;
                         }
-                        
+
                     }
 
                     //
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids")) {
 
-                        if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids"), Integer.class))
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids"), Integer.class)) {
                             itemids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "collect-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
-                        
-                        if(config.contains("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts")){
-                            
-                            if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts"), Integer.class))
+
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts")) {
+
+                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts"), Integer.class)) {
                                 itemamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "collect-item-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "collect-item-amounts:");
                             stageFailed = true;
                             break;
                         }
-                        
-                        if(config.contains("quests." + s + ".stages.ordered." + s2 + ".quest-items")){
-                            
-                            if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".quest-items"), Boolean.class))
+
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".quest-items")) {
+
+                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".quest-items"), Boolean.class)) {
                                 questitems = config.getBooleanList("quests." + s + ".stages.ordered." + s2 + ".quest-items");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-items: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of true/false values!");
                                 stageFailed = true;
                                 break;
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "quest-items:");
                             stageFailed = true;
                             break;
@@ -1569,66 +1606,66 @@ public class Quests extends JavaPlugin {
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-ids")) {
-                        
-                        if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class))
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
                             breakids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "break-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
-                        
-                        if(config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts")){
-                            
-                            if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class))
+
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts")) {
+
+                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
                                 breakamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "break-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "break-block-amounts:");
                             stageFailed = true;
                             break;
                         }
-                        
+
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids")) {
-                        
-                        if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids"), Integer.class))
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids"), Integer.class)) {
                             damageids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "damage-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
-                        
-                        if(config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts")){
-                            
-                            if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class))
+
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts")) {
+
+                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
                                 damageamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "damage-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "damage-block-amounts:");
                             stageFailed = true;
                             break;
                         }
-                        
+
                     }
 
                     for (int i : damageids) {
 
-                        if(Material.getMaterial(i) != null)
+                        if (Material.getMaterial(i) != null) {
                             stage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "damage-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
                             stageFailed = true;
                             break;
@@ -1637,38 +1674,38 @@ public class Quests extends JavaPlugin {
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-ids")) {
-                        
-                        if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids"), Integer.class))
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids"), Integer.class)) {
                             placeids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "place-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
-                        
-                        if(config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts")){
-                            
-                            if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class))
+
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts")) {
+
+                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
                                 placeamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "place-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "place-block-amounts:");
                             stageFailed = true;
                             break;
                         }
-                        
+
                     }
 
                     for (int i : placeids) {
 
-                        if(Material.getMaterial(i) != null)
+                        if (Material.getMaterial(i) != null) {
                             stage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "place-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
                             stageFailed = true;
                             break;
@@ -1677,38 +1714,38 @@ public class Quests extends JavaPlugin {
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-ids")) {
-                        
-                        if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids"), Integer.class))
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids"), Integer.class)) {
                             useids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "use-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
-                        
-                        if(config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts")){
-                            
-                            if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class))
+
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts")) {
+
+                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
                                 useamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "use-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "use-block-amounts:");
                             stageFailed = true;
                             break;
                         }
-                        
+
                     }
 
                     for (int i : useids) {
 
-                        if(Material.getMaterial(i) != null)
+                        if (Material.getMaterial(i) != null) {
                             stage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "use-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
                             stageFailed = true;
                             break;
@@ -1717,38 +1754,38 @@ public class Quests extends JavaPlugin {
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids")) {
-                        
-                        if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids"), Integer.class))
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids"), Integer.class)) {
                             cutids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids");
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cut-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
-                        
-                        if(config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts")){
-                            
-                            if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class))
+
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts")) {
+
+                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
                                 cutamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts");
-                            else{
+                            } else {
                                 log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cut-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
-                            
-                        }else{
+
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "cut-block-amounts:");
                             stageFailed = true;
                             break;
                         }
-                        
+
                     }
 
                     for (int i : cutids) {
 
-                        if(Material.getMaterial(i) != null)
+                        if (Material.getMaterial(i) != null) {
                             stage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
-                        else{
+                        } else {
                             log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "cut-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
                             stageFailed = true;
                             break;
@@ -1757,118 +1794,186 @@ public class Quests extends JavaPlugin {
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch")) {
-                        if(config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999)
+
+                        if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
                             stage.fishToCatch = config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch");
-                        else{
-                            alog.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "fish-to-catch:" + ChatColor.GOLD + " inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "fish-to-catch:" + ChatColor.GOLD + " inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                             stageFailed = true;
                             break;
                         }
+
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".players-to-kill")) {
-                        stage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
+
+                        if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
+                            stage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "players-to-kill:" + ChatColor.GOLD + " inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                            stageFailed = true;
+                            break;
+                        }
+
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
 
-                        for (String enchant : config.getStringList("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered" + s2 + ".enchantments"), String.class)) {
 
-                            if (enchant.equalsIgnoreCase("Power")) {
+                            for (String enchant : config.getStringList("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
 
-                                enchantments.add(Enchantment.ARROW_DAMAGE);
+                                if (enchant.equalsIgnoreCase("Power")) {
 
-                            } else if (enchant.equalsIgnoreCase("Flame")) {
+                                    enchantments.add(Enchantment.ARROW_DAMAGE);
 
-                                enchantments.add(Enchantment.ARROW_FIRE);
+                                } else if (enchant.equalsIgnoreCase("Flame")) {
 
-                            } else if (enchant.equalsIgnoreCase("Infinity")) {
+                                    enchantments.add(Enchantment.ARROW_FIRE);
 
-                                enchantments.add(Enchantment.ARROW_INFINITE);
+                                } else if (enchant.equalsIgnoreCase("Infinity")) {
 
-                            } else if (enchant.equalsIgnoreCase("Punch")) {
+                                    enchantments.add(Enchantment.ARROW_INFINITE);
 
-                                enchantments.add(Enchantment.ARROW_KNOCKBACK);
+                                } else if (enchant.equalsIgnoreCase("Punch")) {
 
-                            } else if (enchant.equalsIgnoreCase("Sharpness")) {
+                                    enchantments.add(Enchantment.ARROW_KNOCKBACK);
 
-                                enchantments.add(Enchantment.DAMAGE_ALL);
+                                } else if (enchant.equalsIgnoreCase("Sharpness")) {
 
-                            } else if (enchant.equalsIgnoreCase("BaneOfArthropods")) {
+                                    enchantments.add(Enchantment.DAMAGE_ALL);
 
-                                enchantments.add(Enchantment.DAMAGE_ARTHROPODS);
+                                } else if (enchant.equalsIgnoreCase("BaneOfArthropods")) {
 
-                            } else if (enchant.equalsIgnoreCase("Smite")) {
+                                    enchantments.add(Enchantment.DAMAGE_ARTHROPODS);
 
-                                enchantments.add(Enchantment.DAMAGE_UNDEAD);
+                                } else if (enchant.equalsIgnoreCase("Smite")) {
 
-                            } else if (enchant.equalsIgnoreCase("Efficiency")) {
+                                    enchantments.add(Enchantment.DAMAGE_UNDEAD);
 
-                                enchantments.add(Enchantment.DIG_SPEED);
+                                } else if (enchant.equalsIgnoreCase("Efficiency")) {
 
-                            } else if (enchant.equalsIgnoreCase("Unbreaking")) {
+                                    enchantments.add(Enchantment.DIG_SPEED);
 
-                                enchantments.add(Enchantment.DURABILITY);
+                                } else if (enchant.equalsIgnoreCase("Unbreaking")) {
 
-                            } else if (enchant.equalsIgnoreCase("FireAspect")) {
+                                    enchantments.add(Enchantment.DURABILITY);
 
-                                enchantments.add(Enchantment.FIRE_ASPECT);
+                                } else if (enchant.equalsIgnoreCase("FireAspect")) {
 
-                            } else if (enchant.equalsIgnoreCase("Knockback")) {
+                                    enchantments.add(Enchantment.FIRE_ASPECT);
 
-                                enchantments.add(Enchantment.KNOCKBACK);
+                                } else if (enchant.equalsIgnoreCase("Knockback")) {
 
-                            } else if (enchant.equalsIgnoreCase("Fortune")) {
+                                    enchantments.add(Enchantment.KNOCKBACK);
 
-                                enchantments.add(Enchantment.LOOT_BONUS_BLOCKS);
+                                } else if (enchant.equalsIgnoreCase("Fortune")) {
 
-                            } else if (enchant.equalsIgnoreCase("Looting")) {
+                                    enchantments.add(Enchantment.LOOT_BONUS_BLOCKS);
 
-                                enchantments.add(Enchantment.LOOT_BONUS_MOBS);
+                                } else if (enchant.equalsIgnoreCase("Looting")) {
 
-                            } else if (enchant.equalsIgnoreCase("Respiration")) {
+                                    enchantments.add(Enchantment.LOOT_BONUS_MOBS);
 
-                                enchantments.add(Enchantment.OXYGEN);
+                                } else if (enchant.equalsIgnoreCase("Respiration")) {
 
-                            } else if (enchant.equalsIgnoreCase("Protection")) {
+                                    enchantments.add(Enchantment.OXYGEN);
 
-                                enchantments.add(Enchantment.PROTECTION_ENVIRONMENTAL);
+                                } else if (enchant.equalsIgnoreCase("Protection")) {
 
-                            } else if (enchant.equalsIgnoreCase("BlastProtection")) {
+                                    enchantments.add(Enchantment.PROTECTION_ENVIRONMENTAL);
 
-                                enchantments.add(Enchantment.PROTECTION_EXPLOSIONS);
+                                } else if (enchant.equalsIgnoreCase("BlastProtection")) {
 
-                            } else if (enchant.equalsIgnoreCase("FeatherFalling")) {
+                                    enchantments.add(Enchantment.PROTECTION_EXPLOSIONS);
 
-                                enchantments.add(Enchantment.PROTECTION_FALL);
+                                } else if (enchant.equalsIgnoreCase("FeatherFalling")) {
 
-                            } else if (enchant.equalsIgnoreCase("FireProtection")) {
+                                    enchantments.add(Enchantment.PROTECTION_FALL);
 
-                                enchantments.add(Enchantment.PROTECTION_FIRE);
+                                } else if (enchant.equalsIgnoreCase("FireProtection")) {
 
-                            } else if (enchant.equalsIgnoreCase("ProjectileProtection")) {
+                                    enchantments.add(Enchantment.PROTECTION_FIRE);
 
-                                enchantments.add(Enchantment.PROTECTION_PROJECTILE);
+                                } else if (enchant.equalsIgnoreCase("ProjectileProtection")) {
 
-                            } else if (enchant.equalsIgnoreCase("SilkTouch")) {
+                                    enchantments.add(Enchantment.PROTECTION_PROJECTILE);
 
-                                enchantments.add(Enchantment.SILK_TOUCH);
+                                } else if (enchant.equalsIgnoreCase("SilkTouch")) {
 
-                            } else if (enchant.equalsIgnoreCase("AquaAffinity")) {
+                                    enchantments.add(Enchantment.SILK_TOUCH);
 
-                                enchantments.add(Enchantment.WATER_WORKER);
+                                } else if (enchant.equalsIgnoreCase("AquaAffinity")) {
+
+                                    enchantments.add(Enchantment.WATER_WORKER);
+
+                                } else {
+
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + enchant + ChatColor.GOLD + " inside " + ChatColor.GREEN + "enchantments: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid enchantment!");
+                                    stageFailed = true;
+                                    break;
+
+                                }
 
                             }
 
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantments: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of enchantment names!");
+                            stageFailed = true;
+                            break;
                         }
 
-                        for (int item : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
 
-                            itemsToEnchant.add(Material.getMaterial(item));
+                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids"), Integer.class)) {
 
+                                for (int item : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
+
+                                    if (Material.getMaterial(item) != null) {
+                                        itemsToEnchant.add(Material.getMaterial(item));
+                                    } else {
+                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + item + ChatColor.GOLD + " inside " + ChatColor.GREEN + "enchantment-item-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item id!");
+                                        stageFailed = true;
+                                        break;
+                                    }
+
+                                }
+
+                            } else {
+
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantment-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                stageFailed = true;
+                                break;
+
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "enchantment-item-ids:");
+                            stageFailed = true;
+                            break;
                         }
 
-                        amountsToEnchant = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts");
+
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts")) {
+
+                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts"), Integer.class)) {
+
+                                amountsToEnchant = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts");
+
+                            } else {
+
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantment-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                stageFailed = true;
+                                break;
+
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "enchantment-amounts:");
+                            stageFailed = true;
+                            break;
+                        }
+
 
                     }
 
@@ -1877,161 +1982,276 @@ public class Quests extends JavaPlugin {
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to")) {
 
-                        npcIdsToTalkTo = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
-                        npcsToTalkTo = new LinkedList<NPC>();
-                        for (int i : npcIdsToTalkTo) {
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to"), Integer.class)) {
 
-                            npcsToTalkTo.add(citizens.getNPCRegistry().getById(i));
-                            questNPCs.add(citizens.getNPCRegistry().getById(i));
+                            npcIdsToTalkTo = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
+                            npcsToTalkTo = new LinkedList<NPC>();
+                            for (int i : npcIdsToTalkTo) {
 
+                                if (citizens.getNPCRegistry().getById(i) != null) {
+
+                                    npcsToTalkTo.add(citizens.getNPCRegistry().getById(i));
+                                    questNPCs.add(citizens.getNPCRegistry().getById(i));
+
+                                } else {
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "npc-ids-to-talk-to: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid NPC id!");
+                                    stageFailed = true;
+                                    break;
+                                }
+
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "npc-ids-to-talk-to: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            stageFailed = true;
+                            break;
                         }
 
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill")) {
 
-                        List<String> mobNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill");
-                        for (String mob : mobNames) {
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill"), String.class)) {
 
-                            if (mob.equalsIgnoreCase("Blaze")) {
+                            List<String> mobNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill");
+                            for (String mob : mobNames) {
 
-                                mobsToKill.add(EntityType.BLAZE);
+                                if (mob.equalsIgnoreCase("Blaze")) {
 
-                            } else if (mob.equalsIgnoreCase("CaveSpider")) {
+                                    mobsToKill.add(EntityType.BLAZE);
 
-                                mobsToKill.add(EntityType.CAVE_SPIDER);
+                                } else if (mob.equalsIgnoreCase("CaveSpider")) {
 
-                            } else if (mob.equalsIgnoreCase("Chicken")) {
+                                    mobsToKill.add(EntityType.CAVE_SPIDER);
 
-                                mobsToKill.add(EntityType.CHICKEN);
+                                } else if (mob.equalsIgnoreCase("Chicken")) {
 
-                            } else if (mob.equalsIgnoreCase("Cow")) {
+                                    mobsToKill.add(EntityType.CHICKEN);
 
-                                mobsToKill.add(EntityType.COW);
+                                } else if (mob.equalsIgnoreCase("Cow")) {
 
-                            } else if (mob.equalsIgnoreCase("Creeper")) {
+                                    mobsToKill.add(EntityType.COW);
 
-                                mobsToKill.add(EntityType.CREEPER);
+                                } else if (mob.equalsIgnoreCase("Creeper")) {
 
-                            } else if (mob.equalsIgnoreCase("Enderman")) {
+                                    mobsToKill.add(EntityType.CREEPER);
 
-                                mobsToKill.add(EntityType.ENDERMAN);
+                                } else if (mob.equalsIgnoreCase("Enderman")) {
 
-                            } else if (mob.equalsIgnoreCase("EnderDragon")) {
+                                    mobsToKill.add(EntityType.ENDERMAN);
 
-                                mobsToKill.add(EntityType.ENDER_DRAGON);
+                                } else if (mob.equalsIgnoreCase("EnderDragon")) {
 
-                            } else if (mob.equalsIgnoreCase("Ghast")) {
+                                    mobsToKill.add(EntityType.ENDER_DRAGON);
 
-                                mobsToKill.add(EntityType.GHAST);
+                                } else if (mob.equalsIgnoreCase("Ghast")) {
 
-                            } else if (mob.equalsIgnoreCase("Giant")) {
+                                    mobsToKill.add(EntityType.GHAST);
 
-                                mobsToKill.add(EntityType.GIANT);
+                                } else if (mob.equalsIgnoreCase("Giant")) {
 
-                            } else if (mob.equalsIgnoreCase("IronGolem")) {
+                                    mobsToKill.add(EntityType.GIANT);
 
-                                mobsToKill.add(EntityType.IRON_GOLEM);
+                                } else if (mob.equalsIgnoreCase("IronGolem")) {
 
-                            } else if (mob.equalsIgnoreCase("MagmaCube")) {
+                                    mobsToKill.add(EntityType.IRON_GOLEM);
 
-                                mobsToKill.add(EntityType.MAGMA_CUBE);
+                                } else if (mob.equalsIgnoreCase("MagmaCube")) {
 
-                            } else if (mob.equalsIgnoreCase("MushroomCow")) {
+                                    mobsToKill.add(EntityType.MAGMA_CUBE);
 
-                                mobsToKill.add(EntityType.MUSHROOM_COW);
+                                } else if (mob.equalsIgnoreCase("MushroomCow")) {
 
-                            } else if (mob.equalsIgnoreCase("Ocelot")) {
+                                    mobsToKill.add(EntityType.MUSHROOM_COW);
 
-                                mobsToKill.add(EntityType.OCELOT);
+                                } else if (mob.equalsIgnoreCase("Ocelot")) {
 
-                            } else if (mob.equalsIgnoreCase("Pig")) {
+                                    mobsToKill.add(EntityType.OCELOT);
 
-                                mobsToKill.add(EntityType.PIG);
+                                } else if (mob.equalsIgnoreCase("Pig")) {
 
-                            } else if (mob.equalsIgnoreCase("PigZombie")) {
+                                    mobsToKill.add(EntityType.PIG);
 
-                                mobsToKill.add(EntityType.PIG_ZOMBIE);
+                                } else if (mob.equalsIgnoreCase("PigZombie")) {
 
-                            } else if (mob.equalsIgnoreCase("Sheep")) {
+                                    mobsToKill.add(EntityType.PIG_ZOMBIE);
 
-                                mobsToKill.add(EntityType.SHEEP);
+                                } else if (mob.equalsIgnoreCase("Sheep")) {
 
-                            } else if (mob.equalsIgnoreCase("Silverfish")) {
+                                    mobsToKill.add(EntityType.SHEEP);
 
-                                mobsToKill.add(EntityType.SILVERFISH);
+                                } else if (mob.equalsIgnoreCase("Silverfish")) {
 
-                            } else if (mob.equalsIgnoreCase("Skeleton")) {
+                                    mobsToKill.add(EntityType.SILVERFISH);
 
-                                mobsToKill.add(EntityType.SKELETON);
+                                } else if (mob.equalsIgnoreCase("Skeleton")) {
 
-                            } else if (mob.equalsIgnoreCase("Slime")) {
+                                    mobsToKill.add(EntityType.SKELETON);
 
-                                mobsToKill.add(EntityType.SLIME);
+                                } else if (mob.equalsIgnoreCase("Slime")) {
 
-                            } else if (mob.equalsIgnoreCase("Snowman")) {
+                                    mobsToKill.add(EntityType.SLIME);
 
-                                mobsToKill.add(EntityType.SNOWMAN);
+                                } else if (mob.equalsIgnoreCase("Snowman")) {
 
-                            } else if (mob.equalsIgnoreCase("Spider")) {
+                                    mobsToKill.add(EntityType.SNOWMAN);
 
-                                mobsToKill.add(EntityType.SPIDER);
+                                } else if (mob.equalsIgnoreCase("Spider")) {
 
-                            } else if (mob.equalsIgnoreCase("Squid")) {
+                                    mobsToKill.add(EntityType.SPIDER);
 
-                                mobsToKill.add(EntityType.SQUID);
+                                } else if (mob.equalsIgnoreCase("Squid")) {
 
-                            } else if (mob.equalsIgnoreCase("Villager")) {
+                                    mobsToKill.add(EntityType.SQUID);
 
-                                mobsToKill.add(EntityType.VILLAGER);
+                                } else if (mob.equalsIgnoreCase("Villager")) {
 
-                            } else if (mob.equalsIgnoreCase("Wolf")) {
+                                    mobsToKill.add(EntityType.VILLAGER);
 
-                                mobsToKill.add(EntityType.WOLF);
+                                } else if (mob.equalsIgnoreCase("Wolf")) {
 
-                            } else if (mob.equalsIgnoreCase("Zombie")) {
+                                    mobsToKill.add(EntityType.WOLF);
 
-                                mobsToKill.add(EntityType.ZOMBIE);
+                                } else if (mob.equalsIgnoreCase("Zombie")) {
+
+                                    mobsToKill.add(EntityType.ZOMBIE);
+
+                                } else {
+
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + mob + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid mob name!");
+                                    stageFailed = true;
+                                    break;
+
+                                }
 
                             }
 
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mobs-to-kill: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mob names!");
+                            stageFailed = true;
+                            break;
                         }
 
-                        for (int i : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
 
-                            mobNumToKill.add(i);
+                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts"), Integer.class)) {
 
+                                for (int i : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts")) {
+
+                                    mobNumToKill.add(i);
+
+                                }
+
+                            } else {
+
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                stageFailed = true;
+                                break;
+
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mob-amounts:");
+                            stageFailed = true;
+                            break;
                         }
 
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill")) {
 
-                        List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill");
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill"), String.class)) {
 
-                        for (String loc : locations) {
+                            List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill");
 
-                            String[] info = loc.split(" ");
-                            double x = Double.parseDouble(info[1]);
-                            double y = Double.parseDouble(info[2]);
-                            double z = Double.parseDouble(info[3]);
-                            Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-                            locationsToKillWithin.add(finalLocation);
+                            for (String loc : locations) {
 
+                                String[] info = loc.split(" ");
+                                if (info.length == 4) {
+                                    double x;
+                                    double y;
+                                    double z;
+                                    try {
+                                        x = Double.parseDouble(info[1]);
+                                        y = Double.parseDouble(info[2]);
+                                        z = Double.parseDouble(info[3]);
+                                    } catch (Exception e) {
+                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                                        log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                        stageFailed = true;
+                                        break;
+                                    }
+
+                                    if (getServer().getWorld(info[0]) != null) {
+                                        Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
+                                        locationsToKillWithin.add(finalLocation);
+                                    } else {
+                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + info[0] + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid world name!");
+                                        stageFailed = true;
+                                        break;
+                                    }
+
+                                } else {
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                                    log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                    stageFailed = true;
+                                    break;
+                                }
+
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "locations-to-kill: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of locations!");
+                            stageFailed = true;
+                            break;
                         }
 
-                        List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii");
-                        List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names");
-                        for (int i : radii) {
+                        if (config.contains("quests." + s + ".stages.ordered" + s2 + ".kill-location-radii")) {
 
-                            radiiToKillWithin.add(i);
+                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii"), Integer.class)) {
 
+                                List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii");
+                                for (int i : radii) {
+
+                                    radiiToKillWithin.add(i);
+
+                                }
+
+                            } else {
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "kill-location-radii: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                stageFailed = true;
+                                break;
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "kill-location-radii:");
+                            stageFailed = true;
+                            break;
                         }
-                        for (String name : locationNames) {
 
-                            areaNames.add(name);
+                        if (config.contains("quests." + s + ".stages.ordered" + s2 + ".kill-location-names")) {
 
+                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names"), String.class)) {
+
+                                List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names");
+                                for (String name : locationNames) {
+
+                                    areaNames.add(name);
+
+                                }
+
+                            } else {
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "kill-location-names: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of names!");
+                                stageFailed = true;
+                                break;
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "kill-location-names:");
+                            stageFailed = true;
+                            break;
                         }
+
 
                     }
 
@@ -2104,221 +2324,486 @@ public class Quests extends JavaPlugin {
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach")) {
 
-                        List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach");
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach"), String.class)) {
 
-                        for (String loc : locations) {
+                            List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach");
 
-                            String[] info = loc.split(" ");
-                            double x = Double.parseDouble(info[1]);
-                            double y = Double.parseDouble(info[2]);
-                            double z = Double.parseDouble(info[3]);
-                            Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-                            stage.locationsToReach.add(finalLocation);
+                            for (String loc : locations) {
 
+                                String[] info = loc.split(" ");
+                                if (info.length == 4) {
+                                    double x;
+                                    double y;
+                                    double z;
+                                    try {
+                                        x = Double.parseDouble(info[1]);
+                                        y = Double.parseDouble(info[2]);
+                                        z = Double.parseDouble(info[3]);
+                                    } catch (Exception e) {
+                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "locations-to-reach: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                                        log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                        stageFailed = true;
+                                        break;
+                                    }
+
+                                    if (getServer().getWorld(info[0]) != null) {
+                                        Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
+                                        stage.locationsToReach.add(finalLocation);
+                                    } else {
+                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + info[0] + ChatColor.GOLD + " inside " + ChatColor.GREEN + "locations-to-reach: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid world name!");
+                                        stageFailed = true;
+                                        break;
+                                    }
+
+                                } else {
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                                    log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                    stageFailed = true;
+                                    break;
+                                }
+
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "locations-to-reach: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of locations!");
+                            stageFailed = true;
+                            break;
                         }
 
-                        for (int i : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii")) {
+                        if (config.contains("quests." + s + ".stages.ordered" + s2 + ".reach-location-radii")) {
 
-                            stage.radiiToReachWithin.add(i);
+                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii"), Integer.class)) {
 
+                                List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii");
+                                for (int i : radii) {
+
+                                    stage.radiiToReachWithin.add(i);
+
+                                }
+
+                            } else {
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "reach-location-radii: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                stageFailed = true;
+                                break;
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "reach-location-radii:");
+                            stageFailed = true;
+                            break;
                         }
 
-                        for (String name : config.getStringList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names")) {
+                        if (config.contains("quests." + s + ".stages.ordered" + s2 + ".reach-location-names")) {
 
-                            stage.locationNames.add(name);
+                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names"), String.class)) {
 
+                                List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names");
+                                for (String name : locationNames) {
+
+                                    stage.locationNames.add(name);
+
+                                }
+
+                            } else {
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "reach-location-names: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of names!");
+                                stageFailed = true;
+                                break;
+                            }
+
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "reach-location-names:");
+                            stageFailed = true;
+                            break;
                         }
 
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame")) {
 
-                        List<String> mobs = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame");
-                        List<Integer> mobAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts");
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame"), String.class)) {
 
-                        for (String mob : mobs) {
+                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts")) {
 
-                            if (mob.equalsIgnoreCase("Wolf")) {
+                                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts"), Integer.class)) {
 
-                                stage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
+                                    List<String> mobs = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame");
+                                    List<Integer> mobAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts");
+
+                                    for (String mob : mobs) {
+
+                                        if (mob.equalsIgnoreCase("Wolf")) {
+
+                                            stage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
+
+                                        } else if (mob.equalsIgnoreCase("Ocelot")) {
+
+                                            stage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
+
+                                        } else {
+                                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + mob + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-tame: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid tameable mob!");
+                                            stageFailed = true;
+                                            break;
+                                        }
+
+                                    }
+
+                                } else {
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-tame-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    stageFailed = true;
+                                    break;
+                                }
 
                             } else {
-
-                                stage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
-
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mob-tame-amounts:");
+                                stageFailed = true;
+                                break;
                             }
 
+                        } else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mobs-to-tame: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mob names!");
+                            stageFailed = true;
+                            break;
                         }
 
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear")) {
 
-                        List<String> sheep = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear");
-                        List<Integer> shearAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts");
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear"), String.class)) {
 
-                        for (String color : sheep) {
+                            if(config.contains("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts")){
 
-                            if (color.equalsIgnoreCase("Black")) {
+                                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts"), Integer.class)) {
 
-                                stage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
+                                    List<String> sheep = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear");
+                                    List<Integer> shearAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts");
 
-                            } else if (color.equalsIgnoreCase("Blue")) {
+                                    for (String color : sheep) {
 
-                                stage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
+                                        if (color.equalsIgnoreCase("Black")) {
 
+                                            stage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Blue")) {
+
+                                            stage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Brown")) {
+
+                                            stage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Cyan")) {
+
+                                            stage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Gray")) {
+
+                                            stage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Green")) {
+
+                                            stage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("LightBlue")) {
+
+                                            stage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Lime")) {
+
+                                            stage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Magenta")) {
+
+                                            stage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Orange")) {
+
+                                            stage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Pink")) {
+
+                                            stage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Purple")) {
+
+                                            stage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Red")) {
+
+                                            stage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Silver")) {
+
+                                            stage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("White")) {
+
+                                            stage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else if (color.equalsIgnoreCase("Yellow")) {
+
+                                            stage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
+
+                                        } else{
+
+                                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + color + ChatColor.GOLD + " inside " + ChatColor.GREEN + "sheep-to-shear: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid color!");
+                                            stageFailed = true;
+                                            break;
+
+                                        }
+
+                                    }
+
+                                }else {
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "sheep-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    stageFailed = true;
+                                    break;
+                                }
+
+                            }else{
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "sheep-amounts:");
+                                stageFailed = true;
+                                break;
                             }
-                            if (color.equalsIgnoreCase("Brown")) {
 
-                                stage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Cyan")) {
-
-                                stage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Gray")) {
-
-                                stage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Green")) {
-
-                                stage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("LightBlue")) {
-
-                                stage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Lime")) {
-
-                                stage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Magenta")) {
-
-                                stage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Orange")) {
-
-                                stage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Pink")) {
-
-                                stage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Purple")) {
-
-                                stage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Red")) {
-
-                                stage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Silver")) {
-
-                                stage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("White")) {
-
-                                stage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-                            if (color.equalsIgnoreCase("Yellow")) {
-
-                                stage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
-
-                            }
-
+                        }else {
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "sheep-to-shear: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of colors!");
+                            stageFailed = true;
+                            break;
                         }
 
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".craft-item-ids")) {
 
-                        List<Integer> craftIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-ids");
-                        List<Integer> craftAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts");
+                        if(Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".craft-item-ids"), Integer.class)){
 
-                        for (int i : craftIds) {
+                            if(config.contains("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts")){
 
-                            stage.itemsToCraft.put(Material.getMaterial(i), craftAmounts.get(craftIds.indexOf(i)));
+                                if(Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts"), Integer.class)){
 
+                                    List<Integer> craftIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-ids");
+                                    List<Integer> craftAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts");
+
+                                    for (int i : craftIds) {
+
+                                        stage.itemsToCraft.put(Material.getMaterial(i), craftAmounts.get(craftIds.indexOf(i)));
+
+                                    }
+
+                                }else{
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "craft-item-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    stageFailed = true;
+                                    break;
+                                }
+
+                            }else{
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "craft-item-amounts:");
+                                stageFailed = true;
+                                break;
+                            }
+
+                        }else{
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "craft-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of item ids!");
+                            stageFailed = true;
+                            break;
                         }
 
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".event")) {
 
-                        stage.event = Event.getEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this, quest);
+                        Event evt = Event.getEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this, quest);
+
+                        if( evt != null)
+                            stage.event = evt;
+                        else{
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Event " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " failed to load.");
+                            stageFailed = true;
+                            break;
+                        }
 
                     }
 
                     stage.citizensToInteract = npcsToTalkTo;
 
+                    if(stageFailed){
+                        break;
+                    }
                     quest.stages.add(stage);
 
+                }
+
+                if(stageFailed){
+                    continue;
                 }
 
                 //Load rewards
                 if (config.contains("quests." + s + ".rewards.item-ids")) {
 
-                    for (int i : config.getIntegerList("quests." + s + ".rewards.item-ids")) {
+                    if(Quests.checkList(config.getList("quests." + s + ".rewards.item-ids"), Integer.class)){
 
-                        ItemStack stack = new ItemStack(Material.getMaterial(i), config.getIntegerList("quests." + s + ".rewards.item-amounts").get(config.getIntegerList("quests." + s + ".rewards.item-ids").indexOf(i)));
-                        quest.itemRewards.add(stack);
+                        if(config.contains("quests." + s + ".rewards.item-amounts")){
+
+                            if(Quests.checkList(config.getList("quests." + s + ".rewards.item-amounts"), Integer.class)) {
+
+                                boolean failed = false;
+                                for (int i : config.getIntegerList("quests." + s + ".rewards.item-ids")) {
+
+                                    Material m = Material.getMaterial(i);
+                                    if(m == null){
+                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD +  " in " + ChatColor.GREEN + "item-amounts: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                        failed = true;
+                                        break;
+                                    }
+                                    ItemStack stack = new ItemStack(m, config.getIntegerList("quests." + s + ".rewards.item-amounts").get(config.getIntegerList("quests." + s + ".rewards.item-ids").indexOf(i)));
+                                    quest.itemRewards.add(stack);
+
+                                }
+
+                                if(failed)
+                                    continue;
+
+                            }else{
+                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                continue;
+                            }
+
+                        }else{
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.AQUA + "Rewards " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts:");
+                            continue;
+                        }
+
+                    }else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of item ids!");
+                        continue;
                     }
 
                 }
 
                 if (config.contains("quests." + s + ".rewards.money")) {
-                    quest.moneyReward = config.getInt("quests." + s + ".rewards.money");
+
+                    if (config.getInt("quests." + s + ".rewards.money", -999) != -999) {
+                        quest.moneyReward = config.getInt("quests." + s + ".rewards.money");
+                    } else {
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "money: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        continue;
+                    }
+
                 }
 
                 if (config.contains("quests." + s + ".rewards.exp")) {
-                    quest.exp = config.getInt("quests." + s + ".rewards.exp");
+
+                    if (config.getInt("quests." + s + ".rewards.exp", -999) != -999) {
+                        quest.exp = config.getInt("quests." + s + ".rewards.exp");
+                    } else {
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "exp: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        continue;
+                    }
+
                 }
 
                 if (config.contains("quests." + s + ".rewards.commands")) {
-                    quest.commands = config.getStringList("quests." + s + ".rewards.commands");
+
+                    if(Quests.checkList(config.getList("quests." + s + ".rewards.commands"), String.class))
+                        quest.commands = config.getStringList("quests." + s + ".rewards.commands");
+                    else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "commands: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of commands!");
+                        continue;
+                    }
+
                 }
 
                 if (config.contains("quests." + s + ".rewards.permissions")) {
-                    quest.permissions = config.getStringList("quests." + s + ".rewards.permissions");
+
+                    if(Quests.checkList(config.getList("quests." + s + ".rewards.permissions"), String.class))
+                        quest.permissions = config.getStringList("quests." + s + ".rewards.permissions");
+                    else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "permissions: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of permissions!");
+                        continue;
+                    }
+
                 }
 
                 if (config.contains("quests." + s + ".rewards.quest-points")) {
-                    quest.questPoints = config.getInt("quests." + s + ".rewards.quest-points");
+
+                    if (config.getInt("quests." + s + ".rewards.quest-points", -999) != -999) {
+                        quest.questPoints = config.getInt("quests." + s + ".rewards.quest-points");
+                    } else {
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-points: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        continue;
+                    }
+
                 }
 
                 if (config.contains("quests." + s + ".rewards.heroes-exp")) {
-                    quest.heroesExp = config.getInt("quests." + s + ".rewards.heroes-exp");
+
+                    if (config.getInt("quests." + s + ".rewards.heroes-exp", -999) != -999) {
+                        quest.heroesExp = config.getInt("quests." + s + ".rewards.heroes-exp");
+                    } else {
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-exp: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        continue;
+                    }
+
                 }
 
                 if (config.contains("quests." + s + ".rewards.heroes-class")) {
-                    quest.heroesClass = config.getString("quests." + s + ".rewards.heroes-class");
+
+                    if(heroes.getClassManager().getClass("quests." + s + ".rewards.heroes-class") != null)
+                        quest.heroesClass = config.getString("quests." + s + ".rewards.heroes-class");
+                    else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-class: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Heroes class name!");
+                        continue;
+                    }
+
                 }
 
                 if (config.contains("quests." + s + ".rewards.heroes-secondary-class")) {
-                    quest.heroesSecClass = config.getString("quests." + s + ".rewards.heroes-secondary-class");
+
+                    if(heroes.getClassManager().getClass("quests." + s + ".rewards.heroes-secondary-class") != null)
+                        quest.heroesSecClass = config.getString("quests." + s + ".rewards.heroes-secondary-class");
+                    else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-secondary-class: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Heroes secondary class name!");
+                        continue;
+                    }
+
                 }
 
-                if(config.contains("quests." + s + ".rewards.mcmmo-skills")){
-                    quest.mcmmoSkills = config.getStringList("quests." + s + ".rewards.mcmmo-skills");
-                    quest.mcmmoAmounts = config.getIntegerList("quests." + s + ".rewards.mcmmo-levels");
+                if (config.contains("quests." + s + ".rewards.mcmmo-skills")) {
+
+                    if(Quests.checkList(config.getList("quests." + s + ".rewards.mcmmo-skills"), String.class)){
+
+                        if(config.contains("quests." + s + ".rewards.mcmmo-levels")){
+
+                            boolean failed = false;
+                            for(String skill : config.getStringList("quests." + s + ".rewards.mcmmo-skills")){
+
+                                if(Quests.getMcMMOSkill(skill) == null){
+                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + skill + ChatColor.GOLD +  " in " + ChatColor.GREEN + "mcmmo-skills: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid mcMMO skill name!");
+                                    failed = true;
+                                    break;
+                                }
+
+                            }
+                            if(failed)
+                                continue;
+
+                            quest.mcmmoSkills = config.getStringList("quests." + s + ".rewards.mcmmo-skills");
+                            quest.mcmmoAmounts = config.getIntegerList("quests." + s + ".rewards.mcmmo-levels");
+
+                        }else{
+                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.AQUA + "Rewards " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mcmmo-levels:");
+                            continue;
+                        }
+
+                    }else{
+                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mcmmo-skills: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mcMMO skill names!");
+                        continue;
+                    }
                 }
 
                 //
-                if(failedToLoad == false)
-                    quests.add(quest);
+                quests.add(quest);
 
             } catch (Exception e) {
 
@@ -2331,8 +2816,9 @@ public class Quests extends JavaPlugin {
 
             }
 
-            if(failedToLoad == true)
+            if (failedToLoad == true) {
                 log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + s + "\". Skipping.");
+            }
 
         }
 
@@ -2642,12 +3128,25 @@ public class Quests extends JavaPlugin {
 
     public static Location getLocation(String arg) {
 
-        Location loc = null;
-
         String[] info = arg.split(" ");
-        double x = Double.parseDouble(info[1]);
-        double y = Double.parseDouble(info[2]);
-        double z = Double.parseDouble(info[3]);
+        if(info.length != 4)
+            return null;
+
+        double x;
+        double y;
+        double z;
+
+        try{
+            x = Double.parseDouble(info[1]);
+            y = Double.parseDouble(info[2]);
+            z = Double.parseDouble(info[3]);
+        }catch (Exception e){
+            return null;
+        }
+
+        if(Bukkit.getServer().getWorld(info[0]) == null)
+            return null;
+
         Location finalLocation = new Location(Bukkit.getServer().getWorld(info[0]), x, y, z);
 
         return finalLocation;
@@ -2676,8 +3175,10 @@ public class Quests extends JavaPlugin {
             return Effect.ZOMBIE_CHEW_IRON_DOOR;
         } else if (eff.equalsIgnoreCase("ZOMBIE_CHEW_WOODEN_DOOR")) {
             return Effect.ZOMBIE_CHEW_WOODEN_DOOR;
-        } else {
+        } else if (eff.equalsIgnoreCase("ZOMBIE_DESTROY_DOOR")){
             return Effect.ZOMBIE_DESTROY_DOOR;
+        } else{
+            return null;
         }
     }
 
@@ -2787,66 +3288,70 @@ public class Quests extends JavaPlugin {
 
     }
 
-    public static String getTime(long milliseconds){
+    public static String getTime(long milliseconds) {
 
         String message = "";
         long days = 0;
         long hours = 0;
         long minutes = 0;
         long seconds = 0;
-        if(((Long) milliseconds).compareTo(Long.parseLong("86400000")) > -1){
+        if (((Long) milliseconds).compareTo(Long.parseLong("86400000")) > -1) {
             days = (Long) milliseconds / Long.parseLong("86400000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("86400000"))*Long.parseLong("86400000");
+            milliseconds -= ((Long) milliseconds / Long.parseLong("86400000")) * Long.parseLong("86400000");
         }
 
-        if(((Long) milliseconds).compareTo(Long.parseLong("3600000")) > -1){
+        if (((Long) milliseconds).compareTo(Long.parseLong("3600000")) > -1) {
             hours = (Long) milliseconds / Long.parseLong("3600000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("3600000"))*Long.parseLong("3600000");
+            milliseconds -= ((Long) milliseconds / Long.parseLong("3600000")) * Long.parseLong("3600000");
         }
 
-        if(((Long) milliseconds).compareTo(Long.parseLong("60000")) > -1){
+        if (((Long) milliseconds).compareTo(Long.parseLong("60000")) > -1) {
             minutes = (Long) milliseconds / Long.parseLong("60000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("60000"))*Long.parseLong("60000");
+            milliseconds -= ((Long) milliseconds / Long.parseLong("60000")) * Long.parseLong("60000");
         }
 
-        if(((Long) milliseconds).compareTo(Long.parseLong("1000")) > -1){
+        if (((Long) milliseconds).compareTo(Long.parseLong("1000")) > -1) {
             seconds = (Long) milliseconds / Long.parseLong("1000");
         }
 
 
-        if(days > 0){
+        if (days > 0) {
 
-            if(days == 1)
+            if (days == 1) {
                 message += " 1 Day,";
-            else
+            } else {
                 message += " " + days + " Days,";
+            }
 
         }
 
-        if(hours > 0){
+        if (hours > 0) {
 
-            if(hours == 1)
+            if (hours == 1) {
                 message += " 1 Hour,";
-            else
+            } else {
                 message += " " + hours + " Hours,";
+            }
 
         }
 
-        if(minutes > 0){
+        if (minutes > 0) {
 
-            if(minutes == 1)
+            if (minutes == 1) {
                 message += " 1 Minute,";
-            else
+            } else {
                 message += " " + minutes + " Minutes,";
+            }
 
         }
 
-        if(seconds > 0){
+        if (seconds > 0) {
 
-            if(seconds == 1)
+            if (seconds == 1) {
                 message += " 1 Second,";
-            else
+            } else {
                 message += " " + seconds + " Seconds,";
+            }
 
         }
 
@@ -2856,91 +3361,99 @@ public class Quests extends JavaPlugin {
 
     }
 
-    public static PotionEffect getPotionEffect(String type, int duration, int amplifier){
+    public static PotionEffect getPotionEffect(String type, int duration, int amplifier) {
 
         PotionEffectType potionType;
 
-        if(type.equalsIgnoreCase("BLINDNESS"))
+        if (type.equalsIgnoreCase("BLINDNESS")) {
             potionType = PotionEffectType.BLINDNESS;
-        else if(type.equalsIgnoreCase("CONFUSION"))
+        } else if (type.equalsIgnoreCase("CONFUSION")) {
             potionType = PotionEffectType.CONFUSION;
-        else if(type.equalsIgnoreCase("DAMAGE_RESISTANCE"))
+        } else if (type.equalsIgnoreCase("DAMAGE_RESISTANCE")) {
             potionType = PotionEffectType.DAMAGE_RESISTANCE;
-        else if(type.equalsIgnoreCase("FAST_DIGGING"))
+        } else if (type.equalsIgnoreCase("FAST_DIGGING")) {
             potionType = PotionEffectType.FAST_DIGGING;
-        else if(type.equalsIgnoreCase("FIRE_RESISTANCE"))
+        } else if (type.equalsIgnoreCase("FIRE_RESISTANCE")) {
             potionType = PotionEffectType.FIRE_RESISTANCE;
-        else if(type.equalsIgnoreCase("HARM"))
+        } else if (type.equalsIgnoreCase("HARM")) {
             potionType = PotionEffectType.HARM;
-        else if(type.equalsIgnoreCase("HEAL"))
+        } else if (type.equalsIgnoreCase("HEAL")) {
             potionType = PotionEffectType.HEAL;
-        else if(type.equalsIgnoreCase("HUNGER"))
+        } else if (type.equalsIgnoreCase("HUNGER")) {
             potionType = PotionEffectType.HUNGER;
-        else if(type.equalsIgnoreCase("INCREASE_DAMAGE"))
+        } else if (type.equalsIgnoreCase("INCREASE_DAMAGE")) {
             potionType = PotionEffectType.INCREASE_DAMAGE;
-        else if(type.equalsIgnoreCase("JUMP"))
+        } else if (type.equalsIgnoreCase("JUMP")) {
             potionType = PotionEffectType.JUMP;
-        else if(type.equalsIgnoreCase("POISON"))
+        } else if (type.equalsIgnoreCase("POISON")) {
             potionType = PotionEffectType.POISON;
-        else if(type.equalsIgnoreCase("REGENERATION"))
+        } else if (type.equalsIgnoreCase("REGENERATION")) {
             potionType = PotionEffectType.REGENERATION;
-        else if(type.equalsIgnoreCase("SLOW"))
+        } else if (type.equalsIgnoreCase("SLOW")) {
             potionType = PotionEffectType.SLOW;
-        else if(type.equalsIgnoreCase("SLOW_DIGGING"))
+        } else if (type.equalsIgnoreCase("SLOW_DIGGING")) {
             potionType = PotionEffectType.SLOW_DIGGING;
-        else if(type.equalsIgnoreCase("SPEED"))
+        } else if (type.equalsIgnoreCase("SPEED")) {
             potionType = PotionEffectType.SPEED;
-        else if(type.equalsIgnoreCase("WATER_BREATHING"))
+        } else if (type.equalsIgnoreCase("WATER_BREATHING")) {
             potionType = PotionEffectType.WATER_BREATHING;
-        else
+        } else if (type.equalsIgnoreCase("WEAKNESS")) {
             potionType = PotionEffectType.WEAKNESS;
+        } else {
+            return null;
+        }
+
 
         return new PotionEffect(potionType, duration, amplifier);
 
     }
 
-    public static SkillType getMcMMOSkill(String s){
+    public static SkillType getMcMMOSkill(String s) {
 
-        if(s.equalsIgnoreCase("Acrobatics"))
+        if (s.equalsIgnoreCase("Acrobatics")) {
             return SkillType.ACROBATICS;
-        else if(s.equalsIgnoreCase("All"))
+        } else if (s.equalsIgnoreCase("All")) {
             return SkillType.ALL;
-        else if(s.equalsIgnoreCase("Archery"))
+        } else if (s.equalsIgnoreCase("Archery")) {
             return SkillType.ARCHERY;
-        else if(s.equalsIgnoreCase("Axes"))
+        } else if (s.equalsIgnoreCase("Axes")) {
             return SkillType.AXES;
-        else if(s.equalsIgnoreCase("Excavation"))
+        } else if (s.equalsIgnoreCase("Excavation")) {
             return SkillType.EXCAVATION;
-        else if(s.equalsIgnoreCase("Fishing"))
+        } else if (s.equalsIgnoreCase("Fishing")) {
             return SkillType.FISHING;
-        else if(s.equalsIgnoreCase("Herbalism"))
+        } else if (s.equalsIgnoreCase("Herbalism")) {
             return SkillType.HERBALISM;
-        else if(s.equalsIgnoreCase("Mining"))
+        } else if (s.equalsIgnoreCase("Mining")) {
             return SkillType.MINING;
-        else if(s.equalsIgnoreCase("Repair"))
+        } else if (s.equalsIgnoreCase("Repair")) {
             return SkillType.REPAIR;
-        else if(s.equalsIgnoreCase("Swords"))
+        } else if (s.equalsIgnoreCase("Swords")) {
             return SkillType.SWORDS;
-        else if(s.equalsIgnoreCase("Taming"))
+        } else if (s.equalsIgnoreCase("Taming")) {
             return SkillType.TAMING;
-        else if(s.equalsIgnoreCase("Unarmed"))
+        } else if (s.equalsIgnoreCase("Unarmed")) {
             return SkillType.UNARMED;
-        else
+        } else if (s.equalsIgnoreCase("Woodcutting")) {
             return SkillType.WOODCUTTING;
+        } else {
+            return null;
+        }
 
     }
 
-    public static void addItem(Player p, ItemStack i){
+    public static void addItem(Player p, ItemStack i) {
 
         PlayerInventory inv = p.getInventory();
         HashMap<Integer, ItemStack> leftover = inv.addItem(i);
 
-        if(leftover != null){
+        if (leftover != null) {
 
-            if(leftover.isEmpty() == false){
+            if (leftover.isEmpty() == false) {
 
-                for(ItemStack i2 : leftover.values())
+                for (ItemStack i2 : leftover.values()) {
                     p.getWorld().dropItem(p.getLocation(), i2);
+                }
 
             }
 
@@ -2986,22 +3499,22 @@ public class Quests extends JavaPlugin {
         }
         return false;
     }
-    
-    public static boolean checkList(List<?> list, Class c){
-          
-        if(list == null)
-            return false;
-        
-        for(Object o : list){
 
-            if(c.isAssignableFrom(o.getClass()) == false)
+    public static boolean checkList(List<?> list, Class c) {
+
+        if (list == null) {
+            return false;
+        }
+
+        for (Object o : list) {
+
+            if (c.isAssignableFrom(o.getClass()) == false) {
                 return false;
+            }
 
         }
-        
-        return true;
-        
-    }
-    
 
+        return true;
+
+    }
 }

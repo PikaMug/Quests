@@ -247,7 +247,6 @@ public class PlayerListener implements Listener {
             Sheep sheep = (Sheep) evt.getEntity();
             quester.shearSheep(sheep.getColor());
 
-
         }
 
     }
@@ -473,9 +472,20 @@ public class PlayerListener implements Listener {
         }
         plugin.questers.add(quester);
 
-        for(Quest q : quester.completedQuests){
-            if(quester.completedTimes.containsKey(q) == false && q.redoDelay > -1)
-                quester.completedTimes.put(q, System.currentTimeMillis());
+        for(String s : quester.completedQuests){
+
+            for(Quest q : plugin.quests){
+
+                if(q.name.equalsIgnoreCase(s)){
+
+                    if(quester.completedTimes.containsKey(q.name) == false && q.redoDelay > -1)
+                        quester.completedTimes.put(q.name, System.currentTimeMillis());
+
+                }
+
+
+            }
+
         }
 
         quester.checkQuest();
@@ -494,7 +504,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent evt){
 
-        if(plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer()) == false){
+        boolean isPlayer = true;
+        if(plugin.getServer().getPluginManager().getPlugin("Citizens") != null){
+            if(plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer()))
+                isPlayer = false;
+        }
+
+        if(isPlayer){
 
             Quester quester = plugin.getQuester(evt.getPlayer().getName());
 

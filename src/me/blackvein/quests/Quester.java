@@ -26,9 +26,9 @@ public class Quester{
     Quests plugin;
     boolean isTalking = false;
 
-    LinkedList<Quest> completedQuests = new LinkedList<Quest>();
+    LinkedList<String> completedQuests = new LinkedList<String>();
 
-    Map<Quest, Long> completedTimes = new HashMap<Quest, Long>();
+    Map<String, Long> completedTimes = new HashMap<String, Long>();
 
     Map<Material, Integer> blocksDamaged = new EnumMap<Material, Integer>(Material.class);
 
@@ -1406,11 +1406,11 @@ public class Quester{
 
         long currentTime = System.currentTimeMillis();
         long lastTime;
-        if(completedTimes.containsKey(q) == false){
+        if(completedTimes.containsKey(q.name) == false){
             lastTime = System.currentTimeMillis();
-            completedTimes.put(q, System.currentTimeMillis());
+            completedTimes.put(q.name, System.currentTimeMillis());
         }else{
-            lastTime = completedTimes.get(q);
+            lastTime = completedTimes.get(q.name);
         }
         long comparator = q.redoDelay;
         long difference = (comparator - (currentTime - lastTime));
@@ -1429,10 +1429,10 @@ public class Quester{
                 List<String> questTimeNames = new LinkedList<String>();
                 List<Long> questTimes = new LinkedList<Long>();
 
-                for(Quest q : completedTimes.keySet()){
+                for(String s : completedTimes.keySet()){
 
-                    questTimeNames.add(q.name);
-                    questTimes.add(completedTimes.get(q));
+                    questTimeNames.add(s);
+                    questTimes.add(completedTimes.get(s));
 
                 }
 
@@ -1737,9 +1737,9 @@ public class Quester{
             }else {
 
                 String[] completed = new String[completedQuests.size()];
-                for(Quest q : completedQuests){
+                for(String s : completedQuests){
 
-                    completed[completedQuests.indexOf(q)] = q.name;
+                    completed[completedQuests.indexOf(s)] = s;
 
                 }
                 data.set("completed-Quests", completed);
@@ -1768,7 +1768,7 @@ public class Quester{
                     for(Quest q : plugin.quests){
 
                         if(q.name.equalsIgnoreCase(s)){
-                            completedTimes.put(q, (Long) o);
+                            completedTimes.put(q.name, (Long) o);
                             break;
                         }
 
@@ -1789,7 +1789,7 @@ public class Quester{
                 for(Quest q : plugin.quests){
 
                     if(q.name.equalsIgnoreCase(s)){
-                        completedQuests.add(q);
+                        completedQuests.add(q.name);
                         break;
                     }
 
