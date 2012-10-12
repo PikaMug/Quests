@@ -5,7 +5,7 @@ description: Player questing system
 website: http://dev.bukkit.org/server-mods/quests/
 dev-url: http://dev.bukkit.org/server-mods/quests/
 authors: [Blackvein]
-soft-depend: [Citizens, Questioner, Vault]
+soft-depend: [Citizens, Vault]
 permissions:
     quests.quest:
         description: View current Quest objectives

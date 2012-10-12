@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -21,6 +22,7 @@ import org.bukkit.potion.PotionEffect;
 public class Event {
 
     String name = "";
+    
     String message = null;
     boolean clearInv = false;
     LinkedList<Location> explosions = new LinkedList<Location>();
@@ -45,7 +47,7 @@ public class Event {
 
     @Override
     public boolean equals(Object o){
-
+        
         if(o instanceof Event){
 
             Event other = (Event) o;

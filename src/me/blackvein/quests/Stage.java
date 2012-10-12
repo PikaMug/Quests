@@ -16,17 +16,17 @@ public class Stage {
 
     public String finished;
 
-    Map<Material, Integer> blocksToDamage = new HashMap<Material, Integer>();
+    Map<Material, Integer> blocksToDamage = new EnumMap<Material, Integer>(Material.class);
 
-    Map<Material, Integer> blocksToBreak = new HashMap<Material, Integer>();
+    Map<Material, Integer> blocksToBreak = new EnumMap<Material, Integer>(Material.class);
 
-    Map<Material, Integer> blocksToPlace = new HashMap<Material, Integer>();
+    Map<Material, Integer> blocksToPlace = new EnumMap<Material, Integer>(Material.class);
 
     Map<Map<Material, Integer>, Boolean> itemsToCollect = new HashMap<Map<Material, Integer>, Boolean>();
 
-    Map<Material, Integer> blocksToUse = new HashMap<Material, Integer>();
+    Map<Material, Integer> blocksToUse = new EnumMap<Material, Integer>(Material.class);
 
-    Map<Material, Integer> blocksToCut = new HashMap<Material, Integer>();
+    Map<Material, Integer> blocksToCut = new EnumMap<Material, Integer>(Material.class);
 
     Integer fishToCatch;
     Integer playersToKill;

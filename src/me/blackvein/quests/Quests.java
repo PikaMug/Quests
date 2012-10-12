@@ -1,8 +1,5 @@
 package me.blackvein.quests;
 
-import ca.xshade.bukkit.questioner.Questioner;
-import ca.xshade.questionmanager.Option;
-import ca.xshade.questionmanager.Question;
 import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.mcMMO;
 import com.herocraftonline.heroes.Heroes;
@@ -30,7 +27,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -60,7 +56,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
     boolean debug = false;
     boolean load = false;
     int killDelay = 0;
-    Questioner questioner;
     public final static Logger log = Logger.getLogger("Minecraft");
     Map<Location, String> brewers = new HashMap<Location, String>();
 
@@ -103,7 +98,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
             mcmmo = (mcMMO) getServer().getPluginManager().getPlugin("mcMMO");
         }
 
-        questioner = (Questioner) getServer().getPluginManager().getPlugin("Questioner");
         if (!setupEconomy()) {
             printWarning("[Quests] Economy not found.");
         }
@@ -210,14 +204,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
         @Override
         protected Prompt acceptValidatedInput(ConversationContext context, String s) {
+            
+            Player player = (Player) context.getForWhom();
             if (s.equalsIgnoreCase("Yes") == false) {
                 
-                ((Player)context.getForWhom()).sendMessage(ChatColor.YELLOW + "Cancelled.");
+                player.sendMessage(ChatColor.YELLOW + "Cancelled.");
                 return Prompt.END_OF_CONVERSATION;
+                
             }
             
-            context.setSessionData("type", s);
-            return new HowManyPrompt();
+            context.setSessionData("who", player.getName());
+            context.setSessionData("message", s);
+            
+            player.sendMessage(new SummoningConversationPrefix().getPrefix(context));
+            
+            getQuester(player.getName()).takeQuest(getQuester(player.getName()).questToTake);
+            
+            return Prompt.END_OF_CONVERSATION;
         }
     }
 
@@ -225,19 +228,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
         @Override
         public String getPrefix(ConversationContext context) {
-            Player who = (Player)context.getSessionData("who");
-            
-            if (what != null && count == null && who == null) {
-                return ChatColor.GREEN + "Summon " + what + ": " + ChatColor.WHITE;
-            }
-            if (what != null && count != null && who == null) {
-                return ChatColor.GREEN + "Summon " + count + " " + what + ": " + ChatColor.WHITE;
-            }
-            if (what != null && count != null && who != null) {
-                return ChatColor.GREEN + "Summon " + count + " " + what + " to " + who.getName() + ": " + ChatColor.WHITE;
-            }
-            return ChatColor.GREEN + "Summon: " + ChatColor.WHITE;
+            String who = (String)context.getSessionData("who");
+            return ChatColor.GREEN + who + ": " + ChatColor.GRAY + (String) context.getSessionData("message");
         }
+        
     }
 
 
@@ -637,72 +631,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                                             }
 
                                             if (takeable == true) {
-                                                LinkedList<Option> options = new LinkedList<Option>();
-                                                Option yes = new Option("Yes", new Runnable() {
-
-                                                    @Override
-                                                    public void run() {
-
-                                                        if (quest.testRequirements((Player) sender) == true) {
-
-                                                            quester.currentQuest = quest;
-                                                            quester.currentStage = quest.stages.getFirst();
-                                                            quester.addEmpties();
-                                                            quester.isTalking = false;
-                                                            if (quest.moneyReq > 0) {
-                                                                economy.withdrawPlayer(quester.name, quest.moneyReq);
-                                                            }
-
-                                                            for (int i : quest.itemIds) {
-                                                                if (quest.removeItems.get(quest.itemIds.indexOf(i)) == true) {
-                                                                    removeItem(((Player) sender).getInventory(), Material.getMaterial(i), quest.itemAmounts.get(quest.itemIds.indexOf(i)));
-                                                                }
-                                                            }
-
-                                                            sender.sendMessage(ChatColor.GREEN + "Quest accepted: " + quest.name);
-                                                            sender.sendMessage("");
-                                                            sender.sendMessage(ChatColor.GOLD + "---(Objectives)---");
-                                                            for (String s : quester.getObjectives()) {
-                                                                sender.sendMessage(s);
-                                                            }
-
-                                                        } else {
-
-                                                            sender.sendMessage(quest.failRequirements);
-                                                            quester.isTalking = false;
-
-                                                        }
-
-                                                    }
-                                                });
-
-                                                Option no = new Option("No", new Runnable() {
-
-                                                    @Override
-                                                    public void run() {
-
-                                                        quester.isTalking = false;
-                                                        sender.sendMessage(ChatColor.YELLOW + "Cancelled.");
-
-                                                    }
-                                                });
-
-                                                options.add(yes);
-                                                options.add(no);
-
-                                                if (quester.isTalking == false) {
-
-                                                    quester.isTalking = true;
-                                                    Question question = new Question(sender.getName(), "Accept quest?", options);
-                                                    questioner.getQuestionManager().newQuestion(question);
-                                                    sender.sendMessage(ChatColor.GOLD + "- " + quest.name + " -");
-                                                    sender.sendMessage(quest.description);
-                                                    try {
-                                                        questioner.appendQuestion(question);
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                    }
-
+                                                
+                                                if (cs instanceof Conversable) {
+                                                    quester.questToTake = quest;
+                                                    conversationFactory.buildConversation((Conversable)cs).begin();
+                                                    return true;
+                                                }else{
+                                                    return false;
                                                 }
 
                                             }
@@ -1154,7 +1089,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                                     quester.currentQuest = questToGive;
                                     quester.currentStage = questToGive.stages.getFirst();
                                     quester.addEmpties();
-                                    quester.isTalking = false;
                                     player.sendMessage(ChatColor.GREEN + target.getName() + ChatColor.GOLD + " has forcibly started the Quest " + ChatColor.DARK_PURPLE + questToGive.name + ChatColor.GOLD + ".");
                                     target.sendMessage(ChatColor.GREEN + player.getName() + ChatColor.GOLD + " has forced you to take the Quest " + ChatColor.DARK_PURPLE + questToGive.name + ChatColor.GOLD + ".");
                                     target.sendMessage(ChatColor.GOLD + "---(Objectives)---");

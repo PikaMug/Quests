@@ -1,11 +1,9 @@
 package me.blackvein.quests;
 
-import ca.xshade.questionmanager.Option;
-import ca.xshade.questionmanager.Question;
 import java.io.File;
-import java.util.LinkedList;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -62,72 +60,8 @@ public class PlayerListener implements Listener {
 
                                 }else {
 
-                                    LinkedList<Option> options = new LinkedList<Option>();
-                                    Option yes = new Option("Yes", new Runnable(){
-
-                                        public void run(){
-
-                                            if(q.testRequirements(player) == true){
-
-                                                quester.currentQuest = q;
-                                                quester.currentStage = q.stages.getFirst();
-                                                quester.addEmpties();
-                                                quester.isTalking = false;
-                                                if (q.moneyReq > 0) {
-                                                    Quests.economy.withdrawPlayer(quester.name, q.moneyReq);
-                                                }
-
-                                                for(int i : q.itemIds){
-                                                    if (q.removeItems.get(q.itemIds.indexOf(i)) == true)
-                                                        Quests.removeItem(player.getInventory(), Material.getMaterial(i), q.itemAmounts.get(q.itemIds.indexOf(i)));
-                                                }
-
-                                                            player.sendMessage(ChatColor.GREEN + "Quest accepted: " + q.name);
-                                                            player.sendMessage("");
-                                                            player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
-                                                            for (String s : quester.getObjectives()) {
-                                                                player.sendMessage(s);
-                                                            }
-
-                                            }else {
-
-                                                player.sendMessage(q.failRequirements);
-                                                quester.isTalking = false;
-
-                                            }
-
-                                        }
-
-                                    });
-
-                                    Option no = new Option("No", new Runnable(){
-
-                                        public void run(){
-
-                                            quester.isTalking = false;
-                                            player.sendMessage(ChatColor.YELLOW + "Cancelled.");
-
-                                        }
-
-                                    });
-
-                                    options.add(yes);
-                                    options.add(no);
-
-                                    if(quester.isTalking == false){
-
-                                        quester.isTalking = true;
-                                        Question question = new Question(player.getName(), "Accept quest?", options);
-                                        plugin.questioner.getQuestionManager().newQuestion(question);
-                                        player.sendMessage(ChatColor.GOLD + "- " + q.name + " -");
-                                        player.sendMessage(q.description);
-                                        try{
-                                            plugin.questioner.appendQuestion(question);
-                                        }catch (Exception e){
-                                            e.printStackTrace();
-                                        }
-
-                                    }
+                                    quester.questToTake = q;
+                                    plugin.conversationFactory.buildConversation((Conversable)player).begin();
 
                                 }
 
