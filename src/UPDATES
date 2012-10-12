@@ -8,3 +8,5 @@
 
 - Added quest item requirement
   - remove-items: list of true/false   Should the item requirements be removed from the players inventory?
+
+- Added catches/printout messages for all quest-reading errors

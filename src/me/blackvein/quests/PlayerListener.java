@@ -405,7 +405,7 @@ public class PlayerListener implements Listener {
                         if(p.getShooter() instanceof Player){
 
                             Player player = (Player) p.getShooter();
-                            if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
+                            if(plugin.citizens.getNPCRegistry().isNPC(player) == false && plugin.citizens.getNPCRegistry().isNPC(evt.getEntity()) == false){
 
                                 Quester quester = plugin.getQuester(player.getName());
                                 if(quester.hasObjective("killPlayer"))
@@ -418,7 +418,7 @@ public class PlayerListener implements Listener {
                     }else if(damager instanceof Player){
 
                         Player player = (Player) damager;
-                        if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
+                        if(plugin.citizens.getNPCRegistry().isNPC(player) == false && plugin.citizens.getNPCRegistry().isNPC(evt.getEntity()) == false){
 
                             Quester quester = plugin.getQuester(player.getName());
                             if(quester.hasObjective("killPlayer"))

@@ -66,3 +66,6 @@ commands:
     quest:
         description: Quest command
         permission: quests.quest
+    convo:
+        description: Convo command
+        permission: quests.quest

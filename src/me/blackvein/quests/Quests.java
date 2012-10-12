@@ -23,22 +23,25 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.conversations.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class Quests extends JavaPlugin {
+public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
     public static Economy economy = null;
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
+    ConversationFactory conversationFactory;
     Heroes heroes;
     Vault vault = null;
     CitizensPlugin citizens;
@@ -63,9 +66,19 @@ public class Quests extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
+        
         pListener = new PlayerListener(this);
         npcListener = new NpcListener(this);
+        
+        this.conversationFactory = new ConversationFactory(this)
+                .withModality(true)
+                .withPrefix(new SummoningConversationPrefix())
+                .withFirstPrompt(new QuestPrompt())
+                .withEscapeSequence("/cancel")
+                .withTimeout(10)
+                .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
+                .addConversationAbandonedListener(this);
+
 
         try {
             if (getServer().getPluginManager().getPlugin("Citizens") != null) {
@@ -75,7 +88,7 @@ public class Quests extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(npcListener, this);
             }
         } catch (Exception e) {
-            log.warning("[Quests] Legacy version of Citizens found. Citizens in Quests not enabled.");
+            printWarning("[Quests] Legacy version of Citizens found. Citizens in Quests not enabled.");
         }
 
         if (getServer().getPluginManager().getPlugin("Denizen") != null) {
@@ -92,17 +105,17 @@ public class Quests extends JavaPlugin {
 
         questioner = (Questioner) getServer().getPluginManager().getPlugin("Questioner");
         if (!setupEconomy()) {
-            log.warning("[Quests] Economy not found.");
+            printWarning("[Quests] Economy not found.");
         }
 
         if (!setupPermissions()) {
-            log.warning("[Quests] Permissions not found.");
+            printWarning("[Quests] Permissions not found.");
         }
 
         vault = (Vault) getServer().getPluginManager().getPlugin("Vault");
 
         if (new File(this.getDataFolder(), "config.yml").exists() == false) {
-            log.info("[Quests] Config not found, writing default to file.");
+            printInfo("[Quests] Config not found, writing default to file.");
             FileConfiguration config = new YamlConfiguration();
             try {
                 config.load(this.getResource("config.yml"));
@@ -116,7 +129,7 @@ public class Quests extends JavaPlugin {
         loadConfig();
 
         if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
-            log.info("[Quests] Quest data not found, writing default to file.");
+            printInfo("[Quests] Quest data not found, writing default to file.");
             FileConfiguration data = new YamlConfiguration();
             try {
                 data.load(this.getResource("quests.yml"));
@@ -129,7 +142,7 @@ public class Quests extends JavaPlugin {
         }
 
         if (new File(this.getDataFolder(), "events.yml").exists() == false) {
-            log.info("[Quests] Events data not found, writing default to file.");
+            printInfo("[Quests] Events data not found, writing default to file.");
             FileConfiguration data = new YamlConfiguration();
             data.options().copyHeader(true);
             data.options().copyDefaults(true);
@@ -143,7 +156,7 @@ public class Quests extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(pListener, this);
-        log.info("[Quests] Enabled.");
+        printInfo("[Quests] Enabled.");
 
         getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 
@@ -164,16 +177,69 @@ public class Quests extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        log.info("[Quests] Saving Quester data.");
+        printInfo("[Quests] Saving Quester data.");
         for (Player p : getServer().getOnlinePlayers()) {
 
             Quester quester = getQuester(p.getName());
             quester.saveData();
 
         }
-        log.info("[Quests] Disabled.");
+        printInfo("[Quests] Disabled.");
 
     }
+    
+    
+    @Override
+    public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
+        if (abandonedEvent.gracefulExit()) {
+            abandonedEvent.getContext().getForWhom().sendRawMessage("Conversation exited gracefully.");
+        } else {
+            abandonedEvent.getContext().getForWhom().sendRawMessage("Conversation abandoned by" + abandonedEvent.getCanceller().getClass().getName());
+        }
+    }
+
+    private class QuestPrompt extends FixedSetPrompt {
+        public QuestPrompt() {
+            super("Yes","No");
+        }
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            return "Accept Quest? " + formatFixedSet();
+        }
+
+        @Override
+        protected Prompt acceptValidatedInput(ConversationContext context, String s) {
+            if (s.equalsIgnoreCase("Yes") == false) {
+                
+                ((Player)context.getForWhom()).sendMessage(ChatColor.YELLOW + "Cancelled.");
+                return Prompt.END_OF_CONVERSATION;
+            }
+            
+            context.setSessionData("type", s);
+            return new HowManyPrompt();
+        }
+    }
+
+    private class SummoningConversationPrefix implements ConversationPrefix {
+
+        @Override
+        public String getPrefix(ConversationContext context) {
+            Player who = (Player)context.getSessionData("who");
+            
+            if (what != null && count == null && who == null) {
+                return ChatColor.GREEN + "Summon " + what + ": " + ChatColor.WHITE;
+            }
+            if (what != null && count != null && who == null) {
+                return ChatColor.GREEN + "Summon " + count + " " + what + ": " + ChatColor.WHITE;
+            }
+            if (what != null && count != null && who != null) {
+                return ChatColor.GREEN + "Summon " + count + " " + what + " to " + who.getName() + ": " + ChatColor.WHITE;
+            }
+            return ChatColor.GREEN + "Summon: " + ChatColor.WHITE;
+        }
+    }
+
 
     public void loadConfig() {
 
@@ -223,7 +289,16 @@ public class Quests extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
-        if (cmd.getName().equalsIgnoreCase("quest")) {
+        if(cmd.getName().equalsIgnoreCase("convo")){
+            
+            if (cs instanceof Conversable) {
+                conversationFactory.buildConversation((Conversable)cs).begin();
+                return true;
+            } else {
+                return false;
+            }
+
+        } else if (cmd.getName().equalsIgnoreCase("quest")) {
 
             if (cs instanceof Player) {
 
@@ -543,7 +618,7 @@ public class Quests extends JavaPlugin {
 
                                         if (quester.currentQuest != null) {
                                             cs.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
-                                        } else if (quester.completedQuests.contains(quest) && quest.redoDelay < 0) {
+                                        } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
                                             cs.sendMessage(ChatColor.YELLOW + "You have already completed " + ChatColor.DARK_PURPLE + quest.name + ChatColor.YELLOW + ".");
                                         } else if (quest.npcStart != null && allowCommandsForNpcQuests == false) {
                                             cs.sendMessage(ChatColor.YELLOW + "You must speak to " + ChatColor.DARK_PURPLE + quest.npcStart.getName() + ChatColor.YELLOW + " to start this Quest.");
@@ -552,7 +627,7 @@ public class Quests extends JavaPlugin {
                                         } else {
 
                                             boolean takeable = true;
-                                            if (quester.completedQuests.contains(quest)) {
+                                            if (quester.completedQuests.contains(quest.name)) {
 
                                                 if (quester.getDifference(quest) > 0) {
                                                     cs.sendMessage(ChatColor.YELLOW + "You may not take " + ChatColor.AQUA + quest.name + ChatColor.YELLOW + " again for another " + ChatColor.DARK_PURPLE + getTime(quester.getDifference(quest)) + ChatColor.YELLOW + ".");
@@ -1331,7 +1406,7 @@ public class Quests extends JavaPlugin {
                         questNPCs.add(citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
 
                     }else{
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED +  "npc-giver-id: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid NPC id!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED +  "npc-giver-id: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid NPC id!");
                         continue;
                     }
 
@@ -1343,8 +1418,8 @@ public class Quests extends JavaPlugin {
                     if(location != null)
                         quest.blockStart = location;
                     else{
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED +  "block-start: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
-                        log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED +  "block-start: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                        printSevere(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
                         continue;
                     }
 
@@ -1355,7 +1430,7 @@ public class Quests extends JavaPlugin {
                     if (config.getInt("quests." + s + ".redo-delay", -999) != -999) {
                         quest.redoDelay = config.getInt("quests." + s + ".redo-delay");
                     } else {
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "redo-delay: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "redo-delay: " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                         continue;
                     }
 
@@ -1364,21 +1439,21 @@ public class Quests extends JavaPlugin {
                 if (config.contains("quests." + s + ".name")) {
                     quest.name = parseString(config.getString("quests." + s + ".name"), quest);
                 } else {
-                    log.severe(ChatColor.GOLD + "[Quests] Quest block \'" + ChatColor.DARK_PURPLE + s + ChatColor.GOLD + "\' is missing " + ChatColor.RED + "name:");
+                    printSevere(ChatColor.GOLD + "[Quests] Quest block \'" + ChatColor.DARK_PURPLE + s + ChatColor.GOLD + "\' is missing " + ChatColor.RED + "name:");
                     continue;
                 }
 
                 if (config.contains("quests." + s + ".ask-message")) {
                     quest.description = parseString(config.getString("quests." + s + ".ask-message"), quest);
                 } else {
-                    log.severe(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "ask-message:");
+                    printSevere(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "ask-message:");
                     continue;
                 }
 
                 if (config.contains("quests." + s + ".finish-message")) {
                     quest.finished = parseString(config.getString("quests." + s + ".finish-message"), quest);
                 } else {
-                    log.severe(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "finish-message:");
+                    printSevere(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "finish-message:");
                     continue;
                 }
 
@@ -1387,7 +1462,7 @@ public class Quests extends JavaPlugin {
                     if (config.contains("quests." + s + ".requirements.fail-requirement-message")) {
                         quest.failRequirements = parseString(config.getString("quests." + s + ".requirements.fail-requirement-message"), quest);
                     } else {
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "fail-requirement-message:");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "fail-requirement-message:");
                         continue;
                     }
 
@@ -1396,7 +1471,7 @@ public class Quests extends JavaPlugin {
                         if (Quests.checkList(config.getList("quests." + s + ".requirements.item-ids"), Integer.class)) {
                             quest.itemIds = config.getIntegerList("quests." + s + ".requirements.item-ids");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             continue;
                         }
 
@@ -1405,11 +1480,11 @@ public class Quests extends JavaPlugin {
                             if (Quests.checkList(config.getList("quests." + s + ".requirements.item-amounts"), Integer.class)) {
                                 quest.itemAmounts = config.getIntegerList("quests." + s + ".requirements.item-amounts");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts:");
                             continue;
                         }
 
@@ -1419,12 +1494,12 @@ public class Quests extends JavaPlugin {
                             if (Quests.checkList(config.getList("quests." + s + ".requirements.remove-items"), Boolean.class)) {
                                 quest.removeItems = config.getBooleanList("quests." + s + ".requirements.remove-items");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "remove-items: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of true/false values!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "remove-items: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of true/false values!");
                                 continue;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "remove-items:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.YELLOW + "Requirements " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "remove-items:");
                             continue;
                         }
                     }
@@ -1434,7 +1509,7 @@ public class Quests extends JavaPlugin {
                         if (config.getInt("quests." + s + ".requirements.money", -999) != -999) {
                             quest.moneyReq = config.getInt("quests." + s + ".requirements.money");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "money: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "money: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                             continue;
                         }
 
@@ -1445,7 +1520,7 @@ public class Quests extends JavaPlugin {
                         if (config.getInt("quests." + s + ".requirements.quest-points", -999) != -999) {
                             quest.questPointsReq = config.getInt("quests." + s + ".requirements.quest-points");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-points: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-points: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                             continue;
                         }
 
@@ -1480,13 +1555,13 @@ public class Quests extends JavaPlugin {
                             }
 
                             if (failed) {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quests: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of Quest names!");
-                                log.severe(ChatColor.RED + "Make sure you are using the Quest " + ChatColor.DARK_RED + "name: " + ChatColor.RED + "values, and not the block names.");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quests: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of Quest names!");
+                                printSevere(ChatColor.RED + "Make sure you are using the Quest " + ChatColor.DARK_RED + "name: " + ChatColor.RED + "values, and not the block names.");
                                 continue;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quests: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of Quest names!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quests: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of Quest names!");
                             continue;
                         }
 
@@ -1497,7 +1572,7 @@ public class Quests extends JavaPlugin {
                         if (Quests.checkList(config.getList("quests." + s + ".requirements.permissions"), String.class)) {
                             quest.permissionReqs = config.getStringList("quests." + s + ".requirements.permissions");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "permissions: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of permissions!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "permissions: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of permissions!");
                             continue;
                         }
 
@@ -1552,7 +1627,7 @@ public class Quests extends JavaPlugin {
                             trigger = new QuestTaskTrigger();
                             stage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "script-to-run: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a Denizen script!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "script-to-run: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a Denizen script!");
                             stageFailed = true;
                             break;
                         }
@@ -1566,7 +1641,7 @@ public class Quests extends JavaPlugin {
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids"), Integer.class)) {
                             itemids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "collect-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "collect-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -1576,13 +1651,13 @@ public class Quests extends JavaPlugin {
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts"), Integer.class)) {
                                 itemamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "collect-item-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "collect-item-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "collect-item-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "collect-item-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -1592,13 +1667,13 @@ public class Quests extends JavaPlugin {
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".quest-items"), Boolean.class)) {
                                 questitems = config.getBooleanList("quests." + s + ".stages.ordered." + s2 + ".quest-items");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-items: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of true/false values!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-items: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of true/false values!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "quest-items:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "quest-items:");
                             stageFailed = true;
                             break;
                         }
@@ -1610,7 +1685,7 @@ public class Quests extends JavaPlugin {
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
                             breakids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "break-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "break-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -1620,13 +1695,13 @@ public class Quests extends JavaPlugin {
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
                                 breakamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "break-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "break-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "break-block-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "break-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -1638,7 +1713,7 @@ public class Quests extends JavaPlugin {
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids"), Integer.class)) {
                             damageids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "damage-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "damage-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -1648,13 +1723,13 @@ public class Quests extends JavaPlugin {
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
                                 damageamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "damage-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "damage-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "damage-block-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "damage-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -1666,7 +1741,7 @@ public class Quests extends JavaPlugin {
                         if (Material.getMaterial(i) != null) {
                             stage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "damage-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "damage-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
                             stageFailed = true;
                             break;
                         }
@@ -1678,7 +1753,7 @@ public class Quests extends JavaPlugin {
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids"), Integer.class)) {
                             placeids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "place-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "place-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -1688,13 +1763,13 @@ public class Quests extends JavaPlugin {
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
                                 placeamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "place-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "place-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "place-block-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "place-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -1706,7 +1781,7 @@ public class Quests extends JavaPlugin {
                         if (Material.getMaterial(i) != null) {
                             stage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "place-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "place-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
                             stageFailed = true;
                             break;
                         }
@@ -1718,7 +1793,7 @@ public class Quests extends JavaPlugin {
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids"), Integer.class)) {
                             useids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "use-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "use-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -1728,13 +1803,13 @@ public class Quests extends JavaPlugin {
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
                                 useamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "use-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "use-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "use-block-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "use-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -1746,7 +1821,7 @@ public class Quests extends JavaPlugin {
                         if (Material.getMaterial(i) != null) {
                             stage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "use-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "use-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
                             stageFailed = true;
                             break;
                         }
@@ -1758,7 +1833,7 @@ public class Quests extends JavaPlugin {
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids"), Integer.class)) {
                             cutids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cut-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cut-block-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -1768,13 +1843,13 @@ public class Quests extends JavaPlugin {
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
                                 cutamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts");
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cut-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cut-block-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "cut-block-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "cut-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -1786,7 +1861,7 @@ public class Quests extends JavaPlugin {
                         if (Material.getMaterial(i) != null) {
                             stage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "cut-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "cut-block-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item ID!");
                             stageFailed = true;
                             break;
                         }
@@ -1798,7 +1873,7 @@ public class Quests extends JavaPlugin {
                         if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
                             stage.fishToCatch = config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "fish-to-catch:" + ChatColor.GOLD + " inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "fish-to-catch:" + ChatColor.GOLD + " inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                             stageFailed = true;
                             break;
                         }
@@ -1810,7 +1885,7 @@ public class Quests extends JavaPlugin {
                         if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
                             stage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "players-to-kill:" + ChatColor.GOLD + " inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "players-to-kill:" + ChatColor.GOLD + " inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                             stageFailed = true;
                             break;
                         }
@@ -1909,7 +1984,7 @@ public class Quests extends JavaPlugin {
 
                                 } else {
 
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + enchant + ChatColor.GOLD + " inside " + ChatColor.GREEN + "enchantments: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid enchantment!");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + enchant + ChatColor.GOLD + " inside " + ChatColor.GREEN + "enchantments: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid enchantment!");
                                     stageFailed = true;
                                     break;
 
@@ -1918,7 +1993,7 @@ public class Quests extends JavaPlugin {
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantments: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of enchantment names!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantments: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of enchantment names!");
                             stageFailed = true;
                             break;
                         }
@@ -1932,7 +2007,7 @@ public class Quests extends JavaPlugin {
                                     if (Material.getMaterial(item) != null) {
                                         itemsToEnchant.add(Material.getMaterial(item));
                                     } else {
-                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + item + ChatColor.GOLD + " inside " + ChatColor.GREEN + "enchantment-item-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item id!");
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + item + ChatColor.GOLD + " inside " + ChatColor.GREEN + "enchantment-item-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item id!");
                                         stageFailed = true;
                                         break;
                                     }
@@ -1941,14 +2016,14 @@ public class Quests extends JavaPlugin {
 
                             } else {
 
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantment-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantment-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
 
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "enchantment-item-ids:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "enchantment-item-ids:");
                             stageFailed = true;
                             break;
                         }
@@ -1962,14 +2037,14 @@ public class Quests extends JavaPlugin {
 
                             } else {
 
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantment-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "enchantment-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
 
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "enchantment-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "enchantment-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -1994,7 +2069,7 @@ public class Quests extends JavaPlugin {
                                     questNPCs.add(citizens.getNPCRegistry().getById(i));
 
                                 } else {
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "npc-ids-to-talk-to: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid NPC id!");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "npc-ids-to-talk-to: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid NPC id!");
                                     stageFailed = true;
                                     break;
                                 }
@@ -2002,7 +2077,7 @@ public class Quests extends JavaPlugin {
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "npc-ids-to-talk-to: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "npc-ids-to-talk-to: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -2118,7 +2193,7 @@ public class Quests extends JavaPlugin {
 
                                 } else {
 
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + mob + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid mob name!");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + mob + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid mob name!");
                                     stageFailed = true;
                                     break;
 
@@ -2127,7 +2202,7 @@ public class Quests extends JavaPlugin {
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mobs-to-kill: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mob names!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mobs-to-kill: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mob names!");
                             stageFailed = true;
                             break;
                         }
@@ -2144,14 +2219,14 @@ public class Quests extends JavaPlugin {
 
                             } else {
 
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
 
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mob-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mob-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -2176,8 +2251,8 @@ public class Quests extends JavaPlugin {
                                         y = Double.parseDouble(info[2]);
                                         z = Double.parseDouble(info[3]);
                                     } catch (Exception e) {
-                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
-                                        log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                                        printSevere(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
                                         stageFailed = true;
                                         break;
                                     }
@@ -2186,14 +2261,14 @@ public class Quests extends JavaPlugin {
                                         Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
                                         locationsToKillWithin.add(finalLocation);
                                     } else {
-                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + info[0] + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid world name!");
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + info[0] + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid world name!");
                                         stageFailed = true;
                                         break;
                                     }
 
                                 } else {
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
-                                    log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                                    printSevere(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
                                     stageFailed = true;
                                     break;
                                 }
@@ -2201,7 +2276,7 @@ public class Quests extends JavaPlugin {
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "locations-to-kill: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of locations!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "locations-to-kill: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of locations!");
                             stageFailed = true;
                             break;
                         }
@@ -2218,13 +2293,13 @@ public class Quests extends JavaPlugin {
                                 }
 
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "kill-location-radii: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "kill-location-radii: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "kill-location-radii:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "kill-location-radii:");
                             stageFailed = true;
                             break;
                         }
@@ -2241,13 +2316,13 @@ public class Quests extends JavaPlugin {
                                 }
 
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "kill-location-names: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of names!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "kill-location-names: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of names!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "kill-location-names:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "kill-location-names:");
                             stageFailed = true;
                             break;
                         }
@@ -2340,8 +2415,8 @@ public class Quests extends JavaPlugin {
                                         y = Double.parseDouble(info[2]);
                                         z = Double.parseDouble(info[3]);
                                     } catch (Exception e) {
-                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "locations-to-reach: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
-                                        log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "locations-to-reach: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                                        printSevere(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
                                         stageFailed = true;
                                         break;
                                     }
@@ -2350,14 +2425,14 @@ public class Quests extends JavaPlugin {
                                         Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
                                         stage.locationsToReach.add(finalLocation);
                                     } else {
-                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + info[0] + ChatColor.GOLD + " inside " + ChatColor.GREEN + "locations-to-reach: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid world name!");
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + info[0] + ChatColor.GOLD + " inside " + ChatColor.GREEN + "locations-to-reach: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid world name!");
                                         stageFailed = true;
                                         break;
                                     }
 
                                 } else {
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
-                                    log.severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not in proper location format!");
+                                    printSevere(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
                                     stageFailed = true;
                                     break;
                                 }
@@ -2365,7 +2440,7 @@ public class Quests extends JavaPlugin {
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "locations-to-reach: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of locations!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "locations-to-reach: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of locations!");
                             stageFailed = true;
                             break;
                         }
@@ -2382,13 +2457,13 @@ public class Quests extends JavaPlugin {
                                 }
 
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "reach-location-radii: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "reach-location-radii: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "reach-location-radii:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "reach-location-radii:");
                             stageFailed = true;
                             break;
                         }
@@ -2405,13 +2480,13 @@ public class Quests extends JavaPlugin {
                                 }
 
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "reach-location-names: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of names!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "reach-location-names: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of names!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "reach-location-names:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "reach-location-names:");
                             stageFailed = true;
                             break;
                         }
@@ -2440,7 +2515,7 @@ public class Quests extends JavaPlugin {
                                             stage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
 
                                         } else {
-                                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + mob + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-tame: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid tameable mob!");
+                                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + mob + ChatColor.GOLD + " inside " + ChatColor.GREEN + "mobs-to-tame: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid tameable mob!");
                                             stageFailed = true;
                                             break;
                                         }
@@ -2448,19 +2523,19 @@ public class Quests extends JavaPlugin {
                                     }
 
                                 } else {
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-tame-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-tame-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                     stageFailed = true;
                                     break;
                                 }
 
                             } else {
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mob-tame-amounts:");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mob-tame-amounts:");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mobs-to-tame: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mob names!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mobs-to-tame: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mob names!");
                             stageFailed = true;
                             break;
                         }
@@ -2546,7 +2621,7 @@ public class Quests extends JavaPlugin {
 
                                         } else{
 
-                                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + color + ChatColor.GOLD + " inside " + ChatColor.GREEN + "sheep-to-shear: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid color!");
+                                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + color + ChatColor.GOLD + " inside " + ChatColor.GREEN + "sheep-to-shear: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid color!");
                                             stageFailed = true;
                                             break;
 
@@ -2555,19 +2630,19 @@ public class Quests extends JavaPlugin {
                                     }
 
                                 }else {
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "sheep-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "sheep-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                     stageFailed = true;
                                     break;
                                 }
 
                             }else{
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "sheep-amounts:");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "sheep-amounts:");
                                 stageFailed = true;
                                 break;
                             }
 
                         }else {
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "sheep-to-shear: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of colors!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "sheep-to-shear: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of colors!");
                             stageFailed = true;
                             break;
                         }
@@ -2592,19 +2667,19 @@ public class Quests extends JavaPlugin {
                                     }
 
                                 }else{
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "craft-item-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "craft-item-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                     stageFailed = true;
                                     break;
                                 }
 
                             }else{
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "craft-item-amounts:");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "craft-item-amounts:");
                                 stageFailed = true;
                                 break;
                             }
 
                         }else{
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "craft-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of item ids!");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "craft-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of item ids!");
                             stageFailed = true;
                             break;
                         }
@@ -2618,7 +2693,7 @@ public class Quests extends JavaPlugin {
                         if( evt != null)
                             stage.event = evt;
                         else{
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Event " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " failed to load.");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Event " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " failed to load.");
                             stageFailed = true;
                             break;
                         }
@@ -2652,7 +2727,7 @@ public class Quests extends JavaPlugin {
 
                                     Material m = Material.getMaterial(i);
                                     if(m == null){
-                                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD +  " in " + ChatColor.GREEN + "item-amounts: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD +  " in " + ChatColor.GREEN + "item-amounts: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                         failed = true;
                                         break;
                                     }
@@ -2665,17 +2740,17 @@ public class Quests extends JavaPlugin {
                                     continue;
 
                             }else{
-                                log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                                 continue;
                             }
 
                         }else{
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.AQUA + "Rewards " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.AQUA + "Rewards " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts:");
                             continue;
                         }
 
                     }else{
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of item ids!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of item ids!");
                         continue;
                     }
 
@@ -2686,7 +2761,7 @@ public class Quests extends JavaPlugin {
                     if (config.getInt("quests." + s + ".rewards.money", -999) != -999) {
                         quest.moneyReward = config.getInt("quests." + s + ".rewards.money");
                     } else {
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "money: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "money: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                         continue;
                     }
 
@@ -2697,7 +2772,7 @@ public class Quests extends JavaPlugin {
                     if (config.getInt("quests." + s + ".rewards.exp", -999) != -999) {
                         quest.exp = config.getInt("quests." + s + ".rewards.exp");
                     } else {
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "exp: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "exp: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                         continue;
                     }
 
@@ -2708,7 +2783,7 @@ public class Quests extends JavaPlugin {
                     if(Quests.checkList(config.getList("quests." + s + ".rewards.commands"), String.class))
                         quest.commands = config.getStringList("quests." + s + ".rewards.commands");
                     else{
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "commands: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of commands!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "commands: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of commands!");
                         continue;
                     }
 
@@ -2719,7 +2794,7 @@ public class Quests extends JavaPlugin {
                     if(Quests.checkList(config.getList("quests." + s + ".rewards.permissions"), String.class))
                         quest.permissions = config.getStringList("quests." + s + ".rewards.permissions");
                     else{
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "permissions: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of permissions!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "permissions: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of permissions!");
                         continue;
                     }
 
@@ -2730,7 +2805,7 @@ public class Quests extends JavaPlugin {
                     if (config.getInt("quests." + s + ".rewards.quest-points", -999) != -999) {
                         quest.questPoints = config.getInt("quests." + s + ".rewards.quest-points");
                     } else {
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-points: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-points: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                         continue;
                     }
 
@@ -2741,7 +2816,7 @@ public class Quests extends JavaPlugin {
                     if (config.getInt("quests." + s + ".rewards.heroes-exp", -999) != -999) {
                         quest.heroesExp = config.getInt("quests." + s + ".rewards.heroes-exp");
                     } else {
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-exp: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-exp: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                         continue;
                     }
 
@@ -2752,7 +2827,7 @@ public class Quests extends JavaPlugin {
                     if(heroes.getClassManager().getClass("quests." + s + ".rewards.heroes-class") != null)
                         quest.heroesClass = config.getString("quests." + s + ".rewards.heroes-class");
                     else{
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-class: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Heroes class name!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-class: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Heroes class name!");
                         continue;
                     }
 
@@ -2763,7 +2838,7 @@ public class Quests extends JavaPlugin {
                     if(heroes.getClassManager().getClass("quests." + s + ".rewards.heroes-secondary-class") != null)
                         quest.heroesSecClass = config.getString("quests." + s + ".rewards.heroes-secondary-class");
                     else{
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-secondary-class: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Heroes secondary class name!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-secondary-class: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Heroes secondary class name!");
                         continue;
                     }
 
@@ -2779,7 +2854,7 @@ public class Quests extends JavaPlugin {
                             for(String skill : config.getStringList("quests." + s + ".rewards.mcmmo-skills")){
 
                                 if(Quests.getMcMMOSkill(skill) == null){
-                                    log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + skill + ChatColor.GOLD +  " in " + ChatColor.GREEN + "mcmmo-skills: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid mcMMO skill name!");
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + skill + ChatColor.GOLD +  " in " + ChatColor.GREEN + "mcmmo-skills: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid mcMMO skill name!");
                                     failed = true;
                                     break;
                                 }
@@ -2792,12 +2867,12 @@ public class Quests extends JavaPlugin {
                             quest.mcmmoAmounts = config.getIntegerList("quests." + s + ".rewards.mcmmo-levels");
 
                         }else{
-                            log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.AQUA + "Rewards " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mcmmo-levels:");
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.AQUA + "Rewards " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mcmmo-levels:");
                             continue;
                         }
 
                     }else{
-                        log.severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mcmmo-skills: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mcMMO skill names!");
+                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mcmmo-skills: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of mcMMO skill names!");
                         continue;
                     }
                 }
@@ -2908,6 +2983,27 @@ public class Quests extends JavaPlugin {
         return sortedMap;
     }
 
+    public static void printSevere(String s){
+        
+        s = ChatColor.stripColor(s);
+        log.severe(s);
+        
+    }
+    
+    public static void printWarning(String s){
+        
+        s = ChatColor.stripColor(s);
+        log.warning(s);
+        
+    }
+    
+    public static void printInfo(String s){
+        
+        s = ChatColor.stripColor(s);
+        log.info(s);
+        
+    }
+    
     public boolean hasItem(Player player, int i, int i2) {
 
         Inventory inv = player.getInventory();
