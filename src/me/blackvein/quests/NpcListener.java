@@ -41,7 +41,13 @@ public class NpcListener implements Listener{
 
                             if(quester.currentQuest == null){
 
-                                quester.questToTake = q;
+                                quester.questToTake = q.name;
+                                
+                                String s =
+                                           ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
+                                           + "\n"
+                                           + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+                                player.sendMessage(s);
                                 plugin.conversationFactory.buildConversation((Conversable)player).begin();
 
                             }else {

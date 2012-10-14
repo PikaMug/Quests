@@ -21,7 +21,7 @@ public class Quester {
 
     String name;
     Quest currentQuest;
-    Quest questToTake;
+    String questToTake;
     Stage currentStage;
     int questPoints = 0;
     Quests plugin;
@@ -522,7 +522,7 @@ public class Quester {
 
         } else if (s.equalsIgnoreCase("catchFish")) {
 
-            if (currentStage.fishToCatch != null) {
+            if (currentStage.fishToCatch == null) {
                 return false;
             } else {
                 return true;
@@ -546,7 +546,7 @@ public class Quester {
 
         } else if (s.equalsIgnoreCase("killPlayer")) {
 
-            if (currentStage.playersToKill != null) {
+            if (currentStage.playersToKill == null) {
                 return false;
             } else {
                 return true;
@@ -825,8 +825,7 @@ public class Quester {
 
             if ((currentTime - killTime) < comparator) {
 
-                long minutes = (comparator - (currentTime - killTime)) / 60000;
-                plugin.getServer().getPlayer(name).sendMessage(ChatColor.RED + "[Quests] Kill did not count. You must wait " + ChatColor.DARK_PURPLE + minutes + " minutes " + ChatColor.RED + " before you can kill " + ChatColor.DARK_PURPLE + player + " again.");
+                plugin.getServer().getPlayer(name).sendMessage(ChatColor.RED + "[Quests] Kill did not count. You must wait " + ChatColor.DARK_PURPLE + Quests.getTime(comparator - (currentTime - killTime)) + ChatColor.RED + " before you can kill " + ChatColor.DARK_PURPLE + player + ChatColor.RED + " again.");
                 return;
 
             }

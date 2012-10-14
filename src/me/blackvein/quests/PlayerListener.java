@@ -60,7 +60,14 @@ public class PlayerListener implements Listener {
 
                                 }else {
 
-                                    quester.questToTake = q;
+                                    quester.questToTake = q.name;
+
+                                    String s =
+                                               ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
+                                               + "\n"
+                                               + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+
+                                    player.sendMessage(s);
                                     plugin.conversationFactory.buildConversation((Conversable)player).begin();
 
                                 }
@@ -265,6 +272,7 @@ public class PlayerListener implements Listener {
                     if(evt.getInventory().getType().equals(InventoryType.CHEST) == false || evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() > 52){
                         ((Player) evt.getWhoClicked()).sendMessage(ChatColor.YELLOW + "You may not modify Quest items in your inventory.");
                         evt.setCancelled(true);
+                        ((Player) evt.getWhoClicked()).updateInventory();
                     }else if(evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() < 53)
                         quester.collectItem(evt.getCurrentItem());
 
@@ -294,7 +302,14 @@ public class PlayerListener implements Listener {
                         if(p.getShooter() instanceof Player){
 
                                 Player player = (Player) p.getShooter();
-                                if(plugin.citizens.getNPCRegistry().isNPC(player) == false){
+                                boolean okay = true;
+
+                                if(plugin.citizens != null){
+                                    if(plugin.citizens.getNPCRegistry().isNPC(player))
+                                        okay = false;
+                                }
+
+                                if(okay){
 
                                     Quester quester = plugin.getQuester(player.getName());
                                     if(quester.hasObjective("killMob"))
@@ -305,7 +320,14 @@ public class PlayerListener implements Listener {
 
                     }else if(damager instanceof Player){
 
-                        if(plugin.citizens.getNPCRegistry().isNPC(damager) == false){
+                        boolean okay = true;
+
+                        if(plugin.citizens != null){
+                            if(plugin.citizens.getNPCRegistry().isNPC(damager))
+                                okay = false;
+                        }
+
+                        if(okay){
 
                             Player player = (Player) damager;
                             Quester quester = plugin.getQuester(player.getName());
@@ -339,7 +361,14 @@ public class PlayerListener implements Listener {
                         if(p.getShooter() instanceof Player){
 
                             Player player = (Player) p.getShooter();
-                            if(plugin.citizens.getNPCRegistry().isNPC(player) == false && plugin.citizens.getNPCRegistry().isNPC(evt.getEntity()) == false){
+                            boolean okay = true;
+
+                            if(plugin.citizens != null){
+                                if(plugin.citizens.getNPCRegistry().isNPC(player) || plugin.citizens.getNPCRegistry().isNPC(evt.getEntity()))
+                                    okay = false;
+                            }
+
+                            if(okay){
 
                                 Quester quester = plugin.getQuester(player.getName());
                                 if(quester.hasObjective("killPlayer"))
@@ -352,7 +381,16 @@ public class PlayerListener implements Listener {
                     }else if(damager instanceof Player){
 
                         Player player = (Player) damager;
-                        if(plugin.citizens.getNPCRegistry().isNPC(player) == false && plugin.citizens.getNPCRegistry().isNPC(evt.getEntity()) == false){
+                        boolean okay = true;
+
+                        if(plugin.citizens != null){
+
+                            if(plugin.citizens.getNPCRegistry().isNPC(player) || plugin.citizens.getNPCRegistry().isNPC(evt.getEntity()))
+                                okay = false;
+
+                        }
+
+                        if(okay){
 
                             Quester quester = plugin.getQuester(player.getName());
                             if(quester.hasObjective("killPlayer"))

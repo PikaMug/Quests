@@ -1,6 +1,6 @@
 name: Quests
 main: me.blackvein.quests.Quests
-version: 1.4
+version: 1.5.0
 description: Player questing system
 website: http://dev.bukkit.org/server-mods/quests/
 dev-url: http://dev.bukkit.org/server-mods/quests/
@@ -65,7 +65,4 @@ commands:
         aliases: [questsadmin]
     quest:
         description: Quest command
-        permission: quests.quest
-    convo:
-        description: Convo command
         permission: quests.quest

@@ -61,19 +61,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
     @Override
     public void onEnable() {
-        
+
         pListener = new PlayerListener(this);
         npcListener = new NpcListener(this);
-        
+
         this.conversationFactory = new ConversationFactory(this)
-                .withModality(true)
+                .withModality(false)
                 .withPrefix(new SummoningConversationPrefix())
                 .withFirstPrompt(new QuestPrompt())
-                .withEscapeSequence("/cancel")
-                .withTimeout(10)
+                .withTimeout(20)
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                 .addConversationAbandonedListener(this);
-
 
         try {
             if (getServer().getPluginManager().getPlugin("Citizens") != null) {
@@ -181,15 +179,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
         printInfo("[Quests] Disabled.");
 
     }
-    
-    
+
+
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
-        if (abandonedEvent.gracefulExit()) {
-            abandonedEvent.getContext().getForWhom().sendRawMessage("Conversation exited gracefully.");
-        } else {
-            abandonedEvent.getContext().getForWhom().sendRawMessage("Conversation abandoned by" + abandonedEvent.getCanceller().getClass().getName());
-        }
+
     }
 
     private class QuestPrompt extends FixedSetPrompt {
@@ -199,28 +193,27 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return "Accept Quest? " + formatFixedSet();
+
+            return ChatColor.YELLOW + "Accept Quest?  " + ChatColor.GREEN + "Yes / No";
+
         }
 
         @Override
         protected Prompt acceptValidatedInput(ConversationContext context, String s) {
-            
+
             Player player = (Player) context.getForWhom();
-            if (s.equalsIgnoreCase("Yes") == false) {
-                
+
+            if (s.equalsIgnoreCase("No")) {
+
                 player.sendMessage(ChatColor.YELLOW + "Cancelled.");
                 return Prompt.END_OF_CONVERSATION;
-                
+
             }
-            
-            context.setSessionData("who", player.getName());
-            context.setSessionData("message", s);
-            
-            player.sendMessage(new SummoningConversationPrefix().getPrefix(context));
-            
-            getQuester(player.getName()).takeQuest(getQuester(player.getName()).questToTake);
-            
+
+            getQuester(player.getName()).takeQuest(getQuest(getQuester(player.getName()).questToTake));
+
             return Prompt.END_OF_CONVERSATION;
+
         }
     }
 
@@ -228,10 +221,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
         @Override
         public String getPrefix(ConversationContext context) {
-            String who = (String)context.getSessionData("who");
-            return ChatColor.GREEN + who + ": " + ChatColor.GRAY + (String) context.getSessionData("message");
+
+            return ChatColor.GREEN + "Quests: " + ChatColor.GRAY;
+
         }
-        
+
     }
 
 
@@ -283,16 +277,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
-        if(cmd.getName().equalsIgnoreCase("convo")){
-            
-            if (cs instanceof Conversable) {
-                conversationFactory.buildConversation((Conversable)cs).begin();
-                return true;
-            } else {
-                return false;
-            }
-
-        } else if (cmd.getName().equalsIgnoreCase("quest")) {
+        if (cmd.getName().equalsIgnoreCase("quest")) {
 
             if (cs instanceof Player) {
 
@@ -608,7 +593,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
                                         final Quest quest = questToFind;
                                         final Quester quester = getQuester(cs.getName());
-                                        final CommandSender sender = cs;
 
                                         if (quester.currentQuest != null) {
                                             cs.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
@@ -631,9 +615,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                                             }
 
                                             if (takeable == true) {
-                                                
+
                                                 if (cs instanceof Conversable) {
-                                                    quester.questToTake = quest;
+
+                                                    quester.questToTake = quest.name;
+
+                                                    String s =
+                                                                ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
+                                                                + "\n"
+                                                                + ChatColor.RESET + getQuest(quester.questToTake).description + "\n";
+
+                                                    cs.sendMessage(s);
                                                     conversationFactory.buildConversation((Conversable)cs).begin();
                                                     return true;
                                                 }else{
@@ -2215,7 +2207,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                             break;
                         }
 
-                        if (config.contains("quests." + s + ".stages.ordered" + s2 + ".kill-location-radii")) {
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii")) {
 
                             if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii"), Integer.class)) {
 
@@ -2918,26 +2910,26 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
     }
 
     public static void printSevere(String s){
-        
+
         s = ChatColor.stripColor(s);
         log.severe(s);
-        
+
     }
-    
+
     public static void printWarning(String s){
-        
+
         s = ChatColor.stripColor(s);
         log.warning(s);
-        
+
     }
-    
+
     public static void printInfo(String s){
-        
+
         s = ChatColor.stripColor(s);
         log.info(s);
-        
+
     }
-    
+
     public boolean hasItem(Player player, int i, int i2) {
 
         Inventory inv = player.getInventory();
@@ -3546,5 +3538,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
         return true;
 
+    }
+
+    public Quest getQuest(String s){
+
+        for(Quest q : quests){
+            if(q.name.equalsIgnoreCase(s))
+                return q;
+        }
+
+        return null;
     }
 }
