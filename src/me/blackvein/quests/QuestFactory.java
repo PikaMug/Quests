@@ -67,7 +67,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         public MenuPrompt(){
 
-            super ("1", "2", "3");
+            super ("1", "2", "3", "4", "5", "6", "7", "8", "9");
 
         }
 
@@ -274,7 +274,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     return new SetNpcStartPrompt();
                 }
                 
-                context.setSessionData("npcStart", input);
+                context.setSessionData("npcStart", input.intValue());
                 
             }
                 
