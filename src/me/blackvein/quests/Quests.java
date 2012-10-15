@@ -400,15 +400,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
                                         if (economy.getBalance(quester.name) >= quest.moneyReq) {
                                             if (quest.moneyReq == 1) {
-                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + quest.moneyReq + " " + economy.currencyNameSingular());
+                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + quest.moneyReq + " " + Quests.getCurrency(false));
                                             } else {
-                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + quest.moneyReq + " " + economy.currencyNamePlural());
+                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + quest.moneyReq + " " + Quests.getCurrency(true));
                                             }
                                         } else {
                                             if (quest.moneyReq == 1) {
-                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + quest.moneyReq + " " + economy.currencyNameSingular());
+                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + quest.moneyReq + " " + Quests.getCurrency(false));
                                             } else {
-                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + quest.moneyReq + " " + economy.currencyNamePlural());
+                                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + quest.moneyReq + " " + Quests.getCurrency(true));
                                             }
                                         }
 
@@ -3488,6 +3488,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
         }
 
+    }
+    
+    public static String getCurrency(boolean plural){
+        
+        if(plural){
+            if(Quests.economy.currencyNamePlural().trim().isEmpty())
+                return "Money";
+            else
+                return Quests.economy.currencyNamePlural();
+        }else{
+            if(Quests.economy.currencyNameSingular().trim().isEmpty())
+                return "Money";
+            else
+                return Quests.economy.currencyNameSingular();
+        }
+        
     }
 
     public static boolean removeItem(Inventory inventory, Material type, int amount) {

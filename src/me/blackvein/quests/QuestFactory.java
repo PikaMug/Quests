@@ -15,8 +15,11 @@ public class QuestFactory implements ConversationAbandonedListener {
     ConversationFactory convoCreator;
     static final ChatColor BOLD = ChatColor.BOLD;
     static final ChatColor AQUA = ChatColor.AQUA;
+    static final ChatColor DARKAQUA = ChatColor.DARK_AQUA;
     static final ChatColor BLUE = ChatColor.BLUE;
     static final ChatColor GOLD = ChatColor.GOLD;
+    static final ChatColor PINK = ChatColor.LIGHT_PURPLE;
+    static final ChatColor GREEN = ChatColor.GREEN;
     static final ChatColor RED = ChatColor.RED;
     static final ChatColor DARKRED = ChatColor.DARK_RED;
     static final ChatColor YELLOW = ChatColor.YELLOW;
@@ -148,6 +151,24 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
 
             }
+            
+            if(quests.citizens != null){
+                text += BLUE + "" + BOLD + "7" + RESET + DARKAQUA + " - Edit Requirements";
+            }else{
+                text += BLUE + "" + BOLD + "6" + RESET + DARKAQUA + " - Edit Requirements";
+            }
+            
+            if(quests.citizens != null){
+                text += BLUE + "" + BOLD + "8" + RESET + PINK + " - Edit Stages";
+            }else{
+                text += BLUE + "" + BOLD + "7" + RESET + PINK + " - Edit Stages";
+            }
+            
+            if(quests.citizens != null){
+                text += BLUE + "" + BOLD + "9" + RESET + GREEN + " - Edit Rewards";
+            }else{
+                text += BLUE + "" + BOLD + "8" + RESET + GREEN + " - Edit Rewards";
+            }
 
             return text;
 
@@ -172,6 +193,18 @@ public class QuestFactory implements ConversationAbandonedListener {
 
                 return new RedoDelayPrompt();
 
+            }else if(input.equalsIgnoreCase("5")){
+                
+                if(quests.citizens != null){
+                    return new SetNpcStartPrompt();
+                }else{
+                    return new BlockStartPrompt();
+                }
+                
+            }else if(input.equalsIgnoreCase("6")){
+                
+                
+                
             }
 
             return null;
@@ -239,19 +272,47 @@ public class QuestFactory implements ConversationAbandonedListener {
                 if(quests.citizens.getNPCRegistry().getById(input.intValue()) == null){
                     context.getForWhom().sendRawMessage(ChatColor.RED + "No NPC exists with that id!");
                     return new SetNpcStartPrompt();
-                }else{
-                    context.setSessionData("")
                 }
-
-            }else{
-                return new CreateMenuPrompt();
+                
+                context.setSessionData("npcStart", input);
+                
             }
-                context.setSessionData("questName", input);
-
+                
             return new CreateMenuPrompt();
 
         }
 
+    }
+    
+    private class BlockStartPrompt extends StringPrompt {
+        
+        @Override
+        public String getPromptText(ConversationContext context){
+            
+            return ChatColor.YELLOW + "Enter location, in the format \"WorldName x y z\", or \"cancel\" to return";
+            
+        }
+        
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input){
+            
+            if(input.equalsIgnoreCase("input") == false){
+                
+                if(Quests.getLocation(input) == null){
+
+                    context.getForWhom().sendRawMessage(ChatColor.RED + "Invalid location.");
+                    return new BlockStartPrompt();
+                    
+                }
+            
+                context.setSessionData("blockStart", Quests.getLocation(input));
+                
+            }
+            
+            return new CreateMenuPrompt();
+            
+        }
+        
     }
 
     private class SetNamePrompt extends StringPrompt {

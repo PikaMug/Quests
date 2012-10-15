@@ -234,10 +234,10 @@ public class Quest {
         }
 
         if(moneyReward > 1){
-            player.sendMessage("- " + ChatColor.DARK_GREEN + moneyReward + " " + ChatColor.DARK_PURPLE + Quests.economy.currencyNamePlural());
+            player.sendMessage("- " + ChatColor.DARK_GREEN + moneyReward + " " + ChatColor.DARK_PURPLE + Quests.getCurrency(true));
             none = null;
         }else if(moneyReward == 1){
-            player.sendMessage("- " + ChatColor.DARK_GREEN + moneyReward + " " + ChatColor.DARK_PURPLE + Quests.economy.currencyNameSingular());
+            player.sendMessage("- " + ChatColor.DARK_GREEN + moneyReward + " " + ChatColor.DARK_PURPLE + Quests.getCurrency(false));
             none = null;
         }
 
