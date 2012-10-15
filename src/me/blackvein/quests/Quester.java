@@ -20,6 +20,7 @@ import org.bukkit.potion.PotionType;
 public class Quester {
 
     String name;
+    boolean editorMode = false;
     Quest currentQuest;
     String questToTake;
     Stage currentStage;

@@ -118,20 +118,6 @@ public class PlayerListener implements Listener {
 
         boolean canOpen = true;
 
-            if(evt.getBlock().getType().equals(Material.BREWING_STAND) && plugin.allowOtherBrewing == false && evt.getPlayer().getName().contains("_computercraft_") == false && evt.getPlayer().getName().contains("_buildcraft_") == false && evt.getPlayer().getName().contains("_redpower_") == false){
-
-                if(plugin.brewers.containsKey(evt.getBlock().getLocation())){
-
-                    if(evt.getPlayer().getName().equalsIgnoreCase(plugin.brewers.get(evt.getBlock().getLocation())) == false){
-                        evt.getPlayer().sendMessage(ChatColor.RED + "You may not break other players' Brewing Stands.");
-                        evt.setCancelled(true);
-                        canOpen = false;
-                    }
-
-                }
-
-            }
-
             if(canOpen == true){
 
                 Quester quester = plugin.getQuester(evt.getPlayer().getName());

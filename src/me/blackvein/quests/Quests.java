@@ -38,6 +38,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
     ConversationFactory conversationFactory;
+    QuestFactory questFactory;
     Heroes heroes;
     Vault vault = null;
     CitizensPlugin citizens;
@@ -52,12 +53,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
     boolean allowCommandsForNpcQuests = false;
     boolean showQuestReqs = true;
     boolean allowQuitting = true;
-    boolean allowOtherBrewing = true;
     boolean debug = false;
     boolean load = false;
     int killDelay = 0;
     public final static Logger log = Logger.getLogger("Minecraft");
-    Map<Location, String> brewers = new HashMap<Location, String>();
 
     @Override
     public void onEnable() {
@@ -72,6 +71,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                 .withTimeout(20)
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                 .addConversationAbandonedListener(this);
+
+        questFactory = new QuestFactory(this);
 
         try {
             if (getServer().getPluginManager().getPlugin("Citizens") != null) {
@@ -277,7 +278,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
-        if (cmd.getName().equalsIgnoreCase("quest")) {
+        if(cmd.getName().equalsIgnoreCase("editor")){
+
+            questFactory.convoCreator.buildConversation((Conversable) cs).begin();
+
+        }
+
+        else if (cmd.getName().equalsIgnoreCase("quest")) {
 
             if (cs instanceof Player) {
 
@@ -2371,7 +2378,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                             break;
                         }
 
-                        if (config.contains("quests." + s + ".stages.ordered" + s2 + ".reach-location-radii")) {
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii")) {
 
                             if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii"), Integer.class)) {
 
@@ -2394,7 +2401,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                             break;
                         }
 
-                        if (config.contains("quests." + s + ".stages.ordered" + s2 + ".reach-location-names")) {
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".reach-location-names")) {
 
                             if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names"), String.class)) {
 
