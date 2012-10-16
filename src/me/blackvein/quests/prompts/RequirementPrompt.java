@@ -44,7 +44,7 @@ public class RequirementPrompt extends FixedSetPrompt{
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money requirement (None set)\n";
         else{
             int moneyReq = (Integer) context.getSessionData("moneyReq");
-            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money requirement (" + context.getSessionData("moneyReq") + " " + (moneyReq > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + " )\n";
+            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money requirement (" + context.getSessionData("moneyReq") + " " + (moneyReq > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
         }
         
         if(context.getSessionData("questPointsReq") == null)
@@ -62,7 +62,7 @@ public class RequirementPrompt extends FixedSetPrompt{
             
             for(int i : ids){
                 
-                text += GRAY + "\t- " + AQUA + Quester.prettyItemString(i) + YELLOW + " x " + AQUA + amounts.get(ids.indexOf(i));
+                text += GRAY + "    - " + AQUA + Quester.prettyItemString(i) + YELLOW + " x " + AQUA + amounts.get(ids.indexOf(i));
                 
             }
         }
@@ -124,7 +124,7 @@ public class RequirementPrompt extends FixedSetPrompt{
             
             if(input.intValue() < 1){
                 context.getForWhom().sendRawMessage(RED + "Amount must be greater than 0!");
-                return new MoneyPrompt();
+                return new QuestPointsPrompt();
             }
             
             context.setSessionData("questPointsReq", input.intValue());
@@ -138,7 +138,7 @@ public class RequirementPrompt extends FixedSetPrompt{
         
         public ItemListPrompt(){
             
-            super("1", "2", "3", "4");
+            super("1", "2", "3", "4", "5");
             
         }
         
@@ -156,7 +156,7 @@ public class RequirementPrompt extends FixedSetPrompt{
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item IDs\n";
                 for(Integer i : getItemIds(context)){
                     
-                    text += GRAY + "\t- " + AQUA + Quester.prettyItemString(i);
+                    text += GRAY + "    - " + AQUA + Quester.prettyItemString(i) + "\n";
                     
                 }
                 
@@ -167,7 +167,7 @@ public class RequirementPrompt extends FixedSetPrompt{
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set item amounts\n";
                     for(Integer i : getItemAmounts(context)){
 
-                        text += GRAY + "\t- " + AQUA + i;
+                        text += GRAY + "    - " + AQUA + i + "\n";
 
                     }
                 
@@ -194,13 +194,19 @@ public class RequirementPrompt extends FixedSetPrompt{
                 }else{
                     return new ItemAmountsPrompt();
                 }
+                
             }else if(input.equalsIgnoreCase("3")){
                 context.getForWhom().sendRawMessage(YELLOW + "Item requirements cleared.");
                 context.setSessionData("itemIdReqs", null);
                 context.setSessionData("itemAmountReqs", null);
                 return new ItemListPrompt();
             }else if(input.equalsIgnoreCase("4")){
-                return new RequirementPrompt(quests);
+                if( ((List<Integer>) context.getSessionData("itemIdReqs")).size() == (((List<Integer>) context.getSessionData("itemAmountReqs")).size()) )
+                    return new RequirementPrompt(quests);
+                else{
+                    context.getForWhom().sendRawMessage(RED + "The item IDs list and item amounts list are not the same size!");
+                    return new ItemListPrompt();
+                }
             }
             return null;
             

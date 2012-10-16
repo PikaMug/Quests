@@ -102,7 +102,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         public CreateMenuPrompt(){
 
-            super("1", "2", "3", "4", "5", "6");
+            super("1", "2", "3", "4", "5", "6", "7", "8", "9");
 
         }
 
@@ -125,50 +125,50 @@ public class QuestFactory implements ConversationAbandonedListener {
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set finish message (\"" + context.getSessionData("finishMessage") + "\")\n";
 
             if(context.getSessionData("redoDelay") == null)
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set redo delay (None set)";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set redo delay (None set)\n";
             else
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set redo delay (" + Quests.getTime((Long)context.getSessionData("redoDelay")) + ")";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set redo delay (" + Quests.getTime((Long)context.getSessionData("redoDelay")) + ")\n";
 
             if(context.getSessionData("npcStart") == null && quests.citizens != null)
-                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set NPC start (None set)";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set NPC start (None set)\n";
             else if(quests.citizens != null)
-                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set NPC start (" + quests.citizens.getNPCRegistry().getById((Integer)context.getSessionData("npcStart")).getName() + ")";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set NPC start (" + quests.citizens.getNPCRegistry().getById((Integer)context.getSessionData("npcStart")).getName() + ")\n";
 
             if(context.getSessionData("blockStart") == null){
 
                 if(quests.citizens != null)
-                    text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Block start (None set)";
+                    text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Block start (None set)\n";
                 else
-                    text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set Block start (None set)";
+                    text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set Block start (None set)\n";
 
             }else{
 
                 if(quests.citizens != null){
                     Location l = (Location) context.getSessionData("blockStart");
-                    text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Block start (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")";
+                    text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Block start (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
                 }else{
                     Location l = (Location) context.getSessionData("blockStart");
-                    text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set Block start (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")";
+                    text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set Block start (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
                 }
 
             }
             
             if(quests.citizens != null){
-                text += BLUE + "" + BOLD + "7" + RESET + DARKAQUA + " - Edit Requirements";
+                text += BLUE + "" + BOLD + "7" + RESET + DARKAQUA + " - Edit Requirements\n";
             }else{
-                text += BLUE + "" + BOLD + "6" + RESET + DARKAQUA + " - Edit Requirements";
+                text += BLUE + "" + BOLD + "6" + RESET + DARKAQUA + " - Edit Requirements\n";
             }
             
             if(quests.citizens != null){
-                text += BLUE + "" + BOLD + "8" + RESET + PINK + " - Edit Stages";
+                text += BLUE + "" + BOLD + "8" + RESET + PINK + " - Edit Stages\n";
             }else{
-                text += BLUE + "" + BOLD + "7" + RESET + PINK + " - Edit Stages";
+                text += BLUE + "" + BOLD + "7" + RESET + PINK + " - Edit Stages\n";
             }
             
             if(quests.citizens != null){
-                text += BLUE + "" + BOLD + "9" + RESET + GREEN + " - Edit Rewards";
+                text += BLUE + "" + BOLD + "9" + RESET + GREEN + " - Edit Rewards\n";
             }else{
-                text += BLUE + "" + BOLD + "8" + RESET + GREEN + " - Edit Rewards";
+                text += BLUE + "" + BOLD + "8" + RESET + GREEN + " - Edit Rewards\n";
             }
 
             return text;
@@ -204,7 +204,9 @@ public class QuestFactory implements ConversationAbandonedListener {
                 
             }else if(input.equalsIgnoreCase("6")){
                 
-                if(quests.citizens == null){
+                if(quests.citizens != null){
+                    return new BlockStartPrompt();
+                }else{
                     return new RequirementPrompt(quests);
                 }
                 
@@ -212,6 +214,24 @@ public class QuestFactory implements ConversationAbandonedListener {
                 
                 if(quests.citizens != null){
                     return new RequirementPrompt(quests);
+                }else{
+                    //Stage Prompt
+                }
+                
+            }else if(input.equalsIgnoreCase("8")){
+                
+                if(quests.citizens != null){
+                    //Stage Prompt
+                }else{
+                    //Rewards Prompt
+                }
+                
+            }else if(input.equalsIgnoreCase("9")){
+                
+                if(quests.citizens != null){
+                    //Rewards Prompt
+                }else{
+                    return new CreateMenuPrompt();
                 }
                 
             }
