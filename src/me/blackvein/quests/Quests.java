@@ -1827,7 +1827,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
 
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered" + s2 + ".enchantments"), String.class)) {
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantments"), String.class)) {
 
                             for (String enchant : config.getStringList("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
 
@@ -2144,7 +2144,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
                             if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts"), Integer.class)) {
 
-                                for (int i : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts")) {
+                                for (int i : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
 
                                     mobNumToKill.add(i);
 
@@ -2237,7 +2237,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                             break;
                         }
 
-                        if (config.contains("quests." + s + ".stages.ordered" + s2 + ".kill-location-names")) {
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".kill-location-names")) {
 
                             if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names"), String.class)) {
 
@@ -3489,9 +3489,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
         }
 
     }
-    
+
     public static String getCurrency(boolean plural){
-        
+
         if(plural){
             if(Quests.economy.currencyNamePlural().trim().isEmpty())
                 return "Money";
@@ -3503,7 +3503,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
             else
                 return Quests.economy.currencyNameSingular();
         }
-        
+
     }
 
     public static boolean removeItem(Inventory inventory, Material type, int amount) {
