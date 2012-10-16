@@ -53,6 +53,20 @@ public class RequirementPrompt extends FixedSetPrompt{
             text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points requirement (" + context.getSessionData("questPointsReq") + " Quest Points)\n";
         }
         
+        if(context.getSessionData("itemIdReqs") == null)
+            text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set Item requirements (None set)\n";
+        else{
+            text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set Item requirements";
+            List<Integer> ids = (List<Integer>) context.getSessionData("itemIdReqs");
+            List<Integer> amounts = (List<Integer>) context.getSessionData("itemAmountReqs");
+            
+            for(int i : ids){
+                
+                text += GRAY + "\t- " + AQUA + Quester.prettyItemString(i) + YELLOW + " x " + AQUA + amounts.get(ids.indexOf(i));
+                
+            }
+        }
+        
         
         return text;
         
@@ -65,6 +79,8 @@ public class RequirementPrompt extends FixedSetPrompt{
             return new MoneyPrompt();
         }else if(input.equalsIgnoreCase("2")){
             return new QuestPointsPrompt();
+        }else if(input.equalsIgnoreCase("3")){
+            return new ItemListPrompt();
         }
         return null;
         
@@ -122,7 +138,7 @@ public class RequirementPrompt extends FixedSetPrompt{
         
         public ItemListPrompt(){
             
-            super("1", "2", "3");
+            super("1", "2", "3", "4");
             
         }
         
@@ -133,7 +149,8 @@ public class RequirementPrompt extends FixedSetPrompt{
             if(context.getSessionData("itemIdReqs") == null){
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item IDs (None set)\n";
                 text += GRAY + "2 - Set item amounts (No IDs set)\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
             }else{
                 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item IDs\n";
@@ -144,10 +161,10 @@ public class RequirementPrompt extends FixedSetPrompt{
                 }
                 
                 if(context.getSessionData("itemAmountReqs") == null){
-                    text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item amounts (None set)\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set item amounts (None set)\n";
                 }else{
                     
-                    text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item amounts\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set item amounts\n";
                     for(Integer i : getItemAmounts(context)){
 
                         text += GRAY + "\t- " + AQUA + i;
@@ -156,6 +173,8 @@ public class RequirementPrompt extends FixedSetPrompt{
                 
                 }
                 
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
                 
             }
             
@@ -167,7 +186,21 @@ public class RequirementPrompt extends FixedSetPrompt{
         protected Prompt acceptValidatedInput(ConversationContext context, String input){
             
             if(input.equalsIgnoreCase("1")){
-                
+                return new ItemIdsPrompt();
+            }else if(input.equalsIgnoreCase("2")){
+                if(context.getSessionData("itemIdReqs") == null){
+                    context.getForWhom().sendRawMessage(RED + "You must set item IDs first!");
+                    return new ItemListPrompt();
+                }else{
+                    return new ItemAmountsPrompt();
+                }
+            }else if(input.equalsIgnoreCase("3")){
+                context.getForWhom().sendRawMessage(YELLOW + "Item requirements cleared.");
+                context.setSessionData("itemIdReqs", null);
+                context.setSessionData("itemAmountReqs", null);
+                return new ItemListPrompt();
+            }else if(input.equalsIgnoreCase("4")){
+                return new RequirementPrompt(quests);
             }
             return null;
             
@@ -201,9 +234,16 @@ public class RequirementPrompt extends FixedSetPrompt{
 
                     try{
 
-                        if(Material.getMaterial(Integer.parseInt(s)) != null)
-                            ids.add(Integer.parseInt(s));
-                        else{
+                        if(Material.getMaterial(Integer.parseInt(s)) != null){
+                            
+                            if(ids.contains(Integer.parseInt(s)) == false){
+                                ids.add(Integer.parseInt(s));
+                            }else{
+                                context.getForWhom().sendRawMessage(RED + " List contains duplicates!");
+                                return new ItemIdsPrompt();
+                            }
+                            
+                        }else{
                             context.getForWhom().sendRawMessage(PINK + s + RED + " is not a valid item ID!");
                             return new ItemIdsPrompt();
                         }
@@ -219,10 +259,9 @@ public class RequirementPrompt extends FixedSetPrompt{
             
             }
             
-            return new RequirementPrompt(quests);
+            return new ItemListPrompt();
             
         }
-        
         
     }
     
@@ -230,7 +269,7 @@ public class RequirementPrompt extends FixedSetPrompt{
         
         @Override
         public String getPromptText(ConversationContext context){
-            return YELLOW + "Enter item amounts, seperating each one by a space, or enter \'cancel\' to return.";
+            return YELLOW + "Enter item amounts (numbers), separating each one by a space, or enter \'cancel\' to return.";
         }
         
         @Override
@@ -253,7 +292,7 @@ public class RequirementPrompt extends FixedSetPrompt{
 
                     }catch (Exception e){
                         context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
-                        return new ItemIdsPrompt();
+                        return new ItemAmountsPrompt();
                     }
 
                 }
@@ -262,7 +301,7 @@ public class RequirementPrompt extends FixedSetPrompt{
             
             }
             
-            return new RequirementPrompt(quests);
+            return new ItemListPrompt();
             
         }
         

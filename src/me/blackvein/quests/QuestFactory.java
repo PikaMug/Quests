@@ -3,6 +3,7 @@ package me.blackvein.quests;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import me.blackvein.quests.prompts.RequirementPrompt;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.conversations.*;
@@ -203,7 +204,15 @@ public class QuestFactory implements ConversationAbandonedListener {
                 
             }else if(input.equalsIgnoreCase("6")){
                 
+                if(quests.citizens == null){
+                    return new RequirementPrompt(quests);
+                }
                 
+            }else if(input.equalsIgnoreCase("7")){
+                
+                if(quests.citizens != null){
+                    return new RequirementPrompt(quests);
+                }
                 
             }
 
