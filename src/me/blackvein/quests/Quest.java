@@ -93,6 +93,10 @@ public class Quest {
 
     }
 
+    public String getName(){
+        return name;
+    }
+    
     public boolean testRequirements(Player player){
 
         Quester quester = plugin.getQuester(player.getName());

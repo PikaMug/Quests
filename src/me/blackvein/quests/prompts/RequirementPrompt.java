@@ -2,6 +2,7 @@ package me.blackvein.quests.prompts;
 
 import java.util.LinkedList;
 import java.util.List;
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import org.bukkit.ChatColor;
@@ -19,6 +20,7 @@ public class RequirementPrompt extends FixedSetPrompt{
     static final ChatColor BLUE = ChatColor.BLUE;
     static final ChatColor GOLD = ChatColor.GOLD;
     static final ChatColor PINK = ChatColor.LIGHT_PURPLE;
+    static final ChatColor PURPLE = ChatColor.DARK_PURPLE;
     static final ChatColor GREEN = ChatColor.GREEN;
     static final ChatColor RED = ChatColor.RED;
     static final ChatColor DARKRED = ChatColor.DARK_RED;
@@ -134,6 +136,67 @@ public class RequirementPrompt extends FixedSetPrompt{
         
     }
     
+    private class QuestListPrompt extends StringPrompt {
+        
+        @Override
+        public String getPromptText(ConversationContext context){
+            
+            String text = PINK + "- Quests -\n" + PURPLE;
+            
+            boolean none = true;
+            for(Quest q : quests.getQuests()){
+                
+                text += q.getName() + ", ";
+                none = false;
+                
+            }
+            
+            if(none)
+                text += "(None)\n";
+            else{
+                text = text.substring(0, (text.length() - 1));
+                text += "\n";
+            }
+            
+            text += YELLOW + "Enter a list of Quest names, or \'cancel\' to return.";
+            
+            return text;
+            
+        }
+        
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input){
+            
+            if(input.equalsIgnoreCase("cancel") == false){
+            
+                String[] args = input.split(" ");
+                LinkedList<String> questNames = new LinkedList<String>();
+                LinkedList<String> names = new LinkedList<String>();
+                
+                for(Quest q : quests.getQuests()){
+                    
+                    names.add(q.getName());
+                    
+                }
+                
+                for(String s : args){
+
+                    if(quests.getQuest(s) == null){
+                        
+                    }
+
+                }
+                
+                context.setSessionData("questReqs", names);
+            
+            }
+            
+            return new RequirementPrompt(quests);
+            
+        }
+        
+    }
+    
     private class ItemListPrompt extends FixedSetPrompt {
         
         public ItemListPrompt(){
@@ -149,8 +212,9 @@ public class RequirementPrompt extends FixedSetPrompt{
             if(context.getSessionData("itemIdReqs") == null){
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item IDs (None set)\n";
                 text += GRAY + "2 - Set item amounts (No IDs set)\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+                text += GRAY + "3 - Set remove items (No IDs set)";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Clear\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Done";
             }else{
                 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item IDs\n";
@@ -168,6 +232,19 @@ public class RequirementPrompt extends FixedSetPrompt{
                     for(Integer i : getItemAmounts(context)){
 
                         text += GRAY + "    - " + AQUA + i + "\n";
+
+                    }
+                
+                }
+                
+                if(context.getSessionData("removeItemReqs") == null){
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set remove items (None set)\n";
+                }else{
+                    
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set remove items\n";
+                    for(Boolean b : getRemoveItems(context)){
+
+                        text += GRAY + "    - " + AQUA + b.toString().toLowerCase() + "\n";
 
                     }
                 
@@ -194,17 +271,27 @@ public class RequirementPrompt extends FixedSetPrompt{
                 }else{
                     return new ItemAmountsPrompt();
                 }
-                
             }else if(input.equalsIgnoreCase("3")){
+                if(context.getSessionData("itemIdReqs") == null){
+                    context.getForWhom().sendRawMessage(RED + "You must set item IDs first!");
+                    return new ItemListPrompt();
+                }else{
+                    return new RemoveItemsPrompt();
+                }
+            }else if(input.equalsIgnoreCase("4")){
                 context.getForWhom().sendRawMessage(YELLOW + "Item requirements cleared.");
                 context.setSessionData("itemIdReqs", null);
                 context.setSessionData("itemAmountReqs", null);
+                context.setSessionData("removeItemReqs", null);
                 return new ItemListPrompt();
-            }else if(input.equalsIgnoreCase("4")){
-                if( ((List<Integer>) context.getSessionData("itemIdReqs")).size() == (((List<Integer>) context.getSessionData("itemAmountReqs")).size()) )
+            }else if(input.equalsIgnoreCase("5")){
+                int one = ((List<Integer>) context.getSessionData("itemIdReqs")).size();
+                int two = ((List<Integer>) context.getSessionData("itemAmountReqs")).size();
+                int three = ((List<Integer>) context.getSessionData("removeItemReqs")).size();
+                if(one == two && two == three)
                     return new RequirementPrompt(quests);
                 else{
-                    context.getForWhom().sendRawMessage(RED + "The item IDs list and item amounts list are not the same size!");
+                    context.getForWhom().sendRawMessage(RED + "The " + GOLD + "item IDs list" + RED + ", " + GOLD + "item amounts list " + RED + "and " + GOLD + "remove items list " + RED + "are not the same size!");
                     return new ItemListPrompt();
                 }
             }
@@ -218,6 +305,10 @@ public class RequirementPrompt extends FixedSetPrompt{
         
         private List<Integer> getItemAmounts(ConversationContext context){
             return (List<Integer>) context.getSessionData("itemAmountReqs");
+        }
+        
+        private List<Boolean> getRemoveItems(ConversationContext context){
+            return (List<Boolean>) context.getSessionData("removeItemReqs");
         }
         
     }
@@ -304,6 +395,45 @@ public class RequirementPrompt extends FixedSetPrompt{
                 }
                 
                 context.setSessionData("itemAmountReqs", amounts);
+            
+            }
+            
+            return new ItemListPrompt();
+            
+        }
+        
+        
+    }
+    
+    private class RemoveItemsPrompt extends StringPrompt {
+        
+        @Override
+        public String getPromptText(ConversationContext context){
+            return YELLOW + "Enter a list of true/false values, separating each one by a space, or enter \'cancel\' to return.";
+        }
+        
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input){
+            
+            if(input.equalsIgnoreCase("cancel") == false){
+            
+                String[] args = input.split(" ");
+                LinkedList<Boolean> booleans = new LinkedList<Boolean>();
+                
+                for(String s : args){
+                    
+                    if(s.equalsIgnoreCase("true") || s.equalsIgnoreCase("yes"))
+                        booleans.add(true);
+                    else if(s.equalsIgnoreCase("false") || s.equalsIgnoreCase("no"))
+                        booleans.add(false);
+                    else{
+                        context.getForWhom().sendRawMessage(PINK + s + RED + " is not a true or false value!\n " + YELLOW + "Example: true false true true");
+                        return new RemoveItemsPrompt();
+                    }
+                    
+                }
+                
+                context.setSessionData("removeItemReqs", booleans);
             
             }
             

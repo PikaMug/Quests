@@ -181,7 +181,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
     }
 
-
+    public LinkedList<Quest> getQuests(){
+        return quests;
+    }
+    
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
 
@@ -1466,6 +1469,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                             List<String> names = config.getStringList("quests." + s + ".requirements.quests");
 
                             boolean failed = false;
+                            String failedQuest = "NULL";
 
                             for (String name : names) {
 
@@ -1482,14 +1486,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
                                 if (!done) {
                                     failed = true;
+                                    failedQuest = name;
                                     break;
                                 }
 
                             }
 
                             if (failed) {
-                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quests: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of Quest names!");
-                                printSevere(ChatColor.RED + "Make sure you are using the Quest " + ChatColor.DARK_RED + "name: " + ChatColor.RED + "values, and not the block names.");
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + failedQuest + ChatColor.GOLD + " inside " + ChatColor.RED + "quests: " + ChatColor.YELLOW + "Requirement " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Quest name!");
+                                printSevere(ChatColor.RED + "Make sure you are using the Quest " + ChatColor.DARK_RED + "name: " + ChatColor.RED + "value, and not the block name.");
                                 continue;
                             }
 

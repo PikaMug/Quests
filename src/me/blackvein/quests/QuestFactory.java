@@ -282,6 +282,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
 
                 context.setSessionData("questName", input);
+                names.add(input);
                 return new CreateMenuPrompt();
 
             }else{
@@ -371,11 +372,18 @@ public class QuestFactory implements ConversationAbandonedListener {
                 for(Quest q : quests.quests){
                     
                     if(q.name.equalsIgnoreCase(input)){
-                        s
+                        context.getForWhom().sendRawMessage(RED + "Quest with that name already exists!");
+                        return new SetNamePrompt();
                     }
                     
                 }
+                
+                if(names.contains(input)){
+                    context.getForWhom().sendRawMessage(RED + "Someone is creating/editing a Quest with that name!");
+                    return new SetNamePrompt();
+                }
                 context.setSessionData("questName", input);
+                names.add(input);
                 
             }
 
