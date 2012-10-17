@@ -2,6 +2,8 @@ package me.blackvein.quests;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import me.blackvein.quests.prompts.RequirementPrompt;
 import org.bukkit.ChatColor;
@@ -13,6 +15,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
     Quests quests;
     Map<Player, Quest> editSessions = new HashMap<Player, Quest>();
+    List<String> names = new LinkedList<String>();
     ConversationFactory convoCreator;
     static final ChatColor BOLD = ChatColor.BOLD;
     static final ChatColor AQUA = ChatColor.AQUA;
@@ -270,6 +273,13 @@ public class QuestFactory implements ConversationAbandonedListener {
                     }
 
                 }
+                
+                if(names.contains(input)){
+                    
+                    context.getForWhom().sendRawMessage(ChatColor.RED + "Someone is creating/editing a Quest with that name!");
+                    return new QuestNamePrompt();
+                    
+                }
 
                 context.setSessionData("questName", input);
                 return new CreateMenuPrompt();
@@ -356,8 +366,18 @@ public class QuestFactory implements ConversationAbandonedListener {
         @Override
         public Prompt acceptInput(ConversationContext context, String input){
 
-            if(input.equalsIgnoreCase("cancel") == false)
+            if(input.equalsIgnoreCase("cancel") == false){
+                
+                for(Quest q : quests.quests){
+                    
+                    if(q.name.equalsIgnoreCase(input)){
+                        s
+                    }
+                    
+                }
                 context.setSessionData("questName", input);
+                
+            }
 
             return new CreateMenuPrompt();
 

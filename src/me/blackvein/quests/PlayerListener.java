@@ -428,7 +428,7 @@ public class PlayerListener implements Listener {
         }else {
             quester.saveData();
         }
-        plugin.questers.add(quester);
+        plugin.questers.put(evt.getPlayer().getName(), quester);
 
         for(String s : quester.completedQuests){
 

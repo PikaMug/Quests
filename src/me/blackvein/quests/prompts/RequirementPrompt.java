@@ -62,7 +62,7 @@ public class RequirementPrompt extends FixedSetPrompt{
             
             for(int i : ids){
                 
-                text += GRAY + "    - " + AQUA + Quester.prettyItemString(i) + YELLOW + " x " + AQUA + amounts.get(ids.indexOf(i));
+                text += GRAY + "    - " + AQUA + Quester.prettyItemString(i) + YELLOW + " x " + AQUA + amounts.get(ids.indexOf(i)) + "\n";
                 
             }
         }

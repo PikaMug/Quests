@@ -46,7 +46,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
     NpcListener npcListener;
     Denizen denizen;
     QuestTaskTrigger trigger;
-    LinkedList<Quester> questers = new LinkedList<Quester>();
+    Map<String, Quester> questers = new HashMap<String, Quester>();
     LinkedList<Quest> quests = new LinkedList<Quest>();
     LinkedList<NPC> questNPCs = new LinkedList<NPC>();
     boolean allowCommands = true;
@@ -163,7 +163,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
         questers = getOnlineQuesters();
         Quester redPower = new Quester(this);
         redPower.name = "[RedPower]";
-        questers.add(redPower);
+        questers.put("[RedPower]", redPower);
 
     }
 
@@ -1249,7 +1249,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
         loadQuests();
         loadConfig();
 
-        for (Quester quester : questers) {
+        for (Quester quester : questers.values()) {
             quester.checkQuest();
         }
 
@@ -1259,7 +1259,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
         Quester quester = null;
 
-        for (Quester q : questers) {
+        for (Quester q : questers.values()) {
 
             if (q.name.equalsIgnoreCase(player)) {
                 quester = q;
@@ -1282,7 +1282,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                 if (debug == true) {
                     log.log(Level.INFO, "[Quests] Manual data retrieval succeeded for player \"" + player + "\"");
                 }
-                questers.add(quester);
+                questers.put(player, quester);
             }
         }
 
@@ -1290,9 +1290,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
     }
 
-    public LinkedList<Quester> getOnlineQuesters() {
+    public Map<String, Quester> getOnlineQuesters() {
 
-        LinkedList<Quester> qs = new LinkedList<Quester>();
+        Map<String, Quester> qs = new HashMap<String, Quester>();
 
         for (Player p : getServer().getOnlinePlayers()) {
 
@@ -1303,7 +1303,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
             } else {
                 quester.saveData();
             }
-            qs.add(quester);
+            qs.put(p.getName(), quester);
 
         }
 
