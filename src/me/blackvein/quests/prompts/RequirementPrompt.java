@@ -250,8 +250,8 @@ public class RequirementPrompt extends FixedSetPrompt{
                 
                 }
                 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Clear\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Done";
                 
             }
             
