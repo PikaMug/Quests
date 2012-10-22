@@ -44,6 +44,8 @@ public class Quester {
     LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
     LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
     Map<NPC, Boolean> citizensInteracted = new HashMap<NPC, Boolean>();
+    LinkedList<NPC> citizensKilled = new LinkedList<NPC>();
+    LinkedList<Integer> citizenNumKilled = new LinkedList<Integer>();
     LinkedList<Location> locationsReached = new LinkedList<Location>();
     LinkedList<Boolean> hasReached = new LinkedList<Boolean>();
     LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
@@ -358,13 +360,31 @@ public class Quester {
 
                     if (((Boolean) e.getValue()) == false) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getName());
+                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getFullName());
 
                     } else {
 
                         finishedObjectives.add(ChatColor.GRAY + "Talk to " + n.getName());
 
                     }
+
+                }
+
+            }
+
+        }
+        
+        for (NPC n : currentStage.citizensToKill) {
+
+            for (NPC n2 : citizensKilled) {
+
+                if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
+
+                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getFullName() + ChatColor.GREEN);
+
+                } else {a
+
+                    finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getFullName());
 
                 }
 
@@ -1056,7 +1076,7 @@ public class Quester {
         } else if (objective.equalsIgnoreCase("killNPC")) {
 
             String message = ChatColor.GREEN + "(Completed) Kill " + npc.getName();
-            message = message + " " + currentStage.citizenNumToKill.
+            message = message + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc));
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1203,6 +1223,15 @@ public class Quester {
 
             }
         }
+        
+        if (currentStage.citizensToKill.isEmpty() == false) {
+            for (NPC n : currentStage.citizensToKill) {
+
+                citizensKilled.add(n);
+                citizenNumKilled.add(0);
+
+            }
+        }
 
         if (currentStage.blocksToCut.isEmpty() == false) {
             for (Material m : currentStage.blocksToCut.keySet()) {
@@ -1264,6 +1293,8 @@ public class Quester {
         radiiToKillWithin.clear();
         playersKilled = 0;
         citizensInteracted.clear();
+        citizensKilled.clear();
+        citizenNumKilled.clear();
         locationsReached.clear();
         hasReached.clear();
         radiiToReachWithin.clear();
@@ -1724,6 +1755,21 @@ public class Quester {
                 data.set("citizen-ids-to-talk-to", npcIds);
                 data.set("has-talked-to", hasTalked);
 
+            }
+            
+            if(citizensKilled.isEmpty() == false) {
+                
+                LinkedList<Integer> npcIds = new LinkedList<Integer>();
+
+                for (NPC n : citizensKilled) {
+
+                    npcIds.add(n.getId());
+
+                }
+
+                data.set("citizen-ids-killed", npcIds);
+                data.set("citizen-amounts-killed", citizenNumKilled);
+                
             }
 
             if (locationsReached.isEmpty() == false) {
@@ -2299,6 +2345,20 @@ public class Quester {
                 for (int i : ids) {
 
                     citizensInteracted.put(plugin.citizens.getNPCRegistry().getById(i), has.get(ids.indexOf(i)));
+
+                }
+
+            }
+            
+            if (data.contains("citizen-ids-killed")) {
+
+                List<Integer> ids = data.getIntegerList("citizen-ids-killed");
+                List<Integer> num = data.getIntegerList("citizen-amounts-killed");
+
+                for (int i : ids) {
+
+                    citizensKilled.add(plugin.citizens.getNPCRegistry().getById(i));
+                    citizenNumKilled.add(num.get(ids.indexOf(i)));
 
                 }
 

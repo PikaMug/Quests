@@ -35,60 +35,72 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent evt){
+    public void onPlayerInteract(PlayerInteractEvent evt) {
 
-        if(evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+        if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 
-                final Quester quester = plugin.getQuester(evt.getPlayer().getName());
-                final Player player = evt.getPlayer();
+            final Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            final Player player = evt.getPlayer();
 
-                if(quester.hasObjective("useBlock")){
+            if (quester.hasObjective("useBlock")) {
 
-                    quester.useBlock(evt.getClickedBlock().getType());
+                quester.useBlock(evt.getClickedBlock().getType());
 
-                }else {
+            } else {
 
-                    for(final Quest q : plugin.quests){
+                for (final Quest q : plugin.quests) {
 
-                        if(q.blockStart != null){
+                    if (q.blockStart != null) {
 
-                            if(q.blockStart.equals(evt.getClickedBlock().getLocation())){
+                        if (q.blockStart.equals(evt.getClickedBlock().getLocation())) {
 
-                                if(quester.currentQuest != null){
+                            if (quester.currentQuest != null) {
 
-                                    player.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
+                                player.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
 
-                                }else {
+                            } else {
 
-                                    quester.questToTake = q.name;
+                                if (quester.completedQuests.contains(q.name)) {
 
-                                    String s =
-                                               ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
-                                               + "\n"
-                                               + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+                                    if (q.redoDelay < 0 || q.redoDelay > -1 && (quester.getDifference(q)) > 0) {
 
-                                    player.sendMessage(s);
-                                    plugin.conversationFactory.buildConversation((Conversable)player).begin();
+                                        player.sendMessage(ChatColor.YELLOW + "You may not take " + ChatColor.AQUA + q.name + ChatColor.YELLOW + " again for another " + ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW + ".");
+                                        return;
+
+                                    }
 
                                 }
 
+                                quester.questToTake = q.name;
+
+                                String s =
+                                        ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
+                                        + "\n"
+                                        + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+
+                                player.sendMessage(s);
+                                plugin.conversationFactory.buildConversation((Conversable) player).begin();
+
                             }
 
+                            break;
                         }
 
                     }
 
                 }
 
+            }
+
         }
 
     }
 
     @EventHandler
-    public void onBlockDamage(BlockDamageEvent evt){
+    public void onBlockDamage(BlockDamageEvent evt) {
 
         Quester quester = plugin.getQuester(evt.getPlayer().getName());
-        if(quester.hasObjective("damageBlock")){
+        if (quester.hasObjective("damageBlock")) {
 
             quester.damageBlock(evt.getBlock().getType());
 
@@ -96,16 +108,17 @@ public class PlayerListener implements Listener {
 
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
-    public void onBlockPlace(BlockPlaceEvent evt){
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockPlace(BlockPlaceEvent evt) {
 
-        if(evt.getPlayer().getName().toLowerCase().contains("_computercraft_") == false && evt.getPlayer().getName().toLowerCase().contains("_buildcraft_") == false && evt.getPlayer().getName().toLowerCase().contains("_redpower_") == false && evt.getPlayer().getName().toLowerCase().contains("_buildcraft_") == false && evt.getPlayer().getName().toLowerCase().contains("(buildcraft)") == false){
+        if (evt.getPlayer().getName().toLowerCase().contains("_computercraft_") == false && evt.getPlayer().getName().toLowerCase().contains("_buildcraft_") == false && evt.getPlayer().getName().toLowerCase().contains("_redpower_") == false && evt.getPlayer().getName().toLowerCase().contains("_buildcraft_") == false && evt.getPlayer().getName().toLowerCase().contains("(buildcraft)") == false) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getName());
-            if(quester.hasObjective("placeBlock")){
+            if (quester.hasObjective("placeBlock")) {
 
-                if(evt.isCancelled() == false)
+                if (evt.isCancelled() == false) {
                     quester.placeBlock(evt.getBlock().getType());
+                }
 
             }
 
@@ -113,51 +126,53 @@ public class PlayerListener implements Listener {
 
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
-    public void onBlockBreak(BlockBreakEvent evt){
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent evt) {
 
         boolean canOpen = true;
 
-            if(canOpen == true){
+        if (canOpen == true) {
 
-                Quester quester = plugin.getQuester(evt.getPlayer().getName());
-                if(quester.hasObjective("breakBlock")){
+            Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            if (quester.hasObjective("breakBlock")) {
 
-                    if(evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false && evt.isCancelled() == false)
-                        quester.breakBlock(evt.getBlock().getType());
-
+                if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false && evt.isCancelled() == false) {
+                    quester.breakBlock(evt.getBlock().getType());
                 }
 
-                if(quester.hasObjective("placeBlock")){
+            }
 
-                    if(quester.blocksPlaced.containsKey(evt.getBlock().getType())){
+            if (quester.hasObjective("placeBlock")) {
 
-                        if(quester.blocksPlaced.get(evt.getBlock().getType()) > 0){
+                if (quester.blocksPlaced.containsKey(evt.getBlock().getType())) {
 
-                            if(evt.isCancelled() == false)
-                                quester.blocksPlaced.put(evt.getBlock().getType(), quester.blocksPlaced.get(evt.getBlock().getType()) - 1);
+                    if (quester.blocksPlaced.get(evt.getBlock().getType()) > 0) {
 
+                        if (evt.isCancelled() == false) {
+                            quester.blocksPlaced.put(evt.getBlock().getType(), quester.blocksPlaced.get(evt.getBlock().getType()) - 1);
                         }
 
                     }
 
                 }
 
-                if(evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS) && quester.hasObjective("cutBlock")){
+            }
 
-                            quester.cutBlock(evt.getBlock().getType());
+            if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS) && quester.hasObjective("cutBlock")) {
 
-                }
+                quester.cutBlock(evt.getBlock().getType());
 
             }
+
+        }
 
     }
 
     @EventHandler
-    public void onPlayerPickupItem(PlayerPickupItemEvent evt){
+    public void onPlayerPickupItem(PlayerPickupItemEvent evt) {
 
         Quester quester = plugin.getQuester(evt.getPlayer().getName());
-        if(quester.hasObjective("collectItem")){
+        if (quester.hasObjective("collectItem")) {
 
             quester.collectItem(evt.getItem().getItemStack());
 
@@ -166,10 +181,10 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerShearEntity(PlayerShearEntityEvent evt){
+    public void onPlayerShearEntity(PlayerShearEntityEvent evt) {
 
         Quester quester = plugin.getQuester(evt.getPlayer().getName());
-        if(evt.getEntity().getType().equals(EntityType.SHEEP) && quester.hasObjective("shearSheep")){
+        if (evt.getEntity().getType().equals(EntityType.SHEEP) && quester.hasObjective("shearSheep")) {
 
             Sheep sheep = (Sheep) evt.getEntity();
             quester.shearSheep(sheep.getColor());
@@ -179,13 +194,13 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityTame(EntityTameEvent evt){
+    public void onEntityTame(EntityTameEvent evt) {
 
-        if(evt.getOwner() instanceof Player){
+        if (evt.getOwner() instanceof Player) {
 
             Player p = (Player) evt.getOwner();
             Quester quester = plugin.getQuester(p.getName());
-            if(quester.hasObjective("tameMob")){
+            if (quester.hasObjective("tameMob")) {
 
                 quester.tameMob(evt.getEntityType());
 
@@ -196,12 +211,12 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onEnchantItem(EnchantItemEvent evt){
+    public void onEnchantItem(EnchantItemEvent evt) {
 
         Quester quester = plugin.getQuester(evt.getEnchanter().getName());
-        if(quester.hasObjective("enchantItem")){
+        if (quester.hasObjective("enchantItem")) {
 
-            for(Enchantment e : evt.getEnchantsToAdd().keySet()){
+            for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
 
                 quester.enchantItem(e, evt.getItem().getType());
 
@@ -212,13 +227,13 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onCraftItem(CraftItemEvent evt){
+    public void onCraftItem(CraftItemEvent evt) {
 
-        if(evt.getWhoClicked() instanceof Player){
+        if (evt.getWhoClicked() instanceof Player) {
 
             Player p = (Player) evt.getWhoClicked();
             Quester quester = plugin.getQuester(p.getName());
-            if(quester.hasObjective("craftItem")){
+            if (quester.hasObjective("craftItem")) {
 
                 quester.craftItem(evt.getCurrentItem());
 
@@ -229,16 +244,16 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent evt){
+    public void onInventoryClick(InventoryClickEvent evt) {
 
-        if(evt.getWhoClicked() instanceof Player && evt.getCursor() != null){
+        if (evt.getWhoClicked() instanceof Player && evt.getCursor() != null) {
 
             Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
-            if(quester.currentQuest != null){
+            if (quester.currentQuest != null) {
 
-                if(quester.currentQuest.questItems.containsKey(evt.getCursor().getType())){
+                if (quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
 
-                    if(evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() > 52){
+                    if (evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() > 52) {
                         quester.collectItem(evt.getCursor());
                     }
 
@@ -248,79 +263,19 @@ public class PlayerListener implements Listener {
 
         }
 
-        if(evt.getWhoClicked() instanceof Player && evt.getCurrentItem() != null){
+        if (evt.getWhoClicked() instanceof Player && evt.getCurrentItem() != null) {
 
             Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
-            if(quester.currentQuest != null){
+            if (quester.currentQuest != null) {
 
-                if(quester.currentQuest.questItems.containsKey(evt.getCurrentItem().getType())){
+                if (quester.currentQuest.questItems.containsKey(evt.getCurrentItem().getType())) {
 
-                    if(evt.getInventory().getType().equals(InventoryType.CHEST) == false || evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() > 52){
+                    if (evt.getInventory().getType().equals(InventoryType.CHEST) == false || evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() > 52) {
                         ((Player) evt.getWhoClicked()).sendMessage(ChatColor.YELLOW + "You may not modify Quest items in your inventory.");
                         evt.setCancelled(true);
                         ((Player) evt.getWhoClicked()).updateInventory();
-                    }else if(evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() < 53)
+                    } else if (evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() < 53) {
                         quester.collectItem(evt.getCurrentItem());
-
-                }
-
-            }
-
-        }
-
-    }
-
-    @EventHandler
-    public void onEntityDeath(EntityDeathEvent evt){
-
-        if(evt.getEntity() instanceof Player == false){
-
-            if(evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent){
-
-                EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
-                Entity damager = damageEvent.getDamager();
-
-                if(damager != null){
-
-                    if(damager instanceof Projectile){
-
-                        Projectile p = (Projectile) damager;
-                        if(p.getShooter() instanceof Player){
-
-                                Player player = (Player) p.getShooter();
-                                boolean okay = true;
-
-                                if(plugin.citizens != null){
-                                    if(plugin.citizens.getNPCRegistry().isNPC(player))
-                                        okay = false;
-                                }
-
-                                if(okay){
-
-                                    Quester quester = plugin.getQuester(player.getName());
-                                    if(quester.hasObjective("killMob"))
-                                        quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
-
-                                }
-                        }
-
-                    }else if(damager instanceof Player){
-
-                        boolean okay = true;
-
-                        if(plugin.citizens != null){
-                            if(plugin.citizens.getNPCRegistry().isNPC(damager))
-                                okay = false;
-                        }
-
-                        if(okay){
-
-                            Player player = (Player) damager;
-                            Quester quester = plugin.getQuester(player.getName());
-                            if(quester.hasObjective("killMob"))
-                                quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
-
-                        }
                     }
 
                 }
@@ -332,55 +287,58 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent evt){
+    public void onEntityDeath(EntityDeathEvent evt) {
 
-            if(evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent){
+        if (evt.getEntity() instanceof Player == false) {
+
+            if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 
                 EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
                 Entity damager = damageEvent.getDamager();
 
-                if(damager != null){
+                if (damager != null) {
 
-                    if(damager instanceof Projectile){
+                    if (damager instanceof Projectile) {
 
                         Projectile p = (Projectile) damager;
-                        if(p.getShooter() instanceof Player){
+                        if (p.getShooter() instanceof Player) {
 
                             Player player = (Player) p.getShooter();
                             boolean okay = true;
 
-                            if(plugin.citizens != null){
-                                if(plugin.citizens.getNPCRegistry().isNPC(player) || plugin.citizens.getNPCRegistry().isNPC(evt.getEntity()))
+                            if (plugin.citizens != null) {
+                                if (plugin.citizens.getNPCRegistry().isNPC(player)) {
                                     okay = false;
+                                }
                             }
 
-                            if(okay){
+                            if (okay) {
 
                                 Quester quester = plugin.getQuester(player.getName());
-                                if(quester.hasObjective("killPlayer"))
-                                    quester.killPlayer(evt.getEntity().getName());
+                                if (quester.hasObjective("killMob")) {
+                                    quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
+                                }
 
                             }
-
                         }
 
-                    }else if(damager instanceof Player){
+                    } else if (damager instanceof Player) {
 
-                        Player player = (Player) damager;
                         boolean okay = true;
 
-                        if(plugin.citizens != null){
-
-                            if(plugin.citizens.getNPCRegistry().isNPC(player) || plugin.citizens.getNPCRegistry().isNPC(evt.getEntity()))
+                        if (plugin.citizens != null) {
+                            if (plugin.citizens.getNPCRegistry().isNPC(damager)) {
                                 okay = false;
-
+                            }
                         }
 
-                        if(okay){
+                        if (okay) {
 
+                            Player player = (Player) damager;
                             Quester quester = plugin.getQuester(player.getName());
-                            if(quester.hasObjective("killPlayer"))
-                                quester.killPlayer(evt.getEntity().getName());
+                            if (quester.hasObjective("killMob")) {
+                                quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
+                            }
 
                         }
                     }
@@ -389,28 +347,67 @@ public class PlayerListener implements Listener {
 
             }
 
-    }
-
-    @EventHandler
-    public void onPlayerFish(PlayerFishEvent evt){
-
-        Player player = evt.getPlayer();
-        Quester quester = plugin.getQuester(player.getName());
-        if(quester.hasObjective("catchFish") && evt.getState().equals(State.CAUGHT_FISH))
-            quester.catchFish();
+        }
 
     }
 
     @EventHandler
-    public void onPlayerDropItem(PlayerDropItemEvent evt){
+    public void onPlayerDeath(PlayerDeathEvent evt) {
 
-        Quester quester = plugin.getQuester(evt.getPlayer().getName());
-        if(quester.currentQuest != null){
+        if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 
-            if(quester.currentQuest.questItems.containsKey(evt.getItemDrop().getItemStack().getType())){
+            EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
+            Entity damager = damageEvent.getDamager();
 
-                evt.getPlayer().sendMessage(ChatColor.YELLOW + "You may not discard Quest items.");
-                    evt.setCancelled(true);
+            if (damager != null) {
+
+                if (damager instanceof Projectile) {
+
+                    Projectile p = (Projectile) damager;
+                    if (p.getShooter() instanceof Player) {
+
+                        Player player = (Player) p.getShooter();
+                        boolean okay = true;
+
+                        if (plugin.citizens != null) {
+                            if (plugin.citizens.getNPCRegistry().isNPC(player) || plugin.citizens.getNPCRegistry().isNPC(evt.getEntity())) {
+                                okay = false;
+                            }
+                        }
+
+                        if (okay) {
+
+                            Quester quester = plugin.getQuester(player.getName());
+                            if (quester.hasObjective("killPlayer")) {
+                                quester.killPlayer(evt.getEntity().getName());
+                            }
+
+                        }
+
+                    }
+
+                } else if (damager instanceof Player) {
+
+                    Player player = (Player) damager;
+                    boolean okay = true;
+
+                    if (plugin.citizens != null) {
+
+                        if (plugin.citizens.getNPCRegistry().isNPC(player) || plugin.citizens.getNPCRegistry().isNPC(evt.getEntity())) {
+                            okay = false;
+                        }
+
+                    }
+
+                    if (okay) {
+
+                        Quester quester = plugin.getQuester(player.getName());
+                        if (quester.hasObjective("killPlayer")) {
+                            quester.killPlayer(evt.getEntity().getName());
+                        }
+
+                    }
+                }
 
             }
 
@@ -419,25 +416,54 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent evt){
+    public void onPlayerFish(PlayerFishEvent evt) {
+
+        Player player = evt.getPlayer();
+        Quester quester = plugin.getQuester(player.getName());
+        if (quester.hasObjective("catchFish") && evt.getState().equals(State.CAUGHT_FISH)) {
+            quester.catchFish();
+        }
+
+    }
+
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent evt) {
+
+        Quester quester = plugin.getQuester(evt.getPlayer().getName());
+        if (quester.currentQuest != null) {
+
+            if (quester.currentQuest.questItems.containsKey(evt.getItemDrop().getItemStack().getType())) {
+
+                evt.getPlayer().sendMessage(ChatColor.YELLOW + "You may not discard Quest items.");
+                evt.setCancelled(true);
+
+            }
+
+        }
+
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent evt) {
 
         Quester quester = new Quester(plugin);
         quester.name = evt.getPlayer().getName();
-        if(new File(plugin.getDataFolder(), "data/" + quester.name + ".yml").exists()){
+        if (new File(plugin.getDataFolder(), "data/" + quester.name + ".yml").exists()) {
             quester.loadData();
-        }else {
+        } else {
             quester.saveData();
         }
         plugin.questers.put(evt.getPlayer().getName(), quester);
 
-        for(String s : quester.completedQuests){
+        for (String s : quester.completedQuests) {
 
-            for(Quest q : plugin.quests){
+            for (Quest q : plugin.quests) {
 
-                if(q.name.equalsIgnoreCase(s)){
+                if (q.name.equalsIgnoreCase(s)) {
 
-                    if(quester.completedTimes.containsKey(q.name) == false && q.redoDelay > -1)
+                    if (quester.completedTimes.containsKey(q.name) == false && q.redoDelay > -1) {
                         quester.completedTimes.put(q.name, System.currentTimeMillis());
+                    }
 
                 }
 
@@ -451,7 +477,7 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent evt){
+    public void onPlayerQuit(PlayerQuitEvent evt) {
 
         Quester quester = plugin.getQuester(evt.getPlayer().getName());
         quester.saveData();
@@ -460,19 +486,20 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent evt){
+    public void onPlayerMove(PlayerMoveEvent evt) {
 
         boolean isPlayer = true;
-        if(plugin.getServer().getPluginManager().getPlugin("Citizens") != null){
-            if(plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer()))
+        if (plugin.getServer().getPluginManager().getPlugin("Citizens") != null) {
+            if (plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer())) {
                 isPlayer = false;
+            }
         }
 
-        if(isPlayer){
+        if (isPlayer) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getName());
 
-            if(quester.hasObjective("reachLocation")){
+            if (quester.hasObjective("reachLocation")) {
 
                 quester.reachLocation(evt.getTo());
 
@@ -481,5 +508,4 @@ public class PlayerListener implements Listener {
         }
 
     }
-
 }
