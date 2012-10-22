@@ -1,11 +1,13 @@
 package me.blackvein.quests;
 
+import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class NpcListener implements Listener{
@@ -18,7 +20,7 @@ public class NpcListener implements Listener{
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(NPCRightClickEvent evt){
 
         if(plugin.questNPCs.contains(evt.getNPC())){
@@ -68,5 +70,14 @@ public class NpcListener implements Listener{
         }
 
     }
+    
+    @EventHandler
+    public void onNPCDespawn(NPCDespawnEvent evt){
+        
+        
+        
+    }
+    
+    
 
 }

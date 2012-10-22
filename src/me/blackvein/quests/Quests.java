@@ -1334,6 +1334,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                 Quest quest = new Quest();
                 failedToLoad = false;
 
+                if (config.contains("quests." + s + ".name")) {
+                    quest.name = parseString(config.getString("quests." + s + ".name"), quest);
+                } else {
+                    printSevere(ChatColor.GOLD + "[Quests] Quest block \'" + ChatColor.DARK_PURPLE + s + ChatColor.GOLD + "\' is missing " + ChatColor.RED + "name:");
+                    continue;
+                }
+                
                 if (config.contains("quests." + s + ".npc-giver-id")) {
 
                     if(citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")) != null){
@@ -1370,13 +1377,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
                         continue;
                     }
 
-                }
-
-                if (config.contains("quests." + s + ".name")) {
-                    quest.name = parseString(config.getString("quests." + s + ".name"), quest);
-                } else {
-                    printSevere(ChatColor.GOLD + "[Quests] Quest block \'" + ChatColor.DARK_PURPLE + s + ChatColor.GOLD + "\' is missing " + ChatColor.RED + "name:");
-                    continue;
                 }
 
                 if (config.contains("quests." + s + ".ask-message")) {
@@ -2016,6 +2016,61 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener{
 
                         } else {
                             printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "npc-ids-to-talk-to: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+                    
+                    List<Integer> npcIdsToKill;
+                    List<Integer> npcKillAmounts;
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill")) {
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill"), Integer.class)) {
+
+                            if(config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts")){
+                            
+                                if(checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts"), Integer.class)) {
+
+                                    npcIdsToKill = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill");
+                                    npcKillAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts");
+                                    for (int i : npcIdsToKill) {
+
+                                        if (citizens.getNPCRegistry().getById(i) != null) {
+
+                                            if(npcKillAmounts.get(npcIdsToKill.indexOf(i)) > 0){
+                                                stage.citizensToKill.add(citizens.getNPCRegistry().getById(i));
+                                                stage.citizenNumToKill.add(npcKillAmounts.get(npcIdsToKill.indexOf(i)));
+                                                questNPCs.add(citizens.getNPCRegistry().getById(i));
+                                            }else{
+                                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + npcKillAmounts.get(npcIdsToKill.indexOf(i)) + ChatColor.GOLD + " inside " + ChatColor.GREEN + "npc-kill-amounts: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a positive number!");
+                                                stageFailed = true;
+                                                break;
+                                            }
+
+                                        } else {
+                                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "npc-ids-to-kill: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid NPC id!");
+                                            stageFailed = true;
+                                            break;
+                                        }
+
+                                    }
+
+                                } else {
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "npc-kill-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    stageFailed = true;
+                                    break;
+                                }
+                            
+                            } else {
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "npc-kill-amounts:");
+                                stageFailed = true;
+                                break;
+                            }
+                            
+                        } else {
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "npc-ids-to-kill: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }

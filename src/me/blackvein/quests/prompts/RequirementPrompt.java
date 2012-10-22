@@ -212,7 +212,7 @@ public class RequirementPrompt extends FixedSetPrompt{
             if(context.getSessionData("itemIdReqs") == null){
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item IDs (None set)\n";
                 text += GRAY + "2 - Set item amounts (No IDs set)\n";
-                text += GRAY + "3 - Set remove items (No IDs set)";
+                text += GRAY + "3 - Set remove items (No IDs set)\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Clear\n";
                 text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Done";
             }else{

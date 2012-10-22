@@ -1053,6 +1053,15 @@ public class Quester {
                 currentQuest.nextStage(this);
             }
 
+        } else if (objective.equalsIgnoreCase("killNPC")) {
+
+            String message = ChatColor.GREEN + "(Completed) Kill " + npc.getName();
+            message = message + " " + currentStage.citizenNumToKill.
+            p.sendMessage(message);
+            if (testComplete()) {
+                currentQuest.nextStage(this);
+            }
+
         } else if (objective.equalsIgnoreCase("tameMob")) {
 
             String message = ChatColor.GREEN + "(Completed) Tame " + getCapitalized(mob.getName());

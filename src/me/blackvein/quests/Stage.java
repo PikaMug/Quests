@@ -4,13 +4,13 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 
 public class Stage {
 
@@ -40,6 +40,9 @@ public class Stage {
     LinkedList<String> areaNames = new LinkedList<String>();
 
     LinkedList<NPC> citizensToInteract = new LinkedList<NPC>();
+    
+    LinkedList<NPC> citizensToKill = new LinkedList<NPC>();
+    LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
 
     LinkedList<Location> locationsToReach = new LinkedList<Location>();
     LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
@@ -124,6 +127,12 @@ public class Stage {
                 return false;
 
             if(other.citizensToInteract.equals(citizensToInteract) == false)
+                return false;
+            
+            if(other.citizensToKill.equals(citizensToKill) == false)
+                return false;
+            
+            if(other.citizenNumToKill.equals(citizenNumToKill) == false)
                 return false;
 
             if(other.locationsToReach.equals(locationsToReach) == false)

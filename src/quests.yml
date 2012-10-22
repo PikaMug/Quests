@@ -6,6 +6,7 @@ quests:
     requirements:
       item-ids: [270]
       item-amounts: [1]
+      remove-items: [false]
       fail-requirement-message: '<red>You must have a <purple>Wooden Pickaxe<red> first.'
     stages:
       ordered:
