@@ -380,11 +380,11 @@ public class Quester {
 
                 if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
 
-                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getFullName() + ChatColor.GREEN);
+                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getFullName() + ChatColor.GREEN + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
-                } else {a
+                } else {
 
-                    finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getFullName());
+                    finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getName() + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
                 }
 
@@ -877,6 +877,21 @@ public class Quester {
 
         }
 
+    }
+    
+    public void killNPC(NPC n) {
+        
+        if(citizensKilled.contains(n)){
+            
+            int index = citizensKilled.indexOf(n);
+            if(citizenNumKilled.get(index) < currentStage.citizenNumToKill.get(index)){
+                citizenNumKilled.set(index, citizenNumKilled.get(index) + 1);
+                if(citizenNumKilled.get(index) == currentStage.citizenNumToKill.get(index))
+                    finishObjective("killNPC", null, null, null, null, null, n, null, null, 0);
+            }
+            
+        }
+        
     }
 
     public void reachLocation(Location l) {

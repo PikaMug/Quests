@@ -24,6 +24,7 @@ import org.bukkit.conversations.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -56,6 +57,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     boolean debug = false;
     boolean load = false;
     int killDelay = 0;
+    int totalQuestPoints = 0;
     public final static Logger log = Logger.getLogger("Minecraft");
 
     @Override
@@ -696,7 +698,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                         Quester quester = getQuester(cs.getName());
                         cs.sendMessage(ChatColor.GOLD + "- " + cs.getName() + " -");
-                        cs.sendMessage(ChatColor.YELLOW + "Quest points: " + ChatColor.DARK_PURPLE + quester.questPoints);
+                        cs.sendMessage(ChatColor.YELLOW + "Quest points: " + ChatColor.DARK_PURPLE + quester.questPoints + "/" + totalQuestPoints);
                         if (quester.currentQuest == null) {
                             cs.sendMessage(ChatColor.YELLOW + "Current Quest: " + ChatColor.DARK_PURPLE + "None");
                         } else {
@@ -1317,6 +1319,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         ConfigurationSection section1 = config.getConfigurationSection("quests");
         boolean failedToLoad = false;
+        totalQuestPoints = 0;
         for (String s : section1.getKeys(false)) {
 
             try {
@@ -2788,6 +2791,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                     if (config.getInt("quests." + s + ".rewards.quest-points", -999) != -999) {
                         quest.questPoints = config.getInt("quests." + s + ".rewards.quest-points");
+                        totalQuestPoints += quest.questPoints;
                     } else {
                         printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-points: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                         continue;
@@ -3599,6 +3603,86 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         }
         return false;
+    }
+
+    public static boolean invCheck(Player player, ItemStack stack, Inventory inv, int rawSlot) {
+
+        if (rawSlot < 0) {
+            player.sendMessage(ChatColor.YELLOW + "You may not discard Quest items.");
+            return false;
+        }
+
+        if (inv.getType().equals(InventoryType.CRAFTING)) {
+            
+            if (((rawSlot > 8) && (rawSlot < 36)) || ((rawSlot > -1) && (rawSlot < 5))) {
+                player.sendMessage(ChatColor.YELLOW + "You may not craft using Quest items.");
+                return false;
+            }
+
+        } else if (inv.getType().equals(InventoryType.BREWING)) {
+            
+            if ((rawSlot > 3) && (rawSlot < 41)) {
+                player.sendMessage(ChatColor.YELLOW + "You may not brew using Quest items.");
+                return false;
+            }
+
+        } else if (inv.getType().equals(InventoryType.ENCHANTING)) {
+            
+            if ((rawSlot > 0) && (rawSlot < 28)) {
+                player.sendMessage(ChatColor.YELLOW + "You may not enchant Quest items.");
+                return false;
+            }
+
+        } else if (inv.getType().equals(InventoryType.ENDER_CHEST)) {
+            
+            if ((rawSlot > 26) && (rawSlot < 54)) {
+                player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
+                return false;
+            }
+
+        } else if (inv.getType().equals(InventoryType.DISPENSER)) {
+            
+            if ((rawSlot > 8) && (rawSlot < 36)) {
+                player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
+                return false;
+            }
+
+        } else if (inv.getType().equals(InventoryType.FURNACE)) {
+            
+            if ((rawSlot > 2) && (rawSlot < 30)) {
+                player.sendMessage(ChatColor.YELLOW + "You may not smelt using Quest items.");
+                return false;
+            }
+
+        } else if (inv.getType().equals(InventoryType.WORKBENCH)) {
+            if ((rawSlot > 9) && (rawSlot < 37)) {
+                player.sendMessage(ChatColor.YELLOW + "You may not craft using Quest items.");
+                return false;
+            }
+
+        } else if (inv.getType().equals(InventoryType.CHEST)) {
+            if (inv.getContents().length == 27) {
+                if ((rawSlot > 26) && (rawSlot < 54)) {
+                    player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
+                    return false;
+                }
+
+            } else if ((rawSlot > 53) && (rawSlot < 81)) {
+                return false;
+
+            } else if (stack != null) {
+                if (inv.getItem(rawSlot) != null) {
+                    if (stack.getType().equals(inv.getItem(rawSlot).getType())) {
+                        return false;
+
+                    }
+
+                }
+
+            }
+
+        }
+        return true;
     }
 
     public static boolean checkList(List<?> list, Class c) {

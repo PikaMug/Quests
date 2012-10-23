@@ -215,7 +215,7 @@ public class Event {
 
         if(hunger != 0){
 
-            player.setExhaustion(hunger);
+            player.setFoodLevel(hunger);
 
         }
 

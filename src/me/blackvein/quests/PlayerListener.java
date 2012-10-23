@@ -246,7 +246,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent evt) {
 
-        if (evt.getWhoClicked() instanceof Player && evt.getCursor() != null) {
+        System.out.println("Slot: " + evt.getRawSlot() + "\n");
+        ((Player)evt.getWhoClicked()).sendMessage("Slot: " + evt.getRawSlot() + "\n");
+        /*if (evt.getWhoClicked() instanceof Player && evt.getCursor() != null) {
 
             Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
             if (quester.currentQuest != null) {
@@ -282,7 +284,7 @@ public class PlayerListener implements Listener {
 
             }
 
-        }
+        }*/
 
     }
 
