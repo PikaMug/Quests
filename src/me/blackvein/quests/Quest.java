@@ -149,7 +149,8 @@ public class Quest {
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (None)";
         player.sendMessage(plugin.parseString(finished, q.currentQuest));
-        Quests.economy.depositPlayer(q.name, moneyReward);
+        if(moneyReward > 0 && Quests.economy != null)
+            Quests.economy.depositPlayer(q.name, moneyReward);
         if(redoDelay > -1)
             q.completedTimes.put(this.name, System.currentTimeMillis());
 
