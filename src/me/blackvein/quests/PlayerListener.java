@@ -242,36 +242,138 @@ public class PlayerListener implements Listener {
         }
 
     }
+    /*
+     * 
+     * CRAFTING (Player)
 
+        0 - Crafted Slot
+        1 - Top-left Craft Slot
+        2 - Top-right Craft Slot
+        3 - Bottom-left Craft Slot
+        4 - Bottom-right Craft Slot
+
+        5 - Head Slot
+        6 - Body Slot
+        7 - Leg Slot
+        8 - Boots Slot
+
+        9-35 - Top-left to Bottom-right inventory slots
+        36-44 - Left to Right hotbar slots
+
+        -999 - Drop Slot
+
+
+        BREWING
+
+        0 - Left Potion Slot
+        1 - Middle Potion Slot
+        2 - Right Potion Slot
+        3- Ingredient Slot
+
+        4-30 - Top-left to Bottom-right inventory slots
+        31-39 - Left to Right hotbar slots
+
+        ENCHANTING
+
+        0 - Enchant Slot
+
+        1-27 - Top-left to Bottom-right inventory slots
+        28-36 - Left to Right hotbar slots
+
+        ENDER CHEST
+
+        0-26 - Top-left to Bottom-right chest slots
+
+        27-53 - Top-left to Bottom-right inventory slots
+        54-62 - Left to Right hotbar slots
+
+        DISPENSER
+
+        0-8 - Top-left to Bottom-right dispenser slots
+
+        9-35 - Top-left to Bottom-right inventory slots
+        36-44 - Left to Right hotbar slots
+
+        FURNACE
+
+        0 - Furnace Slot
+        1 - Fuel Slot
+        2 - Product Slot
+
+        3-29 - Top-left to Bottom-right inventory slots
+        30-38 - Left to Right hotbar slots
+
+        WORKBENCH
+
+        0 - Product Slot
+        1-9 - Top-left to Bottom-right crafting slots
+
+        CHEST
+
+        0-26 - Top-left to Bottom-right chest slots
+
+        27-53 - Top-left to Bottom-right inventory slots
+        54-62 - Left to Right hotbar slots
+
+        CHEST (Double)
+
+        0-53 - Top-left to Bottom-right chest slots
+
+        54-80 - Top-left to Bottom-right inventory slots
+        81-89 - Left to Right hotbar slots
+     * 
+     */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent evt) {
 
-        System.out.println("Slot: " + evt.getRawSlot() + "\n");
-        ((Player)evt.getWhoClicked()).sendMessage("Slot: " + evt.getRawSlot() + "\n");
-        /*if (evt.getWhoClicked() instanceof Player && evt.getCursor() != null) {
+        if (evt.getWhoClicked() instanceof Player && evt.getCursor() != null && evt.getCurrentItem() == null) {
 
             Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
             if (quester.currentQuest != null) {
 
                 if (quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
 
-                    if (evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() > 52) {
-                        quester.collectItem(evt.getCursor());
+                    //Placing Quest item in empty slot
+                    
+                    String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
+                    if (s == null) {
+                        //Placing Quest item in an allowed player inventory slot
+                        if(quester.holdingQuestItem)
+                            quester.collectItem(evt.getCursor());
+                    }else{
+                        ((Player) evt.getWhoClicked()).sendMessage(ChatColor.YELLOW + s);
                     }
 
                 }
 
             }
 
-        }
-
-        if (evt.getWhoClicked() instanceof Player && evt.getCurrentItem() != null) {
+        } else if (evt.getWhoClicked() instanceof Player && evt.getCursor() != null && evt.getCurrentItem() != null) {
 
             Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
             if (quester.currentQuest != null) {
 
-                if (quester.currentQuest.questItems.containsKey(evt.getCurrentItem().getType())) {
+                if (quester.currentQuest.questItems.containsKey(evt.getCurrentItem().getType()) || quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
 
+                    //Either the cursor item or the slot item (or both) is a Quest item
+                    
+                    Material cursor = evt.getCursor().getType();
+                    Material slot = evt.getCurrentItem().getType();
+                    
+                    if(cursor != slot && quester.currentQuest.questItems.containsKey(cursor)){
+                        
+                        //Cursor is a quest item, item in clicked slot is not
+                        
+                    }else if(cursor != slot && quester.currentQuest.questItems.containsKey(slot)){
+                        
+                        //Item in clicked slot is a quest item, cursor is not
+                        
+                    }else{
+                        
+                        //Both are quest items
+                        
+                    }
+                    
                     if (evt.getInventory().getType().equals(InventoryType.CHEST) == false || evt.getInventory().getType().equals(InventoryType.CHEST) == true && evt.getRawSlot() > 52) {
                         ((Player) evt.getWhoClicked()).sendMessage(ChatColor.YELLOW + "You may not modify Quest items in your inventory.");
                         evt.setCancelled(true);
@@ -284,7 +386,11 @@ public class PlayerListener implements Listener {
 
             }
 
-        }*/
+        }else if (evt.getWhoClicked() instanceof Player && evt.getCursor() == null && evt.getCurrentItem() != null){
+            
+            //Check for taking Quest items out of inventories (to set quester.HoldingQuestItem)
+            
+        }
 
     }
 

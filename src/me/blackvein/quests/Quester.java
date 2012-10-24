@@ -13,6 +13,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
@@ -21,6 +23,7 @@ public class Quester {
 
     String name;
     boolean editorMode = false;
+    boolean holdingQuestItem = false;
     Quest currentQuest;
     String questToTake;
     Stage currentStage;
@@ -2595,5 +2598,78 @@ public class Quester {
 
         }
 
+    }
+    
+    public static String checkPlacement(Inventory inv, int rawSlot){
+        
+        if(rawSlot < 0){
+            return "You may not drop Quest items.";
+        }
+        
+        InventoryType type = inv.getType();
+        
+        if(type.equals(InventoryType.BREWING)){
+            
+            if(rawSlot < 4){
+                return "You may not brew using Quest items.";
+            }
+            
+        }else if(type.equals(InventoryType.CHEST)){
+            
+            if(inv.getContents().length == 27){
+                
+                if(rawSlot < 27){
+                    return "You may not store Quest items.";
+                }
+                
+            }else {
+                
+                if(rawSlot < 54){
+                    return "You may not store Quest items.";
+                }
+                
+            }
+            
+        }else if(type.equals(InventoryType.CRAFTING)){
+            
+            if(rawSlot < 5){
+                return "You may not craft using Quest items.";
+            }else if(rawSlot < 9){
+                return "You may not equip Quest items.";
+            }
+            
+        }else if(type.equals(InventoryType.DISPENSER)){
+            
+            if(rawSlot < 9){
+                return "You may not put Quest items in dispensers.";
+            }
+            
+        }else if(type.equals(InventoryType.ENCHANTING)){
+            
+            if(rawSlot == 0){
+                return "You may not enchant Quest items.";
+            }
+            
+        }else if(type.equals(InventoryType.ENDER_CHEST)){
+            
+            if(rawSlot < 27){
+                return "You may not store Quest items.";
+            }
+            
+        }else if(type.equals(InventoryType.FURNACE)){
+            
+            if(rawSlot < 3){
+                return "You may not smelt using Quest items.";
+            }
+            
+        }else if(type.equals(InventoryType.WORKBENCH)){
+            
+            if(rawSlot < 10){
+                return "You may not craft using Quest items.";
+            }
+            
+        }
+        return null;
+        
     }
 }

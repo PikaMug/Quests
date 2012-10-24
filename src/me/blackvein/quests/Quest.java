@@ -149,13 +149,16 @@ public class Quest {
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (None)";
         player.sendMessage(plugin.parseString(finished, q.currentQuest));
-        if(moneyReward > 0 && Quests.economy != null)
+        if(moneyReward > 0 && Quests.economy != null){
             Quests.economy.depositPlayer(q.name, moneyReward);
+            none = null;
+        }
         if(redoDelay > -1)
             q.completedTimes.put(this.name, System.currentTimeMillis());
 
         for(ItemStack i : itemRewards){
             Quests.addItem(player, i);
+            none = null;
         }
 
         for(Entry entry : questItems.entrySet()){
@@ -195,7 +198,8 @@ public class Quest {
             s = s.replaceAll("<player>", player.getName());
 
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), s);
-
+            none = null;
+            
         }
 
         for(String s : permissions){
@@ -208,30 +212,37 @@ public class Quest {
         for(String s : mcmmoSkills){
 
             Quests.mcmmo.getPlayerProfile(player.getName()).skillUp(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
-
+            none = null;
+            
         }
 
-        if(exp > 0)
+        if(exp > 0){
             player.giveExp(exp);
+            none = null;
+        }
 
-        if(heroesExp > 0)
+        if(heroesExp > 0){
             plugin.heroes.getCharacterManager().getHero(player).gainExp(heroesExp, ExperienceType.QUESTING, player.getLocation());
-
-        if(heroesClass != null)
+            none = null;
+        }
+        
+        if(heroesClass != null){
             plugin.heroes.getCharacterManager().getHero(player).changeHeroClass(plugin.heroes.getClassManager().getClass(heroesClass), false);
-
-        if(heroesSecClass != null)
+            none = null;
+        }
+        
+        if(heroesSecClass != null){
             plugin.heroes.getCharacterManager().getHero(player).changeHeroClass(plugin.heroes.getClassManager().getClass(heroesSecClass), true);
-
+            none = null;
+        }
         player.sendMessage(ChatColor.GOLD + "**QUEST COMPLETE: " + ChatColor.YELLOW + q.currentQuest.name + ChatColor.GOLD + "**");
         player.sendMessage(ChatColor.GREEN + "Rewards:");
 
         if(questPoints > 0){
             player.sendMessage("- " + ChatColor.DARK_GREEN + questPoints + " Quest Points");
+            q.questPoints += questPoints;
             none = null;
         }
-
-        q.questPoints += questPoints;
 
         for(ItemStack i : itemRewards){
             player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
