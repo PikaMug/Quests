@@ -23,7 +23,7 @@ public class Quester {
 
     String name;
     boolean editorMode = false;
-    boolean holdingQuestItem = false;
+    boolean holdingQuestItemFromStorage = false;
     Quest currentQuest;
     String questToTake;
     Stage currentStage;

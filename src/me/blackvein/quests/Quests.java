@@ -66,7 +66,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         pListener = new PlayerListener(this);
         npcListener = new NpcListener(this);
 
-        this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new SummoningConversationPrefix()).withFirstPrompt(new QuestPrompt()).withTimeout(20).thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
+        this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix()).withFirstPrompt(new QuestPrompt()).withTimeout(20).thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
 
         questFactory = new QuestFactory(this);
 
@@ -185,11 +185,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
     }
 
-    private class QuestPrompt extends FixedSetPrompt {
-
-        public QuestPrompt() {
-            super("Yes", "No");
-        }
+    private class QuestPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -199,25 +195,32 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String s) {
+        public Prompt acceptInput(ConversationContext context, String s) {
 
             Player player = (Player) context.getForWhom();
 
-            if (s.equalsIgnoreCase("No")) {
+            if (s.equalsIgnoreCase("Yes")) {
+
+                getQuester(player.getName()).takeQuest(getQuest(getQuester(player.getName()).questToTake));
+                return Prompt.END_OF_CONVERSATION;
+
+            }else if (s.equalsIgnoreCase("No")) {
 
                 player.sendMessage(ChatColor.YELLOW + "Cancelled.");
                 return Prompt.END_OF_CONVERSATION;
-
+                
+            }else{
+                
+                player.sendMessage(ChatColor.RED + "Invalid choice. Type \'Yes\' or \'No\'");
+                return new QuestPrompt();
+                
             }
 
-            getQuester(player.getName()).takeQuest(getQuest(getQuester(player.getName()).questToTake));
-
-            return Prompt.END_OF_CONVERSATION;
 
         }
     }
 
-    private class SummoningConversationPrefix implements ConversationPrefix {
+    private class QuestsPrefix implements ConversationPrefix {
 
         @Override
         public String getPrefix(ConversationContext context) {
@@ -1254,14 +1257,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         Quester quester = null;
 
-        for (Quester q : questers.values()) {
-
-            if (q.name.equalsIgnoreCase(player)) {
-                quester = q;
-                break;
-            }
-
-        }
+        if(questers.containsKey(player))
+            quester = questers.get(player);
 
         if (quester == null) {
 
