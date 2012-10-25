@@ -21,7 +21,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
@@ -251,6 +250,9 @@ public class PlayerListener implements Listener {
         if(evt.getPlayer() instanceof Player){
             
             Quester quester = plugin.getQuester(((Player)evt.getPlayer()).getName());
+            if(quester.holdingQuestItemFromStorage){
+                quester.collectItem(evt.getView().getCursor());
+            }
             quester.holdingQuestItemFromStorage = false;
             
         }
@@ -334,112 +336,136 @@ public class PlayerListener implements Listener {
         if(evt.getWhoClicked() instanceof Player)
             player = (Player) evt.getWhoClicked();
         
-        if (player != null && evt.getCursor() != null && evt.getCurrentItem() == null) {
+        if(evt.isShiftClick() == false){
+            
+            if (player != null && evt.getCursor() != null && evt.getCurrentItem() == null) {
 
-            Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
-            if (quester.currentQuest != null) {
+                Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
+                if (quester.currentQuest != null) {
 
-                if (quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
+                    if (quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
 
-                    //Placing Quest item in empty slot
+                        //Placing Quest item in empty slot
 
-                    String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                    if (s == null) {
-                        //Placing Quest item in an allowed player inventory slot
-                        if (quester.holdingQuestItemFromStorage) {
-                            quester.collectItem(evt.getCursor());
-                            quester.holdingQuestItemFromStorage = false;
-                        }
-                    } else {
-                        player.sendMessage(ChatColor.YELLOW + s);
-                        evt.setCancelled(true);
-                        player.updateInventory();
-                    }
-
-                }
-
-            }
-
-        } else if (player != null && evt.getCursor() != null && evt.getCurrentItem() != null) {
-
-            Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
-            if (quester.currentQuest != null) {
-
-                if (quester.currentQuest.questItems.containsKey(evt.getCurrentItem().getType()) || quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
-
-                    //Either the cursor item or the slot item (or both) is a Quest item
-
-                    Material cursor = evt.getCursor().getType();
-                    Material slot = evt.getCurrentItem().getType();
-
-
-                    if (cursor == slot && quester.currentQuest.questItems.containsKey(cursor)) {
-                        
-                        //Both are the same item, and quest items
                         String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                        if(s == null){
-                            
-                            ItemStack from = evt.getCursor();
-                            ItemStack to = evt.getCurrentItem();
-                            
-                            if((from.getAmount() + to.getAmount()) <= from.getMaxStackSize()){
-                                if(quester.holdingQuestItemFromStorage){
-                                    quester.collectItem(from);
-                                    quester.holdingQuestItemFromStorage = false;
-                                }
-                            }else if((from.getAmount() + to.getAmount()) > from.getMaxStackSize() && to.getAmount() < to.getMaxStackSize()){
-                                if(quester.holdingQuestItemFromStorage){
-                                    ItemStack difference = to.clone();
-                                    difference.setAmount(difference.getMaxStackSize() - difference.getAmount());
-                                    quester.collectItem(difference);
-                                    quester.holdingQuestItemFromStorage = false;
-                                }
+                        if (s == null) {
+                            //Placing Quest item in an allowed player inventory slot
+                            if (quester.holdingQuestItemFromStorage) {
+                                quester.collectItem(evt.getCursor());
+                                quester.holdingQuestItemFromStorage = false;
                             }
-                            
-                        }else{
-                            player.sendMessage(ChatColor.YELLOW + s);
-                            evt.setCancelled(true);
-                            player.updateInventory();
-                        }
-                        
-                    } else if (cursor != slot && quester.currentQuest.questItems.containsKey(cursor)) {
-                        
-                        //Cursor is a quest item, item in clicked slot is not
-                        String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                        if (quester.holdingQuestItemFromStorage && s == null) {
-                            quester.collectItem(evt.getCursor());
-                            quester.holdingQuestItemFromStorage = false;
-                        } else if (s != null) {
+                        } else {
                             player.sendMessage(ChatColor.YELLOW + s);
                             evt.setCancelled(true);
                             player.updateInventory();
                         }
 
-                    } else if (cursor != slot && quester.currentQuest.questItems.containsKey(slot)) {
-                        
-                        //Item in clicked slot is a quest item, cursor is not
-                        String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                        if(s != null)
-                            quester.holdingQuestItemFromStorage = true;
-                        
-                    } else {
-                        
-                        //Both are different quest items
-                        String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                        if (quester.holdingQuestItemFromStorage && s == null) {
-                            quester.collectItem(evt.getCursor());
-                            quester.holdingQuestItemFromStorage = false;
-                        } else if (s != null) {
-                            player.sendMessage(ChatColor.YELLOW + s);
-                            evt.setCancelled(true);
-                            player.updateInventory();
-                        }
-                        
                     }
+
+                }
+
+            } else if (player != null && evt.getCursor() != null && evt.getCurrentItem() != null) {
+
+                Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
+                if (quester.currentQuest != null) {
+
+                    if (quester.currentQuest.questItems.containsKey(evt.getCurrentItem().getType()) || quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
+
+                        //Either the cursor item or the slot item (or both) is a Quest item
+
+                        Material cursor = evt.getCursor().getType();
+                        Material slot = evt.getCurrentItem().getType();
+
+
+                        if (cursor == slot && quester.currentQuest.questItems.containsKey(cursor)) {
+
+                            //Both are the same item, and quest items
+                            String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
+                            if(s == null){
+
+                                ItemStack from = evt.getCursor();
+                                ItemStack to = evt.getCurrentItem();
+
+                                if((from.getAmount() + to.getAmount()) <= from.getMaxStackSize()){
+                                    if(quester.holdingQuestItemFromStorage){
+                                        quester.collectItem(from);
+                                        quester.holdingQuestItemFromStorage = false;
+                                    }
+                                }else if((from.getAmount() + to.getAmount()) > from.getMaxStackSize() && to.getAmount() < to.getMaxStackSize()){
+                                    if(quester.holdingQuestItemFromStorage){
+                                        ItemStack difference = to.clone();
+                                        difference.setAmount(difference.getMaxStackSize() - difference.getAmount());
+                                        quester.collectItem(difference);
+                                        quester.holdingQuestItemFromStorage = false;
+                                    }
+                                }
+
+                            }else{
+                                player.sendMessage(ChatColor.YELLOW + s);
+                                evt.setCancelled(true);
+                                player.updateInventory();
+                            }
+
+                        } else if (cursor != slot && quester.currentQuest.questItems.containsKey(cursor)) {
+
+                            //Cursor is a quest item, item in clicked slot is not
+                            String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
+                            if (quester.holdingQuestItemFromStorage && s == null) {
+                                quester.collectItem(evt.getCursor());
+                                quester.holdingQuestItemFromStorage = false;
+                            } else if (s != null) {
+                                player.sendMessage(ChatColor.YELLOW + s);
+                                evt.setCancelled(true);
+                                player.updateInventory();
+                            }
+
+                        } else if (cursor != slot && quester.currentQuest.questItems.containsKey(slot)) {
+
+                            //Item in clicked slot is a quest item, cursor is not
+                            String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
+                            if(s != null)
+                                quester.holdingQuestItemFromStorage = true;
+
+                        } else {
+
+                            //Both are different quest items
+                            String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
+                            if (quester.holdingQuestItemFromStorage && s == null) {
+                                quester.collectItem(evt.getCursor());
+                                quester.holdingQuestItemFromStorage = false;
+                            } else if (s != null) {
+                                player.sendMessage(ChatColor.YELLOW + s);
+                                evt.setCancelled(true);
+                                player.updateInventory();
+                            }
+
+                        }
+                    }
+
                 }
 
             }
-
+        
+        }else{
+            
+            if(player != null && evt.getCurrentItem() != null){
+                
+                Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
+                Material mat = evt.getCurrentItem().getType();
+                
+                if(quester.currentQuest != null){
+                    
+                    if(quester.currentQuest.questItems.containsKey(mat)){
+                        
+                        String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
+                        //CHECK
+                        
+                    }
+                    
+                }
+                
+            }
+            
         }
 
     }
