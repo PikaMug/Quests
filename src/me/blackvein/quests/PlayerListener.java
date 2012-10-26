@@ -1,6 +1,7 @@
 package me.blackvein.quests;
 
 import java.io.File;
+import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversable;
@@ -329,7 +330,7 @@ public class PlayerListener implements Listener {
      *
      */
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent evt) {
 
         Player player = null;
@@ -448,7 +449,7 @@ public class PlayerListener implements Listener {
         
         }else{
             
-            if(player != null && evt.getCurrentItem() != null){
+            if(player != null && evt.getCurrentItem() != null && evt.getResult().equals(org.bukkit.event.Event.Result.ALLOW)){
                 
                 Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
                 Material mat = evt.getCurrentItem().getType();
@@ -458,7 +459,28 @@ public class PlayerListener implements Listener {
                     if(quester.currentQuest.questItems.containsKey(mat)){
                         
                         String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                        //CHECK
+                        if(s == null){
+                            
+                            player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
+                            evt.setCancelled(true);
+                            player.updateInventory();
+                            
+                        }else{
+                            
+                            ItemStack oldStack = evt.getCurrentItem();
+                            HashMap<Integer, ItemStack> map = evt.getInventory().addItem(oldStack);
+                            
+                                
+                            if(map.isEmpty() == false){
+                                    
+                                    ItemStack newStack = oldStack.clone();
+                                    newStack.setAmount(old)
+                                    
+                            }else{
+                                quester.collectItem(oldStack);
+                            }
+                            
+                        }
                         
                     }
                     
