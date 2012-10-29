@@ -2685,6 +2685,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         }
 
                     }
+                    
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay")) {
+
+                        if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999){
+                            stage.delay = config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay");
+                        }else {
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "delay: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+                    
+                    if(config.contains("quests." + s + ".stages.ordered." + s2 + ".delay-message")){
+                        
+                        stage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
+                        
+                    }
 
                     stage.citizensToInteract = npcsToTalkTo;
 
@@ -2717,8 +2735,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                         failed = true;
                                         break;
                                     }
-                                    ItemStack stack = new ItemStack(m, config.getIntegerList("quests." + s + ".rewards.item-amounts").get(config.getIntegerList("quests." + s + ".rewards.item-ids").indexOf(i)));
+                                    int amnt = config.getIntegerList("quests." + s + ".rewards.item-amounts").get(config.getIntegerList("quests." + s + ".rewards.item-ids").indexOf(i));
+                                    ItemStack stack = new ItemStack(m, amnt);
                                     quest.itemRewards.add(stack);
+                                    quest.itemRewardAmounts.add(amnt);
 
                                 }
 

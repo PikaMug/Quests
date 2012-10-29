@@ -2,6 +2,7 @@ package me.blackvein.quests;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversable;
@@ -450,7 +451,7 @@ public class PlayerListener implements Listener {
         
         }else{
             
-            if(player != null && evt.getCurrentItem() != null && evt.getResult().equals(org.bukkit.event.Event.Result.ALLOW)){
+            if(player != null && evt.getCurrentItem() != null){
                 
                 Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
                 Material mat = evt.getCurrentItem().getType();
@@ -459,14 +460,23 @@ public class PlayerListener implements Listener {
                     
                     if(quester.currentQuest.questItems.containsKey(mat)){
                         
-                        String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                        if(s == null){
+                        List<Integer> changedSlots = Quester.getChangedSlots(evt.getInventory(), evt.getCurrentItem());
+                        boolean can = true;
+                        for(int i : changedSlots){
                             
-                            player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
+                            String s = Quester.checkPlacement(evt.getInventory(), i);
+                            if(s != null){
+                                can = false;
+                                break;
+                            }
+                            
+                        }
+                        if(!can){
+                            
                             evt.setCancelled(true);
                             player.updateInventory();
                             
-                        }else{
+                        }else if(can && Quester.checkPlacement(evt.getInventory(), evt.getRawSlot()) != null){
                             
                             ItemStack oldStack = evt.getCurrentItem();
                             Inventory inv = plugin.getServer().createInventory(null, evt.getInventory().getType());

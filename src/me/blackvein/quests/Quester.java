@@ -40,6 +40,7 @@ public class Quester {
     Map<Integer, Integer> potionsBrewed = new HashMap<Integer, Integer>();
     int fishCaught = 0;
     int playersKilled = 0;
+    long stageDelay = 0;
     Map<String, Long> playerKillTimes = new HashMap<String, Long>();
     Map<Map<Enchantment, Material>, Integer> itemsEnchanted = new HashMap<Map<Enchantment, Material>, Integer>();
     LinkedList<EntityType> mobsKilled = new LinkedList<EntityType>();
@@ -2671,5 +2672,50 @@ public class Quester {
         }
         return null;
         
+    }
+    
+    public static List<Integer> getChangedSlots(Inventory inInv, ItemStack inNew)
+    {
+        List<Integer> changed = new ArrayList<Integer>();
+        if(inInv.contains(inNew.getType()))
+        {
+            int amount = inNew.getAmount();
+            HashMap<Integer, ? extends ItemStack> items = inInv.all(inNew.getType());
+            for(int i = 0; i < inInv.getSize(); i++)
+            {
+                if(!items.containsKey((Integer)i))
+                    continue;
+               
+                ItemStack item = items.get((Integer)i);
+                int slotamount = item.getMaxStackSize() - item.getAmount();
+                if(slotamount > 1)
+                {
+                    if(amount > slotamount)
+                    {
+                        int toAdd = slotamount - amount;
+                        amount = amount - toAdd;
+                        changed.add(i);
+                    }
+                    else
+                    {
+                        changed.add(i);
+                        amount = 0;
+                        break;
+                    }
+                }
+            }
+           
+            if(amount > 0)
+            {
+                if(inInv.firstEmpty() != -1)
+                    changed.add(inInv.firstEmpty());
+            }
+        }
+        else
+        {
+            if(inInv.firstEmpty() != -1)
+                changed.add(inInv.firstEmpty());
+        }
+        return changed;
     }
 }

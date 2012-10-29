@@ -48,6 +48,7 @@ public class Quest {
     List<String> commands = new LinkedList<String>();
     List<String> permissions = new LinkedList<String>();
     LinkedList<ItemStack> itemRewards = new LinkedList<ItemStack>();
+    LinkedList<Integer> itemRewardAmounts = new LinkedList<Integer>();
       //Heroes
       int heroesExp = 0;
       String heroesClass = null;
@@ -69,6 +70,7 @@ public class Quest {
                 plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
             if(q.currentStage.event != null)
                 q.currentStage.event.happen(player);
+            
             completeQuest(q);
 
         }else {
@@ -245,7 +247,7 @@ public class Quest {
         }
 
         for(ItemStack i : itemRewards){
-            player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
+            player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + itemRewardAmounts.get(itemRewards.indexOf(i)));
             none = null;
         }
 
@@ -284,6 +286,7 @@ public class Quest {
         q.currentStage = null;
 
         q.saveData();
+        player.updateInventory();
 
     }
 

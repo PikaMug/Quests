@@ -30,7 +30,7 @@ public class Stage {
     LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
     LinkedList<String> areaNames = new LinkedList<String>();
     LinkedList<NPC> citizensToInteract = new LinkedList<NPC>(){
-        
+    
         @Override
         public boolean equals(Object o) {
 
@@ -87,6 +87,8 @@ public class Stage {
     Map<Material, Integer> itemsToCraft = new EnumMap<Material, Integer>(Material.class);
     String script;
     Event event;
+    long delay = -1;
+    String delayMessage = "";
 
     @Override
     public boolean equals(Object o) {
@@ -232,6 +234,12 @@ public class Stage {
             } else if (other.event == null && event != null) {
                 return false;
             }
+            
+            if(other.delay != delay)
+                return false;
+            
+            if(other.delayMessage.equalsIgnoreCase(delayMessage) == false)
+                return false;
 
         }
 
