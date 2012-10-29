@@ -38,6 +38,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public static Economy economy = null;
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
+    HashSet<String> questerBlacklist = new HashSet<String>();
     ConversationFactory conversationFactory;
     QuestFactory questFactory;
     Heroes heroes;
@@ -157,9 +158,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }, 5L);
 
         questers = getOnlineQuesters();
-        Quester redPower = new Quester(this);
-        redPower.name = "[RedPower]";
-        questers.put("[RedPower]", redPower);
 
     }
 
@@ -208,12 +206,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                 player.sendMessage(ChatColor.YELLOW + "Cancelled.");
                 return Prompt.END_OF_CONVERSATION;
-                
+
             }else{
-                
+
                 player.sendMessage(ChatColor.RED + "Invalid choice. Type \'Yes\' or \'No\'");
                 return new QuestPrompt();
-                
+
             }
 
 
@@ -241,6 +239,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         //allowOtherBrewing = config.getBoolean("allow-other-brewing");
         debug = config.getBoolean("debug-mode");
         killDelay = config.getInt("kill-delay");
+        for(String s : config.getStringList("quester-blacklist")){
+
+            questerBlacklist.add(s);
+
+        }
 
     }
 
@@ -3610,42 +3613,42 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
 
         if (inv.getType().equals(InventoryType.CRAFTING)) {
-            
+
             if (((rawSlot > 8) && (rawSlot < 36)) || ((rawSlot > -1) && (rawSlot < 5))) {
                 player.sendMessage(ChatColor.YELLOW + "You may not craft using Quest items.");
                 return false;
             }
 
         } else if (inv.getType().equals(InventoryType.BREWING)) {
-            
+
             if ((rawSlot > 3) && (rawSlot < 41)) {
                 player.sendMessage(ChatColor.YELLOW + "You may not brew using Quest items.");
                 return false;
             }
 
         } else if (inv.getType().equals(InventoryType.ENCHANTING)) {
-            
+
             if ((rawSlot > 0) && (rawSlot < 28)) {
                 player.sendMessage(ChatColor.YELLOW + "You may not enchant Quest items.");
                 return false;
             }
 
         } else if (inv.getType().equals(InventoryType.ENDER_CHEST)) {
-            
+
             if ((rawSlot > 26) && (rawSlot < 54)) {
                 player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
                 return false;
             }
 
         } else if (inv.getType().equals(InventoryType.DISPENSER)) {
-            
+
             if ((rawSlot > 8) && (rawSlot < 36)) {
                 player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
                 return false;
             }
 
         } else if (inv.getType().equals(InventoryType.FURNACE)) {
-            
+
             if ((rawSlot > 2) && (rawSlot < 30)) {
                 player.sendMessage(ChatColor.YELLOW + "You may not smelt using Quest items.");
                 return false;
@@ -3680,6 +3683,49 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         }
         return true;
+    }
+
+    public static boolean checkQuester(String name){
+
+        
+
+    }
+
+    private static boolean checkQuester(String name, String check){
+
+        if(check.endsWith("*") && check.startsWith("*") == false){
+
+            check = check.substring(0, check.length());
+            if(name.endsWith(check))
+                return true;
+            else
+                return false;
+
+        }else if(check.endsWith("*") == false && check.startsWith("*")){
+
+            check = check.substring(1);
+            if(name.startsWith(check))
+                return true;
+            else
+                return false;
+
+        }else if(check.endsWith("*") && check.startsWith("*")){
+
+            check = check.substring(1, check.length());
+            if(name.contains(check))
+                return true;
+            else
+                return false;
+
+        }else{
+
+            if(name.equalsIgnoreCase(check))
+                return true;
+            else
+                return false;
+
+        }
+
     }
 
     public static boolean checkList(List<?> list, Class c) {

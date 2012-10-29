@@ -26,6 +26,7 @@ public class NpcListener implements Listener {
 
             final Player player = evt.getClicker();
 
+            if(Quests.checkQuester())
             final Quester quester = plugin.getQuester(player.getName());
             if (quester.hasObjective("talkToNPC")) {
 
