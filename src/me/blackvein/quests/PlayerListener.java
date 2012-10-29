@@ -24,6 +24,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
@@ -468,13 +469,14 @@ public class PlayerListener implements Listener {
                         }else{
                             
                             ItemStack oldStack = evt.getCurrentItem();
-                            HashMap<Integer, ItemStack> map = evt.getInventory().addItem(oldStack);
-                            
+                            Inventory inv = plugin.getServer().createInventory(null, evt.getInventory().getType());
+                            HashMap<Integer, ItemStack> map = inv.addItem(oldStack);
                                 
                             if(map.isEmpty() == false){
                                     
                                     ItemStack newStack = oldStack.clone();
-                                    newStack.setAmount(old)
+                                    newStack.setAmount(oldStack.getAmount() - map.get(0).getAmount());
+                                    quester.collectItem(newStack);
                                     
                             }else{
                                 quester.collectItem(oldStack);

@@ -38,7 +38,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public static Economy economy = null;
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
-    HashSet<String> questerBlacklist = new HashSet<String>();
+    List<String> questerBlacklist = new LinkedList<String>();
     ConversationFactory conversationFactory;
     QuestFactory questFactory;
     Heroes heroes;
@@ -3685,9 +3685,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return true;
     }
 
-    public static boolean checkQuester(String name){
+    public boolean checkQuester(String name){
 
+        for(String s : questerBlacklist){
+            
+            if(Quests.checkQuester(name, s))
+                return true;
+            
+        }
         
+        return false;
 
     }
 
