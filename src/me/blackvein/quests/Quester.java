@@ -1886,6 +1886,8 @@ public class Quester {
                 data.set("items-crafted", itemAmounts);
 
             }
+            
+            if(currentStage.)
 
 
         } else {
@@ -2553,6 +2555,12 @@ public class Quester {
                 }
 
             }
+            
+            if(data.contains("stage-delay")){
+                
+                delayTimeLeft = data.getLong("stage-delay");
+                
+            }
 
         }
 
@@ -2562,44 +2570,12 @@ public class Quester {
 
     public void startStageTimer(){
         
-        if(delayTimeLeft > -1){
-            
-            delayStartTime = System.currentTimeMillis();
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
-                
-                @Override
-                public void run(){
-                    
-                    if(delayOver){
-                        currentQuest.nextStage(Quester.this);
-                    }
-                    
-                    delayOver = true;
-                    
-                }
-                
-            }, delayTimeLeft*50);
-            
-            
-        }else{
-            
-            delayStartTime = System.currentTimeMillis();
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
-                
-                @Override
-                public void run(){
-                    
-                    if(delayOver){
-                        currentQuest.nextStage(Quester.this);
-                    }
-                    
-                    delayOver = true;
-                    
-                }
-                
-            }, currentStage.delay);
-            
-        }
+        if(delayTimeLeft > -1)
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(this), delayTimeLeft*50);
+        else
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(this), currentStage.delay);
+
+        delayStartTime = System.currentTimeMillis();
         
     }
     
@@ -2609,6 +2585,8 @@ public class Quester {
             delayTimeLeft = delayTimeLeft - (System.currentTimeMillis() - delayStartTime);
         else
             delayTimeLeft = currentStage.delay - (System.currentTimeMillis() - delayStartTime);
+        
+        delayOver = false;
         
     }
     

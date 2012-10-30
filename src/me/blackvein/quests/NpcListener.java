@@ -24,9 +24,9 @@ public class NpcListener implements Listener {
 
         if (plugin.questNPCs.contains(evt.getNPC())) {
 
-                final Player player = evt.getClicker();
+            final Player player = evt.getClicker();
 
-                if(plugin.checkQuester(player.getName()) == false){
+            if (plugin.checkQuester(player.getName()) == false) {
 
                 final Quester quester = plugin.getQuester(player.getName());
                 if (quester.hasObjective("talkToNPC")) {
@@ -85,8 +85,6 @@ public class NpcListener implements Listener {
 
                                 }
 
-
-
                                 break;
 
                             }
@@ -96,7 +94,7 @@ public class NpcListener implements Listener {
                     }
 
                 }
-            
+
             }
 
         }

@@ -1272,7 +1272,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             quester = new Quester(this);
             quester.name = player;
             if (quester.loadData() == false) {
-                throw new NullPointerException("[Quests] Quester not found for player \"" + player + "\"");
+                log.severe("[Quests] Quester not found for player \"" + player + "\". Consider adding them to the Quester blacklist.");
             } else {
                 if (debug == true) {
                     log.log(Level.INFO, "[Quests] Manual data retrieval succeeded for player \"" + player + "\"");
