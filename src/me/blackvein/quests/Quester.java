@@ -1887,7 +1887,11 @@ public class Quester {
 
             }
             
-            if(currentStage.)
+            if(delayStartTime > 0){
+                
+                
+                
+            }
 
 
         } else {
