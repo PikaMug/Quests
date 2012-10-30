@@ -24,6 +24,7 @@ public class Quester {
     String name;
     boolean editorMode = false;
     boolean holdingQuestItemFromStorage = false;
+    boolean delayOver = true;
     Quest currentQuest;
     String questToTake;
     Stage currentStage;
@@ -40,7 +41,8 @@ public class Quester {
     Map<Integer, Integer> potionsBrewed = new HashMap<Integer, Integer>();
     int fishCaught = 0;
     int playersKilled = 0;
-    long stageDelay = 0;
+    long delayStartTime = 0;
+    long delayTimeLeft = -1;
     Map<String, Long> playerKillTimes = new HashMap<String, Long>();
     Map<Map<Enchantment, Material>, Integer> itemsEnchanted = new HashMap<Map<Enchantment, Material>, Integer>();
     LinkedList<EntityType> mobsKilled = new LinkedList<EntityType>();
@@ -2558,6 +2560,58 @@ public class Quester {
 
     }
 
+    public void startStageTimer(){
+        
+        if(delayTimeLeft > -1){
+            
+            delayStartTime = System.currentTimeMillis();
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+                
+                @Override
+                public void run(){
+                    
+                    if(delayOver){
+                        currentQuest.nextStage(Quester.this);
+                    }
+                    
+                    delayOver = true;
+                    
+                }
+                
+            }, delayTimeLeft*50);
+            
+            
+        }else{
+            
+            delayStartTime = System.currentTimeMillis();
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+                
+                @Override
+                public void run(){
+                    
+                    if(delayOver){
+                        currentQuest.nextStage(Quester.this);
+                    }
+                    
+                    delayOver = true;
+                    
+                }
+                
+            }, currentStage.delay);
+            
+        }
+        
+    }
+    
+    public void stopTimer(){
+        
+        if(delayTimeLeft > -1)
+            delayTimeLeft = delayTimeLeft - (System.currentTimeMillis() - delayStartTime);
+        else
+            delayTimeLeft = currentStage.delay - (System.currentTimeMillis() - delayStartTime);
+        
+    }
+    
     public void checkQuest() {
 
         if (currentQuest != null) {
