@@ -295,7 +295,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                         if (getQuester(cs.getName()).currentQuest != null) {
 
-                            cs.sendMessage(ChatColor.GOLD + "---(Objectives)---");
+                            if(getQuester(cs.getName()).delayStartTime == 0)
+                                cs.sendMessage(ChatColor.GOLD + "---(Objectives)---");
 
                             for (String s : getQuester(cs.getName()).getObjectives()) {
 

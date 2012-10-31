@@ -18,12 +18,15 @@ public class StageTimer implements Runnable{
     @Override
     public void run(){
 
+        System.out.println("Running.");
         if(quester.delayOver){
 
+            System.out.println("Delay is over.");
             Player player = plugin.getServer().getPlayerExact(quester.name);
 
             if(quester.currentQuest.stages.indexOf(quester.currentStage) == (quester.currentQuest.stages.size() - 1)){
 
+                System.out.println("Quester is finished Quest.");
                 if(quester.currentStage.script != null)
                     plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, player);
                 if(quester.currentStage.event != null)
@@ -33,6 +36,7 @@ public class StageTimer implements Runnable{
 
             }else {
 
+                System.out.println("Quester is not finished Quest.");
                 quester.reset();
                 player.sendMessage(plugin.parseString(quester.currentStage.finished, quester.currentQuest));
                 if(quester.currentStage.script != null)
@@ -41,7 +45,9 @@ public class StageTimer implements Runnable{
                     quester.currentStage.event.happen(player);
                 quester.currentStage = quester.currentQuest.stages.get(quester.currentQuest.stages.indexOf(quester.currentStage) + 1);
                 quester.addEmpties();
-
+                quester.delayStartTime = 0;
+                quester.delayTimeLeft = -1;
+                
                 player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
                 for(String s : quester.getObjectives()){
 
@@ -51,8 +57,7 @@ public class StageTimer implements Runnable{
 
             }
 
-            quester.delayStartTime = 0;
-            quester.delayTimeLeft = -1;
+            
 
         }
 

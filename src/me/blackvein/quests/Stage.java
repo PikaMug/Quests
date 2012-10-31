@@ -88,7 +88,7 @@ public class Stage {
     String script;
     Event event;
     long delay = -1;
-    String delayMessage = "";
+    String delayMessage = null;
 
     @Override
     public boolean equals(Object o) {
@@ -238,8 +238,15 @@ public class Stage {
             if(other.delay != delay)
                 return false;
             
-            if(other.delayMessage.equalsIgnoreCase(delayMessage) == false)
+            if (other.delayMessage != null && delayMessage != null) {
+                if (other.delayMessage.equals(delayMessage) == false) {
+                    return false;
+                }
+            } else if (other.delayMessage != null && delayMessage == null) {
                 return false;
+            } else if (other.delayMessage == null && delayMessage != null) {
+                return false;
+            }
 
         }
 
