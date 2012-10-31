@@ -693,12 +693,12 @@ public class PlayerListener implements Listener {
 
         Player player = evt.getPlayer();
         if(plugin.checkQuester(player.getName()) == false){
-            
+
             Quester quester = plugin.getQuester(player.getName());
             if (quester.hasObjective("catchFish") && evt.getState().equals(State.CAUGHT_FISH)) {
                 quester.catchFish();
             }
-        
+
         }
 
     }
@@ -707,7 +707,7 @@ public class PlayerListener implements Listener {
     public void onPlayerDropItem(PlayerDropItemEvent evt) {
 
         if(plugin.checkQuester(evt.getPlayer().getName()) == false){
-            
+
             Quester quester = plugin.getQuester(evt.getPlayer().getName());
             if (quester.currentQuest != null) {
 
@@ -719,7 +719,7 @@ public class PlayerListener implements Listener {
                 }
 
             }
-        
+
         }
 
     }
@@ -728,7 +728,7 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent evt) {
 
         if(plugin.checkQuester(evt.getPlayer().getName()) == false){
-            
+
             Quester quester = new Quester(plugin);
             quester.name = evt.getPlayer().getName();
             if (new File(plugin.getDataFolder(), "data/" + quester.name + ".yml").exists()) {
@@ -740,23 +740,29 @@ public class PlayerListener implements Listener {
 
             for (String s : quester.completedQuests) {
 
-                for (Quest q : plugin.quests) {
+                Quest q = plugin.getQuest(s);
 
-                    if (q.name.equalsIgnoreCase(s)) {
+                if (q != null) {
 
-                        if (quester.completedTimes.containsKey(q.name) == false && q.redoDelay > -1) {
-                            quester.completedTimes.put(q.name, System.currentTimeMillis());
-                        }
-
-                    }
-
+                    if (quester.completedTimes.containsKey(q.name) == false && q.redoDelay > -1)
+                        quester.completedTimes.put(q.name, System.currentTimeMillis());
 
                 }
 
             }
 
             quester.checkQuest();
-        
+
+            if(quester.currentQuest != null){
+
+                if(quester.currentStage.delay > -1){
+
+                    quester.startStageTimer();
+
+                }
+
+            }
+
         }
 
     }
@@ -765,11 +771,13 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent evt) {
 
         if(plugin.checkQuester(evt.getPlayer().getName()) == false){
-            
+
             Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            if(quester.currentStage.delay > -1)
+                quester.stopStageTimer();
             quester.saveData();
             plugin.questers.remove(quester.name);
-        
+
         }
 
     }
@@ -778,7 +786,7 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent evt) {
 
         if(plugin.checkQuester(evt.getPlayer().getName()) == false){
-            
+
             boolean isPlayer = true;
             if (plugin.getServer().getPluginManager().getPlugin("Citizens") != null) {
                 if (plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer())) {
@@ -797,7 +805,7 @@ public class PlayerListener implements Listener {
                 }
 
             }
-        
+
         }
 
     }

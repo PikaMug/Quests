@@ -379,7 +379,7 @@ public class Quester {
             }
 
         }
-        
+
         for (NPC n : currentStage.citizensToKill) {
 
             for (NPC n2 : citizensKilled) {
@@ -884,20 +884,20 @@ public class Quester {
         }
 
     }
-    
+
     public void killNPC(NPC n) {
-        
+
         if(citizensKilled.contains(n)){
-            
+
             int index = citizensKilled.indexOf(n);
             if(citizenNumKilled.get(index) < currentStage.citizenNumToKill.get(index)){
                 citizenNumKilled.set(index, citizenNumKilled.get(index) + 1);
                 if(citizenNumKilled.get(index) == currentStage.citizenNumToKill.get(index))
                     finishObjective("killNPC", null, null, null, null, null, n, null, null, 0);
             }
-            
+
         }
-        
+
     }
 
     public void reachLocation(Location l) {
@@ -1244,7 +1244,7 @@ public class Quester {
 
             }
         }
-        
+
         if (currentStage.citizensToKill.isEmpty() == false) {
             for (NPC n : currentStage.citizensToKill) {
 
@@ -1777,9 +1777,9 @@ public class Quester {
                 data.set("has-talked-to", hasTalked);
 
             }
-            
+
             if(citizensKilled.isEmpty() == false) {
-                
+
                 LinkedList<Integer> npcIds = new LinkedList<Integer>();
 
                 for (NPC n : citizensKilled) {
@@ -1790,7 +1790,7 @@ public class Quester {
 
                 data.set("citizen-ids-killed", npcIds);
                 data.set("citizen-amounts-killed", citizenNumKilled);
-                
+
             }
 
             if (locationsReached.isEmpty() == false) {
@@ -1886,12 +1886,9 @@ public class Quester {
                 data.set("items-crafted", itemAmounts);
 
             }
-            
-            if(delayStartTime > 0){
-                
-                
-                
-            }
+
+            if(delayTimeLeft > 0)
+                data.set("stage-delay", delayTimeLeft);
 
 
         } else {
@@ -2376,7 +2373,7 @@ public class Quester {
                 }
 
             }
-            
+
             if (data.contains("citizen-ids-killed")) {
 
                 List<Integer> ids = data.getIntegerList("citizen-ids-killed");
@@ -2559,11 +2556,11 @@ public class Quester {
                 }
 
             }
-            
+
             if(data.contains("stage-delay")){
-                
+
                 delayTimeLeft = data.getLong("stage-delay");
-                
+
             }
 
         }
@@ -2573,27 +2570,36 @@ public class Quester {
     }
 
     public void startStageTimer(){
-        
+
         if(delayTimeLeft > -1)
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(this), delayTimeLeft*50);
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), delayTimeLeft*50);
         else
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(this), currentStage.delay);
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), currentStage.delay);
 
         delayStartTime = System.currentTimeMillis();
-        
+
     }
-    
-    public void stopTimer(){
-        
+
+    public void stopStageTimer(){
+
         if(delayTimeLeft > -1)
             delayTimeLeft = delayTimeLeft - (System.currentTimeMillis() - delayStartTime);
         else
             delayTimeLeft = currentStage.delay - (System.currentTimeMillis() - delayStartTime);
-        
+
         delayOver = false;
-        
+
     }
-    
+
+    public long getStageTime(){
+
+        if(delayTimeLeft > -1)
+            return delayTimeLeft - (System.currentTimeMillis() - delayStartTime);
+        else
+            return currentStage.delay - (System.currentTimeMillis() - delayStartTime);
+
+    }
+
     public void checkQuest() {
 
         if (currentQuest != null) {
@@ -2636,80 +2642,80 @@ public class Quester {
         }
 
     }
-    
+
     public static String checkPlacement(Inventory inv, int rawSlot){
-        
+
         if(rawSlot < 0){
             return "You may not drop Quest items.";
         }
-        
+
         InventoryType type = inv.getType();
-        
+
         if(type.equals(InventoryType.BREWING)){
-            
+
             if(rawSlot < 4){
                 return "You may not brew using Quest items.";
             }
-            
+
         }else if(type.equals(InventoryType.CHEST)){
-            
+
             if(inv.getContents().length == 27){
-                
+
                 if(rawSlot < 27){
                     return "You may not store Quest items.";
                 }
-                
+
             }else {
-                
+
                 if(rawSlot < 54){
                     return "You may not store Quest items.";
                 }
-                
+
             }
-            
+
         }else if(type.equals(InventoryType.CRAFTING)){
-            
+
             if(rawSlot < 5){
                 return "You may not craft using Quest items.";
             }else if(rawSlot < 9){
                 return "You may not equip Quest items.";
             }
-            
+
         }else if(type.equals(InventoryType.DISPENSER)){
-            
+
             if(rawSlot < 9){
                 return "You may not put Quest items in dispensers.";
             }
-            
+
         }else if(type.equals(InventoryType.ENCHANTING)){
-            
+
             if(rawSlot == 0){
                 return "You may not enchant Quest items.";
             }
-            
+
         }else if(type.equals(InventoryType.ENDER_CHEST)){
-            
+
             if(rawSlot < 27){
                 return "You may not store Quest items.";
             }
-            
+
         }else if(type.equals(InventoryType.FURNACE)){
-            
+
             if(rawSlot < 3){
                 return "You may not smelt using Quest items.";
             }
-            
+
         }else if(type.equals(InventoryType.WORKBENCH)){
-            
+
             if(rawSlot < 10){
                 return "You may not craft using Quest items.";
             }
-            
+
         }
         return null;
-        
+
     }
-    
+
     public static List<Integer> getChangedSlots(Inventory inInv, ItemStack inNew)
     {
         List<Integer> changed = new ArrayList<Integer>();
@@ -2721,7 +2727,7 @@ public class Quester {
             {
                 if(!items.containsKey((Integer)i))
                     continue;
-               
+
                 ItemStack item = items.get((Integer)i);
                 int slotamount = item.getMaxStackSize() - item.getAmount();
                 if(slotamount > 1)
@@ -2740,7 +2746,7 @@ public class Quester {
                     }
                 }
             }
-           
+
             if(amount > 0)
             {
                 if(inInv.firstEmpty() != -1)

@@ -62,34 +62,45 @@ public class Quest {
     //
     public void nextStage(Quester q){
 
-        Player player = plugin.getServer().getPlayerExact(q.name);
+        if(q.currentStage.delay < 0){
 
-        if(stages.indexOf(q.currentStage) == (stages.size() - 1)){
+            Player player = plugin.getServer().getPlayerExact(q.name);
 
-            if(q.currentStage.script != null)
-                plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
-            if(q.currentStage.event != null)
-                q.currentStage.event.happen(player);
-            
-            completeQuest(q);
+            if(stages.indexOf(q.currentStage) == (stages.size() - 1)){
 
-        }else {
+                if(q.currentStage.script != null)
+                    plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
+                if(q.currentStage.event != null)
+                    q.currentStage.event.happen(player);
 
-            q.reset();
-            player.sendMessage(plugin.parseString(q.currentStage.finished, q.currentQuest));
-            if(q.currentStage.script != null)
-                plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
-            if(q.currentStage.event != null)
-                q.currentStage.event.happen(player);
-            q.currentStage = stages.get(stages.indexOf(q.currentStage) + 1);
-            q.addEmpties();
+                completeQuest(q);
 
-            player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
-            for(String s : q.getObjectives()){
+            }else {
 
-                player.sendMessage(s);
+                q.reset();
+                player.sendMessage(plugin.parseString(q.currentStage.finished, q.currentQuest));
+                if(q.currentStage.script != null)
+                    plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
+                if(q.currentStage.event != null)
+                    q.currentStage.event.happen(player);
+                q.currentStage = stages.get(stages.indexOf(q.currentStage) + 1);
+                q.addEmpties();
+
+                player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
+                for(String s : q.getObjectives()){
+
+                    player.sendMessage(s);
+
+                }
 
             }
+
+            q.delayStartTime = 0;
+            q.delayTimeLeft = -1;
+
+        }else{
+
+            q.startStageTimer();
 
         }
 
@@ -98,7 +109,7 @@ public class Quest {
     public String getName(){
         return name;
     }
-    
+
     public boolean testRequirements(Player player){
 
         Quester quester = plugin.getQuester(player.getName());
@@ -201,7 +212,7 @@ public class Quest {
 
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), s);
             none = null;
-            
+
         }
 
         for(String s : permissions){
@@ -215,7 +226,7 @@ public class Quest {
 
             Quests.mcmmo.getPlayerProfile(player.getName()).skillUp(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
             none = null;
-            
+
         }
 
         if(exp > 0){
@@ -227,12 +238,12 @@ public class Quest {
             plugin.heroes.getCharacterManager().getHero(player).gainExp(heroesExp, ExperienceType.QUESTING, player.getLocation());
             none = null;
         }
-        
+
         if(heroesClass != null){
             plugin.heroes.getCharacterManager().getHero(player).changeHeroClass(plugin.heroes.getClassManager().getClass(heroesClass), false);
             none = null;
         }
-        
+
         if(heroesSecClass != null){
             plugin.heroes.getCharacterManager().getHero(player).changeHeroClass(plugin.heroes.getClassManager().getClass(heroesSecClass), true);
             none = null;
