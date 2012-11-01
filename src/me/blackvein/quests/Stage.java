@@ -30,14 +30,14 @@ public class Stage {
     LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
     LinkedList<String> areaNames = new LinkedList<String>();
     LinkedList<NPC> citizensToInteract = new LinkedList<NPC>(){
-    
+
         @Override
         public boolean equals(Object o) {
 
             if (o instanceof LinkedList) {
-                
+
                 LinkedList<NPC> otherList = (LinkedList<NPC>) o;
-                
+
                 for (NPC n : this) {
 
                     NPC other = otherList.get(this.indexOf(n));
@@ -51,7 +51,7 @@ public class Stage {
             return true;
 
         }
-        
+
     };
     LinkedList<NPC> citizensToKill = new LinkedList<NPC>() {
 
@@ -59,9 +59,9 @@ public class Stage {
         public boolean equals(Object o) {
 
             if (o instanceof LinkedList) {
-                
+
                 LinkedList<NPC> otherList = (LinkedList<NPC>) o;
-                
+
                 for (NPC n : this) {
 
                     NPC other = otherList.get(this.indexOf(n));
@@ -75,7 +75,7 @@ public class Stage {
             return true;
 
         }
-        
+
     };
     LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
     LinkedList<Location> locationsToReach = new LinkedList<Location>();
@@ -84,7 +84,7 @@ public class Stage {
     LinkedList<String> locationNames = new LinkedList<String>();
     Map<EntityType, Integer> mobsToTame = new EnumMap<EntityType, Integer>(EntityType.class);
     Map<DyeColor, Integer> sheepToShear = new EnumMap<DyeColor, Integer>(DyeColor.class);
-    Map<Material, Integer> itemsToCraft = new EnumMap<Material, Integer>(Material.class);
+    Map<EnumMap<Material, Integer>, Boolean> itemsToCraft = new HashMap<EnumMap<Material, Integer>, Boolean>();
     String script;
     Event event;
     long delay = -1;
@@ -234,10 +234,10 @@ public class Stage {
             } else if (other.event == null && event != null) {
                 return false;
             }
-            
+
             if(other.delay != delay)
                 return false;
-            
+
             if (other.delayMessage != null && delayMessage != null) {
                 if (other.delayMessage.equals(delayMessage) == false) {
                     return false;

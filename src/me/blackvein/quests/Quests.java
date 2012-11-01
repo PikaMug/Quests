@@ -1321,6 +1321,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         ConfigurationSection section1 = config.getConfigurationSection("quests");
         boolean failedToLoad = false;
         totalQuestPoints = 0;
+        boolean firstStage = true;
         for (String s : section1.getKeys(false)) {
 
             try {
@@ -2344,18 +2345,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                     }
 
-                    for (Entry e : itemMap.entrySet()) {
+                    if(firstStage){
 
-                        if ((Boolean) e.getValue() == true) {
+                        for (Entry e : itemMap.entrySet()) {
 
-                            Map<Material, Integer> tempMap = (Map<Material, Integer>) e.getKey();
-                            for (Entry e2 : tempMap.entrySet()) {
+                            if ((Boolean) e.getValue() == true) {
 
-                                if (quest.questItems.containsKey((Material) e2.getKey())) {
-
-                                    quest.questItems.put((Material) e2.getKey(), (quest.questItems.get((Material) e2.getKey()) + (Integer) e2.getValue()));
-
-                                } else {
+                                Map<Material, Integer> tempMap = (Map<Material, Integer>) e.getKey();
+                                for (Entry e2 : tempMap.entrySet()) {
 
                                     quest.questItems.put((Material) e2.getKey(), (Integer) e2.getValue());
 
@@ -2644,13 +2641,30 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                                 if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts"), Integer.class)) {
 
-                                    List<Integer> craftIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-ids");
-                                    List<Integer> craftAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts");
+                                    if(config.contains("quests." + s + ".stages.ordered." + s2 + ".craft-quest-items")){
 
-                                    for (int i : craftIds) {
+                                        if(Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".craft-quest-items"), Boolean.class)){
 
-                                        stage.itemsToCraft.put(Material.getMaterial(i), craftAmounts.get(craftIds.indexOf(i)));
+                                            List<Integer> craftIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-ids");
+                                            List<Integer> craftAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts");
+                                            List<Boolean> craftQuestItems = config.getBooleanList("quests." + s + ".stages.ordered." + s2 + ".craft-quest-items");
 
+                                            for (int i : craftIds) {
+
+                                                EnumMap<Material, Integer> map = new EnumMap<Material, Integer>(Material.class);
+                                                if(firstStage)
+                                                    quest.questItems.put(Material.getMaterial(i), craftAmounts.get(craftIds.indexOf(i)));
+                                                map.put(Material.getMaterial(i), craftAmounts.get(craftIds.indexOf(i)));
+                                                stage.itemsToCraft.put(map, craftQuestItems.get(craftIds.indexOf(i)));
+
+                                            }
+
+                                        }
+
+                                    }else{
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "craft-quest-items:");
+                                        stageFailed = true;
+                                        break;
                                     }
 
                                 } else {
@@ -2686,7 +2700,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         }
 
                     }
-                    
+
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay")) {
 
                         if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999){
@@ -2698,11 +2712,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         }
 
                     }
-                    
+
                     if(config.contains("quests." + s + ".stages.ordered." + s2 + ".delay-message")){
-                        
+
                         stage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
-                        
+
                     }
 
                     stage.citizensToInteract = npcsToTalkTo;
@@ -2711,6 +2725,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         break;
                     }
                     quest.stages.add(stage);
+                    firstStage = false;
 
                 }
 
@@ -3709,12 +3724,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public boolean checkQuester(String name){
 
         for(String s : questerBlacklist){
-            
+
             if(Quests.checkQuester(name, s))
                 return true;
-            
+
         }
-        
+
         return false;
 
     }

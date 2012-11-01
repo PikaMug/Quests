@@ -101,298 +101,23 @@ public class Quester {
 
     public LinkedList<String> getObjectives() {
 
-        if(delayStartTime == 0){
-            
-            LinkedList<String> unfinishedObjectives = new LinkedList<String>();
-            LinkedList<String> finishedObjectives = new LinkedList<String>();
-            LinkedList<String> objectives = new LinkedList<String>();
+        LinkedList<String> unfinishedObjectives = new LinkedList<String>();
+        LinkedList<String> finishedObjectives = new LinkedList<String>();
+        LinkedList<String> objectives = new LinkedList<String>();
 
-            for (Entry e : currentStage.blocksToDamage.entrySet()) {
+        for (Entry e : currentStage.blocksToDamage.entrySet()) {
 
-                for (Entry e2 : blocksDamaged.entrySet()) {
+            for (Entry e2 : blocksDamaged.entrySet()) {
 
-                    if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
 
-                        if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
 
-                            unfinishedObjectives.add(ChatColor.GREEN + "Damage " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + (Integer) e2.getValue() + "/" + ((Integer) e.getValue()));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Damage " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (Entry e : currentStage.blocksToBreak.entrySet()) {
-
-                for (Entry e2 : blocksBroken.entrySet()) {
-
-                    if (((Material) e2.getKey()).equals((Material) e.getKey())) {
-
-                        if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Break " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Break " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (Entry e : currentStage.blocksToPlace.entrySet()) {
-
-                for (Entry e2 : blocksPlaced.entrySet()) {
-
-                    if (((Material) e2.getKey()).equals((Material) e.getKey())) {
-
-                        if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Place " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Place " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (Entry e : currentStage.itemsToCollect.entrySet()) {
-
-                Map<Material, Integer> map = (Map<Material, Integer>) e.getKey();
-
-                for (Entry e2 : map.entrySet()) {
-
-                    for (Entry e3 : itemsCollected.entrySet()) {
-
-                        if (((Material) e3.getKey()).equals((Material) e2.getKey())) {
-
-                            if (((Integer) e3.getValue()) < ((Integer) e2.getValue())) {
-
-                                unfinishedObjectives.add(ChatColor.GREEN + "Collect " + Quester.prettyItemString(((Material) e3.getKey()).getId()) + ": " + ((Integer) e3.getValue()) + "/" + ((Integer) e2.getValue()));
-
-                            } else {
-
-                                finishedObjectives.add(ChatColor.GRAY + "Collect " + Quester.prettyItemString(((Material) e3.getKey()).getId()) + ": " + ((Integer) e3.getValue()) + "/" + ((Integer) e2.getValue()));
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (Entry e : currentStage.blocksToUse.entrySet()) {
-
-                for (Entry e2 : blocksUsed.entrySet()) {
-
-                    if (((Material) e2.getKey()).equals((Material) e.getKey())) {
-
-                        if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Use " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Use " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (Entry e : currentStage.blocksToCut.entrySet()) {
-
-                for (Entry e2 : blocksCut.entrySet()) {
-
-                    if (((Material) e2.getKey()).equals((Material) e.getKey())) {
-
-                        if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Cut " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Cut " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            if (currentStage.fishToCatch != null) {
-
-                if (fishCaught < currentStage.fishToCatch) {
-
-                    unfinishedObjectives.add(ChatColor.GREEN + "Catch Fish: " + fishCaught + "/" + currentStage.fishToCatch);
-
-                } else {
-
-                    finishedObjectives.add(ChatColor.GRAY + "Catch Fish: " + fishCaught + "/" + currentStage.fishToCatch);
-
-                }
-
-            }
-
-            Map set;
-            Map set2;
-            Set<Enchantment> enchantSet;
-            Set<Enchantment> enchantSet2;
-            Collection<Material> matSet;
-            Enchantment enchantment = null;
-            Enchantment enchantment2 = null;
-            Material mat = null;
-            int num1;
-            int num2;
-
-            for (Entry e : currentStage.itemsToEnchant.entrySet()) {
-
-                for (Entry e2 : itemsEnchanted.entrySet()) {
-
-                    set = (Map<Enchantment, Material>) e2.getKey();
-                    set2 = (Map<Enchantment, Material>) e.getKey();
-                    enchantSet = (Set<Enchantment>) set.keySet();
-                    enchantSet2 = (Set<Enchantment>) set2.keySet();
-                    for (Object o : enchantSet.toArray()) {
-
-                        enchantment = (Enchantment) o;
-
-                    }
-                    for (Object o : enchantSet2.toArray()) {
-
-                        enchantment2 = (Enchantment) o;
-
-                    }
-                    num1 = (Integer) e2.getValue();
-                    num2 = (Integer) e.getValue();
-
-                    matSet = (Collection<Material>) set.values();
-
-                    for (Object o : matSet.toArray()) {
-
-                        mat = (Material) o;
-
-                    }
-
-                    if (enchantment2 == enchantment) {
-
-                        if (num1 < num2) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Enchant " + Quester.prettyItemString(mat.getId()) + " with " + Quester.prettyEnchantmentString(enchantment) + ": " + num1 + "/" + num2);
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Enchant " + Quester.prettyItemString(mat.getId()) + " with " + Quester.prettyEnchantmentString(enchantment) + ": " + num1 + "/" + num2);
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (EntityType e : currentStage.mobsToKill) {
-
-                for (EntityType e2 : mobsKilled) {
-
-                    if (e == e2) {
-
-                        if (mobNumKilled.get(mobsKilled.indexOf(e2)) < currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))) {
-
-                            if (currentStage.locationsToKillWithin.isEmpty()) {
-                                unfinishedObjectives.add(ChatColor.GREEN + "Kill " + Quester.prettyMobString(e) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
-                            } else {
-                                unfinishedObjectives.add(ChatColor.GREEN + "Kill " + Quester.prettyMobString(e) + " at " + currentStage.areaNames.get(currentStage.mobsToKill.indexOf(e)) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
-                            }
-                        } else {
-
-                            if (currentStage.locationsToKillWithin.isEmpty()) {
-                                finishedObjectives.add(ChatColor.GRAY + "Kill " + Quester.prettyMobString(e) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
-                            } else {
-                                finishedObjectives.add(ChatColor.GRAY + "Kill " + Quester.prettyMobString(e) + " at " + currentStage.areaNames.get(currentStage.mobsToKill.indexOf(e)) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            if (currentStage.playersToKill != null) {
-
-                if (playersKilled < currentStage.playersToKill) {
-
-                    unfinishedObjectives.add(ChatColor.GREEN + "Kill a Player: " + playersKilled + "/" + currentStage.playersToKill);
-
-                } else {
-
-                    finishedObjectives.add(ChatColor.GRAY + "Kill a Player: " + playersKilled + "/" + currentStage.playersToKill);
-
-                }
-
-            }
-
-            for (NPC n : currentStage.citizensToInteract) {
-
-                for (Entry e : citizensInteracted.entrySet()) {
-
-                    if (((NPC) e.getKey()).equals(n)) {
-
-                        if (((Boolean) e.getValue()) == false) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getFullName());
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Talk to " + n.getName());
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (NPC n : currentStage.citizensToKill) {
-
-                for (NPC n2 : citizensKilled) {
-
-                    if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
-
-                        unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getFullName() + ChatColor.GREEN + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Damage " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + (Integer) e2.getValue() + "/" + ((Integer) e.getValue()));
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getName() + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                        finishedObjectives.add(ChatColor.GRAY + "Damage " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
 
                     }
 
@@ -400,125 +125,372 @@ public class Quester {
 
             }
 
-            for (Entry e : currentStage.mobsToTame.entrySet()) {
-
-                for (Entry e2 : mobsTamed.entrySet()) {
-
-                    if (e.getKey().equals(e2.getKey())) {
-
-                        if ((Integer) e2.getValue() < (Integer) e.getValue()) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Tame " + getCapitalized(((EntityType) e.getKey()).getName()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Tame " + getCapitalized(((EntityType) e.getKey()).getName()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (Entry e : currentStage.sheepToShear.entrySet()) {
-
-                for (Entry e2 : sheepSheared.entrySet()) {
-
-                    if (e.getKey().equals(e2.getKey())) {
-
-                        if ((Integer) e2.getValue() < (Integer) e.getValue()) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Shear " + ((DyeColor) e.getKey()).name().toString().toLowerCase() + " sheep: " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Shear " + ((DyeColor) e.getKey()).name().toString().toLowerCase() + " sheep: " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (Entry e : currentStage.itemsToCraft.entrySet()) {
-
-                for (Entry e2 : itemsCrafted.entrySet()) {
-
-                    if (e.getKey().equals(e2.getKey())) {
-
-                        if ((Integer) e2.getValue() < (Integer) e.getValue()) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Craft " + prettyItemString(((Material) e.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Craft " + prettyItemString(((Material) e.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            for (Location l : currentStage.locationsToReach) {
-
-                for (Location l2 : locationsReached) {
-
-                    if (l.equals(l2)) {
-
-                        if (hasReached.get(locationsReached.indexOf(l2)) == false) {
-
-                            unfinishedObjectives.add(ChatColor.GREEN + "Go to " + currentStage.locationNames.get(currentStage.locationsToReach.indexOf(l)));
-
-                        } else {
-
-                            finishedObjectives.add(ChatColor.GRAY + "Go to " + currentStage.locationNames.get(currentStage.locationsToReach.indexOf(l)));
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            objectives.addAll(unfinishedObjectives);
-            objectives.addAll(finishedObjectives);
-
-            return objectives;
-
-        }else{
-            
-            long time;
-            if(delayTimeLeft > -1)
-                time = delayTimeLeft - (System.currentTimeMillis() - delayStartTime);
-            else
-                time = currentStage.delay - (System.currentTimeMillis() - delayStartTime);
-            
-            LinkedList<String> obj = new LinkedList<String>();
-            String s;
-            
-            if(currentStage.delayMessage != null){
-                
-                s = currentStage.delayMessage;
-
-                s = plugin.parseString(s, currentQuest);
-                s = s.replaceAll("<time>", Quests.getTime(time));
-            
-            }else
-                s = ChatColor.YELLOW + "Wait " + ChatColor.DARK_PURPLE + Quests.getTime(time) + ChatColor.YELLOW + ".";
-            
-            obj.add(s);
-            return obj;
-            
         }
-        
+
+        for (Entry e : currentStage.blocksToBreak.entrySet()) {
+
+            for (Entry e2 : blocksBroken.entrySet()) {
+
+                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+
+                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Break " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Break " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (Entry e : currentStage.blocksToPlace.entrySet()) {
+
+            for (Entry e2 : blocksPlaced.entrySet()) {
+
+                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+
+                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Place " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Place " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (Entry e : currentStage.itemsToCollect.entrySet()) {
+
+            Map<Material, Integer> map = (Map<Material, Integer>) e.getKey();
+
+            for (Entry e2 : map.entrySet()) {
+
+                for (Entry e3 : itemsCollected.entrySet()) {
+
+                    if (((Material) e3.getKey()).equals((Material) e2.getKey())) {
+
+                        if (((Integer) e3.getValue()) < ((Integer) e2.getValue())) {
+
+                            unfinishedObjectives.add(ChatColor.GREEN + "Collect " + Quester.prettyItemString(((Material) e3.getKey()).getId()) + ": " + ((Integer) e3.getValue()) + "/" + ((Integer) e2.getValue()));
+
+                        } else {
+
+                            finishedObjectives.add(ChatColor.GRAY + "Collect " + Quester.prettyItemString(((Material) e3.getKey()).getId()) + ": " + ((Integer) e3.getValue()) + "/" + ((Integer) e2.getValue()));
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (Entry e : currentStage.blocksToUse.entrySet()) {
+
+            for (Entry e2 : blocksUsed.entrySet()) {
+
+                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+
+                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Use " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Use " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (Entry e : currentStage.blocksToCut.entrySet()) {
+
+            for (Entry e2 : blocksCut.entrySet()) {
+
+                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+
+                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Cut " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Cut " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        if (currentStage.fishToCatch != null) {
+
+            if (fishCaught < currentStage.fishToCatch) {
+
+                unfinishedObjectives.add(ChatColor.GREEN + "Catch Fish: " + fishCaught + "/" + currentStage.fishToCatch);
+
+            } else {
+
+                finishedObjectives.add(ChatColor.GRAY + "Catch Fish: " + fishCaught + "/" + currentStage.fishToCatch);
+
+            }
+
+        }
+
+        Map set;
+        Map set2;
+        Set<Enchantment> enchantSet;
+        Set<Enchantment> enchantSet2;
+        Collection<Material> matSet;
+        Enchantment enchantment = null;
+        Enchantment enchantment2 = null;
+        Material mat = null;
+        int num1;
+        int num2;
+
+        for (Entry e : currentStage.itemsToEnchant.entrySet()) {
+
+            for (Entry e2 : itemsEnchanted.entrySet()) {
+
+                set = (Map<Enchantment, Material>) e2.getKey();
+                set2 = (Map<Enchantment, Material>) e.getKey();
+                enchantSet = (Set<Enchantment>) set.keySet();
+                enchantSet2 = (Set<Enchantment>) set2.keySet();
+                for (Object o : enchantSet.toArray()) {
+
+                    enchantment = (Enchantment) o;
+
+                }
+                for (Object o : enchantSet2.toArray()) {
+
+                    enchantment2 = (Enchantment) o;
+
+                }
+                num1 = (Integer) e2.getValue();
+                num2 = (Integer) e.getValue();
+
+                matSet = (Collection<Material>) set.values();
+
+                for (Object o : matSet.toArray()) {
+
+                    mat = (Material) o;
+
+                }
+
+                if (enchantment2 == enchantment) {
+
+                    if (num1 < num2) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Enchant " + Quester.prettyItemString(mat.getId()) + " with " + Quester.prettyEnchantmentString(enchantment) + ": " + num1 + "/" + num2);
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Enchant " + Quester.prettyItemString(mat.getId()) + " with " + Quester.prettyEnchantmentString(enchantment) + ": " + num1 + "/" + num2);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (EntityType e : currentStage.mobsToKill) {
+
+            for (EntityType e2 : mobsKilled) {
+
+                if (e == e2) {
+
+                    if (mobNumKilled.get(mobsKilled.indexOf(e2)) < currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))) {
+
+                        if (currentStage.locationsToKillWithin.isEmpty()) {
+                            unfinishedObjectives.add(ChatColor.GREEN + "Kill " + Quester.prettyMobString(e) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
+                        } else {
+                            unfinishedObjectives.add(ChatColor.GREEN + "Kill " + Quester.prettyMobString(e) + " at " + currentStage.areaNames.get(currentStage.mobsToKill.indexOf(e)) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
+                        }
+                    } else {
+
+                        if (currentStage.locationsToKillWithin.isEmpty()) {
+                            finishedObjectives.add(ChatColor.GRAY + "Kill " + Quester.prettyMobString(e) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
+                        } else {
+                            finishedObjectives.add(ChatColor.GRAY + "Kill " + Quester.prettyMobString(e) + " at " + currentStage.areaNames.get(currentStage.mobsToKill.indexOf(e)) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        if (currentStage.playersToKill != null) {
+
+            if (playersKilled < currentStage.playersToKill) {
+
+                unfinishedObjectives.add(ChatColor.GREEN + "Kill a Player: " + playersKilled + "/" + currentStage.playersToKill);
+
+            } else {
+
+                finishedObjectives.add(ChatColor.GRAY + "Kill a Player: " + playersKilled + "/" + currentStage.playersToKill);
+
+            }
+
+        }
+
+        for (NPC n : currentStage.citizensToInteract) {
+
+            for (Entry e : citizensInteracted.entrySet()) {
+
+                if (((NPC) e.getKey()).equals(n)) {
+
+                    if (((Boolean) e.getValue()) == false) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getFullName());
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Talk to " + n.getName());
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (NPC n : currentStage.citizensToKill) {
+
+            for (NPC n2 : citizensKilled) {
+
+                if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
+
+                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getFullName() + ChatColor.GREEN + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+
+                } else {
+
+                    finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getName() + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+
+                }
+
+            }
+
+        }
+
+        for (Entry e : currentStage.mobsToTame.entrySet()) {
+
+            for (Entry e2 : mobsTamed.entrySet()) {
+
+                if (e.getKey().equals(e2.getKey())) {
+
+                    if ((Integer) e2.getValue() < (Integer) e.getValue()) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Tame " + getCapitalized(((EntityType) e.getKey()).getName()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Tame " + getCapitalized(((EntityType) e.getKey()).getName()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (Entry e : currentStage.sheepToShear.entrySet()) {
+
+            for (Entry e2 : sheepSheared.entrySet()) {
+
+                if (e.getKey().equals(e2.getKey())) {
+
+                    if ((Integer) e2.getValue() < (Integer) e.getValue()) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Shear " + ((DyeColor) e.getKey()).name().toString().toLowerCase() + " sheep: " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Shear " + ((DyeColor) e.getKey()).name().toString().toLowerCase() + " sheep: " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (Entry e : currentStage.itemsToCraft.entrySet()) {
+
+            for (Entry e2 : itemsCrafted.entrySet()) {
+
+                if (e.getKey().equals(e2.getKey())) {
+
+                    if ((Integer) e2.getValue() < (Integer) e.getValue()) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Craft " + prettyItemString(((Material) e.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Craft " + prettyItemString(((Material) e.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        for (Location l : currentStage.locationsToReach) {
+
+            for (Location l2 : locationsReached) {
+
+                if (l.equals(l2)) {
+
+                    if (hasReached.get(locationsReached.indexOf(l2)) == false) {
+
+                        unfinishedObjectives.add(ChatColor.GREEN + "Go to " + currentStage.locationNames.get(currentStage.locationsToReach.indexOf(l)));
+
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Go to " + currentStage.locationNames.get(currentStage.locationsToReach.indexOf(l)));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        objectives.addAll(unfinishedObjectives);
+        objectives.addAll(finishedObjectives);
+
+        return objectives;
+
     }
 
     public boolean hasObjective(String s) {
@@ -990,10 +962,28 @@ public class Quester {
 
         if (itemsCrafted.containsKey(i.getType())) {
 
-            itemsCrafted.put(i.getType(), (itemsCrafted.get(i.getType()) + i.getAmount()));
+            for (EnumMap m : currentStage.itemsToCraft.keySet()) {
 
-            if (itemsCrafted.get(i.getType()) >= currentStage.itemsToCraft.get(i.getType())) {
-                finishObjective("craftItem", i.getType(), null, null, null, null, null, null, null, 0);
+                if (m.containsKey(i.getType())) {
+
+                    if (itemsCrafted.get(i.getType()) < (Integer) m.get(i.getType())) {
+                        int integer = itemsCrafted.get(i.getType());
+                        if ((i.getAmount() + integer) >= (Integer) m.get(i.getType())) {
+                            itemsCrafted.put(i.getType(), (Integer) m.get(i.getType()));
+                        } else {
+                            itemsCrafted.put(i.getType(), (integer + i.getAmount()));
+                        }
+
+                        if (itemsCrafted.get(i.getType()).equals((Integer) m.get(i.getType()))) {
+                            finishObjective("craftItem", null, i, null, null, null, null, null, null, 0);
+                        }
+
+                    }
+
+                    break;
+
+                }
+
             }
 
         }
@@ -1034,16 +1024,7 @@ public class Quester {
         } else if (objective.equalsIgnoreCase("collectItem")) {
 
             String message = ChatColor.GREEN + "(Completed) Collect " + prettyItemString(itemstack.getTypeId());
-            for (Map<Material, Integer> map : currentStage.itemsToCollect.keySet()) {
-
-                if (map.containsKey(itemstack.getType())) {
-
-                    message = message + " " + map.get(itemstack.getType()) + "/" + map.get(itemstack.getType());
-                    break;
-
-                }
-
-            }
+            message = message + " " + itemsCollected.get(material) + "/" + itemsCollected.get(material);
 
             p.sendMessage(message);
             if (testComplete()) {
@@ -1152,7 +1133,7 @@ public class Quester {
         } else if (objective.equalsIgnoreCase("craftItem")) {
 
             String message = ChatColor.GREEN + "(Completed) Craft " + prettyItemString(material.getId());
-            message = message + " " + currentStage.itemsToCraft.get(material) + "/" + currentStage.itemsToCraft.get(material);
+            message = message + " " + itemsCrafted.get(material) + "/" + itemsCrafted.get(material);
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1317,9 +1298,13 @@ public class Quester {
         }
 
         if (currentStage.itemsToCraft.isEmpty() == false) {
-            for (Material m : currentStage.itemsToCraft.keySet()) {
+            for (Entry e : currentStage.itemsToCraft.entrySet()) {
 
-                itemsCrafted.put(m, 0);
+                for (Object o : ((Map) e.getKey()).keySet()) {
+
+                    itemsCrafted.put((Material) o, 0);
+
+                }
 
             }
         }
@@ -2599,14 +2584,11 @@ public class Quester {
 
     public void startStageTimer(){
 
-        if(delayTimeLeft > -1){
-            System.out.println("Starting a new timer.");
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), delayTimeLeft/50);
-        }else{
-            System.out.println("Resuming timer.");
-            System.out.println("Delay: " + currentStage.delay/50 + " ticks. (" + (currentStage.delay/1000) + " seconds)");
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), currentStage.delay/50);
-        }
+        if(delayTimeLeft > -1)
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), delayTimeLeft*50);
+        else
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), currentStage.delay);
+
         delayStartTime = System.currentTimeMillis();
 
     }

@@ -86,6 +86,36 @@ public class Quest {
                 q.currentStage = stages.get(stages.indexOf(q.currentStage) + 1);
                 q.addEmpties();
 
+                for (Entry e : q.currentStage.itemsToCollect.entrySet()) {
+
+                    if ((Boolean) e.getValue() == true) {
+
+                        Map<Material, Integer> tempMap = (Map<Material, Integer>) e.getKey();
+                        for (Entry e2 : tempMap.entrySet()) {
+
+                            questItems.put((Material) e2.getKey(), (Integer) e2.getValue());
+
+                        }
+
+                    }
+
+                }
+
+                for (Entry e : q.currentStage.itemsToCraft.entrySet()) {
+
+                    if ((Boolean) e.getValue() == true) {
+
+                        Map<Material, Integer> tempMap = (Map<Material, Integer>) e.getKey();
+                        for (Entry e2 : tempMap.entrySet()) {
+
+                            questItems.put((Material) e2.getKey(), (Integer) e2.getValue());
+
+                        }
+
+                    }
+
+                }
+
                 player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
                 for(String s : q.getObjectives()){
 
