@@ -788,7 +788,7 @@ public class PlayerListener implements Listener {
         if(plugin.checkQuester(evt.getPlayer().getName()) == false){
 
             boolean isPlayer = true;
-            if (plugin.getServer().getPluginManager().getPlugin("Citizens") != null) {
+            if (plugin.citizens != null) {
                 if (plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer())) {
                     isPlayer = false;
                 }
