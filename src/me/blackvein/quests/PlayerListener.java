@@ -23,6 +23,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
@@ -260,7 +261,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onCraftItem(CraftItemEvent evt) {
-
+        
         if (evt.getWhoClicked() instanceof Player) {
 
             Player p = (Player) evt.getWhoClicked();
@@ -502,6 +503,9 @@ public class PlayerListener implements Listener {
 
                             if (quester.currentQuest.questItems.containsKey(mat)) {
 
+                                if(evt.getInventory().getType().equals(InventoryType.CRAFTING) && evt.getRawSlot() == 0)
+                                    return;
+                                
                                 List<Integer> changedSlots = Quester.getChangedSlots(evt.getInventory(), evt.getCurrentItem());
                                 boolean can = true;
                                 for (int i : changedSlots) {
