@@ -3799,4 +3799,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         return null;
     }
+
+    public int getCraftTimes(Inventory i, Recipe r){
+
+        return 0;
+
+    }
 }

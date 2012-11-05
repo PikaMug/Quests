@@ -261,7 +261,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onCraftItem(CraftItemEvent evt) {
-        
+
         if (evt.getWhoClicked() instanceof Player) {
 
             Player p = (Player) evt.getWhoClicked();
@@ -271,6 +271,12 @@ public class PlayerListener implements Listener {
                 if (quester.hasObjective("craftItem")) {
 
                     quester.craftItem(evt.getCurrentItem());
+
+                }
+
+                if(evt.isShiftClick()){
+
+                    evt.
 
                 }
 
@@ -505,7 +511,7 @@ public class PlayerListener implements Listener {
 
                                 if(evt.getInventory().getType().equals(InventoryType.CRAFTING) && evt.getRawSlot() == 0)
                                     return;
-                                
+
                                 List<Integer> changedSlots = Quester.getChangedSlots(evt.getInventory(), evt.getCurrentItem());
                                 boolean can = true;
                                 for (int i : changedSlots) {
