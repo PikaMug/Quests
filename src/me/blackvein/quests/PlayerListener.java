@@ -261,21 +261,19 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onCraftItem(CraftItemEvent evt) {
+    public void onCraftItem(final CraftItemEvent evt) {
 
         if (evt.getWhoClicked() instanceof Player) {
 
             Player p = (Player) evt.getWhoClicked();
             if (plugin.checkQuester(p.getName()) == false) {
 
-                Quester quester = plugin.getQuester(p.getName());
-                if (quester.hasObjective("craftItem")) {
+                final Quester quester = plugin.getQuester(p.getName());
+                if (evt.isShiftClick() == false && quester.hasObjective("craftItem")) {
 
                     quester.craftItem(evt.getCurrentItem());
 
-                }
-
-                if(evt.isShiftClick()){
+                }else if(quester.hasObjective("craftItem")){
 
                     final int amntBefore = Quests.countInv(evt.getInventory(), evt.getCurrentItem().getType());
                     final Material mat = evt.getCurrentItem().getType();
@@ -285,7 +283,12 @@ public class PlayerListener implements Listener {
                         @Override
                         public void run(){
                             
-                            int amntAfter = Quests.countInv(evt.getInventory(), mat);
+                            if(evt.isCancelled() == false){
+                                
+                                int amntAfter = Quests.countInv(inv, mat);
+                                quester.craftItem(new ItemStack(mat, amntAfter - amntBefore));
+                            
+                            }
                             
                         }
                         
