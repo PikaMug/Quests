@@ -26,6 +26,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -276,7 +277,19 @@ public class PlayerListener implements Listener {
 
                 if(evt.isShiftClick()){
 
-                    evt.
+                    final int amntBefore = Quests.countInv(evt.getInventory(), evt.getCurrentItem().getType());
+                    final Material mat = evt.getCurrentItem().getType();
+                    final Inventory inv = evt.getInventory();
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+                        
+                        @Override
+                        public void run(){
+                            
+                            int amntAfter = Quests.countInv(evt.getInventory(), mat);
+                            
+                        }
+                        
+                    }, 5);
 
                 }
 

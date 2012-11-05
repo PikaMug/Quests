@@ -25,9 +25,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.*;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -3799,10 +3797,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         return null;
     }
-
-    public int getCraftTimes(Inventory i, Recipe r){
-
-        return 0;
-
+    
+    public static int countInv(Inventory inv, Material m){
+        
+        int count = 0;
+        
+        for(ItemStack i : inv.getContents()){
+            
+            if(i != null){
+                if(i.getType().equals(m))
+                    count += i.getAmount();
+            }
+            
+        }
+        
+        return count;
+        
     }
 }
