@@ -444,6 +444,7 @@ public class Quester {
 
         for (Entry e : currentStage.itemsToCraft.entrySet()) {
 
+            System.out.println("Entry.");
             for (Entry e2 : itemsCrafted.entrySet()) {
 
                 if (e.getKey().equals(e2.getKey())) {

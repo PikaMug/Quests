@@ -25,7 +25,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -152,10 +154,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             public void run() {
                 loadQuests();
                 log.log(Level.INFO, "[Quests] " + quests.size() + " Quest(s) loaded.");
+                questers = getOnlineQuesters();
             }
         }, 5L);
-
-        questers = getOnlineQuesters();
 
     }
 
@@ -1292,12 +1293,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
             Quester quester = new Quester(this);
             quester.name = p.getName();
-            if (new File(getDataFolder(), "data/" + quester.name + ".yml").exists()) {
-                quester.loadData();
-            } else {
+            if (quester.loadData() == false) {
+                System.out.println("Saving data.");
                 quester.saveData();
+            } else {
+                System.out.println("Loaded data.");
             }
             qs.put(p.getName(), quester);
+            System.out.println("Quester: " + quester.name);
+            System.out.println("Current Quest: " + quester.currentQuest.name);
 
         }
 
