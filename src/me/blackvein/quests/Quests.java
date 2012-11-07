@@ -3802,7 +3802,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return null;
     }
     
-    public static int countInv(Inventory inv, Material m){
+    public static int countInv(Inventory inv, Material m, int subtract){
         
         int count = 0;
         
@@ -3815,7 +3815,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             
         }
         
-        return count;
+        return count - subtract;
         
     }
 }

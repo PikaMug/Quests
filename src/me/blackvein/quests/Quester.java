@@ -444,18 +444,21 @@ public class Quester {
 
         for (Entry e : currentStage.itemsToCraft.entrySet()) {
 
-            System.out.println("Entry.");
+            Entry entry = null;
+            for(Object o : ((Map) e.getKey()).entrySet())
+                entry = (Entry) o;
+            
             for (Entry e2 : itemsCrafted.entrySet()) {
 
-                if (e.getKey().equals(e2.getKey())) {
+                if (entry.getKey().equals(e2.getKey())) {
 
-                    if ((Integer) e2.getValue() < (Integer) e.getValue()) {
+                    if ((Integer) e2.getValue() < (Integer) entry.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Craft " + prettyItemString(((Material) e.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Craft " + prettyItemString(((Material) entry.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) entry.getValue()));
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Craft " + prettyItemString(((Material) e.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        finishedObjectives.add(ChatColor.GRAY + "Craft " + prettyItemString(((Material) entry.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) entry.getValue()));
 
                     }
 
@@ -976,7 +979,7 @@ public class Quester {
                         }
 
                         if (itemsCrafted.get(i.getType()).equals((Integer) m.get(i.getType()))) {
-                            finishObjective("craftItem", null, i, null, null, null, null, null, null, 0);
+                            finishObjective("craftItem", i.getType(), null, null, null, null, null, null, null, 0);
                         }
 
                     }

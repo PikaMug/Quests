@@ -274,9 +274,10 @@ public class PlayerListener implements Listener {
 
                 }else if(quester.hasObjective("craftItem")){
 
-                    final int amntBefore = Quests.countInv(evt.getInventory(), evt.getCurrentItem().getType());
+                    final int amntBefore = Quests.countInv(evt.getInventory(), evt.getCurrentItem().getType(), evt.getCurrentItem().getAmount());
+                    System.out.println("Amount before: " + amntBefore);
                     final Material mat = evt.getCurrentItem().getType();
-                    final Inventory inv = evt.getInventory();
+                    final Inventory inv = evt.getWhoClicked().getInventory();
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
                         
                         @Override
@@ -284,7 +285,8 @@ public class PlayerListener implements Listener {
                             
                             if(evt.isCancelled() == false){
                                 
-                                int amntAfter = Quests.countInv(inv, mat);
+                                int amntAfter = Quests.countInv(inv, mat, 0);
+                                System.out.println("Amount after: " + amntAfter);
                                 quester.craftItem(new ItemStack(mat, amntAfter - amntBefore));
                             
                             }
@@ -392,7 +394,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent evt) {
-
+        System.out.println("Click fired.");
         Player player = null;
         if (evt.getWhoClicked() instanceof Player) {
             player = (Player) evt.getWhoClicked();
@@ -516,16 +518,15 @@ public class PlayerListener implements Listener {
                 } else {
 
                     if (evt.getCurrentItem() != null) {
-
                         Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
                         Material mat = evt.getCurrentItem().getType();
 
                         if (quester.currentQuest != null) {
-
                             if (quester.currentQuest.questItems.containsKey(mat)) {
-
-                                if(evt.getInventory().getType().equals(InventoryType.CRAFTING) && evt.getRawSlot() == 0)
+                                System.out.println(evt.getInventory().getType());
+                                if((evt.getInventory().getType().equals(InventoryType.WORKBENCH) && evt.getRawSlot() == 0) || (evt.getInventory().getType().equals(InventoryType.CRAFTING) && evt.getRawSlot() == 0)){
                                     return;
+                                }
 
                                 List<Integer> changedSlots = Quester.getChangedSlots(evt.getInventory(), evt.getCurrentItem());
                                 boolean can = true;
