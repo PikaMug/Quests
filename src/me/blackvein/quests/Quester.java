@@ -1028,7 +1028,7 @@ public class Quester {
         } else if (objective.equalsIgnoreCase("collectItem")) {
 
             String message = ChatColor.GREEN + "(Completed) Collect " + prettyItemString(itemstack.getTypeId());
-            message = message + " " + itemsCollected.get(material) + "/" + itemsCollected.get(material);
+            message = message + " " + itemsCollected.get(itemstack.getType()) + "/" + itemsCollected.get(itemstack.getType());
 
             p.sendMessage(message);
             if (testComplete()) {
@@ -2677,13 +2677,11 @@ public class Quester {
         }else if(type.equals(InventoryType.CHEST)){
 
             if(inv.getContents().length == 27){
-
                 if(rawSlot < 27){
                     return "You may not store Quest items.";
                 }
 
             }else {
-
                 if(rawSlot < 54){
                     return "You may not store Quest items.";
                 }

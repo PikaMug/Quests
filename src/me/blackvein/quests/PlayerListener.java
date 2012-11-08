@@ -394,7 +394,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent evt) {
-        System.out.println("Click fired.");
         Player player = null;
         if (evt.getWhoClicked() instanceof Player) {
             player = (Player) evt.getWhoClicked();
@@ -491,7 +490,7 @@ public class PlayerListener implements Listener {
 
                                     //Item in clicked slot is a quest item, cursor is not
                                     String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                                    if (s != null) {
+                                    if (s == null) {
                                         quester.holdingQuestItemFromStorage = true;
                                     }
 
@@ -523,17 +522,18 @@ public class PlayerListener implements Listener {
 
                         if (quester.currentQuest != null) {
                             if (quester.currentQuest.questItems.containsKey(mat)) {
-                                System.out.println(evt.getInventory().getType());
                                 if((evt.getInventory().getType().equals(InventoryType.WORKBENCH) && evt.getRawSlot() == 0) || (evt.getInventory().getType().equals(InventoryType.CRAFTING) && evt.getRawSlot() == 0)){
                                     return;
                                 }
 
                                 List<Integer> changedSlots = Quester.getChangedSlots(evt.getInventory(), evt.getCurrentItem());
+                                System.out.println("Number of changed slots: " + changedSlots.size());
                                 boolean can = true;
                                 for (int i : changedSlots) {
 
                                     String s = Quester.checkPlacement(evt.getInventory(), i);
                                     if (s != null) {
+                                        System.out.println("BAD Changed slot: " + i);
                                         can = false;
                                         break;
                                     }
@@ -541,6 +541,7 @@ public class PlayerListener implements Listener {
                                 }
                                 if (!can) {
 
+                                    System.out.println("Cannot.");
                                     evt.setCancelled(true);
                                     player.updateInventory();
 

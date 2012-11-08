@@ -1,16 +1,8 @@
 package me.blackvein.quests;
 
 import java.io.File;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import java.util.*;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -135,7 +127,7 @@ public class Event {
 
     public void happen(Player player){
 
-        if(message.isEmpty() == false)
+        if(message != null)
             player.sendMessage(message);
 
         if(clearInv == true){
