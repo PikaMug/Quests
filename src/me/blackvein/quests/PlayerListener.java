@@ -526,7 +526,7 @@ public class PlayerListener implements Listener {
                                     return;
                                 }
 
-                                List<Integer> changedSlots = Quester.getChangedSlots(evt.getInventory(), evt.getCurrentItem());
+                                List<Integer> changedSlots = Quester.getChangedSlots(evt.getWhoClicked().getInventory(), evt.getCurrentItem());
                                 System.out.println("Number of changed slots: " + changedSlots.size());
                                 boolean can = true;
                                 for (int i : changedSlots) {
