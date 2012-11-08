@@ -526,26 +526,14 @@ public class PlayerListener implements Listener {
                                     return;
                                 }
 
-                                List<Integer> changedSlots = Quester.getChangedSlots(evt.getWhoClicked().getInventory(), evt.getCurrentItem());
-                                System.out.println("Number of changed slots: " + changedSlots.size());
-                                boolean can = true;
-                                for (int i : changedSlots) {
+                                String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
+                                if (s == null) {
 
-                                    String s = Quester.checkPlacement(evt.getInventory(), i);
-                                    if (s != null) {
-                                        System.out.println("BAD Changed slot: " + i);
-                                        can = false;
-                                        break;
-                                    }
-
-                                }
-                                if (!can) {
-
-                                    System.out.println("Cannot.");
+                                    player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
                                     evt.setCancelled(true);
                                     player.updateInventory();
 
-                                } else if (can && Quester.checkPlacement(evt.getInventory(), evt.getRawSlot()) != null) {
+                                } else {
 
                                     ItemStack oldStack = evt.getCurrentItem();
                                     Inventory inv = plugin.getServer().createInventory(null, evt.getInventory().getType());
@@ -558,6 +546,7 @@ public class PlayerListener implements Listener {
                                         quester.collectItem(newStack);
 
                                     } else {
+                                        System.out.println("Collecting " + oldStack);
                                         quester.collectItem(oldStack);
                                     }
 
