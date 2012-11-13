@@ -538,7 +538,6 @@ public class PlayerListener implements Listener {
                                     ItemStack oldStack = evt.getCurrentItem();
                                     Inventory inv = plugin.getServer().createInventory(null, evt.getInventory().getType());
                                     HashMap<Integer, ItemStack> map = inv.addItem(oldStack);
-
                                     if (map.isEmpty() == false) {
 
                                         ItemStack newStack = oldStack.clone();
@@ -546,7 +545,6 @@ public class PlayerListener implements Listener {
                                         quester.collectItem(newStack);
 
                                     } else {
-                                        System.out.println("Collecting " + oldStack);
                                         quester.collectItem(oldStack);
                                     }
 
