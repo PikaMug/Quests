@@ -3,7 +3,7 @@ main: me.blackvein.quests.Quests
 version: 1.5.1c
 description: Player questing system
 website: http://dev.bukkit.org/server-mods/quests/
-dev-url: http://dev.bukkit.org/server-mods/quests/
+dev-url: https://github.com/Blackvein/Quests/
 authors: [Blackvein]
 soft-depend: [Citizens, Vault]
 permissions:
