@@ -24,7 +24,27 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.1-R3</version>
+            <version>1.4.2-R0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>net.citizensnpcs</groupId>
+            <artifactId>citizensapi</artifactId>
+            <version>2.0.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.aufdemrand</groupId>
+            <artifactId>denizen</artifactId>
+            <version>0.76-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <version>1.2.20-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gmail.nossr50.mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>1.3.11</version>
         </dependency>
     </dependencies>
 
@@ -37,6 +57,8 @@
                 <includes>
                     <include>config.yml</include>
                     <include>plugin.yml</include>
+                    <include>events.yml</include>
+                    <include>quests.yml</include>
                 </includes>
             </resource>
             <resource>
