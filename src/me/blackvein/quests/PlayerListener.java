@@ -2,7 +2,6 @@ package me.blackvein.quests;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversable;
@@ -268,34 +267,7 @@ public class PlayerListener implements Listener {
             if (plugin.checkQuester(p.getName()) == false) {
 
                 final Quester quester = plugin.getQuester(p.getName());
-                if (evt.isShiftClick() == false && quester.hasObjective("craftItem")) {
-
-                    quester.craftItem(evt.getCurrentItem());
-
-                }else if(quester.hasObjective("craftItem")){
-
-                    final int amntBefore = Quests.countInv(evt.getInventory(), evt.getCurrentItem().getType(), evt.getCurrentItem().getAmount());
-                    System.out.println("Amount before: " + amntBefore);
-                    final Material mat = evt.getCurrentItem().getType();
-                    final Inventory inv = evt.getWhoClicked().getInventory();
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
-                        
-                        @Override
-                        public void run(){
-                            
-                            if(evt.isCancelled() == false){
-                                
-                                int amntAfter = Quests.countInv(inv, mat, 0);
-                                System.out.println("Amount after: " + amntAfter);
-                                quester.craftItem(new ItemStack(mat, amntAfter - amntBefore));
-                            
-                            }
-                            
-                        }
-                        
-                    }, 5);
-
-                }
+                //HANDLE CRAFTING ITEMS FOR ITEM CRAFTING AND COLLECTION
 
             }
 
@@ -310,11 +282,7 @@ public class PlayerListener implements Listener {
 
             if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
-                Quester quester = plugin.getQuester(((Player) evt.getPlayer()).getName());
-                if (quester.holdingQuestItemFromStorage) {
-                    quester.collectItem(evt.getView().getCursor());
-                }
-                quester.holdingQuestItemFromStorage = false;
+                //HANDLE CLOSING INVENTORY
 
             }
 
@@ -403,160 +371,7 @@ public class PlayerListener implements Listener {
 
             if (plugin.checkQuester(player.getName()) == false) {
 
-                if (evt.isShiftClick() == false) {
-
-                    if (evt.getCursor() != null && evt.getCurrentItem() == null) {
-
-                        Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
-                        if (quester.currentQuest != null) {
-
-                            if (quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
-
-                                //Placing Quest item in empty slot
-
-                                String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                                if (s == null) {
-                                    //Placing Quest item in an allowed player inventory slot
-                                    if (quester.holdingQuestItemFromStorage) {
-                                        quester.collectItem(evt.getCursor());
-                                        quester.holdingQuestItemFromStorage = false;
-                                    }
-                                } else {
-                                    player.sendMessage(ChatColor.YELLOW + s);
-                                    evt.setCancelled(true);
-                                    player.updateInventory();
-                                }
-
-                            }
-
-                        }
-
-                    } else if (evt.getCursor() != null && evt.getCurrentItem() != null) {
-
-                        Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
-                        if (quester.currentQuest != null) {
-
-                            if (quester.currentQuest.questItems.containsKey(evt.getCurrentItem().getType()) || quester.currentQuest.questItems.containsKey(evt.getCursor().getType())) {
-
-                                //Either the cursor item or the slot item (or both) is a Quest item
-
-                                Material cursor = evt.getCursor().getType();
-                                Material slot = evt.getCurrentItem().getType();
-
-
-                                if (cursor == slot && quester.currentQuest.questItems.containsKey(cursor)) {
-
-                                    //Both are the same item, and quest items
-                                    String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                                    if (s == null) {
-
-                                        ItemStack from = evt.getCursor();
-                                        ItemStack to = evt.getCurrentItem();
-
-                                        if ((from.getAmount() + to.getAmount()) <= from.getMaxStackSize()) {
-                                            if (quester.holdingQuestItemFromStorage) {
-                                                quester.collectItem(from);
-                                                quester.holdingQuestItemFromStorage = false;
-                                            }
-                                        } else if ((from.getAmount() + to.getAmount()) > from.getMaxStackSize() && to.getAmount() < to.getMaxStackSize()) {
-                                            if (quester.holdingQuestItemFromStorage) {
-                                                ItemStack difference = to.clone();
-                                                difference.setAmount(difference.getMaxStackSize() - difference.getAmount());
-                                                quester.collectItem(difference);
-                                                quester.holdingQuestItemFromStorage = false;
-                                            }
-                                        }
-
-                                    } else {
-                                        player.sendMessage(ChatColor.YELLOW + s);
-                                        evt.setCancelled(true);
-                                        player.updateInventory();
-                                    }
-
-                                } else if (cursor != slot && quester.currentQuest.questItems.containsKey(cursor)) {
-
-                                    //Cursor is a quest item, item in clicked slot is not
-                                    String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                                    if (quester.holdingQuestItemFromStorage && s == null) {
-                                        quester.collectItem(evt.getCursor());
-                                        quester.holdingQuestItemFromStorage = false;
-                                    } else if (s != null) {
-                                        player.sendMessage(ChatColor.YELLOW + s);
-                                        evt.setCancelled(true);
-                                        player.updateInventory();
-                                    }
-
-                                } else if (cursor != slot && quester.currentQuest.questItems.containsKey(slot)) {
-
-                                    //Item in clicked slot is a quest item, cursor is not
-                                    String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                                    if (s == null) {
-                                        quester.holdingQuestItemFromStorage = true;
-                                    }
-
-                                } else {
-
-                                    //Both are different quest items
-                                    String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                                    if (quester.holdingQuestItemFromStorage && s == null) {
-                                        quester.collectItem(evt.getCursor());
-                                        quester.holdingQuestItemFromStorage = false;
-                                    } else if (s != null) {
-                                        player.sendMessage(ChatColor.YELLOW + s);
-                                        evt.setCancelled(true);
-                                        player.updateInventory();
-                                    }
-
-                                }
-                            }
-
-                        }
-
-                    }
-
-                } else {
-
-                    if (evt.getCurrentItem() != null) {
-                        Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
-                        Material mat = evt.getCurrentItem().getType();
-
-                        if (quester.currentQuest != null) {
-                            if (quester.currentQuest.questItems.containsKey(mat)) {
-                                if((evt.getInventory().getType().equals(InventoryType.WORKBENCH) && evt.getRawSlot() == 0) || (evt.getInventory().getType().equals(InventoryType.CRAFTING) && evt.getRawSlot() == 0)){
-                                    return;
-                                }
-
-                                String s = Quester.checkPlacement(evt.getInventory(), evt.getRawSlot());
-                                if (s == null) {
-
-                                    player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
-                                    evt.setCancelled(true);
-                                    player.updateInventory();
-
-                                } else {
-
-                                    ItemStack oldStack = evt.getCurrentItem();
-                                    Inventory inv = plugin.getServer().createInventory(null, evt.getInventory().getType());
-                                    HashMap<Integer, ItemStack> map = inv.addItem(oldStack);
-                                    if (map.isEmpty() == false) {
-
-                                        ItemStack newStack = oldStack.clone();
-                                        newStack.setAmount(oldStack.getAmount() - map.get(0).getAmount());
-                                        quester.collectItem(newStack);
-
-                                    } else {
-                                        quester.collectItem(oldStack);
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
+                //HANDLE INVENTORY CLICKING FOR ITEM COLLECTION
 
             }
 
