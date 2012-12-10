@@ -12,11 +12,23 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-  
+
     <repositories>
         <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
+        </repository>
+    	<repository>
+			<id>citizensapi-repo</id>
+			<url>http://ci.citizensnpcs.com/plugin/repository/everything</url>
+		</repository>
+        <repository>
+            <id>denizens-repo</id>
+            <url>http://ci.citizensnpcs.com/view/Characters/job/Denizen/592/maven-repository/repository/</url>
+        </repository>
+        <repository>
+            <id>vault-repo</id>
+            <url>http://ci.herocraftonline.com/plugin/repository/everything</url>
         </repository>
     </repositories>
 
@@ -39,7 +51,7 @@
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
-            <version>1.2.20-SNAPSHOT</version>
+            <version>1.2.22-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
@@ -70,7 +82,7 @@
                 </includes>
             </resource>
         </resources>
-        
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
