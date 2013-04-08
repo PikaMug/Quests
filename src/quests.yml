@@ -1,22 +1,24 @@
 quests:
   Miner:
     name: 'Stone Miner'
-    ask-message: '<yellow>Mine <purple>10<yellow> blocks of <purple>Stone<yellow>, and retrieve <purple>10<yellow> pieces of <purple>Cobblestone<yellow>.'
+    ask-message: '<yellow>Could you mine <purple>10<yellow> blocks of <purple>Stone<yellow>, and deliver the <purple>10<yellow> pieces of <purple>Cobblestone<yellow> to me?.'
     finish-message: '<yellow>Well done. Here is your reward.'
+    redo-delay: 1800000
     requirements:
-      item-ids: [270]
-      item-amounts: [1]
-      remove-items: [false]
+      item-ids:
+        - 270
+      item-amounts:
+        - 1
+      remove-items:
+        - false
       fail-requirement-message: '<red>You must have a <purple>Wooden Pickaxe<red> first.'
     stages:
       ordered:
         1:
-          break-block-ids: [1]
-          break-block-amounts: [10]
-
-          collect-item-ids: [4]
-          collect-item-amounts: [10]
-          quest-items: [true]
+          break-block-ids:
+            - 1
+          break-block-amounts:
+            - 10
 
     rewards:
       money: 1000
@@ -28,23 +30,26 @@ quests:
     ask-message: '<yellow>Kill an assortment of Mobs.'
     finish-message: '<yellow>Excellent. Here is a <purple>Diamond Sword<yellow>.'
     requirements:
-      quests: [Stone Miner]
+      quests:
+        - Stone Miner
       fail-requirement-message: '<red>Complete <purple>Stone Miner<red> first.'
     stages:
       ordered:
         1:
-          mobs-to-kill: [Pig]
-          mob-amounts: [3]
-
-          finished: '<yellow>Now kill <purple>2 Zombies<yellow>.'
+          mobs-to-kill:
+            - Pig
+          mob-amounts:
+            - 3
         2:
-          mobs-to-kill: [Zombie]
-          mob-amounts: [2]
-
-          finished: '<yellow>Finally, kill <purple>1 Skeleton<yellow>.'
+          mobs-to-kill:
+            - Zombie
+          mob-amounts:
+            - 2
         3:
-          mobs-to-kill: [Skeleton]
-          mob-amounts: [1]
+          mobs-to-kill:
+            - Skeleton
+          mob-amounts:
+            - 1
 
     rewards:
       item-ids: [276]

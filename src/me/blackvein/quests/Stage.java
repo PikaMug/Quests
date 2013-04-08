@@ -1,5 +1,6 @@
 package me.blackvein.quests;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,11 +15,9 @@ import org.bukkit.entity.EntityType;
 
 public class Stage {
 
-    public String finished;
     Map<Material, Integer> blocksToDamage = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksToBreak = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksToPlace = new EnumMap<Material, Integer>(Material.class);
-    Map<Map<Material, Integer>, Boolean> itemsToCollect = new HashMap<Map<Material, Integer>, Boolean>();
     Map<Material, Integer> blocksToUse = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksToCut = new EnumMap<Material, Integer>(Material.class);
     Integer fishToCatch;
@@ -29,6 +28,35 @@ public class Stage {
     LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
     LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
     LinkedList<String> areaNames = new LinkedList<String>();
+
+    LinkedList<Material> itemsToDeliver = new LinkedList<Material>();
+    LinkedList<Integer> itemAmountsToDeliver = new LinkedList<Integer>();
+    LinkedList<NPC> itemDeliveryTargets = new LinkedList<NPC>(){
+
+        @Override
+        public boolean equals(Object o) {
+
+            if (o instanceof LinkedList) {
+
+                LinkedList<NPC> otherList = (LinkedList<NPC>) o;
+
+                for (NPC n : this) {
+
+                    NPC other = otherList.get(this.indexOf(n));
+                    if (other.getId() != n.getId()) {
+                        return false;
+                    }
+                }
+
+            }
+
+            return true;
+
+        }
+
+    };
+    ArrayList<String> deliverMessages = new ArrayList<String>();
+
     LinkedList<NPC> citizensToInteract = new LinkedList<NPC>(){
 
         @Override
@@ -97,16 +125,6 @@ public class Stage {
 
             Stage other = (Stage) o;
 
-            if (other.finished != null && finished != null) {
-                if (other.finished.equals(finished) == false) {
-                    return false;
-                }
-            } else if (other.finished != null && finished == null) {
-                return false;
-            } else if (other.finished == null && finished != null) {
-                return false;
-            }
-
             if (other.blocksToDamage.equals(blocksToDamage) == false) {
                 return false;
             }
@@ -116,10 +134,6 @@ public class Stage {
             }
 
             if (other.blocksToPlace.equals(blocksToPlace) == false) {
-                return false;
-            }
-
-            if (other.itemsToCollect.equals(itemsToCollect) == false) {
                 return false;
             }
 
@@ -172,6 +186,22 @@ public class Stage {
             }
 
             if (other.areaNames.equals(areaNames) == false) {
+                return false;
+            }
+
+            if (other.itemsToDeliver.equals(itemsToDeliver) == false){
+                return false;
+            }
+
+            if (other.itemAmountsToDeliver.equals(itemAmountsToDeliver) == false){
+                return false;
+            }
+
+            if (other.itemDeliveryTargets.equals(itemDeliveryTargets) == false){
+                return false;
+            }
+
+            if (other.deliverMessages.equals(deliverMessages) == false){
                 return false;
             }
 

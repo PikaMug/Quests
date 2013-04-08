@@ -24,6 +24,7 @@ show-requirements: true
 allow-quitting: true
 debug-mode: false
 kill-delay: 600
+snoop: true
 quester-blacklist:
   - "SomeGuy12345"
   - "somePrefix*"

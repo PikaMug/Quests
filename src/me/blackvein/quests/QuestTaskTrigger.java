@@ -1,26 +1,17 @@
 package me.blackvein.quests;
 
-import java.util.List;
-import net.aufdemrand.denizen.scripts.ScriptEngine.QueueType;
-import net.aufdemrand.denizen.scripts.ScriptHelper;
-import net.aufdemrand.denizen.triggers.AbstractTrigger;
+import net.aufdemrand.denizen.scripts.ScriptRegistry;
+import net.aufdemrand.denizen.scripts.containers.core.TaskScriptContainer;
 import org.bukkit.entity.Player;
 
-public class QuestTaskTrigger extends AbstractTrigger {
+public class QuestTaskTrigger {
 
-  public boolean parseQuestTaskTrigger(String theScriptName, Player thePlayer) {
-
-    ScriptHelper sE = plugin.getScriptEngine().helper;
-
-    if (theScriptName == null) return false;
-
-    List<String> theScript = sE.getScript(theScriptName + ".Script");
-
-    if (theScript.isEmpty()) return false;
-
-    sE.queueScriptEntries(thePlayer, sE.buildScriptEntries(thePlayer, theScript, theScriptName), QueueType.TASK);
-
-    return true;
-  }
-
+    public boolean parseQuestTaskTrigger(String theScriptName, Player thePlayer) {
+        if (!ScriptRegistry.containsScript(theScriptName)) {
+            return false;
+        }
+        TaskScriptContainer task_script = ScriptRegistry.getScriptContainerAs(theScriptName, TaskScriptContainer.class);
+        task_script.runTaskScript(thePlayer, null, null);
+        return true;
+    }
 }

@@ -1,6 +1,5 @@
 package me.blackvein.quests;
 
-import com.herocraftonline.heroes.characters.classes.HeroClass.ExperienceType;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,16 +48,12 @@ public class Quest {
     List<String> permissions = new LinkedList<String>();
     LinkedList<ItemStack> itemRewards = new LinkedList<ItemStack>();
     LinkedList<Integer> itemRewardAmounts = new LinkedList<Integer>();
-      //Heroes
-      int heroesExp = 0;
-      String heroesClass = null;
-      String heroesSecClass = null;
-      //
 
       //mcMMO
       List<String> mcmmoSkills = new LinkedList<String>();
       List<Integer> mcmmoAmounts = new LinkedList<Integer>();
       //
+
     //
     public void nextStage(Quester q){
 
@@ -71,35 +66,19 @@ public class Quest {
                 if(q.currentStage.script != null)
                     plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
                 if(q.currentStage.event != null)
-                    q.currentStage.event.happen(player);
+                    q.currentStage.event.happen(q);
 
                 completeQuest(q);
 
             }else {
 
                 q.reset();
-                player.sendMessage(plugin.parseString(q.currentStage.finished, q.currentQuest));
                 if(q.currentStage.script != null)
                     plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
                 if(q.currentStage.event != null)
-                    q.currentStage.event.happen(player);
+                    q.currentStage.event.happen(q);
                 q.currentStage = stages.get(stages.indexOf(q.currentStage) + 1);
                 q.addEmpties();
-
-                for (Entry e : q.currentStage.itemsToCollect.entrySet()) {
-
-                    if ((Boolean) e.getValue() == true) {
-
-                        Map<Material, Integer> tempMap = (Map<Material, Integer>) e.getKey();
-                        for (Entry e2 : tempMap.entrySet()) {
-
-                            questItems.put((Material) e2.getKey(), (Integer) e2.getValue());
-
-                        }
-
-                    }
-
-                }
 
                 for (Entry e : q.currentStage.itemsToCraft.entrySet()) {
 
@@ -191,7 +170,7 @@ public class Quest {
         q.reset();
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (None)";
-        player.sendMessage(plugin.parseString(finished, q.currentQuest));
+        player.sendMessage(Quests.parseString(finished, q.currentQuest));
         if(moneyReward > 0 && Quests.economy != null){
             Quests.economy.depositPlayer(q.name, moneyReward);
             none = null;
@@ -264,20 +243,6 @@ public class Quest {
             none = null;
         }
 
-        if(heroesExp > 0){
-            plugin.heroes.getCharacterManager().getHero(player).gainExp(heroesExp, ExperienceType.QUESTING, player.getLocation());
-            none = null;
-        }
-
-        if(heroesClass != null){
-            plugin.heroes.getCharacterManager().getHero(player).changeHeroClass(plugin.heroes.getClassManager().getClass(heroesClass), false);
-            none = null;
-        }
-
-        if(heroesSecClass != null){
-            plugin.heroes.getCharacterManager().getHero(player).changeHeroClass(plugin.heroes.getClassManager().getClass(heroesSecClass), true);
-            none = null;
-        }
         player.sendMessage(ChatColor.GOLD + "**QUEST COMPLETE: " + ChatColor.YELLOW + q.currentQuest.name + ChatColor.GOLD + "**");
         player.sendMessage(ChatColor.GREEN + "Rewards:");
 
@@ -302,21 +267,6 @@ public class Quest {
 
         if(exp > 0){
             player.sendMessage("- " + ChatColor.DARK_GREEN + exp + ChatColor.DARK_PURPLE + " Experience");
-            none = null;
-        }
-
-        if(heroesExp > 0){
-            player.sendMessage("- " + ChatColor.DARK_GREEN + heroesExp + ChatColor.DARK_PURPLE + " Heroes Exp");
-            none = null;
-        }
-
-        if(heroesClass != null){
-            player.sendMessage("- " + ChatColor.DARK_PURPLE + heroesClass + ChatColor.AQUA + " Heroes Class");
-            none = null;
-        }
-
-        if(heroesSecClass != null){
-            player.sendMessage("- " + ChatColor.DARK_PURPLE + heroesSecClass + ChatColor.AQUA + " Heroes Secondary Class");
             none = null;
         }
 
@@ -368,25 +318,6 @@ public class Quest {
                 return false;
 
             if(other.finished.equals(finished) == false)
-                return false;
-
-            if(other.heroesClass != null && heroesClass != null){
-                if(other.heroesClass.equals(heroesClass) == false)
-                    return false;
-            }else if(other.heroesClass != null && heroesClass == null){
-                return false;
-            }else if(other.heroesClass == null && heroesClass != null)
-                return false;
-
-            if(other.heroesExp != heroesExp)
-                return false;
-
-            if(other.heroesSecClass != null && heroesSecClass != null){
-                if(other.heroesSecClass.equals(heroesSecClass) == false)
-                    return false;
-            }else if(other.heroesSecClass != null && heroesSecClass == null){
-                return false;
-            }else if(other.heroesSecClass == null && heroesSecClass != null)
                 return false;
 
             if(other.itemAmounts.equals(itemAmounts) == false)

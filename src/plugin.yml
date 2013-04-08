@@ -1,6 +1,6 @@
 name: Quests
 main: me.blackvein.quests.Quests
-version: 1.5.1c
+version: 1.5.4
 description: Player questing system
 website: http://dev.bukkit.org/server-mods/quests/
 dev-url: https://github.com/Blackvein/Quests/
@@ -55,6 +55,12 @@ permissions:
     quests.admin.reload:
         description: Reload all Quests
         default: op
+    quests.editor.create:
+        description: Create new Quests
+        default: op
+    quests.editor.events:
+        description: Create/Edit/Delete Events
+        default: op
 commands:
     quests:
         description: Quests command
@@ -66,6 +72,6 @@ commands:
     quest:
         description: Quest command
         permission: quests.quest
-    editor:
-        description: Editor
+    events:
+        description: Events
         permission: quests.editor

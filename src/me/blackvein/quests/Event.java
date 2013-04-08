@@ -31,9 +31,9 @@ public class Event {
     LinkedList<Location> lightningStrikes = new LinkedList<Location>();
 
     LinkedList<PotionEffect> potionEffects = new LinkedList<PotionEffect>();
-    int hunger = 0;
-    int saturation = 0;
-    int health = 0;
+    int hunger = -1;
+    int saturation = -1;
+    int health = -1;
     Location teleport;
 
     @Override
@@ -125,10 +125,18 @@ public class Event {
         return true;
     }
 
-    public void happen(Player player){
+    public String getName(){
+        
+        return name;
+        
+    }
+    
+    public void happen(Quester quester){
 
+        Player player = quester.getPlayer();
+        
         if(message != null)
-            player.sendMessage(message);
+            player.sendMessage(Quests.parseString(message, quester.currentQuest));
 
         if(clearInv == true){
             player.getInventory().clear();
@@ -205,19 +213,19 @@ public class Event {
 
         }
 
-        if(hunger != 0){
+        if(hunger != -1){
 
             player.setFoodLevel(hunger);
 
         }
 
-        if(saturation != 0){
+        if(saturation != -1){
 
             player.setSaturation(saturation);
 
         }
 
-        if(health != 0){
+        if(health != -1){
 
             player.setHealth(health);
 
@@ -231,9 +239,9 @@ public class Event {
 
     }
 
-    public static Event getEvent(String name, Quests plugin, Quest quest){
+    public static Event getEvent(String name, Quests plugin){
 
-        if(name == null || plugin == null || quest == null)
+        if(name == null || plugin == null)
             return null;
 
         Event event = new Event();
@@ -249,7 +257,7 @@ public class Event {
 
         event.name = name;
         if(data.contains(eventKey + "message"))
-            event.message = plugin.parseString(data.getString(eventKey + "message"), quest);
+            event.message = data.getString(eventKey + "message");
 
         if(data.contains(eventKey + "clear-inventory")){
 

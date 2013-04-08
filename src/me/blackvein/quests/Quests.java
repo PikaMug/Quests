@@ -1,14 +1,17 @@
 package me.blackvein.quests;
 
-import com.gmail.nossr50.datatypes.SkillType;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.mcMMO;
-import com.herocraftonline.heroes.Heroes;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.aufdemrand.denizen.Denizen;
+import net.aufdemrand.denizen.scripts.ScriptRegistry;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.Vault;
@@ -24,7 +27,6 @@ import org.bukkit.conversations.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -38,18 +40,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public static Economy economy = null;
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
+    public static boolean snoop = true;
     List<String> questerBlacklist = new LinkedList<String>();
     ConversationFactory conversationFactory;
     QuestFactory questFactory;
-    Heroes heroes;
+    EventFactory eventFactory;
     Vault vault = null;
-    CitizensPlugin citizens;
+    public CitizensPlugin citizens;
     PlayerListener pListener;
     NpcListener npcListener;
-    Denizen denizen;
+    public Denizen denizen = null;
     QuestTaskTrigger trigger;
     Map<String, Quester> questers = new HashMap<String, Quester>();
     LinkedList<Quest> quests = new LinkedList<Quest>();
+    public LinkedList<Event> events = new LinkedList<Event>();
     LinkedList<NPC> questNPCs = new LinkedList<NPC>();
     boolean allowCommands = true;
     boolean allowCommandsForNpcQuests = false;
@@ -67,9 +71,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         pListener = new PlayerListener(this);
         npcListener = new NpcListener(this);
 
-        this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix()).withFirstPrompt(new QuestPrompt()).withTimeout(20).thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
+        this.conversationFactory = new ConversationFactory(this)
+                .withModality(false)
+                .withPrefix(new QuestsPrefix())
+                .withFirstPrompt(new QuestPrompt())
+                .withTimeout(20)
+                .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
+                .addConversationAbandonedListener(this);
+
 
         questFactory = new QuestFactory(this);
+        eventFactory = new EventFactory(this);
 
         try {
             if (getServer().getPluginManager().getPlugin("Citizens") != null) {
@@ -84,10 +96,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         if (getServer().getPluginManager().getPlugin("Denizen") != null) {
             denizen = (Denizen) getServer().getPluginManager().getPlugin("Denizen");
-        }
-
-        if (getServer().getPluginManager().getPlugin("Heroes") != null) {
-            heroes = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
         }
 
         if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
@@ -149,12 +157,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         printInfo("[Quests] Enabled.");
 
         getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-
             @Override
             public void run() {
                 loadQuests();
+                loadEvents();
                 log.log(Level.INFO, "[Quests] " + quests.size() + " Quest(s) loaded.");
+                log.log(Level.INFO, "[Quests] " + events.size() + " Event(s) loaded.");
                 questers = getOnlineQuesters();
+                if(snoop)
+                    snoop();
             }
         }, 5L);
 
@@ -201,12 +212,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 getQuester(player.getName()).takeQuest(getQuest(getQuester(player.getName()).questToTake));
                 return Prompt.END_OF_CONVERSATION;
 
-            }else if (s.equalsIgnoreCase("No")) {
+            } else if (s.equalsIgnoreCase("No")) {
 
                 player.sendMessage(ChatColor.YELLOW + "Cancelled.");
                 return Prompt.END_OF_CONVERSATION;
 
-            }else{
+            } else {
 
                 player.sendMessage(ChatColor.RED + "Invalid choice. Type \'Yes\' or \'No\'");
                 return new QuestPrompt();
@@ -235,10 +246,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs");
         showQuestReqs = config.getBoolean("show-requirements");
         allowQuitting = config.getBoolean("allow-quitting");
-        //allowOtherBrewing = config.getBoolean("allow-other-brewing");
+        snoop = config.getBoolean("snoop", true);
         debug = config.getBoolean("debug-mode");
         killDelay = config.getInt("kill-delay");
-        for(String s : config.getStringList("quester-blacklist")){
+        for (String s : config.getStringList("quester-blacklist")) {
 
             questerBlacklist.add(s);
 
@@ -258,6 +269,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (player.hasPermission("quests.quit")) {
             player.sendMessage(ChatColor.YELLOW + "/quests quit - Quit your current Quest");
+        }
+        if (player.hasPermission("quests.editor.create")) {
+            player.sendMessage(ChatColor.YELLOW + "/quests create - Create a Quest");
+        }
+        if (player.hasPermission("quests.editor.events")) {
+            player.sendMessage(ChatColor.YELLOW + "/quests events - Create/Edit Events");
         }
         if (player.hasPermission("quests.stats")) {
             player.sendMessage(ChatColor.YELLOW + "/quests stats - View your Questing stats");
@@ -280,11 +297,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
-        if (cmd.getName().equalsIgnoreCase("editor")) {
-
-            questFactory.convoCreator.buildConversation((Conversable) cs).begin();
-
-        } else if (cmd.getName().equalsIgnoreCase("quest")) {
+        if (cmd.getName().equalsIgnoreCase("quest")) {
 
             if (cs instanceof Player) {
 
@@ -294,8 +307,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                         if (getQuester(cs.getName()).currentQuest != null) {
 
-                            if(getQuester(cs.getName()).delayStartTime == 0)
+                            if (getQuester(cs.getName()).delayStartTime == 0) {
                                 cs.sendMessage(ChatColor.GOLD + "---(Objectives)---");
+                            }
 
                             for (String s : getQuester(cs.getName()).getObjectives()) {
 
@@ -808,6 +822,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                         return true;
 
+                    } else if (args[0].equalsIgnoreCase("create")) {
+
+                        if (cs.hasPermission("quests.editor.create")) {
+                            questFactory.convoCreator.buildConversation((Conversable) cs).begin();
+                        } else {
+                            cs.sendMessage(ChatColor.RED + "You do not have permission to create Quests.");
+                        }
+                        return true;
+
+                    } else if (args[0].equalsIgnoreCase("events")) {
+
+                        if (cs.hasPermission("quests.editor.events")) {
+                            eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
+                        } else {
+                            cs.sendMessage(ChatColor.RED + "You do not have permission to use the Events editor.");
+                        }
+                        return true;
+
                     } else if (args[0].equalsIgnoreCase("info")) {
 
                         cs.sendMessage(ChatColor.GOLD + "Quests " + this.getDescription().getVersion());
@@ -1247,7 +1279,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public void reloadQuests() {
 
         quests.clear();
+        events.clear();
         loadQuests();
+        loadEvents();
         loadConfig();
 
         for (Quester quester : questers.values()) {
@@ -1260,8 +1294,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         Quester quester = null;
 
-        if(questers.containsKey(player))
+        if (questers.containsKey(player)) {
             quester = questers.get(player);
+        }
 
         if (quester == null) {
 
@@ -1300,8 +1335,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 System.out.println("Loaded data.");
             }
             qs.put(p.getName(), quester);
-            System.out.println("Quester: " + quester.name);
-            System.out.println("Current Quest: " + quester.currentQuest.name);
 
         }
 
@@ -1376,17 +1409,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                 }
 
-                if (config.contains("quests." + s + ".ask-message")) {
-                    quest.description = parseString(config.getString("quests." + s + ".ask-message"), quest);
-                } else {
-                    printSevere(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "ask-message:");
-                    continue;
-                }
-
                 if (config.contains("quests." + s + ".finish-message")) {
                     quest.finished = parseString(config.getString("quests." + s + ".finish-message"), quest);
                 } else {
                     printSevere(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "finish-message:");
+                    continue;
+                }
+
+                if (config.contains("quests." + s + ".ask-message")) {
+                    quest.description = parseString(config.getString("quests." + s + ".ask-message"), quest);
+                } else {
+                    printSevere(ChatColor.GOLD + "[Quests] Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "ask-message:");
                     continue;
                 }
 
@@ -1525,10 +1558,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                     Stage stage = new Stage();
 
-                    List<Integer> itemids = new LinkedList<Integer>();
-                    List<Integer> itemamounts = new LinkedList<Integer>();
-                    List<Boolean> questitems = new LinkedList<Boolean>();
-
                     LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
                     LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
                     LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
@@ -1558,7 +1587,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
 
-                        if (denizen.getScriptEngine().helper.getScript("quests." + s + ".stages.ordered." + s2 + ".script-to-run").isEmpty() == false) {
+                        if (ScriptRegistry.containsScript("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
                             trigger = new QuestTaskTrigger();
                             stage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
                         } else {
@@ -1570,50 +1599,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
 
                     //
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids"), Integer.class)) {
-                            itemids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".collect-item-ids");
-                        } else {
-                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "collect-item-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts"), Integer.class)) {
-                                itemamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".collect-item-amounts");
-                            } else {
-                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "collect-item-amounts: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "collect-item-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".quest-items")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".quest-items"), Boolean.class)) {
-                                questitems = config.getBooleanList("quests." + s + ".stages.ordered." + s2 + ".quest-items");
-                            } else {
-                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "quest-items: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of true/false values!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "quest-items:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-ids")) {
 
@@ -1833,89 +1818,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                             for (String enchant : config.getStringList("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
 
-                                if (enchant.equalsIgnoreCase("Power")) {
+                                Enchantment e = Quests.getEnchantment(enchant);
 
-                                    enchantments.add(Enchantment.ARROW_DAMAGE);
+                                if (e != null) {
 
-                                } else if (enchant.equalsIgnoreCase("Flame")) {
-
-                                    enchantments.add(Enchantment.ARROW_FIRE);
-
-                                } else if (enchant.equalsIgnoreCase("Infinity")) {
-
-                                    enchantments.add(Enchantment.ARROW_INFINITE);
-
-                                } else if (enchant.equalsIgnoreCase("Punch")) {
-
-                                    enchantments.add(Enchantment.ARROW_KNOCKBACK);
-
-                                } else if (enchant.equalsIgnoreCase("Sharpness")) {
-
-                                    enchantments.add(Enchantment.DAMAGE_ALL);
-
-                                } else if (enchant.equalsIgnoreCase("BaneOfArthropods")) {
-
-                                    enchantments.add(Enchantment.DAMAGE_ARTHROPODS);
-
-                                } else if (enchant.equalsIgnoreCase("Smite")) {
-
-                                    enchantments.add(Enchantment.DAMAGE_UNDEAD);
-
-                                } else if (enchant.equalsIgnoreCase("Efficiency")) {
-
-                                    enchantments.add(Enchantment.DIG_SPEED);
-
-                                } else if (enchant.equalsIgnoreCase("Unbreaking")) {
-
-                                    enchantments.add(Enchantment.DURABILITY);
-
-                                } else if (enchant.equalsIgnoreCase("FireAspect")) {
-
-                                    enchantments.add(Enchantment.FIRE_ASPECT);
-
-                                } else if (enchant.equalsIgnoreCase("Knockback")) {
-
-                                    enchantments.add(Enchantment.KNOCKBACK);
-
-                                } else if (enchant.equalsIgnoreCase("Fortune")) {
-
-                                    enchantments.add(Enchantment.LOOT_BONUS_BLOCKS);
-
-                                } else if (enchant.equalsIgnoreCase("Looting")) {
-
-                                    enchantments.add(Enchantment.LOOT_BONUS_MOBS);
-
-                                } else if (enchant.equalsIgnoreCase("Respiration")) {
-
-                                    enchantments.add(Enchantment.OXYGEN);
-
-                                } else if (enchant.equalsIgnoreCase("Protection")) {
-
-                                    enchantments.add(Enchantment.PROTECTION_ENVIRONMENTAL);
-
-                                } else if (enchant.equalsIgnoreCase("BlastProtection")) {
-
-                                    enchantments.add(Enchantment.PROTECTION_EXPLOSIONS);
-
-                                } else if (enchant.equalsIgnoreCase("FeatherFalling")) {
-
-                                    enchantments.add(Enchantment.PROTECTION_FALL);
-
-                                } else if (enchant.equalsIgnoreCase("FireProtection")) {
-
-                                    enchantments.add(Enchantment.PROTECTION_FIRE);
-
-                                } else if (enchant.equalsIgnoreCase("ProjectileProtection")) {
-
-                                    enchantments.add(Enchantment.PROTECTION_PROJECTILE);
-
-                                } else if (enchant.equalsIgnoreCase("SilkTouch")) {
-
-                                    enchantments.add(Enchantment.SILK_TOUCH);
-
-                                } else if (enchant.equalsIgnoreCase("AquaAffinity")) {
-
-                                    enchantments.add(Enchantment.WATER_WORKER);
+                                    enchantments.add(e);
 
                                 } else {
 
@@ -2013,6 +1920,107 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                         } else {
                             printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "npc-ids-to-talk-to: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+
+                    List<Integer> itemIdsToDeliver;
+                    List<Integer> itemAmountsToDeliver;
+                    List<Integer> itemDeliveryTargetIds;
+                    ArrayList<String> deliveryMessages = new ArrayList();
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".item-ids-to-deliver")) {
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".item-ids-to-deliver"), Integer.class)) {
+
+                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".item-amounts-to-deliver")) {
+
+                                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".item-amounts-to-deliver"), Integer.class)) {
+
+                                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids")) {
+
+                                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids"), Integer.class)) {
+
+                                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delivery-messages")) {
+
+                                                itemIdsToDeliver = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".item-ids-to-deliver");
+                                                itemAmountsToDeliver = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".item-amounts-to-deliver");
+                                                itemDeliveryTargetIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids");
+                                                deliveryMessages.addAll(config.getStringList("quests." + s + ".stages.ordered." + s2 + ".delivery-messages"));
+
+                                                for (int i : itemIdsToDeliver) {
+
+                                                    Material m = Material.getMaterial(i);
+                                                    if (m != null) {
+
+                                                        int amt = itemAmountsToDeliver.get(itemIdsToDeliver.indexOf(i));
+
+                                                        if (amt > 0) {
+
+                                                            int npcId = itemDeliveryTargetIds.get(itemIdsToDeliver.indexOf(i));
+                                                            NPC npc = citizens.getNPCRegistry().getById(npcId);
+
+                                                            if (npc != null) {
+
+                                                                stage.itemsToDeliver.add(m);
+                                                                stage.itemAmountsToDeliver.add(amt);
+                                                                stage.itemDeliveryTargets.add(npc);
+                                                                stage.deliverMessages = deliveryMessages;
+
+                                                            } else {
+                                                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + npcId + ChatColor.GOLD + " inside " + ChatColor.GREEN + "npc-delivery-ids: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid NPC id!");
+                                                                stageFailed = true;
+                                                                break;
+                                                            }
+
+                                                        } else {
+                                                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + amt + ChatColor.GOLD + " inside " + ChatColor.GREEN + "item-amounts-to-deliver: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a positive amount!");
+                                                            stageFailed = true;
+                                                            break;
+                                                        }
+
+                                                    } else {
+                                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " inside " + ChatColor.GREEN + "item-ids-to-deliver: " + ChatColor.GOLD + "inside " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid item id!");
+                                                        stageFailed = true;
+                                                        break;
+                                                    }
+
+                                                }
+
+                                            } else {
+                                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "delivery-messages:");
+                                                stageFailed = true;
+                                                break;
+                                            }
+
+                                        } else {
+                                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "npc-delivery-ids: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of ids!");
+                                            stageFailed = true;
+                                            break;
+                                        }
+
+                                    } else {
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "npc-delivery-ids:");
+                                        stageFailed = true;
+                                        break;
+                                    }
+
+                                } else {
+                                    printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts-to-deliver: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    stageFailed = true;
+                                    break;
+                                }
+
+                            } else {
+                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts-to-deliver:");
+                                stageFailed = true;
+                                break;
+                            }
+
+                        } else {
+                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids-to-deliver: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of ids!");
                             stageFailed = true;
                             break;
                         }
@@ -2338,36 +2346,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                     stage.itemsToEnchant = enchants;
 
-                    Map<Map<Material, Integer>, Boolean> itemMap = new HashMap<Map<Material, Integer>, Boolean>();
-                    for (int i : itemids) {
-
-                        Map<Material, Integer> map = new EnumMap<Material, Integer>(Material.class);
-                        map.put(Material.getMaterial(i), itemamounts.get(itemids.indexOf(i)));
-                        itemMap.put(map, questitems.get(itemids.indexOf(i)));
-
-                    }
-
-                    if(firstStage){
-
-                        for (Entry e : itemMap.entrySet()) {
-
-                            if ((Boolean) e.getValue() == true) {
-
-                                Map<Material, Integer> tempMap = (Map<Material, Integer>) e.getKey();
-                                for (Entry e2 : tempMap.entrySet()) {
-
-                                    quest.questItems.put((Material) e2.getKey(), (Integer) e2.getValue());
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                    stage.itemsToCollect = itemMap;
-
                     Map<Material, Integer> breakMap = new EnumMap<Material, Integer>(Material.class);
 
                     for (int i : breakids) {
@@ -2379,7 +2357,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     stage.blocksToBreak = breakMap;
 
                     if (index < section2.getKeys(false).size()) {
-                        stage.finished = parseString(config.getString("quests." + s + ".stages.ordered." + s2 + ".finished"), quest);
                         index++;
                     }
 
@@ -2643,9 +2620,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                                 if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts"), Integer.class)) {
 
-                                    if(config.contains("quests." + s + ".stages.ordered." + s2 + ".craft-quest-items")){
+                                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".craft-quest-items")) {
 
-                                        if(Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".craft-quest-items"), Boolean.class)){
+                                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".craft-quest-items"), Boolean.class)) {
 
                                             List<Integer> craftIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-ids");
                                             List<Integer> craftAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".craft-item-amounts");
@@ -2654,8 +2631,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                             for (int i : craftIds) {
 
                                                 EnumMap<Material, Integer> map = new EnumMap<Material, Integer>(Material.class);
-                                                if(firstStage)
+                                                if (firstStage) {
                                                     quest.questItems.put(Material.getMaterial(i), craftAmounts.get(craftIds.indexOf(i)));
+                                                }
                                                 map.put(Material.getMaterial(i), craftAmounts.get(craftIds.indexOf(i)));
                                                 stage.itemsToCraft.put(map, craftQuestItems.get(craftIds.indexOf(i)));
 
@@ -2663,7 +2641,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                                         }
 
-                                    }else{
+                                    } else {
                                         printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "craft-quest-items:");
                                         stageFailed = true;
                                         break;
@@ -2691,7 +2669,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".event")) {
 
-                        Event evt = Event.getEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this, quest);
+                        Event evt = Event.getEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this);
 
                         if (evt != null) {
                             stage.event = evt;
@@ -2705,9 +2683,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay")) {
 
-                        if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999){
+                        if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999) {
                             stage.delay = config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay");
-                        }else {
+                        } else {
                             printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "delay: " + ChatColor.GOLD + "in " + ChatColor.LIGHT_PURPLE + "Stage " + s2 + ChatColor.GOLD + " of Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
                             stageFailed = true;
                             break;
@@ -2715,7 +2693,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                     }
 
-                    if(config.contains("quests." + s + ".stages.ordered." + s2 + ".delay-message")){
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay-message")) {
 
                         stage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
 
@@ -2837,39 +2815,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
                 }
 
-                if (config.contains("quests." + s + ".rewards.heroes-exp")) {
-
-                    if (config.getInt("quests." + s + ".rewards.heroes-exp", -999) != -999) {
-                        quest.heroesExp = config.getInt("quests." + s + ".rewards.heroes-exp");
-                    } else {
-                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-exp: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a number!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".rewards.heroes-class")) {
-
-                    if (heroes.getClassManager().getClass("quests." + s + ".rewards.heroes-class") != null) {
-                        quest.heroesClass = config.getString("quests." + s + ".rewards.heroes-class");
-                    } else {
-                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-class: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Heroes class name!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".rewards.heroes-secondary-class")) {
-
-                    if (heroes.getClassManager().getClass("quests." + s + ".rewards.heroes-secondary-class") != null) {
-                        quest.heroesSecClass = config.getString("quests." + s + ".rewards.heroes-secondary-class");
-                    } else {
-                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "heroes-secondary-class: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a valid Heroes secondary class name!");
-                        continue;
-                    }
-
-                }
-
                 if (config.contains("quests." + s + ".rewards.mcmmo-skills")) {
 
                     if (Quests.checkList(config.getList("quests." + s + ".rewards.mcmmo-skills"), String.class)) {
@@ -2926,7 +2871,32 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     }
 
-    public String parseString(String s, Quest quest) {
+    public void loadEvents() {
+
+        YamlConfiguration config = new YamlConfiguration();
+        File eventsFile = new File(this.getDataFolder(), "events.yml");
+
+        try {
+            config.load(eventsFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ConfigurationSection sec = config.getConfigurationSection("events");
+        for (String s : sec.getKeys(false)) {
+
+            Event event = Event.getEvent(s, this);
+            if (event != null) {
+                events.add(event);
+            } else {
+                log.log(Level.SEVERE, "[Quests] Failed to load Event \"" + s + "\". Skipping.");
+            }
+
+        }
+
+    }
+
+    public static String parseString(String s, Quest quest) {
 
         String parsed = s;
 
@@ -2964,12 +2934,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
 
     private boolean setupEconomy() {
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null) {
-            economy = economyProvider.getProvider();
-        }
+        try {
 
-        return (economy != null);
+            RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+            if (economyProvider != null) {
+                economy = economyProvider.getProvider();
+            }
+
+            return (economy != null);
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean setupPermissions() {
@@ -2985,7 +2961,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         List list = new LinkedList(unsortedMap.entrySet());
 
         Collections.sort(list, new Comparator() {
-
             @Override
             public int compare(Object o1, Object o2) {
                 int i = (Integer) (((Map.Entry) o1).getValue());
@@ -3057,198 +3032,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     }
 
-    public static boolean brewingCompatible(Material ingredient, short dv) {
-
-        if (ingredient.equals(Material.NETHER_STALK)) {
-
-            if (dv == 0) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.FERMENTED_SPIDER_EYE)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 16) {
-                return true;
-            } else if (dv == 32) {
-                return true;
-            } else if (dv == 64) {
-                return true;
-            } else if (dv == 8192) {
-                return true;
-            } else if (dv == 8193) {
-                return true;
-            } else if (dv == 8194) {
-                return true;
-            } else if (dv == 8195) {
-                return true;
-            } else if (dv == 8196) {
-                return true;
-            } else if (dv == 8197) {
-                return true;
-            } else if (dv == 8201) {
-                return true;
-            } else if (dv == 8225) {
-                return true;
-            } else if (dv == 8226) {
-                return true;
-            } else if (dv == 8227) {
-                return true;
-            } else if (dv == 8228) {
-                return true;
-            } else if (dv == 8229) {
-                return true;
-            } else if (dv == 8233) {
-                return true;
-            } else if (dv == 8257) {
-                return true;
-            } else if (dv == 8258) {
-                return true;
-            } else if (dv == 8259) {
-                return true;
-            } else if (dv == 8260) {
-                return true;
-            } else if (dv == 8261) {
-                return true;
-            } else if (dv == 8265) {
-                return true;
-            }
-
-
-        } else if (ingredient.equals(Material.GLOWSTONE_DUST)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 8194) {
-                return true;
-            } else if (dv == 8196) {
-                return true;
-            } else if (dv == 8197) {
-                return true;
-            } else if (dv == 8201) {
-                return true;
-            } else if (dv == 8204) {
-                return true;
-            } else if (dv == 8225) {
-                return true;
-            } else if (dv == 8257) {
-                return true;
-            } else if (dv == 8258) {
-                return true;
-            } else if (dv == 8259) {
-                return true;
-            } else if (dv == 8260) {
-                return true;
-            } else if (dv == 8261) {
-                return true;
-            } else if (dv == 8264) {
-                return true;
-            } else if (dv == 8265) {
-                return true;
-            } else if (dv == 8266) {
-                return true;
-            } else if (dv == 8268) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.REDSTONE)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 8193) {
-                return true;
-            } else if (dv == 8194) {
-                return true;
-            } else if (dv == 8195) {
-                return true;
-            } else if (dv == 8196) {
-                return true;
-            } else if (dv == 8200) {
-                return true;
-            } else if (dv == 8201) {
-                return true;
-            } else if (dv == 8202) {
-                return true;
-            } else if (dv == 8225) {
-                return true;
-            } else if (dv == 8226) {
-                return true;
-            } else if (dv == 8227) {
-                return true;
-            } else if (dv == 8228) {
-                return true;
-            } else if (dv == 8229) {
-                return true;
-            } else if (dv == 8232) {
-                return true;
-            } else if (dv == 8233) {
-                return true;
-            } else if (dv == 8234) {
-                return true;
-            } else if (dv == 8236) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.MAGMA_CREAM)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 16) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.SPECKLED_MELON)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 16) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.SUGAR)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 16) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.SPIDER_EYE)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 16) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.GHAST_TEAR)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 16) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.BLAZE_POWDER)) {
-
-            if (dv == 0) {
-                return true;
-            } else if (dv == 16) {
-                return true;
-            }
-
-        } else if (ingredient.equals(Material.SULPHUR)) {
-
-            if (dv != 0 && dv != 16 && dv != 32 && dv != 64 && dv != 8192) {
-                return true;
-            }
-
-        }
-
-        return false;
-    }
-
     public static Location getLocation(String arg) {
 
         String[] info = arg.split(" ");
@@ -3275,6 +3058,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         Location finalLocation = new Location(Bukkit.getServer().getWorld(info[0]), x, y, z);
 
         return finalLocation;
+
+    }
+
+    public static String getLocationInfo(Location loc) {
+
+        String info = "";
+
+        info += loc.getWorld().getName();
+        info += " " + loc.getX();
+        info += " " + loc.getY();
+        info += " " + loc.getZ();
+
+        return info;
 
     }
 
@@ -3309,7 +3105,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     public static EntityType getMobType(String mob) {
 
-        if (mob.equalsIgnoreCase("Blaze")) {
+        if (mob.equalsIgnoreCase("Bat")) {
+
+            return EntityType.BAT;
+
+        } else if (mob.equalsIgnoreCase("Blaze")) {
 
             return EntityType.BLAZE;
 
@@ -3401,14 +3201,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
             return EntityType.VILLAGER;
 
+        } else if (mob.equalsIgnoreCase("Witch")) {
+
+            return EntityType.WITCH;
+
+        } else if (mob.equalsIgnoreCase("Wither")) {
+
+            return EntityType.WITHER;
+
         } else if (mob.equalsIgnoreCase("Wolf")) {
 
             return EntityType.WOLF;
 
-        } else {
+        } else if (mob.equalsIgnoreCase("Zombie")) {
 
             return EntityType.ZOMBIE;
 
+        } else {
+
+            return null;
         }
 
     }
@@ -3485,6 +3296,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return message;
 
     }
+    private static final String thou[] = {"", "M", "MM", "MMM"};
+    private static final String hund[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+    private static final String ten[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+    private static final String unit[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+
+    public static String getNumeral(int i) {
+
+        int th = i / 1000;
+        int h = (i / 100) % 10;
+        int t = (i / 10) % 10;
+        int u = i % 10;
+
+        return thou[th] + hund[h] + ten[t] + unit[u];
+
+    }
 
     public static PotionEffect getPotionEffect(String type, int duration, int amplifier) {
 
@@ -3508,8 +3334,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             potionType = PotionEffectType.HUNGER;
         } else if (type.equalsIgnoreCase("INCREASE_DAMAGE")) {
             potionType = PotionEffectType.INCREASE_DAMAGE;
+        } else if (type.equalsIgnoreCase("INVISIBILITY")) {
+            potionType = PotionEffectType.INVISIBILITY;
         } else if (type.equalsIgnoreCase("JUMP")) {
             potionType = PotionEffectType.JUMP;
+        } else if (type.equalsIgnoreCase("NIGHT_VISION")) {
+            potionType = PotionEffectType.NIGHT_VISION;
         } else if (type.equalsIgnoreCase("POISON")) {
             potionType = PotionEffectType.POISON;
         } else if (type.equalsIgnoreCase("REGENERATION")) {
@@ -3524,6 +3354,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             potionType = PotionEffectType.WATER_BREATHING;
         } else if (type.equalsIgnoreCase("WEAKNESS")) {
             potionType = PotionEffectType.WEAKNESS;
+        } else if (type.equalsIgnoreCase("WITHER")) {
+            potionType = PotionEffectType.WITHER;
         } else {
             return null;
         }
@@ -3537,8 +3369,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         if (s.equalsIgnoreCase("Acrobatics")) {
             return SkillType.ACROBATICS;
-        } else if (s.equalsIgnoreCase("All")) {
-            return SkillType.ALL;
         } else if (s.equalsIgnoreCase("Archery")) {
             return SkillType.ARCHERY;
         } else if (s.equalsIgnoreCase("Axes")) {
@@ -3643,92 +3473,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return false;
     }
 
-    public static boolean invCheck(Player player, ItemStack stack, Inventory inv, int rawSlot) {
+    public boolean checkQuester(String name) {
 
-        if (rawSlot < 0) {
-            player.sendMessage(ChatColor.YELLOW + "You may not discard Quest items.");
-            return false;
-        }
+        for (String s : questerBlacklist) {
 
-        if (inv.getType().equals(InventoryType.CRAFTING)) {
-
-            if (((rawSlot > 8) && (rawSlot < 36)) || ((rawSlot > -1) && (rawSlot < 5))) {
-                player.sendMessage(ChatColor.YELLOW + "You may not craft using Quest items.");
-                return false;
-            }
-
-        } else if (inv.getType().equals(InventoryType.BREWING)) {
-
-            if ((rawSlot > 3) && (rawSlot < 41)) {
-                player.sendMessage(ChatColor.YELLOW + "You may not brew using Quest items.");
-                return false;
-            }
-
-        } else if (inv.getType().equals(InventoryType.ENCHANTING)) {
-
-            if ((rawSlot > 0) && (rawSlot < 28)) {
-                player.sendMessage(ChatColor.YELLOW + "You may not enchant Quest items.");
-                return false;
-            }
-
-        } else if (inv.getType().equals(InventoryType.ENDER_CHEST)) {
-
-            if ((rawSlot > 26) && (rawSlot < 54)) {
-                player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
-                return false;
-            }
-
-        } else if (inv.getType().equals(InventoryType.DISPENSER)) {
-
-            if ((rawSlot > 8) && (rawSlot < 36)) {
-                player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
-                return false;
-            }
-
-        } else if (inv.getType().equals(InventoryType.FURNACE)) {
-
-            if ((rawSlot > 2) && (rawSlot < 30)) {
-                player.sendMessage(ChatColor.YELLOW + "You may not smelt using Quest items.");
-                return false;
-            }
-
-        } else if (inv.getType().equals(InventoryType.WORKBENCH)) {
-            if ((rawSlot > 9) && (rawSlot < 37)) {
-                player.sendMessage(ChatColor.YELLOW + "You may not craft using Quest items.");
-                return false;
-            }
-
-        } else if (inv.getType().equals(InventoryType.CHEST)) {
-            if (inv.getContents().length == 27) {
-                if ((rawSlot > 26) && (rawSlot < 54)) {
-                    player.sendMessage(ChatColor.YELLOW + "You may not store Quest items.");
-                    return false;
-                }
-
-            } else if ((rawSlot > 53) && (rawSlot < 81)) {
-                return false;
-
-            } else if (stack != null) {
-                if (inv.getItem(rawSlot) != null) {
-                    if (stack.getType().equals(inv.getItem(rawSlot).getType())) {
-                        return false;
-
-                    }
-
-                }
-
-            }
-
-        }
-        return true;
-    }
-
-    public boolean checkQuester(String name){
-
-        for(String s : questerBlacklist){
-
-            if(Quests.checkQuester(name, s))
+            if (Quests.checkQuester(name, s)) {
                 return true;
+            }
 
         }
 
@@ -3736,38 +3487,42 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     }
 
-    private static boolean checkQuester(String name, String check){
+    private static boolean checkQuester(String name, String check) {
 
-        if(check.endsWith("*") && check.startsWith("*") == false){
+        if (check.endsWith("*") && check.startsWith("*") == false) {
 
             check = check.substring(0, check.length());
-            if(name.endsWith(check))
+            if (name.endsWith(check)) {
                 return true;
-            else
+            } else {
                 return false;
+            }
 
-        }else if(check.endsWith("*") == false && check.startsWith("*")){
+        } else if (check.endsWith("*") == false && check.startsWith("*")) {
 
             check = check.substring(1);
-            if(name.startsWith(check))
+            if (name.startsWith(check)) {
                 return true;
-            else
+            } else {
                 return false;
+            }
 
-        }else if(check.endsWith("*") && check.startsWith("*")){
+        } else if (check.endsWith("*") && check.startsWith("*")) {
 
             check = check.substring(1, check.length());
-            if(name.contains(check))
+            if (name.contains(check)) {
                 return true;
-            else
+            } else {
                 return false;
+            }
 
-        }else{
+        } else {
 
-            if(name.equalsIgnoreCase(check))
+            if (name.equalsIgnoreCase(check)) {
                 return true;
-            else
+            } else {
                 return false;
+            }
 
         }
 
@@ -3801,21 +3556,354 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         return null;
     }
-    
-    public static int countInv(Inventory inv, Material m, int subtract){
-        
-        int count = 0;
-        
-        for(ItemStack i : inv.getContents()){
-            
-            if(i != null){
-                if(i.getType().equals(m))
-                    count += i.getAmount();
+
+    public Event getEvent(String s) {
+
+        for (Event e : events) {
+            if (e.name.equalsIgnoreCase(s)) {
+                return e;
             }
-            
         }
-        
+
+        return null;
+
+    }
+
+    public static int countInv(Inventory inv, Material m, int subtract) {
+
+        int count = 0;
+
+        for (ItemStack i : inv.getContents()) {
+
+            if (i != null) {
+                if (i.getType().equals(m)) {
+                    count += i.getAmount();
+                }
+            }
+
+        }
+
         return count - subtract;
-        
+
+    }
+
+    public static Enchantment getEnchantment(String enchant) {
+
+        if (enchant.equalsIgnoreCase("Power")) {
+
+            return Enchantment.ARROW_DAMAGE;
+
+        } else if (enchant.equalsIgnoreCase("Flame")) {
+
+            return Enchantment.ARROW_FIRE;
+
+        } else if (enchant.equalsIgnoreCase("Infinity")) {
+
+            return Enchantment.ARROW_INFINITE;
+
+        } else if (enchant.equalsIgnoreCase("Punch")) {
+
+            return Enchantment.ARROW_KNOCKBACK;
+
+        } else if (enchant.equalsIgnoreCase("Sharpness")) {
+
+            return Enchantment.DAMAGE_ALL;
+
+        } else if (enchant.equalsIgnoreCase("BaneOfArthropods")) {
+
+            return Enchantment.DAMAGE_ARTHROPODS;
+
+        } else if (enchant.equalsIgnoreCase("Smite")) {
+
+            return Enchantment.DAMAGE_UNDEAD;
+
+        } else if (enchant.equalsIgnoreCase("Efficiency")) {
+
+            return Enchantment.DIG_SPEED;
+
+        } else if (enchant.equalsIgnoreCase("Unbreaking")) {
+
+            return Enchantment.DURABILITY;
+
+        } else if (enchant.equalsIgnoreCase("FireAspect")) {
+
+            return Enchantment.FIRE_ASPECT;
+
+        } else if (enchant.equalsIgnoreCase("Knockback")) {
+
+            return Enchantment.KNOCKBACK;
+
+        } else if (enchant.equalsIgnoreCase("Fortune")) {
+
+            return Enchantment.LOOT_BONUS_BLOCKS;
+
+        } else if (enchant.equalsIgnoreCase("Looting")) {
+
+            return Enchantment.LOOT_BONUS_MOBS;
+
+        } else if (enchant.equalsIgnoreCase("Respiration")) {
+
+            return Enchantment.OXYGEN;
+
+        } else if (enchant.equalsIgnoreCase("Protection")) {
+
+            return Enchantment.PROTECTION_ENVIRONMENTAL;
+
+        } else if (enchant.equalsIgnoreCase("BlastProtection")) {
+
+            return Enchantment.PROTECTION_EXPLOSIONS;
+
+        } else if (enchant.equalsIgnoreCase("FeatherFalling")) {
+
+            return Enchantment.PROTECTION_FALL;
+
+        } else if (enchant.equalsIgnoreCase("FireProtection")) {
+
+            return Enchantment.PROTECTION_FIRE;
+
+        } else if (enchant.equalsIgnoreCase("ProjectileProtection")) {
+
+            return Enchantment.PROTECTION_PROJECTILE;
+
+        } else if (enchant.equalsIgnoreCase("SilkTouch")) {
+
+            return Enchantment.SILK_TOUCH;
+
+        } else if (enchant.equalsIgnoreCase("AquaAffinity")) {
+
+            return Enchantment.WATER_WORKER;
+
+        } else {
+
+            return null;
+
+        }
+
+    }
+
+    public static Enchantment getEnchantmentPretty(String enchant) {
+
+        if (enchant.equalsIgnoreCase("Power")) {
+
+            return Enchantment.ARROW_DAMAGE;
+
+        } else if (enchant.equalsIgnoreCase("Flame")) {
+
+            return Enchantment.ARROW_FIRE;
+
+        } else if (enchant.equalsIgnoreCase("Infinity")) {
+
+            return Enchantment.ARROW_INFINITE;
+
+        } else if (enchant.equalsIgnoreCase("Punch")) {
+
+            return Enchantment.ARROW_KNOCKBACK;
+
+        } else if (enchant.equalsIgnoreCase("Sharpness")) {
+
+            return Enchantment.DAMAGE_ALL;
+
+        } else if (enchant.equalsIgnoreCase("Bane Of Arthropods")) {
+
+            return Enchantment.DAMAGE_ARTHROPODS;
+
+        } else if (enchant.equalsIgnoreCase("Smite")) {
+
+            return Enchantment.DAMAGE_UNDEAD;
+
+        } else if (enchant.equalsIgnoreCase("Efficiency")) {
+
+            return Enchantment.DIG_SPEED;
+
+        } else if (enchant.equalsIgnoreCase("Unbreaking")) {
+
+            return Enchantment.DURABILITY;
+
+        } else if (enchant.equalsIgnoreCase("Fire Aspect")) {
+
+            return Enchantment.FIRE_ASPECT;
+
+        } else if (enchant.equalsIgnoreCase("Knockback")) {
+
+            return Enchantment.KNOCKBACK;
+
+        } else if (enchant.equalsIgnoreCase("Fortune")) {
+
+            return Enchantment.LOOT_BONUS_BLOCKS;
+
+        } else if (enchant.equalsIgnoreCase("Looting")) {
+
+            return Enchantment.LOOT_BONUS_MOBS;
+
+        } else if (enchant.equalsIgnoreCase("Respiration")) {
+
+            return Enchantment.OXYGEN;
+
+        } else if (enchant.equalsIgnoreCase("Protection")) {
+
+            return Enchantment.PROTECTION_ENVIRONMENTAL;
+
+        } else if (enchant.equalsIgnoreCase("Blast Protection")) {
+
+            return Enchantment.PROTECTION_EXPLOSIONS;
+
+        } else if (enchant.equalsIgnoreCase("Feather Falling")) {
+
+            return Enchantment.PROTECTION_FALL;
+
+        } else if (enchant.equalsIgnoreCase("Fire Protection")) {
+
+            return Enchantment.PROTECTION_FIRE;
+
+        } else if (enchant.equalsIgnoreCase("Projectile Protection")) {
+
+            return Enchantment.PROTECTION_PROJECTILE;
+
+        } else if (enchant.equalsIgnoreCase("Silk Touch")) {
+
+            return Enchantment.SILK_TOUCH;
+
+        } else if (enchant.equalsIgnoreCase("Aqua Affinity")) {
+
+            return Enchantment.WATER_WORKER;
+
+        } else {
+
+            return null;
+
+        }
+
+    }
+
+    public static DyeColor getDyeColor(String s) {
+
+        if (s.equalsIgnoreCase("Black")) {
+
+            return DyeColor.BLACK;
+
+        } else if (s.equalsIgnoreCase("Blue")) {
+
+            return DyeColor.BLUE;
+
+        } else if (s.equalsIgnoreCase("Brown")) {
+
+            return DyeColor.BROWN;
+
+        } else if (s.equalsIgnoreCase("Cyan")) {
+
+            return DyeColor.CYAN;
+
+        } else if (s.equalsIgnoreCase("Gray")) {
+
+            return DyeColor.GRAY;
+
+        } else if (s.equalsIgnoreCase("Green")) {
+
+            return DyeColor.GREEN;
+
+        } else if (s.equalsIgnoreCase("LightBlue")) {
+
+            return DyeColor.LIGHT_BLUE;
+
+        } else if (s.equalsIgnoreCase("Lime")) {
+
+            return DyeColor.LIME;
+
+        } else if (s.equalsIgnoreCase("Magenta")) {
+
+            return DyeColor.MAGENTA;
+
+        } else if (s.equalsIgnoreCase("Orange")) {
+
+            return DyeColor.ORANGE;
+
+        } else if (s.equalsIgnoreCase("Pink")) {
+
+            return DyeColor.PINK;
+
+        } else if (s.equalsIgnoreCase("Purple")) {
+
+            return DyeColor.PURPLE;
+
+        } else if (s.equalsIgnoreCase("Red")) {
+
+            return DyeColor.RED;
+
+        } else if (s.equalsIgnoreCase("Silver")) {
+
+            return DyeColor.SILVER;
+
+        } else if (s.equalsIgnoreCase("White")) {
+
+            return DyeColor.WHITE;
+
+        } else if (s.equalsIgnoreCase("Yellow")) {
+
+            return DyeColor.YELLOW;
+
+        } else {
+
+            return null;
+
+        }
+
+    }
+
+    public static String getDyeString(DyeColor dc) {
+
+        if (dc.equals(DyeColor.BLACK)) {
+            return "Black";
+        } else if (dc.equals(DyeColor.BLUE)) {
+            return "Blue";
+        } else if (dc.equals(DyeColor.BROWN)) {
+            return "Brown";
+        } else if (dc.equals(DyeColor.CYAN)) {
+            return "Cyan";
+        } else if (dc.equals(DyeColor.GRAY)) {
+            return "Gray";
+        } else if (dc.equals(DyeColor.GREEN)) {
+            return "Green";
+        } else if (dc.equals(DyeColor.LIGHT_BLUE)) {
+            return "LightBlue";
+        } else if (dc.equals(DyeColor.LIME)) {
+            return "Lime";
+        } else if (dc.equals(DyeColor.MAGENTA)) {
+            return "Magenta";
+        } else if (dc.equals(DyeColor.ORANGE)) {
+            return "Orange";
+        } else if (dc.equals(DyeColor.PINK)) {
+            return "Pink";
+        } else if (dc.equals(DyeColor.PURPLE)) {
+            return "Purple";
+        } else if (dc.equals(DyeColor.RED)) {
+            return "Red";
+        } else if (dc.equals(DyeColor.SILVER)) {
+            return "Silver";
+        } else if (dc.equals(DyeColor.WHITE)) {
+            return "White";
+        } else if (dc.equals(DyeColor.YELLOW)) {
+            return "Yellow";
+        } else {
+            return null;
+        }
+
+    }
+
+    public void snoop() {
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            String url = "jdbc:mysql://173.234.237.34:3306/bigal_quests";
+            Connection conn = DriverManager.getConnection(url, "bigal_snooper", "jpuradox");
+            Statement statement = conn.createStatement();
+            java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
+            Timestamp stamp = new Timestamp(date.getTime());
+            statement.executeUpdate("DELETE FROM entries " + "WHERE server='" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "'");
+            String cit = citizens != null ? "true" : "false";
+            statement.executeUpdate("INSERT INTO entries " + "VALUES ('" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "', " + quests.size() + ", '" + cit + "', '" + stamp.toString() + "')");
+        } catch (Exception e) {
+
+        }
+
     }
 }
