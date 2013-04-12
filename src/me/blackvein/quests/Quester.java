@@ -363,7 +363,7 @@ public class Quester {
 
                     if (((Boolean) e.getValue()) == false) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getFullName());
+                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getName());
 
                     } else {
 
@@ -383,7 +383,7 @@ public class Quester {
 
                 if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
 
-                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getFullName() + ChatColor.GREEN + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getName() + ChatColor.GREEN + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
                 } else {
 
@@ -584,6 +584,14 @@ public class Quester {
         } else if (s.equalsIgnoreCase("talkToNPC")) {
 
             if (currentStage.citizensToInteract.isEmpty()) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } else if (s.equalsIgnoreCase("killNPC")) {
+
+            if (currentStage.citizensToKill.isEmpty()) {
                 return false;
             } else {
                 return true;

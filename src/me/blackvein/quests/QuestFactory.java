@@ -853,6 +853,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         LinkedList<String> shearColors;
         LinkedList<Integer> shearAmounts;
+        
+        LinkedList<Integer> npcKillIds;
+        LinkedList<Integer> npcKillAmounts;
 
         String script;
         String event;
@@ -908,6 +911,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 
             shearColors = null;
             shearAmounts = null;
+            
+            npcKillIds = null;
+            npcKillAmounts = null;
 
             script = null;
             event = null;
@@ -985,6 +991,11 @@ public class QuestFactory implements ConversationAbandonedListener {
                 shearColors = (LinkedList<String>) cc.getSessionData(pref + "shearColors");
                 shearAmounts = (LinkedList<Integer>) cc.getSessionData(pref + "shearAmounts");
             }
+            
+            if (cc.getSessionData(pref + "npcIdsToKill") != null) {
+                npcKillIds = (LinkedList<Integer>) cc.getSessionData(pref + "npcIdsToKill");
+                npcKillAmounts = (LinkedList<Integer>) cc.getSessionData(pref + "npcAmountsToKill");
+            }
 
             if (cc.getSessionData(pref + "event") != null) {
                 event = (String) cc.getSessionData(pref + "event");
@@ -1031,6 +1042,8 @@ public class QuestFactory implements ConversationAbandonedListener {
             stage.set("mob-tame-amounts", tameAmounts);
             stage.set("sheep-to-shear", shearColors);
             stage.set("sheep-amounts", shearAmounts);
+            stage.set("npc-ids-to-kill", npcKillIds);
+            stage.set("npc-kill-amounts", npcKillAmounts);
             stage.set("script-to-run", script);
             stage.set("event", event);
             stage.set("delay", delay);

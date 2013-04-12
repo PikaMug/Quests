@@ -165,6 +165,9 @@ public class StagesPrompt extends StringPrompt{
 
                 cc.setSessionData(newPref + "shearColors", cc.getSessionData(pref + "shearColors"));
                 cc.setSessionData(newPref + "shearAmounts", cc.getSessionData(pref + "shearAmounts"));
+                
+                cc.setSessionData(newPref + "npcIdsToKill", cc.getSessionData(pref + "npcIdsToKill"));
+                cc.setSessionData(newPref + "npcAmountsToKill", cc.getSessionData(pref + "npcAmountsToKill"));
 
                 cc.setSessionData(newPref + "event", cc.getSessionData(pref + "event"));
 
@@ -221,6 +224,9 @@ public class StagesPrompt extends StringPrompt{
 
             cc.setSessionData(pref + "shearColors", null);
             cc.setSessionData(pref + "shearAmounts", null);
+            
+            cc.setSessionData(pref + "npcIdsToKill", null);
+            cc.setSessionData(pref + "npcAmountsToKill", null);
 
             cc.setSessionData(pref + "event", null);
 

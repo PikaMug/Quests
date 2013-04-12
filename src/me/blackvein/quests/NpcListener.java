@@ -1,14 +1,17 @@
 package me.blackvein.quests;
 
-import net.citizensnpcs.api.event.NPCDespawnEvent;
+import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class NpcListener implements Listener {
@@ -27,26 +30,26 @@ public class NpcListener implements Listener {
         final Player player = evt.getClicker();
         final Quester quester = plugin.getQuester(player.getName());
         boolean delivery = false;
-        
-        if(quester.hasObjective("deliverItem") && player.getItemInHand() != null){
-            
+
+        if (quester.hasObjective("deliverItem") && player.getItemInHand() != null) {
+
             ItemStack hand = player.getItemInHand();
-            if(quester.itemsDelivered.containsKey(hand.getType())){
-                
+            if (quester.itemsDelivered.containsKey(hand.getType())) {
+
                 NPC clicked = evt.getNPC();
-                
-                for(NPC n : quester.currentStage.itemDeliveryTargets){
-                    if(n.getId() == clicked.getId()){
+
+                for (NPC n : quester.currentStage.itemDeliveryTargets) {
+                    if (n.getId() == clicked.getId()) {
                         quester.deliverItem(hand);
                         delivery = true;
                         break;
                     }
                 }
-                
+
             }
-            
+
         }
-        
+
         if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
 
             if (plugin.checkQuester(player.getName()) == false) {
@@ -89,16 +92,16 @@ public class NpcListener implements Listener {
                                         player.sendMessage(ChatColor.YELLOW + "You may not take " + ChatColor.AQUA + q.name + ChatColor.YELLOW + " again for another " + ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW + ".");
                                     } else if (quester.completedQuests.contains(q.name) && q.redoDelay < 0) {
                                         player.sendMessage(ChatColor.YELLOW + "You have already completed " + ChatColor.AQUA + q.name + ChatColor.YELLOW + ".");
-                                    }else{
-                                        
+                                    } else {
+
                                         quester.questToTake = q.name;
                                         String s =
-                                            ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
-                                            + "\n"
-                                            + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+                                                ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
+                                                + "\n"
+                                                + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
 
                                         player.sendMessage(s);
-                                        
+
                                         plugin.conversationFactory.buildConversation((Conversable) player).begin();
                                     }
 
@@ -125,6 +128,49 @@ public class NpcListener implements Listener {
     }
 
     @EventHandler
-    public void onNPCDespawn(NPCDespawnEvent evt) {
+    public void onNPCDeath(NPCDeathEvent evt) {
+
+        if (evt.getNPC().getBukkitEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+
+            EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getNPC().getBukkitEntity().getLastDamageCause();
+            Entity damager = damageEvent.getDamager();
+
+            if (damager != null) {
+
+                if (damager instanceof Projectile) {
+
+                    Projectile p = (Projectile) damager;
+                    if (p.getShooter() instanceof Player) {
+
+                        Player player = (Player) p.getShooter();
+                        if (plugin.checkQuester(player.getName()) == false) {
+
+                            Quester quester = plugin.getQuester(player.getName());
+                            if (quester.hasObjective("killNPC")) {
+                                quester.killNPC(evt.getNPC());
+                            }
+
+                        }
+
+                    }
+
+                } else if (damager instanceof Player) {
+
+                    Player player = (Player) damager;
+
+                    if (plugin.checkQuester(player.getName()) == false) {
+
+                        Quester quester = plugin.getQuester(player.getName());
+                        if (quester.hasObjective("killNPC")) {
+                            quester.killNPC(evt.getNPC());
+                        }
+
+                    }
+                }
+
+            }
+
+        }
+
     }
 }
