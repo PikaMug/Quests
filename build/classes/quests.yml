@@ -1,0 +1,58 @@
+quests:
+  Miner:
+    name: 'Stone Miner'
+    ask-message: '<yellow>Could you mine <purple>10<yellow> blocks of <purple>Stone<yellow>, and deliver the <purple>10<yellow> pieces of <purple>Cobblestone<yellow> to me?.'
+    finish-message: '<yellow>Well done. Here is your reward.'
+    redo-delay: 1800000
+    requirements:
+      item-ids:
+        - 270
+      item-amounts:
+        - 1
+      remove-items:
+        - false
+      fail-requirement-message: '<red>You must have a <purple>Wooden Pickaxe<red> first.'
+    stages:
+      ordered:
+        1:
+          break-block-ids:
+            - 1
+          break-block-amounts:
+            - 10
+
+    rewards:
+      money: 1000
+      quest-points: 1
+
+
+  Hunter:
+    name: 'Mob Hunter'
+    ask-message: '<yellow>Kill an assortment of Mobs.'
+    finish-message: '<yellow>Excellent. Here is a <purple>Diamond Sword<yellow>.'
+    requirements:
+      quests:
+        - Stone Miner
+      fail-requirement-message: '<red>Complete <purple>Stone Miner<red> first.'
+    stages:
+      ordered:
+        1:
+          mobs-to-kill:
+            - Pig
+          mob-amounts:
+            - 3
+        2:
+          mobs-to-kill:
+            - Zombie
+          mob-amounts:
+            - 2
+        3:
+          mobs-to-kill:
+            - Skeleton
+          mob-amounts:
+            - 1
+
+    rewards:
+      item-ids: [276]
+      item-amounts: [1]
+      exp: 100
+      quest-points: 1
