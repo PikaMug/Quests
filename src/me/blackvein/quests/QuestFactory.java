@@ -393,14 +393,14 @@ public class QuestFactory implements ConversationAbandonedListener {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + "Enter NPC ID, or 0 to clear the NPC start, or -1 to cancel";
+            return ChatColor.YELLOW + "Enter NPC ID, or -1 to clear the NPC start, or -2 to cancel";
 
         }
 
         @Override
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 
-            if (input.intValue() > 0) {
+            if (input.intValue() > -1) {
 
                 if (quests.citizens.getNPCRegistry().getById(input.intValue()) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + "No NPC exists with that id!");
@@ -410,10 +410,10 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.setSessionData("npcStart", input.intValue());
                 return new CreateMenuPrompt();
 
-            } else if (input.intValue() == 0) {
+            } else if (input.intValue() == -1) {
                 context.setSessionData("npcStart", null);
                 return new CreateMenuPrompt();
-            } else if (input.intValue() == -1) {
+            } else if (input.intValue() == -2) {
                 return new CreateMenuPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + "No NPC exists with that id!");
@@ -853,9 +853,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         LinkedList<String> shearColors;
         LinkedList<Integer> shearAmounts;
-        
-        LinkedList<Integer> npcKillIds;
-        LinkedList<Integer> npcKillAmounts;
 
         String script;
         String event;
@@ -911,9 +908,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 
             shearColors = null;
             shearAmounts = null;
-            
-            npcKillIds = null;
-            npcKillAmounts = null;
 
             script = null;
             event = null;
@@ -991,11 +985,6 @@ public class QuestFactory implements ConversationAbandonedListener {
                 shearColors = (LinkedList<String>) cc.getSessionData(pref + "shearColors");
                 shearAmounts = (LinkedList<Integer>) cc.getSessionData(pref + "shearAmounts");
             }
-            
-            if (cc.getSessionData(pref + "npcIdsToKill") != null) {
-                npcKillIds = (LinkedList<Integer>) cc.getSessionData(pref + "npcIdsToKill");
-                npcKillAmounts = (LinkedList<Integer>) cc.getSessionData(pref + "npcAmountsToKill");
-            }
 
             if (cc.getSessionData(pref + "event") != null) {
                 event = (String) cc.getSessionData(pref + "event");
@@ -1042,8 +1031,6 @@ public class QuestFactory implements ConversationAbandonedListener {
             stage.set("mob-tame-amounts", tameAmounts);
             stage.set("sheep-to-shear", shearColors);
             stage.set("sheep-amounts", shearAmounts);
-            stage.set("npc-ids-to-kill", npcKillIds);
-            stage.set("npc-kill-amounts", npcKillAmounts);
             stage.set("script-to-run", script);
             stage.set("event", event);
             stage.set("delay", delay);

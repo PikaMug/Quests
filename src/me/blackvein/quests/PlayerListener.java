@@ -2,6 +2,7 @@ package me.blackvein.quests;
 
 import java.io.File;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,7 +26,7 @@ import org.bukkit.event.player.PlayerFishEvent.State;
 
 public class PlayerListener implements Listener {
 
-    Quests plugin;
+    final Quests plugin;
 
     public PlayerListener(Quests newPlugin) {
 
@@ -450,6 +451,7 @@ public class PlayerListener implements Listener {
                     if (p.getShooter() instanceof Player) {
 
                         Player player = (Player) p.getShooter();
+
                         if (plugin.checkQuester(player.getName()) == false) {
 
                             boolean okay = true;

@@ -1,3 +1,17 @@
-/lib/Quests/build/
-/lib/Quests/dist/
-/lib/Quests/nbproject/private/
+nbproject/
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+nbproject\project.properties
+
+# Class Files #
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear

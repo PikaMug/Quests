@@ -25,6 +25,8 @@ allow-quitting: true
 debug-mode: false
 kill-delay: 600
 snoop: true
+show-npc-effects: true
+npc-effect: "note"
 quester-blacklist:
   - "SomeGuy12345"
   - "somePrefix*"

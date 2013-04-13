@@ -44,9 +44,6 @@ stage#tameAmounts
 stage#shearColors
 stage#shearAmounts
 
-stage#npcIdsToKill
-stage#npcAmountsToKill
-
 stage#event
 
 stage#delay

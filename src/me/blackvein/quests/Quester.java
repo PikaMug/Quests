@@ -363,7 +363,7 @@ public class Quester {
 
                     if (((Boolean) e.getValue()) == false) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getName());
+                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getFullName());
 
                     } else {
 
@@ -383,11 +383,11 @@ public class Quester {
 
                 if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
 
-                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getName() + ChatColor.GREEN + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getName() + ChatColor.GREEN + " " + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
                 } else {
 
-                    finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getName() + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                    finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getName() + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
                 }
 

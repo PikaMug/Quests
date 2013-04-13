@@ -41,6 +41,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
     public static boolean snoop = true;
+    public static boolean npcEffects = true;
+    public static String effect = "note";
     List<String> questerBlacklist = new LinkedList<String>();
     ConversationFactory conversationFactory;
     QuestFactory questFactory;
@@ -48,6 +50,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     Vault vault = null;
     public CitizensPlugin citizens;
     PlayerListener pListener;
+    NpcEffectThread effListener;
     NpcListener npcListener;
     public Denizen denizen = null;
     QuestTaskTrigger trigger;
@@ -69,6 +72,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public void onEnable() {
 
         pListener = new PlayerListener(this);
+        effListener = new NpcEffectThread(this);
         npcListener = new NpcListener(this);
 
         this.conversationFactory = new ConversationFactory(this)
@@ -154,6 +158,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
 
         getServer().getPluginManager().registerEvents(pListener, this);
+        if(npcEffects)
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
         printInfo("[Quests] Enabled.");
 
         getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
@@ -233,7 +239,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         @Override
         public String getPrefix(ConversationContext context) {
 
-            return ChatColor.GREEN + "Quests: " + ChatColor.GRAY;
+            return "" + ChatColor.GRAY;
 
         }
     }
@@ -247,13 +253,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         showQuestReqs = config.getBoolean("show-requirements");
         allowQuitting = config.getBoolean("allow-quitting");
         snoop = config.getBoolean("snoop", true);
+        npcEffects = config.getBoolean("show-npc-effects", true);
+        effect = config.getString("npc-effect", "note");
         debug = config.getBoolean("debug-mode");
         killDelay = config.getInt("kill-delay");
-        for (String s : config.getStringList("quester-blacklist")) {
-
+        for (String s : config.getStringList("quester-blacklist"))
             questerBlacklist.add(s);
-
-        }
 
     }
 
@@ -3905,5 +3910,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         }
 
+    }
+
+    public boolean hasQuest(NPC npc, Quester quester){
+
+        for(Quest quest : quests){
+
+            if(quest.npcStart != null && quester.completedQuests.contains(quest.name) == false){
+
+                if(quest.npcStart.getId() == npc.getId())
+                    return true;
+
+            }
+
+        }
+
+        return false;
     }
 }

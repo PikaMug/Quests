@@ -126,15 +126,15 @@ public class Event {
     }
 
     public String getName(){
-        
+
         return name;
-        
+
     }
-    
+
     public void happen(Quester quester){
 
         Player player = quester.getPlayer();
-        
+
         if(message != null)
             player.sendMessage(Quests.parseString(message, quester.currentQuest));
 
