@@ -16,8 +16,11 @@
 # debug-mode: true/false
 #    Should debugging information be printed out to console?
 #
-# kill-time: number
+# kill-delay: number
 #    How long (in seconds) should a player have to wait before they can kill the same player for a Quest?
+#
+# prompt-timeout: number
+#    How long (in seconds) should a player be prompted for a Quest before it auto-cancels? (0 = Infinite)
 allow-command-questing: true
 allow-command-quests-with-npcs: false
 show-requirements: true
@@ -25,8 +28,12 @@ allow-quitting: true
 debug-mode: false
 kill-delay: 600
 snoop: true
+<<<<<<< HEAD
 show-npc-effects: true
 npc-effect: "note"
+=======
+prompt-timeout: 20
+>>>>>>> Starting rewards item data
 quester-blacklist:
   - "SomeGuy12345"
   - "somePrefix*"

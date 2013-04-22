@@ -41,8 +41,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
     public static boolean snoop = true;
+<<<<<<< HEAD
     public static boolean npcEffects = true;
     public static String effect = "note";
+=======
+    public static int timeout = 20;
+>>>>>>> Starting rewards item data
     List<String> questerBlacklist = new LinkedList<String>();
     ConversationFactory conversationFactory;
     QuestFactory questFactory;
@@ -79,7 +83,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 .withModality(false)
                 .withPrefix(new QuestsPrefix())
                 .withFirstPrompt(new QuestPrompt())
-                .withTimeout(20)
+                .withTimeout(timeout)
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                 .addConversationAbandonedListener(this);
 
@@ -174,6 +178,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     snoop();
             }
         }, 5L);
+        
+        ItemUtil.plugin = Quests.this;
 
     }
 
@@ -253,10 +259,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         showQuestReqs = config.getBoolean("show-requirements");
         allowQuitting = config.getBoolean("allow-quitting");
         snoop = config.getBoolean("snoop", true);
+<<<<<<< HEAD
         npcEffects = config.getBoolean("show-npc-effects", true);
         effect = config.getString("npc-effect", "note");
         debug = config.getBoolean("debug-mode");
         killDelay = config.getInt("kill-delay");
+=======
+        debug = config.getBoolean("debug-mode", false);
+        killDelay = config.getInt("kill-delay", 600);
+        timeout = config.getInt("prompt-timeout", 20);
+>>>>>>> Starting rewards item data
         for (String s : config.getStringList("quester-blacklist"))
             questerBlacklist.add(s);
 
@@ -2719,43 +2731,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
 
                 //Load rewards
-                if (config.contains("quests." + s + ".rewards.item-ids")) {
+                if (config.contains("quests." + s + ".rewards.items")) {
 
-                    if (Quests.checkList(config.getList("quests." + s + ".rewards.item-ids"), Integer.class)) {
-
-                        if (config.contains("quests." + s + ".rewards.item-amounts")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".rewards.item-amounts"), Integer.class)) {
+                    if (Quests.checkList(config.getList("quests." + s + ".rewards.items"), String.class)) {
 
                                 boolean failed = false;
-                                for (int i : config.getIntegerList("quests." + s + ".rewards.item-ids")) {
+                                for (String item : config.getStringList("quests." + s + ".rewards.items")) {
 
-                                    Material m = Material.getMaterial(i);
-                                    if (m == null) {
-                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + i + ChatColor.GOLD + " in " + ChatColor.GREEN + "item-amounts: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
+                                    try{
+                                        
+                                        ItemStack stack = ItemUtil.parseItem(item);
+                                        quest.itemRewards.add(stack);
+                                    
+                                    }catch(Exception e){
+                                        printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + item + ChatColor.GOLD + " in " + ChatColor.GREEN + "items: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not formatted properly!");
                                         failed = true;
                                         break;
                                     }
-                                    int amnt = config.getIntegerList("quests." + s + ".rewards.item-amounts").get(config.getIntegerList("quests." + s + ".rewards.item-ids").indexOf(i));
-                                    ItemStack stack = new ItemStack(m, amnt);
-                                    quest.itemRewards.add(stack);
-                                    quest.itemRewardAmounts.add(amnt);
 
                                 }
 
                                 if (failed) {
                                     continue;
                                 }
-
-                            } else {
-                                printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-amounts: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of numbers!");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.AQUA + "Rewards " + ChatColor.GOLD + "for Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is missing " + ChatColor.RED + "item-amounts:");
-                            continue;
-                        }
 
                     } else {
                         printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "item-ids: " + ChatColor.AQUA + "Reward " + ChatColor.GOLD + "in Quest " + ChatColor.DARK_PURPLE + quest.name + ChatColor.GOLD + " is not a list of item ids!");

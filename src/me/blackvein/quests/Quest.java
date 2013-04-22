@@ -47,7 +47,6 @@ public class Quest {
     List<String> commands = new LinkedList<String>();
     List<String> permissions = new LinkedList<String>();
     LinkedList<ItemStack> itemRewards = new LinkedList<ItemStack>();
-    LinkedList<Integer> itemRewardAmounts = new LinkedList<Integer>();
 
       //mcMMO
       List<String> mcmmoSkills = new LinkedList<String>();
@@ -253,7 +252,7 @@ public class Quest {
         }
 
         for(ItemStack i : itemRewards){
-            player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + itemRewardAmounts.get(itemRewards.indexOf(i)));
+            player.sendMessage("- " + ChatColor.DARK_GREEN + i.getItemMeta().getDisplayName() + ChatColor.GRAY + " x " + i.getAmount());
             none = null;
         }
 
