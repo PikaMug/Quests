@@ -28,11 +28,21 @@ stage#deliveryMessages
 
 stage#npcIdsToTalkTo
 
+stage#npcIdsToKill
+stage#npcAmountsToKill
+
 stage#mobTypes
 stage#mobAmounts
 stage#killLocations
 stage#killLocationRadii
 stage#killLocationNames
+
+stage#bossIds
+stage#bossAmounts
+^^^^
+boss-ids-to-kill
+boss-amounts-to-kill
+^^^^
 
 stage#reachLocations
 stage#reachLocationRadii
@@ -43,9 +53,6 @@ stage#tameAmounts
 
 stage#shearColors
 stage#shearAmounts
-
-stage#npcIdsToKill
-stage#npcAmountsToKill
 
 stage#event
 

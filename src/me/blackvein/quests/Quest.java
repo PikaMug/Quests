@@ -1,43 +1,40 @@
 package me.blackvein.quests;
 
-import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class Quest {
 
-    String name;
-    String description;
-    String finished;
-    int redoDelay = -1;
+    public String name;
+    public String description;
+    public String finished;
+    public long redoDelay = -1;
+    public int parties = 0;
     LinkedList<Stage> stages = new LinkedList<Stage>();
     NPC npcStart;
     Location blockStart;
     Quests plugin;
-    Map<Material, Integer> questItems = new EnumMap<Material, Integer>(Material.class);
+    Event initialEvent;
 
     //Requirements
     int moneyReq = 0;
     int questPointsReq = 0;
 
-    List<Integer> itemIds = new LinkedList<Integer>();
-    List<Integer> itemAmounts = new LinkedList<Integer>();
+    List<ItemStack> items = new LinkedList<ItemStack>();
     List<Boolean> removeItems = new LinkedList<Boolean>();
 
     List<String> neededQuests = new LinkedList<String>();
 
     List<String> permissionReqs = new LinkedList<String>();
 
-    String failRequirements;
+    public String failRequirements = null;
     //
 
     //Rewards
@@ -79,21 +76,6 @@ public class Quest {
                 q.currentStage = stages.get(stages.indexOf(q.currentStage) + 1);
                 q.addEmpties();
 
-                for (Entry e : q.currentStage.itemsToCraft.entrySet()) {
-
-                    if ((Boolean) e.getValue() == true) {
-
-                        Map<Material, Integer> tempMap = (Map<Material, Integer>) e.getKey();
-                        for (Entry e2 : tempMap.entrySet()) {
-
-                            questItems.put((Material) e2.getKey(), (Integer) e2.getValue());
-
-                        }
-
-                    }
-
-                }
-
                 player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
                 for(String s : q.getObjectives()){
 
@@ -118,6 +100,10 @@ public class Quest {
         return name;
     }
 
+    public boolean testRequirements(Quester quester){
+        return testRequirements(quester.getPlayer());
+    }
+
     public boolean testRequirements(Player player){
 
         Quester quester = plugin.getQuester(player.getName());
@@ -128,18 +114,18 @@ public class Quest {
         PlayerInventory inventory = player.getInventory();
         int num = 0;
 
-        for(int i : itemIds){
+        for(ItemStack is : items){
 
             for(ItemStack stack : inventory.getContents()){
 
                 if(stack != null){
-                    if(i == stack.getTypeId())
+                    if(ItemUtil.compareItems(is, stack, true) == 0)
                         num += stack.getAmount();
                 }
 
             }
 
-            if(num < itemAmounts.get(itemIds.indexOf(i)))
+            if(num < is.getAmount())
                 return false;
 
             num = 0;
@@ -182,38 +168,6 @@ public class Quest {
             none = null;
         }
 
-        for(Entry entry : questItems.entrySet()){
-
-            Material material = (Material) entry.getKey();
-            int amount = (Integer) entry.getValue();
-            for(ItemStack stack : player.getInventory().getContents()){
-
-                if(stack != null){
-
-                    if(stack.getType().equals(material)){
-
-                        if(stack.getAmount() > amount){
-
-                            stack.setAmount(stack.getAmount() - amount);
-                            break;
-
-                        }else{
-
-                            amount -= stack.getAmount();
-                            stack.setAmount(0);
-                            if(amount == 0)
-                                break;
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
         for(String s : commands){
 
             s = s.replaceAll("<player>", player.getName());
@@ -252,7 +206,13 @@ public class Quest {
         }
 
         for(ItemStack i : itemRewards){
-            player.sendMessage("- " + ChatColor.DARK_GREEN + i.getItemMeta().getDisplayName() + ChatColor.GRAY + " x " + i.getAmount());
+            if(i.hasItemMeta() && i.getItemMeta().hasDisplayName())
+                player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
+            else if(i.getDurability() != 0)
+                player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
+            else
+                player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
+
             none = null;
         }
 
@@ -297,12 +257,26 @@ public class Quest {
 
             for(String s : other.commands){
 
-                if(commands.get(other.commands.indexOf(s)).equals(s) == false)
+                if(commands.size() >= (other.commands.indexOf(s))){
+
+                    if(commands.get(other.commands.indexOf(s)).equals(s) == false)
+                        return false;
+
+                }else{
                     return false;
+                }
 
             }
 
             if(other.description.equals(description) == false)
+                return false;
+
+            if(other.initialEvent != null && initialEvent != null){
+                if(other.initialEvent.equals(initialEvent) == false)
+                    return false;
+            }else if(other.initialEvent != null && initialEvent == null){
+                return false;
+            }else if(other.initialEvent == null && initialEvent != null)
                 return false;
 
             if(other.exp != exp)
@@ -319,10 +293,7 @@ public class Quest {
             if(other.finished.equals(finished) == false)
                 return false;
 
-            if(other.itemAmounts.equals(itemAmounts) == false)
-                return false;
-
-            if(other.itemIds.equals(itemIds) == false)
+            if(other.items.equals(items) == false)
                 return false;
 
             if(other.itemRewards.equals(itemRewards) == false)
@@ -358,9 +329,6 @@ public class Quest {
                 return false;
 
             if(other.permissions.equals(permissions) == false)
-                return false;
-
-            if(other.questItems.equals(questItems) == false)
                 return false;
 
             if(other.questPoints != questPoints)

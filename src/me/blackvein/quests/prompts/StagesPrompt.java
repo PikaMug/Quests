@@ -1,29 +1,14 @@
 package me.blackvein.quests.prompts;
 
+import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.QuestFactory;
-import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
-public class StagesPrompt extends StringPrompt{
+public class StagesPrompt extends StringPrompt implements ColorUtil{
 
     private final QuestFactory questFactory;
-
-    static final ChatColor BOLD = ChatColor.BOLD;
-    static final ChatColor ITALIC = ChatColor.ITALIC;
-    static final ChatColor AQUA = ChatColor.AQUA;
-    static final ChatColor DARKAQUA = ChatColor.DARK_AQUA;
-    static final ChatColor BLUE = ChatColor.BLUE;
-    static final ChatColor GOLD = ChatColor.GOLD;
-    static final ChatColor PINK = ChatColor.LIGHT_PURPLE;
-    static final ChatColor PURPLE = ChatColor.DARK_PURPLE;
-    static final ChatColor GREEN = ChatColor.GREEN;
-    static final ChatColor RED = ChatColor.RED;
-    static final ChatColor DARKRED = ChatColor.DARK_RED;
-    static final ChatColor YELLOW = ChatColor.YELLOW;
-    static final ChatColor GRAY = ChatColor.GRAY;
-    static final ChatColor RESET = ChatColor.RESET;
 
     public StagesPrompt(QuestFactory qf){
 
@@ -143,12 +128,14 @@ public class StagesPrompt extends StringPrompt{
                 cc.setSessionData(newPref + "enchantIds", cc.getSessionData(pref + "enchantIds"));
                 cc.setSessionData(newPref + "enchantAmounts", cc.getSessionData(pref + "enchantAmounts"));
 
-                cc.setSessionData(newPref + "deliveryIds", cc.getSessionData(pref + "deliveryIds"));
-                cc.setSessionData(newPref + "deliveryAmounts", cc.getSessionData(pref + "deliveryAmounts"));
+                cc.setSessionData(newPref + "deliveryItems", cc.getSessionData(pref + "deliveryItems"));
                 cc.setSessionData(newPref + "deliveryNPCs", cc.getSessionData(pref + "deliveryNPCs"));
                 cc.setSessionData(newPref + "deliveryMessages", cc.getSessionData(pref + "deliveryMessages"));
 
                 cc.setSessionData(newPref + "npcIdsToTalkTo", cc.getSessionData(pref + "npcIdsToTalkTo"));
+
+                cc.setSessionData(newPref + "npcIdsToKill", cc.getSessionData(pref + "npcIdsToKill"));
+                cc.setSessionData(newPref + "npcAmountsToKill", cc.getSessionData(pref + "npcAmountsToKill"));
 
                 cc.setSessionData(newPref + "mobTypes", cc.getSessionData(pref + "mobTypes"));
                 cc.setSessionData(newPref + "mobAmounts", cc.getSessionData(pref + "mobAmounts"));
@@ -199,12 +186,14 @@ public class StagesPrompt extends StringPrompt{
             cc.setSessionData(pref + "enchantIds", null);
             cc.setSessionData(pref + "enchantAmounts", null);
 
-            cc.setSessionData(pref + "deliveryIds", null);
-            cc.setSessionData(pref + "deliveryAmounts", null);
+            cc.setSessionData(pref + "deliveryItems", null);
             cc.setSessionData(pref + "deliveryNPCs", null);
             cc.setSessionData(pref + "deliveryMessages", null);
 
             cc.setSessionData(pref + "npcIdsToTalkTo", null);
+
+            cc.setSessionData(pref + "npcIdsToKill", null);
+            cc.setSessionData(pref + "npcAmountsToKill", null);
 
             cc.setSessionData(pref + "mobTypes", null);
             cc.setSessionData(pref + "mobAmounts", null);

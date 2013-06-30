@@ -149,10 +149,6 @@ public class NpcEffectThread implements Runnable{
                 e.printStackTrace();
             }
 
-        } else{
-
-            Quests.log.severe("[Quests] No particle effect specified!");
-
         }
 
     }

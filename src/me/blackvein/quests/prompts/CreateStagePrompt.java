@@ -3,13 +3,16 @@ package me.blackvein.quests.prompts;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import me.ThaH3lper.com.LoadBosses.LoadBoss;
+import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.Event;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import net.aufdemrand.denizen.scripts.ScriptRegistry;
 import net.citizensnpcs.api.CitizensPlugin;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,33 +23,18 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-public class CreateStagePrompt extends FixedSetPrompt {
+public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
     private final int stageNum;
     private final String pref;
     private final CitizensPlugin citizens;
     private final QuestFactory questFactory;
-    static final ChatColor BOLD = ChatColor.BOLD;
-    static final ChatColor ITALIC = ChatColor.ITALIC;
-    static final ChatColor AQUA = ChatColor.AQUA;
-    static final ChatColor DARKAQUA = ChatColor.DARK_AQUA;
-    static final ChatColor BLUE = ChatColor.BLUE;
-    static final ChatColor GOLD = ChatColor.GOLD;
-    static final ChatColor PINK = ChatColor.LIGHT_PURPLE;
-    static final ChatColor PURPLE = ChatColor.DARK_PURPLE;
-    static final ChatColor GREEN = ChatColor.GREEN;
-    static final ChatColor DARKGREEN = ChatColor.DARK_GREEN;
-    static final ChatColor RED = ChatColor.RED;
-    static final ChatColor DARKRED = ChatColor.DARK_RED;
-    static final ChatColor YELLOW = ChatColor.YELLOW;
-    static final ChatColor GRAY = ChatColor.GRAY;
-    static final ChatColor DARKGRAY = ChatColor.DARK_GRAY;
-    static final ChatColor RESET = ChatColor.RESET;
 
     public CreateStagePrompt(int stageNum, QuestFactory qf, CitizensPlugin cit) {
 
-        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20");
+        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22");
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
         this.citizens = cit;
@@ -57,12 +45,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
 
-        context.setSessionData("stage" + stageNum, Boolean.TRUE);
+        context.setSessionData(pref, Boolean.TRUE);
 
         String text = PINK + "- " + AQUA + (String) context.getSessionData("questName") + PINK + " | Stage " + PURPLE + stageNum + PINK + " -\n";
 
         if (context.getSessionData(pref + "breakIds") == null) {
-            text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- Break Blocks " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- Break Blocks " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- Break Blocks\n";
 
@@ -77,7 +65,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 
         if (context.getSessionData(pref + "damageIds") == null) {
-            text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- Damage Blocks " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- Damage Blocks " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- Damage Blocks\n";
 
@@ -92,7 +80,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 
         if (context.getSessionData(pref + "placeIds") == null) {
-            text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- Place Blocks " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- Place Blocks " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- Place Blocks\n";
 
@@ -107,7 +95,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 
         if (context.getSessionData(pref + "useIds") == null) {
-            text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- Use Blocks " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- Use Blocks " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- Use Blocks\n";
 
@@ -122,7 +110,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 
         if (context.getSessionData(pref + "cutIds") == null) {
-            text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- Cut Blocks " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- Cut Blocks " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- Cut Blocks\n";
 
@@ -136,21 +124,21 @@ public class CreateStagePrompt extends FixedSetPrompt {
         }
 
         if (context.getSessionData(pref + "fish") == null) {
-            text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- Catch Fish " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- Catch Fish " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             Integer fish = (Integer) context.getSessionData(pref + "fish");
             text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- Catch Fish " + GRAY + "(" + AQUA + fish + " fish" + GRAY + ")\n";
         }
 
         if (context.getSessionData(pref + "playerKill") == null) {
-            text += PINK + "" + BOLD + "7 " + RESET + PURPLE + "- Kill Players " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "7 " + RESET + PURPLE + "- Kill Players " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             Integer fish = (Integer) context.getSessionData(pref + "playerKill");
             text += PINK + "" + BOLD + "7 " + RESET + PURPLE + "- Kill Players " + GRAY + "(" + AQUA + fish + " players" + GRAY + ")\n";
         }
 
         if (context.getSessionData(pref + "enchantTypes") == null) {
-            text += PINK + "" + BOLD + "8 " + RESET + PURPLE + "- Enchant Items " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "8 " + RESET + PURPLE + "- Enchant Items " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             text += PINK + "" + BOLD + "8 " + RESET + PURPLE + "- Enchant Items\n";
 
@@ -164,31 +152,30 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
         }
 
-        if(questFactory.quests.citizens != null){
+        if (questFactory.quests.citizens != null) {
 
-            if (context.getSessionData(pref + "deliveryIds") == null) {
-                text += PINK + "" + BOLD + "9 " + RESET + PURPLE + "- Deliver Items " + GRAY + "(None set)\n";
+            if (context.getSessionData(pref + "deliveryItems") == null) {
+                text += PINK + "" + BOLD + "9 " + RESET + PURPLE + "- Deliver Items " + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
                 text += PINK + "" + BOLD + "9 " + RESET + PURPLE + "- Deliver Items\n";
 
                 LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + "deliveryNPCs");
-                LinkedList<Integer> items = (LinkedList<Integer>) context.getSessionData(pref + "deliveryIds");
-                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + "deliveryAmounts");
+                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + "deliveryItems");
 
                 for (int i = 0; i < npcs.size(); i++) {
-                    text += GRAY + "    - " + BLUE + Quester.prettyItemString(items.get(i)) + GRAY + " x " + AQUA + amnts.get(i) + GRAY + " to " + DARKAQUA + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + "\n";
+                    text += GRAY + "    - " + BLUE + ItemUtil.getName(items.get(i)) + GRAY + " x " + AQUA + items.get(i).getAmount() + GRAY + " to " + DARKAQUA + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + "\n";
                 }
 
             }
 
-        }else{
+        } else {
             text += GRAY + "" + BOLD + "9 " + RESET + GRAY + "- Deliver Items " + GRAY + "(Citizens not installed)\n";
         }
 
-        if(questFactory.quests.citizens != null){
+        if (questFactory.quests.citizens != null) {
 
             if (context.getSessionData(pref + "npcIdsToTalkTo") == null) {
-                text += PINK + "" + BOLD + "10 " + RESET + PURPLE + "- Talk to NPCs " + GRAY + "(None set)\n";
+                text += PINK + "" + BOLD + "10 " + RESET + PURPLE + "- Talk to NPCs " + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
                 text += PINK + "" + BOLD + "10 " + RESET + PURPLE + "- Talk to NPCs\n";
 
@@ -200,14 +187,54 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
             }
 
-        }else{
+        } else {
             text += GRAY + "" + BOLD + "10 " + RESET + GRAY + "- Talk to NPCs " + GRAY + "(Citizens not installed)\n";
         }
 
-        if (context.getSessionData(pref + "mobTypes") == null) {
-            text += PINK + "" + BOLD + "11 " + RESET + PURPLE + "- Kill Mobs " + GRAY + "(None set)\n";
+        if (questFactory.quests.citizens != null) {
+
+            if (context.getSessionData(pref + "npcIdsToKill") == null) {
+                text += PINK + "" + BOLD + "11 " + RESET + PURPLE + "- Kill NPCs " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "11 " + RESET + PURPLE + "- Kill NPCs\n";
+
+                LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + "npcIdsToKill");
+                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + "npcAmountsToKill");
+
+                for (int i = 0; i < npcs.size(); i++) {
+                    text += GRAY + "    - " + BLUE + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + GRAY + " x " + AQUA + amounts.get(i) + "\n";
+                }
+
+            }
+
         } else {
-            text += PINK + "" + BOLD + "11 " + RESET + PURPLE + "- Kill Mobs\n";
+            text += GRAY + "" + BOLD + "11 " + RESET + GRAY + "- Kill NPCs " + GRAY + "(Citizens not installed)\n";
+        }
+        
+        if(Quests.epicBoss != null){
+        
+            if (context.getSessionData(pref + "bossIds") == null) {
+                text += PINK + "" + BOLD + "12 " + RESET + PURPLE + "- Kill Bosses " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "12 " + RESET + PURPLE + "- Kill Bosses\n";
+
+                LinkedList<String> bosses = (LinkedList<String>) context.getSessionData(pref + "bossIds");
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + "bossAmounts");
+
+                for (int i = 0; i < bosses.size(); i++) {
+                    text += GRAY + "    - " + ITALIC + AQUA + bosses.get(i) + RESET + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
+                }
+
+            }
+            
+        }else{
+            text += GRAY + "" + BOLD + "12 " + RESET + GRAY + "- Kill Bosses " + GRAY + "(EpicBoss not installed)\n";
+        }
+
+        if (context.getSessionData(pref + "mobTypes") == null) {
+            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- Kill Mobs " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        } else {
+            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- Kill Mobs\n";
 
             LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + "mobTypes");
             LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + "mobAmounts");
@@ -233,9 +260,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
         }
 
         if (context.getSessionData(pref + "reachLocations") == null) {
-            text += PINK + "" + BOLD + "12 " + RESET + PURPLE + "- Reach Locations " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "14 " + RESET + PURPLE + "- Reach Locations " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "12 " + RESET + PURPLE + "- Reach Locations\n";
+            text += PINK + "" + BOLD + "14 " + RESET + PURPLE + "- Reach Locations\n";
 
             LinkedList<String> locations = (LinkedList<String>) context.getSessionData(pref + "reachLocations");
             LinkedList<Integer> radii = (LinkedList<Integer>) context.getSessionData(pref + "reachLocationRadii");
@@ -250,9 +277,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
         }
 
         if (context.getSessionData(pref + "tameTypes") == null) {
-            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- Tame Mobs " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "15 " + RESET + PURPLE + "- Tame Mobs " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- Tame Mobs\n";
+            
+            text += PINK + "" + BOLD + "15 " + RESET + PURPLE + "- Tame Mobs\n";
 
             LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + "tameTypes");
             LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + "tameAmounts");
@@ -261,14 +289,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
                 text += GRAY + "    - " + BLUE + mobs.get(i) + GRAY + " x " + AQUA + amounts.get(i) + "\n";
             }
 
-
-
         }
 
         if (context.getSessionData(pref + "shearColors") == null) {
-            text += PINK + "" + BOLD + "14 " + RESET + PURPLE + "- Shear Sheep " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "16 " + RESET + PURPLE + "- Shear Sheep " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "14 " + RESET + PURPLE + "- Shear Sheep\n";
+            text += PINK + "" + BOLD + "16 " + RESET + PURPLE + "- Shear Sheep\n";
 
             LinkedList<String> colors = (LinkedList<String>) context.getSessionData(pref + "shearColors");
             LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + "shearAmounts");
@@ -280,41 +306,41 @@ public class CreateStagePrompt extends FixedSetPrompt {
         }
 
         if (context.getSessionData(pref + "event") == null) {
-            text += PINK + "" + BOLD + "15 " + RESET + PURPLE + "- Event " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "17 " + RESET + PURPLE + "- Event " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "15 " + RESET + PURPLE + "- Event " + GRAY + "(" + AQUA + context.getSessionData(pref + "event") + GRAY + ")\n";
+            text += PINK + "" + BOLD + "17 " + RESET + PURPLE + "- Event " + GRAY + "(" + AQUA + context.getSessionData(pref + "event") + GRAY + ")\n";
         }
 
         if (context.getSessionData(pref + "delay") == null) {
-            text += PINK + "" + BOLD + "16 " + RESET + PURPLE + "- Delay " + GRAY + "(None set)\n";
+            text += PINK + "" + BOLD + "18 " + RESET + PURPLE + "- Delay " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             long time = (Long) context.getSessionData(pref + "delay");
-            text += PINK + "" + BOLD + "16 " + RESET + PURPLE + "- Delay " + GRAY + "(" + AQUA + Quests.getTime(time) + GRAY + ")\n";
+            text += PINK + "" + BOLD + "18 " + RESET + PURPLE + "- Delay " + GRAY + "(" + AQUA + Quests.getTime(time) + GRAY + ")\n";
         }
 
-        if(context.getSessionData(pref + "delay") == null){
-            text += GRAY + "" + BOLD + "17 " + RESET + GRAY + "- Delay Message " + GRAY + "(No delay set)\n";
-        }else if(context.getSessionData(pref + "delayMessage") == null){
-            text += PINK + "" + BOLD + "17 " + RESET + PURPLE + "- Delay Message " + GRAY + "(None set)\n";
-        }else{
-            text += PINK + "" + BOLD + "17 " + RESET + PURPLE + "- Delay Message " + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + "delayMessage") + "\"" + GRAY + ")\n";
+        if (context.getSessionData(pref + "delay") == null) {
+            text += GRAY + "" + BOLD + "19 " + RESET + GRAY + "- Delay Message " + GRAY + "(No delay set)\n";
+        } else if (context.getSessionData(pref + "delayMessage") == null) {
+            text += PINK + "" + BOLD + "19 " + RESET + PURPLE + "- Delay Message " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        } else {
+            text += PINK + "" + BOLD + "19 " + RESET + PURPLE + "- Delay Message " + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + "delayMessage") + "\"" + GRAY + ")\n";
         }
 
 
-        if(questFactory.quests.denizen == null){
-            text += GRAY + "" + BOLD + "18 " + RESET + GRAY + "- Denizen Script " + GRAY + "(Denizen not installed)\n";
-        }else{
+        if (questFactory.quests.denizen == null) {
+            text += GRAY + "" + BOLD + "19 " + RESET + GRAY + "- Denizen Script " + GRAY + "(Denizen not installed)\n";
+        } else {
 
-            if(context.getSessionData(pref + "denizen") == null){
-                text += GRAY + "" + BOLD + "18 " + RESET + PURPLE + "- Denizen Script " + GRAY + "(None set)\n";
-            }else{
-                text += PINK + "" + BOLD + "18 " + RESET + PURPLE + "- Denizen Script " + GRAY + "(" + AQUA + context.getSessionData(pref + "denizen") + GRAY + "\n";
+            if (context.getSessionData(pref + "denizen") == null) {
+                text += GRAY + "" + BOLD + "20 " + RESET + PURPLE + "- Denizen Script " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- Denizen Script " + GRAY + "(" + AQUA + context.getSessionData(pref + "denizen") + GRAY + "\n";
             }
 
         }
 
-        text += RED + "" + BOLD + "19 " + RESET + PURPLE + "- Delete Stage\n";
-        text += GREEN + "" + BOLD + "20 " + RESET + PURPLE + "- Done\n";
+        text += RED + "" + BOLD + "21 " + RESET + PURPLE + "- Delete Stage\n";
+        text += GREEN + "" + BOLD + "22 " + RESET + PURPLE + "- Done\n";
 
         return text;
 
@@ -340,46 +366,62 @@ public class CreateStagePrompt extends FixedSetPrompt {
         } else if (input.equalsIgnoreCase("8")) {
             return new EnchantmentListPrompt();
         } else if (input.equalsIgnoreCase("9")) {
-            if(questFactory.quests.citizens != null)
+            if (questFactory.quests.citizens != null) {
                 return new DeliveryListPrompt();
-            else{
+            } else {
                 context.getForWhom().sendRawMessage(RED + "Citizens is not installed!");
                 return new CreateStagePrompt(stageNum, questFactory, citizens);
             }
         } else if (input.equalsIgnoreCase("10")) {
-            if(questFactory.quests.citizens != null)
+            if (questFactory.quests.citizens != null) {
                 return new NPCIDsToTalkToPrompt();
-            else{
+            } else {
                 context.getForWhom().sendRawMessage(RED + "Citizens is not installed!");
                 return new CreateStagePrompt(stageNum, questFactory, citizens);
             }
         } else if (input.equalsIgnoreCase("11")) {
-            return new MobListPrompt();
+            if (questFactory.quests.citizens != null) {
+                return new NPCKillListPrompt();
+            } else {
+                context.getForWhom().sendRawMessage(RED + "Citizens is not installed!");
+                return new CreateStagePrompt(stageNum, questFactory, citizens);
+            }
         } else if (input.equalsIgnoreCase("12")) {
-            return new ReachListPrompt();
+            if (Quests.epicBoss != null) {
+                return new EpicBossListPrompt();
+            } else {
+                context.getForWhom().sendRawMessage(RED + "EpicBoss is not installed!");
+                return new CreateStagePrompt(stageNum, questFactory, citizens);
+            }
         } else if (input.equalsIgnoreCase("13")) {
-            return new TameListPrompt();
+            return new MobListPrompt();
         } else if (input.equalsIgnoreCase("14")) {
-            return new ShearListPrompt();
+            return new ReachListPrompt();
         } else if (input.equalsIgnoreCase("15")) {
-            return new EventPrompt();
+            return new TameListPrompt();
         } else if (input.equalsIgnoreCase("16")) {
-            return new DelayPrompt();
+            return new ShearListPrompt();
         } else if (input.equalsIgnoreCase("17")) {
-            if(context.getSessionData(pref + "delay") == null){
+            return new EventPrompt();
+        } else if (input.equalsIgnoreCase("18")) {
+            return new DelayPrompt();
+        } else if (input.equalsIgnoreCase("19")) {
+            if (context.getSessionData(pref + "delay") == null) {
                 context.getForWhom().sendRawMessage(RED + "You must set a delay first!");
                 return new CreateStagePrompt(stageNum, questFactory, citizens);
-            }else
+            } else {
                 return new DelayMessagePrompt();
-        } else if (input.equalsIgnoreCase("18")) {
-            if(questFactory.quests.denizen == null){
+            }
+        } else if (input.equalsIgnoreCase("20")) {
+            if (questFactory.quests.denizen == null) {
                 context.getForWhom().sendRawMessage(RED + "Denizen is not installed!");
                 return new CreateStagePrompt(stageNum, questFactory, citizens);
-            }else
+            } else {
                 return new DenizenPrompt();
-        } else if (input.equalsIgnoreCase("19")) {
+            }
+        } else if (input.equalsIgnoreCase("21")) {
             return new DeletePrompt();
-        } else if (input.equalsIgnoreCase("20")) {
+        } else if (input.equalsIgnoreCase("22")) {
             return new StagesPrompt(questFactory);
         } else {
             return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -1565,10 +1607,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
                         if (Quester.prettyEnchantmentString(e).equalsIgnoreCase(s)) {
 
-                            System.out.println("Found a match: \"" + Quester.prettyEnchantmentString(e) + "\" matches \"" + s + "\"");
                             if (enchs.contains(s) == false) {
                                 enchs.add(Quester.prettyEnchantmentString(e));
-                                System.out.println("added \"" + e.getName() + "\"");
                                 valid = true;
                                 break;
                             } else {
@@ -1688,23 +1728,40 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
         public DeliveryListPrompt() {
 
-            super("1", "2", "3", "4", "5", "6");
+            super("1", "2", "3", "4", "5");
 
         }
 
         @Override
         public String getPromptText(ConversationContext context) {
 
+            // Check/add newly made item
+            if(context.getSessionData("newItem") != null){
+                if(context.getSessionData(pref + "deliveryItems") != null){
+                    List<ItemStack> itemRews = getItems(context);
+                    itemRews.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(pref + "deliveryItems", itemRews);
+                }else{
+                    LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
+                    itemRews.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(pref + "deliveryItems", itemRews);
+                }
+
+                context.setSessionData("newItem", null);
+                context.setSessionData("tempStack", null);
+
+            }
+            
             String text = GOLD + "- Deliver Items -\n";
-            if (context.getSessionData(pref + "deliveryIds") == null) {
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item IDs (None set)\n";
-                text += GRAY + "2 - Set item amounts (No item IDs set)\n";
-                text += GRAY + "3 - Set NPC IDs (No item IDs set)\n";
+            if (context.getSessionData(pref + "deliveryItems") == null) {
+                text += GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
+                text += GRAY + "2 - Set NPC IDs (No items set)\n";
                 if (context.getSessionData(pref + "deliveryMessages") == null) {
-                    text += BLUE + "4 - Set delivery messages (None set)\n";
+                    text += BLUE + "3 - Set delivery messages (None set)\n";
                 } else {
 
-                    text += BLUE + "4 - Set delivery messages\n";
+                    text += BLUE + "3 - Set delivery messages\n";
                     for (String s : getDeliveryMessages(context)) {
 
                         text += GRAY + "    - " + AQUA + "\"" + s + "\"";
@@ -1712,35 +1769,23 @@ public class CreateStagePrompt extends FixedSetPrompt {
                     }
 
                 }
-                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Clear\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Done";
             } else {
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set item IDs\n";
-                for (int i : getDeliveryIds(context)) {
+                for (ItemStack is : getItems(context)) {
 
-                    text += GRAY + "    - " + AQUA + Quester.prettyItemString(i) + "\n";
-
-                }
-
-                if (context.getSessionData(pref + "deliveryAmounts") == null) {
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set item amounts (None set)\n";
-                } else {
-
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set item amounts\n";
-                    for (Integer i : getDeliveryAmounts(context)) {
-
-                        text += GRAY + "    - " + AQUA + i + "\n";
-
-                    }
+                    text += GRAY + "    - " + ItemUtil.getDisplayString(is) + "\n";
 
                 }
+                
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
 
                 if (context.getSessionData(pref + "deliveryNPCs") == null) {
-                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set NPC IDs (None set)\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set NPC IDs (None set)\n";
                 } else {
 
-                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set NPC IDs\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set NPC IDs\n";
                     for (int i : getDeliveryNPCs(context)) {
 
                         text += GRAY + "    - " + AQUA + i + " (" + citizens.getNPCRegistry().getById(i).getName() + ")\n";
@@ -1750,20 +1795,20 @@ public class CreateStagePrompt extends FixedSetPrompt {
                 }
 
                 if (context.getSessionData(pref + "deliveryMessages") == null) {
-                    text += BLUE + "4 - Set delivery messages (None set)\n";
+                    text += BLUE + "3 - Set delivery messages (None set)\n";
                 } else {
 
-                    text += BLUE + "4 - Set delivery messages\n";
+                    text += BLUE + "3 - Set delivery messages\n";
                     for (String s : getDeliveryMessages(context)) {
 
-                        text += GRAY + "    - " + AQUA + "\"" + s + "\"";
+                        text += GRAY + "    - " + AQUA + "\"" + s + "\"\n";
 
                     }
 
                 }
 
-                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Clear\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Done";
 
             }
 
@@ -1775,38 +1820,29 @@ public class CreateStagePrompt extends FixedSetPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase("1")) {
-                return new DeliveryIdsPrompt();
+                return new ItemStackPrompt(DeliveryListPrompt.this);
             } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(pref + "deliveryIds") == null) {
-                    context.getForWhom().sendRawMessage(RED + "You must set item ids first!");
-                    return new DeliveryListPrompt();
-                } else {
-                    return new DeliveryAmountsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData(pref + "deliveryIds") == null) {
-                    context.getForWhom().sendRawMessage(RED + "You must set item ids first!");
+                if (context.getSessionData(pref + "deliveryItems") == null) {
+                    context.getForWhom().sendRawMessage(RED + "You must add items first!");
                     return new DeliveryListPrompt();
                 } else {
                     return new DeliveryNPCsPrompt();
                 }
-            } else if (input.equalsIgnoreCase("4")) {
+            } else if (input.equalsIgnoreCase("3")) {
                 return new DeliveryMessagesPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
+            } else if (input.equalsIgnoreCase("4")) {
                 context.getForWhom().sendRawMessage(YELLOW + "Delivery objective cleared.");
-                context.setSessionData(pref + "deliveryIds", null);
-                context.setSessionData(pref + "deliveryAmounts", null);
+                context.setSessionData(pref + "deliveryItems", null);
                 context.setSessionData(pref + "deliveryNPCs", null);
                 context.setSessionData(pref + "deliveryMessages", null);
                 return new DeliveryListPrompt();
-            } else if (input.equalsIgnoreCase("6")) {
+            } else if (input.equalsIgnoreCase("5")) {
 
                 int one;
                 int two;
-                int three;
 
-                if (context.getSessionData(pref + "deliveryIds") != null) {
-                    one = ((List<Integer>) context.getSessionData(pref + "deliveryIds")).size();
+                if (context.getSessionData(pref + "deliveryItems") != null) {
+                    one = ((List<ItemStack>) context.getSessionData(pref + "deliveryItems")).size();
                 } else {
                     one = 0;
                 }
@@ -1817,13 +1853,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
                     two = 0;
                 }
 
-                if (context.getSessionData(pref + "deliveryAmounts") != null) {
-                    three = ((List<Integer>) context.getSessionData(pref + "deliveryAmounts")).size();
-                } else {
-                    three = 0;
-                }
-
-                if (one == two && two == three) {
+                if (one == two) {
 
                     if (context.getSessionData(pref + "deliveryMessages") == null && one != 0) {
                         context.getForWhom().sendRawMessage(RED + "You must set at least one delivery message!");
@@ -1833,7 +1863,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
                     }
 
                 } else {
-                    context.getForWhom().sendRawMessage(RED + "The list sizes are not equal!");
+                    context.getForWhom().sendRawMessage(RED + "The item list and NPC list are not equal in size!");
                     return new DeliveryListPrompt();
                 }
             }
@@ -1842,12 +1872,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
         }
 
-        private List<Integer> getDeliveryIds(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + "deliveryIds");
-        }
-
-        private List<Integer> getDeliveryAmounts(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + "deliveryAmounts");
+        private List<ItemStack> getItems(ConversationContext context) {
+            return (List<ItemStack>) context.getSessionData(pref + "deliveryItems");
         }
 
         private List<Integer> getDeliveryNPCs(ConversationContext context) {
@@ -1856,105 +1882,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
         private List<String> getDeliveryMessages(ConversationContext context) {
             return (List<String>) context.getSessionData(pref + "deliveryMessages");
-        }
-    }
-
-    private class DeliveryIdsPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-
-            return YELLOW + "Enter item IDs, separating each one by a space, or enter \'cancel\' to return.";
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-
-            if (input.equalsIgnoreCase("cancel") == false) {
-
-                String[] args = input.split(" ");
-                LinkedList<Integer> ids = new LinkedList<Integer>();
-                for (String s : args) {
-
-                    try {
-
-                        Integer i = Integer.parseInt(s);
-
-                        if (Material.getMaterial(i) != null) {
-
-                            if (ids.contains(i) == false) {
-                                ids.add(i);
-                            } else {
-                                context.getForWhom().sendRawMessage(RED + " List contains duplicates!");
-                                return new DeliveryIdsPrompt();
-                            }
-
-                        } else {
-                            context.getForWhom().sendRawMessage(PINK + s + RED + " is not a valid item ID!");
-                            return new DeliveryIdsPrompt();
-                        }
-
-                    } catch (Exception e) {
-
-                        context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
-                        return new DeliveryIdsPrompt();
-
-                    }
-
-                }
-
-                context.setSessionData(pref + "deliveryIds", ids);
-
-            }
-
-            return new DeliveryListPrompt();
-
-        }
-    }
-
-    private class DeliveryAmountsPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-
-            return YELLOW + "Enter item amounts, separating each one by a space, or enter \'cancel\' to return.";
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-
-            if (input.equalsIgnoreCase("cancel") == false) {
-
-                String[] args = input.split(" ");
-                LinkedList<Integer> amounts = new LinkedList<Integer>();
-                for (String s : args) {
-
-                    try {
-
-                        Integer i = Integer.parseInt(s);
-
-                        if (i > 0) {
-                            amounts.add(i);
-                        } else {
-                            context.getForWhom().sendRawMessage(PINK + "" + i + RED + " is not greater than zero!");
-                            return new DeliveryAmountsPrompt();
-                        }
-
-                    } catch (Exception e) {
-
-                        context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
-                        return new DeliveryAmountsPrompt();
-
-                    }
-
-                }
-
-                context.setSessionData(pref + "deliveryAmounts", amounts);
-
-            }
-
-            return new DeliveryListPrompt();
-
         }
     }
 
@@ -2077,6 +2004,195 @@ public class CreateStagePrompt extends FixedSetPrompt {
             }
 
             return new CreateStagePrompt(stageNum, questFactory, citizens);
+
+        }
+    }
+
+    private class NPCKillListPrompt extends FixedSetPrompt {
+
+        public NPCKillListPrompt() {
+
+            super("1", "2", "3", "4");
+
+        }
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+
+            String text = GOLD + "- Kill NPCs -\n";
+            if (context.getSessionData(pref + "npcIdsToKill") == null) {
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set NPC IDs (None set)\n";
+                text += GRAY + "2 - Set kill amounts (No IDs set)\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+            } else {
+
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set kill IDs\n";
+                for (Integer i : getNPCIds(context)) {
+
+                    text += GRAY + "    - " + AQUA + citizens.getNPCRegistry().getById(i).getName() + DARKAQUA + " (" + i + ")\n";
+
+                }
+
+                if (context.getSessionData(pref + "npcAmountsToKill") == null) {
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set kill amounts (None set)\n";
+                } else {
+
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set kill amounts\n";
+                    for (Integer i : getKillAmounts(context)) {
+
+                        text += GRAY + "    - " + BLUE + i + "\n";
+
+                    }
+
+                }
+
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+
+            }
+
+            return text;
+
+        }
+
+        @Override
+        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("1")) {
+                return new npcIdsToKillPrompt();
+            } else if (input.equalsIgnoreCase("2")) {
+                if (context.getSessionData(pref + "npcIdsToKill") == null) {
+                    context.getForWhom().sendRawMessage(RED + "You must set NPC IDs first!");
+                    return new NPCKillListPrompt();
+                } else {
+                    return new npcAmountsToKillPrompt();
+                }
+            } else if (input.equalsIgnoreCase("3")) {
+                context.getForWhom().sendRawMessage(YELLOW + "Kill NPCs objective cleared.");
+                context.setSessionData(pref + "npcIdsToKill", null);
+                context.setSessionData(pref + "npcAmountsToKill", null);
+                return new NPCKillListPrompt();
+            } else if (input.equalsIgnoreCase("4")) {
+
+                int one;
+                int two;
+
+                if (context.getSessionData(pref + "npcIdsToKill") != null) {
+                    one = ((List<Integer>) context.getSessionData(pref + "npcIdsToKill")).size();
+                } else {
+                    one = 0;
+                }
+
+                if (context.getSessionData(pref + "npcAmountsToKill") != null) {
+                    two = ((List<Integer>) context.getSessionData(pref + "npcAmountsToKill")).size();
+                } else {
+                    two = 0;
+                }
+
+                if (one == two) {
+                    return new CreateStagePrompt(stageNum, questFactory, citizens);
+                } else {
+                    context.getForWhom().sendRawMessage(RED + "The " + GOLD + "NPC IDs list" + RED + " and " + GOLD + " kill amounts list " + RED + "are not the same size!");
+                    return new NPCKillListPrompt();
+                }
+            }
+            return null;
+
+        }
+
+        private List<Integer> getNPCIds(ConversationContext context) {
+            return (List<Integer>) context.getSessionData(pref + "npcIdsToKill");
+        }
+
+        private List<Integer> getKillAmounts(ConversationContext context) {
+            return (List<Integer>) context.getSessionData(pref + "npcAmountsToKill");
+        }
+    }
+
+    private class npcIdsToKillPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+
+            return YELLOW + "Enter NPC IDs, separating each one by a space, or enter \'cancel\' to return.";
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false) {
+
+                String[] args = input.split(" ");
+                LinkedList<Integer> npcs = new LinkedList<Integer>();
+                for (String s : args) {
+
+                    try {
+
+                        Integer i = Integer.parseInt(s);
+
+                        if (citizens.getNPCRegistry().getById(i) != null) {
+                            npcs.add(i);
+                        } else {
+                            context.getForWhom().sendRawMessage(PINK + "" + i + RED + " is not a valid NPC ID!");
+                            return new npcIdsToKillPrompt();
+                        }
+
+                    } catch (Exception e) {
+
+                        context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
+                        return new npcIdsToKillPrompt();
+
+                    }
+
+                }
+
+                context.setSessionData(pref + "npcIdsToKill", npcs);
+
+            }
+
+            return new NPCKillListPrompt();
+
+        }
+    }
+
+    private class npcAmountsToKillPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            return YELLOW + "Enter kill amounts (numbers), separating each one by a space, or enter \'cancel\' to return.";
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false) {
+
+                String[] args = input.split(" ");
+                LinkedList<Integer> amounts = new LinkedList<Integer>();
+                for (String s : args) {
+
+                    try {
+
+                        if (Integer.parseInt(s) > 0) {
+                            amounts.add(Integer.parseInt(s));
+                        } else {
+                            context.getForWhom().sendRawMessage(PINK + s + RED + " is not greater than 0!");
+                            return new npcAmountsToKillPrompt();
+                        }
+
+                    } catch (Exception e) {
+                        context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
+                        return new npcAmountsToKillPrompt();
+                    }
+
+                }
+
+                context.setSessionData(pref + "npcAmountsToKill", amounts);
+
+            }
+
+            return new NPCKillListPrompt();
 
         }
     }
@@ -3287,7 +3403,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
         }
     }
 
-
     private class DelayPrompt extends StringPrompt {
 
         @Override
@@ -3306,11 +3421,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
                 long l;
 
-                try{
+                try {
 
                     l = Long.parseLong(input);
 
-                }catch(Exception e){
+                } catch (Exception e) {
                     player.sendMessage(YELLOW + "Input was not a number!");
                     return new DelayPrompt();
                 }
@@ -3334,7 +3449,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
         }
     }
-
 
     private class DelayMessagePrompt extends StringPrompt {
 
@@ -3366,7 +3480,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
         }
     }
 
-
     private class DenizenPrompt extends StringPrompt {
 
         @Override
@@ -3374,8 +3487,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
             String text = DARKAQUA + "- Denizen Scripts -";
 
-            for(String s : ScriptRegistry._getScriptNames())
+            for (String s : ScriptRegistry._getScriptNames()) {
                 text += AQUA + "- " + s + "\n";
+            }
 
             return YELLOW + "Enter script name, or enter \"clear\" to clear the script, or \"cancel\" to return";
 
@@ -3388,12 +3502,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
             if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
 
-                if(ScriptRegistry.containsScript(input)){
+                if (ScriptRegistry.containsScript(input)) {
 
                     context.setSessionData(pref + "denizen", ScriptRegistry.getScriptContainer(input).getName());
                     return new CreateStagePrompt(stageNum, questFactory, citizens);
 
-                }else{
+                } else {
 
                     player.sendMessage(RED + "Denizen script not found!");
                     return new DenizenPrompt();
@@ -3411,6 +3525,197 @@ public class CreateStagePrompt extends FixedSetPrompt {
         }
     }
 
+    private class EpicBossListPrompt extends FixedSetPrompt {
+
+        public EpicBossListPrompt() {
+            super("1", "2", "3", "4");
+        }
+
+        @Override
+        public String getPromptText(ConversationContext cc) {
+            String text = GOLD + "- " + DARKRED + "Kill Bosses" + GOLD + " -\n";
+
+            if (cc.getSessionData(pref + "bossIds") == null) {
+                text += BOLD + "" + RED + "1 " + RESET + RED + "- Set Bosses (None Set)\n";
+            } else {
+                text += BOLD + "" + RED + "1 " + RESET + RED + "- Set Bosses\n";
+                LinkedList<String> ids = (LinkedList<String>) cc.getSessionData(pref + "bossIds");
+                for (String id : ids) {
+
+                    for (LoadBoss b : Quests.epicBoss.BossLoadList) {
+
+                        if (b.getName().equalsIgnoreCase(id)) {
+                            text += GOLD + "    - " + YELLOW + b.getName() + "\n";
+                            break;
+                        }
+
+                    }
+
+
+                }
+            }
+
+            if (cc.getSessionData(pref + "bossAmounts") == null) {
+                text += BOLD + "" + RED + "2 " + RESET + RED + "- Set kill amounts (None Set)\n";
+            } else {
+                text += BOLD + "" + RED + "2 " + RESET + RED + "- Set kill amounts\n";
+                LinkedList<Integer> amounts = (LinkedList<Integer>) cc.getSessionData(pref + "bossAmounts");
+                for (int amount : amounts) {
+                    text += GOLD + "    - " + YELLOW + amount + "\n";
+                }
+            }
+
+            text += BOLD + "" + RED + "3 " + RESET + RED + "- Clear\n";
+            text += BOLD + "" + RED + "4 " + RESET + GREEN + "- Done\n\n";
+
+            return text;
+        }
+
+        @Override
+        protected Prompt acceptValidatedInput(ConversationContext cc, String input) {
+
+            if (input.equalsIgnoreCase("1")) {
+                return new EpicBossIDListPrompt();
+            }else if(input.equalsIgnoreCase("2")) {
+                return new EpicBossAmountListPrompt();
+            }else if(input.equalsIgnoreCase("3")) {
+                
+                cc.setSessionData(pref + "bossIds", null);
+                cc.setSessionData(pref + "bossAmounts", null);
+                
+                cc.getForWhom().sendRawMessage(YELLOW + "Kill Bosses objective cleared.");
+                return new EpicBossListPrompt();
+                
+            }else if(input.equalsIgnoreCase("4")) {
+                
+                int idNum = 0;
+                int amountNum = 0;
+                
+                if(cc.getSessionData(pref + "bossIds") != null)
+                    idNum = ((LinkedList<String>) cc.getSessionData(pref + "bossIds")).size();
+                
+                if(cc.getSessionData(pref + "bossAmounts") != null)
+                    amountNum = ((LinkedList<Integer>) cc.getSessionData(pref + "bossAmounts")).size();
+                
+                if(idNum != amountNum){
+                    
+                    cc.getForWhom().sendRawMessage(RED + "Error: the lists are not the same size!");
+                    return new EpicBossListPrompt();
+                }
+                
+                return new CreateStagePrompt(stageNum, questFactory, citizens);
+            }
+
+            return new EpicBossListPrompt();
+
+        }
+    }
+
+    private class EpicBossIDListPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext cc) {
+            String text = GOLD + "- " + DARKRED + "Bosses" + GOLD + " -\n";
+            if (Quests.epicBoss.BossLoadList.isEmpty()) {
+                text += RED + "- None\n";
+            } else {
+
+                for (LoadBoss b : Quests.epicBoss.BossLoadList) {
+                    text += RED + "  - " + b.getName() + "\n";
+                }
+
+            }
+
+            text += "\n";
+            text += YELLOW + "Enter Boss names, separating each one by a space, or 'cancel' to return.";
+
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext cc, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false) {
+
+                String[] ids = input.split(" ");
+                LinkedList<String> idList = new LinkedList<String>();
+                for (String id : ids) {
+
+                        LoadBoss found = null;
+
+                        for (LoadBoss b : Quests.epicBoss.BossLoadList) {
+                            if (b.getName().equalsIgnoreCase(input)) {
+                                found = b;
+                                break;
+                            }
+                        }
+
+                        if (found == null) {
+                            cc.getForWhom().sendRawMessage(RED + "Error: could not find Boss with name " + id + "!");
+                            return new EpicBossIDListPrompt();
+                        } else {
+                            if (idList.contains(found.getName())) {
+                                cc.getForWhom().sendRawMessage(RED + "Error: list contains duplicates!");
+                                return new EpicBossIDListPrompt();
+                            } else {
+                                idList.add(found.getName());
+                            }
+                        }
+
+                }
+
+                cc.setSessionData(pref + "bossIds", idList);
+
+            }
+
+            return new EpicBossListPrompt();
+
+        }
+    }
+
+    private class EpicBossAmountListPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext cc) {
+            String text = YELLOW + "Enter kill amounts (numbers), separating each one by a space, or 'cancel' to return.";
+
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext cc, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false) {
+                
+                String[] amounts = input.split(",");
+                LinkedList<Integer> amountList = new LinkedList<Integer>();
+                for (String amount : amounts) {
+
+                    try {
+
+                        int i = Integer.parseInt(amount);
+                        if(i < 1){
+                            cc.getForWhom().sendRawMessage(RED + "Error: " + amount + " is not greater than zero!");
+                            return new EpicBossAmountListPrompt();
+                        }
+                        
+                        amountList.add(i);
+
+                    } catch (Exception e) {
+                        cc.getForWhom().sendRawMessage(RED + "Error: " + amount + " is not a number!");
+                        return new EpicBossAmountListPrompt();
+                    }
+
+                }
+
+                cc.setSessionData(pref + "bossAmounts", amountList);
+
+            }
+
+            return new EpicBossListPrompt();
+
+        }
+    }
 
     private class DeletePrompt extends StringPrompt {
 
@@ -3419,7 +3724,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
             String text = GREEN + "" + BOLD + "1" + RESET + "" + GREEN + " - Yes\n";
             text += GREEN + "" + BOLD + "2" + RESET + "" + GREEN + " - No";
-            return RED + "Are you sure you want to delete " + YELLOW + "Stage " + stageNum + RED + " of " + GOLD + context.getSessionData("questName") + RED  + "?\n(Any Stages after will be shifted back one spot)\n" + text;
+            return RED + "Are you sure you want to delete " + YELLOW + "Stage " + stageNum + RED + " of " + GOLD + context.getSessionData("questName") + RED + "?\n(Any Stages after will be shifted back one spot)\n" + text;
 
         }
 

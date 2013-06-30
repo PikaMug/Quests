@@ -3,6 +3,8 @@ package me.blackvein.quests;
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
+import me.ThaH3lper.com.LoadBosses.LoadBoss;
+import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -24,12 +26,12 @@ public class Quester {
     boolean editorMode = false;
     boolean holdingQuestItemFromStorage = false;
     boolean delayOver = true;
-    Quest currentQuest;
-    String questToTake;
+    public Quest currentQuest;
+    public String questToTake;
     Stage currentStage;
     int questPoints = 0;
     Quests plugin;
-    LinkedList<String> completedQuests = new LinkedList<String>();
+    public LinkedList<String> completedQuests = new LinkedList<String>();
     Map<String, Long> completedTimes = new HashMap<String, Long>();
     Map<Material, Integer> blocksDamaged = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksBroken = new EnumMap<Material, Integer>(Material.class);
@@ -37,7 +39,7 @@ public class Quester {
     Map<Material, Integer> blocksUsed = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksCut = new EnumMap<Material, Integer>(Material.class);
     Map<Integer, Integer> potionsBrewed = new HashMap<Integer, Integer>();
-    Map<Material, Integer> itemsDelivered = new EnumMap<Material, Integer>(Material.class);
+    Map<ItemStack, Integer> itemsDelivered = new HashMap<ItemStack, Integer>();
     int fishCaught = 0;
     int playersKilled = 0;
     long delayStartTime = 0;
@@ -51,12 +53,13 @@ public class Quester {
     Map<NPC, Boolean> citizensInteracted = new HashMap<NPC, Boolean>();
     LinkedList<NPC> citizensKilled = new LinkedList<NPC>();
     LinkedList<Integer> citizenNumKilled = new LinkedList<Integer>();
+    LinkedList<String> bossesKilled = new LinkedList<String>();
+    LinkedList<Integer> bossAmountsKilled = new LinkedList<Integer>();
     LinkedList<Location> locationsReached = new LinkedList<Location>();
     LinkedList<Boolean> hasReached = new LinkedList<Boolean>();
     LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
     Map<EntityType, Integer> mobsTamed = new EnumMap<EntityType, Integer>(EntityType.class);
     Map<DyeColor, Integer> sheepSheared = new EnumMap<DyeColor, Integer>(DyeColor.class);
-    Map<Material, Integer> itemsCrafted = new EnumMap<Material, Integer>(Material.class);
     final Random random = new Random();
 
     public Quester(Quests newPlugin) {
@@ -84,9 +87,9 @@ public class Quester {
                 Quests.economy.withdrawPlayer(name, q.moneyReq);
             }
 
-            for (int i : q.itemIds) {
-                if (q.removeItems.get(q.itemIds.indexOf(i)) == true) {
-                    Quests.removeItem(player.getInventory(), Material.getMaterial(i), q.itemAmounts.get(q.itemIds.indexOf(i)));
+            for (ItemStack is : q.items) {
+                if (q.removeItems.get(q.items.indexOf(is)) == true) {
+                    Quests.removeItem(player.getInventory(), is);
                 }
             }
 
@@ -97,6 +100,9 @@ public class Quester {
                 player.sendMessage(s);
             }
 
+            if(q.initialEvent != null)
+                q.initialEvent.happen(this);
+
         } else {
 
             player.sendMessage(q.failRequirements);
@@ -105,6 +111,19 @@ public class Quester {
 
     }
 
+    public Party getParty(){
+        
+        for(Party p : plugin.parties){
+            
+            if(p.getMember(name) != null)
+                return p;
+            
+        }
+        
+        return null;
+        
+    }
+    
     public LinkedList<String> getObjectives() {
 
         LinkedList<String> unfinishedObjectives = new LinkedList<String>();
@@ -336,19 +355,19 @@ public class Quester {
 
         }
 
-        for (Material m : currentStage.itemsToDeliver) {
+        for (ItemStack is : currentStage.itemsToDeliver) {
 
-            int delivered = itemsDelivered.get(m);
-            int amt = currentStage.itemAmountsToDeliver.get(currentStage.itemsToDeliver.indexOf(m));
-            NPC npc = currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(m));
+            int delivered = itemsDelivered.get(is);
+            int amt = is.getAmount();
+            NPC npc = currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(is));
 
             if (delivered < amt) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + "Deliver " + Quester.prettyItemString(m.getId()) + " to " + npc.getName() + ": " + delivered + "/" + amt);
+                unfinishedObjectives.add(ChatColor.GREEN + "Deliver " + ItemUtil.getName(is) + " to " + npc.getName() + ": " + delivered + "/" + amt);
 
             } else {
 
-                finishedObjectives.add(ChatColor.GRAY + "Deliver " + Quester.prettyItemString(m.getId()) + " to " + npc.getName() + ": " + delivered + "/" + amt);
+                finishedObjectives.add(ChatColor.GRAY + "Deliver " + ItemUtil.getName(is) + " to " + npc.getName() + ": " + delivered + "/" + amt);
 
             }
 
@@ -395,6 +414,20 @@ public class Quester {
 
         }
 
+        for (String boss : currentStage.bossesToKill) {
+
+            if (bossAmountsKilled.get(bossesKilled.indexOf(boss)) < currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss))) {
+
+                unfinishedObjectives.add(ChatColor.GREEN + "Kill " + ChatColor.ITALIC + boss + ChatColor.RESET + ChatColor.GREEN + " " + bossAmountsKilled.get(currentStage.bossesToKill.indexOf(boss)) + "/" + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)));
+
+            } else {
+
+                unfinishedObjectives.add(ChatColor.GRAY + "Kill " + ChatColor.ITALIC + boss + ChatColor.RESET + ChatColor.GRAY + " " + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)) + "/" + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)));
+
+            }
+
+        }
+
         for (Entry e : currentStage.mobsToTame.entrySet()) {
 
             for (Entry e2 : mobsTamed.entrySet()) {
@@ -430,33 +463,6 @@ public class Quester {
                     } else {
 
                         finishedObjectives.add(ChatColor.GRAY + "Shear " + ((DyeColor) e.getKey()).name().toString().toLowerCase() + " sheep: " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        for (Entry e : currentStage.itemsToCraft.entrySet()) {
-
-            Entry entry = null;
-            for (Object o : ((Map) e.getKey()).entrySet()) {
-                entry = (Entry) o;
-            }
-
-            for (Entry e2 : itemsCrafted.entrySet()) {
-
-                if (entry.getKey().equals(e2.getKey())) {
-
-                    if ((Integer) e2.getValue() < (Integer) entry.getValue()) {
-
-                        unfinishedObjectives.add(ChatColor.GREEN + "Craft " + prettyItemString(((Material) entry.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) entry.getValue()));
-
-                    } else {
-
-                        finishedObjectives.add(ChatColor.GRAY + "Craft " + prettyItemString(((Material) entry.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) entry.getValue()));
 
                     }
 
@@ -597,6 +603,14 @@ public class Quester {
                 return true;
             }
 
+        } else if (s.equalsIgnoreCase("killBoss")) {
+
+            if (currentStage.bossesToKill.isEmpty()) {
+                return false;
+            } else {
+                return true;
+            }
+
         } else if (s.equalsIgnoreCase("tameMob")) {
 
             if (currentStage.mobsToTame.isEmpty()) {
@@ -642,7 +656,7 @@ public class Quester {
                 blocksDamaged.put(m, (i + 1));
 
                 if (blocksDamaged.get(m).equals(currentStage.blocksToDamage.get(m))) {
-                    finishObjective("damageBlock", m, null, null, null, null, null, null, null, 0);
+                    finishObjective("damageBlock", m, null, null, null, null, null, null, null, null);
                 }
 
             }
@@ -660,7 +674,7 @@ public class Quester {
                 blocksBroken.put(m, (i + 1));
 
                 if (blocksBroken.get(m).equals(currentStage.blocksToBreak.get(m))) {
-                    finishObjective("breakBlock", m, null, null, null, null, null, null, null, 0);
+                    finishObjective("breakBlock", m, null, null, null, null, null, null, null, null);
                 }
             }
 
@@ -677,7 +691,7 @@ public class Quester {
                 blocksPlaced.put(m, (i + 1));
 
                 if (blocksPlaced.get(m).equals(currentStage.blocksToPlace.get(m))) {
-                    finishObjective("placeBlock", m, null, null, null, null, null, null, null, 0);
+                    finishObjective("placeBlock", m, null, null, null, null, null, null, null, null);
                 }
             }
 
@@ -694,7 +708,7 @@ public class Quester {
                 blocksUsed.put(m, (i + 1));
 
                 if (blocksUsed.get(m).equals(currentStage.blocksToUse.get(m))) {
-                    finishObjective("useBlock", m, null, null, null, null, null, null, null, 0);
+                    finishObjective("useBlock", m, null, null, null, null, null, null, null, null);
                 }
 
             }
@@ -712,7 +726,7 @@ public class Quester {
                 blocksCut.put(m, (i + 1));
 
                 if (blocksCut.get(m).equals(currentStage.blocksToCut.get(m))) {
-                    finishObjective("cutBlock", m, null, null, null, null, null, null, null, 0);
+                    finishObjective("cutBlock", m, null, null, null, null, null, null, null, null);
                 }
 
             }
@@ -727,7 +741,7 @@ public class Quester {
             fishCaught++;
 
             if (((Integer) fishCaught).equals(currentStage.fishToCatch)) {
-                finishObjective("catchFish", null, null, null, null, null, null, null, null, 0);
+                finishObjective("catchFish", null, null, null, null, null, null, null, null, null);
             }
 
         }
@@ -750,7 +764,7 @@ public class Quester {
                             itemsEnchanted.put(((Map) entry.getKey()), (num));
 
                             if ((num).equals((Integer) entry2.getValue())) {
-                                finishObjective("enchantItem", m, null, e, null, null, null, null, null, 0);
+                                finishObjective("enchantItem", m, null, e, null, null, null, null, null, null);
                             }
 
                         }
@@ -791,7 +805,7 @@ public class Quester {
                                 mobNumKilled.set(index, numKilledInteger);
 
                                 if ((numKilledInteger).equals(currentStage.mobNumToKill.get(index))) {
-                                    finishObjective("killMob", null, null, null, e, null, null, null, null, 0);
+                                    finishObjective("killMob", null, null, null, e, null, null, null, null, null);
                                 }
 
                             }
@@ -809,7 +823,7 @@ public class Quester {
                     mobNumKilled.set(mobsKilled.indexOf(e), mobNumKilled.get(mobsKilled.indexOf(e)) + 1);
 
                     if ((mobNumKilled.get(mobsKilled.indexOf(e))).equals(currentStage.mobNumToKill.get(mobsKilled.indexOf(e)))) {
-                        finishObjective("killMob", null, null, null, e, null, null, null, null, 0);
+                        finishObjective("killMob", null, null, null, e, null, null, null, null, null);
                     }
 
                 }
@@ -843,7 +857,7 @@ public class Quester {
             playersKilled++;
 
             if (((Integer) playersKilled).equals(currentStage.playersToKill)) {
-                finishObjective("killPlayer", null, null, null, null, null, null, null, null, 0);
+                finishObjective("killPlayer", null, null, null, null, null, null, null, null, null);
             }
 
         }
@@ -856,7 +870,7 @@ public class Quester {
 
             if (citizensInteracted.get(n) == false) {
                 citizensInteracted.put(n, true);
-                finishObjective("talkToNPC", null, null, null, null, null, n, null, null, 0);
+                finishObjective("talkToNPC", null, null, null, null, null, n, null, null, null);
             }
 
         }
@@ -871,8 +885,28 @@ public class Quester {
             if (citizenNumKilled.get(index) < currentStage.citizenNumToKill.get(index)) {
                 citizenNumKilled.set(index, citizenNumKilled.get(index) + 1);
                 if (citizenNumKilled.get(index) == currentStage.citizenNumToKill.get(index)) {
-                    finishObjective("killNPC", null, null, null, null, null, n, null, null, 0);
+                    finishObjective("killNPC", null, null, null, null, null, n, null, null, null);
                 }
+            }
+
+        }
+
+    }
+
+    public void killBoss(String boss) {
+
+        for(String s : bossesKilled){
+
+            if (s.equalsIgnoreCase(boss)) {
+
+                int index = bossesKilled.indexOf(s);
+                if (bossAmountsKilled.get(index) < currentStage.bossAmountsToKill.get(index)) {
+                    bossAmountsKilled.set(index, bossAmountsKilled.get(index) + 1);
+                    if (bossAmountsKilled.get(index) == currentStage.bossAmountsToKill.get(index)) {
+                        finishObjective("killBoss", null, null, null, null, null, null, null, null, boss);
+                    }
+                }
+
             }
 
         }
@@ -895,7 +929,7 @@ public class Quester {
                         if (hasReached.get(index) == false) {
 
                             hasReached.set(index, true);
-                            finishObjective("reachLocation", null, null, null, null, null, null, location, null, 0);
+                            finishObjective("reachLocation", null, null, null, null, null, null, location, null, null);
 
                         }
 
@@ -916,7 +950,7 @@ public class Quester {
             mobsTamed.put(entity, (mobsTamed.get(entity) + 1));
 
             if (mobsTamed.get(entity).equals(currentStage.mobsToTame.get(entity))) {
-                finishObjective("tameMob", null, null, null, entity, null, null, null, null, 0);
+                finishObjective("tameMob", null, null, null, entity, null, null, null, null, null);
             }
 
         }
@@ -930,7 +964,7 @@ public class Quester {
             sheepSheared.put(color, (sheepSheared.get(color) + 1));
 
             if (sheepSheared.get(color).equals(currentStage.sheepToShear.get(color))) {
-                finishObjective("shearSheep", null, null, null, null, null, null, null, color, 0);
+                finishObjective("shearSheep", null, null, null, null, null, null, null, color, null);
             }
 
         }
@@ -941,35 +975,45 @@ public class Quester {
 
         Player player = plugin.getServer().getPlayer(name);
 
-        if (itemsDelivered.containsKey(i.getType())) {
+        ItemStack found = null;
+        
+        for(ItemStack is : itemsDelivered.keySet()){
+            
+            if(ItemUtil.compareItems(i, is, true) == 0){
+                found = is;
+                break;
+            }
+            
+        }
+        if (found != null) {
 
-            int amount = itemsDelivered.get(i.getType());
-            int req = currentStage.itemAmountsToDeliver.get(currentStage.itemsToDeliver.indexOf(i.getType()));
+            int amount = itemsDelivered.get(found);
+            int req = currentStage.itemsToDeliver.get(currentStage.itemsToDeliver.indexOf(found)).getAmount();
 
             if (amount < req) {
 
                 if ((i.getAmount() + amount) > req) {
 
-                    itemsDelivered.put(i.getType(), req);
+                    itemsDelivered.put(found, req);
                     int index = player.getInventory().first(i);
                     i.setAmount(i.getAmount() - (req - amount)); //Take away the remaining amount needed to be delivered from the item stack
                     player.getInventory().setItem(index, i);
                     player.updateInventory();
-                    finishObjective("deliverItem", i.getType(), null, null, null, null, null, null, null, 0);
+                    finishObjective("deliverItem", null, found, null, null, null, null, null, null, null);
 
                 } else if ((i.getAmount() + amount) == req) {
 
-                    itemsDelivered.put(i.getType(), req);
+                    itemsDelivered.put(found, req);
                     player.getInventory().setItem(player.getInventory().first(i), null);
                     player.updateInventory();
-                    finishObjective("deliverItem", i.getType(), null, null, null, null, null, null, null, 0);
+                    finishObjective("deliverItem", null, found, null, null, null, null, null, null, null);
 
                 } else {
 
-                    itemsDelivered.put(i.getType(), (amount + i.getAmount()));
+                    itemsDelivered.put(found, (amount + i.getAmount()));
                     player.getInventory().setItem(player.getInventory().first(i), null);
                     player.updateInventory();
-                    String message = Quests.parseString(currentStage.deliverMessages.get(random.nextInt(currentStage.deliverMessages.size())), currentQuest);
+                    String message = Quests.parseString(currentStage.deliverMessages.get(random.nextInt(currentStage.deliverMessages.size())), currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(found)));
                     player.sendMessage(message);
 
                 }
@@ -980,39 +1024,7 @@ public class Quester {
 
     }
 
-    public void craftItem(ItemStack i) {
-
-        if (itemsCrafted.containsKey(i.getType())) {
-
-            for (EnumMap m : currentStage.itemsToCraft.keySet()) {
-
-                if (m.containsKey(i.getType())) {
-
-                    if (itemsCrafted.get(i.getType()) < (Integer) m.get(i.getType())) {
-                        int integer = itemsCrafted.get(i.getType());
-                        if ((i.getAmount() + integer) >= (Integer) m.get(i.getType())) {
-                            itemsCrafted.put(i.getType(), (Integer) m.get(i.getType()));
-                        } else {
-                            itemsCrafted.put(i.getType(), (integer + i.getAmount()));
-                        }
-
-                        if (itemsCrafted.get(i.getType()).equals((Integer) m.get(i.getType()))) {
-                            finishObjective("craftItem", i.getType(), null, null, null, null, null, null, null, 0);
-                        }
-
-                    }
-
-                    break;
-
-                }
-
-            }
-
-        }
-
-    }
-
-    public void finishObjective(String objective, Material material, ItemStack itemstack, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, int dv) {
+    public void finishObjective(String objective, Material material, ItemStack itemstack, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String boss) {
 
         Player p = plugin.getServer().getPlayerExact(name);
 
@@ -1091,7 +1103,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("deliverItem")) {
 
-            String message = ChatColor.GREEN + "(Completed) Deliver " + currentStage.itemAmountsToDeliver.get(currentStage.itemsToDeliver.indexOf(material)) + " " + prettyItemString(material.getId()) + " to " + currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(material)).getName();
+            String message = ChatColor.GREEN + "(Completed) Deliver " + ItemUtil.getString(currentStage.itemsToDeliver.get(currentStage.itemsToDeliver.indexOf(itemstack))) + " " + ItemUtil.getName(itemstack) + " to " + currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(itemstack)).getName();
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1127,6 +1139,16 @@ public class Quester {
 
             String message = ChatColor.GREEN + "(Completed) Kill " + npc.getName();
             message = message + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc));
+            p.sendMessage(message);
+            if (testComplete()) {
+                currentQuest.nextStage(this);
+            }
+
+        } else if (objective.equalsIgnoreCase("killBoss")) {
+
+            LoadBoss b = Quests.getBoss(boss);
+            String message = ChatColor.GREEN + "(Completed) Kill " + ChatColor.ITALIC + b.getName() + ChatColor.RESET + ChatColor.GREEN;
+            message = message + " " + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)) + "/" + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss));
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1246,9 +1268,9 @@ public class Quester {
         playersKilled = 0;
 
         if (currentStage.itemsToDeliver.isEmpty() == false) {
-            for (Material m : currentStage.itemsToDeliver) {
+            for (ItemStack is : currentStage.itemsToDeliver) {
 
-                itemsDelivered.put(m, 0);
+                itemsDelivered.put(is, 0);
 
             }
         }
@@ -1266,6 +1288,15 @@ public class Quester {
 
                 citizensKilled.add(n);
                 citizenNumKilled.add(0);
+
+            }
+        }
+
+        if (currentStage.bossesToKill.isEmpty() == false) {
+            for (String s : currentStage.bossesToKill) {
+
+                bossesKilled.add(s);
+                bossAmountsKilled.add(0);
 
             }
         }
@@ -1304,18 +1335,6 @@ public class Quester {
             }
         }
 
-        if (currentStage.itemsToCraft.isEmpty() == false) {
-            for (Entry e : currentStage.itemsToCraft.entrySet()) {
-
-                for (Object o : ((Map) e.getKey()).keySet()) {
-
-                    itemsCrafted.put((Material) o, 0);
-
-                }
-
-            }
-        }
-
     }
 
     public void reset() {
@@ -1341,7 +1360,8 @@ public class Quester {
         radiiToReachWithin.clear();
         mobsTamed.clear();
         sheepSheared.clear();
-        itemsCrafted.clear();
+        bossesKilled.clear();
+        bossAmountsKilled.clear();
 
     }
 
@@ -1513,6 +1533,60 @@ public class Quester {
         }
 
         return prettyString;
+
+    }
+
+    public static String enchantmentString(Enchantment e) {
+
+        String string = "";
+
+        if (e.equals(Enchantment.ARROW_DAMAGE)) {
+            string = "Power";
+        } else if (e.equals(Enchantment.ARROW_FIRE)) {
+            string = "Flame";
+        } else if (e.equals(Enchantment.ARROW_INFINITE)) {
+            string = "Infinity";
+        } else if (e.equals(Enchantment.ARROW_KNOCKBACK)) {
+            string = "Punch";
+        } else if (e.equals(Enchantment.DAMAGE_ALL)) {
+            string = "Sharpness";
+        } else if (e.equals(Enchantment.DAMAGE_ARTHROPODS)) {
+            string = "BaneOfArthropods";
+        } else if (e.equals(Enchantment.DAMAGE_UNDEAD)) {
+            string = "Smite";
+        } else if (e.equals(Enchantment.DIG_SPEED)) {
+            string = "Efficiency";
+        } else if (e.equals(Enchantment.DURABILITY)) {
+            string = "Unbreaking";
+        } else if (e.equals(Enchantment.FIRE_ASPECT)) {
+            string = "FireAspect";
+        } else if (e.equals(Enchantment.KNOCKBACK)) {
+            string = "Knockback";
+        } else if (e.equals(Enchantment.LOOT_BONUS_BLOCKS)) {
+            string = "Fortune";
+        } else if (e.equals(Enchantment.LOOT_BONUS_MOBS)) {
+            string = "Looting";
+        } else if (e.equals(Enchantment.OXYGEN)) {
+            string = "Respiration";
+        } else if (e.equals(Enchantment.PROTECTION_ENVIRONMENTAL)) {
+            string = "Protection";
+        } else if (e.equals(Enchantment.PROTECTION_EXPLOSIONS)) {
+            string = "BlastProtection";
+        } else if (e.equals(Enchantment.PROTECTION_FALL)) {
+            string = "FeatherFalling";
+        } else if (e.equals(Enchantment.PROTECTION_FIRE)) {
+            string = "FireProtection";
+        } else if (e.equals(Enchantment.PROTECTION_PROJECTILE)) {
+            string = "ProjectileProtection";
+        } else if (e.equals(Enchantment.SILK_TOUCH)) {
+            string = "SilkTouch";
+        } else if (e.equals(Enchantment.THORNS)) {
+            string = "Thorns";
+        } else if (e.equals(Enchantment.WATER_WORKER)) {
+            string = "AquaAffinity";
+        }
+
+        return string;
 
     }
 
@@ -1764,17 +1838,14 @@ public class Quester {
 
             if (itemsDelivered.isEmpty() == false) {
 
-                LinkedList<Integer> deliveryIds = new LinkedList<Integer>();
                 LinkedList<Integer> deliveryAmounts = new LinkedList<Integer>();
 
-                for (Entry<Material, Integer> e : itemsDelivered.entrySet()) {
+                for (Entry<ItemStack, Integer> e : itemsDelivered.entrySet()) {
 
-                    deliveryIds.add(e.getKey().getId());
                     deliveryAmounts.add(e.getValue());
 
                 }
 
-                data.set("item-delivery-ids", deliveryIds);
                 data.set("item-delivery-amounts", deliveryAmounts);
 
             }
@@ -1808,6 +1879,13 @@ public class Quester {
 
                 data.set("citizen-ids-killed", npcIds);
                 data.set("citizen-amounts-killed", citizenNumKilled);
+
+            }
+
+            if (bossesKilled.isEmpty() == false) {
+
+                data.set("bosses-killed", bossesKilled);
+                data.set("boss-amounts-killed", bossAmountsKilled);
 
             }
 
@@ -1885,23 +1963,6 @@ public class Quester {
 
                 data.set("sheep-to-shear", colors);
                 data.set("sheep-sheared", shearAmounts);
-
-            }
-
-            if (itemsCrafted.isEmpty() == false) {
-
-                LinkedList<Integer> itemIds = new LinkedList<Integer>();
-                LinkedList<Integer> itemAmounts = new LinkedList<Integer>();
-
-                for (Material m : itemsCrafted.keySet()) {
-
-                    itemIds.add(m.getId());
-                    itemAmounts.add(itemsCrafted.get(m));
-
-                }
-
-                data.set("item-ids-to-craft", itemIds);
-                data.set("items-crafted", itemAmounts);
 
             }
 
@@ -2227,107 +2288,9 @@ public class Quester {
 
                 for (String s : data.getStringList("mobs-killed")) {
 
-                    if (s.equalsIgnoreCase("Blaze")) {
-
-                        mobs.add(EntityType.BLAZE);
-
-                    } else if (s.equalsIgnoreCase("CaveSpider")) {
-
-                        mobs.add(EntityType.CAVE_SPIDER);
-
-                    } else if (s.equalsIgnoreCase("Chicken")) {
-
-                        mobs.add(EntityType.CHICKEN);
-
-                    } else if (s.equalsIgnoreCase("Cow")) {
-
-                        mobs.add(EntityType.COW);
-
-                    } else if (s.equalsIgnoreCase("Creeper")) {
-
-                        mobs.add(EntityType.CREEPER);
-
-                    } else if (s.equalsIgnoreCase("Enderman")) {
-
-                        mobs.add(EntityType.ENDERMAN);
-
-                    } else if (s.equalsIgnoreCase("EnderDragon")) {
-
-                        mobs.add(EntityType.ENDER_DRAGON);
-
-                    } else if (s.equalsIgnoreCase("Ghast")) {
-
-                        mobs.add(EntityType.GHAST);
-
-                    } else if (s.equalsIgnoreCase("Giant")) {
-
-                        mobs.add(EntityType.GIANT);
-
-                    } else if (s.equalsIgnoreCase("IronGolem")) {
-
-                        mobs.add(EntityType.IRON_GOLEM);
-
-                    } else if (s.equalsIgnoreCase("MagmaCube")) {
-
-                        mobs.add(EntityType.MAGMA_CUBE);
-
-                    } else if (s.equalsIgnoreCase("MushroomCow")) {
-
-                        mobs.add(EntityType.MUSHROOM_COW);
-
-                    } else if (s.equalsIgnoreCase("Ocelot")) {
-
-                        mobs.add(EntityType.OCELOT);
-
-                    } else if (s.equalsIgnoreCase("Pig")) {
-
-                        mobs.add(EntityType.PIG);
-
-                    } else if (s.equalsIgnoreCase("PigZombie")) {
-
-                        mobs.add(EntityType.PIG_ZOMBIE);
-
-                    } else if (s.equalsIgnoreCase("Sheep")) {
-
-                        mobs.add(EntityType.SHEEP);
-
-                    } else if (s.equalsIgnoreCase("Silverfish")) {
-
-                        mobs.add(EntityType.SILVERFISH);
-
-                    } else if (s.equalsIgnoreCase("Skeleton")) {
-
-                        mobs.add(EntityType.SKELETON);
-
-                    } else if (s.equalsIgnoreCase("Slime")) {
-
-                        mobs.add(EntityType.SLIME);
-
-                    } else if (s.equalsIgnoreCase("Snowman")) {
-
-                        mobs.add(EntityType.SNOWMAN);
-
-                    } else if (s.equalsIgnoreCase("Spider")) {
-
-                        mobs.add(EntityType.SPIDER);
-
-                    } else if (s.equalsIgnoreCase("Squid")) {
-
-                        mobs.add(EntityType.SQUID);
-
-                    } else if (s.equalsIgnoreCase("Villager")) {
-
-                        mobs.add(EntityType.VILLAGER);
-
-                    } else if (s.equalsIgnoreCase("Wolf")) {
-
-                        mobs.add(EntityType.WOLF);
-
-                    } else if (s.equalsIgnoreCase("Zombie")) {
-
-                        mobs.add(EntityType.ZOMBIE);
-
-                    }
+                    EntityType mob = Quests.getMobType(s);
+                    if(mob != null)
+                        mobs.add(mob);
 
                     mobsKilled.clear();
                     mobNumKilled.clear();
@@ -2367,14 +2330,13 @@ public class Quester {
 
             }
 
-            if (data.contains("item-delivery-ids")) {
+            if (data.contains("item-delivery-amounts")) {
 
-                List<Integer> deliveryIds = data.getIntegerList("item-delivery-ids");
                 List<Integer> deliveryAmounts = data.getIntegerList("item-delivery-amounts");
 
-                for (int i : deliveryIds) {
+                for (int i = 0; i < deliveryAmounts.size(); i++) {
 
-                    itemsDelivered.put(Material.getMaterial(i), deliveryAmounts.get(deliveryIds.indexOf(i)));
+                    itemsDelivered.put(currentStage.itemsToDeliver.get(i), deliveryAmounts.get(i));
 
                 }
 
@@ -2402,6 +2364,20 @@ public class Quester {
 
                     citizensKilled.add(plugin.citizens.getNPCRegistry().getById(i));
                     citizenNumKilled.add(num.get(ids.indexOf(i)));
+
+                }
+
+            }
+
+            if (data.contains("bosses-killed")) {
+
+                List<String> ids = data.getStringList("bosses-killed");
+                List<Integer> num = data.getIntegerList("boss-amounts-killed");
+
+                for (String s : ids) {
+
+                    bossesKilled.add(s);
+                    bossAmountsKilled.add(num.get(ids.indexOf(s)));
 
                 }
 
@@ -2563,19 +2539,6 @@ public class Quester {
 
             }
 
-            if (data.contains("item-ids-to-craft")) {
-
-                List<Integer> ids = data.getIntegerList("item-ids-to-craft");
-                List<Integer> amounts = data.getIntegerList("items-crafted");
-
-                for (int i : ids) {
-
-                    itemsCrafted.put(Material.getMaterial(i), amounts.get(ids.indexOf(i)));
-
-                }
-
-            }
-
             if (data.contains("stage-delay")) {
 
                 delayTimeLeft = data.getLong("stage-delay");
@@ -2639,7 +2602,7 @@ public class Quester {
                         currentStage = null;
                         reset();
                         if (plugin.getServer().getPlayer(name) != null) {
-                            plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " has been modified. You have quit the Quest.");
+                            plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " has been modified. You have been forced to quit the Quest.");
                         }
                         currentQuest = null;
 
@@ -2656,7 +2619,7 @@ public class Quester {
                 currentStage = null;
                 reset();
                 if (plugin.getServer().getPlayer(name) != null) {
-                    plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " no longer exists. You have quit the Quest.");
+                    plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " no longer exists. You have been forced to quit the Quest.");
                 }
                 currentQuest = null;
 

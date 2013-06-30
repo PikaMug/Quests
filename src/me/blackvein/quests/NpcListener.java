@@ -1,10 +1,14 @@
 package me.blackvein.quests;
 
+import java.text.MessageFormat;
+import java.util.LinkedList;
+import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -26,53 +30,82 @@ public class NpcListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(NPCRightClickEvent evt) {
+        
+        if (evt.getClicker().isConversing() == false) {
 
-        final Player player = evt.getClicker();
-        final Quester quester = plugin.getQuester(player.getName());
-        boolean delivery = false;
+            final Player player = evt.getClicker();
+            final Quester quester = plugin.getQuester(player.getName());
+            boolean delivery = false;
 
-        if(quester.hasObjective("deliverItem") && player.getItemInHand() != null){
+            if (quester.hasObjective("deliverItem") && player.getItemInHand() != null) {
 
-            ItemStack hand = player.getItemInHand();
-            if(quester.itemsDelivered.containsKey(hand.getType())){
-
-                NPC clicked = evt.getNPC();
-
-                for(NPC n : quester.currentStage.itemDeliveryTargets){
-                    if(n.getId() == clicked.getId()){
-                        quester.deliverItem(hand);
-                        delivery = true;
+                ItemStack hand = player.getItemInHand();
+                
+                ItemStack found = null;
+                
+                for(ItemStack is : quester.currentStage.itemsToDeliver){
+                    
+                    if(ItemUtil.compareItems(is, hand, true) == 0){
+                        found = is;
                         break;
                     }
+                    
                 }
+                
+                if (found != null) {
 
+                    NPC clicked = evt.getNPC();
+
+                    for (NPC n : quester.currentStage.itemDeliveryTargets) {
+                        if (n.getId() == clicked.getId()) {
+                            quester.deliverItem(hand);
+                            delivery = true;
+                            break;
+                        }
+                    }
+
+                }
             }
 
-        }
+            if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
 
-        if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
+                if (plugin.checkQuester(player.getName()) == false) {
+                    if (quester.hasObjective("talkToNPC")) {
 
-            if (plugin.checkQuester(player.getName()) == false) {
-                if (quester.hasObjective("talkToNPC")) {
+                        quester.interactWithNPC(evt.getNPC());
 
-                    quester.interactWithNPC(evt.getNPC());
+                    } else {
 
-                } else {
+                        LinkedList<Quest> npcQuests = new LinkedList<Quest>();
 
-                    for (Quest q : plugin.quests) {
+                        for (Quest q : plugin.getQuests()) {
 
-                        if (q.npcStart != null && player.hasPermission("quests.quest")) {
+                            if (q.npcStart != null && q.npcStart.getId() == evt.getNPC().getId()) {
+                                npcQuests.add(q);
+                            }
 
-                            if (q.npcStart.equals(evt.getNPC()) && quester.completedQuests.contains(q.name) == false) {
+                        }
+
+
+
+                        if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
+
+                            Conversation c = plugin.NPCConversationFactory.buildConversation((Conversable) player);
+                            c.getContext().setSessionData("quests", npcQuests);
+                            c.getContext().setSessionData("npc", evt.getNPC().getName());
+                            c.begin();
+
+                        } else if (npcQuests.size() == 1) {
+
+                            Quest q = npcQuests.get(0);
+
+                            if (!quester.completedQuests.contains(q.name)) {
 
                                 if (quester.currentQuest == null) {
 
                                     quester.questToTake = q.name;
 
-                                    String s =
-                                            ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
-                                            + "\n"
-                                            + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+                                    String s = extracted(quester);
                                     player.sendMessage(s);
                                     plugin.conversationFactory.buildConversation((Conversable) player).begin();
 
@@ -82,23 +115,17 @@ public class NpcListener implements Listener {
 
                                 }
 
-                                break;
-
-                            } else if (q.npcStart.equals(evt.getNPC()) && quester.completedQuests.contains(q.name) == true) {
+                            } else if (quester.completedQuests.contains(q.name)) {
 
                                 if (quester.currentQuest == null) {
 
                                     if (quester.getDifference(q) > 0) {
                                         player.sendMessage(ChatColor.YELLOW + "You may not take " + ChatColor.AQUA + q.name + ChatColor.YELLOW + " again for another " + ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW + ".");
-                                    } else if (quester.completedQuests.contains(q.name) && q.redoDelay < 0) {
+                                    } else if (q.redoDelay < 0) {
                                         player.sendMessage(ChatColor.YELLOW + "You have already completed " + ChatColor.AQUA + q.name + ChatColor.YELLOW + ".");
-                                    }else{
-
+                                    } else {
                                         quester.questToTake = q.name;
-                                        String s =
-                                            ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
-                                            + "\n"
-                                            + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+                                        String s = extracted(quester);
 
                                         player.sendMessage(s);
 
@@ -111,11 +138,10 @@ public class NpcListener implements Listener {
 
                                 }
 
-                                break;
-
                             }
 
                         }
+
 
                     }
 
@@ -124,56 +150,34 @@ public class NpcListener implements Listener {
             }
 
         }
-
     }
 
     @EventHandler
     public void onNPCDeath(NPCDeathEvent evt) {
 
-            if (evt.getNPC().getBukkitEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+        if (evt.getNPC().getBukkitEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 
-                EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getNPC().getBukkitEntity().getLastDamageCause();
-                Entity damager = damageEvent.getDamager();
+            EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getNPC().getBukkitEntity().getLastDamageCause();
+            Entity damager = damageEvent.getDamager();
 
-                if (damager != null) {
+            if (damager != null) {
 
-                    if (damager instanceof Projectile) {
+                if (damager instanceof Projectile) {
 
-                        Projectile p = (Projectile) damager;
-                        if (p.getShooter() instanceof Player) {
+                    Projectile p = (Projectile) damager;
+                    if (p.getShooter() instanceof Player) {
 
-                            Player player = (Player) p.getShooter();
-                            boolean okay = true;
-
-                            if (plugin.citizens != null) {
-                                if (plugin.citizens.getNPCRegistry().isNPC(player)) {
-                                    okay = false;
-                                }
-                            }
-
-                            if (okay) {
-
-                                Quester quester = plugin.getQuester(player.getName());
-                                if (quester.hasObjective("killNPC")) {
-                                    quester.killNPC(evt.getNPC());
-                                }
-
-                            }
-                        }
-
-                    } else if (damager instanceof Player) {
-
+                        Player player = (Player) p.getShooter();
                         boolean okay = true;
 
                         if (plugin.citizens != null) {
-                            if (plugin.citizens.getNPCRegistry().isNPC(damager)) {
+                            if (plugin.citizens.getNPCRegistry().isNPC(player)) {
                                 okay = false;
                             }
                         }
 
                         if (okay) {
 
-                            Player player = (Player) damager;
                             Quester quester = plugin.getQuester(player.getName());
                             if (quester.hasObjective("killNPC")) {
                                 quester.killNPC(evt.getNPC());
@@ -182,11 +186,39 @@ public class NpcListener implements Listener {
                         }
                     }
 
+                } else if (damager instanceof Player) {
+
+                    boolean okay = true;
+
+                    if (plugin.citizens != null) {
+                        if (plugin.citizens.getNPCRegistry().isNPC(damager)) {
+                            okay = false;
+                        }
+                    }
+
+                    if (okay) {
+
+                        Player player = (Player) damager;
+                        Quester quester = plugin.getQuester(player.getName());
+                        if (quester.hasObjective("killNPC")) {
+                            quester.killNPC(evt.getNPC());
+                        }
+
+                    }
                 }
 
             }
 
+        }
+
     }
 
-
+    private String extracted(final Quester quester) {
+        return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n",
+                ChatColor.GOLD,
+                ChatColor.DARK_PURPLE,
+                quester.questToTake,
+                ChatColor.GOLD,
+                ChatColor.RESET, plugin.getQuest(quester.questToTake).description);
+    }
 }

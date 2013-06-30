@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 public class Stage {
 
@@ -29,8 +30,7 @@ public class Stage {
     LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
     LinkedList<String> areaNames = new LinkedList<String>();
 
-    LinkedList<Material> itemsToDeliver = new LinkedList<Material>();
-    LinkedList<Integer> itemAmountsToDeliver = new LinkedList<Integer>();
+    LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
     LinkedList<NPC> itemDeliveryTargets = new LinkedList<NPC>(){
 
         @Override
@@ -106,6 +106,10 @@ public class Stage {
 
     };
     LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
+    
+    LinkedList<String> bossesToKill = new LinkedList<String>();
+    LinkedList<Integer> bossAmountsToKill = new LinkedList<Integer>();
+    
     LinkedList<Location> locationsToReach = new LinkedList<Location>();
     LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
     LinkedList<World> worldsToReachWithin = new LinkedList<World>();
@@ -193,10 +197,6 @@ public class Stage {
                 return false;
             }
 
-            if (other.itemAmountsToDeliver.equals(itemAmountsToDeliver) == false){
-                return false;
-            }
-
             if (other.itemDeliveryTargets.equals(itemDeliveryTargets) == false){
                 return false;
             }
@@ -214,6 +214,14 @@ public class Stage {
             }
 
             if (other.citizenNumToKill.equals(citizenNumToKill) == false) {
+                return false;
+            }
+            
+            if(other.bossesToKill.equals(bossesToKill) == false){
+                return false;
+            }
+            
+            if(other.bossAmountsToKill.equals(bossAmountsToKill) == false){
                 return false;
             }
 

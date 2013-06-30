@@ -2,7 +2,6 @@ package me.blackvein.quests;
 
 import java.io.File;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -104,7 +103,7 @@ public class PlayerListener implements Listener {
                     plugin.questFactory.selectedReachLocations.put(evt.getPlayer(), block);
                     evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
-                }else {
+                }else if(player.isConversing() == false){
 
                     for (final Quest q : plugin.quests) {
 
