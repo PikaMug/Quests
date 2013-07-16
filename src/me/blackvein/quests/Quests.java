@@ -1542,7 +1542,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             for (Player p : getServer().getOnlinePlayers()) {
 
-                                if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+                                if (p.getName().equalsIgnoreCase(args[1])) {
                                     target = p;
                                     break;
                                 }
@@ -1583,6 +1583,101 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         }
 
+                    } else if (args[0].equalsIgnoreCase("takepoints")) {
+
+                    	if (player.hasPermission("quests.admin.takepoints")) {
+
+                    		Player target = null;
+
+                    		for (Player p : getServer().getOnlinePlayers()) {
+
+                    			if (p.getName().equalsIgnoreCase(args[1])) {
+                    				target = p;
+                    				break;
+                    			}
+
+                    		}
+
+                    		if (target == null) {
+
+                    			player.sendMessage(YELLOW + "Player not found.");
+
+                    		} else {
+
+                    			int points;
+
+                    			try {
+
+                    				points = Integer.parseInt(args[2]);
+
+                    			} catch (Exception e) {
+
+                    				player.sendMessage(YELLOW + "Amount must be a number.");
+                    				return true;
+
+                    			}
+
+                    			Quester quester = getQuester(target.getName());
+                    			quester.questPoints = points;
+                    			player.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
+                    			target.sendMessage(GREEN + player.getName() + GOLD + " took away " + PURPLE + points + GOLD + "Quest Points.");
+
+                    			quester.saveData();
+
+                    		}
+
+                    	} else {
+
+                             player.sendMessage(RED + "You do not have access to that command.");
+
+                         }
+                    } else if (args[0].equalsIgnoreCase("givepoints")) {
+                    	if (player.hasPermission("quests.admin.givepoints")) {
+
+                    		Player target = null;
+
+                    		for (Player p : getServer().getOnlinePlayers()) {
+
+                    			if (p.getName().equalsIgnoreCase(args[1])) {
+                    				target = p;
+                    				break;
+                    			}
+
+                    		}
+
+                    		if (target == null) {
+
+                    			player.sendMessage(YELLOW + "Player not found.");
+
+                    		} else {
+
+                    			int points;
+
+                    			try {
+
+                    				points = Integer.parseInt(args[2]);
+
+                    			} catch (Exception e) {
+
+                    				player.sendMessage(YELLOW + "Amount must be a number.");
+                    				return true;
+
+                    			}
+
+                    			Quester quester = getQuester(target.getName());
+                    			quester.questPoints += points;
+                    			player.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + "\'s.");
+                    			target.sendMessage(GREEN + player.getName() + GOLD + " gave you " + PURPLE + points + GOLD + "Quest Points.");
+
+                    			quester.saveData();
+
+                    		}
+
+                    	} else {
+
+                    		player.sendMessage(RED + "You do not have access to that command.");
+
+                    	}
                     } else {
 
                         cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
@@ -1619,6 +1714,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
         if (player.hasPermission("quests.admin.points")) {
             player.sendMessage(DARKRED + "/questadmin points <player> <amount>" + RED + " - Set a players Quest Points");
+        }
+        if (player.hasPermission("quests.admin.takepoints")) {
+            player.sendMessage(DARKRED + "/questadmin takepoints <player> <amount>" + RED + " - Take a players Quest Points");
+        }
+        if (player.hasPermission("quests.admin.givepoints")) {
+            player.sendMessage(DARKRED + "/questadmin givepoints <player> <amount>" + RED + " - Give a player Quest Points");
         }
         if (player.hasPermission("quests.admin.pointsall")) {
             player.sendMessage(DARKRED + "/questadmin pointsall <amount>" + RED + " - Set ALL players' Quest Points");
