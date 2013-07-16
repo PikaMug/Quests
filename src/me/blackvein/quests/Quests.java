@@ -3944,7 +3944,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     }
 
-    public static boolean checkList(List<?> list, Class c) {
+    public static boolean checkList(List<?> list, Class<?> c) {
 
         if (list == null) {
             return false;
