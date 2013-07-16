@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+
 public class Quest {
 
     public String name;
@@ -186,7 +188,7 @@ public class Quest {
 
         for(String s : mcmmoSkills){
 
-            Quests.mcmmo.getPlayerProfile(player.getName()).skillUp(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
+            new McMMOPlayer(player).getProfile().skillUp(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
             none = null;
 
         }
