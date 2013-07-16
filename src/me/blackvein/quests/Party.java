@@ -1,6 +1,10 @@
 package me.blackvein.quests;
 
 import java.util.LinkedList;
+
+import org.bukkit.Bukkit;
+import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
@@ -134,9 +138,15 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
     
     public void sendInvite(Quester target){
         
+    	//Temporary.
+    	if (factory == null) {
+    		this.initFactory();
+    	}
+    	
         Player player = target.getPlayer();
-        
-        
+        Conversation conversation = factory.buildConversation((Conversable)player);
+    	conversation.getContext().setSessionData("inviter", getLeader().getPlayer().getName());
+        conversation.begin();
     }
     
     public void checkSize(){
@@ -160,9 +170,10 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
     }
 
     @Override
-    public void conversationAbandoned(ConversationAbandonedEvent cae) {
+    public void conversationAbandoned(ConversationAbandonedEvent event) {
     	//TODO: support this.
-        throw new UnsupportedOperationException("Not supported yet.");
+    	//Player player = (Player) event.getContext().getForWhom();
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
     
     private static class PartyPrefix implements ConversationPrefix {
@@ -190,24 +201,33 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
         @Override
         public Prompt acceptInput(ConversationContext context, String s) {
 
-            Player player = (Player) context.getForWhom();
+            Player invited = (Player) context.getForWhom();
 
             if (s.equalsIgnoreCase("Yes")) {
 
                 String inviterName = (String) context.getSessionData("inviter");
                 
-                //Quester quester =
+                Quester quester = quests.getQuester(invited.getName());
+                members.add(quester);
+                
+                //send message to inviter and invited
+                quester.getPlayer().sendMessage(partyPrefix + YELLOW + "Accepted invite.");
+                Bukkit.getPlayerExact(inviterName).sendMessage(partyPrefix + GREEN + invited.getName() + YELLOW + " has accepted your invitation.");
                 
                 return Prompt.END_OF_CONVERSATION;
 
             } else if (s.equalsIgnoreCase("No")) {
+            	
+            	String inviterName = (String) context.getSessionData("inviter");
 
-                player.sendMessage(partyPrefix + YELLOW + "Declined invite.");
+                invited.sendMessage(partyPrefix + YELLOW + "Declined invite.");
+                Bukkit.getPlayerExact(inviterName).sendMessage(partyPrefix + GREEN + invited.getName() + YELLOW + " has declined your invitation.");
+                
                 return Prompt.END_OF_CONVERSATION;
 
             } else {
 
-                player.sendMessage(RED + "Invalid choice. Type \'Yes\' or \'No\'");
+                invited.sendMessage(RED + "Invalid choice. Type \'Yes\' or \'No\'");
                 return new InvitePrompt();
 
             }

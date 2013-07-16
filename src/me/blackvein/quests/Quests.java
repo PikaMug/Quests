@@ -43,6 +43,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
@@ -1045,7 +1046,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         LinkedList<Quester> members = party.getMembers();
                                         
                                         player.sendMessage(PURPLE + "- " + PINK + "Party" + PURPLE + " -");
-                                        player.sendMessage(YELLOW + "" + BOLD + "Current Quest: " + RESET + "" + YELLOW +  current != null ? (current.getName()) : "(None)");
+                                        player.sendMessage(YELLOW + "" + BOLD + "Current Quest: " + RESET + "" + YELLOW +  ((current != null) ? current.getName() : "(None)"));
                                         player.sendMessage(PINK + "" + BOLD + "Leader: " + RESET + "" + PINK + leader.name);
                                         if(members.isEmpty())
                                             player.sendMessage(PURPLE + "" + BOLD + "Members: " + RESET + "" + PURPLE + "(None)");
@@ -1094,10 +1095,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                         }
                                                         
                                                         if(found != null){
-                                                            
+                                                            if (found.getName().equals(player.getName())) {
+                                                            	player.sendMessage(Party.partyPrefix + RED + "you can't invite yourself!");
+                                                            	return true;
+                                                            }
                                                             if(getQuester(found.getName()).getParty() == null){
                                                                 
-                                                            	//TODO: do stuff?
+                                                            	//TODO: Invite player to party!
+                                                            	party.sendMessage(Party.partyPrefix + PINK + "" + BOLD +  player.getName() + RESET + "" + PINK + " invited: " + BOLD + found.getName() + RESET + "" + PINK + " to the party!" );
+                                                            	party.sendInvite(getQuester(found.getName()));
                                                                 
                                                             }else{
                                                                 player.sendMessage(Party.partyPrefix + RED + "" + BOLD + found.getName() + RESET + "" + RED + " is already in a party!");
