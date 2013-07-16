@@ -18,8 +18,9 @@
  */
 package me.blackvein.quests;
 
-import net.minecraft.server.v1_5_R3.Packet;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import net.minecraft.server.v1_6_R2.Packet;
+
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class PacketUtils {

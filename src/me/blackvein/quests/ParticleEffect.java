@@ -1,9 +1,10 @@
 package me.blackvein.quests;
 
 import me.blackvein.quests.util.ReflectionUtil;
-import net.minecraft.server.v1_5_R3.Packet63WorldParticles;
+import net.minecraft.server.v1_6_R2.Packet63WorldParticles;
+
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public enum ParticleEffect {
