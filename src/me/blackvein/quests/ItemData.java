@@ -25,7 +25,7 @@ public class ItemData {
 		while(scanner.hasNextLine()) {
 			String[] line = scanner.nextLine().split("=");
 			if (line.length > 1) {
-				String name = line[0];
+				String[] name = line[0].split(",");
 				Data data;
 				
 				String[] str = line[1].split(",");
@@ -40,9 +40,10 @@ public class ItemData {
 					mdata = Byte.parseByte(str[1]);
 				}
 				
-				data = new Data(name, id, mdata);
-				
-				map.put(name, data);
+				for (String n : name) {
+					data = new Data(n, id, mdata);
+					map.put(n, data);
+				}
 			}
 		}
 	}

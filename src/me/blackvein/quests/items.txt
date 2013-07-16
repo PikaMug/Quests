@@ -1,7 +1,7 @@
 Stone=1
 Grass=2
 Dirt=3
-Cobblestone=4
+Cobblestone,Cobble=4
 WoodenPlank=5,0
 RedwoodPlank=5,1
 BirchPlank=5,2
