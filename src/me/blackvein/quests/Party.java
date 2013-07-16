@@ -161,7 +161,8 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
 
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent cae) {
-        throw new UnsupportedOperationException("Not supported yet.");a
+    	//TODO: support this.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     private static class PartyPrefix implements ConversationPrefix {
@@ -195,7 +196,7 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
 
                 String inviterName = (String) context.getSessionData("inviter");
                 
-                Quester quester =
+                //Quester quester =
                 
                 return Prompt.END_OF_CONVERSATION;
 

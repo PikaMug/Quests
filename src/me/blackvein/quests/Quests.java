@@ -1,15 +1,24 @@
 package me.blackvein.quests;
 
-import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.gmail.nossr50.mcMMO;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
@@ -22,13 +31,25 @@ import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.*;
+
+import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.*;
+import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.conversations.ConversationAbandonedListener;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.ConversationPrefix;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -39,6 +60,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
 
@@ -896,7 +920,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             }
 
-                            LinkedHashMap sortedMap = (LinkedHashMap) Quests.sort(questPoints);
+                            LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) Quests.sort(questPoints);
 
                             int numPrinted = 0;
 
@@ -959,7 +983,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                             
                                             if(quester.currentQuest == null){
                                                 
-                                                Party party = new Party(quester);
+                                                Party party = new Party(this, quester);
                                                 if(broadcastPartyCreation)
                                                     getServer().broadcastMessage(Party.partyPrefix + PINK + "" + BOLD +  player.getName() + RESET + "" + PINK + " created a Quest Party!");
                                                 parties.add(party);
@@ -1073,7 +1097,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                             
                                                             if(getQuester(found.getName()).getParty() == null){
                                                                 
-                                                                a
+                                                            	//TODO: do stuff?
                                                                 
                                                             }else{
                                                                 player.sendMessage(Party.partyPrefix + RED + "" + BOLD + found.getName() + RESET + "" + RED + " is already in a party!");
@@ -2321,7 +2345,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     List<String> itemsToDeliver;
                     List<Integer> itemDeliveryTargetIds;
-                    ArrayList<String> deliveryMessages = new ArrayList();
+                    ArrayList<String> deliveryMessages = new ArrayList<String>();
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver")) {
 
@@ -3344,15 +3368,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         return (permission != null);
     }
 
-    private static Map sort(Map unsortedMap) {
+    private static Map<String, Integer> sort(Map<String, Integer> unsortedMap) {
 
-        List list = new LinkedList(unsortedMap.entrySet());
+        List<Entry<String, Integer>> list = new LinkedList<Entry<String, Integer>>(unsortedMap.entrySet());
 
-        Collections.sort(list, new Comparator() {
+        Collections.sort(list, new Comparator<Entry<String, Integer>>() {
             @Override
-            public int compare(Object o1, Object o2) {
-                int i = (Integer) (((Map.Entry) o1).getValue());
-                int i2 = (Integer) (((Map.Entry) o2).getValue());
+            public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+                int i = o1.getValue();
+                int i2 = o2.getValue();
                 if (i < i2) {
                     return 1;
                 } else if (i == i2) {
@@ -3360,14 +3384,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 } else {
                     return -1;
                 }
-
-
             }
         });
 
-        Map sortedMap = new LinkedHashMap();
-        for (Iterator it = list.iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
+        Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+        for (Iterator<Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
+            Entry<String, Integer> entry = it.next();
             sortedMap.put(entry.getKey(), entry.getValue());
         }
         return sortedMap;
