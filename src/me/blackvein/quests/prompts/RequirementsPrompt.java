@@ -239,15 +239,12 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
                 }
 
-                Collections.sort(questNames, new Comparator(){
+                Collections.sort(questNames, new Comparator<String>(){
 
                     @Override
-                    public int compare(Object one, Object two){
+                    public int compare(String one, String two){
 
-                        String s = (String) one;
-                        String s2 = (String) two;
-
-                        return s.compareTo(s2);
+                        return one.compareTo(two);
 
                     }
 

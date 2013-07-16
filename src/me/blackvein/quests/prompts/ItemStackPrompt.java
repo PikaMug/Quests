@@ -12,6 +12,7 @@ import me.blackvein.quests.ItemData.Data;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
@@ -229,7 +230,6 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
             if(input.equalsIgnoreCase("cancel") == false){
 
                 try{
-
                     Material mat = Material.getMaterial(Integer.parseInt(input));
                     if(mat == null){
                         cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
@@ -240,14 +240,22 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                     }
 
                 }catch(Exception e){
-                	Data data = ItemData.getInstance().getItem(input);
-                	if (data == null) {
+                	try {
+	                	Data data = ItemData.getInstance().getItem(input);
+	                	Bukkit.broadcastMessage(input + ":" + data);
+	                	if (data == null) {
+	                		cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
+	                		return new IDPrompt();
+	                	} else {
+	                		
+	                		cc.setSessionData("tempId", data.getId());
+	                		cc.setSessionData("tempData", (data.getData() == 0) ? null : (short)data.getData());
+	                		return new ItemStackPrompt(oldPrompt);
+	                	}
+                	} catch (Exception e1) {
+                		e1.printStackTrace();
                 		cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
                 		return new IDPrompt();
-                	} else {
-                		cc.setSessionData("tempId", data.getId());
-                		cc.setSessionData("tempData", data.getData());
-                		return new ItemStackPrompt(oldPrompt);
                 	}
                 }
 
