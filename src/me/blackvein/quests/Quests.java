@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -26,6 +27,7 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.aufdemrand.denizen.Denizen;
 import net.aufdemrand.denizen.scripts.ScriptRegistry;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.Vault;
@@ -43,7 +45,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
@@ -1879,10 +1880,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (config.contains("quests." + s + ".npc-giver-id")) {
 
-                    if (citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")) != null) {
+                    if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")) != null) {
 
-                        quest.npcStart = citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id"));
-                        questNPCs.add(citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
+                        quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id"));
+                        questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
 
                     } else {
                         printSevere(GOLD + "[Quests] " + RED + "npc-giver-id: " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a valid NPC id!");
@@ -2429,10 +2430,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             npcsToTalkTo = new LinkedList<NPC>();
                             for (int i : npcIdsToTalkTo) {
 
-                                if (citizens.getNPCRegistry().getById(i) != null) {
+                                if (CitizensAPI.getNPCRegistry().getById(i) != null) {
 
-                                    npcsToTalkTo.add(citizens.getNPCRegistry().getById(i));
-                                    questNPCs.add(citizens.getNPCRegistry().getById(i));
+                                    npcsToTalkTo.add(CitizensAPI.getNPCRegistry().getById(i));
+                                    questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
 
                                 } else {
                                     printSevere(GOLD + "[Quests] " + RED + i + GOLD + " inside " + GREEN + "npc-ids-to-talk-to: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid NPC id!");
@@ -2475,7 +2476,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                             if (is != null) {
 
                                                 int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
-                                                NPC npc = citizens.getNPCRegistry().getById(npcId);
+                                                NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
 
                                                 if (npc != null) {
 
@@ -2538,12 +2539,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     npcAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts");
                                     for (int i : npcIds) {
 
-                                        if (citizens.getNPCRegistry().getById(i) != null) {
+                                        if (CitizensAPI.getNPCRegistry().getById(i) != null) {
 
                                             if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
-                                                stage.citizensToKill.add(citizens.getNPCRegistry().getById(i));
+                                                stage.citizensToKill.add(CitizensAPI.getNPCRegistry().getById(i));
                                                 stage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
-                                                questNPCs.add(citizens.getNPCRegistry().getById(i));
+                                                questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
                                             } else {
                                                 printSevere(GOLD + "[Quests] " + RED + npcAmounts.get(npcIds.indexOf(i)) + GOLD + " inside " + GREEN + "npc-kill-amounts: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a positive number!");
                                                 stageFailed = true;
@@ -3743,32 +3744,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static String getTime(long milliseconds) {
 
         String message = "";
-        long days = 0;
-        long hours = 0;
-        long minutes = 0;
-        long seconds = 0;
-        if (((Long) milliseconds).compareTo(Long.parseLong("86400000")) > -1) {
-            days = (Long) milliseconds / Long.parseLong("86400000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("86400000")) * Long.parseLong("86400000");
-        }
-
-        if (((Long) milliseconds).compareTo(Long.parseLong("3600000")) > -1) {
-            hours = (Long) milliseconds / Long.parseLong("3600000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("3600000")) * Long.parseLong("3600000");
-        }
-
-        if (((Long) milliseconds).compareTo(Long.parseLong("60000")) > -1) {
-            minutes = (Long) milliseconds / Long.parseLong("60000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("60000")) * Long.parseLong("60000");
-        }
-
-        if (((Long) milliseconds).compareTo(Long.parseLong("1000")) > -1) {
-            seconds = (Long) milliseconds / Long.parseLong("1000");
-        }
-
-
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliseconds);
+        
+        long days = calendar.get(Calendar.DAY_OF_YEAR) - 1;
+        long hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
+        long minutes = calendar.get(Calendar.MINUTE);
+        long seconds = calendar.get(Calendar.SECOND);
+        
         if (days > 0) {
-
+        	
             if (days == 1) {
                 message += " 1 Day,";
             } else {

@@ -11,6 +11,7 @@ import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -186,7 +187,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (context.getSessionData("npcStart") == null && quests.citizens != null) {
                 text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set NPC start (None set)\n";
             } else if (quests.citizens != null) {
-                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set NPC start (" + quests.citizens.getNPCRegistry().getById((Integer) context.getSessionData("npcStart")).getName() + ")\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set NPC start (" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData("npcStart")).getName() + ")\n";
             }
 
             if (context.getSessionData("blockStart") == null) {
@@ -474,7 +475,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (input.intValue() > -1) {
 
-                if (quests.citizens.getNPCRegistry().getById(input.intValue()) == null) {
+                if (CitizensAPI.getNPCRegistry().getById(input.intValue()) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + "No NPC exists with that id!");
                     return new SetNpcStartPrompt();
                 }

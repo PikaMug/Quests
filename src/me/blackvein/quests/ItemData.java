@@ -3,8 +3,6 @@ package me.blackvein.quests;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import me.blackvein.quests.ItemData.Data;
-
 public class ItemData {
 
 	public HashMap<String, Data> map = new HashMap<String, Data>();
