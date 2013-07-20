@@ -35,6 +35,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -3411,6 +3412,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
         parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
         parsed = parsed.replaceAll("<reset>", RESET.toString());
+        parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
     }
