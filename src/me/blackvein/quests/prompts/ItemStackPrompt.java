@@ -242,7 +242,6 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                 }catch(Exception e){
                 	try {
 	                	Data data = ItemData.getInstance().getItem(input);
-	                	Bukkit.broadcastMessage(input + ":" + data);
 	                	if (data == null) {
 	                		cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
 	                		return new IDPrompt();

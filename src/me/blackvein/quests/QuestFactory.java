@@ -1305,6 +1305,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (q.neededQuests.isEmpty() == false) {
             cc.setSessionData("questReqs", q.neededQuests);
         }
+        
+        if (q.blockQuests.isEmpty() == false) {
+            cc.setSessionData("questBlocks", q.blockQuests);
+        }
 
         if (q.permissionReqs.isEmpty() == false) {
             cc.setSessionData("permissionReqs", q.permissionReqs);
@@ -1650,7 +1654,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                         for (Quest q : quests.quests) {
 
-                            if (q.neededQuests.contains(q.name)) {
+                            if (q.neededQuests.contains(q.name) || q.blockQuests.contains(q.name)) {
                                 used.add(q.name);
                             }
 

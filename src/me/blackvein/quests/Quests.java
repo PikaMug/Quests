@@ -572,6 +572,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         }
 
                                     }
+                                    
+                                    if (quest.blockQuests.isEmpty() == false) {
+
+                                        for (String s : quest.blockQuests) {
+
+                                            if (quester.completedQuests.contains(s)) {
+                                                cs.sendMessage(GRAY + "- " + RED + "You have already Completed " + ITALIC + s);
+                                            } else {
+                                                cs.sendMessage(GRAY + "- " + GREEN + "Still able to complete " + ITALIC + s);
+                                            }
+
+                                        }
+
+                                    }
 
                                 }
 
@@ -2018,6 +2032,49 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
+                    if (config.contains("quests." + s + ".requirements.noQuests")) {
+
+                        if (Quests.checkList(config.getList("quests." + s + ".requirements.noQuests"), String.class)) {
+
+                            List<String> names = config.getStringList("quests." + s + ".requirements.noQuests");
+
+                            boolean failed = false;
+                            String failedQuest = "NULL";
+
+                            for (String name : names) {
+
+                                boolean done = false;
+                                for (String string : section1.getKeys(false)) {
+
+                                    if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+                                        quest.blockQuests.add(name);
+                                        done = true;
+                                        break;
+                                    }
+
+                                }
+
+                                if (!done) {
+                                    failed = true;
+                                    failedQuest = name;
+                                    break;
+                                }
+
+                            }
+
+                            if (failed) {
+                                printSevere(GOLD + "[Quests] " + PINK + failedQuest + GOLD + " inside " + RED + "quests: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a valid Quest name!");
+                                printSevere(RED + "Make sure you are using the Quest " + DARKRED + "name: " + RED + "value, and not the block name.");
+                                continue;
+                            }
+
+                        } else {
+                            printSevere(GOLD + "[Quests] " + RED + "quests: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a list of Quest names!");
+                            continue;
+                        }
+
+                    }
+                    
                     if (config.contains("quests." + s + ".requirements.quests")) {
 
                         if (Quests.checkList(config.getList("quests." + s + ".requirements.quests"), String.class)) {
@@ -2060,6 +2117,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     }
+
 
                     if (config.contains("quests." + s + ".requirements.permissions")) {
 
@@ -3450,6 +3508,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
         parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
         parsed = parsed.replaceAll("<reset>", RESET.toString());
+        parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
         
