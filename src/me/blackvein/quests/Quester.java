@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
 import me.blackvein.quests.util.ItemUtil;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -2349,7 +2350,7 @@ public class Quester {
 
                 for (int i : ids) {
 
-                    citizensInteracted.put(plugin.citizens.getNPCRegistry().getById(i), has.get(ids.indexOf(i)));
+                    citizensInteracted.put(CitizensAPI.getNPCRegistry().getById(i), has.get(ids.indexOf(i)));
 
                 }
 
@@ -2362,7 +2363,7 @@ public class Quester {
 
                 for (int i : ids) {
 
-                    citizensKilled.add(plugin.citizens.getNPCRegistry().getById(i));
+                    citizensKilled.add(CitizensAPI.getNPCRegistry().getById(i));
                     citizenNumKilled.add(num.get(ids.indexOf(i)));
 
                 }
@@ -2556,7 +2557,7 @@ public class Quester {
         if (delayTimeLeft > -1) {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), delayTimeLeft * 50);
         } else {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), currentStage.delay);
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), currentStage.delay / 50);
             plugin.getServer().getPlayer(name).sendMessage(currentStage.delayMessage);
         }
 

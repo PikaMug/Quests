@@ -1,15 +1,25 @@
 package me.blackvein.quests;
 
-import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.gmail.nossr50.mcMMO;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
@@ -17,18 +27,32 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.aufdemrand.denizen.Denizen;
 import net.aufdemrand.denizen.scripts.ScriptRegistry;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.*;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.*;
+import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.conversations.ConversationAbandonedListener;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.ConversationPrefix;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -39,6 +63,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
 
@@ -545,6 +572,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         }
 
                                     }
+                                    
+                                    if (quest.blockQuests.isEmpty() == false) {
+
+                                        for (String s : quest.blockQuests) {
+
+                                            if (quester.completedQuests.contains(s)) {
+                                                cs.sendMessage(GRAY + "- " + RED + "You have already Completed " + ITALIC + s);
+                                            } else {
+                                                cs.sendMessage(GRAY + "- " + GREEN + "Still able to complete " + ITALIC + s);
+                                            }
+
+                                        }
+
+                                    }
 
                                 }
 
@@ -896,7 +937,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             }
 
-                            LinkedHashMap sortedMap = (LinkedHashMap) Quests.sort(questPoints);
+                            LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) Quests.sort(questPoints);
 
                             int numPrinted = 0;
 
@@ -959,7 +1000,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                             
                                             if(quester.currentQuest == null){
                                                 
-                                                Party party = new Party(quester);
+                                                Party party = new Party(this, quester);
                                                 if(broadcastPartyCreation)
                                                     getServer().broadcastMessage(Party.partyPrefix + PINK + "" + BOLD +  player.getName() + RESET + "" + PINK + " created a Quest Party!");
                                                 parties.add(party);
@@ -1021,7 +1062,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         LinkedList<Quester> members = party.getMembers();
                                         
                                         player.sendMessage(PURPLE + "- " + PINK + "Party" + PURPLE + " -");
-                                        player.sendMessage(YELLOW + "" + BOLD + "Current Quest: " + RESET + "" + YELLOW +  current != null ? (current.getName()) : "(None)");
+                                        player.sendMessage(YELLOW + "" + BOLD + "Current Quest: " + RESET + "" + YELLOW +  ((current != null) ? current.getName() : "(None)"));
                                         player.sendMessage(PINK + "" + BOLD + "Leader: " + RESET + "" + PINK + leader.name);
                                         if(members.isEmpty())
                                             player.sendMessage(PURPLE + "" + BOLD + "Members: " + RESET + "" + PURPLE + "(None)");
@@ -1070,10 +1111,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                         }
                                                         
                                                         if(found != null){
-                                                            
+                                                            if (found.getName().equals(player.getName())) {
+                                                            	player.sendMessage(Party.partyPrefix + RED + "you can't invite yourself!");
+                                                            	return true;
+                                                            }
                                                             if(getQuester(found.getName()).getParty() == null){
                                                                 
-                                                                a
+                                                            	//TODO: Invite player to party!
+                                                            	party.sendMessage(Party.partyPrefix + PINK + "" + BOLD +  player.getName() + RESET + "" + PINK + " invited: " + BOLD + found.getName() + RESET + "" + PINK + " to the party!" );
+                                                            	party.sendInvite(getQuester(found.getName()));
                                                                 
                                                             }else{
                                                                 player.sendMessage(Party.partyPrefix + RED + "" + BOLD + found.getName() + RESET + "" + RED + " is already in a party!");
@@ -1512,7 +1558,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             for (Player p : getServer().getOnlinePlayers()) {
 
-                                if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+                                if (p.getName().equalsIgnoreCase(args[1])) {
                                     target = p;
                                     break;
                                 }
@@ -1553,6 +1599,101 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         }
 
+                    } else if (args[0].equalsIgnoreCase("takepoints")) {
+
+                    	if (player.hasPermission("quests.admin.takepoints")) {
+
+                    		Player target = null;
+
+                    		for (Player p : getServer().getOnlinePlayers()) {
+
+                    			if (p.getName().equalsIgnoreCase(args[1])) {
+                    				target = p;
+                    				break;
+                    			}
+
+                    		}
+
+                    		if (target == null) {
+
+                    			player.sendMessage(YELLOW + "Player not found.");
+
+                    		} else {
+
+                    			int points;
+
+                    			try {
+
+                    				points = Integer.parseInt(args[2]);
+
+                    			} catch (Exception e) {
+
+                    				player.sendMessage(YELLOW + "Amount must be a number.");
+                    				return true;
+
+                    			}
+
+                    			Quester quester = getQuester(target.getName());
+                    			quester.questPoints = points;
+                    			player.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
+                    			target.sendMessage(GREEN + player.getName() + GOLD + " took away " + PURPLE + points + GOLD + "Quest Points.");
+
+                    			quester.saveData();
+
+                    		}
+
+                    	} else {
+
+                             player.sendMessage(RED + "You do not have access to that command.");
+
+                         }
+                    } else if (args[0].equalsIgnoreCase("givepoints")) {
+                    	if (player.hasPermission("quests.admin.givepoints")) {
+
+                    		Player target = null;
+
+                    		for (Player p : getServer().getOnlinePlayers()) {
+
+                    			if (p.getName().equalsIgnoreCase(args[1])) {
+                    				target = p;
+                    				break;
+                    			}
+
+                    		}
+
+                    		if (target == null) {
+
+                    			player.sendMessage(YELLOW + "Player not found.");
+
+                    		} else {
+
+                    			int points;
+
+                    			try {
+
+                    				points = Integer.parseInt(args[2]);
+
+                    			} catch (Exception e) {
+
+                    				player.sendMessage(YELLOW + "Amount must be a number.");
+                    				return true;
+
+                    			}
+
+                    			Quester quester = getQuester(target.getName());
+                    			quester.questPoints += points;
+                    			player.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + "\'s.");
+                    			target.sendMessage(GREEN + player.getName() + GOLD + " gave you " + PURPLE + points + GOLD + "Quest Points.");
+
+                    			quester.saveData();
+
+                    		}
+
+                    	} else {
+
+                    		player.sendMessage(RED + "You do not have access to that command.");
+
+                    	}
                     } else {
 
                         cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
@@ -1589,6 +1730,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
         if (player.hasPermission("quests.admin.points")) {
             player.sendMessage(DARKRED + "/questadmin points <player> <amount>" + RED + " - Set a players Quest Points");
+        }
+        if (player.hasPermission("quests.admin.takepoints")) {
+            player.sendMessage(DARKRED + "/questadmin takepoints <player> <amount>" + RED + " - Take a players Quest Points");
+        }
+        if (player.hasPermission("quests.admin.givepoints")) {
+            player.sendMessage(DARKRED + "/questadmin givepoints <player> <amount>" + RED + " - Give a player Quest Points");
         }
         if (player.hasPermission("quests.admin.pointsall")) {
             player.sendMessage(DARKRED + "/questadmin pointsall <amount>" + RED + " - Set ALL players' Quest Points");
@@ -1748,10 +1895,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (config.contains("quests." + s + ".npc-giver-id")) {
 
-                    if (citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")) != null) {
+                    if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")) != null) {
 
-                        quest.npcStart = citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id"));
-                        questNPCs.add(citizens.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
+                        quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id"));
+                        questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
 
                     } else {
                         printSevere(GOLD + "[Quests] " + RED + "npc-giver-id: " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a valid NPC id!");
@@ -1885,6 +2032,49 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
+                    if (config.contains("quests." + s + ".requirements.noQuests")) {
+
+                        if (Quests.checkList(config.getList("quests." + s + ".requirements.noQuests"), String.class)) {
+
+                            List<String> names = config.getStringList("quests." + s + ".requirements.noQuests");
+
+                            boolean failed = false;
+                            String failedQuest = "NULL";
+
+                            for (String name : names) {
+
+                                boolean done = false;
+                                for (String string : section1.getKeys(false)) {
+
+                                    if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+                                        quest.blockQuests.add(name);
+                                        done = true;
+                                        break;
+                                    }
+
+                                }
+
+                                if (!done) {
+                                    failed = true;
+                                    failedQuest = name;
+                                    break;
+                                }
+
+                            }
+
+                            if (failed) {
+                                printSevere(GOLD + "[Quests] " + PINK + failedQuest + GOLD + " inside " + RED + "quests: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a valid Quest name!");
+                                printSevere(RED + "Make sure you are using the Quest " + DARKRED + "name: " + RED + "value, and not the block name.");
+                                continue;
+                            }
+
+                        } else {
+                            printSevere(GOLD + "[Quests] " + RED + "quests: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a list of Quest names!");
+                            continue;
+                        }
+
+                    }
+                    
                     if (config.contains("quests." + s + ".requirements.quests")) {
 
                         if (Quests.checkList(config.getList("quests." + s + ".requirements.quests"), String.class)) {
@@ -1927,6 +2117,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     }
+
 
                     if (config.contains("quests." + s + ".requirements.permissions")) {
 
@@ -2298,10 +2489,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             npcsToTalkTo = new LinkedList<NPC>();
                             for (int i : npcIdsToTalkTo) {
 
-                                if (citizens.getNPCRegistry().getById(i) != null) {
+                                if (CitizensAPI.getNPCRegistry().getById(i) != null) {
 
-                                    npcsToTalkTo.add(citizens.getNPCRegistry().getById(i));
-                                    questNPCs.add(citizens.getNPCRegistry().getById(i));
+                                    npcsToTalkTo.add(CitizensAPI.getNPCRegistry().getById(i));
+                                    questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
 
                                 } else {
                                     printSevere(GOLD + "[Quests] " + RED + i + GOLD + " inside " + GREEN + "npc-ids-to-talk-to: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid NPC id!");
@@ -2321,7 +2512,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     List<String> itemsToDeliver;
                     List<Integer> itemDeliveryTargetIds;
-                    ArrayList<String> deliveryMessages = new ArrayList();
+                    ArrayList<String> deliveryMessages = new ArrayList<String>();
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver")) {
 
@@ -2344,7 +2535,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                             if (is != null) {
 
                                                 int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
-                                                NPC npc = citizens.getNPCRegistry().getById(npcId);
+                                                NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
 
                                                 if (npc != null) {
 
@@ -2407,12 +2598,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     npcAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts");
                                     for (int i : npcIds) {
 
-                                        if (citizens.getNPCRegistry().getById(i) != null) {
+                                        if (CitizensAPI.getNPCRegistry().getById(i) != null) {
 
                                             if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
-                                                stage.citizensToKill.add(citizens.getNPCRegistry().getById(i));
+                                                stage.citizensToKill.add(CitizensAPI.getNPCRegistry().getById(i));
                                                 stage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
-                                                questNPCs.add(citizens.getNPCRegistry().getById(i));
+                                                questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
                                             } else {
                                                 printSevere(GOLD + "[Quests] " + RED + npcAmounts.get(npcIds.indexOf(i)) + GOLD + " inside " + GREEN + "npc-kill-amounts: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a positive number!");
                                                 stageFailed = true;
@@ -3279,6 +3470,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
         parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
         parsed = parsed.replaceAll("<reset>", RESET.toString());
+        parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
     }
@@ -3316,6 +3508,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
         parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
         parsed = parsed.replaceAll("<reset>", RESET.toString());
+        parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
         
@@ -3344,15 +3537,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         return (permission != null);
     }
 
-    private static Map sort(Map unsortedMap) {
+    private static Map<String, Integer> sort(Map<String, Integer> unsortedMap) {
 
-        List list = new LinkedList(unsortedMap.entrySet());
+        List<Entry<String, Integer>> list = new LinkedList<Entry<String, Integer>>(unsortedMap.entrySet());
 
-        Collections.sort(list, new Comparator() {
+        Collections.sort(list, new Comparator<Entry<String, Integer>>() {
             @Override
-            public int compare(Object o1, Object o2) {
-                int i = (Integer) (((Map.Entry) o1).getValue());
-                int i2 = (Integer) (((Map.Entry) o2).getValue());
+            public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+                int i = o1.getValue();
+                int i2 = o2.getValue();
                 if (i < i2) {
                     return 1;
                 } else if (i == i2) {
@@ -3360,14 +3553,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 } else {
                     return -1;
                 }
-
-
             }
         });
 
-        Map sortedMap = new LinkedHashMap();
-        for (Iterator it = list.iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
+        Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+        for (Iterator<Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
+            Entry<String, Integer> entry = it.next();
             sortedMap.put(entry.getKey(), entry.getValue());
         }
         return sortedMap;
@@ -3614,32 +3805,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static String getTime(long milliseconds) {
 
         String message = "";
-        long days = 0;
-        long hours = 0;
-        long minutes = 0;
-        long seconds = 0;
-        if (((Long) milliseconds).compareTo(Long.parseLong("86400000")) > -1) {
-            days = (Long) milliseconds / Long.parseLong("86400000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("86400000")) * Long.parseLong("86400000");
-        }
-
-        if (((Long) milliseconds).compareTo(Long.parseLong("3600000")) > -1) {
-            hours = (Long) milliseconds / Long.parseLong("3600000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("3600000")) * Long.parseLong("3600000");
-        }
-
-        if (((Long) milliseconds).compareTo(Long.parseLong("60000")) > -1) {
-            minutes = (Long) milliseconds / Long.parseLong("60000");
-            milliseconds -= ((Long) milliseconds / Long.parseLong("60000")) * Long.parseLong("60000");
-        }
-
-        if (((Long) milliseconds).compareTo(Long.parseLong("1000")) > -1) {
-            seconds = (Long) milliseconds / Long.parseLong("1000");
-        }
-
-
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliseconds);
+        
+        long days = calendar.get(Calendar.DAY_OF_YEAR) - 1;
+        long hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
+        long minutes = calendar.get(Calendar.MINUTE);
+        long seconds = calendar.get(Calendar.SECOND);
+        
         if (days > 0) {
-
+        	
             if (days == 1) {
                 message += " 1 Day,";
             } else {
@@ -3922,7 +4098,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     }
 
-    public static boolean checkList(List<?> list, Class c) {
+    public static boolean checkList(List<?> list, Class<?> c) {
 
         if (list == null) {
             return false;

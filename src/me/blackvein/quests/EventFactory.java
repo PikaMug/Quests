@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import net.citizensnpcs.api.CitizensAPI;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -1156,8 +1158,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 
             if (input.intValue() != -1) {
-
-                if (quests.citizens.getNPCRegistry().getById(input.intValue()) == null) {
+            	
+                if (CitizensAPI.getNPCRegistry().getById(input.intValue()) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorNoNPCExists"));
                     return new SetNpcStartPrompt();
                 }

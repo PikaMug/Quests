@@ -1,6 +1,9 @@
 package me.blackvein.quests;
 
 import java.io.File;
+
+import net.citizensnpcs.api.CitizensAPI;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -390,7 +393,7 @@ public class PlayerListener implements Listener {
                             boolean okay = true;
 
                             if (plugin.citizens != null) {
-                                if (plugin.citizens.getNPCRegistry().isNPC(player)) {
+                                if (CitizensAPI.getNPCRegistry().isNPC(player)) {
                                     okay = false;
                                 }
                             }
@@ -410,7 +413,7 @@ public class PlayerListener implements Listener {
                         boolean okay = true;
 
                         if (plugin.citizens != null) {
-                            if (plugin.citizens.getNPCRegistry().isNPC(damager)) {
+                            if (CitizensAPI.getNPCRegistry().isNPC(damager)) {
                                 okay = false;
                             }
                         }
@@ -456,7 +459,7 @@ public class PlayerListener implements Listener {
                             boolean okay = true;
 
                             if (plugin.citizens != null) {
-                                if (plugin.citizens.getNPCRegistry().isNPC(player) || plugin.citizens.getNPCRegistry().isNPC(evt.getEntity())) {
+                                if (CitizensAPI.getNPCRegistry().isNPC(player) || CitizensAPI.getNPCRegistry().isNPC(evt.getEntity())) {
                                     okay = false;
                                 }
                             }
@@ -484,7 +487,7 @@ public class PlayerListener implements Listener {
 
                         if (plugin.citizens != null) {
 
-                            if (plugin.citizens.getNPCRegistry().isNPC(player) || plugin.citizens.getNPCRegistry().isNPC(evt.getEntity())) {
+                            if (CitizensAPI.getNPCRegistry().isNPC(player) || CitizensAPI.getNPCRegistry().isNPC(evt.getEntity())) {
                                 okay = false;
                             }
 
@@ -591,7 +594,7 @@ public class PlayerListener implements Listener {
 
             boolean isPlayer = true;
             if (plugin.citizens != null) {
-                if (plugin.citizens.getNPCRegistry().isNPC(evt.getPlayer())) {
+                if (CitizensAPI.getNPCRegistry().isNPC(evt.getPlayer())) {
                     isPlayer = false;
                 }
             }

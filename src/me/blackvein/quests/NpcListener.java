@@ -3,6 +3,7 @@ package me.blackvein.quests;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import me.blackvein.quests.util.ItemUtil;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -171,7 +172,7 @@ public class NpcListener implements Listener {
                         boolean okay = true;
 
                         if (plugin.citizens != null) {
-                            if (plugin.citizens.getNPCRegistry().isNPC(player)) {
+                            if (CitizensAPI.getNPCRegistry().isNPC(player)) {
                                 okay = false;
                             }
                         }

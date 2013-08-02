@@ -1,5 +1,6 @@
 package me.blackvein.quests;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import me.blackvein.quests.util.ItemUtil;
@@ -9,6 +10,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import com.comphenix.net.sf.cglib.core.CollectionUtils;
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 
 public class Quest {
 
@@ -31,6 +35,7 @@ public class Quest {
     List<Boolean> removeItems = new LinkedList<Boolean>();
 
     List<String> neededQuests = new LinkedList<String>();
+    List<String> blockQuests = new LinkedList<String>();
 
     List<String> permissionReqs = new LinkedList<String>();
 
@@ -144,7 +149,13 @@ public class Quest {
 
         if(quester.completedQuests.containsAll(neededQuests) == false)
             return false;
-
+        
+        for (String q : blockQuests) {
+        	if (quester.completedQuests.contains(q)) {
+        		return false;
+        	}
+        }
+        
         return true;
 
     }
@@ -186,7 +197,7 @@ public class Quest {
 
         for(String s : mcmmoSkills){
 
-            Quests.mcmmo.getPlayerProfile(player.getName()).skillUp(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
+            new McMMOPlayer(player).getProfile().skillUp(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
             none = null;
 
         }
@@ -316,6 +327,9 @@ public class Quest {
 
             if(other.neededQuests.equals(neededQuests) == false)
                 return false;
+            
+            if (other.blockQuests.equals(blockQuests) == false)
+            	return false;
 
             if(other.npcStart != null && npcStart != null){
                 if(other.npcStart.equals(npcStart) == false)
