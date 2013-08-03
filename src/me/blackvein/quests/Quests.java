@@ -3857,7 +3857,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         		if (milliSeconds2 == 1) {
                     message += " 1 Millisecond,";
                 } else {
-                    message += " " + seconds + " Milliseconds,";
+                    message += " " + milliSeconds2 + " Milliseconds,";
                 }
         	}
         }
