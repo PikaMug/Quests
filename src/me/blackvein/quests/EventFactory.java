@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import me.blackvein.quests.prompts.ItemStackPrompt;
+import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
@@ -109,7 +110,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 
                 
                 if(player.hasPermission("quests.editor.events.create")){
-                    context.setSessionData("oldEvent", "");
+                    context.setSessionData(CK.E_OLD_EVENT, "");
                     return new EventNamePrompt();
                 }else{
                     player.sendMessage(RED + "You do not have permission to create new Events.");
@@ -169,50 +170,50 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
     public static void clearData(ConversationContext context) {
 
-        context.setSessionData("oldEvent", null);
-        context.setSessionData("evtName", null);
-        context.setSessionData("evtMessage", null);
-        context.setSessionData("evtClearInv", null);
-        context.setSessionData("evtItemIds", null);
-        context.setSessionData("evtItemAmounts", null);
-        context.setSessionData("evtExplosions", null);
-        context.setSessionData("evtEffects", null);
-        context.setSessionData("evtEffectLocations", null);
-        context.setSessionData("evtStormWorld", null);
-        context.setSessionData("evtStormDuration", null);
-        context.setSessionData("evtThunderWorld", null);
-        context.setSessionData("evtThunderDuration", null);
-        context.setSessionData("evtMobTypes", null);
-        context.setSessionData("evtMobAmounts", null);
-        context.setSessionData("evtMobLocations", null);
-        context.setSessionData("evtLightningStrikes", null);
-        context.setSessionData("evtPotionTypes", null);
-        context.setSessionData("evtPotionDurations", null);
-        context.setSessionData("evtPotionMagnitudes", null);
-        context.setSessionData("evtHunger", null);
-        context.setSessionData("evtSaturation", null);
-        context.setSessionData("evtHealth", null);
-        context.setSessionData("evtTeleportLocation", null);
-        context.setSessionData("evtCommands", null);
+        context.setSessionData(CK.E_OLD_EVENT, null);
+        context.setSessionData(CK.E_NAME, null);
+        context.setSessionData(CK.E_MESSAGE, null);
+        context.setSessionData(CK.E_CLEAR_INVENTORY, null);
+        context.setSessionData(CK.E_ITEMS, null);
+        context.setSessionData(CK.E_ITEMS_AMOUNTS, null);
+        context.setSessionData(CK.E_EXPLOSIONS, null);
+        context.setSessionData(CK.E_EFFECTS, null);
+        context.setSessionData(CK.E_EFFECTS_LOCATIONS, null);
+        context.setSessionData(CK.E_WORLD_STORM, null);
+        context.setSessionData(CK.E_WORLD_STORM_DURATION, null);
+        context.setSessionData(CK.E_WORLD_THUNDER, null);
+        context.setSessionData(CK.E_WORLD_THUNDER_DURATION, null);
+        context.setSessionData(CK.E_MOB_TYPES, null);
+        context.setSessionData(CK.E_MOB_AMOUNTS, null);
+        context.setSessionData(CK.E_MOB_LOCATIONS, null);
+        context.setSessionData(CK.E_LIGHTNING, null);
+        context.setSessionData(CK.E_POTION_TYPES, null);
+        context.setSessionData(CK.E_POTION_DURATIONS, null);
+        context.setSessionData(CK.E_POTION_STRENGHT, null);
+        context.setSessionData(CK.E_HUNGER, null);
+        context.setSessionData(CK.E_SATURATION, null);
+        context.setSessionData(CK.E_HEALTH, null);
+        context.setSessionData(CK.E_TELEPORT, null);
+        context.setSessionData(CK.E_COMMANDS, null);
 
     }
 
     public static void loadData(Event event, ConversationContext context){
 
         if(event.message != null)
-            context.setSessionData("evtMessage", event.message);
+            context.setSessionData(CK.E_MESSAGE, event.message);
 
         if(event.clearInv == true)
-            context.setSessionData("evtClearInv", "Yes");
+            context.setSessionData(CK.E_CLEAR_INVENTORY, "Yes");
         else
-            context.setSessionData("evtClearInv", "No");
+            context.setSessionData(CK.E_CLEAR_INVENTORY, "No");
 
         if(event.items != null && event.items.isEmpty() == false){
 
             LinkedList<ItemStack> items = new LinkedList<ItemStack>();
             items.addAll(event.items);
 
-            context.setSessionData("evtItems", items);
+            context.setSessionData(CK.E_ITEMS, items);
 
         }
 
@@ -223,7 +224,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             for(Location loc : event.explosions)
                 locs.add(Quests.getLocationInfo(loc));
 
-            context.setSessionData("evtExplosions", locs);
+            context.setSessionData(CK.E_EXPLOSIONS, locs);
 
         }
 
@@ -239,22 +240,22 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            context.setSessionData("evtEffects", effs);
-            context.setSessionData("evtEffectLocations", locs);
+            context.setSessionData(CK.E_EFFECTS, effs);
+            context.setSessionData(CK.E_EFFECTS_LOCATIONS, locs);
 
         }
 
         if(event.stormWorld != null){
 
-            context.setSessionData("evtStormWorld", event.stormWorld.getName());
-            context.setSessionData("evtStormDuration", (long)event.stormDuration);
+            context.setSessionData(CK.E_WORLD_STORM, event.stormWorld.getName());
+            context.setSessionData(CK.E_WORLD_STORM_DURATION, (long)event.stormDuration);
 
         }
 
         if(event.thunderWorld != null){
 
-            context.setSessionData("evtThunderWorld", event.thunderWorld.getName());
-            context.setSessionData("evtThunderDuration", (long)event.thunderDuration);
+            context.setSessionData(CK.E_WORLD_THUNDER, event.thunderWorld.getName());
+            context.setSessionData(CK.E_WORLD_THUNDER_DURATION, (long)event.thunderDuration);
 
         }
 
@@ -272,9 +273,9 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            context.setSessionData("evtMobTypes", types);
-            context.setSessionData("evtMobAmounts", amounts);
-            context.setSessionData("evtMobLocations", locs);
+            context.setSessionData(CK.E_MOB_TYPES, types);
+            context.setSessionData(CK.E_MOB_AMOUNTS, amounts);
+            context.setSessionData(CK.E_MOB_LOCATIONS, locs);
 
         }
 
@@ -283,7 +284,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             LinkedList<String> locs = new LinkedList<String>();
             for(Location loc : event.lightningStrikes)
                 locs.add(Quests.getLocationInfo(loc));
-            context.setSessionData("evtLightningStrikes", locs);
+            context.setSessionData(CK.E_LIGHTNING, locs);
 
         }
 
@@ -301,39 +302,39 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            context.setSessionData("evtPotionTypes", types);
-            context.setSessionData("evtPotionDurations", durations);
-            context.setSessionData("evtPotionMagnitudes", mags);
+            context.setSessionData(CK.E_POTION_TYPES, types);
+            context.setSessionData(CK.E_POTION_DURATIONS, durations);
+            context.setSessionData(CK.E_POTION_STRENGHT, mags);
 
         }
 
         if(event.hunger > -1){
 
-            context.setSessionData("evtHunger", (Integer) event.hunger);
+            context.setSessionData(CK.E_HUNGER, (Integer) event.hunger);
 
         }
 
         if(event.saturation > -1){
 
-            context.setSessionData("evtSaturation", (Integer) event.saturation);
+            context.setSessionData(CK.E_SATURATION, (Integer) event.saturation);
 
         }
 
         if(event.health > -1){
 
-            context.setSessionData("evtHealth", (Integer) event.health);
+            context.setSessionData(CK.E_HEALTH, (Integer) event.health);
 
         }
 
         if(event.teleport != null){
 
-            context.setSessionData("evtTeleportLocation", Quests.getLocationInfo(event.teleport));
+            context.setSessionData(CK.E_TELEPORT, Quests.getLocationInfo(event.teleport));
 
         }
 
         if(event.commands != null){
 
-            context.setSessionData("evtCommands", event.commands);
+            context.setSessionData(CK.E_COMMANDS, event.commands);
 
         }
 
@@ -364,8 +365,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 for(Event evt : quests.events){
 
                     if(evt.name.equalsIgnoreCase(input)){
-                        context.setSessionData("oldEvent", evt.name);
-                        context.setSessionData("evtName", evt.name);
+                        context.setSessionData(CK.E_OLD_EVENT, evt.name);
+                        context.setSessionData(CK.E_NAME, evt.name);
                         loadData(evt, context);
                         return new CreateMenuPrompt();
                     }
@@ -425,7 +426,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                         }
 
                         if(used.isEmpty()){
-                            context.setSessionData("delEvent", evt.name);
+                            context.setSessionData(CK.ED_EVENT_DELETE, evt.name);
                             return new DeletePrompt();
                         }else{
                             ((Player)context.getForWhom()).sendMessage(RED + Lang.get("eventEditorEventInUse") + " \"" + PURPLE + evt.name + RED + "\":");
@@ -456,7 +457,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public String getPromptText(ConversationContext context) {
 
             String text =
-                    RED + Lang.get("eventEditorDeletePrompt") + " \"" + GOLD + (String)context.getSessionData("delEvent") + RED + "\"?\n";
+                    RED + Lang.get("eventEditorDeletePrompt") + " \"" + GOLD + (String)context.getSessionData(CK.ED_EVENT_DELETE) + RED + "\"?\n";
                     text += YELLOW + Lang.get("yes") + "/" + Lang.get("no");
 
             return text;
@@ -491,28 +492,28 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public String getPromptText(ConversationContext context) {
 
             String text =
-                    GOLD + "- " + Lang.get("event") + ": " + AQUA + context.getSessionData("evtName") + GOLD + " -\n";
+                    GOLD + "- " + Lang.get("event") + ": " + AQUA + context.getSessionData(CK.E_NAME) + GOLD + " -\n";
 
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetName") + "\n";
 
-            if (context.getSessionData("evtMessage") == null) {
+            if (context.getSessionData(CK.E_MESSAGE) == null) {
                 text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMessage") + "(" + AQUA + "\"" + context.getSessionData("evtMessage") + "\"" + YELLOW + ")\n";
+                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMessage") + "(" + AQUA + "\"" + context.getSessionData(CK.E_MESSAGE) + "\"" + YELLOW + ")\n";
             }
 
-            if (context.getSessionData("evtClearInv") == null) {
-                context.setSessionData("evtClearInv", "No");
+            if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
+                context.setSessionData(CK.E_CLEAR_INVENTORY, "No");
             }
 
-            text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorClearInv") + ": " + AQUA + context.getSessionData("evtClearInv") + "\n";
+            text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorClearInv") + ": " + AQUA + context.getSessionData(CK.E_CLEAR_INVENTORY) + "\n";
 
-            if (context.getSessionData("evtItems") == null) {
+            if (context.getSessionData(CK.E_ITEMS) == null) {
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("eventEditorSetItems") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("eventEditorSetItems") + "\n";
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData("evtItems");
+                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
 
                 for (ItemStack is : items) {
 
@@ -522,12 +523,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            if (context.getSessionData("evtExplosions") == null) {
+            if (context.getSessionData(CK.E_EXPLOSIONS) == null) {
                 text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("eventEditorSetExplosions") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
                 text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("eventEditorSetExplosions") + "\n";
-                LinkedList<String> locations = (LinkedList<String>) context.getSessionData("evtExplosions");
+                LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
 
                 for (String loc : locations) {
 
@@ -537,13 +538,13 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            if (context.getSessionData("evtEffects") == null) {
+            if (context.getSessionData(CK.E_EFFECTS) == null) {
                 text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("eventEditorSetEffects") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
                 text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("eventEditorSetEffects") + "\n";
-                LinkedList<String> effects = (LinkedList<String>) context.getSessionData("evtEffects");
-                LinkedList<String> locations = (LinkedList<String>) context.getSessionData("evtEffectLocations");
+                LinkedList<String> effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
+                LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
 
                 for (String effect : effects) {
 
@@ -553,25 +554,25 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            if (context.getSessionData("evtStormWorld") == null) {
+            if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                 text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("eventEditorSetStorm") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("eventEditorSetStorm") + " (" + AQUA + (String) context.getSessionData("evtStormWorld") + YELLOW + " -> " + DARKAQUA + Quests.getTime((Long) context.getSessionData("evtStormDuration")) + YELLOW + ")\n";
+                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("eventEditorSetStorm") + " (" + AQUA + (String) context.getSessionData(CK.E_WORLD_STORM) + YELLOW + " -> " + DARKAQUA + Quests.getTime((Long) context.getSessionData(CK.E_WORLD_STORM_DURATION)) + YELLOW + ")\n";
             }
 
-            if (context.getSessionData("evtThunderWorld") == null) {
+            if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
                 text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("eventEditorSetThunder") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("eventEditorSetThunder") + " (" + AQUA + (String) context.getSessionData("evtThunderWorld") + YELLOW + " -> " + DARKAQUA + Quests.getTime((Long) context.getSessionData("evtThunderDuration")) + YELLOW + ")\n";
+                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("eventEditorSetThunder") + " (" + AQUA + (String) context.getSessionData(CK.E_WORLD_THUNDER) + YELLOW + " -> " + DARKAQUA + Quests.getTime((Long) context.getSessionData(CK.E_WORLD_THUNDER_DURATION)) + YELLOW + ")\n";
             }
 
 
-            if (context.getSessionData("evtMobTypes") == null) {
+            if (context.getSessionData(CK.E_MOB_TYPES) == null) {
                 text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                LinkedList<String> types = (LinkedList<String>) context.getSessionData("evtMobTypes");
-                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData("evtMobAmounts");
-                LinkedList<String> locations = (LinkedList<String>) context.getSessionData("evtMobLocations");
+                LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(CK.E_MOB_AMOUNTS);
+                LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_MOB_LOCATIONS);
 
                 text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + "\n";
 
@@ -582,12 +583,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 }
             }
 
-            if (context.getSessionData("evtLightningStrikes") == null) {
+            if (context.getSessionData(CK.E_LIGHTNING) == null) {
                 text += BLUE + "" + BOLD + "10" + RESET + YELLOW + " - " + Lang.get("eventEditorSetLightning") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
                 text += BLUE + "" + BOLD + "10" + RESET + YELLOW + " - " + Lang.get("eventEditorSetLightning") + "\n";
-                LinkedList<String> locations = (LinkedList<String>) context.getSessionData("evtLightningStrikes");
+                LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
 
                 for (String loc : locations) {
 
@@ -597,14 +598,14 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            if (context.getSessionData("evtPotionTypes") == null) {
+            if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                 text += BLUE + "" + BOLD + "11" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionEffects") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
                 text += BLUE + "" + BOLD + "11" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionEffects") + "\n";
-                LinkedList<String> types = (LinkedList<String>) context.getSessionData("evtPotionTypes");
-                LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData("evtPotionDurations");
-                LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData("evtPotionMagnitudes");
+                LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES);
+                LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
+                LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT);
                 int index = -1;
 
                 for (String type : types) {
@@ -616,44 +617,44 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            if(context.getSessionData("evtHunger") == null) {
+            if(context.getSessionData(CK.E_HUNGER) == null) {
                 text += BLUE + "" + BOLD + "12" + RESET + YELLOW + " - " + Lang.get("eventEditorSetHunger") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
-                text += BLUE + "" + BOLD + "12" + RESET + YELLOW + " - " + Lang.get("eventEditorSetHunger") + AQUA + " (" + (Integer)context.getSessionData("evtHunger") + ")\n";
+                text += BLUE + "" + BOLD + "12" + RESET + YELLOW + " - " + Lang.get("eventEditorSetHunger") + AQUA + " (" + (Integer)context.getSessionData(CK.E_HUNGER) + ")\n";
 
             }
 
-            if(context.getSessionData("evtSaturation") == null) {
+            if(context.getSessionData(CK.E_SATURATION) == null) {
                 text += BLUE + "" + BOLD + "13" + RESET + YELLOW + " - " + Lang.get("eventEditorSetSaturation") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
-                text += BLUE + "" + BOLD + "13" + RESET + YELLOW + " - " + Lang.get("eventEditorSetSaturation") + AQUA + " (" + (Integer)context.getSessionData("evtSaturation") + ")\n";
+                text += BLUE + "" + BOLD + "13" + RESET + YELLOW + " - " + Lang.get("eventEditorSetSaturation") + AQUA + " (" + (Integer)context.getSessionData(CK.E_SATURATION) + ")\n";
 
             }
 
-            if(context.getSessionData("evtHealth") == null) {
+            if(context.getSessionData(CK.E_HEALTH) == null) {
                 text += BLUE + "" + BOLD + "14" + RESET + YELLOW + " - " + Lang.get("eventEditorSetHealth") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
-                text += BLUE + "" + BOLD + "14" + RESET + YELLOW + " - " + Lang.get("eventEditorSetHealth") + AQUA + " (" + (Integer)context.getSessionData("evtHealth") + ")\n";
+                text += BLUE + "" + BOLD + "14" + RESET + YELLOW + " - " + Lang.get("eventEditorSetHealth") + AQUA + " (" + (Integer)context.getSessionData(CK.E_HEALTH) + ")\n";
 
             }
 
-            if(context.getSessionData("evtTeleportLocation") == null) {
+            if(context.getSessionData(CK.E_TELEPORT) == null) {
                 text += BLUE + "" + BOLD + "15" + RESET + YELLOW + " - " + Lang.get("eventEditorSetTeleport") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
-                text += BLUE + "" + BOLD + "15" + RESET + YELLOW + " - " + Lang.get("eventEditorSetTeleport") + AQUA + " (" + (String)context.getSessionData("evtTeleportLocation") + ")\n";
+                text += BLUE + "" + BOLD + "15" + RESET + YELLOW + " - " + Lang.get("eventEditorSetTeleport") + AQUA + " (" + (String)context.getSessionData(CK.E_TELEPORT) + ")\n";
 
             }
 
-            if(context.getSessionData("evtCommands") == null) {
+            if(context.getSessionData(CK.E_COMMANDS) == null) {
                 text += BLUE + "" + BOLD + "16" + RESET + YELLOW + " - " + Lang.get("eventEditorSetCommands") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
 
                 text += BLUE + "" + BOLD + "16" + RESET + YELLOW + " - " + Lang.get("eventEditorSetCommands") + "\n";
-                for(String s : (LinkedList<String>)context.getSessionData("evtCommands"))
+                for(String s : (LinkedList<String>)context.getSessionData(CK.E_COMMANDS))
                     text += GRAY + "    - " + AQUA + s + "\n";
 
             }
@@ -678,11 +679,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             } else if (input.equalsIgnoreCase("3")) {
 
-                String s = (String) context.getSessionData("evtClearInv");
+                String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
                 if (s.equalsIgnoreCase("Yes")) {
-                    context.setSessionData("evtClearInv", "No");
+                    context.setSessionData(CK.E_CLEAR_INVENTORY, "No");
                 } else {
-                    context.setSessionData("evtClearInv", "Yes");
+                    context.setSessionData(CK.E_CLEAR_INVENTORY, "Yes");
                 }
 
                 return new CreateMenuPrompt();
@@ -744,8 +745,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             } else if (input.equalsIgnoreCase("17")) {
 
-                if(context.getSessionData("oldEvent") != null){
-                    return new FinishPrompt((String)context.getSessionData("oldEvent"));
+                if(context.getSessionData(CK.E_OLD_EVENT) != null){
+                    return new FinishPrompt((String)context.getSessionData(CK.E_OLD_EVENT));
                 }else{
                     return new FinishPrompt(null);
                 }
@@ -826,7 +827,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public String getPromptText(ConversationContext context) {
 
             String text =
-                    RED + Lang.get("eventEditorFinishAndSave") + " \"" + GOLD + (String)context.getSessionData("evtName") + RED + "\"?\n";
+                    RED + Lang.get("eventEditorFinishAndSave") + " \"" + GOLD + (String)context.getSessionData(CK.E_NAME) + RED + "\"?\n";
                     if(modified.isEmpty() == false){
                         text += RED + Lang.get("eventEditorModifiedNote") + "\n";
                         for(String s : modified)
@@ -903,7 +904,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             return;
         }
 
-        String event = (String)context.getSessionData("delEvent");
+        String event = (String)context.getSessionData(CK.ED_EVENT_DELETE);
         ConfigurationSection sec = data.getConfigurationSection("events");
         sec.set(event, null);
 
@@ -939,27 +940,27 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             return;
         }
 
-        if(((String) context.getSessionData("oldEvent")).isEmpty() == false){
-            data.set("events." + (String)context.getSessionData("oldEvent"), null);
-            quests.events.remove(quests.getEvent((String)context.getSessionData("oldEvent")));
+        if(((String) context.getSessionData(CK.E_OLD_EVENT)).isEmpty() == false){
+            data.set("events." + (String)context.getSessionData(CK.E_OLD_EVENT), null);
+            quests.events.remove(quests.getEvent((String)context.getSessionData(CK.E_OLD_EVENT)));
         }
 
-        ConfigurationSection section = data.createSection("events." + (String)context.getSessionData("evtName"));
-        names.remove((String)context.getSessionData("evtName"));
+        ConfigurationSection section = data.createSection("events." + (String)context.getSessionData(CK.E_NAME));
+        names.remove((String)context.getSessionData(CK.E_NAME));
 
-        if (context.getSessionData("evtMessage") != null) {
-            section.set("message", getCString(context, "evtMessage"));
+        if (context.getSessionData(CK.E_MESSAGE) != null) {
+            section.set("message", getCString(context, CK.E_MESSAGE));
         }
 
-        if (context.getSessionData("evtClearInv") != null) {
-            String s = getCString(context, "evtClearInv");
+        if (context.getSessionData(CK.E_CLEAR_INVENTORY) != null) {
+            String s = getCString(context, CK.E_CLEAR_INVENTORY);
             if(s.equalsIgnoreCase("Yes"))
                 context.setSessionData("clear-inventory", "true");
         }
 
-        if (context.getSessionData("evtItems") != null) {
+        if (context.getSessionData(CK.E_ITEMS) != null) {
 
-            LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData("evtItems");
+            LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
             LinkedList<String> lines = new LinkedList<String>();
             
             for(ItemStack is : items)
@@ -969,48 +970,48 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         }
 
-        if (context.getSessionData("evtExplosions") != null) {
+        if (context.getSessionData(CK.E_EXPLOSIONS) != null) {
 
-            LinkedList<String> locations = getCStringList(context, "evtExplosions");
+            LinkedList<String> locations = getCStringList(context, CK.E_EXPLOSIONS);
             section.set("explosions", locations);
 
         }
 
-        if (context.getSessionData("evtEffects") != null) {
+        if (context.getSessionData(CK.E_EFFECTS) != null) {
 
-            LinkedList<String> effects = getCStringList(context, "evtEffects");
-            LinkedList<String> locations = getCStringList(context, "evtEffectLocations");
+            LinkedList<String> effects = getCStringList(context, CK.E_EFFECTS);
+            LinkedList<String> locations = getCStringList(context, CK.E_EFFECTS_LOCATIONS);
 
             section.set("effects", effects);
             section.set("effect-locations", locations);
 
         }
 
-        if (context.getSessionData("evtStormWorld") != null) {
+        if (context.getSessionData(CK.E_WORLD_STORM) != null) {
 
-            String world = getCString(context, "evtStormWorld");
-            Long duration = getCLong(context, "evtStormDuration");
+            String world = getCString(context, CK.E_WORLD_STORM);
+            Long duration = getCLong(context, CK.E_WORLD_STORM_DURATION);
 
             section.set("storm-world", world);
             section.set("storm-duration", duration/50L);
 
         }
 
-        if (context.getSessionData("evtThunderWorld") != null) {
+        if (context.getSessionData(CK.E_WORLD_THUNDER) != null) {
 
-            String world = getCString(context, "evtThunderWorld");
-            Long duration = getCLong(context, "evtThunderDuration");
+            String world = getCString(context, CK.E_WORLD_THUNDER);
+            Long duration = getCLong(context, CK.E_WORLD_THUNDER_DURATION);
 
             section.set("thunder-world", world);
             section.set("thunder-duration", duration/50L);
 
         }
 
-        if (context.getSessionData("evtMobTypes") != null) {
+        if (context.getSessionData(CK.E_MOB_TYPES) != null) {
 
-            LinkedList<String> types = getCStringList(context, "evtMobTypes");
-            LinkedList<Integer> amounts = getCIntList(context, "evtMobAmounts");
-            LinkedList<String> locations = getCStringList(context, "evtMobLocations");
+            LinkedList<String> types = getCStringList(context, CK.E_MOB_TYPES);
+            LinkedList<Integer> amounts = getCIntList(context, CK.E_MOB_AMOUNTS);
+            LinkedList<String> locations = getCStringList(context, CK.E_MOB_LOCATIONS);
 
             section.set("mob-spawn-types", types);
             section.set("mob-spawn-amounts", amounts);
@@ -1018,25 +1019,25 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         }
 
-        if (context.getSessionData("evtLightningStrikes") != null) {
+        if (context.getSessionData(CK.E_LIGHTNING) != null) {
 
-            LinkedList<String> locations = getCStringList(context, "evtLightningStrikes");
+            LinkedList<String> locations = getCStringList(context, CK.E_LIGHTNING);
             section.set("lightning-strikes", locations);
 
         }
 
-        if (context.getSessionData("evtCommands") != null) {
+        if (context.getSessionData(CK.E_COMMANDS) != null) {
 
-            LinkedList<String> commands = getCStringList(context, "evtCommands");
+            LinkedList<String> commands = getCStringList(context, CK.E_COMMANDS);
             section.set("commands", commands);
 
         }
 
-        if (context.getSessionData("evtPotionTypes") != null) {
+        if (context.getSessionData(CK.E_POTION_TYPES) != null) {
 
-            LinkedList<String> types = getCStringList(context, "evtPotionTypes");
-            LinkedList<Long> durations = getCLongList(context, "evtPotionDurations");
-            LinkedList<Integer> mags = getCIntList(context, "evtPotionMagnitudes");
+            LinkedList<String> types = getCStringList(context, CK.E_POTION_TYPES);
+            LinkedList<Long> durations = getCLongList(context, CK.E_POTION_DURATIONS);
+            LinkedList<Integer> mags = getCIntList(context, CK.E_POTION_STRENGHT);
 
             section.set("potion-effect-types", types);
             section.set("potion-effect-durations", durations);
@@ -1044,30 +1045,30 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         }
 
-        if (context.getSessionData("evtHunger") != null) {
+        if (context.getSessionData(CK.E_HUNGER) != null) {
 
-            Integer i = getCInt(context, "evtHunger");
+            Integer i = getCInt(context, CK.E_HUNGER);
             section.set("hunger", i);
 
         }
 
-        if (context.getSessionData("evtSaturation") != null) {
+        if (context.getSessionData(CK.E_SATURATION) != null) {
 
-            Integer i = getCInt(context, "evtSaturation");
+            Integer i = getCInt(context, CK.E_SATURATION);
             section.set("saturation", i);
 
         }
 
-        if (context.getSessionData("evtHealth") != null) {
+        if (context.getSessionData(CK.E_HEALTH) != null) {
 
-            Integer i = getCInt(context, "evtHealth");
+            Integer i = getCInt(context, CK.E_HEALTH);
             section.set("health", i);
 
         }
 
-        if (context.getSessionData("evtTeleportLocation") != null) {
+        if (context.getSessionData(CK.E_TELEPORT) != null) {
 
-            section.set("teleport-location", getCString(context, "evtTeleportLocation"));
+            section.set("teleport-location", getCString(context, CK.E_TELEPORT));
 
         }
 
@@ -1132,7 +1133,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }
 
-                context.setSessionData("evtName", input);
+                context.setSessionData(CK.E_NAME, input);
                 names.add(input);
                 return new CreateMenuPrompt();
 
@@ -1195,14 +1196,14 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     Location loc = block.getLocation();
 
                     LinkedList<String> locs;
-                    if (context.getSessionData("evtExplosions") != null) {
-                        locs = (LinkedList<String>) context.getSessionData("evtExplosions");
+                    if (context.getSessionData(CK.E_EXPLOSIONS) != null) {
+                        locs = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
                     } else {
                         locs = new LinkedList<String>();
                     }
 
                     locs.add(Quests.getLocationInfo(loc));
-                    context.setSessionData("evtExplosions", locs);
+                    context.setSessionData(CK.E_EXPLOSIONS, locs);
                     selectedExplosionLocations.remove(player);
 
                 } else {
@@ -1214,7 +1215,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
-                context.setSessionData("evtExplosions", null);
+                context.setSessionData(CK.E_EXPLOSIONS, null);
                 selectedExplosionLocations.remove(player);
                 return new CreateMenuPrompt();
 
@@ -1265,8 +1266,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }
 
-                names.remove((String) context.getSessionData("evtName"));
-                context.setSessionData("evtName", input);
+                names.remove((String) context.getSessionData(CK.E_NAME));
+                context.setSessionData(CK.E_NAME, input);
                 names.add(input);
 
             }
@@ -1289,9 +1290,9 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public Prompt acceptInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase("cmdNone") == false) {
-                context.setSessionData("evtMessage", input);
+                context.setSessionData(CK.E_MESSAGE, input);
             } else if (input.equalsIgnoreCase(Lang.get("cmdNone"))) {
-                context.setSessionData("evtMessage", null);
+                context.setSessionData(CK.E_MESSAGE, null);
             }
 
             return new CreateMenuPrompt();
@@ -1312,14 +1313,14 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             // Check/add newly made item
             if(context.getSessionData("newItem") != null){
-                if(context.getSessionData("evtItems") != null){
+                if(context.getSessionData(CK.E_ITEMS) != null){
                     List<ItemStack> items = getItems(context);
                     items.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData("evtItems", items);
+                    context.setSessionData(CK.E_ITEMS, items);
                 }else{
                     LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData("evtItems", itemRews);
+                    context.setSessionData(CK.E_ITEMS, itemRews);
                 }
 
                 context.setSessionData("newItem", null);
@@ -1328,7 +1329,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             }
             
             String text = GOLD + "- Give Items -\n";
-            if(context.getSessionData("evtItems") == null){
+            if(context.getSessionData(CK.E_ITEMS) == null){
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
                 text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Clear\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Done";
@@ -1358,7 +1359,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 return new ItemStackPrompt(ItemListPrompt.this);
             }else if(input.equalsIgnoreCase("2")){
                 context.getForWhom().sendRawMessage(YELLOW + "Event Items cleared.");
-                context.setSessionData("evtItems", null);
+                context.setSessionData(CK.E_ITEMS, null);
                 return new ItemListPrompt();
             }else if(input.equalsIgnoreCase("3")){
                 return new CreateMenuPrompt();
@@ -1368,7 +1369,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         }
 
         private List<ItemStack> getItems(ConversationContext context){
-            return (List<ItemStack>) context.getSessionData("evtItems");
+            return (List<ItemStack>) context.getSessionData(CK.E_ITEMS);
         }
 
     }
@@ -1385,7 +1386,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public String getPromptText(ConversationContext context) {
 
             String text = GOLD + "- " + Lang.get("eventEditorEffects") + " -\n";
-            if (context.getSessionData("evtEffects") == null) {
+            if (context.getSessionData(CK.E_EFFECTS) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorAddEffect") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - Add effect location (" + Lang.get("eventEditorNoEffects") + ")\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
@@ -1399,7 +1400,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }
 
-                if (context.getSessionData("evtEffectLocations") == null) {
+                if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) == null) {
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorAddEffectLocation") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
@@ -1427,7 +1428,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             if (input.equalsIgnoreCase("1")) {
                 return new EffectPrompt();
             } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData("evtEffects") == null) {
+                if (context.getSessionData(CK.E_EFFECTS) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustAddEffects"));
                     return new EffectListPrompt();
                 } else {
@@ -1436,21 +1437,21 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 }
             } else if (input.equalsIgnoreCase("3")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorEffectsCleared"));
-                context.setSessionData("evtEffects", null);
-                context.setSessionData("evtEffectLocations", null);
+                context.setSessionData(CK.E_EFFECTS, null);
+                context.setSessionData(CK.E_EFFECTS_LOCATIONS, null);
                 return new EffectListPrompt();
             } else if (input.equalsIgnoreCase("4")) {
 
                 int one;
                 int two;
 
-                if (context.getSessionData("evtEffects") != null) {
+                if (context.getSessionData(CK.E_EFFECTS) != null) {
                     one = getEffects(context).size();
                 } else {
                     one = 0;
                 }
 
-                if (context.getSessionData("evtEffectLocations") != null) {
+                if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) != null) {
                     two = getEffectLocations(context).size();
                 } else {
                     two = 0;
@@ -1468,11 +1469,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         }
 
         private List<String> getEffects(ConversationContext context) {
-            return (List<String>) context.getSessionData("evtEffects");
+            return (List<String>) context.getSessionData(CK.E_EFFECTS);
         }
 
         private List<String> getEffectLocations(ConversationContext context) {
-            return (List<String>) context.getSessionData("evtEffectLocations");
+            return (List<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
         }
     }
 
@@ -1498,14 +1499,14 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     Location loc = block.getLocation();
 
                     LinkedList<String> locs;
-                    if (context.getSessionData("evtEffectLocations") != null) {
-                        locs = (LinkedList<String>) context.getSessionData("evtEffectLocations");
+                    if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) != null) {
+                        locs = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
                     } else {
                         locs = new LinkedList<String>();
                     }
 
                     locs.add(Quests.getLocationInfo(loc));
-                    context.setSessionData("evtEffectLocations", locs);
+                    context.setSessionData(CK.E_EFFECTS_LOCATIONS, locs);
                     selectedEffectLocations.remove(player);
 
                 } else {
@@ -1558,14 +1559,14 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 if (Quests.getEffect(input.toUpperCase()) != null) {
 
                     LinkedList<String> effects;
-                    if (context.getSessionData("evtEffects") != null) {
-                        effects = (LinkedList<String>) context.getSessionData("evtEffects");
+                    if (context.getSessionData(CK.E_EFFECTS) != null) {
+                        effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
                     } else {
                         effects = new LinkedList<String>();
                     }
 
                     effects.add(input.toUpperCase());
-                    context.setSessionData("evtEffects", effects);
+                    context.setSessionData(CK.E_EFFECTS, effects);
                     selectedEffectLocations.remove(player);
                     return new EffectListPrompt();
 
@@ -1596,20 +1597,20 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public String getPromptText(ConversationContext context) {
 
             String text = GOLD + "- " + Lang.get("eventEditorStorm") + " -\n";
-            if (context.getSessionData("evtStormWorld") == null) {
+            if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + AQUA + ((String) context.getSessionData("evtStormWorld")) + YELLOW + ")\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + AQUA + ((String) context.getSessionData(CK.E_WORLD_STORM)) + YELLOW + ")\n";
 
-                if (context.getSessionData("evtStormDuration") == null) {
+                if (context.getSessionData(CK.E_WORLD_STORM_DURATION) == null) {
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    Long dur = (Long) context.getSessionData("evtStormDuration");
+                    Long dur = (Long) context.getSessionData(CK.E_WORLD_STORM_DURATION);
 
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + AQUA + Quests.getTime(dur) + YELLOW + ")\n";
 
@@ -1630,7 +1631,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             if (input.equalsIgnoreCase("1")) {
                 return new StormWorldPrompt();
             } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData("evtStormWorld") == null) {
+                if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorSetWorldFirst"));
                     return new StormPrompt();
                 } else {
@@ -1638,12 +1639,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 }
             } else if (input.equalsIgnoreCase("3")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorStormCleared"));
-                context.setSessionData("evtStormWorld", null);
-                context.setSessionData("evtStormDuration", null);
+                context.setSessionData(CK.E_WORLD_STORM, null);
+                context.setSessionData(CK.E_WORLD_STORM_DURATION, null);
                 return new StormPrompt();
             } else if (input.equalsIgnoreCase("4")) {
 
-                if (context.getSessionData("evtStormWorld") != null && context.getSessionData("evtStormDuration") == null) {
+                if (context.getSessionData(CK.E_WORLD_STORM) != null && context.getSessionData(CK.E_WORLD_STORM_DURATION) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetStormDuration"));
                     return new StormPrompt();
                 } else {
@@ -1681,7 +1682,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 if (quests.getServer().getWorld(input) != null) {
 
-                    context.setSessionData("evtStormWorld", quests.getServer().getWorld(input).getName());
+                    context.setSessionData(CK.E_WORLD_STORM, quests.getServer().getWorld(input).getName());
 
                 } else {
                     player.sendMessage(PINK + input + " " + RED + Lang.get("eventEditorInvalidWorld"));
@@ -1711,7 +1712,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 return new StormDurationPrompt();
             }
 
-            context.setSessionData("evtStormDuration", input.longValue());
+            context.setSessionData(CK.E_WORLD_STORM_DURATION, input.longValue());
             return new StormPrompt();
 
         }
@@ -1730,7 +1731,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             String text = GOLD + "- " + Lang.get("eventEditorThunder") + " -\n";
 
-            if (context.getSessionData("evtThunderWorld") == null) {
+            if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
@@ -1739,13 +1740,13 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             } else {
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + AQUA + ((String) context.getSessionData("evtThunderWorld")) + YELLOW + ")\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + AQUA + ((String) context.getSessionData(CK.E_WORLD_THUNDER)) + YELLOW + ")\n";
 
-                if (context.getSessionData("evtThunderDuration") == null) {
+                if (context.getSessionData(CK.E_WORLD_THUNDER_DURATION) == null) {
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    Long dur = (Long) context.getSessionData("evtThunderDuration");
+                    Long dur = (Long) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + AQUA + Quests.getTime(dur) + YELLOW + ")\n";
 
                 }
@@ -1766,7 +1767,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             if (input.equalsIgnoreCase("1")) {
                 return new ThunderWorldPrompt();
             } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData("evtThunderWorld") == null) {
+                if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorSetWorldFirst"));
                     return new ThunderPrompt();
                 } else {
@@ -1774,12 +1775,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 }
             } else if (input.equalsIgnoreCase("3")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorThunderCleared"));
-                context.setSessionData("evtThunderWorld", null);
-                context.setSessionData("evtThunderDuration", null);
+                context.setSessionData(CK.E_WORLD_THUNDER, null);
+                context.setSessionData(CK.E_WORLD_THUNDER_DURATION, null);
                 return new ThunderPrompt();
             } else if (input.equalsIgnoreCase("4")) {
 
-                if (context.getSessionData("evtThunderWorld") != null && context.getSessionData("evtThunderDuration") == null) {
+                if (context.getSessionData(CK.E_WORLD_THUNDER) != null && context.getSessionData(CK.E_WORLD_THUNDER_DURATION) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetThunderDuration"));
                     return new ThunderPrompt();
                 } else {
@@ -1817,7 +1818,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 if (quests.getServer().getWorld(input) != null) {
 
-                    context.setSessionData("evtThunderWorld", quests.getServer().getWorld(input).getName());
+                    context.setSessionData(CK.E_WORLD_THUNDER, quests.getServer().getWorld(input).getName());
 
                 } else {
                     player.sendMessage(PINK + input + " " + RED + Lang.get("eventEditorInvalidWorld"));
@@ -1846,7 +1847,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorAtLeastOneSecond"));
                 return new ThunderDurationPrompt();
             } else {
-                context.setSessionData("evtThunderDuration", input.longValue());
+                context.setSessionData(CK.E_WORLD_THUNDER_DURATION, input.longValue());
             }
 
             return new ThunderPrompt();
@@ -1866,7 +1867,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public String getPromptText(ConversationContext context) {
 
             String text = GOLD + "- " + Lang.get("eventEditorMobSpawns") + " -\n";
-            if (context.getSessionData("evtMobTypes") == null) {
+            if (context.getSessionData(CK.E_MOB_TYPES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobTypes") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("eventEditorSetMobAmounts") + " " + Lang.get("eventEditorNoTypesSet") + "\n";
                 text += GRAY + "3 - " + Lang.get("eventEditorAddSpawnLocation") + " " + Lang.get("eventEditorNoTypesSet") + "\n";
@@ -1875,27 +1876,27 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             } else {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobTypes") + "\n";
-                for (String s : (LinkedList<String>) context.getSessionData("evtMobTypes")) {
+                for (String s : (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)) {
                     text += GRAY + "    - " + AQUA + s + "\n";
                 }
 
-                if (context.getSessionData("evtMobAmounts") == null) {
+                if (context.getSessionData(CK.E_MOB_AMOUNTS) == null) {
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobAmounts") + " (" + Lang.get("noneSet") + ")\n";
                     text += GRAY + "3 - " + Lang.get("eventEditorAddSpawnLocation") + Lang.get("eventEditorNoAmountsSet") + "\n";
                 } else {
 
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobAmounts");
-                    for (int i : (LinkedList<Integer>) context.getSessionData("evtMobAmounts")) {
+                    for (int i : (LinkedList<Integer>) context.getSessionData(CK.E_MOB_AMOUNTS)) {
                         text += GRAY + "    - " + DARKAQUA + i + "\n";
                     }
 
 
-                    if (context.getSessionData("evtMobLocations") == null) {
+                    if (context.getSessionData(CK.E_MOB_LOCATIONS) == null) {
                         text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorAddSpawnLocation") + " (" + Lang.get("noneSet") + ")\n";
                     } else {
 
                         text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorAddSpawnLocation") + "\n";
-                        for (String s : (LinkedList<String>) context.getSessionData("evtMobLocations")) {
+                        for (String s : (LinkedList<String>) context.getSessionData(CK.E_MOB_LOCATIONS)) {
                             text += GRAY + "    - " + GREEN + s + "\n";
                         }
 
@@ -1918,17 +1919,17 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             if (input.equalsIgnoreCase("1")) {
                 return new MobTypesPrompt();
             } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData("evtMobTypes") == null) {
+                if (context.getSessionData(CK.E_MOB_TYPES) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobTypesFirst"));
                     return new MobPrompt();
                 } else {
                     return new MobAmountsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData("evtMobTypes") == null) {
+                if (context.getSessionData(CK.E_MOB_TYPES) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobTypesAndAmountsFirst"));
                     return new MobPrompt();
-                } else if (context.getSessionData("evtMobAmounts") == null) {
+                } else if (context.getSessionData(CK.E_MOB_AMOUNTS) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobAmountsFirst"));
                     return new MobPrompt();
                 } else {
@@ -1937,9 +1938,9 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 }
             } else if (input.equalsIgnoreCase("4")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorMobSpawnsCleared"));
-                context.setSessionData("evtMobTypes", null);
-                context.setSessionData("evtMobAmounts", null);
-                context.setSessionData("evtMobLocations", null);
+                context.setSessionData(CK.E_MOB_TYPES, null);
+                context.setSessionData(CK.E_MOB_AMOUNTS, null);
+                context.setSessionData(CK.E_MOB_LOCATIONS, null);
                 return new MobPrompt();
             } else if (input.equalsIgnoreCase("5")) {
 
@@ -1947,20 +1948,20 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 int two;
                 int three;
 
-                if (context.getSessionData("evtMobTypes") != null) {
-                    one = ((List<String>) context.getSessionData("evtMobTypes")).size();
+                if (context.getSessionData(CK.E_MOB_TYPES) != null) {
+                    one = ((List<String>) context.getSessionData(CK.E_MOB_TYPES)).size();
                 } else {
                     one = 0;
                 }
 
-                if (context.getSessionData("evtMobAmounts") != null) {
-                    two = ((List<Integer>) context.getSessionData("evtMobAmounts")).size();
+                if (context.getSessionData(CK.E_MOB_AMOUNTS) != null) {
+                    two = ((List<Integer>) context.getSessionData(CK.E_MOB_AMOUNTS)).size();
                 } else {
                     two = 0;
                 }
 
-                if (context.getSessionData("evtMobLocations") != null) {
-                    three = ((List<String>) context.getSessionData("evtMobLocations")).size();
+                if (context.getSessionData(CK.E_MOB_LOCATIONS) != null) {
+                    three = ((List<String>) context.getSessionData(CK.E_MOB_LOCATIONS)).size();
                 } else {
                     three = 0;
                 }
@@ -2030,7 +2031,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     if (Quests.getMobType(s) != null) {
 
                         mobTypes.add(Quester.prettyMobString(Quests.getMobType(s)));
-                        context.setSessionData("evtMobTypes", mobTypes);
+                        context.setSessionData(CK.E_MOB_TYPES, mobTypes);
 
                     } else {
                         player.sendMessage(PINK + s + " " + RED + Lang.get("eventEditorInvalidMob"));
@@ -2084,7 +2085,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }
 
-                context.setSessionData("evtMobAmounts", mobAmounts);
+                context.setSessionData(CK.E_MOB_AMOUNTS, mobAmounts);
 
             }
 
@@ -2115,14 +2116,14 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     Location loc = block.getLocation();
 
                     LinkedList<String> locs;
-                    if (context.getSessionData("evtMobLocations") != null) {
-                        locs = (LinkedList<String>) context.getSessionData("evtMobLocations");
+                    if (context.getSessionData(CK.E_MOB_LOCATIONS) != null) {
+                        locs = (LinkedList<String>) context.getSessionData(CK.E_MOB_LOCATIONS);
                     } else {
                         locs = new LinkedList<String>();
                     }
 
                     locs.add(Quests.getLocationInfo(loc));
-                    context.setSessionData("evtMobLocations", locs);
+                    context.setSessionData(CK.E_MOB_LOCATIONS, locs);
                     selectedMobLocations.remove(player);
 
                 } else {
@@ -2166,14 +2167,14 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     Location loc = block.getLocation();
 
                     LinkedList<String> locs;
-                    if (context.getSessionData("evtLightningStrikes") != null) {
-                        locs = (LinkedList<String>) context.getSessionData("evtLightningStrikes");
+                    if (context.getSessionData(CK.E_LIGHTNING) != null) {
+                        locs = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
                     } else {
                         locs = new LinkedList<String>();
                     }
 
                     locs.add(Quests.getLocationInfo(loc));
-                    context.setSessionData("evtLightningStrikes", locs);
+                    context.setSessionData(CK.E_LIGHTNING, locs);
                     selectedLightningLocations.remove(player);
 
                 } else {
@@ -2185,7 +2186,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
-                context.setSessionData("evtLightningStrikes", null);
+                context.setSessionData(CK.E_LIGHTNING, null);
                 selectedLightningLocations.remove(player);
                 return new CreateMenuPrompt();
 
@@ -2213,7 +2214,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public String getPromptText(ConversationContext context) {
 
             String text = GOLD + "- " + Lang.get("eventEditorPotionEffects") + " -\n";
-            if (context.getSessionData("evtPotionTypes") == null) {
+            if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionEffects") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("eventEditorSetPotionDurations") + " " + Lang.get("eventEditorNoTypesSet") + "\n";
                 text += GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " " + Lang.get("eventEditorNoTypesSet") + "\n";
@@ -2222,26 +2223,26 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             } else {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionEffects") + "\n";
-                for (String s : (LinkedList<String>) context.getSessionData("evtPotionTypes")) {
+                for (String s : (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES)) {
                     text += GRAY + "    - " + AQUA + s + "\n";
                 }
 
-                if (context.getSessionData("evtPotionDurations") == null) {
+                if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionDurations") + " (" + Lang.get("noneSet") + ")\n";
                     text += GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " " + Lang.get("eventEditorNoDurationsSet") + "\n";
                 } else {
 
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorNoDurationsSet") + "\n";
-                    for (Long l : (LinkedList<Long>) context.getSessionData("evtPotionDurations")) {
+                    for (Long l : (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS)) {
                         text += GRAY + "    - " + DARKAQUA + Quests.getTime(l*50L) + "\n";
                     }
 
-                    if (context.getSessionData("evtPotionMagnitudes") == null) {
+                    if (context.getSessionData(CK.E_POTION_STRENGHT) == null) {
                         text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionMagnitudes") + " (" + Lang.get("noneSet") + ")\n";
                     } else {
 
                         text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionMagnitudes") + "\n";
-                        for (int i : (LinkedList<Integer>) context.getSessionData("evtPotionMagnitudes")) {
+                        for (int i : (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT)) {
                             text += GRAY + "    - " + PURPLE + i + "\n";
                         }
 
@@ -2264,17 +2265,17 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             if (input.equalsIgnoreCase("1")) {
                 return new PotionTypesPrompt();
             } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData("evtPotionTypes") == null) {
+                if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetPotionTypesFirst"));
                     return new PotionEffectPrompt();
                 } else {
                     return new PotionDurationsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData("evtPotionTypes") == null) {
+                if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetPotionTypesAndDurationsFirst"));
                     return new PotionEffectPrompt();
-                } else if (context.getSessionData("evtPotionDurations") == null) {
+                } else if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetPotionDurationsFirst"));
                     return new PotionEffectPrompt();
                 } else {
@@ -2283,9 +2284,9 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             } else if (input.equalsIgnoreCase("4")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorPotionsCleared"));
-                context.setSessionData("evtPotionTypes", null);
-                context.setSessionData("evtPotionDurations", null);
-                context.setSessionData("evtPotionMagnitudes", null);
+                context.setSessionData(CK.E_POTION_TYPES, null);
+                context.setSessionData(CK.E_POTION_DURATIONS, null);
+                context.setSessionData(CK.E_POTION_STRENGHT, null);
                 return new PotionEffectPrompt();
             } else if (input.equalsIgnoreCase("5")) {
 
@@ -2293,20 +2294,20 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 int two;
                 int three;
 
-                if (context.getSessionData("evtPotionTypes") != null) {
-                    one = ((List<String>) context.getSessionData("evtPotionTypes")).size();
+                if (context.getSessionData(CK.E_POTION_TYPES) != null) {
+                    one = ((List<String>) context.getSessionData(CK.E_POTION_TYPES)).size();
                 } else {
                     one = 0;
                 }
 
-                if (context.getSessionData("evtPotionDurations") != null) {
-                    two = ((List<Long>) context.getSessionData("evtPotionDurations")).size();
+                if (context.getSessionData(CK.E_POTION_DURATIONS) != null) {
+                    two = ((List<Long>) context.getSessionData(CK.E_POTION_DURATIONS)).size();
                 } else {
                     two = 0;
                 }
 
-                if (context.getSessionData("evtPotionMagnitudes") != null) {
-                    three = ((List<Integer>) context.getSessionData("evtPotionMagnitudes")).size();
+                if (context.getSessionData(CK.E_POTION_STRENGHT) != null) {
+                    three = ((List<Integer>) context.getSessionData(CK.E_POTION_STRENGHT)).size();
                 } else {
                     three = 0;
                 }
@@ -2352,7 +2353,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                         effTypes.add(PotionEffectType.getByName(s.toUpperCase()).getName());
 
-                        context.setSessionData("evtPotionTypes", effTypes);
+                        context.setSessionData(CK.E_POTION_TYPES, effTypes);
 
                     } else {
                         player.sendMessage(PINK + s + " " + RED + Lang.get("eventEditorInvalidPotionType"));
@@ -2406,7 +2407,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }
 
-                context.setSessionData("evtPotionDurations", effDurations);
+                context.setSessionData(CK.E_POTION_DURATIONS, effDurations);
 
             }
 
@@ -2453,7 +2454,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }
 
-                context.setSessionData("evtPotionMagnitudes", magAmounts);
+                context.setSessionData(CK.E_POTION_STRENGHT, magAmounts);
 
             }
 
@@ -2480,11 +2481,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     ((Player)context.getForWhom()).sendMessage(RED + Lang.get("eventEditorHungerLevelAtLeastZero"));
                     return new HungerPrompt();
                 }else{
-                    context.setSessionData("evtHunger", (Integer)input.intValue());
+                    context.setSessionData(CK.E_HUNGER, (Integer)input.intValue());
                 }
 
             }else{
-                context.setSessionData("evtHunger", null);
+                context.setSessionData(CK.E_HUNGER, null);
             }
 
             return new CreateMenuPrompt();
@@ -2510,11 +2511,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     ((Player)context.getForWhom()).sendMessage(RED + Lang.get("eventEditorSaturationLevelAtLeastZero"));
                     return new SaturationPrompt();
                 }else{
-                    context.setSessionData("evtSaturation", (Integer)input.intValue());
+                    context.setSessionData(CK.E_SATURATION, (Integer)input.intValue());
                 }
 
             }else{
-                context.setSessionData("evtSaturation", null);
+                context.setSessionData(CK.E_SATURATION, null);
             }
 
             return new CreateMenuPrompt();
@@ -2540,11 +2541,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     ((Player)context.getForWhom()).sendMessage(RED + Lang.get("eventEditorHealthLevelAtLeastZero"));
                     return new HealthPrompt();
                 }else{
-                    context.setSessionData("evtHealth", (Integer)input.intValue());
+                    context.setSessionData(CK.E_HEALTH, (Integer)input.intValue());
                 }
 
             }else{
-                context.setSessionData("evtHealth", null);
+                context.setSessionData(CK.E_HEALTH, null);
             }
 
             return new CreateMenuPrompt();
@@ -2573,7 +2574,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                     Location loc = block.getLocation();
 
-                    context.setSessionData("evtTeleportLocation", Quests.getLocationInfo(loc));
+                    context.setSessionData(CK.E_TELEPORT, Quests.getLocationInfo(loc));
                     selectedTeleportLocations.remove(player);
 
                 } else {
@@ -2585,7 +2586,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
-                context.setSessionData("evtTeleportLocation", null);
+                context.setSessionData(CK.E_TELEPORT, null);
                 selectedTeleportLocations.remove(player);
                 return new CreateMenuPrompt();
 
@@ -2622,10 +2623,10 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 String[] commands = input.split(",");
                 LinkedList<String> cmdList = new LinkedList<String>();
                 cmdList.addAll(Arrays.asList(commands));
-                context.setSessionData("evtCommands", cmdList);
+                context.setSessionData(CK.E_COMMANDS, cmdList);
 
             }else if(input.equalsIgnoreCase(Lang.get("cmdClear")))
-                context.setSessionData("evtCommands", null);
+                context.setSessionData(CK.E_COMMANDS, null);
 
             return new CreateMenuPrompt();
 
