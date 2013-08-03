@@ -699,7 +699,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + "Enter amount of time (in seconds), or 0 to clear the redo delay, or -1 to cancel";
+            return ChatColor.YELLOW + "Enter amount of time (in milliseconds), or 0 to clear the redo delay, or -1 to cancel";
 
         }
 
