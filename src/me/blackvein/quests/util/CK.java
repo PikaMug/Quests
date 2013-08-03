@@ -77,6 +77,8 @@ public class CK {
 	public static String S_DELAY = "delay";
 	public static String S_DELAY_MESSAGE = "delayMessage";
 	public static String S_DENIZEN = "denizen";
+	public static String S_COMPLETE_MESSAGE = "completeMessage";
+	public static String S_START_MESSAGE = "startMessage";
 	
 	//Events
 	public static String E_OLD_EVENT = "oldEvent";

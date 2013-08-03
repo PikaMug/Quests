@@ -51,6 +51,11 @@ public class StageTimer implements Runnable{
                         player.sendMessage(s);
 
                     }
+                    
+                    String stageStartMessage = quester.currentStage.startMessage;
+                	if (stageStartMessage != null) {
+                		quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quester.currentQuest));
+                	}
 
                 }
 

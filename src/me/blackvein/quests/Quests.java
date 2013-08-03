@@ -3253,6 +3253,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         stage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
 
                     }
+                    
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-message")) {
+
+                        stage.startMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".start-message");
+
+                    }
+                    
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".complete-message")) {
+
+                        stage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
+
+                    }
 
                     stage.citizensToInteract = npcsToTalkTo;
 

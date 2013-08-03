@@ -107,60 +107,63 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
                 pref = "stage" + current;
                 newPref = "stage" + (current - 1);
 
-                cc.setSessionData(newPref + "breakIds", cc.getSessionData(pref + CK.S_BREAK_IDS));
-                cc.setSessionData(newPref + "breakAmounts", cc.getSessionData(pref + CK.S_BREAK_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_BREAK_IDS, cc.getSessionData(pref + CK.S_BREAK_IDS));
+                cc.setSessionData(newPref + CK.S_BREAK_AMOUNTS, cc.getSessionData(pref + CK.S_BREAK_AMOUNTS));
 
-                cc.setSessionData(newPref + "damageIds", cc.getSessionData(pref + CK.S_DAMAGE_IDS));
-                cc.setSessionData(newPref + "damageAmounts", cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_DAMAGE_IDS, cc.getSessionData(pref + CK.S_DAMAGE_IDS));
+                cc.setSessionData(newPref + CK.S_DAMAGE_AMOUNTS, cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS));
 
-                cc.setSessionData(newPref + "placeIds", cc.getSessionData(pref + CK.S_PLACE_IDS));
-                cc.setSessionData(newPref + "placeAmounts", cc.getSessionData(pref + CK.S_PLACE_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_PLACE_IDS, cc.getSessionData(pref + CK.S_PLACE_IDS));
+                cc.setSessionData(newPref + CK.S_PLACE_IDS, cc.getSessionData(pref + CK.S_PLACE_AMOUNTS));
 
-                cc.setSessionData(newPref + "useIds", cc.getSessionData(pref + CK.S_USE_IDS));
-                cc.setSessionData(newPref + "useAmounts", cc.getSessionData(pref + CK.S_USE_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_USE_IDS, cc.getSessionData(pref + CK.S_USE_IDS));
+                cc.setSessionData(newPref + CK.S_USE_AMOUNTS, cc.getSessionData(pref + CK.S_USE_AMOUNTS));
 
-                cc.setSessionData(newPref + "cutIds", cc.getSessionData(pref + CK.S_CUT_IDS));
-                cc.setSessionData(newPref + "cutAmounts", cc.getSessionData(pref + CK.S_CUT_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_CUT_IDS, cc.getSessionData(pref + CK.S_CUT_IDS));
+                cc.setSessionData(newPref + CK.S_CUT_AMOUNTS, cc.getSessionData(pref + CK.S_CUT_AMOUNTS));
 
-                cc.setSessionData(newPref + "fish", cc.getSessionData(pref + CK.S_FISH));
+                cc.setSessionData(newPref + CK.S_FISH, cc.getSessionData(pref + CK.S_FISH));
 
-                cc.setSessionData(newPref + "playerKill", cc.getSessionData(pref + CK.S_PLAYER_KILL));
+                cc.setSessionData(newPref + CK.S_PLAYER_KILL, cc.getSessionData(pref + CK.S_PLAYER_KILL));
 
-                cc.setSessionData(newPref + "enchantTypes", cc.getSessionData(pref + CK.S_ENCHANT_TYPES));
-                cc.setSessionData(newPref + "enchantIds", cc.getSessionData(pref + CK.S_ENCHANT_IDS));
-                cc.setSessionData(newPref + "enchantAmounts", cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_ENCHANT_TYPES, cc.getSessionData(pref + CK.S_ENCHANT_TYPES));
+                cc.setSessionData(newPref + CK.S_ENCHANT_IDS, cc.getSessionData(pref + CK.S_ENCHANT_IDS));
+                cc.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS));
 
-                cc.setSessionData(newPref + "deliveryItems", cc.getSessionData(pref + CK.S_DELIVERY_ITEMS));
-                cc.setSessionData(newPref + "deliveryNPCs", cc.getSessionData(pref + CK.S_DELIVERY_NPCS));
-                cc.setSessionData(newPref + "deliveryMessages", cc.getSessionData(pref + CK.S_DELIVERY_MESSAGES));
+                cc.setSessionData(newPref + CK.S_DELIVERY_ITEMS, cc.getSessionData(pref + CK.S_DELIVERY_ITEMS));
+                cc.setSessionData(newPref + CK.S_DELIVERY_NPCS, cc.getSessionData(pref + CK.S_DELIVERY_NPCS));
+                cc.setSessionData(newPref + CK.S_DELIVERY_MESSAGES, cc.getSessionData(pref + CK.S_DELIVERY_MESSAGES));
 
-                cc.setSessionData(newPref + "npcIdsToTalkTo", cc.getSessionData(pref + CK.S_NPCS_TO_TALK_TO));
+                cc.setSessionData(newPref + CK.S_NPCS_TO_TALK_TO, cc.getSessionData(pref + CK.S_NPCS_TO_TALK_TO));
 
-                cc.setSessionData(newPref + "npcIdsToKill", cc.getSessionData(pref + CK.S_NPCS_TO_KILL));
-                cc.setSessionData(newPref + "npcAmountsToKill", cc.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_NPCS_TO_KILL, cc.getSessionData(pref + CK.S_NPCS_TO_KILL));
+                cc.setSessionData(newPref + CK.S_NPCS_TO_KILL_AMOUNTS, cc.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS));
 
-                cc.setSessionData(newPref + "mobTypes", cc.getSessionData(pref + CK.S_MOB_TYPES));
-                cc.setSessionData(newPref + "mobAmounts", cc.getSessionData(pref + CK.S_MOB_AMOUNTS));
-                cc.setSessionData(newPref + "killLocations", cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS));
-                cc.setSessionData(newPref + "killLocationRadii", cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS));
-                cc.setSessionData(newPref + "killLocationNames", cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES));
+                cc.setSessionData(newPref + CK.S_MOB_TYPES, cc.getSessionData(pref + CK.S_MOB_TYPES));
+                cc.setSessionData(newPref + CK.S_MOB_AMOUNTS, cc.getSessionData(pref + CK.S_MOB_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS, cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS));
+                cc.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS_RADIUS, cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS));
+                cc.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS_NAMES, cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES));
 
-                cc.setSessionData(newPref + "reachLocations", cc.getSessionData(pref + CK.S_REACH_LOCATIONS));
-                cc.setSessionData(newPref + "reachLocationRadii", cc.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS));
-                cc.setSessionData(newPref + "reachLocationNames", cc.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES));
+                cc.setSessionData(newPref + CK.S_REACH_LOCATIONS, cc.getSessionData(pref + CK.S_REACH_LOCATIONS));
+                cc.setSessionData(newPref + CK.S_REACH_LOCATIONS_RADIUS, cc.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS));
+                cc.setSessionData(newPref + CK.S_REACH_LOCATIONS_NAMES, cc.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES));
 
-                cc.setSessionData(newPref + "tameTypes", cc.getSessionData(pref + CK.S_TAME_TYPES));
-                cc.setSessionData(newPref + "tameAmounts", cc.getSessionData(pref + CK.S_TAME_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_TAME_TYPES, cc.getSessionData(pref + CK.S_TAME_TYPES));
+                cc.setSessionData(newPref + CK.S_TAME_AMOUNTS, cc.getSessionData(pref + CK.S_TAME_AMOUNTS));
 
-                cc.setSessionData(newPref + "shearColors", cc.getSessionData(pref + CK.S_SHEAR_COLORS));
-                cc.setSessionData(newPref + "shearAmounts", cc.getSessionData(pref + CK.S_SHEAR_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_SHEAR_COLORS, cc.getSessionData(pref + CK.S_SHEAR_COLORS));
+                cc.setSessionData(newPref + CK.S_SHEAR_AMOUNTS, cc.getSessionData(pref + CK.S_SHEAR_AMOUNTS));
 
-                cc.setSessionData(newPref + "event", cc.getSessionData(pref + CK.S_EVENT));
+                cc.setSessionData(newPref + CK.S_EVENT, cc.getSessionData(pref + CK.S_EVENT));
 
-                cc.setSessionData(newPref + "delay", cc.getSessionData(pref + CK.S_DELAY));
-                cc.setSessionData(newPref + "delayMessage", cc.getSessionData(pref + CK.S_DELAY_MESSAGE));
+                cc.setSessionData(newPref + CK.S_DELAY, cc.getSessionData(pref + CK.S_DELAY));
+                cc.setSessionData(newPref +CK.S_DELAY_MESSAGE, cc.getSessionData(pref + CK.S_DELAY_MESSAGE));
 
-                cc.setSessionData(newPref + "denizen", cc.getSessionData(pref + CK.S_DENIZEN));
+                cc.setSessionData(newPref + CK.S_DENIZEN, cc.getSessionData(pref + CK.S_DENIZEN));
+                
+                cc.setSessionData(newPref + CK.S_COMPLETE_MESSAGE, cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE));
+                cc.setSessionData(newPref + CK.S_START_MESSAGE, cc.getSessionData(pref + CK.S_START_MESSAGE));
 
             }
 
@@ -219,6 +222,9 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
             cc.setSessionData(pref + CK.S_DELAY_MESSAGE, null);
 
             cc.setSessionData(pref + CK.S_DENIZEN, null);
+            
+            cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, null);
+            cc.setSessionData(pref + CK.S_START_MESSAGE, null);
 
             if(last)
                 break;

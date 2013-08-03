@@ -35,7 +35,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
     public CreateStagePrompt(int stageNum, QuestFactory qf, CitizensPlugin cit) {
 
-        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22");
+        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24");
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
         this.citizens = cit;
@@ -340,9 +340,21 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             }
 
         }
+        
+        if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
+        	text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- Start Mmessage " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        } else {
+        	text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- Start Message " + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + GRAY + ")\n";
+        }
+        
+        if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
+        	text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- Complete Message " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        } else {
+        	text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- Complete Message " + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + GRAY + ")\n";
+        }
 
-        text += RED + "" + BOLD + "21 " + RESET + PURPLE + "- Delete Stage\n";
-        text += GREEN + "" + BOLD + "22 " + RESET + PURPLE + "- Done\n";
+        text += RED + "" + BOLD + "23 " + RESET + PURPLE + "- Delete Stage\n";
+        text += GREEN + "" + BOLD + "24 " + RESET + PURPLE + "- Done\n";
 
         return text;
 
@@ -422,8 +434,12 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 return new DenizenPrompt();
             }
         } else if (input.equalsIgnoreCase("21")) {
-            return new DeletePrompt();
+        	return new StartMessagePrompt();
         } else if (input.equalsIgnoreCase("22")) {
+        	return new CompleteMessagePrompt();
+        } else if (input.equalsIgnoreCase("23")) {
+            return new DeletePrompt();
+        } else if (input.equalsIgnoreCase("24")) {
             return new StagesPrompt(questFactory);
         } else {
             return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -3747,5 +3763,63 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             }
 
         }
+    }
+
+    private class StartMessagePrompt extends StringPrompt {
+
+    	@Override
+		public String getPromptText(ConversationContext context) {
+    		
+    		return YELLOW + "Enter start message, or enter \"clear\" to clear the message, or \"cancel\" to return";
+    		
+		}
+    	
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			 Player player = (Player) context.getForWhom();
+
+			 if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+
+				 context.setSessionData(pref + CK.S_START_MESSAGE, input);
+				 return new CreateStagePrompt(stageNum, questFactory, citizens);
+
+			 } else if (input.equalsIgnoreCase("clear")) {
+				 context.setSessionData(pref + CK.S_START_MESSAGE, null);
+				 player.sendMessage(YELLOW + "Start message cleared.");
+				 return new CreateStagePrompt(stageNum, questFactory, citizens);
+			 } else {
+				 return new StartMessagePrompt();
+			 }
+		}
+    	
+    }
+    
+    private class CompleteMessagePrompt extends StringPrompt {
+
+    	@Override
+		public String getPromptText(ConversationContext context) {
+    		
+    		return YELLOW + "Enter start message, or enter \"clear\" to clear the message, or \"cancel\" to return";
+    		
+		}
+    	
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			 Player player = (Player) context.getForWhom();
+
+			 if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+
+				 context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, input);
+				 return new CreateStagePrompt(stageNum, questFactory, citizens);
+
+			 } else if (input.equalsIgnoreCase("clear")) {
+				 context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, null);
+				 player.sendMessage(YELLOW + "Complete message cleared.");
+				 return new CreateStagePrompt(stageNum, questFactory, citizens);
+			 } else {
+				 return new CompleteMessagePrompt();
+			 }
+		}
+    	
     }
 }

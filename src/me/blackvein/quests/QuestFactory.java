@@ -1043,6 +1043,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         String event;
         Long delay;
         String delayMessage;
+        String startMessage;
+        String completeMessage;
 
         for (int i = 1; i <= StagesPrompt.getStages(cc); i++) {
 
@@ -1103,7 +1105,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             event = null;
             delay = null;
             delayMessage = null;
-
+            startMessage = null;
+            completeMessage = null;
 
 
             if (cc.getSessionData(pref + CK.S_BREAK_IDS) != null) {
@@ -1197,6 +1200,14 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (cc.getSessionData(pref + CK.S_DENIZEN) != null) {
                 script = (String) cc.getSessionData(pref + CK.S_DENIZEN);
             }
+            
+            if (cc.getSessionData(pref + CK.S_START_MESSAGE) != null) {
+            	startMessage = (String) cc.getSessionData(pref + CK.S_START_MESSAGE);
+            }
+            
+            if (cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE) != null) {
+            	completeMessage = (String) cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE);
+            }
 
             if (breakIds != null && breakIds.isEmpty() == false) {
                 stage.set("break-block-ids", breakIds);
@@ -1256,9 +1267,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             stage.set("sheep-to-shear", shearColors);
             stage.set("sheep-amounts", shearAmounts);
             stage.set("script-to-run", script);
-            stage.set(CK.S_EVENT, event);
-            stage.set(CK.S_DELAY, delay);
+            stage.set("event", event);
+            stage.set("delay", delay);
             stage.set("delay-message", delayMessage);
+            stage.set("start-message", startMessage);
+            stage.set("complete-message", completeMessage);
 
         }
 
@@ -1627,6 +1640,14 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (stage.script != null) {
                 cc.setSessionData(pref + CK.S_DENIZEN, stage.script);
+            }
+            
+            if (stage.completeMessage != null) {
+            	cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.completeMessage);
+            }
+            
+            if (stage.startMessage != null) {
+            	cc.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
             }
 
         }

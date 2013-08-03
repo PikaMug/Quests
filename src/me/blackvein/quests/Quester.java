@@ -71,7 +71,7 @@ public class Quester {
 
     public Player getPlayer() {
 
-        return plugin.getServer().getPlayer(name);
+        return plugin.getServer().getPlayerExact(name);
 
     }
 
@@ -100,6 +100,11 @@ public class Quester {
             for (String s : getObjectives()) {
                 player.sendMessage(s);
             }
+            
+            String stageStartMessage = currentStage.startMessage;
+        	if (stageStartMessage != null) {
+        		getPlayer().sendMessage(Quests.parseString(stageStartMessage, currentQuest));
+        	}
 
             if(q.initialEvent != null)
                 q.initialEvent.happen(this);
