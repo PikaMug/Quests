@@ -25,7 +25,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
     public RequirementsPrompt(Quests plugin, QuestFactory qf){
 
-        super("1", "2", "3", "4", "5", "6", "7");
+        super("1", "2", "3", "4", "5", "6", "7", "8");
         quests = plugin;
         factory = qf;
 
@@ -78,16 +78,29 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
             }
         }
+        
+        if(context.getSessionData("questBlocks") == null)
+            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Quest that mustn't be done " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        else{
+            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Quest requirements\n";
+            List<String> qs = (List<String>) context.getSessionData("questBlocks");
 
-            if(context.getSessionData("moneyReq") == null && context.getSessionData("questPointsReq") == null && context.getSessionData("itemReqs") == null && context.getSessionData("permissionReqs") == null && context.getSessionData("questReqs") == null){
-                text += GRAY + "" + BOLD + "6 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
-            }else if(context.getSessionData("failMessage") == null){
-                text += RED + "" + BOLD + "6 - " + RESET + RED + "Set fail requirements message (Required)\n";
-            }else{
-                text += BLUE + "" + BOLD + "6 - " + RESET + YELLOW + "Set fail requirements message" + GRAY + "(" + AQUA + "\"" + context.getSessionData("failMessage") + "\"" + GRAY + ")\n";
+            for(String s : qs){
+
+                text += GRAY + "    - " + AQUA + s + "\n";
+
             }
+        }
 
-        text += GREEN + "" + BOLD + "7" + RESET + YELLOW + " - Done";
+        if(context.getSessionData("moneyReq") == null && context.getSessionData("questPointsReq") == null && context.getSessionData("itemReqs") == null && context.getSessionData("permissionReqs") == null && context.getSessionData("questReqs") == null && context.getSessionData("questBlocks") == null){
+        	text += GRAY + "" + BOLD + "7 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
+        }else if(context.getSessionData("failMessage") == null){
+        	text += RED + "" + BOLD + "7 - " + RESET + RED + "Set fail requirements message (Required)\n";
+        }else{
+        	text += BLUE + "" + BOLD + "7 - " + RESET + YELLOW + "Set fail requirements message" + GRAY + "(" + AQUA + "\"" + context.getSessionData("failMessage") + "\"" + GRAY + ")\n";
+        }
+
+        text += GREEN + "" + BOLD + "8" + RESET + YELLOW + " - Done";
 
 
         return text;
@@ -106,11 +119,13 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
         }else if(input.equalsIgnoreCase("4")){
             return new PermissionsPrompt();
         }else if(input.equalsIgnoreCase("5")){
-            return new QuestListPrompt();
-        }else if(input.equalsIgnoreCase("6")){
-            return new FailMessagePrompt();
+            return new QuestListPrompt(true);
+        }else if(input.equalsIgnoreCase("6")) {
+        	return new QuestListPrompt(false);
         }else if(input.equalsIgnoreCase("7")){
-            if(context.getSessionData("moneyReq") != null || context.getSessionData("questPointsReq") != null || context.getSessionData("itemReqs") != null || context.getSessionData("permissionReqs") != null || context.getSessionData("questReqs") != null){
+            return new FailMessagePrompt();
+        }else if(input.equalsIgnoreCase("8")){
+            if(context.getSessionData("moneyReq") != null || context.getSessionData("questPointsReq") != null || context.getSessionData("itemReqs") != null || context.getSessionData("permissionReqs") != null || context.getSessionData("questReqs") != null || context.getSessionData("questBlocks") != null){
 
                 if(context.getSessionData("failMessage") == null){
                     context.getForWhom().sendRawMessage(RED + "You must set a fail requirements message!");
@@ -184,6 +199,16 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
     }
 
     private class QuestListPrompt extends StringPrompt {
+    	
+    	private boolean isRequiredQuest;
+    	
+    	/*public QuestListPrompt() {
+    		this.isRequiredQuest = true;
+    	}*/
+    	
+    	public QuestListPrompt(boolean isRequired) {
+    		this.isRequiredQuest = isRequired;
+    	}
 
         @Override
         public String getPromptText(ConversationContext context){
@@ -224,14 +249,14 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
                     if(quests.getQuest(s) == null){
 
                         context.getForWhom().sendRawMessage(PINK + s + " " + RED + "is not a Quest name!");
-                        return new QuestListPrompt();
+                        return new QuestListPrompt(isRequiredQuest);
 
                     }
 
                     if(questNames.contains(s)){
 
                         context.getForWhom().sendRawMessage(RED + "List contains duplicates!");
-                        return new QuestListPrompt();
+                        return new QuestListPrompt(isRequiredQuest);
 
                     }
 
@@ -250,11 +275,19 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
                 });
 
-                context.setSessionData("questReqs", questNames);
+                if (isRequiredQuest) {
+                	context.setSessionData("questReqs", questNames);
+                } else {
+                	context.setSessionData("questBlocks", questNames);
+                }
 
             }else if(input.equalsIgnoreCase("clear")){
 
-                context.setSessionData("questReqs", null);
+            	if (isRequiredQuest) {
+                	context.setSessionData("questReqs", null);
+                } else {
+                	context.setSessionData("questBlocks", null);
+                }
 
             }
 

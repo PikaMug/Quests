@@ -3803,6 +3803,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public static String getTime(long milliseconds) {
+    	
 
         String message = "";
         
@@ -3813,7 +3814,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         long hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
         long minutes = calendar.get(Calendar.MINUTE);
         long seconds = calendar.get(Calendar.SECOND);
-        
+        long milliSeconds2 = calendar.get(Calendar.MILLISECOND);        
         if (days > 0) {
         	
             if (days == 1) {
@@ -3851,7 +3852,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             } else {
                 message += " " + seconds + " Seconds,";
             }
-
+        } else {
+        	if (milliSeconds2 > 0) {
+        		if (milliSeconds2 == 1) {
+                    message += " 1 Millisecond,";
+                } else {
+                    message += " " + seconds + " Milliseconds,";
+                }
+        	}
         }
 
         message = message.substring(1, message.length() - 1);

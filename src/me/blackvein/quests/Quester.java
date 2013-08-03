@@ -2555,10 +2555,10 @@ public class Quester {
     public void startStageTimer() {
 
         if (delayTimeLeft > -1) {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), delayTimeLeft * 50);
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), (long) (delayTimeLeft * 0.02));
         } else {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), currentStage.delay / 50);
-            plugin.getServer().getPlayer(name).sendMessage(currentStage.delayMessage);
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), (long) (currentStage.delay * 0.02));
+            plugin.getServer().getPlayer(name).sendMessage(Quests.parseString((currentStage.delayMessage), currentQuest));
         }
 
         delayStartTime = System.currentTimeMillis();

@@ -349,6 +349,7 @@ public class Quest {
                 return false;
 
             if(other.questPointsReq != questPointsReq)
+            	return false;
 
             if(other.redoDelay != redoDelay)
                 return false;

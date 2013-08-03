@@ -699,7 +699,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + "Enter amount of time (in milliseconds), or 0 to clear the redo delay, or -1 to cancel";
+            return ChatColor.YELLOW + "Enter amount of time (in seconds), or 0 to clear the redo delay, or -1 to cancel";
 
         }
 
@@ -851,6 +851,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<Boolean> removeItemReqs = null;
         LinkedList<String> permReqs = null;
         LinkedList<String> questReqs = null;
+        LinkedList<String> questBlocks = null;
         String failMessage = null;
 
         Integer moneyRew = null;
@@ -897,6 +898,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (cc.getSessionData("questReqs") != null) {
             questReqs = (LinkedList<String>) cc.getSessionData("questReqs");
+        }
+        
+        if (cc.getSessionData("questBlocks") != null) {
+            questBlocks = (LinkedList<String>) cc.getSessionData("questBlocks");
         }
 
         if (cc.getSessionData("failMessage") != null) {
@@ -949,7 +954,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("event", initialEvent);
 
 
-        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || questReqs != null && questReqs.isEmpty() == false) {
+        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false)) {
 
             ConfigurationSection reqs = cs.createSection("requirements");
             List<String> items = new LinkedList<String>();
@@ -960,12 +965,16 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 }
             
             }
-            reqs.set("items", items);
+            if (items.isEmpty() == false) {
+            	reqs.set("items", items);
+            }
+
             reqs.set("remove-items", removeItemReqs);
             reqs.set("money", moneyReq);
             reqs.set("quest-points", questPointsReq);
             reqs.set("permissions", permReqs);
             reqs.set("quests", questReqs);
+            reqs.set("quests-blocks", questBlocks);
             reqs.set("fail-requirement-message", failMessage);
 
         } else {
