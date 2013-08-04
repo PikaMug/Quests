@@ -4026,8 +4026,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         int foundAmount = 0;
         for (Map.Entry<Integer, ? extends ItemStack> item : allItems.entrySet()) {
 
-            if (ItemUtil.compareItems(is, item.getValue(), false) == 0) {
-
+            if (ItemUtil.compareItems(is, item.getValue(), true) == 0) {
 
                 if (item.getValue().getAmount() >= amount - foundAmount) {
                     removeFrom.put(item.getKey(), amount - foundAmount);
@@ -4043,7 +4042,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
 
         }
-
         if (foundAmount == amount) {
 
             for (Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
