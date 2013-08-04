@@ -179,19 +179,19 @@ public class Quester {
 
         }
 
-        for (Entry e : currentStage.blocksToPlace.entrySet()) {
+        for (Entry<Material, Integer> e : currentStage.blocksToPlace.entrySet()) {
 
-            for (Entry e2 : blocksPlaced.entrySet()) {
+            for (Entry<Material, Integer> e2 : blocksPlaced.entrySet()) {
 
-                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+                if (e2.getKey().equals(e.getKey())) {
 
-                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+                    if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Place " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                    	unfinishedObjectives.add(ChatColor.GREEN + "Place " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Place " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        finishedObjectives.add(ChatColor.GRAY + "Place " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -201,19 +201,19 @@ public class Quester {
 
         }
 
-        for (Entry e : currentStage.blocksToUse.entrySet()) {
+        for (Entry<Material, Integer> e : currentStage.blocksToUse.entrySet()) {
 
-            for (Entry e2 : blocksUsed.entrySet()) {
+            for (Entry<Material, Integer> e2 : blocksUsed.entrySet()) {
 
-                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+                if (e2.getKey().equals(e.getKey())) {
 
-                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+                    if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Use " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Use " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Use " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        finishedObjectives.add(ChatColor.GRAY + "Use " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -223,19 +223,19 @@ public class Quester {
 
         }
 
-        for (Entry e : currentStage.blocksToCut.entrySet()) {
+        for (Entry<Material, Integer> e : currentStage.blocksToCut.entrySet()) {
 
-            for (Entry e2 : blocksCut.entrySet()) {
+            for (Entry<Material, Integer> e2 : blocksCut.entrySet()) {
 
-                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+                if (e2.getKey().equals(e.getKey())) {
 
-                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+                    if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Cut " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Cut " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Cut " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        finishedObjectives.add(ChatColor.GRAY + "Cut " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -381,11 +381,11 @@ public class Quester {
 
         for (NPC n : currentStage.citizensToInteract) {
 
-            for (Entry e : citizensInteracted.entrySet()) {
+            for (Entry<NPC, Boolean> e : citizensInteracted.entrySet()) {
 
-                if (((NPC) e.getKey()).equals(n)) {
+                if (e.getKey().equals(n)) {
 
-                    if (((Boolean) e.getValue()) == false) {
+                    if ( e.getValue() == false) {
 
                         unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getFullName());
 
@@ -433,19 +433,19 @@ public class Quester {
 
         }
 
-        for (Entry e : currentStage.mobsToTame.entrySet()) {
+        for (Entry<EntityType, Integer> e : currentStage.mobsToTame.entrySet()) {
 
-            for (Entry e2 : mobsTamed.entrySet()) {
+            for (Entry<EntityType, Integer> e2 : mobsTamed.entrySet()) {
 
                 if (e.getKey().equals(e2.getKey())) {
 
-                    if ((Integer) e2.getValue() < (Integer) e.getValue()) {
+                    if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Tame " + getCapitalized(((EntityType) e.getKey()).getName()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Tame " + getCapitalized(e.getKey().getName()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Tame " + getCapitalized(((EntityType) e.getKey()).getName()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        finishedObjectives.add(ChatColor.GRAY + "Tame " + getCapitalized(e.getKey().getName()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -455,19 +455,19 @@ public class Quester {
 
         }
 
-        for (Entry e : currentStage.sheepToShear.entrySet()) {
+        for (Entry<DyeColor, Integer> e : currentStage.sheepToShear.entrySet()) {
 
-            for (Entry e2 : sheepSheared.entrySet()) {
+            for (Entry<DyeColor, Integer> e2 : sheepSheared.entrySet()) {
 
                 if (e.getKey().equals(e2.getKey())) {
 
-                    if ((Integer) e2.getValue() < (Integer) e.getValue()) {
+                    if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Shear " + ((DyeColor) e.getKey()).name().toString().toLowerCase() + " sheep: " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Shear " + e.getKey().name().toString().toLowerCase() + " sheep: " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Shear " + ((DyeColor) e.getKey()).name().toString().toLowerCase() + " sheep: " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        finishedObjectives.add(ChatColor.GRAY + "Shear " + e.getKey().name().toString().toLowerCase() + " sheep: " + e2.getValue() + "/" + e.getValue());
 
                     }
 
