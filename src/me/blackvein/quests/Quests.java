@@ -3253,6 +3253,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         stage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
 
                     }
+                    
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-message")) {
+
+                        stage.startMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".start-message");
+
+                    }
+                    
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".complete-message")) {
+
+                        stage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
+
+                    }
 
                     stage.citizensToInteract = npcsToTalkTo;
 
@@ -3803,6 +3815,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public static String getTime(long milliseconds) {
+    	
 
         String message = "";
         
@@ -3813,7 +3826,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         long hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
         long minutes = calendar.get(Calendar.MINUTE);
         long seconds = calendar.get(Calendar.SECOND);
-        
+        long milliSeconds2 = calendar.get(Calendar.MILLISECOND);        
         if (days > 0) {
         	
             if (days == 1) {
@@ -3851,7 +3864,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             } else {
                 message += " " + seconds + " Seconds,";
             }
-
+        } else {
+        	if (milliSeconds2 > 0) {
+        		if (milliSeconds2 == 1) {
+                    message += " 1 Millisecond,";
+                } else {
+                    message += " " + milliSeconds2 + " Milliseconds,";
+                }
+        	}
         }
 
         message = message.substring(1, message.length() - 1);
@@ -4006,8 +4026,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         int foundAmount = 0;
         for (Map.Entry<Integer, ? extends ItemStack> item : allItems.entrySet()) {
 
-            if (ItemUtil.compareItems(is, item.getValue(), false) == 0) {
-
+            if (ItemUtil.compareItems(is, item.getValue(), true) == 0) {
 
                 if (item.getValue().getAmount() >= amount - foundAmount) {
                     removeFrom.put(item.getKey(), amount - foundAmount);
@@ -4023,7 +4042,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
 
         }
-
         if (foundAmount == amount) {
 
             for (Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {

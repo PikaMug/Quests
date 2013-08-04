@@ -3,13 +3,20 @@ package me.blackvein.quests.prompts;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import org.bukkit.conversations.*;
+
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.FixedSetPrompt;
+import org.bukkit.conversations.NumericPrompt;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -32,34 +39,34 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
         String text;
 
-        text = DARKAQUA + "- " + AQUA + context.getSessionData("questName") + AQUA + " | Rewards -\n";
+        text = DARKAQUA + "- " + AQUA + context.getSessionData(CK.Q_NAME) + AQUA + " | Rewards -\n";
 
-        if(context.getSessionData("moneyRew") == null)
+        if(context.getSessionData(CK.REW_MONEY) == null)
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money reward (None set)\n";
         else{
-            int moneyRew = (Integer) context.getSessionData("moneyRew");
+            int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money reward (" + moneyRew + " " + (moneyRew > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
         }
 
-        if(context.getSessionData("questPointsRew") == null)
+        if(context.getSessionData(CK.REW_QUEST_POINTS) == null)
             text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points reward (None set)\n";
         else{
-            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points reward (" + context.getSessionData("questPointsRew") + " Quest Points)\n";
+            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points reward (" + context.getSessionData(CK.REW_QUEST_POINTS) + " Quest Points)\n";
         }
 
             text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set item rewards\n";
 
-        if(context.getSessionData("expRew") == null)
+        if(context.getSessionData(CK.REW_EXP) == null)
             text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set experience reward (None set)\n";
         else{
-            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set experience reward (" + context.getSessionData("expRew") + " points)\n";
+            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set experience reward (" + context.getSessionData(CK.REW_EXP) + " points)\n";
         }
 
-        if(context.getSessionData("commandRews") == null)
+        if(context.getSessionData(CK.REW_COMMAND) == null)
             text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set command rewards (None set)\n";
         else{
             text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set command rewards\n";
-            List<String> commands = (List<String>) context.getSessionData("commandRews");
+            List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
 
             for(String cmd : commands){
 
@@ -68,11 +75,11 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
             }
         }
 
-        if(context.getSessionData("permissionRews") == null)
+        if(context.getSessionData(CK.REW_PERMISSION) == null)
             text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set permission rewards (None set)\n";
         else{
             text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set permission rewards\n";
-            List<String> permissions = (List<String>) context.getSessionData("permissionRews");
+            List<String> permissions = (List<String>) context.getSessionData(CK.REW_PERMISSION);
 
             for(String perm : permissions){
 
@@ -85,12 +92,12 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
         if(Quests.mcmmo != null){
 
-            if(context.getSessionData("mcMMOSkillRews") == null)
+            if(context.getSessionData(CK.REW_MCMMO_SKILLS) == null)
                 text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set mcMMO skill rewards (None set)\n";
             else{
                 text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set mcMMO skill rewards\n";
-                List<String> skills = (List<String>) context.getSessionData("mcMMOSkillRews");
-                List<Integer> amounts = (List<Integer>) context.getSessionData("mcMMOSkillAmounts");
+                List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
+                List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
 
                 for(String skill : skills){
 
@@ -159,9 +166,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                 context.getForWhom().sendRawMessage(RED + "Amount must be positive!");
                 return new MoneyPrompt();
             }else if(input.intValue() == 0)
-                context.setSessionData("moneyRew", null);
+                context.setSessionData(CK.REW_MONEY, null);
             else if(input.intValue() != -1)
-                context.setSessionData("moneyRew", input.intValue());
+                context.setSessionData(CK.REW_MONEY, input.intValue());
 
             return new RewardsPrompt(quests, factory);
 
@@ -185,9 +192,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                 context.getForWhom().sendRawMessage(RED + "Amount must be positive!");
                 return new ExperiencePrompt();
             }else if(input.intValue() == -1)
-                context.setSessionData("expRew", null);
+                context.setSessionData(CK.REW_EXP, null);
             else if(input.intValue() != 0)
-                context.setSessionData("expRew", input.intValue());
+                context.setSessionData(CK.REW_EXP, input.intValue());
 
             return new RewardsPrompt(quests, factory);
 
@@ -211,16 +218,16 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                 context.getForWhom().sendRawMessage(RED + "Amount must be positive!");
                 return new QuestPointsPrompt();
             }else if(input.intValue() == -1)
-                context.setSessionData("questPointsRew", null);
+                context.setSessionData(CK.REW_QUEST_POINTS, null);
             else if(input.intValue() != 0)
-                context.setSessionData("questPointsRew", input.intValue());
+                context.setSessionData(CK.REW_QUEST_POINTS, input.intValue());
 
             return new RewardsPrompt(quests, factory);
 
         }
 
-    }
 
+    }
     private class ItemListPrompt extends FixedSetPrompt {
 
         public ItemListPrompt(){
@@ -234,14 +241,14 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
             // Check/add newly made item
             if(context.getSessionData("newItem") != null){
-                if(context.getSessionData("itemRews") != null){
+                if(context.getSessionData(CK.REW_ITEMS) != null){
                     List<ItemStack> itemRews = getItems(context);
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData("itemRews", itemRews);
+                    context.setSessionData(CK.REW_ITEMS, itemRews);
                 }else{
                     LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData("itemRews", itemRews);
+                    context.setSessionData(CK.REW_ITEMS, itemRews);
                 }
 
                 context.setSessionData("newItem", null);
@@ -250,7 +257,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
             }
 
             String text = GOLD + "- Item Rewards -\n";
-            if(context.getSessionData("itemRews") == null){
+            if(context.getSessionData(CK.REW_ITEMS) == null){
                 text += GRAY + " (" + Lang.get("noneSet") + ")\n";
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
                 text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Clear\n";
@@ -280,7 +287,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                 return new ItemStackPrompt(ItemListPrompt.this);
             }else if(input.equalsIgnoreCase("2")){
                 context.getForWhom().sendRawMessage(YELLOW + "Item rewards cleared.");
-                context.setSessionData("itemRews", null);
+                context.setSessionData(CK.REW_ITEMS, null);
                 return new ItemListPrompt();
             }else if(input.equalsIgnoreCase("3")){
                 return new RewardsPrompt(quests, factory);
@@ -290,7 +297,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
         }
 
         private List<ItemStack> getItems(ConversationContext context){
-            return (List<ItemStack>) context.getSessionData("itemRews");
+            return (List<ItemStack>) context.getSessionData(CK.REW_ITEMS);
         }
 
     }
@@ -411,10 +418,10 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
                 }
 
-                context.setSessionData("commandRews", commands);
+                context.setSessionData(CK.REW_COMMAND, commands);
 
             }else if(input.equalsIgnoreCase("clear")){
-                context.setSessionData("commandRews", null);
+                context.setSessionData(CK.REW_COMMAND, null);
             }
 
             return new RewardsPrompt(quests, factory);
@@ -439,10 +446,10 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                 LinkedList<String> permissions = new LinkedList<String>();
                 permissions.addAll(Arrays.asList(args));
 
-                context.setSessionData("permissionRews", permissions);
+                context.setSessionData(CK.REW_PERMISSION, permissions);
 
             }else if(input.equalsIgnoreCase("clear")){
-                context.setSessionData("permissionRews", null);
+                context.setSessionData(CK.REW_PERMISSION, null);
             }
 
             return new RewardsPrompt(quests, factory);
@@ -469,7 +476,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
         public String getPromptText(ConversationContext context){
 
             String text = GOLD + "- mcMMO Rewards -\n";
-            if(context.getSessionData("mcMMOSkillRews") == null){
+            if(context.getSessionData(CK.REW_MCMMO_SKILLS) == null){
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set skills (None set)\n";
                 text += GRAY + "2 - Set skill amounts (No skills set)\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
@@ -483,7 +490,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
                 }
 
-                if(context.getSessionData("mcMMOAmountRews") == null){
+                if(context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null){
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set skill amounts (None set)\n";
                 }else{
 
@@ -511,7 +518,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
             if(input.equalsIgnoreCase("1")){
                 return new mcMMOSkillsPrompt();
             }else if(input.equalsIgnoreCase("2")){
-                if(context.getSessionData("mcMMOSkillRews") == null){
+                if(context.getSessionData(CK.REW_MCMMO_SKILLS) == null){
                     context.getForWhom().sendRawMessage(RED + "You must set skills first!");
                     return new mcMMOListPrompt();
                 }else{
@@ -519,21 +526,21 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                 }
             }else if(input.equalsIgnoreCase("3")){
                 context.getForWhom().sendRawMessage(YELLOW + "mcMMO rewards cleared.");
-                context.setSessionData("mcMMOSkillRews", null);
-                context.setSessionData("mcMMOAmountRews", null);
+                context.setSessionData(CK.REW_MCMMO_SKILLS, null);
+                context.setSessionData(CK.REW_MCMMO_AMOUNTS, null);
                 return new mcMMOListPrompt();
             }else if(input.equalsIgnoreCase("4")){
 
                 int one;
                 int two;
 
-                if(context.getSessionData("mcMMOSkillRews") != null)
-                    one = ((List<Integer>) context.getSessionData("mcMMOSkillRews")).size();
+                if(context.getSessionData(CK.REW_MCMMO_SKILLS) != null)
+                    one = ((List<Integer>) context.getSessionData(CK.REW_MCMMO_SKILLS)).size();
                 else
                     one = 0;
 
-                if(context.getSessionData("mcMMOAmountRews") != null)
-                    two = ((List<Integer>) context.getSessionData("mcMMOAmountRews")).size();
+                if(context.getSessionData(CK.REW_MCMMO_AMOUNTS) != null)
+                    two = ((List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS)).size();
                 else
                     two = 0;
 
@@ -549,11 +556,11 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
         }
 
         private List<String> getSkills(ConversationContext context){
-            return (List<String>) context.getSessionData("mcMMOSkillRews");
+            return (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
         }
 
         private List<Integer> getSkillAmounts(ConversationContext context){
-            return (List<Integer>) context.getSessionData("mcMMOAmountRews");
+            return (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
         }
 
     }
@@ -607,7 +614,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
                 }
 
-                context.setSessionData("mcMMOSkillRews", skills);
+                context.setSessionData(CK.REW_MCMMO_SKILLS, skills);
 
             }
 
@@ -649,7 +656,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
                 }
 
-                context.setSessionData("mcMMOSkillAmounts", amounts);
+                context.setSessionData(CK.REW_MCMMO_AMOUNTS, amounts);
 
             }
 

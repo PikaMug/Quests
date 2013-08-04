@@ -2,6 +2,8 @@ package me.blackvein.quests;
 
 import java.util.LinkedList;
 
+import me.blackvein.quests.util.CK;
+
 import org.bukkit.Bukkit;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
@@ -145,7 +147,7 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
     	
         Player player = target.getPlayer();
         Conversation conversation = factory.buildConversation((Conversable)player);
-    	conversation.getContext().setSessionData("inviter", getLeader().getPlayer().getName());
+    	conversation.getContext().setSessionData(CK.P_INVITER, getLeader().getPlayer().getName());
         conversation.begin();
     }
     
@@ -192,7 +194,7 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = partyPrefix + PINK + "You have been invited to " + PURPLE + ((String) context.getSessionData("inviter")) + PINK + "'s party.\n";
+            String text = partyPrefix + PINK + "You have been invited to " + PURPLE + ((String) context.getSessionData(CK.P_INVITER)) + PINK + "'s party.\n";
             
             return text + YELLOW + "Accept Invite?  " + GREEN + "Yes / No";
 
@@ -205,7 +207,7 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
 
             if (s.equalsIgnoreCase("Yes")) {
 
-                String inviterName = (String) context.getSessionData("inviter");
+                String inviterName = (String) context.getSessionData(CK.P_INVITER);
                 
                 Quester quester = quests.getQuester(invited.getName());
                 members.add(quester);
@@ -218,7 +220,7 @@ public class Party implements ConversationAbandonedListener, ColorUtil{
 
             } else if (s.equalsIgnoreCase("No")) {
             	
-            	String inviterName = (String) context.getSessionData("inviter");
+            	String inviterName = (String) context.getSessionData(CK.P_INVITER);
 
                 invited.sendMessage(partyPrefix + YELLOW + "Declined invite.");
                 Bukkit.getPlayerExact(inviterName).sendMessage(partyPrefix + GREEN + invited.getName() + YELLOW + " has declined your invitation.");

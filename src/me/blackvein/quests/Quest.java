@@ -57,10 +57,15 @@ public class Quest {
 
     //
     public void nextStage(Quester q){
-
+    	
+    	String stageCompleteMessage = q.currentStage.completeMessage;
+    	if (stageCompleteMessage != null) {
+    		q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, q.currentQuest));
+    	}
+    	
         if(q.currentStage.delay < 0){
 
-            Player player = plugin.getServer().getPlayerExact(q.name);
+            Player player = q.getPlayer();
 
             if(stages.indexOf(q.currentStage) == (stages.size() - 1)){
 
@@ -87,6 +92,11 @@ public class Quest {
                     player.sendMessage(s);
 
                 }
+                
+                String stageStartMessage = q.currentStage.startMessage;
+            	if (stageStartMessage != null) {
+            		q.getPlayer().sendMessage(Quests.parseString(stageStartMessage, q.currentQuest));
+            	}
 
             }
 
@@ -94,7 +104,6 @@ public class Quest {
             q.delayTimeLeft = -1;
 
         }else{
-
             q.startStageTimer();
 
         }
@@ -349,6 +358,7 @@ public class Quest {
                 return false;
 
             if(other.questPointsReq != questPointsReq)
+            	return false;
 
             if(other.redoDelay != redoDelay)
                 return false;

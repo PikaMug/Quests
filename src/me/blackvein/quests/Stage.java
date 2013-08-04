@@ -57,7 +57,7 @@ public class Stage {
     };
     ArrayList<String> deliverMessages = new ArrayList<String>();
 
-    LinkedList<NPC> citizensToInteract = new LinkedList<NPC>(){
+    public LinkedList<NPC> citizensToInteract = new LinkedList<NPC>(){
 
         @Override
         public boolean equals(Object o) {
@@ -81,7 +81,7 @@ public class Stage {
         }
 
     };
-    LinkedList<NPC> citizensToKill = new LinkedList<NPC>() {
+    public LinkedList<NPC> citizensToKill = new LinkedList<NPC>() {
 
         @Override
         public boolean equals(Object o) {
@@ -105,22 +105,24 @@ public class Stage {
         }
 
     };
-    LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
+    public LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
     
-    LinkedList<String> bossesToKill = new LinkedList<String>();
-    LinkedList<Integer> bossAmountsToKill = new LinkedList<Integer>();
+    public LinkedList<String> bossesToKill = new LinkedList<String>();
+    public LinkedList<Integer> bossAmountsToKill = new LinkedList<Integer>();
     
-    LinkedList<Location> locationsToReach = new LinkedList<Location>();
-    LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
-    LinkedList<World> worldsToReachWithin = new LinkedList<World>();
-    LinkedList<String> locationNames = new LinkedList<String>();
-    Map<EntityType, Integer> mobsToTame = new EnumMap<EntityType, Integer>(EntityType.class);
-    Map<DyeColor, Integer> sheepToShear = new EnumMap<DyeColor, Integer>(DyeColor.class);
-    Map<EnumMap<Material, Integer>, Boolean> itemsToCraft = new HashMap<EnumMap<Material, Integer>, Boolean>();
-    String script;
-    Event event;
-    long delay = -1;
-    String delayMessage = null;
+    public LinkedList<Location> locationsToReach = new LinkedList<Location>();
+    public LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
+    public LinkedList<World> worldsToReachWithin = new LinkedList<World>();
+    public LinkedList<String> locationNames = new LinkedList<String>();
+    public Map<EntityType, Integer> mobsToTame = new EnumMap<EntityType, Integer>(EntityType.class);
+    public Map<DyeColor, Integer> sheepToShear = new EnumMap<DyeColor, Integer>(DyeColor.class);
+    public Map<EnumMap<Material, Integer>, Boolean> itemsToCraft = new HashMap<EnumMap<Material, Integer>, Boolean>();
+    public String script;
+    public Event event;
+    public long delay = -1;
+    public String delayMessage = null;
+	public String completeMessage = null;
+	public String startMessage = null;
 
     @Override
     public boolean equals(Object o) {
@@ -283,6 +285,26 @@ public class Stage {
             } else if (other.delayMessage != null && delayMessage == null) {
                 return false;
             } else if (other.delayMessage == null && delayMessage != null) {
+                return false;
+            }
+            
+            if (other.startMessage != null && startMessage != null) {
+                if (other.startMessage.equals(startMessage) == false) {
+                    return false;
+                }
+            } else if (other.startMessage != null && startMessage == null) {
+                return false;
+            } else if (other.startMessage == null && startMessage != null) {
+                return false;
+            }
+            
+            if (other.completeMessage != null && completeMessage != null) {
+                if (other.completeMessage.equals(completeMessage) == false) {
+                    return false;
+                }
+            } else if (other.completeMessage != null && completeMessage == null) {
+                return false;
+            } else if (other.completeMessage == null && completeMessage != null) {
                 return false;
             }
 

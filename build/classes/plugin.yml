@@ -82,6 +82,12 @@ permissions:
     quests.editor.events.delete:
         description: Delete Events
         default: op
+    quests.party.create:
+        description: Create/Disband Parties
+        default: true
+    quests.party.join:
+        description: Join parties without invitation
+        default: op
 commands:
     quests:
         description: Quests command

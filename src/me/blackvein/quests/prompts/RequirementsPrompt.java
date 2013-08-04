@@ -5,15 +5,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+
 import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
-import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import org.bukkit.Material;
-import org.bukkit.conversations.*;
+
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.FixedSetPrompt;
+import org.bukkit.conversations.NumericPrompt;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -25,7 +30,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
     public RequirementsPrompt(Quests plugin, QuestFactory qf){
 
-        super("1", "2", "3", "4", "5", "6", "7");
+        super("1", "2", "3", "4", "5", "6", "7", "8");
         quests = plugin;
         factory = qf;
 
@@ -36,28 +41,28 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
         String text;
 
-        text = DARKAQUA + "- " + AQUA + context.getSessionData("questName") + AQUA + " | Requirements -\n";
+        text = DARKAQUA + "- " + AQUA + context.getSessionData(CK.Q_NAME) + AQUA + " | Requirements -\n";
 
-        if(context.getSessionData("moneyReq") == null)
+        if(context.getSessionData(CK.REQ_MONEY) == null)
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money requirement " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         else{
-            int moneyReq = (Integer) context.getSessionData("moneyReq");
+            int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money requirement (" + moneyReq + " " + (moneyReq > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
         }
 
-        if(context.getSessionData("questPointsReq") == null)
+        if(context.getSessionData(CK.REQ_QUEST_POINTS) == null)
             text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points requirement " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         else{
-            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points requirement " + GRAY + "(" + AQUA + context.getSessionData("questPointsReq") + " Quest Points" + GRAY + ")\n";
+            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points requirement " + GRAY + "(" + AQUA + context.getSessionData(CK.REQ_QUEST_POINTS) + " Quest Points" + GRAY + ")\n";
         }
 
         text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set item requirements\n";
 
-        if(context.getSessionData("permissionReqs") == null)
+        if(context.getSessionData(CK.REQ_PERMISSION) == null)
             text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set permission requirements " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         else{
             text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set permission requirements\n";
-            List<String> perms = (List<String>) context.getSessionData("permissionReqs");
+            List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
 
             for(String s : perms){
 
@@ -66,11 +71,24 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
             }
         }
 
-        if(context.getSessionData("questReqs") == null)
+        if(context.getSessionData(CK.REQ_QUEST) == null)
             text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set Quest requirements " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         else{
             text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set Quest requirements\n";
-            List<String> qs = (List<String>) context.getSessionData("questReqs");
+            List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
+
+            for(String s : qs){
+
+                text += GRAY + "    - " + AQUA + s + "\n";
+
+            }
+        }
+        
+        if(context.getSessionData(CK.REQ_QUEST_BLOCK) == null)
+            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Quest that mustn't be done " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        else{
+            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Quest requirements\n";
+            List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
 
             for(String s : qs){
 
@@ -79,15 +97,15 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
             }
         }
 
-            if(context.getSessionData("moneyReq") == null && context.getSessionData("questPointsReq") == null && context.getSessionData("itemReqs") == null && context.getSessionData("permissionReqs") == null && context.getSessionData("questReqs") == null){
-                text += GRAY + "" + BOLD + "6 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
-            }else if(context.getSessionData("failMessage") == null){
-                text += RED + "" + BOLD + "6 - " + RESET + RED + "Set fail requirements message (Required)\n";
-            }else{
-                text += BLUE + "" + BOLD + "6 - " + RESET + YELLOW + "Set fail requirements message" + GRAY + "(" + AQUA + "\"" + context.getSessionData("failMessage") + "\"" + GRAY + ")\n";
-            }
+        if(context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null){
+        	text += GRAY + "" + BOLD + "7 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
+        }else if(context.getSessionData(CK.Q_FAIL_MESSAGE) == null){
+        	text += RED + "" + BOLD + "7 - " + RESET + RED + "Set fail requirements message (Required)\n";
+        }else{
+        	text += BLUE + "" + BOLD + "7 - " + RESET + YELLOW + "Set fail requirements message" + GRAY + "(" + AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + GRAY + ")\n";
+        }
 
-        text += GREEN + "" + BOLD + "7" + RESET + YELLOW + " - Done";
+        text += GREEN + "" + BOLD + "8" + RESET + YELLOW + " - Done";
 
 
         return text;
@@ -106,13 +124,15 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
         }else if(input.equalsIgnoreCase("4")){
             return new PermissionsPrompt();
         }else if(input.equalsIgnoreCase("5")){
-            return new QuestListPrompt();
-        }else if(input.equalsIgnoreCase("6")){
-            return new FailMessagePrompt();
+            return new QuestListPrompt(true);
+        }else if(input.equalsIgnoreCase("6")) {
+        	return new QuestListPrompt(false);
         }else if(input.equalsIgnoreCase("7")){
-            if(context.getSessionData("moneyReq") != null || context.getSessionData("questPointsReq") != null || context.getSessionData("itemReqs") != null || context.getSessionData("permissionReqs") != null || context.getSessionData("questReqs") != null){
+            return new FailMessagePrompt();
+        }else if(input.equalsIgnoreCase("8")){
+            if(context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null || context.getSessionData(CK.REQ_ITEMS) != null || context.getSessionData(CK.REQ_PERMISSION) != null || context.getSessionData(CK.REQ_QUEST) != null || context.getSessionData(CK.REQ_QUEST_BLOCK) != null){
 
-                if(context.getSessionData("failMessage") == null){
+                if(context.getSessionData(CK.Q_FAIL_MESSAGE) == null){
                     context.getForWhom().sendRawMessage(RED + "You must set a fail requirements message!");
                     return new RequirementsPrompt(quests, factory);
                 }
@@ -143,11 +163,11 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
             }else if(input.intValue() == -1){
                 return new RequirementsPrompt(quests, factory);
             }else if(input.intValue() == 0){
-                context.setSessionData("moneyReq", null);
+                context.setSessionData(CK.REQ_MONEY, null);
                 return new RequirementsPrompt(quests, factory);
             }
 
-            context.setSessionData("moneyReq", input.intValue());
+            context.setSessionData(CK.REQ_MONEY, input.intValue());
             return new RequirementsPrompt(quests, factory);
 
         }
@@ -172,11 +192,11 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
             }else if(input.intValue() == -1){
                 return new RequirementsPrompt(quests, factory);
             }else if(input.intValue() == 0){
-                context.setSessionData("questPointsReq", null);
+                context.setSessionData(CK.REQ_QUEST_POINTS, null);
                 return new RequirementsPrompt(quests, factory);
             }
 
-            context.setSessionData("questPointsReq", input.intValue());
+            context.setSessionData(CK.REQ_QUEST_POINTS, input.intValue());
             return new RequirementsPrompt(quests, factory);
 
         }
@@ -184,6 +204,16 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
     }
 
     private class QuestListPrompt extends StringPrompt {
+    	
+    	private boolean isRequiredQuest;
+    	
+    	/*public QuestListPrompt() {
+    		this.isRequiredQuest = true;
+    	}*/
+    	
+    	public QuestListPrompt(boolean isRequired) {
+    		this.isRequiredQuest = isRequired;
+    	}
 
         @Override
         public String getPromptText(ConversationContext context){
@@ -224,14 +254,14 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
                     if(quests.getQuest(s) == null){
 
                         context.getForWhom().sendRawMessage(PINK + s + " " + RED + "is not a Quest name!");
-                        return new QuestListPrompt();
+                        return new QuestListPrompt(isRequiredQuest);
 
                     }
 
                     if(questNames.contains(s)){
 
                         context.getForWhom().sendRawMessage(RED + "List contains duplicates!");
-                        return new QuestListPrompt();
+                        return new QuestListPrompt(isRequiredQuest);
 
                     }
 
@@ -250,11 +280,19 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
                 });
 
-                context.setSessionData("questReqs", questNames);
+                if (isRequiredQuest) {
+                	context.setSessionData(CK.REQ_QUEST, questNames);
+                } else {
+                	context.setSessionData(CK.REQ_QUEST_BLOCK, questNames);
+                }
 
             }else if(input.equalsIgnoreCase("clear")){
 
-                context.setSessionData("questReqs", null);
+            	if (isRequiredQuest) {
+                	context.setSessionData(CK.REQ_QUEST, null);
+                } else {
+                	context.setSessionData(CK.REQ_QUEST_BLOCK, null);
+                }
 
             }
 
@@ -277,14 +315,14 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
             // Check/add newly made item
             if(context.getSessionData("newItem") != null){
-                if(context.getSessionData("itemReqs") != null){
+                if(context.getSessionData(CK.REQ_ITEMS) != null){
                     List<ItemStack> itemRews = getItems(context);
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData("itemReqs", itemRews);
+                    context.setSessionData(CK.REQ_ITEMS, itemRews);
                 }else{
                     LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData("itemReqs", itemRews);
+                    context.setSessionData(CK.REQ_ITEMS, itemRews);
                 }
 
                 context.setSessionData("newItem", null);
@@ -293,7 +331,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
             }
             
             String text = GOLD + "- Item Requirements -\n";
-            if(context.getSessionData("itemReqs") == null){
+            if(context.getSessionData(CK.REQ_ITEMS) == null){
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
                 text += GRAY + "2 - Set remove items (No items set)\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
@@ -309,7 +347,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
                 
 
-                if(context.getSessionData("removeItemReqs") == null){
+                if(context.getSessionData(CK.REQ_ITEMS_REMOVE) == null){
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set remove items (No values set)\n";
                 }else{
 
@@ -337,7 +375,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
             if(input.equalsIgnoreCase("1")){
                 return new ItemStackPrompt(ItemListPrompt.this);
             }else if(input.equalsIgnoreCase("2")){
-                if(context.getSessionData("itemReqs") == null){
+                if(context.getSessionData(CK.REQ_ITEMS) == null){
                     context.getForWhom().sendRawMessage(RED + "You must add at least one item first!");
                     return new ItemListPrompt();
                 }else{
@@ -345,21 +383,21 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
                 }
             }else if(input.equalsIgnoreCase("3")){
                 context.getForWhom().sendRawMessage(YELLOW + "Item requirements cleared.");
-                context.setSessionData("itemReqs", null);
-                context.setSessionData("removeItemReqs", null);
+                context.setSessionData(CK.REQ_ITEMS, null);
+                context.setSessionData(CK.REQ_ITEMS_REMOVE, null);
                 return new ItemListPrompt();
             }else if(input.equalsIgnoreCase("4")){
 
                 int one;
                 int two;
 
-                if(context.getSessionData("itemReqs") != null)
-                    one = ((List<ItemStack>) context.getSessionData("itemReqs")).size();
+                if(context.getSessionData(CK.REQ_ITEMS) != null)
+                    one = ((List<ItemStack>) context.getSessionData(CK.REQ_ITEMS)).size();
                 else
                     one = 0;
 
-                if(context.getSessionData("removeItemReqs") != null)
-                    two = ((List<Boolean>) context.getSessionData("removeItemReqs")).size();
+                if(context.getSessionData(CK.REQ_ITEMS_REMOVE) != null)
+                    two = ((List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE)).size();
                 else
                     two = 0;
 
@@ -375,11 +413,11 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
         }
 
         private List<ItemStack> getItems(ConversationContext context){
-            return (List<ItemStack>) context.getSessionData("itemReqs");
+            return (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
         }
 
         private List<Boolean> getRemoveItems(ConversationContext context){
-            return (List<Boolean>) context.getSessionData("removeItemReqs");
+            return (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
         }
 
     }
@@ -412,7 +450,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
 
                 }
 
-                context.setSessionData("removeItemReqs", booleans);
+                context.setSessionData(CK.REQ_ITEMS_REMOVE, booleans);
 
             }
 
@@ -439,10 +477,10 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
                 LinkedList<String> permissions = new LinkedList<String>();
                 permissions.addAll(Arrays.asList(args));
 
-                context.setSessionData("permissionReqs", permissions);
+                context.setSessionData(CK.REQ_PERMISSION, permissions);
 
             }else if(input.equalsIgnoreCase("clear")){
-                context.setSessionData("permissionReqs", null);
+                context.setSessionData(CK.REQ_PERMISSION, null);
             }
 
             return new RequirementsPrompt(quests, factory);
@@ -462,7 +500,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
         public Prompt acceptInput(ConversationContext context, String input){
 
             if(input.equalsIgnoreCase("cancel") == false)
-                context.setSessionData("failMessage", input);
+                context.setSessionData(CK.Q_FAIL_MESSAGE, input);
 
             return new RequirementsPrompt(quests, factory);
 

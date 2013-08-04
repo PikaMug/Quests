@@ -2,6 +2,8 @@ package me.blackvein.quests.prompts;
 
 import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.util.CK;
+
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -105,118 +107,124 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
                 pref = "stage" + current;
                 newPref = "stage" + (current - 1);
 
-                cc.setSessionData(newPref + "breakIds", cc.getSessionData(pref + "breakIds"));
-                cc.setSessionData(newPref + "breakAmounts", cc.getSessionData(pref + "breakAmounts"));
+                cc.setSessionData(newPref + CK.S_BREAK_IDS, cc.getSessionData(pref + CK.S_BREAK_IDS));
+                cc.setSessionData(newPref + CK.S_BREAK_AMOUNTS, cc.getSessionData(pref + CK.S_BREAK_AMOUNTS));
 
-                cc.setSessionData(newPref + "damageIds", cc.getSessionData(pref + "damageIds"));
-                cc.setSessionData(newPref + "damageAmounts", cc.getSessionData(pref + "damageAmounts"));
+                cc.setSessionData(newPref + CK.S_DAMAGE_IDS, cc.getSessionData(pref + CK.S_DAMAGE_IDS));
+                cc.setSessionData(newPref + CK.S_DAMAGE_AMOUNTS, cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS));
 
-                cc.setSessionData(newPref + "placeIds", cc.getSessionData(pref + "placeIds"));
-                cc.setSessionData(newPref + "placeAmounts", cc.getSessionData(pref + "placeAmounts"));
+                cc.setSessionData(newPref + CK.S_PLACE_IDS, cc.getSessionData(pref + CK.S_PLACE_IDS));
+                cc.setSessionData(newPref + CK.S_PLACE_IDS, cc.getSessionData(pref + CK.S_PLACE_AMOUNTS));
 
-                cc.setSessionData(newPref + "useIds", cc.getSessionData(pref + "useIds"));
-                cc.setSessionData(newPref + "useAmounts", cc.getSessionData(pref + "useAmounts"));
+                cc.setSessionData(newPref + CK.S_USE_IDS, cc.getSessionData(pref + CK.S_USE_IDS));
+                cc.setSessionData(newPref + CK.S_USE_AMOUNTS, cc.getSessionData(pref + CK.S_USE_AMOUNTS));
 
-                cc.setSessionData(newPref + "cutIds", cc.getSessionData(pref + "cutIds"));
-                cc.setSessionData(newPref + "cutAmounts", cc.getSessionData(pref + "cutAmounts"));
+                cc.setSessionData(newPref + CK.S_CUT_IDS, cc.getSessionData(pref + CK.S_CUT_IDS));
+                cc.setSessionData(newPref + CK.S_CUT_AMOUNTS, cc.getSessionData(pref + CK.S_CUT_AMOUNTS));
 
-                cc.setSessionData(newPref + "fish", cc.getSessionData(pref + "fish"));
+                cc.setSessionData(newPref + CK.S_FISH, cc.getSessionData(pref + CK.S_FISH));
 
-                cc.setSessionData(newPref + "playerKill", cc.getSessionData(pref + "playerKill"));
+                cc.setSessionData(newPref + CK.S_PLAYER_KILL, cc.getSessionData(pref + CK.S_PLAYER_KILL));
 
-                cc.setSessionData(newPref + "enchantTypes", cc.getSessionData(pref + "enchantTypes"));
-                cc.setSessionData(newPref + "enchantIds", cc.getSessionData(pref + "enchantIds"));
-                cc.setSessionData(newPref + "enchantAmounts", cc.getSessionData(pref + "enchantAmounts"));
+                cc.setSessionData(newPref + CK.S_ENCHANT_TYPES, cc.getSessionData(pref + CK.S_ENCHANT_TYPES));
+                cc.setSessionData(newPref + CK.S_ENCHANT_IDS, cc.getSessionData(pref + CK.S_ENCHANT_IDS));
+                cc.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS));
 
-                cc.setSessionData(newPref + "deliveryItems", cc.getSessionData(pref + "deliveryItems"));
-                cc.setSessionData(newPref + "deliveryNPCs", cc.getSessionData(pref + "deliveryNPCs"));
-                cc.setSessionData(newPref + "deliveryMessages", cc.getSessionData(pref + "deliveryMessages"));
+                cc.setSessionData(newPref + CK.S_DELIVERY_ITEMS, cc.getSessionData(pref + CK.S_DELIVERY_ITEMS));
+                cc.setSessionData(newPref + CK.S_DELIVERY_NPCS, cc.getSessionData(pref + CK.S_DELIVERY_NPCS));
+                cc.setSessionData(newPref + CK.S_DELIVERY_MESSAGES, cc.getSessionData(pref + CK.S_DELIVERY_MESSAGES));
 
-                cc.setSessionData(newPref + "npcIdsToTalkTo", cc.getSessionData(pref + "npcIdsToTalkTo"));
+                cc.setSessionData(newPref + CK.S_NPCS_TO_TALK_TO, cc.getSessionData(pref + CK.S_NPCS_TO_TALK_TO));
 
-                cc.setSessionData(newPref + "npcIdsToKill", cc.getSessionData(pref + "npcIdsToKill"));
-                cc.setSessionData(newPref + "npcAmountsToKill", cc.getSessionData(pref + "npcAmountsToKill"));
+                cc.setSessionData(newPref + CK.S_NPCS_TO_KILL, cc.getSessionData(pref + CK.S_NPCS_TO_KILL));
+                cc.setSessionData(newPref + CK.S_NPCS_TO_KILL_AMOUNTS, cc.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS));
 
-                cc.setSessionData(newPref + "mobTypes", cc.getSessionData(pref + "mobTypes"));
-                cc.setSessionData(newPref + "mobAmounts", cc.getSessionData(pref + "mobAmounts"));
-                cc.setSessionData(newPref + "killLocations", cc.getSessionData(pref + "killLocations"));
-                cc.setSessionData(newPref + "killLocationRadii", cc.getSessionData(pref + "killLocationRadii"));
-                cc.setSessionData(newPref + "killLocationNames", cc.getSessionData(pref + "killLocationNames"));
+                cc.setSessionData(newPref + CK.S_MOB_TYPES, cc.getSessionData(pref + CK.S_MOB_TYPES));
+                cc.setSessionData(newPref + CK.S_MOB_AMOUNTS, cc.getSessionData(pref + CK.S_MOB_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS, cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS));
+                cc.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS_RADIUS, cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS));
+                cc.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS_NAMES, cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES));
 
-                cc.setSessionData(newPref + "reachLocations", cc.getSessionData(pref + "reachLocations"));
-                cc.setSessionData(newPref + "reachLocationRadii", cc.getSessionData(pref + "reachLocationRadii"));
-                cc.setSessionData(newPref + "reachLocationNames", cc.getSessionData(pref + "reachLocationNames"));
+                cc.setSessionData(newPref + CK.S_REACH_LOCATIONS, cc.getSessionData(pref + CK.S_REACH_LOCATIONS));
+                cc.setSessionData(newPref + CK.S_REACH_LOCATIONS_RADIUS, cc.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS));
+                cc.setSessionData(newPref + CK.S_REACH_LOCATIONS_NAMES, cc.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES));
 
-                cc.setSessionData(newPref + "tameTypes", cc.getSessionData(pref + "tameTypes"));
-                cc.setSessionData(newPref + "tameAmounts", cc.getSessionData(pref + "tameAmounts"));
+                cc.setSessionData(newPref + CK.S_TAME_TYPES, cc.getSessionData(pref + CK.S_TAME_TYPES));
+                cc.setSessionData(newPref + CK.S_TAME_AMOUNTS, cc.getSessionData(pref + CK.S_TAME_AMOUNTS));
 
-                cc.setSessionData(newPref + "shearColors", cc.getSessionData(pref + "shearColors"));
-                cc.setSessionData(newPref + "shearAmounts", cc.getSessionData(pref + "shearAmounts"));
+                cc.setSessionData(newPref + CK.S_SHEAR_COLORS, cc.getSessionData(pref + CK.S_SHEAR_COLORS));
+                cc.setSessionData(newPref + CK.S_SHEAR_AMOUNTS, cc.getSessionData(pref + CK.S_SHEAR_AMOUNTS));
 
-                cc.setSessionData(newPref + "event", cc.getSessionData(pref + "event"));
+                cc.setSessionData(newPref + CK.S_EVENT, cc.getSessionData(pref + CK.S_EVENT));
 
-                cc.setSessionData(newPref + "delay", cc.getSessionData(pref + "delay"));
-                cc.setSessionData(newPref + "delayMessage", cc.getSessionData(pref + "delayMessage"));
+                cc.setSessionData(newPref + CK.S_DELAY, cc.getSessionData(pref + CK.S_DELAY));
+                cc.setSessionData(newPref +CK.S_DELAY_MESSAGE, cc.getSessionData(pref + CK.S_DELAY_MESSAGE));
 
-                cc.setSessionData(newPref + "denizen", cc.getSessionData(pref + "denizen"));
+                cc.setSessionData(newPref + CK.S_DENIZEN, cc.getSessionData(pref + CK.S_DENIZEN));
+                
+                cc.setSessionData(newPref + CK.S_COMPLETE_MESSAGE, cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE));
+                cc.setSessionData(newPref + CK.S_START_MESSAGE, cc.getSessionData(pref + CK.S_START_MESSAGE));
 
             }
 
 
-            cc.setSessionData(pref + "breakIds", null);
-            cc.setSessionData(pref + "breakAmounts", null);
+            cc.setSessionData(pref + CK.S_BREAK_IDS, null);
+            cc.setSessionData(pref + CK.S_BREAK_AMOUNTS, null);
 
-            cc.setSessionData(pref + "damageIds", null);
-            cc.setSessionData(pref + "damageAmounts", null);
+            cc.setSessionData(pref + CK.S_DAMAGE_IDS, null);
+            cc.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, null);
 
-            cc.setSessionData(pref + "placeIds", null);
-            cc.setSessionData(pref + "placeAmounts", null);
+            cc.setSessionData(pref + CK.S_PLACE_IDS, null);
+            cc.setSessionData(pref + CK.S_PLACE_AMOUNTS, null);
 
-            cc.setSessionData(pref + "useIds", null);
-            cc.setSessionData(pref + "useAmounts", null);
+            cc.setSessionData(pref + CK.S_USE_IDS, null);
+            cc.setSessionData(pref + CK.S_USE_AMOUNTS, null);
 
-            cc.setSessionData(pref + "cutIds", null);
-            cc.setSessionData(pref + "cutAmounts", null);
+            cc.setSessionData(pref + CK.S_CUT_IDS, null);
+            cc.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
 
-            cc.setSessionData(pref + "fish", null);
+            cc.setSessionData(pref + CK.S_FISH, null);
 
-            cc.setSessionData(pref + "playerKill", null);
+            cc.setSessionData(pref + CK.S_PLAYER_KILL, null);
 
-            cc.setSessionData(pref + "enchantTypes", null);
-            cc.setSessionData(pref + "enchantIds", null);
-            cc.setSessionData(pref + "enchantAmounts", null);
+            cc.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
+            cc.setSessionData(pref + CK.S_ENCHANT_IDS, null);
+            cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, null);
 
-            cc.setSessionData(pref + "deliveryItems", null);
-            cc.setSessionData(pref + "deliveryNPCs", null);
-            cc.setSessionData(pref + "deliveryMessages", null);
+            cc.setSessionData(pref + CK.S_DELIVERY_ITEMS, null);
+            cc.setSessionData(pref + CK.S_DELIVERY_NPCS, null);
+            cc.setSessionData(pref + CK.S_DELIVERY_MESSAGES, null);
 
-            cc.setSessionData(pref + "npcIdsToTalkTo", null);
+            cc.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, null);
 
-            cc.setSessionData(pref + "npcIdsToKill", null);
-            cc.setSessionData(pref + "npcAmountsToKill", null);
+            cc.setSessionData(pref + CK.S_NPCS_TO_KILL, null);
+            cc.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, null);
 
-            cc.setSessionData(pref + "mobTypes", null);
-            cc.setSessionData(pref + "mobAmounts", null);
-            cc.setSessionData(pref + "killLocations", null);
-            cc.setSessionData(pref + "killLocationRadii", null);
-            cc.setSessionData(pref + "killLocationNames", null);
+            cc.setSessionData(pref + CK.S_MOB_TYPES, null);
+            cc.setSessionData(pref + CK.S_MOB_AMOUNTS, null);
+            cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, null);
+            cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, null);
+            cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, null);
 
-            cc.setSessionData(pref + "reachLocations", null);
-            cc.setSessionData(pref + "reachLocationRadii", null);
-            cc.setSessionData(pref + "reachLocationNames", null);
+            cc.setSessionData(pref + CK.S_REACH_LOCATIONS, null);
+            cc.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, null);
+            cc.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, null);
 
-            cc.setSessionData(pref + "tameTypes", null);
-            cc.setSessionData(pref + "tameAmounts", null);
+            cc.setSessionData(pref + CK.S_TAME_TYPES, null);
+            cc.setSessionData(pref + CK.S_TAME_AMOUNTS, null);
 
-            cc.setSessionData(pref + "shearColors", null);
-            cc.setSessionData(pref + "shearAmounts", null);
+            cc.setSessionData(pref + CK.S_SHEAR_COLORS, null);
+            cc.setSessionData(pref + CK.S_SHEAR_AMOUNTS, null);
 
-            cc.setSessionData(pref + "event", null);
+            cc.setSessionData(pref + CK.S_EVENT, null);
 
-            cc.setSessionData(pref + "delay", null);
-            cc.setSessionData(pref + "delayMessage", null);
+            cc.setSessionData(pref + CK.S_DELAY, null);
+            cc.setSessionData(pref + CK.S_DELAY_MESSAGE, null);
 
-            cc.setSessionData(pref + "denizen", null);
+            cc.setSessionData(pref + CK.S_DENIZEN, null);
+            
+            cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, null);
+            cc.setSessionData(pref + CK.S_START_MESSAGE, null);
 
             if(last)
                 break;
