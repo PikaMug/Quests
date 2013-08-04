@@ -5,14 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.ItemData;
 import me.blackvein.quests.ItemData.Data;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
@@ -246,7 +243,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 	                		cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
 	                		return new IDPrompt();
 	                	} else {
-	                		
+
 	                		cc.setSessionData("tempId", data.getId());
 	                		cc.setSessionData("tempData", (data.getData() == 0) ? null : (short)data.getData());
 	                		return new ItemStackPrompt(oldPrompt);

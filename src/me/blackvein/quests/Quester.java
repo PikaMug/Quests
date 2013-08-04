@@ -100,7 +100,7 @@ public class Quester {
             for (String s : getObjectives()) {
                 player.sendMessage(s);
             }
-            
+
             String stageStartMessage = currentStage.startMessage;
         	if (stageStartMessage != null) {
         		getPlayer().sendMessage(Quests.parseString(stageStartMessage, currentQuest));
@@ -116,19 +116,6 @@ public class Quester {
 
     }
 
-    public Party getParty(){
-        
-        for(Party p : plugin.parties){
-            
-            if(p.getMember(name) != null)
-                return p;
-            
-        }
-        
-        return null;
-        
-    }
-    
     public LinkedList<String> getObjectives() {
 
         LinkedList<String> unfinishedObjectives = new LinkedList<String>();
@@ -981,14 +968,14 @@ public class Quester {
         Player player = plugin.getServer().getPlayer(name);
 
         ItemStack found = null;
-        
+
         for(ItemStack is : itemsDelivered.keySet()){
-            
+
             if(ItemUtil.compareItems(i, is, true) == 0){
                 found = is;
                 break;
             }
-            
+
         }
         if (found != null) {
 

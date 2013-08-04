@@ -92,7 +92,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public Denizen denizen = null;
     QuestTaskTrigger trigger;
     final Map<String, Quester> questers = new HashMap<String, Quester>();
-    final LinkedList<Party> parties = new LinkedList<Party>();
     final LinkedList<Quest> quests = new LinkedList<Quest>();
     public final LinkedList<Event> events = new LinkedList<Event>();
     final LinkedList<NPC> questNPCs = new LinkedList<NPC>();
@@ -327,29 +326,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         debug = config.getBoolean("debug-mode");
         killDelay = config.getInt("kill-delay");
         acceptTimeout = config.getInt("accept-timeout");
-        
+
         if(config.contains("broadcast-party-creation")){
             broadcastPartyCreation = config.getBoolean("broadcast-party-creation");
         }else{
             config.set("broadcast-party-creation", true);
         }
-        
+
         if(config.contains("max-party-size")){
             maxPartySize = config.getInt("max-party-size");
         }else{
             config.set("max-party-size", 0);
         }
-        
+
         if(config.contains("party-invite-timeout")){
             inviteTimeout = config.getInt("party-invite-timeout");
         }else{
             config.set("party-invite-timeout", 20);
         }
-        
+
         for (String s : config.getStringList("quester-blacklist")) {
             questerBlacklist.add(s);
         }
-        
+
         try{
             config.save(new File(this.getDataFolder(), "config.yml"));
         }catch(Exception e){
@@ -390,15 +389,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (player.hasPermission("quests.questinfo")) {
             player.sendMessage(YELLOW + "/quest <quest name> - Display Quest information");
         }
-        
+
         if (player.hasPermission("quests.admin")) {
             player.sendMessage(DARKRED + "/questadmin " + RED + "- Questadmin help");
         }
 
     }
-    
+
     public void printPartyHelp(Player player){
-        
+
         player.sendMessage(PURPLE + "- Quest Parties -");
         player.sendMessage(PINK + "/quests party create - Create new party");
         player.sendMessage(PINK + "/quests party leave - Leave your party");
@@ -407,7 +406,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         player.sendMessage(PINK + "/quests party invite <player> - Invite a player to your party");
         player.sendMessage(PINK + "/quests party kick <player> - Kick a member from the party");
         player.sendMessage(PINK + "/quests party setleader <player> - Set a party member as the new leader");
-        
+
     }
 
     @Override
@@ -572,7 +571,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         }
 
                                     }
-                                    
+
                                     if (quest.blockQuests.isEmpty() == false) {
 
                                         for (String s : quest.blockQuests) {
@@ -976,195 +975,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
                         } else {
                             cs.sendMessage(RED + "You do not have permission to use the Events editor.");
-                        }
-                        return true;
-
-                    } else if (args[0].equalsIgnoreCase("party")) {
-
-                        if(cs instanceof Player){
-                            
-                            Player player = (Player) cs;
-                            Quester quester = getQuester(player.getName());
-
-                            if(args.length == 1){
-
-                                printPartyHelp(player);
-
-                            }else{
-                                
-                                if(args[1].equalsIgnoreCase("create")){
-                                    
-                                    if(player.hasPermission("quests.party.create")){
-                                        
-                                        if(quester.getParty() == null){
-                                            
-                                            if(quester.currentQuest == null){
-                                                
-                                                Party party = new Party(this, quester);
-                                                if(broadcastPartyCreation)
-                                                    getServer().broadcastMessage(Party.partyPrefix + PINK + "" + BOLD +  player.getName() + RESET + "" + PINK + " created a Quest Party!");
-                                                parties.add(party);
-                                                return true;
-                                                
-                                            }else{
-                                                player.sendMessage(Party.partyPrefix + RED + "You may not create a party while you are on a Quest.");
-                                                return true;
-                                            }
-                                            
-                                        }else{
-                                            player.sendMessage(Party.partyPrefix + RED + "You are already in a party!");
-                                            return true;
-                                        }
-                                        
-                                    }else{
-                                        player.sendMessage(Party.partyPrefix + RED + "You do not have permission to create parties.");
-                                        return true;
-                                    }
-                                    
-                                }else if(args[1].equalsIgnoreCase("leave")){
-                                    
-                                    if(quester.getParty() != null){
-                                        
-                                        Party party = quester.getParty();
-                                        
-                                        if(party.isLeader(quester)){
-                                            
-                                            player.sendMessage(Party.partyPrefix + YELLOW + "You have left your party.");
-                                            
-                                            party.sendMessageEx(RED + "The party leader has left the party. The party has been disbanded.", quester);
-                                            party.disband();
-                                            parties.remove(party);
-                                        
-                                        }else{
-                                            
-                                            player.sendMessage(Party.partyPrefix + YELLOW + "You have left your party.");
-                                            party.sendMessageEx(YELLOW + player.getName() + PINK + " has left the party.", quester);
-                                            party.removeMember(quester);
-                                            party.checkSize();
-                                            
-                                        }
-                                        
-                                        return true;
-                                        
-                                    }else{
-                                        player.sendMessage(Party.partyPrefix + RED + "You are not in a party!");
-                                        return true;
-                                    }
-                                    
-                                }else if(args[1].equalsIgnoreCase("info")){
-                                    
-                                    if(quester.getParty() != null){
-                                        
-                                        Party party = quester.getParty();
-                                        
-                                        Quest current = party.getQuest();
-                                        Quester leader = party.getLeader();
-                                        LinkedList<Quester> members = party.getMembers();
-                                        
-                                        player.sendMessage(PURPLE + "- " + PINK + "Party" + PURPLE + " -");
-                                        player.sendMessage(YELLOW + "" + BOLD + "Current Quest: " + RESET + "" + YELLOW +  ((current != null) ? current.getName() : "(None)"));
-                                        player.sendMessage(PINK + "" + BOLD + "Leader: " + RESET + "" + PINK + leader.name);
-                                        if(members.isEmpty())
-                                            player.sendMessage(PURPLE + "" + BOLD + "Members: " + RESET + "" + PURPLE + "(None)");
-                                        else{
-                                            player.sendMessage(PURPLE + "" + BOLD + "Members: " + RESET);
-                                            for(Quester q : members)
-                                                player.sendMessage(PURPLE + "  - " + q.name);
-                                        }
-                                        
-                                        if(maxPartySize > 0)
-                                            player.sendMessage(PINK + "Max Party Size: " + maxPartySize);
-                                        
-                                        return true;
-                                        
-                                    }else{
-                                        player.sendMessage(Party.partyPrefix + RED + "You are not in a party!");
-                                        return true;
-                                    }
-                                    
-                                }else if(args[1].equalsIgnoreCase("invite")){
-                                    
-                                    if(args.length == 3){
-                                        
-                                        if(quester.getParty() != null){
-
-                                            Party party = quester.getParty();
-
-                                            if(party.isLeader(quester)){
-
-                                                Quest current = party.getQuest();
-                                                
-                                                if(current == null){
-                                                    
-                                                    if(maxPartySize < 1 || party.getSize() >= maxPartySize){
-                                                        
-                                                        String search = args[2];
-                                                        Player found = null;
-                                                        
-                                                        for(Player p : getServer().getOnlinePlayers()){
-                                                            
-                                                            if(p.getName().toLowerCase().contains(search.toLowerCase()) || p.getName().equalsIgnoreCase(search)){
-                                                                found = p;
-                                                                break;
-                                                            }
-                                                            
-                                                        }
-                                                        
-                                                        if(found != null){
-                                                            if (found.getName().equals(player.getName())) {
-                                                            	player.sendMessage(Party.partyPrefix + RED + "you can't invite yourself!");
-                                                            	return true;
-                                                            }
-                                                            if(getQuester(found.getName()).getParty() == null){
-                                                                
-                                                            	//TODO: Invite player to party!
-                                                            	party.sendMessage(Party.partyPrefix + PINK + "" + BOLD +  player.getName() + RESET + "" + PINK + " invited: " + BOLD + found.getName() + RESET + "" + PINK + " to the party!" );
-                                                            	party.sendInvite(getQuester(found.getName()));
-                                                                
-                                                            }else{
-                                                                player.sendMessage(Party.partyPrefix + RED + "" + BOLD + found.getName() + RESET + "" + RED + " is already in a party!");
-                                                                return true;
-                                                            }
-                                                            
-                                                        }else{
-                                                            player.sendMessage(Party.partyPrefix + RED + "Player not found!");
-                                                            return true; 
-                                                        }
-                                                        
-                                                    }else{
-                                                        player.sendMessage(Party.partyPrefix + RED + "Your party is too large!");
-                                                        return true; 
-                                                    }
-                                                    
-                                                }else{
-                                                    player.sendMessage(Party.partyPrefix + RED + "You may not invite players to your party while on a Quest!");
-                                                    return true; 
-                                                }
-
-                                            }else{
-                                               player.sendMessage(Party.partyPrefix + RED + "You are not the leader of your party!");
-                                               return true; 
-                                            }
-
-                                            return true;
-
-                                        }else{
-                                            player.sendMessage(Party.partyPrefix + RED + "You are not in a party!");
-                                            return true;
-                                        }
-                                    
-                                    }else{
-                                        player.sendMessage(YELLOW + "Usage: /quests party invite <player>");
-                                        return true;
-                                    }
-                                    
-                                }
-                                
-                            }
-                        
-                        }else{
-                            cs.sendMessage(YELLOW + "This command may only be performed in-game.");
-                            return true;
                         }
                         return true;
 
@@ -2074,7 +1884,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     }
-                    
+
                     if (config.contains("quests." + s + ".requirements.quests")) {
 
                         if (Quests.checkList(config.getList("quests." + s + ".requirements.quests"), String.class)) {
@@ -2531,7 +2341,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         for (String item : itemsToDeliver) {
 
                                             ItemStack is = ItemUtil.readItemStack(item);
-                                            
+
                                             if (is != null) {
 
                                                 int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
@@ -2699,103 +2509,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             List<String> mobNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill");
                             for (String mob : mobNames) {
 
-                                if (mob.equalsIgnoreCase("Blaze")) {
+                                EntityType type = getMobType(mob);
 
-                                    mobsToKill.add(EntityType.BLAZE);
-
-                                } else if (mob.equalsIgnoreCase("CaveSpider")) {
-
-                                    mobsToKill.add(EntityType.CAVE_SPIDER);
-
-                                } else if (mob.equalsIgnoreCase("Chicken")) {
-
-                                    mobsToKill.add(EntityType.CHICKEN);
-
-                                } else if (mob.equalsIgnoreCase("Cow")) {
-
-                                    mobsToKill.add(EntityType.COW);
-
-                                } else if (mob.equalsIgnoreCase("Creeper")) {
-
-                                    mobsToKill.add(EntityType.CREEPER);
-
-                                } else if (mob.equalsIgnoreCase("Enderman")) {
-
-                                    mobsToKill.add(EntityType.ENDERMAN);
-
-                                } else if (mob.equalsIgnoreCase("EnderDragon")) {
-
-                                    mobsToKill.add(EntityType.ENDER_DRAGON);
-
-                                } else if (mob.equalsIgnoreCase("Ghast")) {
-
-                                    mobsToKill.add(EntityType.GHAST);
-
-                                } else if (mob.equalsIgnoreCase("Giant")) {
-
-                                    mobsToKill.add(EntityType.GIANT);
-
-                                } else if (mob.equalsIgnoreCase("IronGolem")) {
-
-                                    mobsToKill.add(EntityType.IRON_GOLEM);
-
-                                } else if (mob.equalsIgnoreCase("MagmaCube")) {
-
-                                    mobsToKill.add(EntityType.MAGMA_CUBE);
-
-                                } else if (mob.equalsIgnoreCase("MushroomCow")) {
-
-                                    mobsToKill.add(EntityType.MUSHROOM_COW);
-
-                                } else if (mob.equalsIgnoreCase("Ocelot")) {
-
-                                    mobsToKill.add(EntityType.OCELOT);
-
-                                } else if (mob.equalsIgnoreCase("Pig")) {
-
-                                    mobsToKill.add(EntityType.PIG);
-
-                                } else if (mob.equalsIgnoreCase("PigZombie")) {
-
-                                    mobsToKill.add(EntityType.PIG_ZOMBIE);
-
-                                } else if (mob.equalsIgnoreCase("Sheep")) {
-
-                                    mobsToKill.add(EntityType.SHEEP);
-
-                                } else if (mob.equalsIgnoreCase("Silverfish")) {
-
-                                    mobsToKill.add(EntityType.SILVERFISH);
-
-                                } else if (mob.equalsIgnoreCase("Skeleton")) {
-
-                                    mobsToKill.add(EntityType.SKELETON);
-
-                                } else if (mob.equalsIgnoreCase("Slime")) {
-
-                                    mobsToKill.add(EntityType.SLIME);
-
-                                } else if (mob.equalsIgnoreCase("Snowman")) {
-
-                                    mobsToKill.add(EntityType.SNOWMAN);
-
-                                } else if (mob.equalsIgnoreCase("Spider")) {
-
-                                    mobsToKill.add(EntityType.SPIDER);
-
-                                } else if (mob.equalsIgnoreCase("Squid")) {
-
-                                    mobsToKill.add(EntityType.SQUID);
-
-                                } else if (mob.equalsIgnoreCase("Villager")) {
-
-                                    mobsToKill.add(EntityType.VILLAGER);
-
-                                } else if (mob.equalsIgnoreCase("Wolf")) {
-
-                                    mobsToKill.add(EntityType.WOLF);
-
-                                } else if (mob.equalsIgnoreCase("Zombie")) {
+                                if (type != null) {
 
                                     mobsToKill.add(EntityType.ZOMBIE);
 
@@ -3253,13 +2969,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         stage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
 
                     }
-                    
+
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-message")) {
 
                         stage.startMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".start-message");
 
                     }
-                    
+
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".complete-message")) {
 
                         stage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
@@ -3486,9 +3202,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         return parsed;
     }
-    
+
     public static String parseString(String s, NPC npc){
-        
+
         String parsed = s;
 
         if (parsed.contains("<npc>")) {
@@ -3523,7 +3239,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
-        
+
     }
 
     private boolean setupEconomy() {
@@ -3815,20 +3531,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public static String getTime(long milliseconds) {
-    	
+
 
         String message = "";
-        
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliseconds);
-        
+
         long days = calendar.get(Calendar.DAY_OF_YEAR) - 1;
         long hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
         long minutes = calendar.get(Calendar.MINUTE);
         long seconds = calendar.get(Calendar.SECOND);
-        long milliSeconds2 = calendar.get(Calendar.MILLISECOND);        
+        long milliSeconds2 = calendar.get(Calendar.MILLISECOND);
         if (days > 0) {
-        	
+
             if (days == 1) {
                 message += " 1 Day,";
             } else {

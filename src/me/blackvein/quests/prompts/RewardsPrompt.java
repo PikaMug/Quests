@@ -3,7 +3,6 @@ package me.blackvein.quests.prompts;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
 import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quester;
@@ -11,7 +10,6 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.NumericPrompt;

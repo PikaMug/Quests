@@ -1,6 +1,6 @@
 package me.blackvein.quests;
 
-import java.util.Collections;
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import java.util.LinkedList;
 import java.util.List;
 import me.blackvein.quests.util.ItemUtil;
@@ -10,9 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import com.comphenix.net.sf.cglib.core.CollectionUtils;
-import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 
 public class Quest {
 
@@ -57,12 +54,12 @@ public class Quest {
 
     //
     public void nextStage(Quester q){
-    	
+
     	String stageCompleteMessage = q.currentStage.completeMessage;
     	if (stageCompleteMessage != null) {
     		q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, q.currentQuest));
     	}
-    	
+
         if(q.currentStage.delay < 0){
 
             Player player = q.getPlayer();
@@ -92,7 +89,7 @@ public class Quest {
                     player.sendMessage(s);
 
                 }
-                
+
                 String stageStartMessage = q.currentStage.startMessage;
             	if (stageStartMessage != null) {
             		q.getPlayer().sendMessage(Quests.parseString(stageStartMessage, q.currentQuest));
@@ -158,13 +155,13 @@ public class Quest {
 
         if(quester.completedQuests.containsAll(neededQuests) == false)
             return false;
-        
+
         for (String q : blockQuests) {
         	if (quester.completedQuests.contains(q)) {
         		return false;
         	}
         }
-        
+
         return true;
 
     }
@@ -336,7 +333,7 @@ public class Quest {
 
             if(other.neededQuests.equals(neededQuests) == false)
                 return false;
-            
+
             if (other.blockQuests.equals(blockQuests) == false)
             	return false;
 
