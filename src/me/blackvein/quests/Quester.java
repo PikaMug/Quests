@@ -105,7 +105,6 @@ public class Quester {
         	if (stageStartMessage != null) {
         		getPlayer().sendMessage(Quests.parseString(stageStartMessage, currentQuest));
         	}
-
             if(q.initialEvent != null)
                 q.initialEvent.happen(this);
 
