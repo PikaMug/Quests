@@ -135,19 +135,19 @@ public class Quester {
         LinkedList<String> finishedObjectives = new LinkedList<String>();
         LinkedList<String> objectives = new LinkedList<String>();
 
-        for (Entry e : currentStage.blocksToDamage.entrySet()) {
+        for (Entry<Material, Integer> e : currentStage.blocksToDamage.entrySet()) {
 
-            for (Entry e2 : blocksDamaged.entrySet()) {
+            for (Entry<Material, Integer> e2 : blocksDamaged.entrySet()) {
 
-                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+                if (e2.getKey().equals(e.getKey())) {
 
-                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+                    if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Damage " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + (Integer) e2.getValue() + "/" + ((Integer) e.getValue()));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Damage " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Damage " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        finishedObjectives.add(ChatColor.GRAY + "Damage " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -157,19 +157,19 @@ public class Quester {
 
         }
 
-        for (Entry e : currentStage.blocksToBreak.entrySet()) {
+        for (Entry<Material, Integer> e : currentStage.blocksToBreak.entrySet()) {
 
-            for (Entry e2 : blocksBroken.entrySet()) {
+            for (Entry<Material, Integer> e2 : blocksBroken.entrySet()) {
 
-                if (((Material) e2.getKey()).equals((Material) e.getKey())) {
+                if (e2.getKey().equals(e.getKey())) {
 
-                    if (((Integer) e2.getValue()) < ((Integer) e.getValue())) {
+                    if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Break " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Break " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Break " + Quester.prettyItemString(((Material) e2.getKey()).getId()) + ": " + ((Integer) e2.getValue()) + "/" + ((Integer) e.getValue()));
+                        finishedObjectives.add(ChatColor.GRAY + "Break " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -259,8 +259,8 @@ public class Quester {
 
         }
 
-        Map set;
-        Map set2;
+        Map<Enchantment, Material> set;
+        Map<Enchantment, Material> set2;
         Set<Enchantment> enchantSet;
         Set<Enchantment> enchantSet2;
         Collection<Material> matSet;
@@ -270,14 +270,14 @@ public class Quester {
         int num1;
         int num2;
 
-        for (Entry e : currentStage.itemsToEnchant.entrySet()) {
+        for (Entry<Map<Enchantment, Material>, Integer> e : currentStage.itemsToEnchant.entrySet()) {
 
-            for (Entry e2 : itemsEnchanted.entrySet()) {
+            for (Entry<Map<Enchantment, Material>, Integer> e2 : itemsEnchanted.entrySet()) {
 
-                set = (Map<Enchantment, Material>) e2.getKey();
-                set2 = (Map<Enchantment, Material>) e.getKey();
-                enchantSet = (Set<Enchantment>) set.keySet();
-                enchantSet2 = (Set<Enchantment>) set2.keySet();
+                set = e2.getKey();
+                set2 = e.getKey();
+                enchantSet = set.keySet();
+                enchantSet2 = set2.keySet();
                 for (Object o : enchantSet.toArray()) {
 
                     enchantment = (Enchantment) o;
@@ -288,10 +288,10 @@ public class Quester {
                     enchantment2 = (Enchantment) o;
 
                 }
-                num1 = (Integer) e2.getValue();
-                num2 = (Integer) e.getValue();
+                num1 = e2.getValue();
+                num2 = e.getValue();
 
-                matSet = (Collection<Material>) set.values();
+                matSet = set.values();
 
                 for (Object o : matSet.toArray()) {
 
