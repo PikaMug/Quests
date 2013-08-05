@@ -1808,7 +1808,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (config.contains("quests." + s + ".requirements.remove-items")) {
 
                             if (Quests.checkList(config.getList("quests." + s + ".requirements.remove-items"), Boolean.class)) {
-                                quest.removeItems = config.getBooleanList("quests." + s + ".requirements.remove-items");
+                            	quest.removeItems.clear();
+                                quest.removeItems.addAll(config.getBooleanList("quests." + s + ".requirements.remove-items"));
                             } else {
                                 printSevere(GOLD + "[Quests] " + RED + "remove-items: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a list of true/false values!");
                                 continue;
@@ -1932,7 +1933,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.contains("quests." + s + ".requirements.permissions")) {
 
                         if (Quests.checkList(config.getList("quests." + s + ".requirements.permissions"), String.class)) {
-                            quest.permissionReqs = config.getStringList("quests." + s + ".requirements.permissions");
+                        	quest.permissionReqs.clear();
+                            quest.permissionReqs.addAll(config.getStringList("quests." + s + ".requirements.permissions"));
                         } else {
                             printSevere(GOLD + "[Quests] " + RED + "permissions: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a list of permissions!");
                             continue;
@@ -3053,7 +3055,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.contains("quests." + s + ".rewards.commands")) {
 
                     if (Quests.checkList(config.getList("quests." + s + ".rewards.commands"), String.class)) {
-                        quest.commands = config.getStringList("quests." + s + ".rewards.commands");
+                    	quest.commands.clear();
+                        quest.commands.addAll(config.getStringList("quests." + s + ".rewards.commands"));
                     } else {
                         printSevere(GOLD + "[Quests] " + RED + "commands: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a list of commands!");
                         continue;
@@ -3064,7 +3067,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.contains("quests." + s + ".rewards.permissions")) {
 
                     if (Quests.checkList(config.getList("quests." + s + ".rewards.permissions"), String.class)) {
-                        quest.permissions = config.getStringList("quests." + s + ".rewards.permissions");
+                    	quest.permissions.clear();
+                        quest.permissions.addAll(config.getStringList("quests." + s + ".rewards.permissions"));
                     } else {
                         printSevere(GOLD + "[Quests] " + RED + "permissions: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a list of permissions!");
                         continue;
@@ -3104,8 +3108,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 continue;
                             }
 
-                            quest.mcmmoSkills = config.getStringList("quests." + s + ".rewards.mcmmo-skills");
-                            quest.mcmmoAmounts = config.getIntegerList("quests." + s + ".rewards.mcmmo-levels");
+                            quest.mcmmoSkills.clear();
+                            quest.mcmmoAmounts.clear();
+                            
+                            quest.mcmmoSkills.addAll(config.getStringList("quests." + s + ".rewards.mcmmo-skills"));
+                            quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + s + ".rewards.mcmmo-levels"));
 
                         } else {
                             printSevere(GOLD + "[Quests] " + AQUA + "Rewards " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "mcmmo-levels:");
