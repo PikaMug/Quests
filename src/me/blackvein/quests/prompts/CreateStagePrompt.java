@@ -342,7 +342,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
         
         if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
-        	text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- Start Mmessage " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        	text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- Start Message " + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
         	text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- Start Message " + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + GRAY + ")\n";
         }

@@ -48,7 +48,7 @@ permissions:
         default: op
     quests.admin.takepoints:
         description: Take away a players Quest Points
-        default:op
+        default: op
     quests.admin.givepoints:
         description: Give a player Quest Points
         default: op
