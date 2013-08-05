@@ -1446,7 +1446,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     			Quester quester = getQuester(target.getName());
                     			quester.questPoints -= Math.abs(points);
                     			player.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
-                    			target.sendMessage(GREEN + player.getName() + GOLD + " took away " + PURPLE + points + GOLD + "Quest Points.");
+                    			target.sendMessage(GREEN + player.getName() + GOLD + " took away " + PURPLE + points + GOLD + " Quest Points.");
 
                     			quester.saveData();
 
@@ -1493,7 +1493,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     			Quester quester = getQuester(target.getName());
                     			quester.questPoints += Math.abs(points);
                     			player.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + "\'s.");
-                    			target.sendMessage(GREEN + player.getName() + GOLD + " gave you " + PURPLE + points + GOLD + "Quest Points.");
+                    			target.sendMessage(GREEN + player.getName() + GOLD + " gave you " + PURPLE + points + GOLD + " Quest Points.");
 
                     			quester.saveData();
 
