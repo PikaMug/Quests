@@ -34,6 +34,7 @@
             <id>mcMMO-repo</id>
             <url>http://repo.mcmmo.org</url>
         </repository>
+        
     </repositories>
 
     <dependencies>
@@ -66,6 +67,13 @@
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
             <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>me.ThaH3lper</groupId>
+            <artifactId>EpicBoss</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/EpicBossRecoded.jar</systemPath>
         </dependency>
     </dependencies>
 
