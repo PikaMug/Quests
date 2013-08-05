@@ -967,10 +967,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 }
             
             }
-            if (items.isEmpty() == false) {
-            	reqs.set("items", items);
-            }
 
+            reqs.set("items", (items.isEmpty() == false) ? items : null);
             reqs.set("remove-items", removeItemReqs);
             reqs.set("money", moneyReq);
             reqs.set("quest-points", questPointsReq);
@@ -1279,7 +1277,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null) {
 
             ConfigurationSection rews = cs.createSection("rewards");
-            rews.set("items", itemRews);
+            
+            rews.set("items", (itemRews.isEmpty() == false) ? itemRews : null);
             rews.set("money", moneyRew);
             rews.set("quest-points", questPointsRew);
             rews.set("exp", expRew);
