@@ -2324,7 +2324,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     List<String> itemsToDeliver;
                     List<Integer> itemDeliveryTargetIds;
-                    ArrayList<String> deliveryMessages = new ArrayList<String>();
+                    LinkedList<String> deliveryMessages = new LinkedList<String>();
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver")) {
 

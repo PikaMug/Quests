@@ -55,7 +55,7 @@ public class Stage {
         }
 
     };
-    ArrayList<String> deliverMessages = new ArrayList<String>();
+    public LinkedList<String> deliverMessages = new LinkedList<String>();
 
     public LinkedList<NPC> citizensToInteract = new LinkedList<NPC>(){
 
