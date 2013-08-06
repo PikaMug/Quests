@@ -143,7 +143,10 @@ public class PlayerListener implements Listener {
                                             + "\n"
                                             + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
 
-                                    player.sendMessage(s);
+                                    for (String msg : s.split("<br>")) {
+                                    	player.sendMessage(msg);
+                                    }
+                                    
                                     plugin.conversationFactory.buildConversation((Conversable) player).begin();
 
                                 }

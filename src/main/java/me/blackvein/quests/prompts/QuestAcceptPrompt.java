@@ -68,14 +68,34 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
             Quest q = null;
 
             for (Quest quest : quests) {
-
-                if (quest.getName().equalsIgnoreCase(input) || StringUtils.containsIgnoreCase(quest.getName(), input) || numInput == (quests.indexOf(quest) + 1)) {
+            	
+                if (quest.getName().equalsIgnoreCase(input)) {
                     q = quest;
                     break;
                 }
 
             }
-
+            
+            if (q == null)
+	            for (Quest quest : quests) {
+	            	
+	                if (numInput == (quests.indexOf(quest) + 1)) {
+	                    q = quest;
+	                    break;
+	                }
+	
+	            }
+            
+            if (q == null)
+	            for (Quest quest : quests) {
+	            	
+	                if (StringUtils.containsIgnoreCase(quest.getName(), input)) {
+	                    q = quest;
+	                    break;
+	                }
+	
+	            }
+            
             if (q == null) {
                 cc.getForWhom().sendRawMessage(RED + "Invalid Selection!");
                 return new QuestAcceptPrompt(plugin);
@@ -92,7 +112,11 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
                             quester.questToTake = q.name;
 
                             String s = extracted(quester);
-                            player.sendMessage(s);
+                            
+                            for (String msg : s.split("<br>")) {
+                            	player.sendMessage(msg);
+                            }
+                            
                             plugin.conversationFactory.buildConversation((Conversable) player).begin();
 
                         }else{
@@ -117,7 +141,9 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
                             quester.questToTake = q.name;
                             String s = extracted(quester);
 
-                            player.sendMessage(s);
+                            for (String msg : s.split("<br>")) {
+                            	player.sendMessage(msg);
+                            }
 
                             plugin.conversationFactory.buildConversation((Conversable) player).begin();
                         }

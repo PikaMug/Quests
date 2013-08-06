@@ -3,6 +3,8 @@ package me.blackvein.quests;
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
 import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.CitizensAPI;
@@ -2071,7 +2073,14 @@ public class Quester {
                 }
 
             }
-
+            
+            if (stage == null) {
+            	currentQuest = quest;
+            	currentQuest.completeQuest(this);
+            	Quests.log.log(Level.SEVERE, "[Quests] Invalid stage for player: \"" + name + "\". Quest ended.");
+            	return true;
+            }
+            
             currentQuest = quest;
             currentStage = stage;
 

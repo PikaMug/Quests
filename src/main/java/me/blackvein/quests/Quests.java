@@ -779,6 +779,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                                 + RESET + getQuest(quester.questToTake).description + "\n";
 
                                                         cs.sendMessage(s);
+                                                        
+                                                        for (String msg : s.split("<br>")) {
+                                                        	cs.sendMessage(msg);
+                                                        }
+                                                        
                                                         conversationFactory.buildConversation((Conversable) cs).begin();
 
                                                     } else {
