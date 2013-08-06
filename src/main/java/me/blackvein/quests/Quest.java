@@ -173,7 +173,13 @@ public class Quest {
         q.reset();
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (None)";
-        player.sendMessage(Quests.parseString(finished, q.currentQuest));
+        
+        String ps = Quests.parseString(finished, q.currentQuest);
+        
+        for (String msg : ps.split("<br>")) {
+        	player.sendMessage(msg);
+        }
+        
         if(moneyReward > 0 && Quests.economy != null){
             Quests.economy.depositPlayer(q.name, moneyReward);
             none = null;

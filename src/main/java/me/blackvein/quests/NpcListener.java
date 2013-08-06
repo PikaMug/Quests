@@ -107,7 +107,11 @@ public class NpcListener implements Listener {
                                     quester.questToTake = q.name;
 
                                     String s = extracted(quester);
-                                    player.sendMessage(s);
+                                    
+                                    for (String msg : s.split("<br>")) {
+                                    	player.sendMessage(msg);
+                                    }
+                                    
                                     plugin.conversationFactory.buildConversation((Conversable) player).begin();
 
                                 } else if (quester.currentQuest.equals(q) == false) {
@@ -127,8 +131,10 @@ public class NpcListener implements Listener {
                                     } else {
                                         quester.questToTake = q.name;
                                         String s = extracted(quester);
-
-                                        player.sendMessage(s);
+                                        
+                                        for (String msg : s.split("<br>")) {
+                                        	player.sendMessage(msg);
+                                        }
 
                                         plugin.conversationFactory.buildConversation((Conversable) player).begin();
                                     }

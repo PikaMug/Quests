@@ -92,7 +92,11 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
                             quester.questToTake = q.name;
 
                             String s = extracted(quester);
-                            player.sendMessage(s);
+                            
+                            for (String msg : s.split("<br>")) {
+                            	player.sendMessage(msg);
+                            }
+                            
                             plugin.conversationFactory.buildConversation((Conversable) player).begin();
 
                         }else{

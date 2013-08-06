@@ -222,8 +222,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 loadEvents();
                 log.log(Level.INFO, "[Quests] " + quests.size() + " Quest(s) loaded.");
                 log.log(Level.INFO, "[Quests] " + events.size() + " Event(s) loaded.");
+                questers.putAll(getOnlineQuesters());
                 if (snoop) {
-                	questers.putAll(getOnlineQuesters());
                     snoop();
                 }
             }
@@ -779,6 +779,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                                 + RESET + getQuest(quester.questToTake).description + "\n";
 
                                                         cs.sendMessage(s);
+                                                        
+                                                        for (String msg : s.split("<br>")) {
+                                                        	cs.sendMessage(msg);
+                                                        }
+                                                        
                                                         conversationFactory.buildConversation((Conversable) cs).begin();
 
                                                     } else {
