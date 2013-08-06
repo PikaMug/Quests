@@ -431,7 +431,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         public String getPromptText(ConversationContext context) {
 
             String text = GOLD + "- Create Quest -\n";
-            text += AQUA + "Create new Quest " + GOLD + "- Enter a name for the Quest (Or enter \'cancel\' to return)";
+            text += AQUA + "Create new Quest " + GOLD + "- " + Lang.get("enterQuestName");
 
             return text;
 

@@ -69,6 +69,7 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
 
+	public final static Logger log = Logger.getLogger("Minecraft");
     public static Economy economy = null;
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
@@ -77,35 +78,35 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static boolean npcEffects = true;
     public static boolean broadcastPartyCreation = true;
     public static int maxPartySize = 0;
-    public static String effect = "note";
-    final List<String> questerBlacklist = new LinkedList<String>();
-    public ConversationFactory conversationFactory;
-    ConversationFactory NPCConversationFactory;
-    QuestFactory questFactory;
-    EventFactory eventFactory;
-    Vault vault = null;
-    public CitizensPlugin citizens;
-    PlayerListener pListener;
-    NpcEffectThread effListener;
-    NpcListener npcListener;
-    EpicBossListener bossListener;
-    public Denizen denizen = null;
-    QuestTaskTrigger trigger;
-    final Map<String, Quester> questers = new HashMap<String, Quester>();
-    final LinkedList<Quest> quests = new LinkedList<Quest>();
-    public final LinkedList<Event> events = new LinkedList<Event>();
-    final LinkedList<NPC> questNPCs = new LinkedList<NPC>();
-    boolean allowCommands = true;
-    boolean allowCommandsForNpcQuests = false;
-    boolean showQuestReqs = true;
-    boolean allowQuitting = true;
-    boolean debug = false;
-    boolean load = false;
-    int killDelay = 0;
     public static int acceptTimeout = 20;
     public static int inviteTimeout = 20;
-    int totalQuestPoints = 0;
-    public final static Logger log = Logger.getLogger("Minecraft");
+    public static String effect = "note";
+    public final Map<String, Quester> questers = new HashMap<String, Quester>();
+    public final List<String> questerBlacklist = new LinkedList<String>();
+    public final LinkedList<Quest> quests = new LinkedList<Quest>();
+    public final LinkedList<Event> events = new LinkedList<Event>();
+    public final LinkedList<NPC> questNPCs = new LinkedList<NPC>();
+    public ConversationFactory conversationFactory;
+    public ConversationFactory NPCConversationFactory;
+    public QuestFactory questFactory;
+    public EventFactory eventFactory;
+    public Vault vault = null;
+    public CitizensPlugin citizens;
+    public PlayerListener pListener;
+    public NpcListener npcListener;
+    public EpicBossListener bossListener;
+    public NpcEffectThread effListener;
+    public Denizen denizen = null;
+    public QuestTaskTrigger trigger;
+    public boolean allowCommands = true;
+    public boolean allowCommandsForNpcQuests = false;
+    public boolean showQuestReqs = true;
+    public boolean allowQuitting = true;
+    public boolean debug = false;
+    public boolean load = false;
+    public int killDelay = 0;
+    public int totalQuestPoints = 0;
+    public Lang lang;
 
     @Override
     public void onEnable() {
@@ -180,7 +181,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         loadConfig();
-        Lang.initPhrases();
+        lang = new Lang(this);
+        lang.initPhrases();
+        lang.save();
 
         if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
             printInfo("[Quests] Quest data not found, writing default to file.");
@@ -326,6 +329,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         debug = config.getBoolean("debug-mode");
         killDelay = config.getInt("kill-delay");
         acceptTimeout = config.getInt("accept-timeout");
+        
+        if (config.contains("language")) {
+        	Lang.lang = config.getString("language");
+        } else {
+        	config.set("language", "en");
+        }
 
         if(config.contains("broadcast-party-creation")){
             broadcastPartyCreation = config.getBoolean("broadcast-party-creation");
