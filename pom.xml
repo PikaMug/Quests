@@ -34,7 +34,7 @@
             <id>mcMMO-repo</id>
             <url>http://repo.mcmmo.org</url>
         </repository>
-        
+
     </repositories>
 
     <dependencies>
@@ -43,11 +43,6 @@
             <artifactId>craftbukkit</artifactId>
             <version>LATEST</version>
         </dependency>
-        <dependency>
-       		<groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>LATEST</version>
-		</dependency>
         <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizens</artifactId>
