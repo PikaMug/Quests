@@ -1,6 +1,6 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
-import main.java.me.blackvein.quests.util.ReflectionUtil;
+import me.blackvein.quests.util.ReflectionUtil;
 import net.minecraft.server.v1_6_R2.Packet63WorldParticles;
 
 import org.bukkit.Location;

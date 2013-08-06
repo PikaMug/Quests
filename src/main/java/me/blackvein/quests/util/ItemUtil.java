@@ -1,10 +1,10 @@
-package main.java.me.blackvein.quests.util;
+package me.blackvein.quests.util;
 
 import java.util.LinkedList;
 import java.util.Map.Entry;
-import main.java.me.blackvein.quests.ColorUtil;
-import main.java.me.blackvein.quests.Quester;
-import main.java.me.blackvein.quests.Quests;
+import me.blackvein.quests.ColorUtil;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;

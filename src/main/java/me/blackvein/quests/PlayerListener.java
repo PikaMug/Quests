@@ -1,4 +1,4 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
 import java.io.File;
 

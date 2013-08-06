@@ -1,4 +1,4 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
 import me.ThaH3lper.com.Api.BossDeathEvent;
 import org.bukkit.entity.Player;

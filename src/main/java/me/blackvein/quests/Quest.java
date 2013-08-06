@@ -1,9 +1,9 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import java.util.LinkedList;
 import java.util.List;
-import main.java.me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

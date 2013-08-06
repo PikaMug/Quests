@@ -1,15 +1,15 @@
-package main.java.me.blackvein.quests.prompts;
+package me.blackvein.quests.prompts;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import main.java.me.blackvein.quests.ColorUtil;
-import main.java.me.blackvein.quests.QuestFactory;
-import main.java.me.blackvein.quests.Quester;
-import main.java.me.blackvein.quests.Quests;
-import main.java.me.blackvein.quests.util.CK;
-import main.java.me.blackvein.quests.util.ItemUtil;
-import main.java.me.blackvein.quests.util.Lang;
+import me.blackvein.quests.ColorUtil;
+import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.NumericPrompt;

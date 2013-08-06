@@ -1,8 +1,8 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
 import java.io.File;
 import java.util.*;
-import main.java.me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.ItemUtil;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

@@ -1,4 +1,4 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
 import java.io.File;
 import java.util.HashMap;
@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import main.java.me.blackvein.quests.prompts.RequirementsPrompt;
-import main.java.me.blackvein.quests.prompts.RewardsPrompt;
-import main.java.me.blackvein.quests.prompts.StagesPrompt;
-import main.java.me.blackvein.quests.util.CK;
-import main.java.me.blackvein.quests.util.ItemUtil;
-import main.java.me.blackvein.quests.util.Lang;
+import me.blackvein.quests.prompts.RequirementsPrompt;
+import me.blackvein.quests.prompts.RewardsPrompt;
+import me.blackvein.quests.prompts.StagesPrompt;
+import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;

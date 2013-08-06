@@ -1,4 +1,4 @@
-package main.java.me.blackvein.quests.util;
+package me.blackvein.quests.util;
 
 public class CK {
 

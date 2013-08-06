@@ -1,10 +1,10 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
-import main.java.me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;

@@ -1,8 +1,8 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
-import main.java.me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;

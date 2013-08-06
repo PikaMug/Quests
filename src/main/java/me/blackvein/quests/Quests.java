@@ -1,4 +1,4 @@
-package main.java.me.blackvein.quests;
+package me.blackvein.quests;
 
 import java.io.File;
 import java.sql.Connection;
@@ -22,9 +22,9 @@ import java.util.logging.Logger;
 
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
-import main.java.me.blackvein.quests.prompts.QuestAcceptPrompt;
-import main.java.me.blackvein.quests.util.ItemUtil;
-import main.java.me.blackvein.quests.util.Lang;
+import me.blackvein.quests.prompts.QuestAcceptPrompt;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import net.aufdemrand.denizen.Denizen;
 import net.aufdemrand.denizen.scripts.ScriptRegistry;
 import net.citizensnpcs.api.CitizensAPI;

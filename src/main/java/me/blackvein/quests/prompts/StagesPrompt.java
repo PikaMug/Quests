@@ -1,8 +1,8 @@
-package main.java.me.blackvein.quests.prompts;
+package me.blackvein.quests.prompts;
 
-import main.java.me.blackvein.quests.ColorUtil;
-import main.java.me.blackvein.quests.QuestFactory;
-import main.java.me.blackvein.quests.util.CK;
+import me.blackvein.quests.ColorUtil;
+import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.util.CK;
 
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
