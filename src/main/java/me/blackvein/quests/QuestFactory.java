@@ -391,11 +391,29 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 for (Quest q : quests.getQuests()) {
 
-                    if (q.getName().equalsIgnoreCase(input) || q.getName().toLowerCase().contains(input.toLowerCase())) {
+                    if (q.getName().equalsIgnoreCase(input)) {
                         loadQuest(context, q);
                         return new CreateMenuPrompt();
                     }
+                    
+                }
+                
+                for (Quest q : quests.getQuests()) {
 
+                    if (q.getName().toLowerCase().startsWith(input.toLowerCase())) {
+                        loadQuest(context, q);
+                        return new CreateMenuPrompt();
+                    }
+                    
+                }
+                
+                for (Quest q : quests.getQuests()) {
+
+                    if (q.getName().toLowerCase().contains(input.toLowerCase())) {
+                        loadQuest(context, q);
+                        return new CreateMenuPrompt();
+                    }
+                    
                 }
 
                 return new SelectEditPrompt();
