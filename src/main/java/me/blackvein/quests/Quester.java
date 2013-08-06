@@ -30,6 +30,7 @@ public class Quester {
     public Quest currentQuest;
     public String questToTake;
     Stage currentStage;
+    public int currentStageIndex = 0;
     int questPoints = 0;
     Quests plugin;
     public LinkedList<String> completedQuests = new LinkedList<String>();
@@ -1673,7 +1674,7 @@ public class Quester {
         if (currentQuest != null) {
 
             data.set("currentQuest", currentQuest.name);
-            data.set("currentStage", currentQuest.stages.indexOf(currentStage));
+            data.set("currentStage", currentStageIndex);
             data.set("quest-points", questPoints);
 
             if (blocksDamaged.isEmpty() == false) {

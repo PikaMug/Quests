@@ -64,7 +64,7 @@ public class Quest {
 
             Player player = q.getPlayer();
 
-            if(stages.indexOf(q.currentStage) == (stages.size() - 1)){
+            if(q.currentStageIndex >= (stages.size() - 1)){
 
                 if(q.currentStage.script != null)
                     plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
@@ -81,6 +81,7 @@ public class Quest {
                 if(q.currentStage.event != null)
                     q.currentStage.event.happen(q);
                 q.currentStage = stages.get(stages.indexOf(q.currentStage) + 1);
+                q.currentStageIndex++;
                 q.addEmpties();
 
                 player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
@@ -251,6 +252,7 @@ public class Quest {
         }
         q.currentQuest = null;
         q.currentStage = null;
+        q.currentStageIndex = 0;
 
         q.saveData();
         player.updateInventory();

@@ -1175,6 +1175,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     mobLocNames = (LinkedList<String>) cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES);
                 }
             }
+            
+            if (cc.getSessionData(pref + CK.S_REACH_LOCATIONS) != null) {
+            	reachLocs = (LinkedList<String>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS);
+            	reachRadii = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
+            	reachNames = (LinkedList<String>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
+            }
 
             if (cc.getSessionData(pref + CK.S_TAME_TYPES) != null) {
                 tames = (LinkedList<String>) cc.getSessionData(pref + CK.S_TAME_TYPES);
