@@ -1,50 +1,32 @@
 package me.blackvein.quests.util;
 
-import java.util.HashMap;
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import me.blackvein.quests.Quests;
+
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Lang {
 
     public static String lang = "en";
-    private static Map<String, String> en = new HashMap<String, String>();
-    private static Map<String, String> fr = new HashMap<String, String>();
-    private static Map<String, String> es = new HashMap<String, String>();
-    private static Map<String, String> de = new HashMap<String, String>();
-    private static Map<String, String> sv = new HashMap<String, String>();
-    private static Map<String, String> nl = new HashMap<String, String>();
-    private static Map<String, String> pl = new HashMap<String, String>();
-    private static Map<String, String> da = new HashMap<String, String>();
-    private static Map<String, String> zh = new HashMap<String, String>();
-    private static Map<String, String> no = new HashMap<String, String>();
+    
+    private static Map<String, String> en = new LinkedHashMap<String, String>();
 
+	private Quests plugin;
+
+    public Lang (Quests plugin) {
+    	this.plugin = plugin;
+    }
+    
     public static String get(String key){
-
-        if(lang.equals("en"))
-            return en.get(key);
-        else if(lang.equals("fr"))
-            return fr.get(key);
-        else if(lang.equals("es"))
-            return es.get(key);
-        else if(lang.equals("de"))
-            return de.get(key);
-        else if(lang.equals("sv"))
-            return sv.get(key);
-        else if(lang.equals("nl"))
-            return nl.get(key);
-        else if(lang.equals("pl"))
-            return pl.get(key);
-        else if(lang.equals("da"))
-            return da.get(key);
-        else if(lang.equals("zh"))
-            return zh.get(key);
-        else if(lang.equals("no"))
-            return no.get(key);
-        else
-            return en.get(key);
-
+    	return en.get(key);
     }
 
-    public static void initPhrases(){
+    public void initPhrases(){
 
         //English
 
@@ -184,17 +166,17 @@ public class Lang {
             en.put("eventEditorSetPotionDurationsPrompt", "Enter effect durations (in milliseconds) separating each one by a space, or enter \"cancel\" to return");
             en.put("eventEditorSetPotionMagnitudesPrompt", "Enter potion effect magnitudes separating each one by a space, or enter \"cancel\" to return");
             en.put("eventEditorSetHungerPrompt", "Enter hunger level, or -1 to remove it");
-                en.put("eventEditorHungerLevelAtLeastZero", "Hunger level must be at least 0!");
+            en.put("eventEditorHungerLevelAtLeastZero", "Hunger level must be at least 0!");
             en.put("eventEditorSetSaturationPrompt", "Enter saturation level, or -1 to remove it");
-                en.put("eventEditorSaturationLevelAtLeastZero", "Saturation level must be at least 0!");
+            en.put("eventEditorSaturationLevelAtLeastZero", "Saturation level must be at least 0!");
             en.put("eventEditorSetHealthPrompt", "Enter health level, or -1 to remove it");
-                en.put("eventEditorHealthLevelAtLeastZero", "Health level must be at least 0!");
+            en.put("eventEditorHealthLevelAtLeastZero", "Health level must be at least 0!");
             en.put("eventEditorSetTeleportPrompt", "Right-click on a block to teleport the player to, then enter \"done\" to finish,\nor enter \"clear\" to clear the teleport location, or \"cancel\" to return");
             en.put("eventEditorCommandsNote", "Note: You may use <player> to refer to the player's name.");
             en.put("eventEditorSetCommandsPrompt", "Enter commands separating each one by a comma, or enter \"clear\" to clear the list, or enter \"cancel\" to return.");
             en.put("eventEditorSet", "");
-            en.put("eventEditorSet", "");
-            en.put("eventEditorSet", "");
+            //en.put("eventEditorSet", "");
+            //en.put("eventEditorSet", "");
 
 
             //
@@ -237,6 +219,28 @@ public class Lang {
             en.put("invalidOption", "Invalid option!");
             //
         //
+            
+        File file = new File(plugin.getDataFolder(), "/lang/" + lang + ".yml");
+        YamlConfiguration langFile = YamlConfiguration.loadConfiguration(file);
+        
+        for (Entry<String, Object> e : langFile.getValues(true).entrySet()) {
+        	en.put(e.getKey(), (String) e.getValue());
+        }
 
+    }
+    
+    public void save() {
+    	File file = new File(plugin.getDataFolder(), "/lang/" + lang + ".yml");
+    	YamlConfiguration langFile = YamlConfiguration.loadConfiguration(file);
+    	
+    	for (Entry<String, String> e : en.entrySet()) {
+    		langFile.set(e.getKey(), e.getValue());
+    	}
+    	
+    	try {
+			langFile.save(file);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
     }
 }
