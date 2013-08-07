@@ -29,11 +29,60 @@ public class Lang {
     public void initPhrases(){
 
         //English
-
-            //Quests
-            en.put("enterQuestName", "Enter Quest name (or \"cancel\" to return)");
-
-
+//TODO: If finished, completely check everything.
+    	//Quests
+    		//Quest create menu
+    		en.put("questEditorHeader", "Create Quest");
+    		en.put("questEditorCreate", "Create new Quest");
+    		en.put("questEditorEdit", "Edit a Quest");
+    		en.put("questEditorDelete", "Delete Quest");
+            en.put("questEditorName", "Set name");
+            
+            en.put("questEditorAskMessage", "Set ask message");
+            en.put("questEditorFinishMessage", "Set finish message");
+            en.put("questEditorRedoDelay", "Set redo delay");
+            en.put("questEditorNPCStart", "Set NPC start");
+            en.put("questEditorBlockStart", "Set Block start");
+            en.put("questEditorInitialEvent", "Set initial Event");
+            en.put("questEditorReqs", "Edit Requirements");
+            en.put("questEditorStages", "Edit Stage");
+            en.put("questEditorRews", "Edit Rewards");
+            
+            en.put("questEditorEnterQuestName", "Enter Quest name (or \"cancel\" to return)");
+            en.put("questEditorEnterAskMessage", "Enter ask message (or \"cancel\" to return)");
+            en.put("questEditorEnterFinishMessage", "Enter finish message (or \"cancel\" to return)");
+            en.put("questEditorEnterRedoDelay", "Enter amount of time (in milliseconds), 0 to clear the redo delay or -1 to cancel ");
+            en.put("questEditorEnterNPCStart", "Enter NPC ID, -1 to clear the NPC start or -2 to cancel");
+            en.put("questEditorEnterBlockStart", "Right-click on a block to use as a start point, then enter \"done\" to save,\n"
+                    + "or enter \"clear\" to clear the block start, or \"cancel\" to return");
+            en.put("questEditorEnterInitialEvent", "Enter an Event name, or enter \"clear\" to clear the initial Event, or \"cancel\" to return");
+            
+            //Quest create menu errors
+            en.put("questEditorNameExists", "A Quest with that name already exists!");
+			en.put("questEditorBeingEdited", "Someone is creating/editing a Quest with that name!");
+			en.put("questEditorInvalidQuestName", "Name may not contain commas!");
+			en.put("questEditorInvalidEventName", "is not a valid event name!");
+			en.put("questEditorInvalidNPC", "No NPC exists with that id!");
+			en.put("questEditorNoStartBlockSelected", "You must select a block first.");
+			en.put("questEditorPositiveAmount", "Amount must be a positive number.");
+			en.put("questEditorQuestAsRequirement1", "The following Quests have");
+			en.put("questEditorQuestAsRequirement2", "as a requirement:");
+			en.put("questEditorQuestAsRequirement3", "You must modify these Quests so that they do not use it before deleting it.");
+			en.put("questEditorQuestNotFound", "Quest not found!");
+			
+			en.put("questEditorEventCleared", "Initial Event cleared.");
+			en.put("questEditorSave", "Finish and save");
+			
+			en.put("questEditorNeedAskMessage", "You must set an ask message!");
+			en.put("questEditorNeedFinishMessage", "You must set a finish message!");
+			en.put("questEditorNeedStages", "Your Quest has no Stages!");
+			en.put("questEditorSaved", "Quest saved! (You will need to perform a Quest reload for it to appear)");
+			en.put("questEditorExited", "Are you sure you want to exit without saving?");
+			en.put("questEditorDeleted", "Are you sure you want to delete the Quest");
+            
+			en.put("questEditorNoPermsCreate", "You do not have permission to create Quests.");
+			en.put("questEditorNoPermsEdit", "You do not have permission to edit Quests.");
+			en.put("questEditorNoPermsDelete", "You do not have permission to delete Quests.");
             //
 
 
@@ -206,6 +255,7 @@ public class Lang {
 
             //Misc
             en.put("event", "Event");
+            en.put("save", "save");
             en.put("exit", "Exit");
             en.put("exited", "Exited.");
             en.put("yes", "Yes");

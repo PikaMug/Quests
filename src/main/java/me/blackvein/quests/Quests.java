@@ -1997,11 +1997,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
 
-                        if (ScriptRegistry.containsScript("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
+                        if (ScriptRegistry.containsScript(config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run"))) {
                             trigger = new QuestTaskTrigger();
                             stage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "script-to-run: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a Denizen script!");
+                            printSevere(GOLD + "[Quests] script-to-run: in Stage " + s2 + " of Quest " +  quest.name + " is not a Denizen script!");
                             stageFailed = true;
                             break;
                         }
@@ -2015,7 +2015,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
                             breakids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "break-block-ids: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                            printSevere(GOLD + "[Quests] break-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -3558,9 +3558,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliseconds);
+        
+        Calendar epoch = Calendar.getInstance();
+        epoch.setTimeInMillis(0);
 
-        long days = calendar.get(Calendar.DAY_OF_YEAR) - 1;
-        long hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
+        long days = calendar.get(Calendar.DAY_OF_YEAR) - epoch.get(Calendar.DAY_OF_YEAR);
+        long hours = calendar.get(Calendar.HOUR_OF_DAY) - epoch.get(Calendar.HOUR_OF_DAY);
         long minutes = calendar.get(Calendar.MINUTE);
         long seconds = calendar.get(Calendar.SECOND);
         long milliSeconds2 = calendar.get(Calendar.MILLISECOND);
