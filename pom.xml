@@ -11,6 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <libs.dir>${project.basedir}/lib</libs.dir>
     </properties>
 
     <repositories>
@@ -68,7 +69,7 @@
             <artifactId>EpicBoss</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/EpicBossRecoded.jar</systemPath>
+            <systemPath>${libs.dir}/EpicBossRecoded.jar</systemPath>
         </dependency>
     </dependencies>
 
