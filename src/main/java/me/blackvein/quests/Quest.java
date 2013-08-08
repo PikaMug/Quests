@@ -280,17 +280,15 @@ public class Quest {
             }else if(other.blockStart == null && blockStart != null)
                 return false;
 
-            for(String s : other.commands){
-
-                if(commands.size() >= (other.commands.indexOf(s))){
-
-                    if(commands.get(other.commands.indexOf(s)).equals(s) == false)
-                        return false;
-
-                }else{
-                    return false;
-                }
-
+            if(commands.size() == other.commands.size()){
+            	
+            	for (int i = 0; i < commands.size(); i++) {
+            		if (commands.get(i).equals(other.commands.get(i)) == false) 
+            			return false;
+            	}
+            	
+            }else{
+                return false;
             }
 
             if(other.description.equals(description) == false)
