@@ -430,8 +430,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + "- " + Lang.get("questCreateHeader") + " -\n";
-            text += AQUA + Lang.get("questCreateNew") + " " + GOLD + "- " + Lang.get("enterQuestName");
+            String text = GOLD + "- " + Lang.get("questEditorHeader") + " -\n";
+            text += AQUA + Lang.get("questEditorCreate") + " " + GOLD + "- " + Lang.get("questEditorEnterQuestName");
 
             return text;
 
@@ -446,7 +446,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                     if (q.name.equalsIgnoreCase(input)) {
 
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questNameExists"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
                         return new QuestNamePrompt();
 
                     }
@@ -455,14 +455,14 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 if (names.contains(input)) {
 
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questBeingEdited"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new QuestNamePrompt();
 
                 }
 
                 if (input.contains(",")) {
 
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questNameContainsCommas"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new QuestNamePrompt();
 
                 }
@@ -485,7 +485,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + Lang.get("enterNPCStart");
+            return ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
 
         }
 
@@ -495,7 +495,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (input.intValue() > -1) {
 
                 if (CitizensAPI.getNPCRegistry().getById(input.intValue()) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("npcNonExistant"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
                     return new SetNpcStartPrompt();
                 }
 
@@ -508,7 +508,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             } else if (input.intValue() == -2) {
                 return new CreateMenuPrompt();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("npcNonExistant"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
                 return new SetNpcStartPrompt();
             }
 
@@ -520,7 +520,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + Lang.get("enterBlockStart");
+            return ChatColor.YELLOW + Lang.get("questEditorEnterBlockStart");
 
         }
 
@@ -538,7 +538,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                         context.setSessionData(CK.Q_START_BLOCK, loc);
                         selectedBlockStarts.remove(player);
                     } else {
-                        player.sendMessage(ChatColor.RED + Lang.get("blockNotSelected"));
+                        player.sendMessage(ChatColor.RED + Lang.get("questEditorNoStartBlockSelected"));
                         return new BlockStartPrompt();
                     }
 
@@ -567,7 +567,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + Lang.get("enterQuestName");
+            return ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
 
         }
 
@@ -585,7 +585,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                         }
 
                         if (s != null && s.equalsIgnoreCase(input) == false) {
-                            context.getForWhom().sendRawMessage(RED + Lang.get("questNameExists"));
+                            context.getForWhom().sendRawMessage(RED + Lang.get("questEditorNameExists"));
                             return new SetNamePrompt();
                         }
                     }
@@ -593,13 +593,13 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 }
 
                 if (names.contains(input)) {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("questBeingEdited"));
+                    context.getForWhom().sendRawMessage(RED + Lang.get("questEditorBeingEdited"));
                     return new SetNamePrompt();
                 }
 
                 if (input.contains(",")) {
 
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questNameContainsCommas"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new QuestNamePrompt();
 
                 }
@@ -620,7 +620,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + Lang.get("enterAskMessage");
+            return ChatColor.YELLOW + Lang.get("questEditorEnterAskMessage");
 
         }
 
@@ -647,7 +647,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + Lang.get("enterFinishMessage");
+            return ChatColor.YELLOW + Lang.get("questEditorEnterFinishMessage");
 
         }
 

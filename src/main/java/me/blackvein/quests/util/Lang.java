@@ -45,7 +45,7 @@ public class Lang {
             en.put("questEditorBlockStart", "Set Block start");
             en.put("questEditorInitialEvent", "Set initial Event");
             en.put("questEditorReqs", "Edit Requirements");
-            en.put("questEditorStages", "Edit Stage");
+            en.put("questEditorStages", "Edit Stages");
             en.put("questEditorRews", "Edit Rewards");
             
             en.put("questEditorEnterQuestName", "Enter Quest name (or \"cancel\" to return)");
@@ -255,7 +255,7 @@ public class Lang {
 
             //Misc
             en.put("event", "Event");
-            en.put("save", "save");
+            en.put("save", "Save");
             en.put("exit", "Exit");
             en.put("exited", "Exited.");
             en.put("yes", "Yes");

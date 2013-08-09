@@ -3788,7 +3788,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 				 player.sendMessage(YELLOW + "Start message cleared.");
 				 return new CreateStagePrompt(stageNum, questFactory, citizens);
 			 } else {
-				 return new StartMessagePrompt();
+				 return new CreateStagePrompt(stageNum, questFactory, citizens);
 			 }
 		}
 
@@ -3817,7 +3817,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 				 player.sendMessage(YELLOW + "Complete message cleared.");
 				 return new CreateStagePrompt(stageNum, questFactory, citizens);
 			 } else {
-				 return new CompleteMessagePrompt();
+				 return new CreateStagePrompt(stageNum, questFactory, citizens);
 			 }
 		}
 
