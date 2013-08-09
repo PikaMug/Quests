@@ -97,7 +97,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil{
             }
         }
 
-        if(context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null){
+        if(context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null){
         	text += GRAY + "" + BOLD + "7 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
         }else if(context.getSessionData(CK.Q_FAIL_MESSAGE) == null){
         	text += RED + "" + BOLD + "7 - " + RESET + RED + "Set fail requirements message (Required)\n";
