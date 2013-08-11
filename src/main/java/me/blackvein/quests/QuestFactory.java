@@ -485,7 +485,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
+            return ChatColor.YELLOW + Lang.get("questEditorEnterNPCStart");
 
         }
 

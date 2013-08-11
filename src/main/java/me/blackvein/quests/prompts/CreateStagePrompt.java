@@ -2230,11 +2230,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set mob types (None set)\n";
                 text += GRAY + "2 - Set mob amounts (No mob types set)\n";
-                text += DARKGRAY + "|---------Optional---------|";
+                text += DARKGRAY + "|---------Optional---------|\n";
                 text += GRAY + "3 - Set kill locations (No mob types set)\n";
                 text += GRAY + "4 - Set kill location radii (No mob types set)\n";
                 text += GRAY + "5 - Set kill location names (No mob types set)\n";
-                text += DARKGRAY + "|--------------------------|";
+                text += DARKGRAY + "|--------------------------|\n";
                 text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Clear\n";
                 text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Done";
             } else {
