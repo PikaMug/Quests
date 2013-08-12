@@ -84,6 +84,46 @@ public class Lang {
 			en.put("questEditorNoPermsEdit", "You do not have permission to edit Quests.");
 			en.put("questEditorNoPermsDelete", "You do not have permission to delete Quests.");
             //
+			
+			//Stages
+			//Menu
+			en.put("stageEditorEditStage", "Edit Stage");
+			en.put("stageEditorNewStage", "Add new Stage");
+			//create prompt
+			en.put("stageEditorStages", "Stages");
+			en.put("stageEditorStage", "Stage");
+			en.put("stageEditorEditStage", "Edit Stage");
+			en.put("stageEditorNewStage", "Add new Stage");
+			en.put("stageEditorBreakBlocks", "Break Blocks");
+			en.put("stageEditorDamageBlocks", "Damage Blocks");
+			en.put("stageEditorPlaceBlocks", "Place Blocks");
+			en.put("stageEditorUseBlocks", "Use Blocks");
+			en.put("stageEditorCutBlocks", "Cut Blocks");
+			en.put("stageEditorCatchFish", "Catch Fish");
+			en.put("stageEditorFish", "fish");
+			en.put("stageEditorKillPlayers", "Kill Players");
+			en.put("stageEditorPlayers", "players");
+			en.put("stageEditorEnchantItems", "Enchant Items");
+			en.put("stageEditorDeliverItems", "Deliver Items");
+			en.put("stageEditorTalkToNPCs", "Talk to NPCs");
+			en.put("stageEditorKillNPCs", "Kill NPCs");
+			en.put("stageEditorKillBosses", "Kill Bosses");
+			en.put("stageEditorKillMobs", "Kill Mobs");
+			en.put("stageEditorReachLocs", "");
+			en.put("stageEditorReachRadii1", "Reach within");
+			en.put("stageEditorReachRadii2", "blocks of");
+			en.put("stageEditorTameMobs", "Tame Mobs");
+			en.put("stageEditorShearSheep", "Shear Sheep");
+			en.put("stageEditorDelayMessage", "Delay Message");
+			en.put("stageEditorDenizenScript", "Denizen Script");
+			en.put("stageEditorStartMessage", "Start Message");
+			en.put("stageEditorDelete", "Delete Stage");
+			
+			en.put("stageEditorSetBlockIds", "Set block IDs");
+			en.put("stageEditorSetBlockAmounts", "Set block amounts");
+			
+			//prompts
+			
 
 
             //Events
@@ -255,15 +295,18 @@ public class Lang {
 
             //Misc
             en.put("event", "Event");
+            en.put("delay", "Delay");
             en.put("save", "Save");
             en.put("exit", "Exit");
             en.put("exited", "Exited.");
             en.put("yes", "Yes");
             en.put("no", "No");
+            en.put("clear", "Clear");
             en.put("done", "Done");
             en.put("quit", "Quit");
-            en.put("clear", "Clear");
             en.put("noneSet", "None set");
+            en.put("noDelaySet", "No delay set");
+            en.put("noIdsSet", "No IDs set");
             en.put("worlds", "Worlds");
             en.put("mobs", "Mobs");
             en.put("invalidOption", "Invalid option!");
