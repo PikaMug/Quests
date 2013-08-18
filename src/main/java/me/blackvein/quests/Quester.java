@@ -2063,11 +2063,11 @@ public class Quester {
                 return true;
             }
 
-            int stageIndex = data.getInt("currentStage");
+            currentStageIndex = data.getInt("currentStage");
 
             for (Stage s : quest.stages) {
 
-                if (quest.stages.indexOf(s) == (stageIndex)) {
+                if (quest.stages.indexOf(s) == (currentStageIndex)) {
                     stage = s;
                     break;
                 }

@@ -234,9 +234,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
 
         if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
-            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillBosses") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillMobs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillBosses") + "\n";
+            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillMobs") + "\n";
 
             LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_TYPES);
             LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
@@ -462,8 +462,8 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(pref + CK.S_BREAK_IDS) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockIds") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noIdsSet") + ")\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockIds") + "\n";
@@ -502,13 +502,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 return new BreakBlockIdsPrompt();
             } else if (input.equalsIgnoreCase("2")) {
                 if (context.getSessionData(pref + CK.S_BREAK_IDS) == null) {
-                    context.getForWhom().sendRawMessage(RED + "You must set Block IDs first!");
+                    context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoBlockIds"));
                     return new BreakBlockListPrompt();
                 } else {
                     return new BreakBlockAmountsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
-                context.getForWhom().sendRawMessage(YELLOW + "Break blocks objective cleared.");
+                context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorBreakBlocksCleared"));
                 context.setSessionData(pref + CK.S_BREAK_IDS, null);
                 context.setSessionData(pref + CK.S_BREAK_AMOUNTS, null);
                 return new BreakBlockListPrompt();
@@ -532,7 +532,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 if (one == two) {
                     return new CreateStagePrompt(stageNum, questFactory, citizens);
                 } else {
-                    context.getForWhom().sendRawMessage(RED + "The " + GOLD + "block IDs list" + RED + " and " + GOLD + " block amounts list " + RED + "are not the same size!");
+                    context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorInvalidIdAmountList"));
                     return new BreakBlockListPrompt();
                 }
             }
@@ -553,13 +553,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.";
+            return YELLOW + Lang.get("stageEditorEnterBlockIds");
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
                 String[] args = input.split(" ");
                 LinkedList<Integer> ids = new LinkedList<Integer>();
@@ -572,17 +572,17 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             if (ids.contains(Integer.parseInt(s)) == false) {
                                 ids.add(Integer.parseInt(s));
                             } else {
-                                context.getForWhom().sendRawMessage(RED + " List contains duplicates!");
+                                context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorContainsDuplicates"));
                                 return new BreakBlockIdsPrompt();
                             }
 
                         } else {
-                            context.getForWhom().sendRawMessage(PINK + s + RED + " is not a valid block ID!");
+                            context.getForWhom().sendRawMessage(PINK + s + RED + " " + Lang.get("stageEditorInvalidBlockId"));
                             return new BreakBlockIdsPrompt();
                         }
 
                     } catch (Exception e) {
-                        context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
+                        context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorInvalidEntryInt") + "\n" + PINK + s);
                         return new BreakBlockIdsPrompt();
                     }
 
@@ -744,7 +744,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.";
+            return YELLOW + Lang.get("stageEditorEnterBlockIds");
         }
 
         @Override
@@ -935,7 +935,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.";
+            return YELLOW + Lang.get("stageEditorEnterBlockIds");
         }
 
         @Override
@@ -1126,7 +1126,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.";
+            return YELLOW + Lang.get("stageEditorEnterBlockIds");
         }
 
         @Override
@@ -1317,7 +1317,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.";
+            return YELLOW + Lang.get("stageEditorEnterBlockIds");
         }
 
         @Override
@@ -3799,7 +3799,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
     	@Override
 		public String getPromptText(ConversationContext context) {
 
-    		return YELLOW + "Enter start message, or enter \"clear\" to clear the message, or \"cancel\" to return";
+    		return YELLOW + "Enter complete message, or enter \"clear\" to clear the message, or \"cancel\" to return";
 
 		}
 

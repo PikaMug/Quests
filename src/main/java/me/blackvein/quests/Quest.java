@@ -1,6 +1,9 @@
 package me.blackvein.quests;
 
+import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.util.player.UserManager;
+
 import java.util.LinkedList;
 import java.util.List;
 import me.blackvein.quests.util.ItemUtil;
@@ -63,8 +66,7 @@ public class Quest {
         if(q.currentStage.delay < 0){
 
             Player player = q.getPlayer();
-
-            if(q.currentStageIndex >= (stages.size() - 1)){
+           	if(stages.indexOf(q.currentStage) == (q.currentQuest.stages.size() - 1)){
 
                 if(q.currentStage.script != null)
                     plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
@@ -80,7 +82,7 @@ public class Quest {
                     plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
                 if(q.currentStage.event != null)
                     q.currentStage.event.happen(q);
-                q.currentStage = stages.get(stages.indexOf(q.currentStage) + 1);
+                q.currentStage = stages.get(q.currentStageIndex +  1);
                 q.currentStageIndex++;
                 q.addEmpties();
 
@@ -210,7 +212,7 @@ public class Quest {
 
         for(String s : mcmmoSkills){
 
-            new McMMOPlayer(player).getProfile().skillUp(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
+        	UserManager.getPlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
             none = null;
 
         }
@@ -251,6 +253,12 @@ public class Quest {
         if(exp > 0){
             player.sendMessage("- " + ChatColor.DARK_GREEN + exp + ChatColor.DARK_PURPLE + " Experience");
             none = null;
+        }
+        
+        if (mcmmoSkills.isEmpty() == false) {
+        	for (String s : mcmmoSkills) {
+        		player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " Experience");
+        	}
         }
 
         if(none != null){

@@ -117,10 +117,18 @@ public class Lang {
 			en.put("stageEditorDelayMessage", "Delay Message");
 			en.put("stageEditorDenizenScript", "Denizen Script");
 			en.put("stageEditorStartMessage", "Start Message");
+			en.put("stageEditorCompleteMessage", "Complete Message");
 			en.put("stageEditorDelete", "Delete Stage");
 			
 			en.put("stageEditorSetBlockIds", "Set block IDs");
 			en.put("stageEditorSetBlockAmounts", "Set block amounts");
+			en.put("stageEditorNoBlockIds", "You must set Block IDs first!");
+			en.put("stageEditorBreakBlocksCleared", "Break blocks objective cleared.");
+			en.put("stageEditorInvalidIdAmountList", "The block IDs list block amounts list are not the same size!");
+			en.put("stageEditorEnterBlockIds", "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.");
+			en.put("stageEditorContainsDuplicates", "List contains duplicates!");
+			en.put("stageEditorInvalidBlockId", "is not a valid block ID!");
+			en.put("stageEditorInvalidEntryInt", "Invalid entry, input was not a list of numbers!");
 			
 			//prompts
 			
