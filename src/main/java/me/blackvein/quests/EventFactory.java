@@ -1885,7 +1885,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     text += GRAY + "3 - " + Lang.get("eventEditorAddSpawnLocation") + Lang.get("eventEditorNoAmountsSet") + "\n";
                 } else {
 
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobAmounts");
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobAmounts") + "\n";
                     for (int i : (LinkedList<Integer>) context.getSessionData(CK.E_MOB_AMOUNTS)) {
                         text += GRAY + "    - " + DARKAQUA + i + "\n";
                     }

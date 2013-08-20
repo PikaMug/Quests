@@ -29,12 +29,109 @@ public class Lang {
     public void initPhrases(){
 
         //English
-
-            //Quests
-            en.put("enterQuestName", "Enter Quest name (or \"cancel\" to return)");
-
-
+//TODO: If finished, completely check everything.
+    	//Quests
+    		//Quest create menu
+    		en.put("questEditorHeader", "Create Quest");
+    		en.put("questEditorCreate", "Create new Quest");
+    		en.put("questEditorEdit", "Edit a Quest");
+    		en.put("questEditorDelete", "Delete Quest");
+            en.put("questEditorName", "Set name");
+            
+            en.put("questEditorAskMessage", "Set ask message");
+            en.put("questEditorFinishMessage", "Set finish message");
+            en.put("questEditorRedoDelay", "Set redo delay");
+            en.put("questEditorNPCStart", "Set NPC start");
+            en.put("questEditorBlockStart", "Set Block start");
+            en.put("questEditorInitialEvent", "Set initial Event");
+            en.put("questEditorReqs", "Edit Requirements");
+            en.put("questEditorStages", "Edit Stages");
+            en.put("questEditorRews", "Edit Rewards");
+            
+            en.put("questEditorEnterQuestName", "Enter Quest name (or \"cancel\" to return)");
+            en.put("questEditorEnterAskMessage", "Enter ask message (or \"cancel\" to return)");
+            en.put("questEditorEnterFinishMessage", "Enter finish message (or \"cancel\" to return)");
+            en.put("questEditorEnterRedoDelay", "Enter amount of time (in milliseconds), 0 to clear the redo delay or -1 to cancel ");
+            en.put("questEditorEnterNPCStart", "Enter NPC ID, -1 to clear the NPC start or -2 to cancel");
+            en.put("questEditorEnterBlockStart", "Right-click on a block to use as a start point, then enter \"done\" to save,\n"
+                    + "or enter \"clear\" to clear the block start, or \"cancel\" to return");
+            en.put("questEditorEnterInitialEvent", "Enter an Event name, or enter \"clear\" to clear the initial Event, or \"cancel\" to return");
+            
+            //Quest create menu errors
+            en.put("questEditorNameExists", "A Quest with that name already exists!");
+			en.put("questEditorBeingEdited", "Someone is creating/editing a Quest with that name!");
+			en.put("questEditorInvalidQuestName", "Name may not contain commas!");
+			en.put("questEditorInvalidEventName", "is not a valid event name!");
+			en.put("questEditorInvalidNPC", "No NPC exists with that id!");
+			en.put("questEditorNoStartBlockSelected", "You must select a block first.");
+			en.put("questEditorPositiveAmount", "Amount must be a positive number.");
+			en.put("questEditorQuestAsRequirement1", "The following Quests have");
+			en.put("questEditorQuestAsRequirement2", "as a requirement:");
+			en.put("questEditorQuestAsRequirement3", "You must modify these Quests so that they do not use it before deleting it.");
+			en.put("questEditorQuestNotFound", "Quest not found!");
+			
+			en.put("questEditorEventCleared", "Initial Event cleared.");
+			en.put("questEditorSave", "Finish and save");
+			
+			en.put("questEditorNeedAskMessage", "You must set an ask message!");
+			en.put("questEditorNeedFinishMessage", "You must set a finish message!");
+			en.put("questEditorNeedStages", "Your Quest has no Stages!");
+			en.put("questEditorSaved", "Quest saved! (You will need to perform a Quest reload for it to appear)");
+			en.put("questEditorExited", "Are you sure you want to exit without saving?");
+			en.put("questEditorDeleted", "Are you sure you want to delete the Quest");
+            
+			en.put("questEditorNoPermsCreate", "You do not have permission to create Quests.");
+			en.put("questEditorNoPermsEdit", "You do not have permission to edit Quests.");
+			en.put("questEditorNoPermsDelete", "You do not have permission to delete Quests.");
             //
+			
+			//Stages
+			//Menu
+			en.put("stageEditorEditStage", "Edit Stage");
+			en.put("stageEditorNewStage", "Add new Stage");
+			//create prompt
+			en.put("stageEditorStages", "Stages");
+			en.put("stageEditorStage", "Stage");
+			en.put("stageEditorEditStage", "Edit Stage");
+			en.put("stageEditorNewStage", "Add new Stage");
+			en.put("stageEditorBreakBlocks", "Break Blocks");
+			en.put("stageEditorDamageBlocks", "Damage Blocks");
+			en.put("stageEditorPlaceBlocks", "Place Blocks");
+			en.put("stageEditorUseBlocks", "Use Blocks");
+			en.put("stageEditorCutBlocks", "Cut Blocks");
+			en.put("stageEditorCatchFish", "Catch Fish");
+			en.put("stageEditorFish", "fish");
+			en.put("stageEditorKillPlayers", "Kill Players");
+			en.put("stageEditorPlayers", "players");
+			en.put("stageEditorEnchantItems", "Enchant Items");
+			en.put("stageEditorDeliverItems", "Deliver Items");
+			en.put("stageEditorTalkToNPCs", "Talk to NPCs");
+			en.put("stageEditorKillNPCs", "Kill NPCs");
+			en.put("stageEditorKillBosses", "Kill Bosses");
+			en.put("stageEditorKillMobs", "Kill Mobs");
+			en.put("stageEditorReachLocs", "");
+			en.put("stageEditorReachRadii1", "Reach within");
+			en.put("stageEditorReachRadii2", "blocks of");
+			en.put("stageEditorTameMobs", "Tame Mobs");
+			en.put("stageEditorShearSheep", "Shear Sheep");
+			en.put("stageEditorDelayMessage", "Delay Message");
+			en.put("stageEditorDenizenScript", "Denizen Script");
+			en.put("stageEditorStartMessage", "Start Message");
+			en.put("stageEditorCompleteMessage", "Complete Message");
+			en.put("stageEditorDelete", "Delete Stage");
+			
+			en.put("stageEditorSetBlockIds", "Set block IDs");
+			en.put("stageEditorSetBlockAmounts", "Set block amounts");
+			en.put("stageEditorNoBlockIds", "You must set Block IDs first!");
+			en.put("stageEditorBreakBlocksCleared", "Break blocks objective cleared.");
+			en.put("stageEditorInvalidIdAmountList", "The block IDs list block amounts list are not the same size!");
+			en.put("stageEditorEnterBlockIds", "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.");
+			en.put("stageEditorContainsDuplicates", "List contains duplicates!");
+			en.put("stageEditorInvalidBlockId", "is not a valid block ID!");
+			en.put("stageEditorInvalidEntryInt", "Invalid entry, input was not a list of numbers!");
+			
+			//prompts
+			
 
 
             //Events
@@ -206,14 +303,18 @@ public class Lang {
 
             //Misc
             en.put("event", "Event");
+            en.put("delay", "Delay");
+            en.put("save", "Save");
             en.put("exit", "Exit");
             en.put("exited", "Exited.");
             en.put("yes", "Yes");
             en.put("no", "No");
+            en.put("clear", "Clear");
             en.put("done", "Done");
             en.put("quit", "Quit");
-            en.put("clear", "Clear");
             en.put("noneSet", "None set");
+            en.put("noDelaySet", "No delay set");
+            en.put("noIdsSet", "No IDs set");
             en.put("worlds", "Worlds");
             en.put("mobs", "Mobs");
             en.put("invalidOption", "Invalid option!");

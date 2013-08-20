@@ -2063,11 +2063,11 @@ public class Quester {
                 return true;
             }
 
-            int stageIndex = data.getInt("currentStage");
+            currentStageIndex = data.getInt("currentStage");
 
             for (Stage s : quest.stages) {
 
-                if (quest.stages.indexOf(s) == (stageIndex)) {
+                if (quest.stages.indexOf(s) == (currentStageIndex)) {
                     stage = s;
                     break;
                 }
@@ -2559,7 +2559,8 @@ public class Quester {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), (long) (delayTimeLeft * 0.02));
         } else {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), (long) (currentStage.delay * 0.02));
-            plugin.getServer().getPlayer(name).sendMessage(Quests.parseString((currentStage.delayMessage), currentQuest));
+            if (currentStage.delayMessage != null)
+            	plugin.getServer().getPlayer(name).sendMessage(Quests.parseString((currentStage.delayMessage), currentQuest));
         }
 
         delayStartTime = System.currentTimeMillis();

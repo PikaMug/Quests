@@ -787,8 +787,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                                 + "\n"
                                                                 + RESET + getQuest(quester.questToTake).description + "\n";
 
-                                                        cs.sendMessage(s);
-                                                        
                                                         for (String msg : s.split("<br>")) {
                                                         	cs.sendMessage(msg);
                                                         }
@@ -1713,7 +1711,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.contains("quests." + s + ".name")) {
                     quest.name = parseString(config.getString("quests." + s + ".name"), quest);
                 } else {
-                    printSevere(GOLD + "[Quests] Quest block \'" + PURPLE + s + GOLD + "\' is missing " + RED + "name:");
+                    printSevere("[Quests] Quest block \'" + s + "\' is missing " + RED + "name:");
                     continue;
                 }
 
@@ -1725,7 +1723,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
 
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "npc-giver-id: " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a valid NPC id!");
+                        printSevere("[Quests] npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
                         continue;
                     }
 
@@ -1737,8 +1735,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (location != null) {
                         quest.blockStart = location;
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "block-start: " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not in proper location format!");
-                        printSevere(GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                        printSevere("[Quests] block-start: for Quest " + quest.name + " is not in proper location format!");
+                        printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
                         continue;
                     }
 
@@ -1749,7 +1747,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.getInt("quests." + s + ".redo-delay", -999) != -999) {
                         quest.redoDelay = config.getInt("quests." + s + ".redo-delay");
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "redo-delay: " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                        printSevere("[Quests] redo-delay: for Quest " + quest.name + " is not a number!");
                         continue;
                     }
 
@@ -1758,14 +1756,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.contains("quests." + s + ".finish-message")) {
                     quest.finished = parseString(config.getString("quests." + s + ".finish-message"), quest);
                 } else {
-                    printSevere(GOLD + "[Quests] Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "finish-message:");
+                    printSevere("[Quests] Quest " + quest.name + " is missing finish-message:");
                     continue;
                 }
 
                 if (config.contains("quests." + s + ".ask-message")) {
                     quest.description = parseString(config.getString("quests." + s + ".ask-message"), quest);
                 } else {
-                    printSevere(GOLD + "[Quests] Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "ask-message:");
+                    printSevere("[Quests] Quest " + quest.name + " is missing ask-message:");
                     continue;
                 }
 
@@ -1776,7 +1774,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (evt != null) {
                         quest.initialEvent = evt;
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "Initial Event in Quest " + PURPLE + quest.name + GOLD + " failed to load.");
+                        printSevere("[Quests] Initial Event in Quest " + quest.name + " failed to load.");
                         continue;
                     }
 
@@ -1787,7 +1785,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.contains("quests." + s + ".requirements.fail-requirement-message")) {
                         quest.failRequirements = parseString(config.getString("quests." + s + ".requirements.fail-requirement-message"), quest);
                     } else {
-                        printSevere(GOLD + "[Quests] " + YELLOW + "Requirements " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "fail-requirement-message:");
+                        printSevere("[Quests] Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
                         continue;
                     }
 
@@ -1809,12 +1807,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                             if (failed == true) {
-                                printSevere(GOLD + "[Quests] " + RED + "items: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not formatted correctly!");
+                                printSevere("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
                                 continue;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "items: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not formatted correctly!");
+                            printSevere("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
                             continue;
                         }
 
@@ -1825,12 +1823,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             	quest.removeItems.clear();
                                 quest.removeItems.addAll(config.getBooleanList("quests." + s + ".requirements.remove-items"));
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "remove-items: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a list of true/false values!");
+                                printSevere("[Quests] remove-items: Requirement for Quest " + quest.name + " is not a list of true/false values!");
                                 continue;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + YELLOW + "Requirements " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "remove-items:");
+                            printSevere("[Quests] Requirements for Quest " + quest.name + " is missing remove-items:");
                             continue;
                         }
                     }
@@ -1840,7 +1838,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (config.getInt("quests." + s + ".requirements.money", -999) != -999) {
                             quest.moneyReq = config.getInt("quests." + s + ".requirements.money");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "money: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                            printSevere("[Quests] money: Requirement for Quest " + quest.name + " is not a number!");
                             continue;
                         }
 
@@ -1851,7 +1849,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (config.getInt("quests." + s + ".requirements.quest-points", -999) != -999) {
                             quest.questPointsReq = config.getInt("quests." + s + ".requirements.quest-points");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "quest-points: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                            printSevere("[Quests] quest-points: Requirement for Quest " + quest.name + " is not a number!");
                             continue;
                         }
 
@@ -1888,13 +1886,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                             if (failed) {
-                                printSevere(GOLD + "[Quests] " + PINK + failedQuest + GOLD + " inside " + RED + "quests: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a valid Quest name!");
-                                printSevere(RED + "Make sure you are using the Quest " + DARKRED + "name: " + RED + "value, and not the block name.");
+                                printSevere("[Quests] " + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
+                                printSevere("Make sure you are using the Quest name: value, and not the block name.");
                                 continue;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "quests: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a list of Quest names!");
+                            printSevere("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
                             continue;
                         }
 
@@ -1931,13 +1929,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                             if (failed) {
-                                printSevere(GOLD + "[Quests] " + PINK + failedQuest + GOLD + " inside " + RED + "quests: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a valid Quest name!");
-                                printSevere(RED + "Make sure you are using the Quest " + DARKRED + "name: " + RED + "value, and not the block name.");
+                                printSevere("[Quests] " + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
+                                printSevere("Make sure you are using the Quest name: value, and not the block name.");
                                 continue;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "quests: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a list of Quest names!");
+                            printSevere("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
                             continue;
                         }
 
@@ -1950,7 +1948,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         	quest.permissionReqs.clear();
                             quest.permissionReqs.addAll(config.getStringList("quests." + s + ".requirements.permissions"));
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "permissions: " + YELLOW + "Requirement " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is not a list of permissions!");
+                            printSevere("[Quests] permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
                             continue;
                         }
 
@@ -1997,11 +1995,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
 
-                        if (ScriptRegistry.containsScript("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
+                        if (ScriptRegistry.containsScript(config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run"))) {
                             trigger = new QuestTaskTrigger();
                             stage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "script-to-run: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a Denizen script!");
+                            printSevere("[Quests] script-to-run: in Stage " + s2 + " of Quest " +  quest.name + " is not a Denizen script!");
                             stageFailed = true;
                             break;
                         }
@@ -2015,7 +2013,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
                             breakids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "break-block-ids: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                            printSevere("[Quests] break-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -2025,13 +2023,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
                                 breakamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts");
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "break-block-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] break-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "break-block-amounts:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing break-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -2043,7 +2041,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids"), Integer.class)) {
                             damageids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "damage-block-ids: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                            printSevere("[Quests] damage-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -2053,13 +2051,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
                                 damageamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts");
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "damage-block-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] damage-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "damage-block-amounts:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -2071,7 +2069,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (Material.getMaterial(i) != null) {
                             stage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + i + GOLD + " inside " + GREEN + "damage-block-ids: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid item ID!");
+                            printSevere("[Quests] " + i + " inside damage-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
                             stageFailed = true;
                             break;
                         }
@@ -2083,7 +2081,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids"), Integer.class)) {
                             placeids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "place-block-ids: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                            printSevere("[Quests] place-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -2093,13 +2091,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
                                 placeamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts");
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "place-block-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] place-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "place-block-amounts:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing place-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -2111,7 +2109,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (Material.getMaterial(i) != null) {
                             stage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + i + GOLD + " inside " + GREEN + "place-block-ids: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid item ID!");
+                            printSevere("[Quests] " +  + i + " inside place-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
                             stageFailed = true;
                             break;
                         }
@@ -2123,7 +2121,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids"), Integer.class)) {
                             useids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "use-block-ids: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                            printSevere("[Quests] use-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -2133,13 +2131,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
                                 useamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts");
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "use-block-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] use-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "use-block-amounts:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing use-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -2151,7 +2149,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (Material.getMaterial(i) != null) {
                             stage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + i + GOLD + " inside " + GREEN + "use-block-ids: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid item ID!");
+                            printSevere("[Quests] " + RED + i + " inside use-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
                             stageFailed = true;
                             break;
                         }
@@ -2163,7 +2161,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids"), Integer.class)) {
                             cutids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "cut-block-ids: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                            printSevere("[Quests] cut-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -2173,13 +2171,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
                                 cutamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts");
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "cut-block-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] cut-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "cut-block-amounts:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -2191,7 +2189,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (Material.getMaterial(i) != null) {
                             stage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + i + GOLD + " inside " + GREEN + "cut-block-ids: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid item ID!");
+                            printSevere("[Quests] " + i + " inside cut-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
                             stageFailed = true;
                             break;
                         }
@@ -2203,7 +2201,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
                             stage.fishToCatch = config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "fish-to-catch:" + GOLD + " inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                            printSevere("[Quests] fish-to-catch: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                             stageFailed = true;
                             break;
                         }
@@ -2215,7 +2213,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
                             stage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "players-to-kill:" + GOLD + " inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                            printSevere("[Quests] players-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                             stageFailed = true;
                             break;
                         }
@@ -2236,7 +2234,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 } else {
 
-                                    printSevere(GOLD + "[Quests] " + RED + enchant + GOLD + " inside " + GREEN + "enchantments: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid enchantment!");
+                                    printSevere("[Quests] " + enchant + " inside enchantments: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid enchantment!");
                                     stageFailed = true;
                                     break;
 
@@ -2245,7 +2243,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "enchantments: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of enchantment names!");
+                            printSevere("[Quests] enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
                             stageFailed = true;
                             break;
                         }
@@ -2259,7 +2257,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     if (Material.getMaterial(item) != null) {
                                         itemsToEnchant.add(Material.getMaterial(item));
                                     } else {
-                                        printSevere(GOLD + "[Quests] " + RED + item + GOLD + " inside " + GREEN + "enchantment-item-ids: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid item id!");
+                                        printSevere("[Quests] " + item + " inside enchantment-item-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item id!");
                                         stageFailed = true;
                                         break;
                                     }
@@ -2268,14 +2266,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             } else {
 
-                                printSevere(GOLD + "[Quests] " + RED + "enchantment-item-ids: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] enchantment-item-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
 
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "enchantment-item-ids:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-ids:");
                             stageFailed = true;
                             break;
                         }
@@ -2289,14 +2287,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             } else {
 
-                                printSevere(GOLD + "[Quests] " + RED + "enchantment-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] enchantment-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
 
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "enchantment-amounts:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -2321,7 +2319,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
 
                                 } else {
-                                    printSevere(GOLD + "[Quests] " + RED + i + GOLD + " inside " + GREEN + "npc-ids-to-talk-to: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid NPC id!");
+                                    printSevere("[Quests] " + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
                                     stageFailed = true;
                                     break;
                                 }
@@ -2329,7 +2327,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "npc-ids-to-talk-to: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                            printSevere("[Quests] npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -2370,13 +2368,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                     stage.deliverMessages = deliveryMessages;
 
                                                 } else {
-                                                    printSevere(GOLD + "[Quests] " + RED + npcId + GOLD + " inside " + GREEN + "npc-delivery-ids: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid NPC id!");
+                                                    printSevere("[Quests] " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
                                                     stageFailed = true;
                                                     break;
                                                 }
 
                                             } else {
-                                                printSevere(GOLD + "[Quests] " + RED + item + GOLD + " inside " + GREEN + "items-to-deliver: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not formatted properly!");
+                                                printSevere("[Quests] " + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
                                                 stageFailed = true;
                                                 break;
                                             }
@@ -2384,25 +2382,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         }
 
                                     } else {
-                                        printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "delivery-messages:");
+                                        printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing delivery-messages:");
                                         stageFailed = true;
                                         break;
                                     }
 
                                 } else {
-                                    printSevere(GOLD + "[Quests] " + RED + "npc-delivery-ids: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of NPC ids!");
+                                    printSevere("[Quests] npc-delivery-ids: in Stage " + s2 + " of Quest " + PURPLE + quest.name + " is not a list of NPC ids!");
                                     stageFailed = true;
                                     break;
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "npc-delivery-ids:");
+                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-delivery-ids:");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "items-to-deliver: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not formatted properly!");
+                            printSevere("[Quests] items-to-deliver: in Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
                             stageFailed = true;
                             break;
                         }
@@ -2431,13 +2429,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                 stage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
                                                 questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
                                             } else {
-                                                printSevere(GOLD + "[Quests] " + RED + npcAmounts.get(npcIds.indexOf(i)) + GOLD + " inside " + GREEN + "npc-kill-amounts: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a positive number!");
+                                                printSevere("[Quests] " + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
                                                 stageFailed = true;
                                                 break;
                                             }
 
                                         } else {
-                                            printSevere(GOLD + "[Quests] " + RED + i + GOLD + " inside " + GREEN + "npc-ids-to-kill: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid NPC id!");
+                                            printSevere("[Quests] " + i + " inside npc-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
                                             stageFailed = true;
                                             break;
                                         }
@@ -2445,19 +2443,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     }
 
                                 } else {
-                                    printSevere(GOLD + "[Quests] " + RED + "npc-kill-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                    printSevere("[Quests] npc-kill-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                     stageFailed = true;
                                     break;
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "npc-kill-amounts:");
+                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-kill-amounts:");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "npc-ids-to-kill: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                            printSevere("[Quests] npc-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                             stageFailed = true;
                             break;
                         }
@@ -2485,13 +2483,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                 stage.bossesToKill.add(boss);
                                                 stage.bossAmountsToKill.add(bossKillAmounts.get(bossIdsToKill.indexOf(boss)));
                                             } else {
-                                                printSevere(GOLD + "[Quests] " + RED + bossKillAmounts.get(bossIdsToKill.indexOf(boss)) + GOLD + " inside " + GREEN + "boss-amounts-to-kill: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a positive number!");
+                                                printSevere("[Quests] " + bossKillAmounts.get(bossIdsToKill.indexOf(boss)) + GOLD + " inside boss-amounts-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
                                                 stageFailed = true;
                                                 break;
                                             }
 
                                         } else {
-                                            printSevere(GOLD + "[Quests] " + RED + boss + GOLD + " inside " + GREEN + "boss-ids-to-kill: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid EpicBoss name!");
+                                            printSevere("[Quests] " + boss + " inside boss-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid EpicBoss name!");
                                             stageFailed = true;
                                             break;
                                         }
@@ -2499,19 +2497,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     }
 
                                 } else {
-                                    printSevere(GOLD + "[Quests] " + RED + "boss-amounts-to-kill: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                    printSevere("[Quests] boss-amounts-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                     stageFailed = true;
                                     break;
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "boss-amounts-to-kill:");
+                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing boss-amounts-to-kill:");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "boss-ids-to-kill: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of IDs!");
+                            printSevere("[Quests] boss-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of IDs!");
                             stageFailed = true;
                             break;
                         }
@@ -2529,11 +2527,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 if (type != null) {
 
-                                    mobsToKill.add(EntityType.ZOMBIE);
+                                    mobsToKill.add(type);
 
                                 } else {
 
-                                    printSevere(GOLD + "[Quests] " + RED + mob + GOLD + " inside " + GREEN + "mobs-to-kill: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid mob name!");
+                                    printSevere("[Quests] "+ mob + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid mob name!");
                                     stageFailed = true;
                                     break;
 
@@ -2542,7 +2540,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "mobs-to-kill: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of mob names!");
+                            printSevere("[Quests] mobs-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
                             stageFailed = true;
                             break;
                         }
@@ -2559,14 +2557,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             } else {
 
-                                printSevere(GOLD + "[Quests] " + RED + "mob-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] mob-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
 
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "mob-amounts:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + PURPLE + quest.name + " is missing mob-amounts:");
                             stageFailed = true;
                             break;
                         }
@@ -2591,8 +2589,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         y = Double.parseDouble(info[2]);
                                         z = Double.parseDouble(info[3]);
                                     } catch (Exception e) {
-                                        printSevere(GOLD + "[Quests] " + RED + loc + GOLD + " inside " + GREEN + "mobs-to-kill: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not in proper location format!");
-                                        printSevere(GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                        printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
+                                        printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
                                         stageFailed = true;
                                         break;
                                     }
@@ -2601,14 +2599,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
                                         locationsToKillWithin.add(finalLocation);
                                     } else {
-                                        printSevere(GOLD + "[Quests] " + RED + info[0] + GOLD + " inside " + GREEN + "mobs-to-kill: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid world name!");
+                                        printSevere("[Quests] " + info[0] + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
                                         stageFailed = true;
                                         break;
                                     }
 
                                 } else {
-                                    printSevere(GOLD + "[Quests] " + RED + loc + GOLD + " inside " + GREEN + "mobs-to-kill: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not in proper location format!");
-                                    printSevere(GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                    printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
+                                    printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
                                     stageFailed = true;
                                     break;
                                 }
@@ -2616,7 +2614,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "locations-to-kill: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of locations!");
+                            printSevere("[Quests] locations-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
                             stageFailed = true;
                             break;
                         }
@@ -2633,13 +2631,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "kill-location-radii: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] kill-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "kill-location-radii:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-radii:");
                             stageFailed = true;
                             break;
                         }
@@ -2656,13 +2654,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "kill-location-names: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of names!");
+                                printSevere("[Quests] kill-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "kill-location-names:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-names:");
                             stageFailed = true;
                             break;
                         }
@@ -2720,8 +2718,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         y = Double.parseDouble(info[2]);
                                         z = Double.parseDouble(info[3]);
                                     } catch (Exception e) {
-                                        printSevere(GOLD + "[Quests] " + RED + loc + GOLD + " inside " + GREEN + "locations-to-reach: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not in proper location format!");
-                                        printSevere(GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                        printSevere("[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
+                                        printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
                                         stageFailed = true;
                                         break;
                                     }
@@ -2730,14 +2728,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
                                         stage.locationsToReach.add(finalLocation);
                                     } else {
-                                        printSevere(GOLD + "[Quests] " + RED + info[0] + GOLD + " inside " + GREEN + "locations-to-reach: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid world name!");
+                                        printSevere("[Quests] " + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
                                         stageFailed = true;
                                         break;
                                     }
 
                                 } else {
-                                    printSevere(GOLD + "[Quests] " + RED + loc + GOLD + " inside " + GREEN + "mobs-to-kill: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not in proper location format!");
-                                    printSevere(GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                                    printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
+                                    printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
                                     stageFailed = true;
                                     break;
                                 }
@@ -2745,7 +2743,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "locations-to-reach: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of locations!");
+                            printSevere("[Quests] locations-to-reach: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
                             stageFailed = true;
                             break;
                         }
@@ -2762,13 +2760,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "reach-location-radii: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                printSevere("[Quests] reach-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "reach-location-radii:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-radii:");
                             stageFailed = true;
                             break;
                         }
@@ -2785,13 +2783,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + RED + "reach-location-names: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of names!");
+                                printSevere("[Quests] reach-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "reach-location-names:");
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-names:");
                             stageFailed = true;
                             break;
                         }
@@ -2820,7 +2818,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                             stage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
 
                                         } else {
-                                            printSevere(GOLD + "[Quests] " + RED + mob + GOLD + " inside " + GREEN + "mobs-to-tame: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid tameable mob!");
+                                            printSevere("[Quests] " + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
                                             stageFailed = true;
                                             break;
                                         }
@@ -2828,19 +2826,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     }
 
                                 } else {
-                                    printSevere(GOLD + "[Quests] " + RED + "mob-tame-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                    printSevere("[Quests] mob-tame-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                     stageFailed = true;
                                     break;
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "mob-tame-amounts:");
+                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing mob-tame-amounts:");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "mobs-to-tame: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of mob names!");
+                            printSevere("[Quests] mobs-to-tame: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
                             stageFailed = true;
                             break;
                         }
@@ -2926,7 +2924,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                         } else {
 
-                                            printSevere(GOLD + "[Quests] " + RED + color + GOLD + " inside " + GREEN + "sheep-to-shear: " + GOLD + "inside " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a valid color!");
+                                            printSevere("[Quests] " + color + " inside sheep-to-shear: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid color!");
                                             stageFailed = true;
                                             break;
 
@@ -2935,19 +2933,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     }
 
                                 } else {
-                                    printSevere(GOLD + "[Quests] " + RED + "sheep-amounts: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of numbers!");
+                                    printSevere("[Quests] sheep-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                                     stageFailed = true;
                                     break;
                                 }
 
                             } else {
-                                printSevere(GOLD + "[Quests] " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "sheep-amounts:");
+                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing sheep-amounts:");
                                 stageFailed = true;
                                 break;
                             }
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "sheep-to-shear: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a list of colors!");
+                            printSevere("[Quests] sheep-to-shear: in Stage " + s2 + " of Quest " + quest.name + " is not a list of colors!");
                             stageFailed = true;
                             break;
                         }
@@ -2961,7 +2959,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (evt != null) {
                             stage.event = evt;
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "Event " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " failed to load.");
+                            printSevere("[Quests] Event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
                             break;
                         }
@@ -2973,7 +2971,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999) {
                             stage.delay = config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay");
                         } else {
-                            printSevere(GOLD + "[Quests] " + RED + "delay: " + GOLD + "in " + PINK + "Stage " + s2 + GOLD + " of Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                            printSevere("[Quests] delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                             stageFailed = true;
                             break;
                         }
@@ -3026,7 +3024,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     quest.itemRewards.add(stack);
                                 }
                             } catch (Exception e) {
-                                printSevere(GOLD + "[Quests] " + RED + item + GOLD + " in " + GREEN + "items: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not properly formatted!");
+                                printSevere("[Quests] " + item + " in items: Reward in Quest " + quest.name + " is not properly formatted!");
                                 failed = true;
                                 break;
                             }
@@ -3038,7 +3036,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "items: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a list of strings!");
+                        printSevere("[Quests] items: Reward in Quest " + quest.name + " is not a list of strings!");
                         continue;
                     }
 
@@ -3049,7 +3047,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.getInt("quests." + s + ".rewards.money", -999) != -999) {
                         quest.moneyReward = config.getInt("quests." + s + ".rewards.money");
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "money: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                        printSevere("[Quests] money: Reward in Quest " + quest.name + " is not a number!");
                         continue;
                     }
 
@@ -3060,7 +3058,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.getInt("quests." + s + ".rewards.exp", -999) != -999) {
                         quest.exp = config.getInt("quests." + s + ".rewards.exp");
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "exp: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                        printSevere("[Quests] exp: Reward in Quest " + quest.name + " is not a number!");
                         continue;
                     }
 
@@ -3072,7 +3070,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     	quest.commands.clear();
                         quest.commands.addAll(config.getStringList("quests." + s + ".rewards.commands"));
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "commands: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a list of commands!");
+                        printSevere("[Quests] commands: Reward in Quest " + quest.name + " is not a list of commands!");
                         continue;
                     }
 
@@ -3084,7 +3082,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     	quest.permissions.clear();
                         quest.permissions.addAll(config.getStringList("quests." + s + ".rewards.permissions"));
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "permissions: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a list of permissions!");
+                        printSevere("[Quests] permissions: Reward in Quest " + quest.name + " is not a list of permissions!");
                         continue;
                     }
 
@@ -3096,7 +3094,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         quest.questPoints = config.getInt("quests." + s + ".rewards.quest-points");
                         totalQuestPoints += quest.questPoints;
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "quest-points: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a number!");
+                        printSevere("[Quests] quest-points: Reward in Quest " + quest.name + " is not a number!");
                         continue;
                     }
 
@@ -3112,7 +3110,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             for (String skill : config.getStringList("quests." + s + ".rewards.mcmmo-skills")) {
 
                                 if (Quests.getMcMMOSkill(skill) == null) {
-                                    printSevere(GOLD + "[Quests] " + RED + skill + GOLD + " in " + GREEN + "mcmmo-skills: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a valid mcMMO skill name!");
+                                    printSevere("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
                                     failed = true;
                                     break;
                                 }
@@ -3129,12 +3127,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + s + ".rewards.mcmmo-levels"));
 
                         } else {
-                            printSevere(GOLD + "[Quests] " + AQUA + "Rewards " + GOLD + "for Quest " + PURPLE + quest.name + GOLD + " is missing " + RED + "mcmmo-levels:");
+                            printSevere("[Quests] Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
                             continue;
                         }
 
                     } else {
-                        printSevere(GOLD + "[Quests] " + RED + "mcmmo-skills: " + AQUA + "Reward " + GOLD + "in Quest " + PURPLE + quest.name + GOLD + " is not a list of mcMMO skill names!");
+                        printSevere("[Quests] mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
                         continue;
                     }
                 }
@@ -3558,9 +3556,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliseconds);
+        
+        Calendar epoch = Calendar.getInstance();
+        epoch.setTimeInMillis(0);
 
-        long days = calendar.get(Calendar.DAY_OF_YEAR) - 1;
-        long hours = calendar.get(Calendar.HOUR_OF_DAY) - 1;
+        long days = calendar.get(Calendar.DAY_OF_YEAR) - epoch.get(Calendar.DAY_OF_YEAR);
+        long hours = calendar.get(Calendar.HOUR_OF_DAY) - epoch.get(Calendar.HOUR_OF_DAY);
         long minutes = calendar.get(Calendar.MINUTE);
         long seconds = calendar.get(Calendar.SECOND);
         long milliSeconds2 = calendar.get(Calendar.MILLISECOND);
@@ -4231,9 +4232,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             Statement statement = conn.createStatement();
             java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
             Timestamp stamp = new Timestamp(date.getTime());
-            statement.executeUpdate("DELETE FROM entries " + "WHERE server='" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "'");
+            statement.executeUpdate("DELETE FROM entries WHERE server='" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "'");
             String cit = citizens != null ? "true" : "false";
-            statement.executeUpdate("INSERT INTO entries " + "VALUES ('" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "', " + quests.size() + ", '" + cit + "', '" + stamp.toString() + "')");
+            statement.executeUpdate("INSERT INTO entries VALUES ('" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "', " + quests.size() + ", '" + cit + "', '" + stamp.toString() + "')");
         } catch (Exception e) {
         }
 
