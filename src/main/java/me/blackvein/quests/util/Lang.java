@@ -120,15 +120,53 @@ public class Lang {
 		en.put("stageEditorCompleteMessage", "Complete Message");
 		en.put("stageEditorDelete", "Delete Stage");
 
+		en.put("stageEditorDamageBlocks", "Damage Blocks");
+		en.put("stageEditorPlaceBlocks", "Place Blocks");
 		en.put("stageEditorSetBlockIds", "Set block IDs");
 		en.put("stageEditorSetBlockAmounts", "Set block amounts");
-		en.put("stageEditorNoBlockIds", "You must set Block IDs first!");
+		en.put("stageEditorSetDamageAmounts", "Set damage amounts");
+		en.put("stageEditorSetPlaceAmounts", "Set place amounts");
+		en.put("stageEditorSetUseAmounts", "Set use amounts");
+		en.put("stageEditorSetCutAmounts", "Set cut amounts");
+		en.put("stageEditorSetEnchantments", "Set enchantments");
+		en.put("stageEditorSetItemIds", "Set item ids");
+		en.put("stageEditorSetEnchantAmounts", "Set enchant amounts");
 		en.put("stageEditorBreakBlocksCleared", "Break blocks objective cleared.");
-		en.put("stageEditorInvalidIdAmountList", "The block IDs list block amounts list are not the same size!");
+		en.put("stageEditorDamageBlocksCleared", "Damage blocks objective cleared.");
+		en.put("stageEditorPlaceBlocksCleared", "Place blocks objective cleared.");
+		en.put("stageEditorUseBlocksCleared", "Use blocks objective cleared.");
+		en.put("stageEditorCutBlocksCleared", "Cut blocks objective cleared.");
+		en.put("stageEditorEnchantmentsCleared", "Enchantment objective cleared.");
 		en.put("stageEditorEnterBlockIds", "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorBreakBlocksPrompt", "Enter block amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorDamageBlocksPrompt", "Enter damage amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorPlaceBlocksPrompt", "Enter place amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorUseBlocksPrompt", "Enter use amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorCutBlocksPrompt", "Enter cut amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorCatchFishPrompt", "Enter number of fish to catch, or 0 to clear the fish catch objective, or -1 to cancel");
+		en.put("stageEditorKillPlayerPrompt", "Enter number of players to kill, or 0 to clear the player kill objective, or -1 to cancel");
+		en.put("stageEditorEnchantTypePrompt", "Enter enchantment names, separating each one by a \"comma\", or enter \'cancel\' to return.");
+		
+		en.put("stageEditorInvalidIdAmountList", "The block IDs list block amounts list are not the same size!");
 		en.put("stageEditorContainsDuplicates", "List contains duplicates!");
 		en.put("stageEditorInvalidBlockId", "is not a valid block ID!");
 		en.put("stageEditorInvalidEntryInt", "Invalid entry, input was not a list of numbers!");
+		en.put("stageEditorNoCitizens", "Citizens is not installed!");
+		en.put("stageEditorNoEpicBoss", "EpicBoss is not installed!");
+		en.put("stageEditorNoDenizen", "Denizen is not installed!");
+		en.put("stageEditorNoDelaySet", "You must set a delay first!");
+		en.put("stageEditorNotGreaterThanZero", "is not greater than 0!");
+		en.put("stageEditorNotListofNumbers", "Invalid entry, input was not a list of numbers!");
+		en.put("stageEditorNoBlockIds", "You must set Block IDs first!");
+		en.put("stageEditorNoEnchantments", "You must set enchantments first!");
+		en.put("stageEditorNoEnchantmentsSet", "No enchantments set");
+		en.put("stageEditorListNotSameSize", "The block IDs list and amounts list are not the same size!");
+		en.put("stageEditorEnchantmentNotSameSize", "The enchantments list, item id list and enchant amount list are not the same size!");
+		en.put("stageEditorListContainsDuplicates", " List contains duplicates!");
+		en.put("stageEditorInvalidBlockID", "is not a valid block ID!");
+		en.put("stageEditorPositiveAmount", "You must enter a positive number!");
+		
+		en.put("stageEditorEnchantments", "Enchantments");
 
 		//prompts
 
