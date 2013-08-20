@@ -570,7 +570,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
             String skillList =
                     GOLD + "-Skill List-\n" +
                     AQUA + "Acrobatics\n" +
-                    AQUA + "All\n" +
+                    GRAY + "All\n" +
                     AQUA + "Archery\n" +
                     AQUA + "Axes\n" +
                     AQUA + "Excavation\n" +

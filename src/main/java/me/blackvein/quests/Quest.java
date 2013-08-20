@@ -1,18 +1,18 @@
 package me.blackvein.quests;
 
-import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.datatypes.player.McMMOPlayer;
-import com.gmail.nossr50.util.player.UserManager;
-
 import java.util.LinkedList;
 import java.util.List;
+
 import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import com.gmail.nossr50.util.player.UserManager;
 
 public class Quest {
 

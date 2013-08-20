@@ -70,6 +70,7 @@ public class ItemUtil implements ColorUtil{
     //
     public static ItemStack readItemStack(String data){
 
+    	if (data == null) return null;
         ItemStack stack = null;
         String[] args = data.split(":");
         ItemMeta meta = null;
@@ -107,6 +108,8 @@ public class ItemUtil implements ColorUtil{
     public static String serialize(ItemStack is){
 
         String serial;
+        
+        if (is == null) return null;
 
         serial = "id-" + is.getTypeId();
         serial += ":amount-" + is.getAmount();

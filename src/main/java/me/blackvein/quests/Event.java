@@ -1,9 +1,19 @@
 package me.blackvein.quests;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import me.blackvein.quests.util.ItemUtil;
-import org.bukkit.*;
+import me.blackvein.quests.util.QuestMob;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -23,9 +33,23 @@ public class Event {
     int stormDuration = 0;
     World thunderWorld = null;
     int thunderDuration = 0;
-    LinkedList<Location> mobSpawnLocs = new LinkedList<Location>();
-    LinkedList<EntityType> mobSpawnTypes = new LinkedList<EntityType>();
-    LinkedList<Integer> mobSpawnAmounts = new LinkedList<Integer>();
+    public LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>() {
+    	
+    	@Override
+    	public boolean equals(Object o) {
+    		if (o instanceof LinkedList) {
+    			
+    			LinkedList<QuestMob> other = (LinkedList<QuestMob>) o;
+    			
+    			if (size() != other.size()) return false;
+    			
+    			for (int i = 0; i < size(); i++) {
+    				if (get(i).equals(other.get(i)) == false) return false;
+    			}
+    		}
+    		return false;
+    	}
+    };
     LinkedList<Location> lightningStrikes = new LinkedList<Location>();
     LinkedList<String> commands = new LinkedList<String>();
     LinkedList<PotionEffect> potionEffects = new LinkedList<PotionEffect>();
@@ -98,18 +122,9 @@ public class Event {
             if (other.thunderDuration != thunderDuration) {
                 return false;
             }
-
-            if (other.mobSpawnLocs.equals(mobSpawnLocs) == false) {
-                return false;
-            }
-
-            if (other.mobSpawnTypes.equals(mobSpawnTypes) == false) {
-                return false;
-            }
-
-            if (other.mobSpawnAmounts.equals(mobSpawnAmounts) == false) {
-                return false;
-            }
+            
+            if (other.mobSpawns.equals(mobSpawns) == false)
+            	return false;
 
             if (other.lightningStrikes.equals(lightningStrikes) == false) {
                 return false;
@@ -205,19 +220,12 @@ public class Event {
             thunderWorld.setThundering(true);
             thunderWorld.setThunderDuration(thunderDuration);
         }
-
-        if (mobSpawnLocs.isEmpty() == false) {
-
-            for (Location l : mobSpawnLocs) {
-
-                for (int i = 1; i <= mobSpawnAmounts.get(mobSpawnLocs.indexOf(l)); i++) {
-
-                    l.getWorld().spawnEntity(l, mobSpawnTypes.get(mobSpawnLocs.indexOf(l)));
-
-                }
-
-            }
-
+        
+        if (mobSpawns.isEmpty() == false) {
+        	
+        	for (QuestMob questMob : mobSpawns) {
+        		questMob.spawn();
+        	}
         }
 
         if (lightningStrikes.isEmpty() == false) {
@@ -457,71 +465,54 @@ public class Event {
             }
 
         }
-
-        if (data.contains(eventKey + "mob-spawn-locations")) {
-
-            if (Quests.checkList(data.getList(eventKey + "mob-spawn-locations"), String.class)) {
-
-                if (data.contains(eventKey + "mob-spawn-types")) {
-
-                    if (Quests.checkList(data.getList(eventKey + "mob-spawn-types"), String.class)) {
-
-                        if (data.contains(eventKey + "mob-spawn-amounts")) {
-
-                            if (Quests.checkList(data.getList(eventKey + "mob-spawn-amounts"), Integer.class)) {
-
-                                List<String> mobLocs = data.getStringList(eventKey + "mob-spawn-locations");
-                                List<String> mobTypes = data.getStringList(eventKey + "mob-spawn-types");
-                                List<Integer> mobAmounts = data.getIntegerList(eventKey + "mob-spawn-amounts");
-
-                                for (String s : mobLocs) {
-
-                                    Location location = Quests.getLocation(s);
-                                    if (location == null) {
-                                        Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-locations: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
-                                        Quests.printSevere(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
-                                        return null;
-                                    }
-
-                                    EntityType type = Quests.getMobType(mobTypes.get(mobLocs.indexOf(s)));
-                                    if (type == null) {
-                                        Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + mobTypes.get(mobLocs.indexOf(s)) + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-types: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid mob name!");
-                                        return null;
-                                    }
-
-                                    int amount = mobAmounts.get(mobLocs.indexOf(s));
-
-                                    event.mobSpawnLocs.add(location);
-                                    event.mobSpawnTypes.add(type);
-                                    event.mobSpawnAmounts.add(amount);
-
-                                }
-
-                            } else {
-                                Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-spawn-amounts: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of numbers!");
-                                return null;
-                            }
-
-                        } else {
-                            Quests.printSevere(ChatColor.GOLD + "[Quests] Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mob-spawn-amounts:");
-                            return null;
-                        }
-
-                    } else {
-                        Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-spawn-types: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of mob names!");
-                        return null;
-                    }
-
-                } else {
-                    Quests.printSevere(ChatColor.GOLD + "[Quests] Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "mob-spawn-types:");
+        
+        if (data.contains(eventKey + "mob-spawns")) {
+        	ConfigurationSection section = data.getConfigurationSection(eventKey + "mob-spawns");
+        	
+        	//is a mob, the keys are just a number or something.
+        	for (String s : section.getKeys(false)) {
+        		String mobName = section.getString(s + ".name");
+        		Location spawnLocation = Quests.getLocation(section.getString(s + ".spawn-location"));
+        		EntityType type = Quests.getMobType(section.getString(s + ".mob-type"));
+        		Integer mobAmount = section.getInt(s + ".spawn-amounts");
+        		
+        		
+        		if (spawnLocation == null) {
+        			Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-locations: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
+                    Quests.printSevere(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
+                    return null;
+        		}
+        		
+                if (type == null) {
+                    Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + section.getString(s + ".mob-type") + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-types: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid mob name!");
                     return null;
                 }
+                
+                ItemStack[] inventory = new ItemStack[5];
+                Float[] dropChances = new Float[5];
+                
+                inventory[0] = ItemUtil.readItemStack(section.getString(s + ".held-item"));
+                dropChances[0] = (float) section.getDouble(s + ".held-item-drop-chance");
 
-            } else {
-                Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "mob-spawn-locations: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of locations!");
-                return null;
-            }
+                inventory[1] = ItemUtil.readItemStack(section.getString(s + ".boots"));
+                dropChances[1] = (float) section.getDouble(s + ".boots-drop-chance");
 
+                inventory[2] = ItemUtil.readItemStack(section.getString(s + ".leggings"));
+                dropChances[2] = (float) section.getDouble(s + ".leggings-drop-chance");
+
+                inventory[3] = ItemUtil.readItemStack(section.getString(s + ".chest-plate"));
+                dropChances[3] = (float) section.getDouble(s + ".chest-plate-drop-chance");
+
+                inventory[4] = ItemUtil.readItemStack(section.getString(s + ".helmet"));
+                dropChances[4] = (float) section.getDouble(s + ".helmet-drop-chance");              
+                
+                QuestMob questMob = new QuestMob(type, spawnLocation, mobAmount);
+                questMob.inventory = inventory;
+                questMob.dropChances = dropChances;
+                questMob.setName(mobName);
+                
+                event.mobSpawns.add(questMob);
+        	}
         }
 
         if (data.contains(eventKey + "lightning-strikes")) {

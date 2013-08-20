@@ -93,8 +93,6 @@ public class CK {
 	public static final String E_WORLD_THUNDER = "evtThunderWorld";
 	public static final String E_WORLD_THUNDER_DURATION = "evtThunderDuration";
 	public static final String E_MOB_TYPES = "evtMobTypes";
-	public static final String E_MOB_AMOUNTS = "evtMobAmounts";
-	public static final String E_MOB_LOCATIONS = "evtMobLocations";
 	public static final String E_LIGHTNING = "evtLightningStrikes";
 	public static final String E_POTION_TYPES = "evtPotionTypes";
 	public static final String E_POTION_DURATIONS = "evtPotionDurations";
