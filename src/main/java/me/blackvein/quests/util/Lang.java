@@ -128,15 +128,17 @@ public class Lang {
 		en.put("stageEditorSetPlaceAmounts", "Set place amounts");
 		en.put("stageEditorSetUseAmounts", "Set use amounts");
 		en.put("stageEditorSetCutAmounts", "Set cut amounts");
+		en.put("stageEditorSetKillAmounts", "Set kill amounts");
+		en.put("stageEditorSetEnchantAmounts", "Set enchant amounts");
+		en.put("stageEditorSetMobAmounts", "Set mob amounts");
 		en.put("stageEditorSetEnchantments", "Set enchantments");
 		en.put("stageEditorSetItemIds", "Set item ids");
-		en.put("stageEditorSetEnchantAmounts", "Set enchant amounts");
-		en.put("stageEditorBreakBlocksCleared", "Break blocks objective cleared.");
-		en.put("stageEditorDamageBlocksCleared", "Damage blocks objective cleared.");
-		en.put("stageEditorPlaceBlocksCleared", "Place blocks objective cleared.");
-		en.put("stageEditorUseBlocksCleared", "Use blocks objective cleared.");
-		en.put("stageEditorCutBlocksCleared", "Cut blocks objective cleared.");
-		en.put("stageEditorEnchantmentsCleared", "Enchantment objective cleared.");
+		en.put("stageEditorSetKillIds", "Set NPC IDs");
+		en.put("stageEditorSetMobTypes", "Set mob types");
+		en.put("stageEditorSetKillLocations", "Set kill locations");		
+		en.put("stageEditorSetKillLocationRadii", "Set kill location radii");		
+		en.put("stageEditorSetKillLocationNames", "Set kill location names");		
+		
 		en.put("stageEditorEnterBlockIds", "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.");
 		en.put("stageEditorBreakBlocksPrompt", "Enter block amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
 		en.put("stageEditorDamageBlocksPrompt", "Enter damage amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
@@ -146,31 +148,74 @@ public class Lang {
 		en.put("stageEditorCatchFishPrompt", "Enter number of fish to catch, or 0 to clear the fish catch objective, or -1 to cancel");
 		en.put("stageEditorKillPlayerPrompt", "Enter number of players to kill, or 0 to clear the player kill objective, or -1 to cancel");
 		en.put("stageEditorEnchantTypePrompt", "Enter enchantment names, separating each one by a \"comma\", or enter \'cancel\' to return.");
+		en.put("stageEditorEnchantAmountsPrompt", "Enter enchant amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorItemIDsPrompt", "Enter item IDs, separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorNPCPrompt", "Enter NPC ids, separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorNPCToTalkToPrompt", "Enter NPC IDs, separating each one by a space, or enter \'clear\' to clear the NPC ID list, or \'cancel\' to return.");
+		en.put("stageEditorDeliveryMessagesPrompt", "Enter delivery messages, separating each one by a \"semi-colon\" or enter \'cancel\' to return");
+		en.put("stageEditorKillNPCsPrompt", "Enter kill amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		en.put("stageEditorMobsPrompt", "Enter mob names separating each one by a space, or enter \"cancel\" to return");
+		en.put("stageEditorMobAmountsPrompt", "Enter mob amounts separating each one by a space, or enter \"cancel\" to return");
+		en.put("stageEditorMobLocationPrompt", "Right-click on a block to select it, then enter \"add\" to add it to the kill location list, or enter \"cancel\" to return");
+		en.put("stageEditorMobLocationRadiiPrompt", "Enter kill location radii (number of blocks) separating each one by a space, or enter \"cancel\" to return");
+		en.put("stageEditorMobLocationNamesPrompt", "Enter location names separating each one by a \"comma\", or enter \"cancel\" to return");
 		
-		en.put("stageEditorInvalidIdAmountList", "The block IDs list block amounts list are not the same size!");
+		en.put("stageEditorDeliveryAddItem", "Add item");
+		en.put("stageEditorDeliveryNPCs", "Set NPC IDs");
+		en.put("stageEditorDeliveryMessages", "Set delivery messages");
+		
 		en.put("stageEditorContainsDuplicates", "List contains duplicates!");
 		en.put("stageEditorInvalidBlockId", "is not a valid block ID!");
-		en.put("stageEditorInvalidEntryInt", "Invalid entry, input was not a list of numbers!");
+		en.put("stageEditorInvalidBlockID", "is not a valid block ID!");
+		en.put("stageEditorInvalidEnchantment", "is not a valid enchantment name!");
+		en.put("stageEditorInvalidNPC", "is not a valid NPC ID!");
+		en.put("stageEditorInvalidMob", "is not a valid mob name!");
+		en.put("stageEditorInvalidItemID", "is not a valid item ID!");
+		en.put("stageEditorInvalidNumber", "is not a number!");
+		
 		en.put("stageEditorNoCitizens", "Citizens is not installed!");
 		en.put("stageEditorNoEpicBoss", "EpicBoss is not installed!");
 		en.put("stageEditorNoDenizen", "Denizen is not installed!");
-		en.put("stageEditorNoDelaySet", "You must set a delay first!");
+		
 		en.put("stageEditorNotGreaterThanZero", "is not greater than 0!");
 		en.put("stageEditorNotListofNumbers", "Invalid entry, input was not a list of numbers!");
+		en.put("stageEditorNoDelaySet", "You must set a delay first!");
 		en.put("stageEditorNoBlockIds", "You must set Block IDs first!");
 		en.put("stageEditorNoEnchantments", "You must set enchantments first!");
-		en.put("stageEditorNoEnchantmentsSet", "No enchantments set");
-		en.put("stageEditorListNotSameSize", "The block IDs list and amounts list are not the same size!");
-		en.put("stageEditorEnchantmentNotSameSize", "The enchantments list, item id list and enchant amount list are not the same size!");
-		en.put("stageEditorListContainsDuplicates", " List contains duplicates!");
-		en.put("stageEditorInvalidBlockID", "is not a valid block ID!");
+		en.put("stageEditorNoItems", "You must add items first!");
+		en.put("stageEditorNoDeliveryMessage", "You must set at least one delivery message!");
+		en.put("stageEditorNoNPCs", "You must set NPC IDs first!");
+		en.put("stageEditorNoMobTypes", "You must set mob types first!");
+		en.put("stageEditorNoKillLocations", "You must set kill locations first!");
+		en.put("stageEditorNoBlockSelected", "You must select a block first.");
 		en.put("stageEditorPositiveAmount", "You must enter a positive number!");
 		
+		en.put("stageEditorNoEnchantmentsSet", "No enchantments set");
+		en.put("stageEditorNoItemsSet", "No items set");
+		en.put("stageEditorNoMobTypesSet", "No mob types set");
+		
+		en.put("stageEditorListNotSameSize", "The block IDs list and amounts list are not the same size!");
+		en.put("stageEditorEnchantmentNotSameSize", "The enchantments list, item id list and enchant amount list are not the same size!");
+		en.put("stageEditorDeliveriesNotSameSize", "The item list and NPC list are not equal in size!");
+		en.put("stageEditorNPCKillsNotSameSize", "The NPC IDs list and  kill amounts list are not the same size!");
+		en.put("stageEditorAllListsNotSameSize", "All of your lists are not the same size!");
+		en.put("stageEditorMobTypesNotSameSize", "The mob types list and mob amounts list are not the same size!");
+		
+		en.put("stageEditorListContainsDuplicates", " List contains duplicates!");
+		
+		en.put("stageEditorBreakBlocksCleared", "Break blocks objective cleared.");
+		en.put("stageEditorDamageBlocksCleared", "Damage blocks objective cleared.");
+		en.put("stageEditorPlaceBlocksCleared", "Place blocks objective cleared.");
+		en.put("stageEditorUseBlocksCleared", "Use blocks objective cleared.");
+		en.put("stageEditorCutBlocksCleared", "Cut blocks objective cleared.");
+		en.put("stageEditorEnchantmentsCleared", "Enchantment objective cleared.");
+		en.put("stageEditorDeliveriesCleared", "Delivery objective cleared.");
+		en.put("stageEditorKillNPCsCleared", "Kill NPCs objective cleared.");
+		en.put("stageEditorKillMobsCleared", "Kill Mobs objective cleared.");
+		
 		en.put("stageEditorEnchantments", "Enchantments");
-
-		//prompts
-
-
+		en.put("stageEditorNPCNote", "Note: You may specify the name of the NPC with <npc>");
+		en.put("stageEditorOptional", "Optional");
 
 		//Events
 		en.put("eventEditorTitle", "Event Editor");
@@ -206,8 +251,6 @@ public class Lang {
 
 		en.put("eventEditorSetName", "Set name");
 		en.put("eventEditorSetMessage", "Set message");
-
-
 
 		en.put("eventEditorClearInv", "Clear player inventory");
 		en.put("eventEditorSetExplosions", "Set explosion locations");
