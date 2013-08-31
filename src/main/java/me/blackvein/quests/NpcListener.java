@@ -93,8 +93,6 @@ public class NpcListener implements Listener {
 
                         }
 
-
-
                         if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
 
                             Conversation c = plugin.NPCConversationFactory.buildConversation((Conversable) player);
