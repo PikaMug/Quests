@@ -446,6 +446,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
         public Prompt acceptInput(ConversationContext cc, String input) {
             if(input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false){
 
+            	input = Quests.parseString(input);
+            	
                 cc.setSessionData("tempName", input);
 
             }else if(input.equalsIgnoreCase("clear")){
@@ -470,6 +472,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
             if(input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false){
+            	
+            	input = Quests.parseString(input);
 
                 LinkedList<String> lore = new LinkedList<String>();
                 for(String line : input.split(";"))
