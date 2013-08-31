@@ -77,6 +77,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static boolean snoop = true;
     public static boolean npcEffects = true;
     public static boolean broadcastPartyCreation = true;
+    public static boolean ignoreLockedQuests = false;
     public static int maxPartySize = 0;
     public static int acceptTimeout = 20;
     public static int inviteTimeout = 20;
@@ -334,6 +335,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         	Lang.lang = config.getString("language");
         } else {
         	config.set("language", "en");
+        }
+        
+        if (config.contains("ignore-locked-quests")) {
+        	ignoreLockedQuests = config.getBoolean("ignore-locked-quests");
+        } else {
+        	config.set("ignore-locked-quests", false);
         }
 
         if(config.contains("broadcast-party-creation")){
