@@ -119,6 +119,7 @@ public class Lang {
 		en.put("stageEditorDenizenScript", "Denizen Script");
 		en.put("stageEditorStartMessage", "Start Message");
 		en.put("stageEditorCompleteMessage", "Complete Message");
+		en.put("stageEditorMiniEventMessage", "Mini-Events");
 		en.put("stageEditorDelete", "Delete Stage");
 
 		en.put("stageEditorDamageBlocks", "Damage Blocks");
@@ -146,6 +147,7 @@ public class Lang {
 		en.put("stageEditorSetShearColors", "Set sheep colors");
 		en.put("stageEditorSetShearAmounts", "Set shear amounts");
 		en.put("stageEditorSetBosses", "Set Bosses");
+		en.put("stageEditorAddMiniEvent", "Add mini-event");
 		
 		en.put("stageEditorEnterBlockIds", "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.");
 		en.put("stageEditorBreakBlocksPrompt", "Enter block amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");

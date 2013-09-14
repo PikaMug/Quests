@@ -77,6 +77,7 @@ public class CK {
 	public static final String S_DENIZEN = "denizen";
 	public static final String S_COMPLETE_MESSAGE = "completeMessage";
 	public static final String S_START_MESSAGE = "startMessage";
+	public static final String S_MINI_EVENTS = "miniEvents";
 
 	//Events
 	public static final String E_OLD_EVENT = "oldEvent";

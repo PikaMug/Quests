@@ -66,7 +66,7 @@ public class Quest {
         if(q.currentStage.delay < 0){
 
             Player player = q.getPlayer();
-           	if(stages.indexOf(q.currentStage) == (q.currentQuest.stages.size() - 1)){
+           	if(q.currentStageIndex == (q.currentQuest.stages.size() - 1)){
 
                 if(q.currentStage.script != null)
                     plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
@@ -76,28 +76,10 @@ public class Quest {
                 completeQuest(q);
 
             }else {
-
-                q.reset();
-                if(q.currentStage.script != null)
-                    plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
-                if(q.currentStage.event != null)
-                    q.currentStage.event.happen(q);
-                q.currentStage = stages.get(q.currentStageIndex +  1);
-                q.currentStageIndex++;
-                q.addEmpties();
-
-                player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
-                for(String s : q.getObjectives()){
-
-                    player.sendMessage(s);
-
-                }
-
-                String stageStartMessage = q.currentStage.startMessage;
-            	if (stageStartMessage != null) {
-            		q.getPlayer().sendMessage(Quests.parseString(stageStartMessage, q.currentQuest));
-            	}
-
+            	
+            	q.currentStageIndex++;
+            	setStage(q, q.currentStageIndex);
+            	
             }
 
             q.delayStartTime = 0;
@@ -108,6 +90,37 @@ public class Quest {
 
         }
 
+    }
+    
+    public void setStage(Quester q, int stage) {
+    	
+    	if (stages.size() - 1 < stage) {
+    		return;
+    	}
+    	
+    	q.reset();
+    	
+    	if(q.currentStage.script != null)
+    		plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, q.getPlayer());
+    	
+    	if(q.currentStage.event != null)
+    		q.currentStage.event.happen(q);
+    	
+    	q.currentStage = stages.get(stage);
+    	q.addEmpties();
+
+    	q.getPlayer().sendMessage(ChatColor.GOLD + "---(Objectives)---");
+    	for(String s : q.getObjectives()){
+
+    		q.getPlayer().sendMessage(s);
+
+    	}
+
+    	String stageStartMessage = q.currentStage.startMessage;
+    	if (stageStartMessage != null) {
+    		q.getPlayer().sendMessage(Quests.parseString(stageStartMessage, q.currentQuest));
+    	}
+    	
     }
 
     public String getName(){
