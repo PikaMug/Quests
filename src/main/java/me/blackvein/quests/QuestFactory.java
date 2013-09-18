@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import me.blackvein.quests.events.MiniEvent;
-import me.blackvein.quests.events.MiniEvent.MiniEventType;
 import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.StagesPrompt;
@@ -298,15 +296,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 } else {
                     selectedBlockStarts.put((Player) context.getForWhom(), null);
                     return new BlockStartPrompt();
-                }
-
-            } else if (input.equalsIgnoreCase("6")) {
-
-                if (quests.citizens != null) {
-                    selectedBlockStarts.put((Player) context.getForWhom(), null);
-                    return new BlockStartPrompt();
-                } else {
-                    return new RequirementsPrompt(quests, QuestFactory.this);
                 }
 
             } else if (input.equalsIgnoreCase("6")) {
@@ -709,7 +698,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 }
 
                 if (found == null) {
-                    player.sendMessage(RED + input + YELLOW + " " + Lang.get("questEditorInvalidName"));
+                    player.sendMessage(RED + input + YELLOW + " " + Lang.get("questEditorInvalidEventName"));
                     return new InitialEventPrompt();
                 } else {
                     context.setSessionData(CK.Q_INITIAL_EVENT, found.getName());
@@ -1137,9 +1126,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             delayMessage = null;
             startMessage = null;
             completeMessage = null;
-            
-            Map<MiniEventType, List<MiniEvent>> miniEvents = null;
-
 
             if (cc.getSessionData(pref + CK.S_BREAK_IDS) != null) {
                 breakIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_IDS);
@@ -1246,10 +1232,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE) != null) {
             	completeMessage = (String) cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE);
             }
-            
-            if (cc.getSessionData(pref + CK.S_MINI_EVENTS) != null) {
-            	miniEvents = (Map<MiniEventType, List<MiniEvent>>) cc.getSessionData(pref + CK.S_MINI_EVENTS);
-            }
 
             if (breakIds != null && breakIds.isEmpty() == false) {
                 stage.set("break-block-ids", breakIds);
@@ -1314,16 +1296,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             stage.set("delay-message", delayMessage);
             stage.set("start-message", startMessage);
             stage.set("complete-message", completeMessage);
-            
-            //TODO change here
-            if (miniEvents != null && miniEvents.isEmpty() == false) {
-            	for (Entry<MiniEventType, List<MiniEvent>> ent : miniEvents.entrySet()) {
-            		int count = 1;
-            		for (MiniEvent miniEvent : ent.getValue()) {
-            			stage.createSection("mini-events." + ent.getKey().getName() + "." + count, miniEvent.getValues());
-            		}
-            	}
-            }
 
         }
 
@@ -1701,10 +1673,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (stage.startMessage != null) {
             	cc.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
-            }
-            
-            if (stage.miniEvents != null && stage.miniEvents.isEmpty() == false) {
-            	cc.setSessionData(pref + CK.S_START_MESSAGE, stage.miniEvents);
             }
 
         }

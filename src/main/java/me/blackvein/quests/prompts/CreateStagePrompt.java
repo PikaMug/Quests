@@ -1,10 +1,8 @@
 package me.blackvein.quests.prompts;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
 import me.blackvein.quests.ColorUtil;
@@ -12,8 +10,6 @@ import me.blackvein.quests.Event;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.events.MiniEvent;
-import me.blackvein.quests.events.MiniEvent.MiniEventType;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -41,7 +37,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
     public CreateStagePrompt(int stageNum, QuestFactory qf, CitizensPlugin cit) {
 
-        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25");
+        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24");
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
         this.citizens = cit;
@@ -358,11 +354,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         } else {
         	text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + GRAY + ")\n";
         }
-        
-        text += PINK + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorMiniEventMessage") + "\n";
 
-        text += RED + "" + BOLD + "24 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
-        text += GREEN + "" + BOLD + "25 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
+        text += RED + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
+        text += GREEN + "" + BOLD + "24 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
 
         return text;
 
@@ -446,10 +440,8 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         } else if (input.equalsIgnoreCase("22")) {
         	return new CompleteMessagePrompt();
         } else if (input.equalsIgnoreCase("23")) {
-        	return new MiniEventPrompt();
-        } else if (input.equalsIgnoreCase("24")) {
             return new DeletePrompt();
-        } else if (input.equalsIgnoreCase("25")) {
+        } else if (input.equalsIgnoreCase("24")) {
             return new StagesPrompt(questFactory);
         } else {
             return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -3828,256 +3820,5 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 			 }
 		}
 
-    }
-    
-    private class MiniEventPrompt extends StringPrompt {
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public String getPromptText(ConversationContext context) {
-			String text = YELLOW + "- " + GOLD + Lang.get("stageEditorMiniEventMessage") + YELLOW + "-\n";
-			if (context.getSessionData(CK.S_MINI_EVENTS) == null) {
-				text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + "onDeath" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- " + "onKill" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- " + "onReach" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + "onStageEnd" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- " + "onQuestQuit" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- " + "onNpcTalk" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				text += GREEN + "" + BOLD + "7 " + RESET + GREEN + "- " + Lang.get("done");
-			} else {
-				Map<MiniEventType, List<MiniEvent>> map = (Map<MiniEventType, List<MiniEvent>>) context.getSessionData(CK.S_MINI_EVENTS);
-				
-				if (map.containsKey(MiniEventType.ONDEATH)) {
-					text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + "onDeath" + AQUA + " (" + map.get(MiniEventType.ONDEATH).size() + ")\n";
-				} else {
-					text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + "onDeath" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				}
-				
-				if (map.containsKey(MiniEventType.ONKILL)) {
-					text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- " + "onKill" + AQUA + " (" + map.get(MiniEventType.ONKILL) + ")\n";
-				} else {
-					text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- " + "onKill" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				}
-				
-				if (map.containsKey(MiniEventType.ONREACH)) {
-					text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- " + "onReach" + AQUA + " (" + map.get(MiniEventType.ONREACH).size() + ")\n";
-				} else {
-					text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- " + "onReach" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				}
-				
-				if (map.containsKey(MiniEventType.ONSTAGEEND)) {
-					text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + "onStageEnd" + AQUA + " (" + map.get(MiniEventType.ONSTAGEEND).size() + ")\n";
-				} else {
-					text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + "onStageEnd" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				}
-				
-				if (map.containsKey(MiniEventType.ONQUESTQUIT)) {
-					text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- " + "onQuestQuit" + AQUA + " (" + map.get(MiniEventType.ONQUESTQUIT).size() + ")\n";
-				} else {
-					text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- " + "onQuestQuit" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				}
-				if (map.containsKey(MiniEventType.ONNPCINTERACT)) {
-					text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- " + "onNpcTalk" + AQUA + " (" + map.get(MiniEventType.ONNPCINTERACT).size() + ")\n";
-				} else {
-					text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- " + "onNpcTalk" + GRAY + " (" + Lang.get("noneSet") + ")\n";
-				}
-				text += GREEN + "" + BOLD + "7 " + RESET + GREEN + "- " + Lang.get("done");
-			}
-			return text;
-		}
-
-		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			MiniEventType type = null;
-			switch (input) {
-			case "1":
-				type = MiniEventType.ONDEATH;
-				break;
-			case "2":
-				type = MiniEventType.ONKILL;
-				break;
-			case "3":
-				type = MiniEventType.ONREACH;
-				break;
-			case "4":
-				type = MiniEventType.ONSTAGEEND;
-				break;
-			case "5":
-				type = MiniEventType.ONQUESTQUIT;
-				break;
-			case "6":
-				type = MiniEventType.ONNPCINTERACT;
-				break;
-			case "7":
-				return new CreateStagePrompt(stageNum, questFactory, citizens);
-			}
-			
-			if (type == null) return new MiniEventPrompt();
-			
-			return new MiniEventEditorPrompt(type);
-			
-		}
-    }
-    
-    private class MiniEventEditorPrompt extends StringPrompt {
-    	
-    	private MiniEventType type;
-
-		public MiniEventEditorPrompt (MiniEventType type) {
-    		this.type = type;
-    	}
-
-		@Override
-		public String getPromptText(ConversationContext context) {
-			String text = YELLOW + "- " + GOLD + type.getName() + YELLOW + "-\n";
-	            if (context.getSessionData(CK.S_MINI_EVENTS) == null) {
-	                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorAddMiniEvent") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-	                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-	                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
-	            } else {
-	            	HashMap<MiniEventType, List<MiniEvent>> types = (HashMap<MiniEventType, List<MiniEvent>>) context.getSessionData(CK.S_MINI_EVENTS);
-	                for (int i = 0; i < types.size(); i++) {
-	                  	text += GOLD  + "  " + (i + 1) + " - Edit: " + AQUA + "Mini-Event: " + (i + 1);
-	                }
-
-	                text += BLUE + "" + BOLD + (types.size() + 1) + RESET + YELLOW + " - " + Lang.get("stageEditorAddMiniEvent") + "\n";
-	                text += BLUE + "" + BOLD + (types.size() + 2) + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-	                text += GREEN + "" + BOLD + (types.size() + 3) + RESET + YELLOW + " - " + Lang.get("done");
-
-	            }
-	           return text;
-		}
-		
-		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			HashMap<MiniEventType, List<MiniEvent>> map = (HashMap<MiniEventType, List<MiniEvent>>) context.getSessionData(CK.S_MINI_EVENTS);
-			boolean none = true;
-			if (map != null) {
-				if (map.containsKey(type)) none = false;
-			}
-			if (none) {
-        		if (input.equalsIgnoreCase("1")) {
-                    return new MiniEventAddPrompt(0, null);
-        		} else if (input.equalsIgnoreCase("2")) {
-        			//TODO cleared
-        			context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorMobSpawnsCleared"));
-                    return new MiniEventEditorPrompt(type);
-        		} else if (input.equalsIgnoreCase("3")) {
-        			return new CreateStagePrompt(stageNum, questFactory, citizens);
-        		}
-        	} else {
-        		LinkedList<MiniEvent> types = new LinkedList<MiniEvent>(map.get(type));
-        		int inp = -1;
-        		try {
-        			inp = Integer.parseInt(input);
-        		} catch (Exception e) {
-        			context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorNotANumber"));
-        			return new MiniEventEditorPrompt(type);
-        		}
-        		
-        			if (inp == types.size() + 1) { 
-        				return new MiniEventAddPrompt(inp - 1, null);
-        			} else if (inp == types.size() + 2) {
-        				//TODO cleared
-        				context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorMobSpawnsCleared"));
-        				map.put(type, null);
-                        context.setSessionData(CK.S_MINI_EVENTS, map);
-                        return new MiniEventEditorPrompt(type);
-        			} else if (inp == types.size() + 3) {
-        				return new CreateStagePrompt(stageNum, questFactory, citizens);
-        			} else if (inp > types.size()){
-        				return new MiniEventEditorPrompt(type);
-        			} else {
-        				return new MiniEventAddPrompt(inp - 1, types.get(inp - 1));
-        			}
-        	}
-			
-			return new MiniEventEditorPrompt(type);
-		}    	
-    }
-    
-    private class MiniEventAddPrompt extends StringPrompt {
-    	
-    	private int index;
-    	private MiniEvent miniEvent;
-    	
-    	public MiniEventAddPrompt (int index, MiniEvent miniEvent) {
-    		this.index = index;
-    		if (miniEvent == null) {
-    			this.miniEvent = new MiniEvent(null);
-    		} else {
-    			this.miniEvent = miniEvent;
-    		}
-    		
-    	}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public String getPromptText(ConversationContext context) {
-			String text = "\n";
-			HashMap<String, String> map = (HashMap<String, String>) miniEvent.getValues();
-			
-			if (map.containsKey("cancel")) {
-				text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventCancel") + GRAY + " (" + map.get("cancel") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventCancel") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-			}
-			
-			if (map.containsKey("command")) {
-				text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventCommand") + GRAY + " (" + map.get("command") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventCommand") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-			}
-			
-			if (map.containsKey("send-message")) {
-				text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventSendMessage") + GRAY + " (" + map.get("send-message") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventSendMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-			}
-			
-			if (map.containsKey("chat-message")) {
-				text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventChatMessage") + GRAY + " (" + map.get("chat-message") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventChatMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-			}
-			
-			if (map.containsKey("broadcast-message")) {
-				text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventBroadcastMessage") + GRAY + " (" + map.get("broadcast-message") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventBroadcaseMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";				
-			}
-			
-			if (map.containsKey("set-stage")) {
-				text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventSetStage") + GRAY + " (" + map.get("set-stage") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventSetStage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-			}
-			
-			if (map.containsKey("teleport")) {
-				text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventTeleport") + GRAY + " (" + map.get("teleport") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventTeleport") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-			}
-			
-			if (map.containsKey("take-item")) {
-				text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventTakeItem") + GRAY + " (" + map.get("take-item") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventTakeItem") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-			}
-			
-			if (map.containsKey("add-item")) {
-				text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventAddItem") + GRAY + " (" + map.get("add-item") + ")\n";
-			} else {
-				text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("stageEditorMiniEventAddItem") + GRAY + " (" + Lang.get("noneSet") + ")\n";				
-			}
-			
-			text += GREEN + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("done");
-			return text;
-		}
-
-		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			return null;
-		}
     }
 }

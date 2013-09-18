@@ -278,6 +278,8 @@ public class Quest {
             player.sendMessage(none);
         }
         q.currentQuest = null;
+        
+        System.out.println(plugin.getQuester(q.name).currentQuest.getName());
         q.currentStage = null;
         q.currentStageIndex = 0;
 

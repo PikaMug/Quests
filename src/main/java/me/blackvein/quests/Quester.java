@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
-import me.ThaH3lper.com.LoadBosses.LoadBoss;
 import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -1141,8 +1140,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("killBoss")) {
 
-            LoadBoss b = Quests.getBoss(boss);
-            String message = ChatColor.GREEN + "(Completed) Kill " + ChatColor.ITALIC + b.getName() + ChatColor.RESET + ChatColor.GREEN;
+            String message = ChatColor.GREEN + "(Completed) Kill " + ChatColor.ITALIC + boss + ChatColor.RESET + ChatColor.GREEN;
             message = message + " " + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)) + "/" + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss));
             p.sendMessage(message);
             if (testComplete()) {

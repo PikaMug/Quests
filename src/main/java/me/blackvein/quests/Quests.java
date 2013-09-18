@@ -21,12 +21,6 @@ import java.util.logging.Logger;
 
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
-import me.blackvein.quests.events.MiniEvent;
-import me.blackvein.quests.events.MiniEvent.MiniEventType;
-import me.blackvein.quests.events.MiniEventChat;
-import me.blackvein.quests.events.MiniEventKill;
-import me.blackvein.quests.events.MiniEventNPCInteract;
-import me.blackvein.quests.events.MiniEventReach;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -3012,68 +3006,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         stage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
 
-                    }
-                    
-                    for (MiniEventType t : MiniEventType.values()) {
-                    	int meCount = 1;
-                    	if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mini-events." + t.getName())) {
-                    		ConfigurationSection configSection = config.createSection("quests." + s + ".stages.ordered." + s2 + ".mini-events." + t.getName());
-
-                    		LinkedList<MiniEvent> ml = new LinkedList<MiniEvent>();
-                    		
-                    		for (String string : configSection.getKeys(false)) {
-                    			
-                    			MiniEvent me = null;
-                    			ConfigurationSection miniSection = configSection.getConfigurationSection(string);
-
-                    			switch(t) {
-                    			case ONDEATH:
-                    				me = new MiniEvent(miniSection.getValues(false));
-                    				break;
-                    			case ONKILL:
-                    				if (miniSection.contains("data")) {
-                    					me = new MiniEventKill(quest, miniSection.getValues(false), miniSection.getString("data"));
-                    				} else {
-                    					me = new MiniEventKill(quest, miniSection.getValues(false), "");
-                    				}
-                    				break;
-                    			case ONREACH:
-                    				if (miniSection.contains("data")) {
-                    					me = new MiniEventReach(quest, miniSection.getValues(false), miniSection.getString("data"));
-                    				} else {
-                    					me = new MiniEventReach(quest, miniSection.getValues(false), "");
-                    				}
-                    				break;
-                    			case ONCHAT:
-                    				if (miniSection.contains("data")) {
-                    					me = new MiniEventChat(quest, miniSection.getValues(false), miniSection.getString("data"));
-                    				} else {
-                    					me = new MiniEventChat(quest, miniSection.getValues(false), "");
-                    				}
-                    				break;
-                    			case ONSTAGEEND:
-                    				me = new MiniEvent(miniSection.getValues(false));
-                    				break;
-                    			case ONQUESTQUIT:
-                    				me = new MiniEvent(miniSection.getValues(false));
-                    				break;
-                    			case ONNPCINTERACT:
-                    				if (miniSection.contains("data")) {
-                    					me = new MiniEventNPCInteract(quest, miniSection.getValues(false), miniSection.getString("data"));
-                    				} else {
-                    					me = new MiniEventNPCInteract(quest, miniSection.getValues(false), "");
-                    				}
-                    				break;
-                    			}
-                    			
-                    			if (me != null) {
-                    				ml.add(me);
-                    			}
-                    			meCount++;
-                    		}
-                    		
-                    		stage.miniEvents.put(t, ml);
-                    	}
                     }
 
                     stage.citizensToInteract = npcsToTalkTo;

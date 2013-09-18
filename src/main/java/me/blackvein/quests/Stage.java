@@ -6,10 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import me.blackvein.quests.events.MiniEvent;
-import me.blackvein.quests.events.MiniEvent.MiniEventType;
-import me.blackvein.quests.events.MiniEventKill;
-import me.blackvein.quests.events.MiniEventReach;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.DyeColor;
@@ -30,8 +26,6 @@ public class Stage {
     Integer fishToCatch;
     Integer playersToKill;
     Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
-    
-    Map<MiniEventType, List<MiniEvent>> miniEvents = new HashMap();
     
     LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
     LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
@@ -127,52 +121,8 @@ public class Stage {
     public Event event;
     public long delay = -1;
     public String delayMessage = null;
-	public String completeMessage = null;
-	public String startMessage = null;
-	
-	public boolean executeEvent(Quester quester, MiniEventType type) {
-	
-		if (miniEvents.containsKey(type)) {
-			boolean isCancelled = false;
-			for (MiniEvent me : miniEvents.get(type)) {
-				boolean c = me.execute(quester);
-				if (c == true) {
-					isCancelled = true;
-				}
-			}
-			return isCancelled;
-		}
-		return false;
-	}
-
-	public boolean executeReachEvent(Location location, Quester quester) {
-
-		if (miniEvents.containsKey(MiniEventType.ONREACH)) {
-			boolean isCancelled = false;
-			for (MiniEvent me : miniEvents.get(MiniEventType.ONREACH)) {
-				boolean c = ((MiniEventReach) me).execute(quester, location);
-				if (c == true) {
-					isCancelled = true;
-				}
-			}
-			return isCancelled;
-		}
-		return false;
-	}
-	
-	public boolean executeKillEvent(Quester quester, EntityType entityType) {
-		if (miniEvents.containsKey(MiniEventType.ONKILL)) {
-			boolean isCancelled = false;
-			for (MiniEvent me : miniEvents.get(MiniEventType.ONREACH)) {
-				boolean c = ((MiniEventKill) me).execute(quester, entityType);
-				if (c == true) {
-					isCancelled = true;
-				}
-			}
-			return isCancelled;
-		}
-		return false;
-	}
+    public String completeMessage = null;
+    public String startMessage = null;
 	
     @Override
     public boolean equals(Object o) {

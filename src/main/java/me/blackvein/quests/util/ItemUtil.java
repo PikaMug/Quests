@@ -27,6 +27,12 @@ public class ItemUtil implements ColorUtil{
      */
     public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount){
 
+        if(one == null && two != null || one != null && two == null)
+            return 0;
+        
+        if(one == null && two == null)
+            return 0;
+        
         if(one.getTypeId() != two.getTypeId())
             return -1;
         else if( (one.getAmount() != two.getAmount()) && ignoreAmount == false)
