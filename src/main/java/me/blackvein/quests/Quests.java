@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,6 +21,12 @@ import java.util.logging.Logger;
 
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
+import me.blackvein.quests.events.MiniEvent;
+import me.blackvein.quests.events.MiniEvent.MiniEventType;
+import me.blackvein.quests.events.MiniEventChat;
+import me.blackvein.quests.events.MiniEventKill;
+import me.blackvein.quests.events.MiniEventNPCInteract;
+import me.blackvein.quests.events.MiniEventReach;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -77,6 +82,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static boolean snoop = true;
     public static boolean npcEffects = true;
     public static boolean broadcastPartyCreation = true;
+    public static boolean ignoreLockedQuests = false;
     public static int maxPartySize = 0;
     public static int acceptTimeout = 20;
     public static int inviteTimeout = 20;
@@ -107,6 +113,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public int killDelay = 0;
     public int totalQuestPoints = 0;
     public Lang lang;
+    private static Quests instance = null;
 
     @Override
     public void onEnable() {
@@ -115,6 +122,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         effListener = new NpcEffectThread(this);
         npcListener = new NpcListener(this);
         bossListener = new EpicBossListener(this);
+        instance = this;
 
         this.conversationFactory = new ConversationFactory(this)
                 .withModality(false)
@@ -269,6 +277,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
     }
+    
+    public static Quests getInstance() {
+    	return instance;
+    }
 
     private class QuestPrompt extends StringPrompt {
 
@@ -334,6 +346,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         	Lang.lang = config.getString("language");
         } else {
         	config.set("language", "en");
+        }
+        
+        if (config.contains("ignore-locked-quests")) {
+        	ignoreLockedQuests = config.getBoolean("ignore-locked-quests");
+        } else {
+        	config.set("ignore-locked-quests", false);
         }
 
         if(config.contains("broadcast-party-creation")){
@@ -993,7 +1011,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     } else if (args[0].equalsIgnoreCase("info")) {
 
                         cs.sendMessage(GOLD + "Quests " + this.getDescription().getVersion());
-                        cs.sendMessage(GOLD + "Made by " + DARKRED + "Blackvein");
+                        cs.sendMessage(GOLD + "Made by " + DARKRED + "Blackvein" + GOLD + " and " + RED + "BlockCat");
                         return true;
 
                     } else {
@@ -2995,6 +3013,68 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         stage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
 
                     }
+                    
+                    for (MiniEventType t : MiniEventType.values()) {
+                    	int meCount = 1;
+                    	if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mini-events." + t.getName())) {
+                    		ConfigurationSection configSection = config.createSection("quests." + s + ".stages.ordered." + s2 + ".mini-events." + t.getName());
+
+                    		LinkedList<MiniEvent> ml = new LinkedList<MiniEvent>();
+                    		
+                    		for (String string : configSection.getKeys(false)) {
+                    			
+                    			MiniEvent me = null;
+                    			ConfigurationSection miniSection = configSection.getConfigurationSection(string);
+
+                    			switch(t) {
+                    			case ONDEATH:
+                    				me = new MiniEvent(miniSection.getValues(false));
+                    				break;
+                    			case ONKILL:
+                    				if (miniSection.contains("data")) {
+                    					me = new MiniEventKill(quest, miniSection.getValues(false), miniSection.getString("data"));
+                    				} else {
+                    					me = new MiniEventKill(quest, miniSection.getValues(false), "");
+                    				}
+                    				break;
+                    			case ONREACH:
+                    				if (miniSection.contains("data")) {
+                    					me = new MiniEventReach(quest, miniSection.getValues(false), miniSection.getString("data"));
+                    				} else {
+                    					me = new MiniEventReach(quest, miniSection.getValues(false), "");
+                    				}
+                    				break;
+                    			case ONCHAT:
+                    				if (miniSection.contains("data")) {
+                    					me = new MiniEventChat(quest, miniSection.getValues(false), miniSection.getString("data"));
+                    				} else {
+                    					me = new MiniEventChat(quest, miniSection.getValues(false), "");
+                    				}
+                    				break;
+                    			case ONSTAGEEND:
+                    				me = new MiniEvent(miniSection.getValues(false));
+                    				break;
+                    			case ONQUESTQUIT:
+                    				me = new MiniEvent(miniSection.getValues(false));
+                    				break;
+                    			case ONNPCINTERACT:
+                    				if (miniSection.contains("data")) {
+                    					me = new MiniEventNPCInteract(quest, miniSection.getValues(false), miniSection.getString("data"));
+                    				} else {
+                    					me = new MiniEventNPCInteract(quest, miniSection.getValues(false), "");
+                    				}
+                    				break;
+                    			}
+                    			
+                    			if (me != null) {
+                    				ml.add(me);
+                    			}
+                    			meCount++;
+                    		}
+                    		
+                    		stage.miniEvents.put(t, ml);
+                    	}
+                    }
 
                     stage.citizensToInteract = npcsToTalkTo;
 
@@ -3258,6 +3338,42 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
+
+    }
+    
+    public static String parseString(String s) {
+    	
+    	String parsed = s;
+
+        parsed = parsed.replaceAll("<black>", BLACK.toString());
+        parsed = parsed.replaceAll("<darkblue>", DARKBLUE.toString());
+        parsed = parsed.replaceAll("<darkgreen>", DARKGREEN.toString());
+        parsed = parsed.replaceAll("<darkaqua>", DARKAQUA.toString());
+        parsed = parsed.replaceAll("<darkred>", DARKRED.toString());
+        parsed = parsed.replaceAll("<purple>", PURPLE.toString());
+        parsed = parsed.replaceAll("<gold>", GOLD.toString());
+        parsed = parsed.replaceAll("<grey>", GRAY.toString());
+        parsed = parsed.replaceAll("<gray>", GRAY.toString());
+        parsed = parsed.replaceAll("<darkgrey>", DARKGRAY.toString());
+        parsed = parsed.replaceAll("<darkgray>", DARKGRAY.toString());
+        parsed = parsed.replaceAll("<blue>", BLUE.toString());
+        parsed = parsed.replaceAll("<green>", GREEN.toString());
+        parsed = parsed.replaceAll("<aqua>", AQUA.toString());
+        parsed = parsed.replaceAll("<red>", RED.toString());
+        parsed = parsed.replaceAll("<pink>", PINK.toString());
+        parsed = parsed.replaceAll("<yellow>", YELLOW.toString());
+        parsed = parsed.replaceAll("<white>", WHITE.toString());
+
+        parsed = parsed.replaceAll("<random>", MAGIC.toString());
+        parsed = parsed.replaceAll("<italic>", ITALIC.toString());
+        parsed = parsed.replaceAll("<bold>", BOLD.toString());
+        parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
+        parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
+        parsed = parsed.replaceAll("<reset>", RESET.toString());
+        parsed = ChatColor.translateAlternateColorCodes('&', parsed);
+
+        return parsed;
+
 
     }
 

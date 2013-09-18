@@ -1,11 +1,17 @@
 package me.blackvein.quests;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import me.blackvein.quests.events.MiniEvent;
+import me.blackvein.quests.events.MiniEvent.MiniEventType;
+import me.blackvein.quests.events.MiniEventKill;
+import me.blackvein.quests.events.MiniEventReach;
 import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,6 +30,9 @@ public class Stage {
     Integer fishToCatch;
     Integer playersToKill;
     Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
+    
+    Map<MiniEventType, List<MiniEvent>> miniEvents = new HashMap();
+    
     LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
     LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
     LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
@@ -89,15 +98,12 @@ public class Stage {
             if (o instanceof LinkedList) {
 
                 LinkedList<NPC> otherList = (LinkedList<NPC>) o;
+                
+                if (this.size() != otherList.size()) return false;
 
-                for (NPC n : this) {
-
-                    NPC other = otherList.get(this.indexOf(n));
-                    if (other.getId() != n.getId()) {
-                        return false;
-                    }
+                for (int i = 0; i < this.size(); i++) {
+                	if (this.get(i) != otherList.get(i)) return false;
                 }
-
             }
 
             return true;
@@ -123,7 +129,51 @@ public class Stage {
     public String delayMessage = null;
 	public String completeMessage = null;
 	public String startMessage = null;
+	
+	public boolean executeEvent(Quester quester, MiniEventType type) {
+	
+		if (miniEvents.containsKey(type)) {
+			boolean isCancelled = false;
+			for (MiniEvent me : miniEvents.get(type)) {
+				boolean c = me.execute(quester);
+				if (c == true) {
+					isCancelled = true;
+				}
+			}
+			return isCancelled;
+		}
+		return false;
+	}
 
+	public boolean executeReachEvent(Location location, Quester quester) {
+
+		if (miniEvents.containsKey(MiniEventType.ONREACH)) {
+			boolean isCancelled = false;
+			for (MiniEvent me : miniEvents.get(MiniEventType.ONREACH)) {
+				boolean c = ((MiniEventReach) me).execute(quester, location);
+				if (c == true) {
+					isCancelled = true;
+				}
+			}
+			return isCancelled;
+		}
+		return false;
+	}
+	
+	public boolean executeKillEvent(Quester quester, EntityType entityType) {
+		if (miniEvents.containsKey(MiniEventType.ONKILL)) {
+			boolean isCancelled = false;
+			for (MiniEvent me : miniEvents.get(MiniEventType.ONREACH)) {
+				boolean c = ((MiniEventKill) me).execute(quester, entityType);
+				if (c == true) {
+					isCancelled = true;
+				}
+			}
+			return isCancelled;
+		}
+		return false;
+	}
+	
     @Override
     public boolean equals(Object o) {
 
@@ -313,4 +363,6 @@ public class Stage {
         return true;
 
     }
+
+	
 }

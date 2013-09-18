@@ -2,6 +2,7 @@ package me.blackvein.quests;
 
 import java.io.File;
 
+import me.blackvein.quests.events.MiniEvent.MiniEventType;
 import net.citizensnpcs.api.CitizensAPI;
 
 import org.bukkit.ChatColor;
@@ -404,6 +405,7 @@ public class PlayerListener implements Listener {
                             if (okay) {
 
                                 Quester quester = plugin.getQuester(player.getName());
+                                
                                 if (quester.hasObjective("killMob")) {
                                     quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
                                 }
@@ -470,6 +472,7 @@ public class PlayerListener implements Listener {
                             if (okay) {
 
                                 Quester quester = plugin.getQuester(player.getName());
+                                
                                 if (quester.hasObjective("killPlayer")) {
                                     quester.killPlayer(evt.getEntity().getName());
                                 }
@@ -605,6 +608,14 @@ public class PlayerListener implements Listener {
             if (isPlayer) {
 
                 Quester quester = plugin.getQuester(evt.getPlayer().getName());
+                
+                if (quester.currentStage != null) {
+                	boolean isCancelled = quester.currentStage.executeReachEvent(evt.getTo(), quester);
+                
+                	if(isCancelled) {
+                		evt.setCancelled(isCancelled);
+                	}
+                }
 
                 if (quester.hasObjective("reachLocation")) {
 
@@ -616,5 +627,21 @@ public class PlayerListener implements Listener {
 
         }
 
+    }
+
+    public void onEntityDamage(EntityDamageByEntityEvent evt) {
+    	if (evt.getEntity() instanceof Player) {
+    		double health = ((Damageable) evt.getEntity()).getHealth();
+    		if (evt.getDamage() >= health) {
+    			Quester quester = plugin.getQuester(((Player) evt.getEntity()).getName());
+    			evt.setCancelled(quester.currentStage.executeEvent(quester, MiniEventType.ONDEATH));
+    			
+    		}
+    	} else if (evt.getDamager() instanceof Player) {
+    		if (evt.getDamage() >= ((Damageable) evt.getEntity()).getHealth()) {
+    			Quester quester = plugin.getQuester(((Player) evt.getDamager()).getName());
+    			evt.setCancelled(quester.currentStage.executeKillEvent(quester, evt.getEntityType()));
+    		}
+    	}
     }
 }

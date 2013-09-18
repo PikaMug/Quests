@@ -7,10 +7,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.QuestMob;
 import net.citizensnpcs.api.CitizensAPI;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +23,15 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.*;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.conversations.ConversationAbandonedListener;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.ConversationPrefix;
+import org.bukkit.conversations.FixedSetPrompt;
+import org.bukkit.conversations.NumericPrompt;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -184,8 +194,6 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         context.setSessionData(CK.E_WORLD_THUNDER, null);
         context.setSessionData(CK.E_WORLD_THUNDER_DURATION, null);
         context.setSessionData(CK.E_MOB_TYPES, null);
-        context.setSessionData(CK.E_MOB_AMOUNTS, null);
-        context.setSessionData(CK.E_MOB_LOCATIONS, null);
         context.setSessionData(CK.E_LIGHTNING, null);
         context.setSessionData(CK.E_POTION_TYPES, null);
         context.setSessionData(CK.E_POTION_DURATIONS, null);
@@ -233,7 +241,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             LinkedList<String> effs = new LinkedList<String>();
             LinkedList<String> locs = new LinkedList<String>();
 
-            for(Entry e : event.effects.entrySet()){
+            for(Entry<?, ?> e : event.effects.entrySet()){
 
                 effs.add(((Effect) e.getKey()).toString());
                 locs.add(Quests.getLocationInfo((Location) e.getValue()));
@@ -259,24 +267,15 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         }
 
-        if(event.mobSpawnTypes != null && event.mobSpawnTypes.isEmpty() == false){
-
-            LinkedList<String> types = new LinkedList<String>();
-            LinkedList<String> locs = new LinkedList<String>();
-            LinkedList<Integer> amounts = new LinkedList<Integer>();
-
-            for(int i = 0; i < event.mobSpawnTypes.size(); i++){
-
-                types.add(Quester.prettyMobString(event.mobSpawnTypes.get(i)));
-                locs.add(Quests.getLocationInfo(event.mobSpawnLocs.get(i)));
-                amounts.add(event.mobSpawnAmounts.get(i));
-
-            }
-
-            context.setSessionData(CK.E_MOB_TYPES, types);
-            context.setSessionData(CK.E_MOB_AMOUNTS, amounts);
-            context.setSessionData(CK.E_MOB_LOCATIONS, locs);
-
+        if (event.mobSpawns != null && event.mobSpawns.isEmpty() == false) {
+        	
+        	LinkedList<String> questMobs = new LinkedList<String>();
+        	
+        	for (QuestMob questMob : event.mobSpawns) {
+        		questMobs.add(questMob.serialize());
+        	}
+        	
+        	context.setSessionData(CK.E_MOB_TYPES, questMobs);
         }
 
         if(event.lightningStrikes != null && event.lightningStrikes.isEmpty() == false){
@@ -571,15 +570,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
                 LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
-                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(CK.E_MOB_AMOUNTS);
-                LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_MOB_LOCATIONS);
 
                 text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + "\n";
 
                 for (String s : types) {
-                    int amt = amounts.get(types.indexOf(s));
-                    String loc = locations.get(types.indexOf(s));
-                    text += GRAY + "    - " + AQUA + s + GRAY + " x " + DARKAQUA + amt + GRAY + " -> " + GREEN + loc + "\n";
+                	QuestMob qm = QuestMob.fromString(s);
+                    text += GRAY + "    - " + AQUA + qm.getType().getName() + ((qm.getName() != null) ? ": " + qm.getName() : "") + GRAY + " x " + DARKAQUA + qm.getSpawnAmounts() + GRAY + " -> " + GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
             }
 
@@ -862,7 +858,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             return (String)context.getSessionData(path);
         }
 
-        private static LinkedList<String> getCStringList(ConversationContext context, String path){
+        @SuppressWarnings("unchecked")
+		private static LinkedList<String> getCStringList(ConversationContext context, String path){
             return (LinkedList<String>)context.getSessionData(path);
         }
 
@@ -870,7 +867,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             return (Integer)context.getSessionData(path);
         }
 
-        private static LinkedList<Integer> getCIntList(ConversationContext context, String path){
+        @SuppressWarnings("unchecked")
+		private static LinkedList<Integer> getCIntList(ConversationContext context, String path){
             return (LinkedList<Integer>)context.getSessionData(path);
         }
 
@@ -878,7 +876,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             return (Boolean)context.getSessionData(path);
         }
 
-        private static LinkedList<Boolean> getCBooleanList(ConversationContext context, String path){
+        @SuppressWarnings("unchecked")
+		private static LinkedList<Boolean> getCBooleanList(ConversationContext context, String path){
             return (LinkedList<Boolean>)context.getSessionData(path);
         }
 
@@ -886,7 +885,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             return (Long)context.getSessionData(path);
         }
 
-        private static LinkedList<Long> getCLongList(ConversationContext context, String path){
+        @SuppressWarnings("unchecked")
+		private static LinkedList<Long> getCLongList(ConversationContext context, String path){
             return (LinkedList<Long>)context.getSessionData(path);
         }
     //
@@ -1007,16 +1007,39 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         }
 
+        try {
         if (context.getSessionData(CK.E_MOB_TYPES) != null) {
-
-            LinkedList<String> types = getCStringList(context, CK.E_MOB_TYPES);
-            LinkedList<Integer> amounts = getCIntList(context, CK.E_MOB_AMOUNTS);
-            LinkedList<String> locations = getCStringList(context, CK.E_MOB_LOCATIONS);
-
-            section.set("mob-spawn-types", types);
-            section.set("mob-spawn-amounts", amounts);
-            section.set("mob-spawn-locations", locations);
-
+        	int count = 0;
+        	
+        	for (String s : getCStringList(context, CK.E_MOB_TYPES)) {
+        		ConfigurationSection ss = section.getConfigurationSection("mob-spawns." + count);
+        		if (ss == null) {
+        			ss = section.createSection("mob-spawns." + count);
+        		}
+        		QuestMob questMob = QuestMob.fromString(s);
+        		
+        		if (questMob == null) continue;
+        		
+        		ss.set("name", questMob.getName());
+        		ss.set("spawn-location", Quests.getLocationInfo(questMob.getSpawnLocation()));
+        		ss.set("mob-type", questMob.getType().getName());
+        		ss.set("spawn-amounts", questMob.getSpawnAmounts());
+        		ss.set("held-item", ItemUtil.serialize(questMob.inventory[0]));
+        		ss.set("held-item-drop-chance", questMob.dropChances[0]);
+        		ss.set("boots", ItemUtil.serialize(questMob.inventory[1]));
+        		ss.set("boots-drop-chance", questMob.dropChances[1]);
+        		ss.set("leggings", ItemUtil.serialize(questMob.inventory[2]));
+        		ss.set("leggings-drop-chance", questMob.dropChances[2]);
+        		ss.set("chest-plate", ItemUtil.serialize(questMob.inventory[3]));
+        		ss.set("chest-plate-drop-chance", questMob.dropChances[3]);
+        		ss.set("helmet", ItemUtil.serialize(questMob.inventory[4]));
+        		ss.set("helmet-drop-chance", questMob.dropChances[4]);
+        		count++;
+        	}
+        	
+        }
+        } catch (Exception e) {
+        	e.printStackTrace();
         }
 
         if (context.getSessionData(CK.E_LIGHTNING) != null) {
@@ -1029,7 +1052,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         if (context.getSessionData(CK.E_COMMANDS) != null) {
 
             LinkedList<String> commands = getCStringList(context, CK.E_COMMANDS);
-            section.set("commands", commands);
+            if (commands.isEmpty() == false)
+            	section.set("commands", commands);
 
         }
 
@@ -1855,57 +1879,27 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         }
     }
 
-    private class MobPrompt extends FixedSetPrompt {
-
-        public MobPrompt() {
-
-            super("1", "2", "3", "4", "5");
-
-        }
+    private class MobPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
 
             String text = GOLD + "- " + Lang.get("eventEditorMobSpawns") + " -\n";
             if (context.getSessionData(CK.E_MOB_TYPES) == null) {
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobTypes") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + Lang.get("eventEditorSetMobAmounts") + " " + Lang.get("eventEditorNoTypesSet") + "\n";
-                text += GRAY + "3 - " + Lang.get("eventEditorAddSpawnLocation") + " " + Lang.get("eventEditorNoTypesSet") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorAddMobTypes") + " (" + Lang.get("noneSet") + ")\n";
+                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
-
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobTypes") + "\n";
-                for (String s : (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)) {
-                    text += GRAY + "    - " + AQUA + s + "\n";
+            	LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+                
+                for (int i = 0; i < types.size(); i++) {
+                  	QuestMob qm = QuestMob.fromString(types.get(i));
+                  	text += GOLD  + "  " + (i + 1) + " - Edit: " + AQUA + qm.getType().getName() + ((qm.getName() != null) ? ": " + qm.getName() : "") + GRAY + " x " + DARKAQUA + qm.getSpawnAmounts() + GRAY + " -> " + GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
 
-                if (context.getSessionData(CK.E_MOB_AMOUNTS) == null) {
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                    text += GRAY + "3 - " + Lang.get("eventEditorAddSpawnLocation") + Lang.get("eventEditorNoAmountsSet") + "\n";
-                } else {
-
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobAmounts") + "\n";
-                    for (int i : (LinkedList<Integer>) context.getSessionData(CK.E_MOB_AMOUNTS)) {
-                        text += GRAY + "    - " + DARKAQUA + i + "\n";
-                    }
-
-
-                    if (context.getSessionData(CK.E_MOB_LOCATIONS) == null) {
-                        text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorAddSpawnLocation") + " (" + Lang.get("noneSet") + ")\n";
-                    } else {
-
-                        text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorAddSpawnLocation") + "\n";
-                        for (String s : (LinkedList<String>) context.getSessionData(CK.E_MOB_LOCATIONS)) {
-                            text += GRAY + "    - " + GREEN + s + "\n";
-                        }
-
-                    }
-
-                }
-
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += GREEN + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
+                text += BLUE + "" + BOLD + (types.size() + 1) + RESET + YELLOW + " - " + Lang.get("eventEditorAddMobTypes") + "\n";
+                text += BLUE + "" + BOLD + (types.size() + 2) + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += GREEN + "" + BOLD + (types.size() + 3) + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -1913,78 +1907,223 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         }
 
-        @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-
-            if (input.equalsIgnoreCase("1")) {
-                return new MobTypesPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(CK.E_MOB_TYPES) == null) {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobTypesFirst"));
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			
+			if (context.getSessionData(CK.E_MOB_TYPES) == null) {
+        		if (input.equalsIgnoreCase("1")) {
+                    return new QuestMobPrompt(0, null);
+        		} else if (input.equalsIgnoreCase("2")) {
+        			context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorMobSpawnsCleared"));
+                    context.setSessionData(CK.E_MOB_TYPES, null);
                     return new MobPrompt();
-                } else {
-                    return new MobAmountsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData(CK.E_MOB_TYPES) == null) {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobTypesAndAmountsFirst"));
-                    return new MobPrompt();
-                } else if (context.getSessionData(CK.E_MOB_AMOUNTS) == null) {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobAmountsFirst"));
-                    return new MobPrompt();
-                } else {
-                    selectedMobLocations.put((Player) context.getForWhom(), null);
-                    return new MobLocationPrompt();
-                }
-            } else if (input.equalsIgnoreCase("4")) {
-                context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorMobSpawnsCleared"));
-                context.setSessionData(CK.E_MOB_TYPES, null);
-                context.setSessionData(CK.E_MOB_AMOUNTS, null);
-                context.setSessionData(CK.E_MOB_LOCATIONS, null);
-                return new MobPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
-
-                int one;
-                int two;
-                int three;
-
-                if (context.getSessionData(CK.E_MOB_TYPES) != null) {
-                    one = ((List<String>) context.getSessionData(CK.E_MOB_TYPES)).size();
-                } else {
-                    one = 0;
-                }
-
-                if (context.getSessionData(CK.E_MOB_AMOUNTS) != null) {
-                    two = ((List<Integer>) context.getSessionData(CK.E_MOB_AMOUNTS)).size();
-                } else {
-                    two = 0;
-                }
-
-                if (context.getSessionData(CK.E_MOB_LOCATIONS) != null) {
-                    three = ((List<String>) context.getSessionData(CK.E_MOB_LOCATIONS)).size();
-                } else {
-                    three = 0;
-                }
-
-                if (one == two && two == three) {
-                    return new CreateMenuPrompt();
-                } else {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorListSizeMismatch"));
-                    return new MobPrompt();
-                }
-
-            }
-            return null;
-
-        }
+        		} else if (input.equalsIgnoreCase("3")) {
+        			return new CreateMenuPrompt();
+        		}
+        	} else {
+        		LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+        		int inp = -1;
+        		try {
+        			inp = Integer.parseInt(input);
+        		} catch (Exception e) {
+        			context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorNotANumber"));
+        			return new MobPrompt();
+        		}
+        		
+        			if (inp == types.size() + 1) { 
+        				return new QuestMobPrompt(inp - 1, null);
+        			} else if (inp == types.size() + 2) {
+        				context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorMobSpawnsCleared"));
+                        context.setSessionData(CK.E_MOB_TYPES, null);
+                        return new MobPrompt();
+        			} else if (inp == types.size() + 3) {
+        				return new CreateMenuPrompt();
+        			} else if (inp > types.size()){
+        				return new MobPrompt();
+        			} else {
+        				return new QuestMobPrompt(inp - 1, QuestMob.fromString(types.get(inp - 1)));
+        			}
+        	}
+			
+			return new MobPrompt();
+		}
     }
 
-    private class MobTypesPrompt extends StringPrompt {
+    private class QuestMobPrompt extends StringPrompt {
 
-        @Override
+    	private QuestMob questMob;
+    	private Integer itemIndex = -1;
+    	private Integer mobIndex;
+    	
+        public QuestMobPrompt(int mobIndex, QuestMob questMob) {
+			this.questMob = questMob;
+			this.mobIndex = mobIndex;
+		}
+
+		@Override
         public String getPromptText(ConversationContext context) {
 
-            String mobs = PINK + "- " + Lang.get("mobs") + " - \n";
+			String text = GOLD + "- " + Lang.get("eventEditorAddMobTypes") + " - \n";
+			
+			if (questMob == null) {
+				questMob = new QuestMob();				
+			}
+			
+			// Check/add newly made item
+			
+            if(context.getSessionData("newItem") != null){
+                if(itemIndex >= 0){
+                    questMob.inventory[itemIndex] = ((ItemStack) context.getSessionData("tempStack"));
+                    itemIndex = -1;
+                }
+
+                context.setSessionData("newItem", null);
+                context.setSessionData("tempStack", null);
+
+            }
+				
+				text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobName") + GRAY + " (" + ((questMob.getName() == null) ? Lang.get("noneSet") : AQUA + questMob.getName()) + ")\n";
+				text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobType") + GRAY + " (" + ((questMob.getType() == null) ? Lang.get("eventEditorNoTypesSet") : AQUA + questMob.getType().getName()) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorAddSpawnLocation") + GRAY + " (" + ((questMob.getSpawnLocation() == null) ? GRAY + Lang.get("noneSet") : AQUA + Quests.getLocationInfo(questMob.getSpawnLocation()) ) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobSpawnAmount") + GRAY +" (" + ((questMob.getSpawnAmounts() == null) ? GRAY + Lang.get("eventEditorNoAmountsSet") : AQUA + "" + questMob.getSpawnAmounts()) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobItemInHand") + GRAY +" (" + ((questMob.inventory[0] == null) ? GRAY + Lang.get("noneSet") : AQUA + ItemUtil.getDisplayString(questMob.inventory[0])) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobItemInHandDrop") + GRAY + " (" + ((questMob.dropChances[0] == null) ? GRAY + Lang.get("noneSet") : AQUA + "" + questMob.dropChances[0]) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobBoots") + GRAY + " (" +  ((questMob.inventory[1] == null) ? GRAY + Lang.get("noneSet") : AQUA + ItemUtil.getDisplayString(questMob.inventory[1])) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobBootsDrop") + GRAY + " (" + ((questMob.dropChances[1] == null) ? GRAY + Lang.get("noneSet") : AQUA + "" + questMob.dropChances[1]) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobLeggings") + GRAY + " (" + ((questMob.inventory[2] == null) ? GRAY + Lang.get("noneSet") : AQUA + ItemUtil.getDisplayString(questMob.inventory[2])) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "10" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobLeggingsDrop") + GRAY + " (" +  ((questMob.dropChances[2] == null) ? GRAY + Lang.get("noneSet") : AQUA + "" + questMob.dropChances[2]) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "11" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobChestPlate") + GRAY + " (" + ((questMob.inventory[3] == null) ? GRAY + Lang.get("noneSet") : AQUA + ItemUtil.getDisplayString(questMob.inventory[3])) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "12" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobChestPlateDrop") + GRAY + " (" + ((questMob.dropChances[3] == null) ? GRAY + Lang.get("noneSet") : AQUA + "" + questMob.dropChances[3]) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "13" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobHelmet") + GRAY + " (" + ((questMob.inventory[4] == null) ? GRAY + Lang.get("noneSet") : AQUA + ItemUtil.getDisplayString(questMob.inventory[4])) + GRAY + ")\n";
+				text += BLUE + "" + BOLD + "14" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobHelmetDrop") + GRAY + " (" + ((questMob.dropChances[4] == null) ? GRAY + Lang.get("noneSet") : AQUA + "" + questMob.dropChances[4]) + GRAY + ")\n";
+			
+			
+			text += GREEN + "" + BOLD + "15" + RESET + YELLOW + " - " + Lang.get("done") + "\n";
+			text += RED + "" + BOLD + "16" + RESET + YELLOW + " - " + Lang.get("cancel");
+			
+            return text;
+
+        }
+
+        @SuppressWarnings("unchecked")
+		@Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+        	
+        	if (input.equalsIgnoreCase("1")) {
+        		return new MobNamePrompt(mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("2")) {
+        		return new MobTypePrompt(mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("3")) {
+        		selectedMobLocations.put((Player) context.getForWhom(), null);
+        		return new MobLocationPrompt(mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("4")) {
+        		return new MobAmountPrompt(mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("5")) {
+        		itemIndex = 0;
+        		return new ItemStackPrompt(QuestMobPrompt.this);
+        	} else if (input.equalsIgnoreCase("6")) {
+        		return new MobDropPrompt(0, mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("7")) {
+        		itemIndex = 1;
+        		return new ItemStackPrompt(QuestMobPrompt.this);
+        	} else if (input.equalsIgnoreCase("8")) {
+        		return new MobDropPrompt(1, mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("9")) {
+        		itemIndex = 2;
+        		return new ItemStackPrompt(QuestMobPrompt.this);
+        	} else if (input.equalsIgnoreCase("10")) {
+        		return new MobDropPrompt(2, mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("11")) {
+        		itemIndex = 3;
+        		return new ItemStackPrompt(QuestMobPrompt.this);
+        	} else if (input.equalsIgnoreCase("12")) {
+        		return new MobDropPrompt(3, mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("13")) {
+        		itemIndex = 4;
+        		return new ItemStackPrompt(QuestMobPrompt.this);
+        	} else if (input.equalsIgnoreCase("14")) {
+        		return new MobDropPrompt(4, mobIndex, questMob);
+        	} else if (input.equalsIgnoreCase("15")) {
+        		if (questMob.getType() == null) {
+        			context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobTypesFirst"));
+        			return new QuestMobPrompt(mobIndex, questMob);
+        		} else if (questMob.getSpawnLocation() == null) {
+        			context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobLocationFirst"));
+        			return new QuestMobPrompt(mobIndex, questMob);
+        		} else if (questMob.getSpawnAmounts() == null) {
+        			context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustSetMobAmountsFirst"));
+        			return new QuestMobPrompt(mobIndex, questMob);
+        		}
+        		if (context.getSessionData(CK.E_MOB_TYPES) == null) {
+        			LinkedList<String> list = new LinkedList<String>();
+        			list.add(questMob.serialize());
+        			context.setSessionData(CK.E_MOB_TYPES, list);
+        		} else {
+        			if (((LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)).isEmpty()) {
+        				LinkedList<String> list = new LinkedList<String>();
+            			list.add(questMob.serialize());
+            			context.setSessionData(CK.E_MOB_TYPES, list);
+        			} else {
+        				LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+        				list.set(mobIndex, questMob.serialize());
+        				context.setSessionData(CK.E_MOB_TYPES, list);
+        			}
+        		}
+        		return new MobPrompt();
+        	} else if (input.equalsIgnoreCase("16")) {
+        		return new MobPrompt();
+        	} else {
+        		return new QuestMobPrompt(mobIndex, questMob);
+        	}
+        		
+        }
+    }
+    
+    private class MobNamePrompt extends StringPrompt {
+
+    	private QuestMob questMob;
+    	private Integer mobIndex;
+    	
+    	public MobNamePrompt (int mobIndex, QuestMob questMob) {
+    		this.questMob = questMob;
+    		this.mobIndex = mobIndex;
+    	}
+    	
+    	@Override
+		public String getPromptText(ConversationContext context) {
+    		String text = YELLOW + Lang.get("eventEditorSetMobNamePrompt");
+    		return text;
+		}
+    	
+    	@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+    		
+    		if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+				return new QuestMobPrompt(mobIndex, questMob); 
+    		} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+    			questMob.setName(null);
+    			return new QuestMobPrompt(mobIndex, questMob);
+    		} else {
+    			input = ChatColor.translateAlternateColorCodes('&', input);
+    			questMob.setName(input);
+    			return new QuestMobPrompt(mobIndex, questMob);
+    		}
+		}
+    }
+    
+    private class MobTypePrompt extends StringPrompt {
+    	
+    	private QuestMob questMob;
+    	private Integer mobIndex;
+    	
+    	public MobTypePrompt (int mobIndex, QuestMob questMob) {
+    		this.questMob = questMob;
+    		this.mobIndex = mobIndex;
+    	}
+
+    	@Override
+		public String getPromptText(ConversationContext arg0) {
+    		 String mobs = PINK + "- " + Lang.get("mobs") + " - \n";
             mobs += PURPLE + "Bat, ";
             mobs += PURPLE + "Blaze, ";
             mobs += PURPLE + "CaveSpider, ";
@@ -2015,40 +2154,38 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             mobs += PURPLE + "Zombie\n";
 
             return mobs + YELLOW + Lang.get("eventEditorSetMobTypesPrompt");
+		}
+    	
+    	@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+    		 Player player = (Player) context.getForWhom();
 
-        }
+             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+                     if (Quests.getMobType(input) != null) {
 
-            Player player = (Player) context.getForWhom();
+                    	 questMob.setType(Quests.getMobType(input));
+                    	 
+                     } else {
+                         player.sendMessage(PINK + input + " " + RED + Lang.get("eventEditorInvalidMob"));
+                         return new MobTypePrompt(mobIndex, questMob);
+                     }
+             }
 
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-
-                LinkedList<String> mobTypes = new LinkedList<String>();
-                for (String s : input.split(" ")) {
-
-                    if (Quests.getMobType(s) != null) {
-
-                        mobTypes.add(Quester.prettyMobString(Quests.getMobType(s)));
-                        context.setSessionData(CK.E_MOB_TYPES, mobTypes);
-
-                    } else {
-                        player.sendMessage(PINK + s + " " + RED + Lang.get("eventEditorInvalidMob"));
-                        return new MobTypesPrompt();
-                    }
-
-                }
-
-            }
-
-            return new MobPrompt();
-
-        }
+             return new QuestMobPrompt(mobIndex, questMob);
+		}
     }
 
-    private class MobAmountsPrompt extends StringPrompt {
+    private class MobAmountPrompt extends StringPrompt {
 
+    	private QuestMob questMob;
+    	private Integer mobIndex;
+    	
+    	public MobAmountPrompt (int mobIndex, QuestMob questMob) {
+    		this.questMob = questMob;
+    		this.mobIndex = mobIndex;
+    	}
+    	
         @Override
         public String getPromptText(ConversationContext context) {
 
@@ -2063,43 +2200,43 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
-                LinkedList<Integer> mobAmounts = new LinkedList<Integer>();
-                for (String s : input.split(" ")) {
-
                     try {
 
-                        int i = Integer.parseInt(s);
+                        int i = Integer.parseInt(input);
 
                         if (i < 1) {
                             player.sendMessage(PINK + input + " " + RED + Lang.get("eventEditorNotGreaterThanZero"));
-                            return new MobAmountsPrompt();
+                            return new MobAmountPrompt(mobIndex, questMob);
                         }
 
-                        mobAmounts.add(i);
-
-
+                        questMob.setSpawnAmounts(i);
+                        return new QuestMobPrompt(mobIndex, questMob);
                     } catch (Exception e) {
                         player.sendMessage(PINK + input + " " + RED + Lang.get("eventEditorNotANumber"));
-                        return new MobAmountsPrompt();
+                        return new MobAmountPrompt(mobIndex, questMob);
                     }
-
-                }
-
-                context.setSessionData(CK.E_MOB_AMOUNTS, mobAmounts);
 
             }
 
-            return new MobPrompt();
+            return new QuestMobPrompt(mobIndex, questMob);
 
         }
     }
 
     private class MobLocationPrompt extends StringPrompt {
+    	
+    	private QuestMob questMob;
+    	private Integer mobIndex;
+    	
+    	public MobLocationPrompt (int mobIndex, QuestMob questMob) {
+    		this.questMob = questMob;
+    		this.mobIndex = mobIndex;
+    	}
 
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + Lang.get("eventEditorMobLocationPrompt");
+            return YELLOW + Lang.get("eventEditorSetMobLocationPrompt");
 
         }
 
@@ -2115,34 +2252,69 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                     Location loc = block.getLocation();
 
-                    LinkedList<String> locs;
-                    if (context.getSessionData(CK.E_MOB_LOCATIONS) != null) {
-                        locs = (LinkedList<String>) context.getSessionData(CK.E_MOB_LOCATIONS);
-                    } else {
-                        locs = new LinkedList<String>();
-                    }
-
-                    locs.add(Quests.getLocationInfo(loc));
-                    context.setSessionData(CK.E_MOB_LOCATIONS, locs);
+                    questMob.setSpawnLocation(loc);
                     selectedMobLocations.remove(player);
 
                 } else {
                     player.sendMessage(RED + Lang.get("eventEditorSelectBlockFirst"));
-                    return new MobLocationPrompt();
+                    return new MobLocationPrompt(mobIndex, questMob);
                 }
 
-                return new MobPrompt();
+                return new QuestMobPrompt(mobIndex, questMob);
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 
                 selectedMobLocations.remove(player);
-                return new MobPrompt();
+                return new QuestMobPrompt(mobIndex, questMob);
 
             } else {
-                return new MobLocationPrompt();
+                return new MobLocationPrompt(mobIndex, questMob);
             }
 
         }
+    }
+
+    private class MobDropPrompt extends StringPrompt {
+    	
+    	private QuestMob questMob;
+    	private Integer mobIndex;
+    	private Integer invIndex;
+    	
+    	public MobDropPrompt (int invIndex, int mobIndex ,QuestMob questMob) {
+    		this.questMob = questMob;
+    		this.mobIndex = mobIndex;
+    		this.invIndex = invIndex;
+    	}
+
+    	@Override
+		public String getPromptText(ConversationContext context) {
+    		String text = YELLOW + Lang.get("eventEditorSetDropChance");
+			return text;
+		}
+    	
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			float chance = 0.0F;
+			
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+				return new QuestMobPrompt(mobIndex, questMob);
+			}
+			
+			try {
+    			chance = Float.parseFloat(input);
+    		} catch (Exception e) {
+    			context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorInvalidDropChance"));
+    			return new MobDropPrompt(invIndex, mobIndex, questMob);
+    		}
+			if (chance > 1 || chance < 0) {
+				context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorInvalidDropChance"));
+				return new MobDropPrompt(invIndex, mobIndex, questMob);
+			}
+			
+			questMob.dropChances[invIndex] = chance;
+			
+			return new QuestMobPrompt(mobIndex, questMob);
+		}
     }
 
     private class LightningPrompt extends StringPrompt {

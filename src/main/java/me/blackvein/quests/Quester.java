@@ -745,20 +745,20 @@ public class Quester {
 
     public void enchantItem(Enchantment e, Material m) {
 
-        for (Entry entry : itemsEnchanted.entrySet()) {
+        for (Entry<Map<Enchantment, Material>, Integer> entry : itemsEnchanted.entrySet()) {
 
-            if (((Map) entry.getKey()).containsKey(e) && ((Map) entry.getKey()).containsValue(m)) {
+            if (entry.getKey().containsKey(e) && entry.getKey().containsValue(m)) {
 
-                for (Entry entry2 : currentStage.itemsToEnchant.entrySet()) {
+                for (Entry<Map<Enchantment, Material>, Integer> entry2 : currentStage.itemsToEnchant.entrySet()) {
 
-                    if (((Map) entry2.getKey()).containsKey(e) && ((Map) entry2.getKey()).containsValue(m)) {
+                    if (entry2.getKey().containsKey(e) && entry2.getKey().containsValue(m)) {
 
-                        if ((Integer) entry.getValue() < (Integer) entry2.getValue()) {
+                        if (entry.getValue() < entry2.getValue()) {
 
-                            Integer num = (Integer) entry.getValue() + 1;
-                            itemsEnchanted.put(((Map) entry.getKey()), (num));
+                            Integer num = entry.getValue() + 1;
+                            itemsEnchanted.put(entry.getKey(), num);
 
-                            if ((num).equals((Integer) entry2.getValue())) {
+                            if (num.equals(entry2.getValue())) {
                                 finishObjective("enchantItem", m, null, e, null, null, null, null, null, null);
                             }
 
