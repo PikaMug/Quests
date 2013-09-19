@@ -1608,7 +1608,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             text = text.substring(0, text.length() - 1);
 
             return text + "\n" + YELLOW + Lang.get("stageEditorEnchantTypePrompt");
-            
+
         }
 
         @Override
@@ -1789,7 +1789,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     }
 
                 }
-                
+
             } else {
 
                 for (ItemStack is : getItems(context)) {
@@ -1827,10 +1827,10 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 }
 
             }
-            
+
             text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
             text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
-            
+
             return text;
 
         }
@@ -3661,7 +3661,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                         LoadBoss found = null;
 
                         for (LoadBoss b : Quests.epicBoss.BossLoadList) {
-                            if (b.getName().equalsIgnoreCase(input)) {
+                            if (b.getName().equalsIgnoreCase(id)) {
                                 found = b;
                                 break;
                             }
@@ -3704,7 +3704,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
-                String[] amounts = input.split(",");
+                String[] amounts = input.split(" ");
                 LinkedList<Integer> amountList = new LinkedList<Integer>();
                 for (String amount : amounts) {
 

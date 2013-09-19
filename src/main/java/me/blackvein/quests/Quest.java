@@ -76,10 +76,10 @@ public class Quest {
                 completeQuest(q);
 
             }else {
-            	
+
             	q.currentStageIndex++;
             	setStage(q, q.currentStageIndex);
-            	
+
             }
 
             q.delayStartTime = 0;
@@ -91,21 +91,21 @@ public class Quest {
         }
 
     }
-    
+
     public void setStage(Quester q, int stage) {
-    	
+
     	if (stages.size() - 1 < stage) {
     		return;
     	}
-    	
+
     	q.reset();
-    	
+
     	if(q.currentStage.script != null)
     		plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, q.getPlayer());
-    	
+
     	if(q.currentStage.event != null)
     		q.currentStage.event.happen(q);
-    	
+
     	q.currentStage = stages.get(stage);
     	q.addEmpties();
 
@@ -120,7 +120,7 @@ public class Quest {
     	if (stageStartMessage != null) {
     		q.getPlayer().sendMessage(Quests.parseString(stageStartMessage, q.currentQuest));
     	}
-    	
+
     }
 
     public String getName(){
@@ -188,13 +188,13 @@ public class Quest {
         q.reset();
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (None)";
-        
+
         String ps = Quests.parseString(finished, q.currentQuest);
-        
+
         for (String msg : ps.split("<br>")) {
         	player.sendMessage(msg);
         }
-        
+
         if(moneyReward > 0 && Quests.economy != null){
             Quests.economy.depositPlayer(q.name, moneyReward);
             none = null;
@@ -267,7 +267,7 @@ public class Quest {
             player.sendMessage("- " + ChatColor.DARK_GREEN + exp + ChatColor.DARK_PURPLE + " Experience");
             none = null;
         }
-        
+
         if (mcmmoSkills.isEmpty() == false) {
         	for (String s : mcmmoSkills) {
         		player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " Experience");
@@ -278,8 +278,7 @@ public class Quest {
             player.sendMessage(none);
         }
         q.currentQuest = null;
-        
-        System.out.println(plugin.getQuester(q.name).currentQuest.getName());
+
         q.currentStage = null;
         q.currentStageIndex = 0;
 
@@ -304,12 +303,12 @@ public class Quest {
                 return false;
 
             if(commands.size() == other.commands.size()){
-            	
+
             	for (int i = 0; i < commands.size(); i++) {
-            		if (commands.get(i).equals(other.commands.get(i)) == false) 
+            		if (commands.get(i).equals(other.commands.get(i)) == false)
             			return false;
             	}
-            	
+
             }else{
                 return false;
             }

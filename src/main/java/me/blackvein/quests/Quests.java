@@ -1,5 +1,7 @@
 package me.blackvein.quests;
 
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.mcMMO;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.LoadBosses.LoadBoss;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
@@ -32,7 +33,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -62,9 +62,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import com.gmail.nossr50.mcMMO;
-import com.gmail.nossr50.datatypes.skills.SkillType;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
 
@@ -271,7 +268,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
     }
-    
+
     public static Quests getInstance() {
     	return instance;
     }
@@ -335,13 +332,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         debug = config.getBoolean("debug-mode");
         killDelay = config.getInt("kill-delay");
         acceptTimeout = config.getInt("accept-timeout");
-        
+
         if (config.contains("language")) {
         	Lang.lang = config.getString("language");
         } else {
         	config.set("language", "en");
         }
-        
+
         if (config.contains("ignore-locked-quests")) {
         	ignoreLockedQuests = config.getBoolean("ignore-locked-quests");
         } else {
@@ -802,7 +799,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                         for (String msg : s.split("<br>")) {
                                                         	cs.sendMessage(msg);
                                                         }
-                                                        
+
                                                         conversationFactory.buildConversation((Conversable) cs).begin();
 
                                                     } else {
@@ -3272,9 +3269,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         return parsed;
 
     }
-    
+
     public static String parseString(String s) {
-    	
+
     	String parsed = s;
 
         parsed = parsed.replaceAll("<black>", BLACK.toString());
@@ -3604,7 +3601,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliseconds);
-        
+
         Calendar epoch = Calendar.getInstance();
         epoch.setTimeInMillis(0);
 
@@ -3786,6 +3783,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public static String getCurrency(boolean plural) {
+
+        if(Quests.economy == null)
+            return "Money";
 
         if (plural) {
             if (Quests.economy.currencyNamePlural().trim().isEmpty()) {
