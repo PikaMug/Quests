@@ -1533,8 +1533,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     items.add(is);
                 }
 
-                for (NPC n : stage.itemDeliveryTargets) {
-                    npcs.add(n.getId());
+                for (Integer n : stage.itemDeliveryTargets) {
+                    npcs.add(n);
                 }
 
                 cc.setSessionData(pref + CK.S_DELIVERY_ITEMS, items);
@@ -1547,8 +1547,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (stage.citizensToInteract.isEmpty() == false) {
 
                 LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (NPC n : stage.citizensToInteract) {
-                    npcs.add(n.getId());
+                for (Integer n : stage.citizensToInteract) {
+                    npcs.add(n);
                 }
 
                 cc.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
@@ -1559,8 +1559,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (stage.citizensToKill.isEmpty() == false) {
 
                 LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (NPC n : stage.citizensToKill) {
-                    npcs.add(n.getId());
+                for (Integer n : stage.citizensToKill) {
+                    npcs.add(n);
                 }
 
                 cc.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);

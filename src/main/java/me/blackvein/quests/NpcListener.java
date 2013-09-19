@@ -57,8 +57,8 @@ public class NpcListener implements Listener {
 
                     NPC clicked = evt.getNPC();
 
-                    for (NPC n : quester.currentStage.itemDeliveryTargets) {
-                        if (n.getId() == clicked.getId()) {
+                    for (Integer n : quester.currentStage.itemDeliveryTargets) {
+                        if (n == clicked.getId()) {
                             quester.deliverItem(hand);
                             delivery = true;
                             break;

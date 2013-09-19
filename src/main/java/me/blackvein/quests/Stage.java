@@ -4,7 +4,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,19 +30,19 @@ public class Stage {
     LinkedList<String> areaNames = new LinkedList<String>();
 
     LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
-    LinkedList<NPC> itemDeliveryTargets = new LinkedList<NPC>(){
+    LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>(){
 
         @Override
         public boolean equals(Object o) {
 
             if (o instanceof LinkedList) {
 
-                LinkedList<NPC> otherList = (LinkedList<NPC>) o;
+                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
 
-                for (NPC n : this) {
+                for (Integer i : this) {
 
-                    NPC other = otherList.get(this.indexOf(n));
-                    if (other.getId() != n.getId()) {
+                    Integer other = otherList.get(this.indexOf(i));
+                    if (other != i) {
                         return false;
                     }
                 }
@@ -57,19 +56,19 @@ public class Stage {
     };
     public LinkedList<String> deliverMessages = new LinkedList<String>();
 
-    public LinkedList<NPC> citizensToInteract = new LinkedList<NPC>(){
+    public LinkedList<Integer> citizensToInteract = new LinkedList<Integer>(){
 
         @Override
         public boolean equals(Object o) {
 
             if (o instanceof LinkedList) {
 
-                LinkedList<NPC> otherList = (LinkedList<NPC>) o;
+                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
 
-                for (NPC n : this) {
+                for (Integer i : this) {
 
-                    NPC other = otherList.get(this.indexOf(n));
-                    if (other.getId() != n.getId()) {
+                    Integer other = otherList.get(this.indexOf(i));
+                    if (other != i) {
                         return false;
                     }
                 }
@@ -81,20 +80,23 @@ public class Stage {
         }
 
     };
-    public LinkedList<NPC> citizensToKill = new LinkedList<NPC>() {
+    public LinkedList<Integer> citizensToKill = new LinkedList<Integer>() {
 
         @Override
         public boolean equals(Object o) {
 
             if (o instanceof LinkedList) {
 
-                LinkedList<NPC> otherList = (LinkedList<NPC>) o;
+                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
 
-                if (this.size() != otherList.size()) return false;
+                for (Integer i : this) {
 
-                for (int i = 0; i < this.size(); i++) {
-                	if (this.get(i) != otherList.get(i)) return false;
+                    Integer other = otherList.get(this.indexOf(i));
+                    if (other != i) {
+                        return false;
+                    }
                 }
+
             }
 
             return true;

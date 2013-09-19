@@ -2313,20 +2313,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-                    List<Integer> npcIdsToTalkTo;
-                    LinkedList<NPC> npcsToTalkTo = new LinkedList<NPC>();
+                    List<Integer> npcIdsToTalkTo = null;
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to")) {
 
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to"), Integer.class)) {
 
                             npcIdsToTalkTo = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
-                            npcsToTalkTo = new LinkedList<NPC>();
                             for (int i : npcIdsToTalkTo) {
 
                                 if (CitizensAPI.getNPCRegistry().getById(i) != null) {
 
-                                    npcsToTalkTo.add(CitizensAPI.getNPCRegistry().getById(i));
                                     questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
 
                                 } else {
@@ -2375,7 +2372,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                 if (npc != null) {
 
                                                     stage.itemsToDeliver.add(is);
-                                                    stage.itemDeliveryTargets.add(npc);
+                                                    stage.itemDeliveryTargets.add(npcId);
                                                     stage.deliverMessages = deliveryMessages;
 
                                                 } else {
@@ -2436,7 +2433,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         if (CitizensAPI.getNPCRegistry().getById(i) != null) {
 
                                             if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
-                                                stage.citizensToKill.add(CitizensAPI.getNPCRegistry().getById(i));
+                                                stage.citizensToKill.add(i);
                                                 stage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
                                                 questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
                                             } else {
@@ -3100,7 +3097,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-                    stage.citizensToInteract = npcsToTalkTo;
+                    LinkedList<Integer> ids = new LinkedList<Integer>();
+                    if(npcIdsToTalkTo != null){
+                        ids.addAll(npcIdsToTalkTo);
+                    }
+                    stage.citizensToInteract = ids;
 
                     if (stageFailed) {
                         break;
@@ -4038,6 +4039,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     }
 
+    public String getNPCName(int id){
+        
+        return citizens.getNPCRegistry().getById(id).getName();
+        
+    }
+    
     public static int countInv(Inventory inv, Material m, int subtract) {
 
         int count = 0;

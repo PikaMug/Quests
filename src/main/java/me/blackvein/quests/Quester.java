@@ -52,8 +52,8 @@ public class Quester {
     LinkedList<Integer> mobNumKilled = new LinkedList<Integer>();
     LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
     LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-    Map<NPC, Boolean> citizensInteracted = new HashMap<NPC, Boolean>();
-    LinkedList<NPC> citizensKilled = new LinkedList<NPC>();
+    Map<Integer, Boolean> citizensInteracted = new HashMap<Integer, Boolean>();
+    LinkedList<Integer> citizensKilled = new LinkedList<Integer>();
     LinkedList<Integer> citizenNumKilled = new LinkedList<Integer>();
     LinkedList<String> bossesKilled = new LinkedList<String>();
     LinkedList<Integer> bossAmountsKilled = new LinkedList<Integer>();
@@ -366,33 +366,33 @@ public class Quester {
 
             int delivered = itemsDelivered.get(is);
             int amt = is.getAmount();
-            NPC npc = currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(is));
+            Integer npc = currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(is));
 
             if (delivered < amt) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + "Deliver " + ItemUtil.getName(is) + " to " + npc.getName() + ": " + delivered + "/" + amt);
+                unfinishedObjectives.add(ChatColor.GREEN + "Deliver " + ItemUtil.getName(is) + " to " + plugin.getNPCName(npc) + ": " + delivered + "/" + amt);
 
             } else {
 
-                finishedObjectives.add(ChatColor.GRAY + "Deliver " + ItemUtil.getName(is) + " to " + npc.getName() + ": " + delivered + "/" + amt);
+                finishedObjectives.add(ChatColor.GRAY + "Deliver " + ItemUtil.getName(is) + " to " + plugin.getNPCName(npc) + ": " + delivered + "/" + amt);
 
             }
 
         }
 
-        for (NPC n : currentStage.citizensToInteract) {
+        for (Integer n : currentStage.citizensToInteract) {
 
-            for (Entry<NPC, Boolean> e : citizensInteracted.entrySet()) {
+            for (Entry<Integer, Boolean> e : citizensInteracted.entrySet()) {
 
                 if (e.getKey().equals(n)) {
 
                     if ( e.getValue() == false) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + n.getFullName());
+                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + plugin.getNPCName(n));
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Talk to " + n.getName());
+                        finishedObjectives.add(ChatColor.GRAY + "Talk to " + plugin.getNPCName(n));
 
                     }
 
@@ -402,19 +402,19 @@ public class Quester {
 
         }
 
-        for (NPC n : currentStage.citizensToKill) {
+        for (Integer n : currentStage.citizensToKill) {
 
-            for (NPC n2 : citizensKilled) {
+            for (Integer n2 : citizensKilled) {
 
-                if(n.getId() == n2.getId()){
+                if(n.equals(n2)){
 
                     if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getName() + ChatColor.GREEN + " " + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                        unfinishedObjectives.add(ChatColor.GREEN + "Kill " + plugin.getNPCName(n) + ChatColor.GREEN + " " + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getName() + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                        finishedObjectives.add(ChatColor.GRAY + "Kill " + plugin.getNPCName(n) + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
                     }
 
@@ -876,10 +876,10 @@ public class Quester {
 
     public void interactWithNPC(NPC n) {
 
-        if (citizensInteracted.containsKey(n)) {
+        if (citizensInteracted.containsKey(n.getId())) {
 
-            if (citizensInteracted.get(n) == false) {
-                citizensInteracted.put(n, true);
+            if (citizensInteracted.get(n.getId()) == false) {
+                citizensInteracted.put(n.getId(), true);
                 finishObjective("talkToNPC", null, null, null, null, null, n, null, null, null);
             }
 
@@ -889,9 +889,9 @@ public class Quester {
 
     public void killNPC(NPC n) {
 
-        if (citizensKilled.contains(n)) {
+        if (citizensKilled.contains(n.getId())) {
 
-            int index = citizensKilled.indexOf(n);
+            int index = citizensKilled.indexOf(n.getId());
             if (citizenNumKilled.get(index) < currentStage.citizenNumToKill.get(index)) {
                 citizenNumKilled.set(index, citizenNumKilled.get(index) + 1);
                 if (citizenNumKilled.get(index) == currentStage.citizenNumToKill.get(index)) {
@@ -1023,7 +1023,7 @@ public class Quester {
                     itemsDelivered.put(found, (amount + i.getAmount()));
                     player.getInventory().setItem(player.getInventory().first(i), null);
                     player.updateInventory();
-                    String message = Quests.parseString(currentStage.deliverMessages.get(random.nextInt(currentStage.deliverMessages.size())), currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(found)));
+                    String message = Quests.parseString(currentStage.deliverMessages.get(random.nextInt(currentStage.deliverMessages.size())), plugin.citizens.getNPCRegistry().getById(currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(found))));
                     player.sendMessage(message);
 
                 }
@@ -1113,7 +1113,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("deliverItem")) {
 
-            String message = ChatColor.GREEN + "(Completed) Deliver " + ItemUtil.getString(currentStage.itemsToDeliver.get(currentStage.itemsToDeliver.indexOf(itemstack))) + " " + ItemUtil.getName(itemstack) + " to " + currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(itemstack)).getName();
+            String message = ChatColor.GREEN + "(Completed) Deliver " + ItemUtil.getString(currentStage.itemsToDeliver.get(currentStage.itemsToDeliver.indexOf(itemstack))) + " " + ItemUtil.getName(itemstack) + " to " + plugin.getNPCName(currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(itemstack)));
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1288,7 +1288,7 @@ public class Quester {
         }
 
         if (currentStage.citizensToInteract.isEmpty() == false) {
-            for (NPC n : currentStage.citizensToInteract) {
+            for (Integer n : currentStage.citizensToInteract) {
 
                 citizensInteracted.put(n, false);
 
@@ -1296,7 +1296,7 @@ public class Quester {
         }
 
         if (currentStage.citizensToKill.isEmpty() == false) {
-            for (NPC n : currentStage.citizensToKill) {
+            for (Integer n : currentStage.citizensToKill) {
 
                 System.out.println("Adding..");
                 citizensKilled.add(n);
@@ -1868,9 +1868,9 @@ public class Quester {
                 LinkedList<Integer> npcIds = new LinkedList<Integer>();
                 LinkedList<Boolean> hasTalked = new LinkedList<Boolean>();
 
-                for (NPC n : citizensInteracted.keySet()) {
+                for (Integer n : citizensInteracted.keySet()) {
 
-                    npcIds.add(n.getId());
+                    npcIds.add(n);
                     hasTalked.add(citizensInteracted.get(n));
 
                 }
@@ -1884,9 +1884,9 @@ public class Quester {
 
                 LinkedList<Integer> npcIds = new LinkedList<Integer>();
 
-                for (NPC n : citizensKilled) {
+                for (Integer n : citizensKilled) {
 
-                    npcIds.add(n.getId());
+                    npcIds.add(n);
 
                 }
 
@@ -2384,7 +2384,7 @@ public class Quester {
 
                 for (int i : ids) {
 
-                    citizensInteracted.put(CitizensAPI.getNPCRegistry().getById(i), has.get(ids.indexOf(i)));
+                    citizensInteracted.put(i, has.get(ids.indexOf(i)));
 
                 }
 
@@ -2400,7 +2400,7 @@ public class Quester {
 
                 for (int i : ids) {
 
-                    citizensKilled.add(CitizensAPI.getNPCRegistry().getById(i));
+                    citizensKilled.add(i);
                     citizenNumKilled.add(num.get(ids.indexOf(i)));
 
                 }
