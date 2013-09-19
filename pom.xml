@@ -30,10 +30,6 @@
             <id>vault-repo</id>
             <url>http://ci.herocraftonline.com/plugin/repository/everything</url>
         </repository>
-        <repository>
-            <id>mcMMO-repo</id>
-            <url>http://repo.mcmmo.org</url>
-        </repository>
 
     </repositories>
 
@@ -61,7 +57,9 @@
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>LATEST</version>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/mcMMO.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>me.ThaH3lper</groupId>

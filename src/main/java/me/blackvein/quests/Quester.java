@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-
 import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -63,6 +62,7 @@ public class Quester {
     LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
     Map<EntityType, Integer> mobsTamed = new EnumMap<EntityType, Integer>(EntityType.class);
     Map<DyeColor, Integer> sheepSheared = new EnumMap<DyeColor, Integer>(DyeColor.class);
+    public Map<String, Boolean> eventFired = new HashMap<String, Boolean>();
     final Random random = new Random();
 
     public Quester(Quests newPlugin) {
@@ -107,8 +107,21 @@ public class Quester {
         	if (stageStartMessage != null) {
         		getPlayer().sendMessage(Quests.parseString(stageStartMessage, currentQuest));
         	}
+
+            if(currentStage.chatEvents.isEmpty() == false){
+
+                for(String chatTrigger : currentStage.chatEvents.keySet()){
+
+                    eventFired.put(chatTrigger, false);
+
+                }
+
+            }
+
             if(q.initialEvent != null)
-                q.initialEvent.happen(this);
+                q.initialEvent.fire(this);
+            if(currentStage.startEvent != null)
+                currentStage.startEvent.fire(this);
 
         } else {
 
@@ -365,7 +378,6 @@ public class Quester {
 
             }
 
-
         }
 
         for (NPC n : currentStage.citizensToInteract) {
@@ -394,13 +406,17 @@ public class Quester {
 
             for (NPC n2 : citizensKilled) {
 
-                if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
+                if(n.getId() == n2.getId()){
 
-                    unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getName() + ChatColor.GREEN + " " + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                    if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
 
-                } else {
+                        unfinishedObjectives.add(ChatColor.GREEN + "Kill " + n.getName() + ChatColor.GREEN + " " + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
-                    finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getName() + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                    } else {
+
+                        finishedObjectives.add(ChatColor.GRAY + "Kill " + n.getName() + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+
+                    }
 
                 }
 
@@ -1192,6 +1208,9 @@ public class Quester {
 
     public void addEmpties() {
 
+        System.out.println("Adding empties.");
+        System.out.println("Citizens to kill: " + currentStage.citizensToKill.size());
+
         if (currentStage.blocksToDamage.isEmpty() == false) {
             for (Material m : currentStage.blocksToDamage.keySet()) {
 
@@ -1279,6 +1298,7 @@ public class Quester {
         if (currentStage.citizensToKill.isEmpty() == false) {
             for (NPC n : currentStage.citizensToKill) {
 
+                System.out.println("Adding..");
                 citizensKilled.add(n);
                 citizenNumKilled.add(0);
 
@@ -1330,7 +1350,7 @@ public class Quester {
 
     }
 
-    public void reset() {
+    public void resetObjectives() {
 
         blocksDamaged.clear();
         blocksBroken.clear();
@@ -1963,6 +1983,21 @@ public class Quester {
                 data.set("stage-delay", delayTimeLeft);
             }
 
+            if(eventFired.isEmpty() == false){
+
+                LinkedList<String> triggers = new LinkedList<String>();
+                for(String trigger : eventFired.keySet()){
+
+                    if(eventFired.get(trigger) == true)
+                        triggers.add(trigger);
+
+                }
+
+                if(triggers.isEmpty() == false)
+                    data.set("chat-triggers", triggers);
+
+            }
+
 
         } else {
 
@@ -2071,14 +2106,14 @@ public class Quester {
                 }
 
             }
-            
+
             if (stage == null) {
             	currentQuest = quest;
             	currentQuest.completeQuest(this);
             	Quests.log.log(Level.SEVERE, "[Quests] Invalid stage for player: \"" + name + "\". Quest ended.");
             	return true;
             }
-            
+
             currentQuest = quest;
             currentStage = stage;
 
@@ -2360,6 +2395,9 @@ public class Quester {
                 List<Integer> ids = data.getIntegerList("citizen-ids-killed");
                 List<Integer> num = data.getIntegerList("citizen-amounts-killed");
 
+                citizensKilled.clear();
+                citizenNumKilled.clear();
+
                 for (int i : ids) {
 
                     citizensKilled.add(CitizensAPI.getNPCRegistry().getById(i));
@@ -2545,6 +2583,27 @@ public class Quester {
 
             }
 
+            if(currentStage.chatEvents.isEmpty() == false){
+
+                for(String trig : currentStage.chatEvents.keySet()){
+
+                    eventFired.put(trig, false);
+
+                }
+
+            }
+
+            if(data.contains("chat-triggers")){
+
+                List<String> triggers = data.getStringList("chat-triggers");
+                for(String s : triggers){
+
+                    eventFired.put(s, true);
+
+                }
+
+            }
+
         }
 
         return true;
@@ -2601,7 +2660,7 @@ public class Quester {
                     if (q.equals(currentQuest) == false) {
 
                         currentStage = null;
-                        reset();
+                        resetObjectives();
                         if (plugin.getServer().getPlayer(name) != null) {
                             plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " has been modified. You have been forced to quit the Quest.");
                         }
@@ -2618,7 +2677,7 @@ public class Quester {
             if (exists == false) {
 
                 currentStage = null;
-                reset();
+                resetObjectives();
                 if (plugin.getServer().getPlayer(name) != null) {
                     plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " no longer exists. You have been forced to quit the Quest.");
                 }

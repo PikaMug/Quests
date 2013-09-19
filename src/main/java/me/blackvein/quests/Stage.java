@@ -3,11 +3,8 @@ package me.blackvein.quests;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-
 import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +23,7 @@ public class Stage {
     Integer fishToCatch;
     Integer playersToKill;
     Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
-    
+
     LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
     LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
     LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
@@ -92,7 +89,7 @@ public class Stage {
             if (o instanceof LinkedList) {
 
                 LinkedList<NPC> otherList = (LinkedList<NPC>) o;
-                
+
                 if (this.size() != otherList.size()) return false;
 
                 for (int i = 0; i < this.size(); i++) {
@@ -118,12 +115,16 @@ public class Stage {
     public Map<DyeColor, Integer> sheepToShear = new EnumMap<DyeColor, Integer>(DyeColor.class);
     public Map<EnumMap<Material, Integer>, Boolean> itemsToCraft = new HashMap<EnumMap<Material, Integer>, Boolean>();
     public String script;
-    public Event event;
+    public Event startEvent = null;
+    public Event deathEvent = null;
+    public Map<String, Event> chatEvents = new HashMap<String, Event>();
+    public Event disconnectEvent = null;
+    public Event finishEvent = null;
     public long delay = -1;
     public String delayMessage = null;
     public String completeMessage = null;
     public String startMessage = null;
-	
+
     @Override
     public boolean equals(Object o) {
 
@@ -265,15 +266,38 @@ public class Stage {
                 return false;
             }
 
-            if (other.event != null && event != null) {
-                if (other.event.equals(event) == false) {
+            if (other.startEvent != null && startEvent != null) {
+                if (other.startEvent.equals(startEvent) == false) {
                     return false;
                 }
-            } else if (other.event != null && event == null) {
+            } else if (other.startEvent != null && startEvent == null) {
                 return false;
-            } else if (other.event == null && event != null) {
+            } else if (other.startEvent == null && startEvent != null) {
                 return false;
             }
+
+            if (other.deathEvent != null && deathEvent != null) {
+                if (other.deathEvent.equals(deathEvent) == false) {
+                    return false;
+                }
+            } else if (other.deathEvent != null && deathEvent == null) {
+                return false;
+            } else if (other.deathEvent == null && deathEvent != null) {
+                return false;
+            }
+
+            if (other.finishEvent != null && finishEvent != null) {
+                if (other.finishEvent.equals(finishEvent) == false) {
+                    return false;
+                }
+            } else if (other.finishEvent != null && finishEvent == null) {
+                return false;
+            } else if (other.finishEvent == null && finishEvent != null) {
+                return false;
+            }
+
+            if(other.chatEvents.equals(chatEvents) == false)
+                return false;
 
             if(other.delay != delay)
                 return false;
@@ -314,5 +338,5 @@ public class Stage {
 
     }
 
-	
+
 }

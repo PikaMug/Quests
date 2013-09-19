@@ -28,20 +28,21 @@ public class StageTimer implements Runnable{
 
                     if(quester.currentStage.script != null)
                         plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, player);
-                    if(quester.currentStage.event != null)
-                        quester.currentStage.event.happen(quester);
+                    if(quester.currentStage.finishEvent != null)
+                        quester.currentStage.finishEvent.fire(quester);
 
                     quester.currentQuest.completeQuest(quester);
 
                 }else {
 
-                    quester.reset();
+                    quester.resetObjectives();
                     if(quester.currentStage.script != null)
                         plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, player);
-                    if(quester.currentStage.event != null)
-                        quester.currentStage.event.happen(quester);
+                    if(quester.currentStage.finishEvent != null)
+                        quester.currentStage.finishEvent.fire(quester);
                     quester.currentStage = quester.currentQuest.stages.get(quester.currentStageIndex +  1);
                     quester.currentStageIndex++;
+                    System.out.println("Adding empties from stage timer");
                     quester.addEmpties();
                     quester.delayStartTime = 0;
                     quester.delayTimeLeft = -1;

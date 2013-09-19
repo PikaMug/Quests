@@ -847,10 +847,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 Quester quester = getQuester(cs.getName());
                                 if (quester.currentQuest != null) {
 
-                                    quester.reset();
+                                    quester.resetObjectives();
                                     quester.currentStage = null;
                                     cs.sendMessage(YELLOW + "You have quit " + PURPLE + quester.currentQuest.name + YELLOW + ".");
                                     quester.currentQuest = null;
+                                    quester.saveData();
+                                    quester.loadData();
                                     return true;
 
                                 } else {
@@ -1090,7 +1092,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 } else {
 
-                                    quester.reset();
+                                    quester.resetObjectives();
                                     quester.currentStage = null;
                                     player.sendMessage(GREEN + target.getName() + GOLD + " has forcibly quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
                                     target.sendMessage(GREEN + player.getName() + GOLD + " has forced you to quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
@@ -1357,7 +1359,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                     Quester quester = getQuester(target.getName());
 
-                                    quester.reset();
+                                    quester.resetObjectives();
 
                                     quester.currentQuest = questToGive;
                                     quester.currentStage = questToGive.stages.getFirst();
@@ -2961,14 +2963,107 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".event")) {
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-event")) {
 
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this);
+                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".start-event"), this);
 
                         if (evt != null) {
-                            stage.event = evt;
+                            stage.startEvent = evt;
                         } else {
-                            printSevere("[Quests] Event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            printSevere("[Quests] start-event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".death-event")) {
+
+                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".death-event"), this);
+
+                        if (evt != null) {
+                            stage.deathEvent = evt;
+                        } else {
+                            printSevere("[Quests] death-event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".disconnect-event")) {
+
+                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".disconnect-event"), this);
+
+                        if (evt != null) {
+                            stage.disconnectEvent = evt;
+                        } else {
+                            printSevere("[Quests] disconnect-event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".chat-events")) {
+
+                        if(config.isList("quests." + s + ".stages.ordered." + s2 + ".chat-events")){
+
+                            if(config.contains("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers")){
+
+                                if (config.isList("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers")) {
+
+                                    List<String> chatEvents = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".chat-events");
+                                    List<String> chatEventTriggers = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers");
+                                    boolean loadEventFailed = false;
+
+                                    for (int i = 0; i < chatEvents.size(); i++) {
+
+                                        Event evt = Event.loadEvent(chatEvents.get(i), this);
+
+                                        if (evt != null) {
+                                            stage.chatEvents.put(chatEventTriggers.get(i), evt);
+                                        } else {
+                                            printSevere("[Quests] " + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                                            stageFailed = true;
+                                            loadEventFailed = true;
+                                            break;
+                                        }
+
+                                    }
+
+                                    if (loadEventFailed) {
+                                        break;
+                                    }
+
+                                } else {
+                                    printSevere("[Quests] chat-event-triggers in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+                                    stageFailed = true;
+                                    break;
+                                }
+
+                            }else{
+                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing chat-event-triggers!");
+                                stageFailed = true;
+                                break;
+                            }
+
+                        }else{
+                            printSevere("[Quests] chat-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".finish-event")) {
+
+                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".finish-event"), this);
+
+                        if (evt != null) {
+                            stage.finishEvent = evt;
+                        } else {
+                            printSevere("[Quests] finish-event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
                             break;
                         }

@@ -10,4 +10,13 @@ events:
     potion-effect-amplifiers:
       - 3
       - 2
-
+  GoodJob:
+    message: "<green>Good job!"
+  DeathFail:
+    fail-quest: true
+  FishingStart:
+    message: "<yellow>Type 'rod' in chat to get a fishing rod!"
+  RodEvent:
+    message: "<green>Here you go!"
+    items:
+      - id-346:amount-1

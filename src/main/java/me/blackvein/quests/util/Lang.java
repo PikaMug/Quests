@@ -31,6 +31,9 @@ public class Lang {
 		//English
 		//TODO: If finished, completely check everything.
 		//Quests
+
+        en.put("questFailed", "*QUEST FAILED*");
+
 		//Quest create menu
 		en.put("questEditorHeader", "Create Quest");
 		en.put("questEditorCreate", "Create new Quest");

@@ -418,7 +418,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         } else if (input.equalsIgnoreCase("16")) {
             return new ShearListPrompt();
         } else if (input.equalsIgnoreCase("17")) {
-            return new EventPrompt();
+            return new EventsPrompt();
         } else if (input.equalsIgnoreCase("18")) {
             return new DelayPrompt();
         } else if (input.equalsIgnoreCase("19")) {
@@ -3363,6 +3363,67 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             }
 
             return new ShearListPrompt();
+
+        }
+    }
+
+    private class EventsPrompt extends FixedSetPrompt {
+
+        public EventsPrompt(){
+
+            super("1", "2", "3", "4");
+
+        }
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+
+        	String text = DARKGREEN + "- " + Lang.get("stageEditorEvents") + " -\n";
+            if (questFactory.quests.events.isEmpty()) {
+                text += RED + "- None";
+            } else {
+                for (Event e : questFactory.quests.events) {
+                    text += GREEN + "- " + e.getName() + "\n";
+                }
+            }
+
+            return text + YELLOW + Lang.get("stageEditorEventsPrompt");
+
+        }
+
+        @Override
+        public Prompt acceptValidatedInput(ConversationContext context, String input) {
+
+            Player player = (Player) context.getForWhom();
+
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+
+                Event found = null;
+
+                for (Event e : questFactory.quests.events) {
+
+                    if (e.getName().equalsIgnoreCase(input)) {
+                        found = e;
+                        break;
+                    }
+
+                }
+
+                if (found == null) {
+                    player.sendMessage(RED + input + YELLOW + " " + Lang.get("stageEditorInvalidEvent"));
+                    return new EventsPrompt();
+                } else {
+                    context.setSessionData(pref + CK.S_EVENT, found.getName());
+                    return new CreateStagePrompt(stageNum, questFactory, citizens);
+                }
+
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(pref + CK.S_EVENT, null);
+                player.sendMessage(YELLOW + "Event cleared.");
+                return new CreateStagePrompt(stageNum, questFactory, citizens);
+            } else {
+                return new CreateStagePrompt(stageNum, questFactory, citizens);
+            }
 
         }
     }

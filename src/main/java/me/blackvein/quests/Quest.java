@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import com.gmail.nossr50.util.player.UserManager;
+import me.blackvein.quests.util.Lang;
 
 public class Quest {
 
@@ -70,8 +71,8 @@ public class Quest {
 
                 if(q.currentStage.script != null)
                     plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
-                if(q.currentStage.event != null)
-                    q.currentStage.event.happen(q);
+                if(q.currentStage.finishEvent != null)
+                    q.currentStage.finishEvent.fire(q);
 
                 completeQuest(q);
 
@@ -98,15 +99,19 @@ public class Quest {
     		return;
     	}
 
-    	q.reset();
+    	q.resetObjectives();
 
     	if(q.currentStage.script != null)
     		plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, q.getPlayer());
 
-    	if(q.currentStage.event != null)
-    		q.currentStage.event.happen(q);
+    	if(q.currentStage.finishEvent != null)
+    		q.currentStage.finishEvent.fire(q);
 
     	q.currentStage = stages.get(stage);
+        
+        if(q.currentStage.startEvent != null)
+            q.currentStage.startEvent.fire(q);
+
     	q.addEmpties();
 
     	q.getPlayer().sendMessage(ChatColor.GOLD + "---(Objectives)---");
@@ -185,7 +190,7 @@ public class Quest {
     public void completeQuest(Quester q){
 
         Player player = plugin.getServer().getPlayerExact(q.name);
-        q.reset();
+        q.resetObjectives();
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (None)";
 
@@ -277,6 +282,24 @@ public class Quest {
         if(none != null){
             player.sendMessage(none);
         }
+        q.currentQuest = null;
+
+        q.currentStage = null;
+        q.currentStageIndex = 0;
+
+        q.saveData();
+        player.updateInventory();
+
+    }
+
+    public void failQuest(Quester q){
+
+        Player player = plugin.getServer().getPlayerExact(q.name);
+        q.resetObjectives();
+
+        player.sendMessage(ChatColor.AQUA + "-- " +  ChatColor.DARK_PURPLE + q.currentQuest.name + ChatColor.AQUA + " -- ");
+        player.sendMessage(ChatColor.RED + Lang.get("questFailed"));
+
         q.currentQuest = null;
 
         q.currentStage = null;

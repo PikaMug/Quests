@@ -36,16 +36,21 @@ quests:
     stages:
       ordered:
         1:
+          death-event: DeathFail
           mobs-to-kill:
             - Pig
           mob-amounts:
             - 3
+          finish-event: GoodJob
         2:
+          death-event: DeathFail
           mobs-to-kill:
             - Zombie
           mob-amounts:
             - 2
+          finish-event: GoodJob
         3:
+          death-event: DeathFail
           mobs-to-kill:
             - Skeleton
           mob-amounts:
@@ -56,3 +61,25 @@ quests:
         - id-276:amount-1
       exp: 100
       quest-points: 1
+  CatchFish:
+    name: 'Catch Fish'
+    ask-message: '<yellow>Catch some fish!'
+    finish-message: '<yellow>Excellent. Here is some <green>experience<yellow>.'
+    parties: 2
+    requirements:
+      quests:
+        - Stone Miner
+      fail-requirement-message: '<red>Complete <purple>Stone Miner<red> first.'
+    stages:
+      ordered:
+        1:
+          start-event: FishingStart
+          death-event: DeathFail
+          chat-events:
+            - "RodEvent"
+          chat-event-triggers:
+            - "rod"
+          fish-to-catch: 5
+
+    rewards:
+      exp: 250

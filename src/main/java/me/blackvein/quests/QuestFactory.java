@@ -387,25 +387,25 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                         loadQuest(context, q);
                         return new CreateMenuPrompt();
                     }
-                    
+
                 }
-                
+
                 for (Quest q : quests.getQuests()) {
 
                     if (q.getName().toLowerCase().startsWith(input.toLowerCase())) {
                         loadQuest(context, q);
                         return new CreateMenuPrompt();
                     }
-                    
+
                 }
-                
+
                 for (Quest q : quests.getQuests()) {
 
                     if (q.getName().toLowerCase().contains(input.toLowerCase())) {
                         loadQuest(context, q);
                         return new CreateMenuPrompt();
                     }
-                    
+
                 }
 
                 return new SelectEditPrompt();
@@ -1195,7 +1195,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     mobLocNames = (LinkedList<String>) cc.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES);
                 }
             }
-            
+
             if (cc.getSessionData(pref + CK.S_REACH_LOCATIONS) != null) {
             	reachLocs = (LinkedList<String>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS);
             	reachRadii = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
@@ -1651,8 +1651,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
 
-            if (stage.event != null) {
-                cc.setSessionData(pref + CK.S_EVENT, stage.event.getName());
+            if (stage.finishEvent != null) {
+                cc.setSessionData(pref + CK.S_EVENT, stage.finishEvent.getName());
             }
 
 

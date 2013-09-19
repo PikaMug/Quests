@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.QuestMob;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -26,6 +24,7 @@ public class Event {
     String name = "";
     String message = null;
     boolean clearInv = false;
+    boolean failQuest = false;
     LinkedList<Location> explosions = new LinkedList<Location>();
     Map<Location, Effect> effects = new HashMap<Location, Effect>();
     LinkedList<ItemStack> items = new LinkedList<ItemStack>();
@@ -34,15 +33,15 @@ public class Event {
     World thunderWorld = null;
     int thunderDuration = 0;
     public LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>() {
-    	
+
     	@Override
     	public boolean equals(Object o) {
     		if (o instanceof LinkedList) {
-    			
+
     			LinkedList<QuestMob> other = (LinkedList<QuestMob>) o;
-    			
+
     			if (size() != other.size()) return false;
-    			
+
     			for (int i = 0; i < size(); i++) {
     				if (get(i).equals(other.get(i)) == false) return false;
     			}
@@ -80,6 +79,10 @@ public class Event {
             }
 
             if (other.clearInv != clearInv) {
+                return false;
+            }
+
+            if(other.failQuest != failQuest) {
                 return false;
             }
 
@@ -122,9 +125,13 @@ public class Event {
             if (other.thunderDuration != thunderDuration) {
                 return false;
             }
-            
-            if (other.mobSpawns.equals(mobSpawns) == false)
-            	return false;
+
+            for(QuestMob qm : mobSpawns){
+
+                if(qm.equals(other.mobSpawns.get(mobSpawns.indexOf(qm))) == false)
+                    return false;
+
+            }
 
             if (other.lightningStrikes.equals(lightningStrikes) == false) {
                 return false;
@@ -171,7 +178,7 @@ public class Event {
 
     }
 
-    public void happen(Quester quester) {
+    public void fire(Quester quester) {
 
         Player player = quester.getPlayer();
 
@@ -220,9 +227,9 @@ public class Event {
             thunderWorld.setThundering(true);
             thunderWorld.setThunderDuration(thunderDuration);
         }
-        
+
         if (mobSpawns.isEmpty() == false) {
-        	
+
         	for (QuestMob questMob : mobSpawns) {
         		questMob.spawn();
         	}
@@ -281,6 +288,12 @@ public class Event {
 
         }
 
+        if(failQuest == true) {
+
+            quester.currentQuest.failQuest(quester);
+
+        }
+
     }
 
     public static Event loadEvent(String name, Quests plugin) {
@@ -311,6 +324,17 @@ public class Event {
                 event.clearInv = data.getBoolean(eventKey + "clear-inventory");
             } else {
                 Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "clear-inventory: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a true/false value!");
+                return null;
+            }
+
+        }
+
+        if (data.contains(eventKey + "fail-quest")) {
+
+            if (data.isBoolean(eventKey + "fail-quest")) {
+                event.failQuest = data.getBoolean(eventKey + "fail-quest");
+            } else {
+                Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "fail-quest: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a true/false value!");
                 return null;
             }
 
@@ -465,32 +489,32 @@ public class Event {
             }
 
         }
-        
+
         if (data.contains(eventKey + "mob-spawns")) {
         	ConfigurationSection section = data.getConfigurationSection(eventKey + "mob-spawns");
-        	
+
         	//is a mob, the keys are just a number or something.
         	for (String s : section.getKeys(false)) {
         		String mobName = section.getString(s + ".name");
         		Location spawnLocation = Quests.getLocation(section.getString(s + ".spawn-location"));
         		EntityType type = Quests.getMobType(section.getString(s + ".mob-type"));
         		Integer mobAmount = section.getInt(s + ".spawn-amounts");
-        		
-        		
+
+
         		if (spawnLocation == null) {
         			Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-locations: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
                     Quests.printSevere(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
                     return null;
         		}
-        		
+
                 if (type == null) {
                     Quests.printSevere(ChatColor.GOLD + "[Quests] " + ChatColor.RED + section.getString(s + ".mob-type") + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-types: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid mob name!");
                     return null;
                 }
-                
+
                 ItemStack[] inventory = new ItemStack[5];
                 Float[] dropChances = new Float[5];
-                
+
                 inventory[0] = ItemUtil.readItemStack(section.getString(s + ".held-item"));
                 dropChances[0] = (float) section.getDouble(s + ".held-item-drop-chance");
 
@@ -504,13 +528,13 @@ public class Event {
                 dropChances[3] = (float) section.getDouble(s + ".chest-plate-drop-chance");
 
                 inventory[4] = ItemUtil.readItemStack(section.getString(s + ".helmet"));
-                dropChances[4] = (float) section.getDouble(s + ".helmet-drop-chance");              
-                
+                dropChances[4] = (float) section.getDouble(s + ".helmet-drop-chance");
+
                 QuestMob questMob = new QuestMob(type, spawnLocation, mobAmount);
                 questMob.inventory = inventory;
                 questMob.dropChances = dropChances;
                 questMob.setName(mobName);
-                
+
                 event.mobSpawns.add(questMob);
         	}
         }

@@ -1,7 +1,6 @@
 package me.blackvein.quests.util;
 
 import me.blackvein.quests.Quests;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
@@ -27,31 +26,31 @@ public class QuestMob {
 		this.spawnLocation = spawnLocation;
 		this.spawnAmounts = spawnAmounts;
 	}
-	
+
 	public QuestMob() {
-		
+
 	}
-	
+
 	public void setSpawnLocation(Location spawnLocation) {
 		this.spawnLocation = spawnLocation;
 	}
-	
+
 	public Location getSpawnLocation() {
 		return spawnLocation;
 	}
-	
+
 	public void setType(EntityType entityType) {
 		this.entityType = entityType;
 	}
-	
+
 	public EntityType getType() {
 		return entityType;
 	}
-	
+
 	public void setSpawnAmounts(int spawnAmounts) {
 		this.spawnAmounts = spawnAmounts;
 	}
-	
+
 	public Integer getSpawnAmounts() {
 		return spawnAmounts;
 	}
@@ -60,7 +59,7 @@ public class QuestMob {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 
 	public String getName() {
 		return name;
@@ -97,9 +96,9 @@ public class QuestMob {
 		World world = spawnLocation.getWorld();
 
 		for (int i = 0; i < spawnAmounts; i++) {
-			
+
 			Entity entity = world.spawnEntity(spawnLocation, entityType);
-			
+
 			if (name != null) {
 				((LivingEntity) entity).setCustomName(name);
 				((LivingEntity) entity).setCustomNameVisible(true);
@@ -120,51 +119,51 @@ public class QuestMob {
 
 		}
 	}
-	
+
 	public String serialize() {
 		String string = "";
 		string += "type-" + entityType.getName();
 		if (name != null) string += "::name-" + name;
 		if (spawnLocation != null) string += "::spawn-" + Quests.getLocationInfo(spawnLocation);
 		if (spawnAmounts != null) string += "::amounts-" + spawnAmounts;
-		
+
 		if (inventory[0] != null) {
 			string += "::hand-" + ItemUtil.serialize(inventory[0]);
 			string += "::hand_drop-" + dropChances[0];
 		}
-		
+
 		if (inventory[1] != null) {
 			string += "::boots-" + ItemUtil.serialize(inventory[1]);
 			string += "::boots_drop-" + dropChances[1];
 		}
-		
+
 		if (inventory[2] != null) {
 			string += "::leggings-" + ItemUtil.serialize(inventory[2]);
 			string += "::leggings_drop-" + dropChances[2];
 		}
-		
+
 		if (inventory[3] != null) {
 			string += "::chest-" + ItemUtil.serialize(inventory[3]);
 			string += "::chest_drop-" + dropChances[3];
 		}
-		
+
 		if (inventory[4] != null) {
 			string += "::helmet-" + ItemUtil.serialize(inventory[4]);
 			string += "::helmet_drop-" + dropChances[4];
 		}
-		
+
 		return string;
 	}
-	
+
 	public static QuestMob fromString(String str) {
-		
+
 		String name = null;
 		EntityType entityType = null;
 		Location loc = null;
 		Integer amounts = null;
 		ItemStack[] inventory = new ItemStack[5];
 		Float[] dropChances = new Float[5];
-				
+
 		String[] args = str.split("::");
 		for (String string : args) {
 			if (string.startsWith("type-")) {
@@ -196,32 +195,38 @@ public class QuestMob {
 			} else if (string.startsWith("helmet_drop-")) {
 				dropChances[4] = Float.parseFloat(string.substring(12));
 			}
-			
+
 		}
-		
+
 		QuestMob qm = new QuestMob(entityType, loc, amounts);
 		qm.setName(name);
 		qm.inventory = inventory;
 		qm.dropChances = dropChances;
 		return qm;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if ((o instanceof QuestMob) == false) {
 			return false;
 		}
+
+        System.out.println("1");
 		QuestMob other = (QuestMob) o;
-		
-		if (name.equalsIgnoreCase(other.name) == false) 
+
+		if (name.equalsIgnoreCase(other.name) == false)
 			return false;
-		
-		if (entityType != other.entityType) 
+
+		if (entityType != other.entityType)
 			return false;
-		
-		if (dropChances != other.dropChances) 
+
+        System.out.println("2");
+
+		if (dropChances != other.dropChances)
 			return false;
-		
+
+        System.out.println("3");
+
 		if (inventory.length == other.inventory.length) {
 			for (int i = 0; i < inventory.length; i++) {
 				if (ItemUtil.compareItems(inventory[i], other.inventory[i], false) != 0)
@@ -230,10 +235,12 @@ public class QuestMob {
 		} else {
 			return false;
 		}
-		
-		if (spawnAmounts != other.spawnAmounts) 
+
+        System.out.println("4");
+
+		if (spawnAmounts != other.spawnAmounts)
 			return false;
-		
+
 		if (spawnLocation != other.spawnLocation)
 			return false;
 
