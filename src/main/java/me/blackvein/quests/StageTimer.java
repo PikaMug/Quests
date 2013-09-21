@@ -42,7 +42,6 @@ public class StageTimer implements Runnable{
                         quester.currentStage.finishEvent.fire(quester);
                     quester.currentStage = quester.currentQuest.stages.get(quester.currentStageIndex +  1);
                     quester.currentStageIndex++;
-                    System.out.println("Adding empties from stage timer");
                     quester.addEmpties();
                     quester.delayStartTime = 0;
                     quester.delayTimeLeft = -1;

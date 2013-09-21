@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import me.blackvein.quests.util.ItemUtil;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -1208,9 +1207,6 @@ public class Quester {
 
     public void addEmpties() {
 
-        System.out.println("Adding empties.");
-        System.out.println("Citizens to kill: " + currentStage.citizensToKill.size());
-
         if (currentStage.blocksToDamage.isEmpty() == false) {
             for (Material m : currentStage.blocksToDamage.keySet()) {
 
@@ -1298,7 +1294,6 @@ public class Quester {
         if (currentStage.citizensToKill.isEmpty() == false) {
             for (Integer n : currentStage.citizensToKill) {
 
-                System.out.println("Adding..");
                 citizensKilled.add(n);
                 citizenNumKilled.add(0);
 

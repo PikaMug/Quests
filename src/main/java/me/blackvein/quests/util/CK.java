@@ -71,7 +71,13 @@ public class CK {
 	public static final String S_TAME_AMOUNTS = "tameAmounts";
 	public static final String S_SHEAR_COLORS = "shearColors";
 	public static final String S_SHEAR_AMOUNTS = "shearAmounts";
-	public static final String S_EVENT = "event";
+	public static final String S_START_EVENT = "startEvent";
+    public static final String S_FINISH_EVENT = "finishEvent";
+    public static final String S_CHAT_EVENTS = "chatEvents";
+    public static final String S_CHAT_EVENT_TRIGGERS = "chatEventTriggers";
+    public static final String S_CHAT_TEMP_EVENT = "chatTempEvent";
+    public static final String S_DEATH_EVENT = "deathEvent";
+    public static final String S_DISCONNECT_EVENT = "disconnectEvent";
 	public static final String S_DELAY = "delay";
 	public static final String S_DELAY_MESSAGE = "delayMessage";
 	public static final String S_DENIZEN = "denizen";

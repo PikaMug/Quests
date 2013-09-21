@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>1.6.7-SNAPSHOT</version>
+    <version>1.6.8-SNAPSHOT</version>
     <name>quests</name>
     <url>http://dev.bukkit.org/server-mods/quests/</url>
     <packaging>jar</packaging>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>net.aufdemrand</groupId>
             <artifactId>denizen</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>

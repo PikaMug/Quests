@@ -3,9 +3,9 @@ package me.blackvein.quests.util;
 import me.blackvein.quests.Quests;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -92,7 +92,7 @@ public class QuestMob {
 
 
 	public void spawn() {
-		System.out.println("Spawned!");
+
 		World world = spawnLocation.getWorld();
 
 		for (int i = 0; i < spawnAmounts; i++) {
@@ -211,7 +211,6 @@ public class QuestMob {
 			return false;
 		}
 
-        System.out.println("1");
 		QuestMob other = (QuestMob) o;
 
 		if (name.equalsIgnoreCase(other.name) == false)
@@ -220,12 +219,8 @@ public class QuestMob {
 		if (entityType != other.entityType)
 			return false;
 
-        System.out.println("2");
-
 		if (dropChances != other.dropChances)
 			return false;
-
-        System.out.println("3");
 
 		if (inventory.length == other.inventory.length) {
 			for (int i = 0; i < inventory.length; i++) {
@@ -235,8 +230,6 @@ public class QuestMob {
 		} else {
 			return false;
 		}
-
-        System.out.println("4");
 
 		if (spawnAmounts != other.spawnAmounts)
 			return false;

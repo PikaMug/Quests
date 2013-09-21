@@ -116,11 +116,23 @@ public class Lang {
 		en.put("stageEditorTameMobs", "Tame Mobs");
 		en.put("stageEditorShearSheep", "Shear Sheep");
 		en.put("stageEditorEvents", "Events");
+        en.put("stageEditorStageEvents", "Stage Events");
+        en.put("stageEditorStartEvent", "Start Event");
+        en.put("stageEditorStartEventCleared", "Start Event cleared.");
+        en.put("stageEditorFinishEvent", "Finish Event");
+        en.put("stageEditorFinishEventCleared", "Finish Event cleared.");
+        en.put("stageEditorChatEvents", "Chat Events");
+        en.put("stageEditorChatTrigger", "Chat Trigger");
+        en.put("stageEditorTriggeredBy", "Triggered by");
+        en.put("stageEditorChatEventsCleared", "Chat Events cleared.");
+        en.put("stageEditorDeathEvent", "Death Event");
+        en.put("stageEditorDeathEventCleared", "Death Event cleared.");
+        en.put("stageEditorDisconnectEvent", "Disconnect Event");
+        en.put("stageEditorDisconnectEventCleared", "Disconnect Event cleared.");
 		en.put("stageEditorDelayMessage", "Delay Message");
 		en.put("stageEditorDenizenScript", "Denizen Script");
 		en.put("stageEditorStartMessage", "Start Message");
 		en.put("stageEditorCompleteMessage", "Complete Message");
-		en.put("stageEditorMiniEventMessage", "Mini-Events");
 		en.put("stageEditorDelete", "Delete Stage");
 
 		en.put("stageEditorDamageBlocks", "Damage Blocks");
@@ -148,7 +160,6 @@ public class Lang {
 		en.put("stageEditorSetShearColors", "Set sheep colors");
 		en.put("stageEditorSetShearAmounts", "Set shear amounts");
 		en.put("stageEditorSetBosses", "Set Bosses");
-		en.put("stageEditorAddMiniEvent", "Add mini-event");
 
 		en.put("stageEditorEnterBlockIds", "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.");
 		en.put("stageEditorBreakBlocksPrompt", "Enter block amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
@@ -177,6 +188,9 @@ public class Lang {
 		en.put("stageEditorShearColorsPrompt", "Enter sheep colors separating each one by a space, or enter \"cancel\" to return");
 		en.put("stageEditorShearAmountsPrompt", "Enter shear amounts separating each one by a space, or enter \"cancel\" to return");
 		en.put("stageEditorEventsPrompt", "Enter an event name, or enter \"clear\" to clear the event, or \"cancel\" to return");
+        en.put("stageEditorChatEventsPrompt", "Enter an event name to add, or enter \"clear\" to clear all chat events, or \"cancel\" to return");
+        en.put("stageEditorChatEventsTriggerPromptA", "Enter a chat trigger for");
+        en.put("stageEditorChatEventsTriggerPromptB", "or enter \"cancel\" to return.");
 		en.put("stageEditorDelayPrompt", "Enter time (in milliseconds), or enter \"clear\" to clear the delay, or \"cancel\" to return");
 		en.put("stageEditorDelayMessagePrompt", "Enter delay message, or enter \"clear\" to clear the message, or \"cancel\" to return");
 		en.put("stageEditorScriptPrompt", "Enter script name, or enter \"clear\" to clear the script, or \"cancel\" to return");
@@ -198,6 +212,7 @@ public class Lang {
 		en.put("stageEditorInvalidNumber", "is not a number!");
 		en.put("stageEditorInvalidDye", "is not a valid dye color!");
 		en.put("stageEditorInvalidEvent", "is not a valid event name!");
+        en.put("stageEditorDuplicateEvent", "Event is already in the list!");
 		en.put("stageEditorInvalidDelay", "Delay must be at least one second!");
 		en.put("stageEditorInvalidScript", "Denizen script not found!");
 		en.put("stageEditorInvalidBoss", "Could not find Boss with the name:");
@@ -454,6 +469,7 @@ public class Lang {
 		en.put("exit", "Exit");
 		en.put("exited", "Exited");
 		en.put("cancel", "Cancel");
+        en.put("back", "Back");
 		en.put("yes", "Yes");
 		en.put("no", "No");
 		en.put("clear", "Clear");

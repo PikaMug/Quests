@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.StagesPrompt;
@@ -14,7 +13,6 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -974,7 +972,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("redo-delay", redo);
         cs.set("ask-message", desc);
         cs.set("finish-message", finish);
-        cs.set(CK.S_EVENT, initialEvent);
+        cs.set(CK.S_FINISH_EVENT, initialEvent);
 
 
         if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false)) {
@@ -1059,7 +1057,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<Integer> shearAmounts;
 
         String script;
-        String event;
+        String startEvent;
+        String finishEvent;
+        String deathEvent;
+        String disconnectEvent;
+        LinkedList<String> chatEvents;
+        LinkedList<String> chatEventTriggers;
         Long delay;
         String delayMessage;
         String startMessage;
@@ -1121,7 +1124,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             shearAmounts = null;
 
             script = null;
-            event = null;
+            startEvent = null;
+            finishEvent = null;
+            deathEvent = null;
+            disconnectEvent = null;
+            chatEvents = null;
+            chatEventTriggers = null;
             delay = null;
             delayMessage = null;
             startMessage = null;
@@ -1212,8 +1220,25 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 shearAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
             }
 
-            if (cc.getSessionData(pref + CK.S_EVENT) != null) {
-                event = (String) cc.getSessionData(pref + CK.S_EVENT);
+            if (cc.getSessionData(pref + CK.S_START_EVENT) != null) {
+                startEvent = (String) cc.getSessionData(pref + CK.S_START_EVENT);
+            }
+
+            if (cc.getSessionData(pref + CK.S_FINISH_EVENT) != null) {
+                finishEvent = (String) cc.getSessionData(pref + CK.S_FINISH_EVENT);
+            }
+
+            if (cc.getSessionData(pref + CK.S_DEATH_EVENT) != null) {
+                deathEvent = (String) cc.getSessionData(pref + CK.S_DEATH_EVENT);
+            }
+
+            if (cc.getSessionData(pref + CK.S_DISCONNECT_EVENT) != null) {
+                disconnectEvent = (String) cc.getSessionData(pref + CK.S_DISCONNECT_EVENT);
+            }
+
+            if (cc.getSessionData(pref + CK.S_CHAT_EVENTS) != null) {
+                chatEvents = (LinkedList<String>) cc.getSessionData(pref + CK.S_CHAT_EVENTS);
+                chatEventTriggers = (LinkedList<String>) cc.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS);
             }
 
             if (cc.getSessionData(pref + CK.S_DELAY) != null) {
@@ -1291,7 +1316,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             stage.set("sheep-to-shear", shearColors);
             stage.set("sheep-amounts", shearAmounts);
             stage.set("script-to-run", script);
-            stage.set("event", event);
+            stage.set("start-event", startEvent);
+            stage.set("finish-event", finishEvent);
+            stage.set("death-event", deathEvent);
+            stage.set("disconnect-event", disconnectEvent);
+            stage.set("chat-events", chatEvents);
+            stage.set("chat-event-triggers", chatEventTriggers);
             stage.set("delay", delay);
             stage.set("delay-message", delayMessage);
             stage.set("start-message", startMessage);
@@ -1651,8 +1681,33 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
 
+            if (stage.startEvent != null) {
+                cc.setSessionData(pref + CK.S_START_EVENT, stage.startEvent.getName());
+            }
+
             if (stage.finishEvent != null) {
-                cc.setSessionData(pref + CK.S_EVENT, stage.finishEvent.getName());
+                cc.setSessionData(pref + CK.S_FINISH_EVENT, stage.finishEvent.getName());
+            }
+
+            if (stage.deathEvent != null) {
+                cc.setSessionData(pref + CK.S_DEATH_EVENT, stage.deathEvent.getName());
+            }
+            if (stage.disconnectEvent != null) {
+                cc.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.disconnectEvent.getName());
+            }
+            if (stage.chatEvents != null) {
+
+                LinkedList<String> chatEvents = new LinkedList<String>();
+                LinkedList<String> chatEventTriggers = new LinkedList<String>();
+
+                for(String s : stage.chatEvents.keySet()){
+                    chatEventTriggers.add(s);
+                    chatEvents.add(stage.chatEvents.get(s).getName());
+                }
+
+                cc.setSessionData(pref + CK.S_CHAT_EVENTS, chatEvents);
+                cc.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
+
             }
 
 
