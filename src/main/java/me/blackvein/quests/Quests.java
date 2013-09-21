@@ -1700,9 +1700,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public void loadQuests() {
 
         FileConfiguration config = new YamlConfiguration();
+        File file = new File(this.getDataFolder(), "quests.yml");
+
         try {
 
-            config.load(new File(this.getDataFolder(), "quests.yml"));
+            config.load(file);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1711,7 +1713,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         ConfigurationSection section1 = config.getConfigurationSection("quests");
         boolean failedToLoad = false;
         totalQuestPoints = 0;
-        boolean firstStage = true;
+        boolean needsSaving = false;
         for (String s : section1.getKeys(false)) {
 
             try {
@@ -2967,12 +2969,47 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (evt != null) {
                             stage.startEvent = evt;
                         } else {
-                            printSevere("[Quests] start-event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            printSevere("[Quests] start-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
                             break;
                         }
 
                     }
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".finish-event")) {
+
+                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".finish-event"), this);
+
+                        if (evt != null) {
+                            stage.finishEvent = evt;
+                        } else {
+                            printSevere("[Quests] finish-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+
+                    //Legacy support
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".event")) {
+
+                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this);
+
+                        if (evt != null) {
+                            stage.finishEvent = evt;
+                            printInfo("[Quests] Converting event: in Stage " + s2 + " of Quest " + quest.name + " to finish-event:");
+                            String old = config.getString("quests." + s + ".stages.ordered." + s2 + ".event");
+                            config.set("quests." + s + ".stages.ordered." + s2 + ".finish-event", old);
+                            config.set("quests." + s + ".stages.ordered." + s2 + ".event", null);
+                            needsSaving = true;
+                        } else {
+                            printSevere("[Quests] event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            stageFailed = true;
+                            break;
+                        }
+
+                    }
+                    //
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".death-event")) {
 
@@ -2981,7 +3018,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (evt != null) {
                             stage.deathEvent = evt;
                         } else {
-                            printSevere("[Quests] death-event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            printSevere("[Quests] death-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
                             break;
                         }
@@ -2995,7 +3032,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (evt != null) {
                             stage.disconnectEvent = evt;
                         } else {
-                            printSevere("[Quests] disconnect-event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                            printSevere("[Quests] disconnect-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
                             break;
                         }
@@ -3053,20 +3090,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".finish-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".finish-event"), this);
-
-                        if (evt != null) {
-                            stage.finishEvent = evt;
-                        } else {
-                            printSevere("[Quests] finish-event in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay")) {
 
                         if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999) {
@@ -3107,7 +3130,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         break;
                     }
                     quest.stages.add(stage);
-                    firstStage = false;
 
                 }
 
@@ -3244,6 +3266,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 //
                 quests.add(quest);
+
+                if(needsSaving){
+                    config.save(file);
+                }
 
             } catch (Exception e) {
 
@@ -4040,11 +4066,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public String getNPCName(int id){
-        
+
         return citizens.getNPCRegistry().getById(id).getName();
-        
+
     }
-    
+
     public static int countInv(Inventory inv, Material m, int subtract) {
 
         int count = 0;
