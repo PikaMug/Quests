@@ -70,6 +70,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
     public static EpicBoss epicBoss = null;
+    public static think.rpgitems.Plugin rpgItems = null;
     public static boolean snoop = true;
     public static boolean npcEffects = true;
     public static boolean broadcastPartyCreation = true;
@@ -155,6 +156,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (getServer().getPluginManager().getPlugin("EpicBossRecoded") != null) {
             epicBoss = (EpicBoss) getServer().getPluginManager().getPlugin("EpicBossRecoded");
             getServer().getPluginManager().registerEvents(bossListener, this);
+        }
+        
+        if (getServer().getPluginManager().getPlugin("RPG Items") != null) {
+        	rpgItems = think.rpgitems.Plugin.plugin;
         }
 
         if (!setupEconomy()) {
@@ -428,7 +433,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
+    public boolean onCommand(final CommandSender cs, Command cmd, String label, String[] args) {
 
         if (cmd.getName().equalsIgnoreCase("quest")) {
 
@@ -1027,8 +1032,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else if (cmd.getName().equalsIgnoreCase("questadmin")) {
 
-            if (cs instanceof Player || args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-
                 final Player player;
                 if (cs instanceof Player) {
                     player = (Player) cs;
@@ -1038,10 +1041,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (args.length == 0) {
 
-                    if (player.hasPermission("quests.admin")) {
-                        printAdminHelp(player);
+                    if (player == null || player.hasPermission("quests.admin")) {
+                        printAdminHelp(cs);
                     } else {
-                        player.sendMessage(RED + "You do not have access to that command.");
+                        cs.sendMessage(RED + "You do not have access to that command.");
                     }
 
                 } else if (args.length == 1) {
@@ -1066,7 +1069,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     if (args[0].equalsIgnoreCase("quit")) {
 
-                        if (player.hasPermission("quests.admin.quit")) {
+                        if (player == null || player.hasPermission("quests.admin.quit")) {
 
                             Player target = null;
 
@@ -1081,21 +1084,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             if (target == null) {
 
-                                player.sendMessage(YELLOW + "Player not found.");
+                                cs.sendMessage(YELLOW + "Player not found.");
 
                             } else {
 
                                 Quester quester = getQuester(target.getName());
                                 if (quester.currentQuest == null) {
 
-                                    player.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
+                                    cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
 
                                 } else {
 
                                     quester.resetObjectives();
                                     quester.currentStage = null;
-                                    player.sendMessage(GREEN + target.getName() + GOLD + " has forcibly quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    target.sendMessage(GREEN + player.getName() + GOLD + " has forced you to quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                    cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                    target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has forced you to quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
                                     quester.currentQuest = null;
 
                                     quester.saveData();
@@ -1106,13 +1109,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            player.sendMessage(RED + "You do not have access to that command.");
+                            cs.sendMessage(RED + "You do not have access to that command.");
 
                         }
 
                     } else if (args[0].equalsIgnoreCase("nextstage")) {
 
-                        if (player.hasPermission("quests.admin.nextstage")) {
+                        if (player == null || player.hasPermission("quests.admin.nextstage")) {
 
                             Player target = null;
 
@@ -1127,19 +1130,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             if (target == null) {
 
-                                player.sendMessage(YELLOW + "Player not found.");
+                                cs.sendMessage(YELLOW + "Player not found.");
 
                             } else {
 
                                 Quester quester = getQuester(target.getName());
                                 if (quester.currentQuest == null) {
 
-                                    player.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
+                                    cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
 
                                 } else {
 
-                                    player.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    target.sendMessage(GREEN + player.getName() + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                    cs.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                    target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
                                     quester.currentQuest.nextStage(quester);
 
                                     quester.saveData();
@@ -1150,13 +1153,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            player.sendMessage(RED + "You do not have access to that command.");
+                            cs.sendMessage(RED + "You do not have access to that command.");
 
                         }
 
                     } else if (args[0].equalsIgnoreCase("finish")) {
 
-                        if (player.hasPermission("quests.admin.finish")) {
+                        if (player == null || player.hasPermission("quests.admin.finish")) {
 
                             Player target = null;
 
@@ -1171,19 +1174,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             if (target == null) {
 
-                                player.sendMessage(YELLOW + "Player not found.");
+                                cs.sendMessage(YELLOW + "Player not found.");
 
                             } else {
 
                                 Quester quester = getQuester(target.getName());
                                 if (quester.currentQuest == null) {
 
-                                    player.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
+                                    cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
 
                                 } else {
 
-                                    player.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    target.sendMessage(GREEN + player.getName() + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                    cs.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                    target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
                                     quester.currentQuest.completeQuest(quester);
 
                                     quester.saveData();
@@ -1194,13 +1197,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            player.sendMessage(RED + "You do not have access to that command.");
+                            cs.sendMessage(RED + "You do not have access to that command.");
 
                         }
 
                     } else if (args[0].equalsIgnoreCase("pointsall")) {
 
-                        if (player.hasPermission("quests.admin.points.all")) {
+                        if (player == null || player.hasPermission("quests.admin.points.all")) {
 
                             final int amount;
 
@@ -1209,12 +1212,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 amount = Integer.parseInt(args[1]);
 
                                 if (amount < 0) {
-                                    player.sendMessage(RED + "Error: Amount cannot be less than zero!");
+                                    cs.sendMessage(RED + "Error: Amount cannot be less than zero!");
                                     return true;
                                 }
 
                             } catch (Exception e) {
-                                player.sendMessage(RED + "Error: Input was not a number!");
+                                cs.sendMessage(RED + "Error: Input was not a number!");
                                 return true;
                             }
 
@@ -1240,9 +1243,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                             } catch (Exception e) {
 
                                                 if (failCount < 4) {
-                                                    player.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", skipping..");
+                                                    cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", skipping..");
                                                 } else if (suppressed == false) {
-                                                    player.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", suppressing further errors.");
+                                                    cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", suppressing further errors.");
                                                     suppressed = true;
                                                 }
 
@@ -1250,17 +1253,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                         }
 
-                                        player.sendMessage(GREEN + "Done.");
+                                        cs.sendMessage(GREEN + "Done.");
                                         getServer().broadcastMessage(YELLOW + "[Quests] " + GOLD + "All players' Quest Points have been set to " + AQUA + amount + GOLD + "!");
 
                                     } else {
-                                        player.sendMessage(RED + "Error: Unable to read Quests data folder!");
+                                        cs.sendMessage(RED + "Error: Unable to read Quests data folder!");
                                     }
 
                                 }
                             });
 
-                            player.sendMessage(YELLOW + "Setting all players' Quest Points...");
+                            cs.sendMessage(YELLOW + "Setting all players' Quest Points...");
                             for (Quester q : questers.values()) {
 
                                 q.questPoints = amount;
@@ -1270,7 +1273,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            player.sendMessage(RED + "You do not have access to that command.");
+                        	cs.sendMessage(RED + "You do not have access to that command.");
 
                         }
 
@@ -1284,7 +1287,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     if (args[0].equalsIgnoreCase("give")) {
 
-                        if (player.hasPermission("quests.admin.give")) {
+                        if (player == null || player.hasPermission("quests.admin.give")) {
 
                             Player target = null;
 
@@ -1299,7 +1302,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             if (target == null) {
 
-                                player.sendMessage(YELLOW + "Player not found.");
+                                cs.sendMessage(YELLOW + "Player not found.");
 
                             } else {
 
@@ -1353,7 +1356,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 if (questToGive == null) {
 
-                                    player.sendMessage(YELLOW + "Quest not found.");
+                                    cs.sendMessage(YELLOW + "Quest not found.");
 
                                 } else {
 
@@ -1364,8 +1367,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     quester.currentQuest = questToGive;
                                     quester.currentStage = questToGive.stages.getFirst();
                                     quester.addEmpties();
-                                    player.sendMessage(GREEN + target.getName() + GOLD + " has forcibly started the Quest " + PURPLE + questToGive.name + GOLD + ".");
-                                    target.sendMessage(GREEN + player.getName() + GOLD + " has forced you to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
+                                    cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly started the Quest " + PURPLE + questToGive.name + GOLD + ".");
+                                    target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has forced you to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
                                     target.sendMessage(GOLD + "---(Objectives)---");
                                     for (String s : quester.getObjectives()) {
                                         target.sendMessage(s);
@@ -1379,13 +1382,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            player.sendMessage(RED + "You do not have access to that command.");
+                            cs.sendMessage(RED + "You do not have access to that command.");
 
                         }
 
                     } else if (args[0].equalsIgnoreCase("points")) {
 
-                        if (player.hasPermission("quests.admin.points")) {
+                        if (player == null || player.hasPermission("quests.admin.points")) {
 
                             Player target = null;
 
@@ -1400,7 +1403,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             if (target == null) {
 
-                                player.sendMessage(YELLOW + "Player not found.");
+                                cs.sendMessage(YELLOW + "Player not found.");
 
                             } else {
 
@@ -1412,15 +1415,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 } catch (Exception e) {
 
-                                    player.sendMessage(YELLOW + "Amount must be a number.");
+                                    cs.sendMessage(YELLOW + "Amount must be a number.");
                                     return true;
 
                                 }
 
                                 Quester quester = getQuester(target.getName());
                                 quester.questPoints = points;
-                                player.sendMessage(GREEN + target.getName() + GOLD + "\'s Quest Points have been set to " + PURPLE + points + GOLD + ".");
-                                target.sendMessage(GREEN + player.getName() + GOLD + " has set your Quest Points to " + PURPLE + points + GOLD + ".");
+                                cs.sendMessage(GREEN + target.getName() + GOLD + "\'s Quest Points have been set to " + PURPLE + points + GOLD + ".");
+                                target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has set your Quest Points to " + PURPLE + points + GOLD + ".");
 
                                 quester.saveData();
 
@@ -1428,13 +1431,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            player.sendMessage(RED + "You do not have access to that command.");
+                            cs.sendMessage(RED + "You do not have access to that command.");
 
                         }
 
                     } else if (args[0].equalsIgnoreCase("takepoints")) {
 
-                    	if (player.hasPermission("quests.admin.takepoints")) {
+                    	if (player == null || player.hasPermission("quests.admin.takepoints")) {
 
                     		Player target = null;
 
@@ -1449,7 +1452,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     		if (target == null) {
 
-                    			player.sendMessage(YELLOW + "Player not found.");
+                    			cs.sendMessage(YELLOW + "Player not found.");
 
                     		} else {
 
@@ -1461,15 +1464,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     			} catch (Exception e) {
 
-                    				player.sendMessage(YELLOW + "Amount must be a number.");
+                    				cs.sendMessage(YELLOW + "Amount must be a number.");
                     				return true;
 
                     			}
 
                     			Quester quester = getQuester(target.getName());
                     			quester.questPoints -= Math.abs(points);
-                    			player.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
-                    			target.sendMessage(GREEN + player.getName() + GOLD + " took away " + PURPLE + points + GOLD + " Quest Points.");
+                    			cs.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
+                    			target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " took away " + PURPLE + points + GOLD + " Quest Points.");
 
                     			quester.saveData();
 
@@ -1477,11 +1480,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     	} else {
 
-                             player.sendMessage(RED + "You do not have access to that command.");
+                             cs.sendMessage(RED + "You do not have access to that command.");
 
                          }
                     } else if (args[0].equalsIgnoreCase("givepoints")) {
-                    	if (player.hasPermission("quests.admin.givepoints")) {
+                    	if (player == null || player.hasPermission("quests.admin.givepoints")) {
 
                     		Player target = null;
 
@@ -1496,7 +1499,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     		if (target == null) {
 
-                    			player.sendMessage(YELLOW + "Player not found.");
+                    			cs.sendMessage(YELLOW + "Player not found.");
 
                     		} else {
 
@@ -1508,15 +1511,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     			} catch (Exception e) {
 
-                    				player.sendMessage(YELLOW + "Amount must be a number.");
+                    				cs.sendMessage(YELLOW + "Amount must be a number.");
                     				return true;
 
                     			}
 
                     			Quester quester = getQuester(target.getName());
                     			quester.questPoints += Math.abs(points);
-                    			player.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + "\'s.");
-                    			target.sendMessage(GREEN + player.getName() + GOLD + " gave you " + PURPLE + points + GOLD + " Quest Points.");
+                    			cs.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + "\'s.");
+                    			target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " gave you " + PURPLE + points + GOLD + " Quest Points.");
 
                     			quester.saveData();
 
@@ -1524,7 +1527,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     	} else {
 
-                    		player.sendMessage(RED + "You do not have access to that command.");
+                    		cs.sendMessage(RED + "You do not have access to that command.");
 
                     	}
                     } else {
@@ -1535,12 +1538,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 }
 
-            } else {
-
-                cs.sendMessage(YELLOW + "This command may only be performed in-game.");
-
-            }
-
             return true;
 
         }
@@ -1550,37 +1547,37 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     }
 
-    public void printAdminHelp(Player player) {
+    public void printAdminHelp(CommandSender cs) {
 
-        player.sendMessage(RED + "- " + DARKRED + "Questadmin" + RED + " -");
-        player.sendMessage("");
-        player.sendMessage(DARKRED + "/questadmin" + RED + " - View Questadmin help");
-        if (player.hasPermission("quests.admin.give")) {
-            player.sendMessage(DARKRED + "/questadmin give <player> <quest>" + RED + " - Force a player to take a Quest");
+        cs.sendMessage(RED + "- " + DARKRED + "Questadmin" + RED + " -");
+        cs.sendMessage("");
+        cs.sendMessage(DARKRED + "/questadmin" + RED + " - View Questadmin help");
+        if (cs.hasPermission("quests.admin.give")) {
+            cs.sendMessage(DARKRED + "/questadmin give <player> <quest>" + RED + " - Force a player to take a Quest");
         }
-        if (player.hasPermission("quests.admin.quit")) {
-            player.sendMessage(DARKRED + "/questadmin quit <player>" + RED + " - Force a player to quit their Quest");
+        if (cs.hasPermission("quests.admin.quit")) {
+            cs.sendMessage(DARKRED + "/questadmin quit <player>" + RED + " - Force a player to quit their Quest");
         }
-        if (player.hasPermission("quests.admin.points")) {
-            player.sendMessage(DARKRED + "/questadmin points <player> <amount>" + RED + " - Set a players Quest Points");
+        if (cs.hasPermission("quests.admin.points")) {
+            cs.sendMessage(DARKRED + "/questadmin points <player> <amount>" + RED + " - Set a players Quest Points");
         }
-        if (player.hasPermission("quests.admin.takepoints")) {
-            player.sendMessage(DARKRED + "/questadmin takepoints <player> <amount>" + RED + " - Take a players Quest Points");
+        if (cs.hasPermission("quests.admin.takepoints")) {
+            cs.sendMessage(DARKRED + "/questadmin takepoints <player> <amount>" + RED + " - Take a players Quest Points");
         }
-        if (player.hasPermission("quests.admin.givepoints")) {
-            player.sendMessage(DARKRED + "/questadmin givepoints <player> <amount>" + RED + " - Give a player Quest Points");
+        if (cs.hasPermission("quests.admin.givepoints")) {
+            cs.sendMessage(DARKRED + "/questadmin givepoints <player> <amount>" + RED + " - Give a player Quest Points");
         }
-        if (player.hasPermission("quests.admin.pointsall")) {
-            player.sendMessage(DARKRED + "/questadmin pointsall <amount>" + RED + " - Set ALL players' Quest Points");
+        if (cs.hasPermission("quests.admin.pointsall")) {
+            cs.sendMessage(DARKRED + "/questadmin pointsall <amount>" + RED + " - Set ALL players' Quest Points");
         }
-        if (player.hasPermission("quests.admin.finish")) {
-            player.sendMessage(DARKRED + "/questadmin finish <player>" + RED + " - Immediately force Quest completion for a player");
+        if (cs.hasPermission("quests.admin.finish")) {
+            cs.sendMessage(DARKRED + "/questadmin finish <player>" + RED + " - Immediately force Quest completion for a player");
         }
-        if (player.hasPermission("quests.admin.nextstage")) {
-            player.sendMessage(DARKRED + "/questadmin nextstage <player>" + RED + " - Immediately force Stage completion for a player");
+        if (cs.hasPermission("quests.admin.nextstage")) {
+            cs.sendMessage(DARKRED + "/questadmin nextstage <player>" + RED + " - Immediately force Stage completion for a player");
         }
-        if (player.hasPermission("quests.admin.reload")) {
-            player.sendMessage(DARKRED + "/questadmin reload" + RED + " - Reload all Quests");
+        if (cs.hasPermission("quests.admin.reload")) {
+            cs.sendMessage(DARKRED + "/questadmin reload" + RED + " - Reload all Quests");
         }
 
     }

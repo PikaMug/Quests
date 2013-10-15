@@ -212,9 +212,14 @@ public class QuestMob {
 		}
 
 		QuestMob other = (QuestMob) o;
-
-		if (name.equalsIgnoreCase(other.name) == false)
+		
+		if (name != null && other.name != null) {
+			if (name.equalsIgnoreCase(other.name) == false)
+				return false;
+		} else if (name == null && other.name == null) {
+		} else {
 			return false;
+		}
 
 		if (entityType != other.entityType)
 			return false;

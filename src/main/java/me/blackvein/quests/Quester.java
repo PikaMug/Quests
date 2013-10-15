@@ -1147,7 +1147,7 @@ public class Quester {
         } else if (objective.equalsIgnoreCase("killNPC")) {
 
             String message = ChatColor.GREEN + "(Completed) Kill " + npc.getName();
-            message = message + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc));
+            message = message + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc.getId())) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc.getId()));
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);

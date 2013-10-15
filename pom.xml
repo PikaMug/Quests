@@ -68,6 +68,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/EpicBossRecoded.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>think.rpgitems</groupId>
+            <artifactId>rpgitems</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/rpgitems.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
