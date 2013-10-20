@@ -74,12 +74,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static Permission permission = null;
     public static mcMMO mcmmo = null;
     public static EpicBoss epicBoss = null;
-<<<<<<< HEAD
-    public static think.rpgitems.Plugin rpgItems = null;
-=======
+    public static Plugin rpgItems = null;
     public static Heroes heroes = null;
-    public static Plugin rpgItems;
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
     public static boolean snoop = true;
     public static boolean npcEffects = true;
     public static boolean broadcastPartyCreation = true;
@@ -170,9 +166,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         if (getServer().getPluginManager().getPlugin("Heroes") != null) {
-            epicBoss = (EpicBoss) getServer().getPluginManager().getPlugin("Heroes");
+            heroes = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
         }
-        
+
         if (getServer().getPluginManager().getPlugin("RPG Items") != null) {
         	rpgItems = think.rpgitems.Plugin.plugin;
         }
@@ -1048,22 +1044,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else if (cmd.getName().equalsIgnoreCase("questadmin")) {
 
-<<<<<<< HEAD
-                final Player player;
-                if (cs instanceof Player) {
-                    player = (Player) cs;
-                } else {
-                    player = null;
-                }
-
-                if (args.length == 0) {
-
-                    if (player == null || player.hasPermission("quests.admin")) {
-=======
                 if (args.length == 0) {
 
                     if (cs.hasPermission("quests.admin")) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
                         printAdminHelp(cs);
                     } else {
                         cs.sendMessage(RED + "You do not have access to that command.");
@@ -1091,11 +1074,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     if (args[0].equalsIgnoreCase("quit")) {
 
-<<<<<<< HEAD
-                        if (player == null || player.hasPermission("quests.admin.quit")) {
-=======
                         if (cs.hasPermission("quests.admin.quit")) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                             Player target = null;
 
@@ -1124,11 +1103,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     quester.resetObjectives();
                                     quester.currentStage = null;
                                     cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-<<<<<<< HEAD
-                                    target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has forced you to quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-=======
                                     target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
                                     quester.currentQuest = null;
 
                                     quester.saveData();
@@ -1145,11 +1120,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else if (args[0].equalsIgnoreCase("nextstage")) {
 
-<<<<<<< HEAD
-                        if (player == null || player.hasPermission("quests.admin.nextstage")) {
-=======
                         if (cs.hasPermission("quests.admin.nextstage")) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                             Player target = null;
 
@@ -1176,11 +1147,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 } else {
 
                                     cs.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-<<<<<<< HEAD
-                                    target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-=======
                                     target.sendMessage(GREEN + cs.getName() + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
                                     quester.currentQuest.nextStage(quester);
 
                                     quester.saveData();
@@ -1197,11 +1164,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else if (args[0].equalsIgnoreCase("finish")) {
 
-<<<<<<< HEAD
-                        if (player == null || player.hasPermission("quests.admin.finish")) {
-=======
                         if (cs.hasPermission("quests.admin.finish")) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                             Player target = null;
 
@@ -1228,11 +1191,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 } else {
 
                                     cs.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-<<<<<<< HEAD
-                                    target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-=======
                                     target.sendMessage(GREEN + cs.getName() + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
                                     quester.currentQuest.completeQuest(quester);
 
                                     quester.saveData();
@@ -1249,11 +1208,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else if (args[0].equalsIgnoreCase("pointsall")) {
 
-<<<<<<< HEAD
-                        if (player == null || player.hasPermission("quests.admin.points.all")) {
-=======
                         if (cs.hasPermission("quests.admin.points.all")) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                             final int amount;
 
@@ -1323,11 +1278,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-<<<<<<< HEAD
-                        	cs.sendMessage(RED + "You do not have access to that command.");
-=======
                             cs.sendMessage(RED + "You do not have access to that command.");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                         }
 
@@ -1341,11 +1292,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     if (args[0].equalsIgnoreCase("give")) {
 
-<<<<<<< HEAD
-                        if (player == null || player.hasPermission("quests.admin.give")) {
-=======
                         if (cs.hasPermission("quests.admin.give")) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                             Player target = null;
 
@@ -1426,11 +1373,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     quester.currentStage = questToGive.stages.getFirst();
                                     quester.addEmpties();
                                     cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly started the Quest " + PURPLE + questToGive.name + GOLD + ".");
-<<<<<<< HEAD
-                                    target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has forced you to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
-=======
                                     target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
                                     target.sendMessage(GOLD + "---(Objectives)---");
                                     for (String s : quester.getObjectives()) {
                                         target.sendMessage(s);
@@ -1450,11 +1393,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else if (args[0].equalsIgnoreCase("points")) {
 
-<<<<<<< HEAD
-                        if (player == null || player.hasPermission("quests.admin.points")) {
-=======
                         if (cs.hasPermission("quests.admin.points")) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                             Player target = null;
 
@@ -1489,11 +1428,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 Quester quester = getQuester(target.getName());
                                 quester.questPoints = points;
                                 cs.sendMessage(GREEN + target.getName() + GOLD + "\'s Quest Points have been set to " + PURPLE + points + GOLD + ".");
-<<<<<<< HEAD
-                                target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " has set your Quest Points to " + PURPLE + points + GOLD + ".");
-=======
                                 target.sendMessage(GREEN + cs.getName() + GOLD + " has set your Quest Points to " + PURPLE + points + GOLD + ".");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                                 quester.saveData();
 
@@ -1507,11 +1442,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else if (args[0].equalsIgnoreCase("takepoints")) {
 
-<<<<<<< HEAD
-                    	if (player == null || player.hasPermission("quests.admin.takepoints")) {
-=======
                         if (cs.hasPermission("quests.admin.takepoints")) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                             Player target = null;
 
@@ -1526,11 +1457,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             if (target == null) {
 
-<<<<<<< HEAD
-                    			cs.sendMessage(YELLOW + "Player not found.");
-=======
                                 cs.sendMessage(YELLOW + "Player not found.");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                             } else {
 
@@ -1542,27 +1469,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 } catch (Exception e) {
 
-<<<<<<< HEAD
-                    				cs.sendMessage(YELLOW + "Amount must be a number.");
-                    				return true;
-=======
                                     cs.sendMessage(YELLOW + "Amount must be a number.");
                                     return true;
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                                 }
-
-<<<<<<< HEAD
-                    			Quester quester = getQuester(target.getName());
-                    			quester.questPoints -= Math.abs(points);
-                    			cs.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
-                    			target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " took away " + PURPLE + points + GOLD + " Quest Points.");
-=======
                                 Quester quester = getQuester(target.getName());
                                 quester.questPoints -= Math.abs(points);
                                 cs.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
                                 target.sendMessage(GREEN + cs.getName() + GOLD + " took away " + PURPLE + points + GOLD + " Quest Points.");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                                 quester.saveData();
 
@@ -1570,18 +1484,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-<<<<<<< HEAD
-                             cs.sendMessage(RED + "You do not have access to that command.");
-=======
                             cs.sendMessage(RED + "You do not have access to that command.");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                         }
                     } else if (args[0].equalsIgnoreCase("givepoints")) {
-<<<<<<< HEAD
-                    	if (player == null || player.hasPermission("quests.admin.givepoints")) {
-=======
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                         if (cs.hasPermission("quests.admin.givepoints")) {
 
@@ -1596,11 +1502,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             }
 
-<<<<<<< HEAD
-                    			cs.sendMessage(YELLOW + "Player not found.");
-=======
                             if (target == null) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                                 cs.sendMessage(YELLOW + "Player not found.");
 
@@ -1612,41 +1514,28 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                     points = Integer.parseInt(args[2]);
 
-<<<<<<< HEAD
-                    				cs.sendMessage(YELLOW + "Amount must be a number.");
+                                    Quester quester = getQuester(target.getName());
+                                    quester.questPoints += Math.abs(points);
+                                    cs.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + ".");
+                                    target.sendMessage(GREEN + cs.getName() + GOLD + " gave you " + PURPLE + points + GOLD + " Quest Points.");
+
+                                    quester.saveData();
+
                     				return true;
-=======
+
                                 } catch (Exception e) {
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                                     cs.sendMessage(YELLOW + "Amount must be a number.");
-                                    return true;
 
-<<<<<<< HEAD
-                    			Quester quester = getQuester(target.getName());
-                    			quester.questPoints += Math.abs(points);
-                    			cs.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + "\'s.");
-                    			target.sendMessage(GREEN + ((player == null) ? "console" : player.getName()) + GOLD + " gave you " + PURPLE + points + GOLD + " Quest Points.");
-=======
                                 }
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
-                                Quester quester = getQuester(target.getName());
-                                quester.questPoints += Math.abs(points);
-                                cs.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + "\'s.");
-                                target.sendMessage(GREEN + cs.getName() + GOLD + " gave you " + PURPLE + points + GOLD + " Quest Points.");
 
-                                quester.saveData();
 
                             }
 
                         } else {
 
-<<<<<<< HEAD
-                    		cs.sendMessage(RED + "You do not have access to that command.");
-=======
                             cs.sendMessage(RED + "You do not have access to that command.");
->>>>>>> Added RPGItems + EpicBossGoldEdition Support
 
                         }
                     } else {
