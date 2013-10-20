@@ -425,13 +425,15 @@ public class Quester {
 
         for (String boss : currentStage.bossesToKill) {
 
+            String bossName = Quests.getBoss(boss).Display;
+
             if (bossAmountsKilled.get(bossesKilled.indexOf(boss)) < currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss))) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + "Kill " + ChatColor.ITALIC + boss + ChatColor.RESET + ChatColor.GREEN + " " + bossAmountsKilled.get(currentStage.bossesToKill.indexOf(boss)) + "/" + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)));
+                unfinishedObjectives.add(ChatColor.GREEN + "Kill " + ChatColor.ITALIC + bossName + ChatColor.RESET + ChatColor.GREEN + " " + bossAmountsKilled.get(currentStage.bossesToKill.indexOf(boss)) + "/" + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)));
 
             } else {
 
-                unfinishedObjectives.add(ChatColor.GRAY + "Kill " + ChatColor.ITALIC + boss + ChatColor.RESET + ChatColor.GRAY + " " + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)) + "/" + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)));
+                unfinishedObjectives.add(ChatColor.GRAY + "Kill " + ChatColor.ITALIC + bossName + ChatColor.RESET + ChatColor.GRAY + " " + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)) + "/" + currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss)));
 
             }
 
@@ -2638,6 +2640,21 @@ public class Quester {
         } else {
             return currentStage.delay - (System.currentTimeMillis() - delayStartTime);
         }
+
+    }
+
+    public boolean hasData() {
+
+        if(currentQuest != null || currentStage != null)
+            return true;
+
+        if(questPoints > 1)
+            return true;
+
+        if(completedQuests.isEmpty() == false)
+            return true;
+
+        return false;
 
     }
 

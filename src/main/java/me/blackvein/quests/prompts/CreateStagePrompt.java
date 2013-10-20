@@ -3,7 +3,7 @@ package me.blackvein.quests.prompts;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import me.ThaH3lper.com.LoadBosses.LoadBoss;
+import me.ThaH3lper.com.Mobs.EpicMobs;
 import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.Event;
 import me.blackvein.quests.QuestFactory;
@@ -3927,10 +3927,10 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 LinkedList<String> ids = (LinkedList<String>) cc.getSessionData(pref + "bossIds");
                 for (String id : ids) {
 
-                    for (LoadBoss b : Quests.epicBoss.BossLoadList) {
+                    for (EpicMobs em : Quests.epicBoss.listMobs) {
 
-                        if (b.getName().equalsIgnoreCase(id)) {
-                            text += GOLD + "    - " + YELLOW + b.getName() + "\n";
+                        if (em.cmdName.equalsIgnoreCase(id)) {
+                            text += GOLD + "    - " + YELLOW + em.cmdName + "\n";
                             break;
                         }
 
@@ -3999,12 +3999,12 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext cc) {
             String text = GOLD + "- " + DARKRED + Lang.get("stageEditorBosses") + GOLD + " -\n";
-            if (Quests.epicBoss.BossLoadList.isEmpty()) {
+            if (Quests.epicBoss.listMobs.isEmpty()) {
                 text += RED + "- " + Lang.get("none") + "\n";
             } else {
 
-                for (LoadBoss b : Quests.epicBoss.BossLoadList) {
-                    text += RED + "  - " + b.getName() + "\n";
+                for (EpicMobs em : Quests.epicBoss.listMobs) {
+                    text += RED + "  - " + em.cmdName + "\n";
                 }
 
             }
@@ -4024,11 +4024,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 LinkedList<String> idList = new LinkedList<String>();
                 for (String id : ids) {
 
-                        LoadBoss found = null;
+                        EpicMobs found = null;
 
-                        for (LoadBoss b : Quests.epicBoss.BossLoadList) {
-                            if (b.getName().equalsIgnoreCase(id)) {
-                                found = b;
+                        for (EpicMobs em : Quests.epicBoss.listMobs) {
+                            if (em.cmdName.equalsIgnoreCase(id)) {
+                                found = em;
                                 break;
                             }
                         }
@@ -4037,11 +4037,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             cc.getForWhom().sendRawMessage(RED + Lang.get("stageEditorInvalidBoss") + " " + id + "!");
                             return new EpicBossIDListPrompt();
                         } else {
-                            if (idList.contains(found.getName())) {
+                            if (idList.contains(found.cmdName)) {
                                 cc.getForWhom().sendRawMessage(RED + Lang.get("stageEditorContainsDuplicates"));
                                 return new EpicBossIDListPrompt();
                             } else {
-                                idList.add(found.getName());
+                                idList.add(found.cmdName);
                             }
                         }
 

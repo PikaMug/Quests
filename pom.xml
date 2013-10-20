@@ -19,9 +19,9 @@
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
     	<repository>
-			<id>citizens-repo</id>
-			<url>http://repo.citizensnpcs.com</url>
-		</repository>
+                <id>citizens-repo</id>
+                <url>http://repo.citizensnpcs.com</url>
+        </repository>
         <repository>
             <id>denizens-repo</id>
             <url>http://repo.citizensnpcs.com</url>
@@ -57,16 +57,30 @@
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>1.0</version>
+            <version>1.4.07-beta1-b2226</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/mcMMO.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>me.ThaH3lper</groupId>
-            <artifactId>EpicBoss</artifactId>
-            <version>1.0</version>
+            <groupId>think.rpgitems</groupId>
+            <artifactId>RPGItems</artifactId>
+            <version>3.3</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/EpicBossRecoded.jar</systemPath>
+            <systemPath>${project.basedir}/lib/RPGItems.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>me.ThaH3lper</groupId>
+            <artifactId>EpicBossGoldEdition</artifactId>
+            <version>0.0.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/EpicBossGoldEdition.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.herocraftonline</groupId>
+            <artifactId>Heroes</artifactId>
+            <version>1.5.4-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/Heroes.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>think.rpgitems</groupId>

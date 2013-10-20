@@ -120,7 +120,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 if (player.hasPermission("quests.editor.delete")) {
                     return new SelectDeletePrompt();
                 } else {
-                	player.sendMessage(RED + Lang.get("questEditorNoPermsDelete"));
+                    player.sendMessage(RED + Lang.get("questEditorNoPermsDelete"));
                     return new MenuPrompt();
                 }
 
@@ -154,7 +154,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             String text =
                     GOLD + "- Quest: " + AQUA + context.getSessionData(CK.Q_NAME) + GOLD + " -\n";
 
-            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - "+ Lang.get("questEditorName") +"\n";
+            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("questEditorName") + "\n";
 
             if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
                 text += BLUE + "" + BOLD + "2" + RESET + RED + " - " + Lang.get("questEditorAskMessage") + " " + DARKRED + "(Required, none set)\n";
@@ -175,9 +175,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             } else {
 
                 //something here is throwing an exception
-                try{
+                try {
                     text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("questEditorRedoDelay") + " (" + Quests.getTime((Long) context.getSessionData(CK.Q_REDO_DELAY)) + ")\n";
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -618,12 +618,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-            	if (input.startsWith("++")) {
-            		if (context.getSessionData(CK.Q_ASK_MESSAGE) != null) {
-            			context.setSessionData(CK.Q_ASK_MESSAGE, context.getSessionData(CK.Q_ASK_MESSAGE) + " " + input.substring(2));
-            			return new CreateMenuPrompt();
-            		}
-            	}
+                if (input.startsWith("++")) {
+                    if (context.getSessionData(CK.Q_ASK_MESSAGE) != null) {
+                        context.setSessionData(CK.Q_ASK_MESSAGE, context.getSessionData(CK.Q_ASK_MESSAGE) + " " + input.substring(2));
+                        return new CreateMenuPrompt();
+                    }
+                }
                 context.setSessionData(CK.Q_ASK_MESSAGE, input);
             }
 
@@ -645,12 +645,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-            	if (input.startsWith("++")) {
-            		if (context.getSessionData(CK.Q_FINISH_MESSAGE) != null) {
-            			context.setSessionData(CK.Q_FINISH_MESSAGE, context.getSessionData(CK.Q_FINISH_MESSAGE) + " " + input.substring(2));
-            			return new CreateMenuPrompt();
-            		}
-            	}
+                if (input.startsWith("++")) {
+                    if (context.getSessionData(CK.Q_FINISH_MESSAGE) != null) {
+                        context.setSessionData(CK.Q_FINISH_MESSAGE, context.getSessionData(CK.Q_FINISH_MESSAGE) + " " + input.substring(2));
+                        return new CreateMenuPrompt();
+                    }
+                }
                 context.setSessionData(CK.Q_FINISH_MESSAGE, input);
             }
 
@@ -833,7 +833,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
     }
 
     @SuppressWarnings("unchecked")
-	public static void saveQuest(ConversationContext cc, ConfigurationSection cs) {
+    public static void saveQuest(ConversationContext cc, ConfigurationSection cs) {
 
         String edit = null;
         if (cc.getSessionData(CK.ED_QUEST_EDIT) != null) {
@@ -878,6 +878,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         Integer moneyRew = null;
         Integer questPointsRew = null;
         LinkedList<String> itemRews = new LinkedList<String>();
+        LinkedList<Integer> RPGItemRews = new LinkedList<Integer>();
+        LinkedList<Integer> RPGItemAmounts = new LinkedList<Integer>();
         Integer expRew = null;
         LinkedList<String> commandRews = null;
         LinkedList<String> permRews = null;
@@ -947,6 +949,17 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
         }
 
+        if (cc.getSessionData(CK.REW_RPG_ITEM_IDS) != null) {
+            RPGItemRews = new LinkedList<Integer>();
+            RPGItemAmounts = new LinkedList<Integer>();
+            for (Integer i : (LinkedList<Integer>) cc.getSessionData(CK.REW_RPG_ITEM_IDS)) {
+                RPGItemRews.add(i);
+            }
+            for (Integer i : (LinkedList<Integer>) cc.getSessionData(CK.REW_RPG_ITEM_AMOUNTS)) {
+                RPGItemAmounts.add(i);
+            }
+        }
+
         if (cc.getSessionData(CK.REW_EXP) != null) {
             expRew = (Integer) cc.getSessionData(CK.REW_EXP);
         }
@@ -979,7 +992,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             ConfigurationSection reqs = cs.createSection("requirements");
             List<String> items = new LinkedList<String>();
-            if(itemReqs != null){
+            if (itemReqs != null) {
 
                 for (ItemStack is : itemReqs) {
                     items.add(ItemUtil.serialize(is));
@@ -1205,9 +1218,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
             if (cc.getSessionData(pref + CK.S_REACH_LOCATIONS) != null) {
-            	reachLocs = (LinkedList<String>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS);
-            	reachRadii = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
-            	reachNames = (LinkedList<String>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
+                reachLocs = (LinkedList<String>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS);
+                reachRadii = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
+                reachNames = (LinkedList<String>) cc.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
             }
 
             if (cc.getSessionData(pref + CK.S_TAME_TYPES) != null) {
@@ -1251,11 +1264,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
             if (cc.getSessionData(pref + CK.S_START_MESSAGE) != null) {
-            	startMessage = (String) cc.getSessionData(pref + CK.S_START_MESSAGE);
+                startMessage = (String) cc.getSessionData(pref + CK.S_START_MESSAGE);
             }
 
             if (cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE) != null) {
-            	completeMessage = (String) cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE);
+                completeMessage = (String) cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE);
             }
 
             if (breakIds != null && breakIds.isEmpty() == false) {
@@ -1288,12 +1301,13 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             stage.set("enchantments", enchantments);
             stage.set("enchantment-item-ids", enchantmentIds);
             stage.set("enchantment-amounts", enchantmentAmounts);
-            if(deliveryItems != null && deliveryItems.isEmpty() == false){
+            if (deliveryItems != null && deliveryItems.isEmpty() == false) {
                 LinkedList<String> items = new LinkedList<String>();
-                for(ItemStack is : deliveryItems)
+                for (ItemStack is : deliveryItems) {
                     items.add(ItemUtil.serialize(is));
+                }
                 stage.set("items-to-deliver", items);
-            }else{
+            } else {
                 stage.set("items-to-deliver", null);
             }
             stage.set("npc-delivery-ids", deliveryNPCIds);
@@ -1330,7 +1344,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
 
 
-        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null) {
+        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null) {
 
             ConfigurationSection rews = cs.createSection("rewards");
 
@@ -1342,6 +1356,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             rews.set("commands", commandRews);
             rews.set("mcmmo-skills", mcMMOSkillRews);
             rews.set("mcmmo-levels", mcMMOSkillAmounts);
+            rews.set("rpgitem-ids", RPGItemRews);
+            rews.set("rpgitem-amounts", RPGItemAmounts);
 
         } else {
             cs.set("rewards", null);
@@ -1422,6 +1438,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (q.mcmmoSkills.isEmpty() == false) {
             cc.setSessionData(CK.REW_MCMMO_SKILLS, q.mcmmoSkills);
             cc.setSessionData(CK.REW_MCMMO_AMOUNTS, q.mcmmoAmounts);
+        }
+
+        if(q.rpgItemRewardIDs.isEmpty() == false) {
+            cc.setSessionData(CK.REW_RPG_ITEM_IDS, q.rpgItemRewardIDs);
+            cc.setSessionData(CK.REW_RPG_ITEM_AMOUNTS, q.rpgItemRewardAmounts);
         }
         //
 
@@ -1700,7 +1721,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 LinkedList<String> chatEvents = new LinkedList<String>();
                 LinkedList<String> chatEventTriggers = new LinkedList<String>();
 
-                for(String s : stage.chatEvents.keySet()){
+                for (String s : stage.chatEvents.keySet()) {
                     chatEventTriggers.add(s);
                     chatEvents.add(stage.chatEvents.get(s).getName());
                 }
@@ -1723,11 +1744,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
             if (stage.completeMessage != null) {
-            	cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.completeMessage);
+                cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.completeMessage);
             }
 
             if (stage.startMessage != null) {
-            	cc.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
+                cc.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
             }
 
         }

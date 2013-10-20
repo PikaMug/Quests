@@ -16,6 +16,8 @@ import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
+import think.rpgitems.item.ItemManager;
+import think.rpgitems.item.RPGItem;
 
 
 public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
@@ -26,7 +28,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
     public RewardsPrompt(Quests plugin, QuestFactory qf){
 
-        super("1", "2", "3", "4", "5", "6", "7", "8");
+        super("1", "2", "3", "4", "5", "6", "7", "8", "9");
         quests = plugin;
         factory = qf;
 
@@ -54,16 +56,43 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
             text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set item rewards\n";
 
+        //RPGItems
+
+        if(Quests.rpgItems != null){
+
+            if(context.getSessionData(CK.REW_RPG_ITEM_IDS) == null)
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set RPGItem rewards (None set)\n";
+            else{
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set RPGItem rewards\n";
+                List<Integer> rpgItems = (List<Integer>) context.getSessionData(CK.REW_RPG_ITEM_IDS);
+                List<Integer> rpgItemAmounts = (List<Integer>) context.getSessionData(CK.REW_RPG_ITEM_AMOUNTS);
+
+                for(Integer i : rpgItems){
+
+                    RPGItem item = ItemManager.getItemById(i);
+                    text += GRAY + "    - " + PINK + ITALIC + item.getName() + RESET + GRAY + " x " + PURPLE + rpgItemAmounts.get(rpgItems.indexOf(i)) + "\n";
+
+                }
+            }
+
+        }else{
+
+            text += GRAY + "4 - Set RPGItem rewards (RPGItems not installed)\n";
+
+        }
+
+        //
+
         if(context.getSessionData(CK.REW_EXP) == null)
-            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set experience reward (None set)\n";
+            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set experience reward (None set)\n";
         else{
-            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set experience reward (" + context.getSessionData(CK.REW_EXP) + " points)\n";
+            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set experience reward (" + context.getSessionData(CK.REW_EXP) + " points)\n";
         }
 
         if(context.getSessionData(CK.REW_COMMAND) == null)
-            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set command rewards (None set)\n";
+            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set command rewards (None set)\n";
         else{
-            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set command rewards\n";
+            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set command rewards\n";
             List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
 
             for(String cmd : commands){
@@ -74,9 +103,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
         }
 
         if(context.getSessionData(CK.REW_PERMISSION) == null)
-            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set permission rewards (None set)\n";
+            text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set permission rewards (None set)\n";
         else{
-            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set permission rewards\n";
+            text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set permission rewards\n";
             List<String> permissions = (List<String>) context.getSessionData(CK.REW_PERMISSION);
 
             for(String perm : permissions){
@@ -91,9 +120,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
         if(Quests.mcmmo != null){
 
             if(context.getSessionData(CK.REW_MCMMO_SKILLS) == null)
-                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set mcMMO skill rewards (None set)\n";
+                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - Set mcMMO skill rewards (None set)\n";
             else{
-                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set mcMMO skill rewards\n";
+                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - Set mcMMO skill rewards\n";
                 List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
                 List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
 
@@ -104,15 +133,14 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                 }
             }
 
+        }else{
+
+            text += GRAY + "8 - Set mcMMO skill rewards (mcMMO not installed)\n";
+
         }
 
         //
-
-        if(Quests.mcmmo != null)
-            text += GREEN + "" + BOLD + "8" + RESET + YELLOW + " - Done";
-        else
-            text += GREEN + "" + BOLD + "7" + RESET + YELLOW + " - Done";
-
+        text += GREEN + "" + BOLD + "9" + RESET + YELLOW + " - Done";
 
         return text;
 
@@ -128,21 +156,23 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
         }else if(input.equalsIgnoreCase("3")){
             return new ItemListPrompt();
         }else if(input.equalsIgnoreCase("4")){
-            return new ExperiencePrompt();
+            if(Quests.rpgItems != null)
+                return new RPGItemsPrompt();
+            else
+                return new RewardsPrompt(quests, factory);
         }else if(input.equalsIgnoreCase("5")){
-            return new CommandsPrompt();
+            return new ExperiencePrompt();
         }else if(input.equalsIgnoreCase("6")){
-            return new PermissionsPrompt();
+            return new CommandsPrompt();
         }else if(input.equalsIgnoreCase("7")){
+            return new PermissionsPrompt();
+        }else if(input.equalsIgnoreCase("8")){
             if(Quests.mcmmo != null)
                 return new mcMMOListPrompt();
             else
-                return factory.returnToMenu();
-        }else if(input.equalsIgnoreCase("8")){
-            if(Quests.mcmmo != null)
-                return factory.returnToMenu();
-            else
                 return new RewardsPrompt(quests, factory);
+        }else if(input.equalsIgnoreCase("9")){
+            return factory.returnToMenu();
         }
         return null;
 
@@ -300,17 +330,89 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
     }
 
-    /*private class ItemIdsPrompt extends StringPrompt {
+    private class RPGItemsPrompt extends FixedSetPrompt {
+
+        public RPGItemsPrompt(){
+
+            super("1", "2", "3");
+
+        }
 
         @Override
         public String getPromptText(ConversationContext context){
-            return YELLOW + "Enter item IDs separating each one by a space, or enter \'cancel\' to return.";
+
+            String text = GOLD + "- RPGItem Rewards -\n";
+            if(context.getSessionData(CK.REW_RPG_ITEM_IDS) == null){
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set IDs\n";
+            }else{
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set IDs\n";
+                for(Integer i : (List<Integer>) context.getSessionData(CK.REW_RPG_ITEM_IDS)){
+                    text += AQUA + "    - " + i + "\n";
+                }
+            }
+
+            if(context.getSessionData(CK.REW_RPG_ITEM_AMOUNTS) == null){
+                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set amounts\n";
+            }else{
+                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set amounts\n";
+                for(Integer i : (List<Integer>) context.getSessionData(CK.REW_RPG_ITEM_AMOUNTS)){
+                    text += AQUA + "    - " + i + "\n";
+                }
+            }
+
+            text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Done";
+
+            return text;
+
+        }
+
+        @Override
+        protected Prompt acceptValidatedInput(ConversationContext context, String input){
+
+            if(input.equalsIgnoreCase("1")){
+                return new RPGItemIdsPrompt();
+            }else if(input.equalsIgnoreCase("2")){
+                return new RPGItemAmountsPrompt();
+            }else if(input.equalsIgnoreCase("3")){
+
+                int one;
+                int two;
+
+                if(context.getSessionData(CK.REW_RPG_ITEM_IDS) != null)
+                    one = ((List<Integer>) context.getSessionData(CK.REW_RPG_ITEM_IDS)).size();
+                else
+                    one = 0;
+
+                if(context.getSessionData(CK.REW_RPG_ITEM_AMOUNTS) != null)
+                    two = ((List<Integer>) context.getSessionData(CK.REW_RPG_ITEM_AMOUNTS)).size();
+                else
+                    two = 0;
+
+                if(one == two)
+                    return new RewardsPrompt(quests, factory);
+                else{
+                    context.getForWhom().sendRawMessage(RED + "The " + GOLD + "IDs list " + RED + "and " + GOLD + "amounts list " + RED + "are not the same size!");
+                    return new RPGItemsPrompt();
+                }
+
+            }
+            return null;
+
+        }
+
+    }
+
+    private class RPGItemIdsPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context){
+            return YELLOW + "Enter RPGItem IDs (or names) separating each one by a space, or enter \'clear\' to clear the list, or \'cancel\' to return.";
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input){
 
-            if(input.equalsIgnoreCase("cancel") == false){
+            if(input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false){
 
                 String[] args = input.split(" ");
                 LinkedList<Integer> ids = new LinkedList<Integer>();
@@ -318,48 +420,63 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
 
                     try{
 
-                        if(Material.getMaterial(Integer.parseInt(s)) != null){
+                        int id = Integer.parseInt(s);
 
-                            if(ids.contains(Integer.parseInt(s)) == false){
-                                ids.add(Integer.parseInt(s));
-                            }else{
-                                context.getForWhom().sendRawMessage(RED + "List contains duplicates!");
-                                return new ItemIdsPrompt();
-                            }
+                        if(ids.contains(id)){
+                            context.getForWhom().sendRawMessage(RED + "Error: List contains duplicates!");
+                            return new RPGItemIdsPrompt();
+                        }
 
-                        }else{
-                            context.getForWhom().sendRawMessage(PINK + s + RED + " is not a valid item ID!");
-                            return new ItemIdsPrompt();
+
+                        RPGItem item = ItemManager.getItemById(id);
+
+                        if(item != null){
+                            ids.add(id);
+                        }else {
+                            context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ", not an RPGItem ID or name!");
+                            return new RPGItemIdsPrompt();
                         }
 
                     }catch (Exception e){
-                        context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
-                        return new ItemIdsPrompt();
+
+                        RPGItem item = ItemManager.getItemByName(s);
+
+                        if(item == null){
+                            context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ", not an RPGItem ID or name!");
+                            return new RPGItemIdsPrompt();
+                        }else{
+                            ids.add(item.getID());
+                        }
                     }
 
                 }
 
-                context.setSessionData("itemIdRews", ids);
+                context.setSessionData(CK.REW_RPG_ITEM_IDS, ids);
+
+            }else if(input.equalsIgnoreCase("clear")){
+
+                context.setSessionData(CK.REW_RPG_ITEM_IDS, null);
+                context.getForWhom().sendRawMessage(YELLOW + "RPGItem IDs cleared.");
 
             }
 
-            return new ItemListPrompt();
+            return new RPGItemsPrompt();
 
         }
 
-    }*/
+    }
 
-    /*private class ItemAmountsPrompt extends StringPrompt {
+    private class RPGItemAmountsPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context){
-            return YELLOW + "Enter item amounts (numbers) separating each one by a space, or enter \'cancel\' to return.";
+            return YELLOW + "Enter RPGItem amounts (numbers) separating each one by a space, or enter \'clear\' to clear the list, or \'cancel\' to return.";
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input){
 
-            if(input.equalsIgnoreCase("cancel") == false){
+            if(input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false){
 
                 String[] args = input.split(" ");
                 LinkedList<Integer> amounts = new LinkedList<Integer>();
@@ -371,26 +488,31 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                             amounts.add(Integer.parseInt(s));
                         else{
                             context.getForWhom().sendRawMessage(PINK + s + RED + " is not greater than 0!");
-                            return new ItemAmountsPrompt();
+                            return new RPGItemAmountsPrompt();
                         }
 
                     }catch (Exception e){
                         context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
-                        return new ItemAmountsPrompt();
+                        return new RPGItemAmountsPrompt();
                     }
 
                 }
 
-                context.setSessionData("itemAmountRews", amounts);
+                context.setSessionData(CK.REW_RPG_ITEM_AMOUNTS, amounts);
+
+            }else if(input.equalsIgnoreCase("clear")){
+
+                context.setSessionData(CK.REW_RPG_ITEM_AMOUNTS, null);
+                context.getForWhom().sendRawMessage(YELLOW + "RPGItem amounts cleared.");
 
             }
 
-            return new ItemListPrompt();
+            return new RPGItemsPrompt();
 
         }
 
 
-    }*/
+    }
 
     private class CommandsPrompt extends StringPrompt {
 

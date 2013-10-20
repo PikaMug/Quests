@@ -1,6 +1,9 @@
 package me.blackvein.quests;
 
 import java.io.File;
+import java.util.UUID;
+import me.ThaH3lper.com.Mobs.EpicMobs;
+import me.ThaH3lper.com.Mobs.MobCommon;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -440,6 +443,11 @@ public class PlayerListener implements Listener {
                                     quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
                                 }
 
+                                if(quester.hasObjective("killBoss") && Quests.epicBoss.allMobs.contains(evt.getEntity().getUniqueId())) {
+                                    EpicMobs em = MobCommon.getEpicMob(evt.getEntity());
+                                    quester.killBoss(em.cmdName);
+                                }
+
                             }
                         }
 
@@ -459,6 +467,11 @@ public class PlayerListener implements Listener {
                             Quester quester = plugin.getQuester(player.getName());
                             if (quester.hasObjective("killMob")) {
                                 quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
+                            }
+
+                            if(quester.hasObjective("killBoss") && Quests.epicBoss.allMobs.contains(evt.getEntity().getUniqueId())) {
+                                EpicMobs em = MobCommon.getEpicMob(evt.getEntity());
+                                quester.killBoss(em.cmdName);
                             }
 
                         }
@@ -583,8 +596,7 @@ public class PlayerListener implements Listener {
             quester.name = evt.getPlayer().getName();
             if (new File(plugin.getDataFolder(), "data/" + quester.name + ".yml").exists()) {
                 quester.loadData();
-
-            } else {
+            } else if (Quests.genFilesOnJoin) {
                 quester.saveData();
             }
 
@@ -637,7 +649,10 @@ public class PlayerListener implements Listener {
                 }
 
             }
-            quester.saveData();
+
+            if(quester.hasData()){
+                quester.saveData();
+            }
 
             plugin.questers.remove(quester.name);
 

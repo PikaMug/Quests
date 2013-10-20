@@ -29,6 +29,8 @@ public class CK {
 	public static final String REW_MONEY = "moneyRew";
 	public static final String REW_QUEST_POINTS = "questPointsRew";
 	public static final String REW_ITEMS = "itemRews";
+        public static final String REW_RPG_ITEM_IDS = "rpgItemRewIDs";
+        public static final String REW_RPG_ITEM_AMOUNTS = "rpgItemRewAmounts";
 	public static final String REW_EXP = "expRew";
 	public static final String REW_COMMAND = "commandRews";
 	public static final String REW_PERMISSION = "permissionRews";
