@@ -66,7 +66,7 @@
             <artifactId>RPGItems</artifactId>
             <version>3.3</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/RPGItems.jar</systemPath>
+            <systemPath>${project.basedir}/lib/rpgitems.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>me.ThaH3lper</groupId>
