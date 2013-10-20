@@ -4469,13 +4469,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             String url = "jdbc:mysql://173.234.237.34:3306/bigal_quests";
-            Connection conn = DriverManager.getConnection(url, "bigal_snooper", "jpuradox");
+            Connection conn = DriverManager.getConnection(url, "bigal_snooper", "merv41");
             Statement statement = conn.createStatement();
             java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
             Timestamp stamp = new Timestamp(date.getTime());
             statement.executeUpdate("DELETE FROM entries WHERE server='" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "'");
             String cit = citizens != null ? "true" : "false";
-            statement.executeUpdate("INSERT INTO entries VALUES ('" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "', " + quests.size() + ", '" + cit + "', '" + stamp.toString() + "')");
+            String name = getServer().getServerName().replaceAll("'", "''").replaceAll("\"", "''");
+            String motd = getServer().getMotd().replaceAll("'", "''").replaceAll("\"", "''");
+            String ip = getServer().getIp().trim();
+            if(ip.isEmpty())
+                ip = "localhost";
+            String port = ((Integer) getServer().getPort()).toString();
+
+            statement.executeUpdate("INSERT INTO entries VALUES ('" + ip + ":" + port + "', '" + name + "', '" + motd + "', " + quests.size() + ", '" + cit + "', '" + stamp.toString() + "')");
         } catch (Exception e) {
         }
 
