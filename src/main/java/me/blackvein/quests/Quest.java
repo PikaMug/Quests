@@ -1,5 +1,6 @@
 package me.blackvein.quests;
 
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +35,8 @@ public class Quest {
     List<String> neededQuests = new LinkedList<String>();
     List<String> blockQuests = new LinkedList<String>();
     List<String> permissionReqs = new LinkedList<String>();
+    List<String> mcMMOSkillReqs = new LinkedList<String>();
+    List<Integer> mcMMOAmountReqs = new LinkedList<Integer>();
     public String failRequirements = null;
     //
     //Rewards
@@ -171,6 +174,15 @@ public class Quest {
             if (player.hasPermission(s) == false) {
                 return false;
             }
+
+        }
+
+        for(String s : mcMMOSkillReqs) {
+
+            final SkillType st = Quests.getMcMMOSkill(s);
+            final int lvl = mcMMOAmountReqs.get(mcMMOSkillReqs.indexOf(s));
+            if(UserManager.getPlayer(player).getProfile().getSkillLevel(st) < lvl)
+                return false;
 
         }
 
@@ -451,6 +463,14 @@ public class Quest {
             }
 
             if (other.permissions.equals(permissions) == false) {
+                return false;
+            }
+
+            if (other.mcMMOSkillReqs.equals(mcMMOSkillReqs) == false) {
+                return false;
+            }
+
+            if (other.mcMMOAmountReqs.equals(mcMMOAmountReqs) == false) {
                 return false;
             }
 
