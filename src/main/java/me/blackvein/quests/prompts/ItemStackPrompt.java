@@ -1,5 +1,6 @@
 package me.blackvein.quests.prompts;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -236,7 +237,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                         return new ItemStackPrompt(oldPrompt);
                     }
 
-                }catch(Exception e){
+                }catch(NumberFormatException e){
                 	try {
 	                	Data data = ItemData.getInstance().getItem(input);
 	                	if (data == null) {
@@ -288,7 +289,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                         return new ItemStackPrompt(oldPrompt);
                     }
 
-                }catch(Exception e){
+                }catch(NumberFormatException e){
                     cc.getForWhom().sendRawMessage(RED + "Invalid input!");
                     return new AmountPrompt();
                 }
@@ -324,7 +325,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                         return new ItemStackPrompt(oldPrompt);
                     }
 
-                }catch(Exception e){
+                }catch(NumberFormatException e){
                     cc.getForWhom().sendRawMessage(RED + "Invalid input!");
                     return new DataPrompt();
                 }
@@ -421,7 +422,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                         return new ItemStackPrompt(oldPrompt);
                     }
 
-                }catch (Exception e){
+                }catch (NumberFormatException e){
                     cc.getForWhom().sendRawMessage(RED + "Input was not a number!");
                     e.printStackTrace();
                     return new LevelPrompt(enchantment);
@@ -476,8 +477,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
             	input = Quests.parseString(input);
 
                 LinkedList<String> lore = new LinkedList<String>();
-                for(String line : input.split(";"))
-                    lore.add(line);
+                lore.addAll(Arrays.asList(input.split(";")));
                 cc.setSessionData("tempLore", lore);
 
             }else if(input.equalsIgnoreCase("clear")){

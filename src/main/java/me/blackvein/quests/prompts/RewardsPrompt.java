@@ -437,7 +437,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                             return new RPGItemIdsPrompt();
                         }
 
-                    }catch (Exception e){
+                    }catch (NumberFormatException e){
 
                         RPGItem item = ItemManager.getItemByName(s);
 
@@ -491,7 +491,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                             return new RPGItemAmountsPrompt();
                         }
 
-                    }catch (Exception e){
+                    }catch (NumberFormatException e){
                         context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
                         return new RPGItemAmountsPrompt();
                     }
@@ -700,6 +700,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                     AQUA + "Herbalism\n" +
                     AQUA + "Mining\n" +
                     AQUA + "Repair\n" +
+                    AQUA + "Smelting\n" +
                     AQUA + "Swords\n" +
                     AQUA + "Taming\n" +
                     AQUA + "Unarmed\n" +
@@ -769,7 +770,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil{
                             return new mcMMOAmountsPrompt();
                         }
 
-                    }catch (Exception e){
+                    }catch (NumberFormatException e){
                         context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
                         return new mcMMOAmountsPrompt();
                     }

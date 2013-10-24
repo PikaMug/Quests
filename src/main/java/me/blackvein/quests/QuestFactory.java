@@ -1,6 +1,7 @@
 package me.blackvein.quests;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.*;
@@ -788,7 +790,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     data.save(new File(quests.getDataFolder(), "quests.yml"));
                     context.getForWhom().sendRawMessage(BOLD + Lang.get("questEditorSaved"));
 
-                } catch (Exception e) {
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
 
@@ -873,13 +877,15 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> permReqs = null;
         LinkedList<String> questReqs = null;
         LinkedList<String> questBlocks = null;
+        LinkedList<String> mcMMOSkillReqs = null;
+        LinkedList<Integer> mcMMOAmountReqs = null;
         String failMessage = null;
 
         Integer moneyRew = null;
         Integer questPointsRew = null;
-        LinkedList<String> itemRews = new LinkedList<String>();
-        LinkedList<Integer> RPGItemRews = new LinkedList<Integer>();
-        LinkedList<Integer> RPGItemAmounts = new LinkedList<Integer>();
+        LinkedList<String> itemRews = null;
+        LinkedList<Integer> RPGItemRews = null;
+        LinkedList<Integer> RPGItemAmounts = null;
         Integer expRew = null;
         LinkedList<String> commandRews = null;
         LinkedList<String> permRews = null;
@@ -926,6 +932,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (cc.getSessionData(CK.REQ_QUEST_BLOCK) != null) {
             questBlocks = (LinkedList<String>) cc.getSessionData(CK.REQ_QUEST_BLOCK);
         }
+        
+        if (cc.getSessionData(CK.REQ_MCMMO_SKILLS) != null) {
+            mcMMOSkillReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
+            mcMMOAmountReqs = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
+        }
 
         if (cc.getSessionData(CK.Q_FAIL_MESSAGE) != null) {
             failMessage = (String) cc.getSessionData(CK.Q_FAIL_MESSAGE);
@@ -944,6 +955,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
 
         if (cc.getSessionData(CK.REW_ITEMS) != null) {
+            itemRews = new LinkedList<String>();
             for (ItemStack is : (LinkedList<ItemStack>) cc.getSessionData(CK.REW_ITEMS)) {
                 itemRews.add(ItemUtil.serialize(is));
             }
@@ -988,7 +1000,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set(CK.S_FINISH_EVENT, initialEvent);
 
 
-        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false)) {
+        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) ||(mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false)) {
 
             ConfigurationSection reqs = cs.createSection("requirements");
             List<String> items = new LinkedList<String>();
@@ -1006,7 +1018,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             reqs.set("quest-points", questPointsReq);
             reqs.set("permissions", permReqs);
             reqs.set("quests", questReqs);
-            reqs.set("quests-blocks", questBlocks);
+            reqs.set("quest-blocks", questBlocks);
+            reqs.set("mcmmo-skills", mcMMOSkillReqs);
+            reqs.set("mcmmo-amounts", mcMMOAmountReqs);
             reqs.set("fail-requirement-message", failMessage);
 
         } else {
@@ -1404,11 +1418,21 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (q.blockQuests.isEmpty() == false) {
             cc.setSessionData(CK.REQ_QUEST_BLOCK, q.blockQuests);
         }
+        
+        if(q.mcMMOSkillReqs.isEmpty() == false){
+            cc.setSessionData(CK.REQ_MCMMO_SKILLS, q.mcMMOSkillReqs);
+            cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, q.mcMMOAmountReqs);
+        }
 
         if (q.permissionReqs.isEmpty() == false) {
             cc.setSessionData(CK.REQ_PERMISSION, q.permissionReqs);
         }
 
+        if(q.mcMMOSkillReqs.isEmpty() == false) {
+            cc.setSessionData(CK.REQ_MCMMO_SKILLS, q.mcMMOSkillReqs);
+            cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, q.mcMMOAmountReqs);
+        }
+        
         if (q.failRequirements != null) {
             cc.setSessionData(CK.Q_FAIL_MESSAGE, q.failRequirements);
         }
@@ -1852,7 +1876,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         try {
             data.load(questsFile);
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "Error reading Quests file.");
+            return;
+        } catch (InvalidConfigurationException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "Error reading Quests file.");
             return;
@@ -1872,7 +1900,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         try {
             data.save(questsFile);
-        } catch (Exception e) {
+        } catch (IOException e) {
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "An error occurred while saving.");
             return;
         }

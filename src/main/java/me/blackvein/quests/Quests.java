@@ -1,11 +1,15 @@
 package me.blackvein.quests;
 
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -13,7 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,9 +26,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.Mobs.EpicMobs;
+import static me.blackvein.quests.ColorUtil.GREEN;
+import static me.blackvein.quests.ColorUtil.RED;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import net.aufdemrand.denizen.Denizen;
 import net.aufdemrand.denizen.scripts.ScriptRegistry;
 import net.citizensnpcs.api.CitizensAPI;
@@ -43,6 +49,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
@@ -170,7 +177,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         if (getServer().getPluginManager().getPlugin("RPG Items") != null) {
-        	rpgItems = think.rpgitems.Plugin.plugin;
+            rpgItems = think.rpgitems.Plugin.plugin;
         }
 
         if (!setupEconomy()) {
@@ -189,7 +196,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             try {
                 config.load(this.getResource("config.yml"));
                 config.save(new File(this.getDataFolder(), "config.yml"));
-            } catch (Exception e) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
                 e.printStackTrace();
             }
 
@@ -207,7 +216,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 data.load(this.getResource("quests.yml"));
                 data.set("events", null);
                 data.save(new File(this.getDataFolder(), "quests.yml"));
-            } catch (Exception e) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
                 e.printStackTrace();
             }
 
@@ -221,7 +232,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             try {
                 data.load(this.getResource("events.yml"));
                 data.save(new File(this.getDataFolder(), "events.yml"));
-            } catch (Exception e) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
                 e.printStackTrace();
             }
 
@@ -320,7 +333,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             }
 
-
         }
     }
 
@@ -386,7 +398,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         try {
             config.save(new File(this.getDataFolder(), "config.yml"));
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -551,6 +563,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                     }
 
+                                    if (quest.mcMMOSkillReqs.isEmpty() == false) {
+
+                                        for (String skill : quest.mcMMOSkillReqs) {
+
+                                            int level = Quests.getMCMMOSkillLevel(Quests.getMcMMOSkill(skill), player.getName());
+                                            int req = quest.mcMMOAmountReqs.get(quest.mcMMOSkillReqs.indexOf(skill));
+                                            String skillName = MiscUtil.getCapitalized(skill);
+
+                                            if (level >= req) {
+                                                cs.sendMessage(GREEN + skillName + " level " + req);
+                                            } else {
+                                                cs.sendMessage(RED + skillName + " level " + req);
+                                            }
+
+                                        }
+
+                                    }
+
                                     if (quest.questPointsReq != 0) {
 
                                         if (quester.questPoints >= quest.questPointsReq) {
@@ -695,7 +725,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                     }
 
-                                } catch (Exception e) {
+                                } catch (NumberFormatException e) {
 
                                     cs.sendMessage(YELLOW + "Page selection must be a number.");
                                     return true;
@@ -808,8 +838,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                                         quester.questToTake = quest.name;
 
-                                                        String s =
-                                                                GOLD + "- " + PURPLE + quester.questToTake + GOLD + " -\n"
+                                                        String s
+                                                                = GOLD + "- " + PURPLE + quester.questToTake + GOLD + " -\n"
                                                                 + "\n"
                                                                 + RESET + getQuest(quester.questToTake).description + "\n";
 
@@ -939,7 +969,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 topNumber = Integer.parseInt(args[1]);
 
-                            } catch (Exception e) {
+                            } catch (NumberFormatException e) {
 
                                 cs.sendMessage(YELLOW + "Input must be a number.");
                                 return true;
@@ -965,10 +995,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                     data.load(f);
 
-                                } catch (Exception e) {
+                                } catch (IOException e) {
 
                                     e.printStackTrace();
 
+                                } catch (InvalidConfigurationException e) {
+                                    e.printStackTrace();
                                 }
 
                                 String name = f.getName().substring(0, (f.getName().indexOf(".")));
@@ -981,10 +1013,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             int numPrinted = 0;
 
                             cs.sendMessage(GOLD + "- Top " + PURPLE + topNumber + GOLD + " Questers -");
-                            for (Object o : sortedMap.keySet()) {
+                            for (String s : sortedMap.keySet()) {
 
-                                String s = (String) o;
-                                int i = (Integer) sortedMap.get(o);
+                                int i = (Integer) sortedMap.get(s);
                                 numPrinted++;
                                 cs.sendMessage(YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + PURPLE + i + YELLOW + " Quest points");
 
@@ -992,9 +1023,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     break;
                                 }
 
-
                             }
-
 
                         }
 
@@ -1044,512 +1073,516 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else if (cmd.getName().equalsIgnoreCase("questadmin")) {
 
-                if (args.length == 0) {
+            if (args.length == 0) {
 
-                    if (cs.hasPermission("quests.admin")) {
-                        printAdminHelp(cs);
+                if (cs.hasPermission("quests.admin")) {
+                    printAdminHelp(cs);
+                } else {
+                    cs.sendMessage(RED + "You do not have access to that command.");
+                }
+
+            } else if (args.length == 1) {
+
+                if (args[0].equalsIgnoreCase("reload")) {
+
+                    if (cs.hasPermission("quests.admin.reload")) {
+                        reloadQuests();
+                        cs.sendMessage(GOLD + "Quests reloaded.");
+                        cs.sendMessage(PURPLE + String.valueOf(quests.size()) + GOLD + " Quests loaded.");
                     } else {
                         cs.sendMessage(RED + "You do not have access to that command.");
                     }
 
-                } else if (args.length == 1) {
+                } else {
 
-                    if (args[0].equalsIgnoreCase("reload")) {
+                    cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
 
-                        if (cs.hasPermission("quests.admin.reload")) {
-                            reloadQuests();
-                            cs.sendMessage(GOLD + "Quests reloaded.");
-                            cs.sendMessage(PURPLE + String.valueOf(quests.size()) + GOLD + " Quests loaded.");
+                }
+
+            } else if (args.length == 2) {
+
+                if (args[0].equalsIgnoreCase("quit")) {
+
+                    if (cs.hasPermission("quests.admin.quit")) {
+
+                        Player target = null;
+
+                        for (Player p : getServer().getOnlinePlayers()) {
+
+                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+                                target = p;
+                                break;
+                            }
+
+                        }
+
+                        if (target == null) {
+
+                            cs.sendMessage(YELLOW + "Player not found.");
+
                         } else {
-                            cs.sendMessage(RED + "You do not have access to that command.");
+
+                            Quester quester = getQuester(target.getName());
+                            if (quester.currentQuest == null) {
+
+                                cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
+
+                            } else {
+
+                                quester.resetObjectives();
+                                quester.currentStage = null;
+                                cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                quester.currentQuest = null;
+
+                                quester.saveData();
+
+                            }
+
                         }
 
                     } else {
 
-                        cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
+                        cs.sendMessage(RED + "You do not have access to that command.");
 
                     }
 
-                } else if (args.length == 2) {
+                } else if (args[0].equalsIgnoreCase("nextstage")) {
 
-                    if (args[0].equalsIgnoreCase("quit")) {
+                    if (cs.hasPermission("quests.admin.nextstage")) {
 
-                        if (cs.hasPermission("quests.admin.quit")) {
+                        Player target = null;
 
-                            Player target = null;
+                        for (Player p : getServer().getOnlinePlayers()) {
 
-                            for (Player p : getServer().getOnlinePlayers()) {
-
-                                if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                    target = p;
-                                    break;
-                                }
-
+                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+                                target = p;
+                                break;
                             }
-
-                            if (target == null) {
-
-                                cs.sendMessage(YELLOW + "Player not found.");
-
-                            } else {
-
-                                Quester quester = getQuester(target.getName());
-                                if (quester.currentQuest == null) {
-
-                                    cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
-
-                                } else {
-
-                                    quester.resetObjectives();
-                                    quester.currentStage = null;
-                                    cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    quester.currentQuest = null;
-
-                                    quester.saveData();
-
-                                }
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(RED + "You do not have access to that command.");
 
                         }
 
-                    } else if (args[0].equalsIgnoreCase("nextstage")) {
+                        if (target == null) {
 
-                        if (cs.hasPermission("quests.admin.nextstage")) {
+                            cs.sendMessage(YELLOW + "Player not found.");
 
-                            Player target = null;
+                        } else {
 
-                            for (Player p : getServer().getOnlinePlayers()) {
+                            Quester quester = getQuester(target.getName());
+                            if (quester.currentQuest == null) {
 
-                                if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                    target = p;
-                                    break;
-                                }
-
-                            }
-
-                            if (target == null) {
-
-                                cs.sendMessage(YELLOW + "Player not found.");
+                                cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
 
                             } else {
 
-                                Quester quester = getQuester(target.getName());
-                                if (quester.currentQuest == null) {
+                                cs.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                target.sendMessage(GREEN + cs.getName() + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                quester.currentQuest.nextStage(quester);
 
-                                    cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
-
-                                } else {
-
-                                    cs.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    target.sendMessage(GREEN + cs.getName() + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    quester.currentQuest.nextStage(quester);
-
-                                    quester.saveData();
-
-                                }
+                                quester.saveData();
 
                             }
-
-                        } else {
-
-                            cs.sendMessage(RED + "You do not have access to that command.");
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase("finish")) {
-
-                        if (cs.hasPermission("quests.admin.finish")) {
-
-                            Player target = null;
-
-                            for (Player p : getServer().getOnlinePlayers()) {
-
-                                if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                    target = p;
-                                    break;
-                                }
-
-                            }
-
-                            if (target == null) {
-
-                                cs.sendMessage(YELLOW + "Player not found.");
-
-                            } else {
-
-                                Quester quester = getQuester(target.getName());
-                                if (quester.currentQuest == null) {
-
-                                    cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
-
-                                } else {
-
-                                    cs.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    target.sendMessage(GREEN + cs.getName() + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
-                                    quester.currentQuest.completeQuest(quester);
-
-                                    quester.saveData();
-
-                                }
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(RED + "You do not have access to that command.");
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase("pointsall")) {
-
-                        if (cs.hasPermission("quests.admin.points.all")) {
-
-                            final int amount;
-
-                            try {
-
-                                amount = Integer.parseInt(args[1]);
-
-                                if (amount < 0) {
-                                    cs.sendMessage(RED + "Error: Amount cannot be less than zero!");
-                                    return true;
-                                }
-
-                            } catch (Exception e) {
-                                cs.sendMessage(RED + "Error: Input was not a number!");
-                                return true;
-                            }
-
-                            Thread thread = new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    File questerFolder = new File(Quests.this.getDataFolder(), "data");
-                                    if (questerFolder.exists() && questerFolder.isDirectory()) {
-
-                                        FileConfiguration data = new YamlConfiguration();
-                                        int failCount = 0;
-                                        boolean suppressed = false;
-
-                                        for (File f : questerFolder.listFiles()) {
-
-                                            try {
-
-                                                data.load(f);
-                                                data.set("quest-points", amount);
-                                                data.save(f);
-
-                                            } catch (Exception e) {
-
-                                                if (failCount < 4) {
-                                                    cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", skipping..");
-                                                } else if (suppressed == false) {
-                                                    cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", suppressing further errors.");
-                                                    suppressed = true;
-                                                }
-
-                                            }
-
-                                        }
-
-                                        cs.sendMessage(GREEN + "Done.");
-                                        getServer().broadcastMessage(YELLOW + "[Quests] " + GOLD + "All players' Quest Points have been set to " + AQUA + amount + GOLD + "!");
-
-                                    } else {
-                                        cs.sendMessage(RED + "Error: Unable to read Quests data folder!");
-                                    }
-
-                                }
-                            });
-
-                            cs.sendMessage(YELLOW + "Setting all players' Quest Points...");
-                            for (Quester q : questers.values()) {
-
-                                q.questPoints = amount;
-
-                            }
-                            thread.start();
-
-                        } else {
-
-                            cs.sendMessage(RED + "You do not have access to that command.");
 
                         }
 
                     } else {
 
-                        cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
+                        cs.sendMessage(RED + "You do not have access to that command.");
+
+                    }
+
+                } else if (args[0].equalsIgnoreCase("finish")) {
+
+                    if (cs.hasPermission("quests.admin.finish")) {
+
+                        Player target = null;
+
+                        for (Player p : getServer().getOnlinePlayers()) {
+
+                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+                                target = p;
+                                break;
+                            }
+
+                        }
+
+                        if (target == null) {
+
+                            cs.sendMessage(YELLOW + "Player not found.");
+
+                        } else {
+
+                            Quester quester = getQuester(target.getName());
+                            if (quester.currentQuest == null) {
+
+                                cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
+
+                            } else {
+
+                                cs.sendMessage(GREEN + target.getName() + GOLD + " has advanced to the next Stage in the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                target.sendMessage(GREEN + cs.getName() + GOLD + " has advanced you to the next Stage in your Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
+                                quester.currentQuest.completeQuest(quester);
+
+                                quester.saveData();
+
+                            }
+
+                        }
+
+                    } else {
+
+                        cs.sendMessage(RED + "You do not have access to that command.");
+
+                    }
+
+                } else if (args[0].equalsIgnoreCase("pointsall")) {
+
+                    if (cs.hasPermission("quests.admin.points.all")) {
+
+                        final int amount;
+
+                        try {
+
+                            amount = Integer.parseInt(args[1]);
+
+                            if (amount < 0) {
+                                cs.sendMessage(RED + "Error: Amount cannot be less than zero!");
+                                return true;
+                            }
+
+                        } catch (NumberFormatException e) {
+                            cs.sendMessage(RED + "Error: Input was not a number!");
+                            return true;
+                        }
+
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                File questerFolder = new File(Quests.this.getDataFolder(), "data");
+                                if (questerFolder.exists() && questerFolder.isDirectory()) {
+
+                                    FileConfiguration data = new YamlConfiguration();
+                                    int failCount = 0;
+                                    boolean suppressed = false;
+
+                                    for (File f : questerFolder.listFiles()) {
+
+                                        try {
+
+                                            data.load(f);
+                                            data.set("quest-points", amount);
+                                            data.save(f);
+
+                                        } catch (IOException e) {
+
+                                            if (failCount < 4) {
+                                                cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", skipping..");
+                                            } else if (suppressed == false) {
+                                                cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", suppressing further errors.");
+                                                suppressed = true;
+                                            }
+
+                                        } catch (InvalidConfigurationException e) {
+                                            if (failCount < 4) {
+                                                cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", skipping..");
+                                            } else if (suppressed == false) {
+                                                cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", suppressing further errors.");
+                                                suppressed = true;
+                                            }
+                                        }
+
+                                    }
+
+                                    cs.sendMessage(GREEN + "Done.");
+                                    getServer().broadcastMessage(YELLOW + "[Quests] " + GOLD + "All players' Quest Points have been set to " + AQUA + amount + GOLD + "!");
+
+                                } else {
+                                    cs.sendMessage(RED + "Error: Unable to read Quests data folder!");
+                                }
+
+                            }
+                        });
+
+                        cs.sendMessage(YELLOW + "Setting all players' Quest Points...");
+                        for (Quester q : questers.values()) {
+
+                            q.questPoints = amount;
+
+                        }
+                        thread.start();
+
+                    } else {
+
+                        cs.sendMessage(RED + "You do not have access to that command.");
 
                     }
 
                 } else {
 
-                    if (args[0].equalsIgnoreCase("give")) {
+                    cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
 
-                        if (cs.hasPermission("quests.admin.give")) {
+                }
 
-                            Player target = null;
+            } else {
 
-                            for (Player p : getServer().getOnlinePlayers()) {
+                if (args[0].equalsIgnoreCase("give")) {
 
-                                if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                    target = p;
-                                    break;
-                                }
+                    if (cs.hasPermission("quests.admin.give")) {
 
+                        Player target = null;
+
+                        for (Player p : getServer().getOnlinePlayers()) {
+
+                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+                                target = p;
+                                break;
                             }
 
-                            if (target == null) {
+                        }
 
-                                cs.sendMessage(YELLOW + "Player not found.");
+                        if (target == null) {
 
+                            cs.sendMessage(YELLOW + "Player not found.");
+
+                        } else {
+
+                            Quest questToGive = null;
+
+                            String name = null;
+
+                            if (args.length == 3) {
+                                name = args[2].toLowerCase();
                             } else {
 
-                                Quest questToGive = null;
+                                boolean first = true;
+                                int lastIndex = (args.length - 1);
+                                int index = 0;
 
-                                String name = null;
+                                for (String s : args) {
 
-                                if (args.length == 3) {
-                                    name = args[2].toLowerCase();
-                                } else {
+                                    if (index != 0) {
 
-                                    boolean first = true;
-                                    int lastIndex = (args.length - 1);
-                                    int index = 0;
+                                        if (first) {
 
-                                    for (String s : args) {
-
-                                        if (index != 0) {
-
-                                            if (first) {
-
-                                                first = false;
-                                                if (args.length > 2) {
-                                                    name = s.toLowerCase() + " ";
-                                                } else {
-                                                    name = s.toLowerCase();
-                                                }
-
-                                            } else if (index == lastIndex) {
-                                                name = name + s.toLowerCase();
+                                            first = false;
+                                            if (args.length > 2) {
+                                                name = s.toLowerCase() + " ";
                                             } else {
-                                                name = name + s.toLowerCase() + " ";
+                                                name = s.toLowerCase();
                                             }
 
+                                        } else if (index == lastIndex) {
+                                            name = name + s.toLowerCase();
+                                        } else {
+                                            name = name + s.toLowerCase() + " ";
                                         }
 
-                                        index++;
-
                                     }
 
-                                }
-
-                                for (Quest q : quests) {
-
-                                    if (q.name.toLowerCase().contains(name)) {
-                                        questToGive = q;
-                                        break;
-                                    }
-
-                                }
-
-                                if (questToGive == null) {
-
-                                    cs.sendMessage(YELLOW + "Quest not found.");
-
-                                } else {
-
-                                    Quester quester = getQuester(target.getName());
-
-                                    quester.resetObjectives();
-
-                                    quester.currentQuest = questToGive;
-                                    quester.currentStage = questToGive.stages.getFirst();
-                                    quester.addEmpties();
-                                    cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly started the Quest " + PURPLE + questToGive.name + GOLD + ".");
-                                    target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
-                                    target.sendMessage(GOLD + "---(Objectives)---");
-                                    for (String s : quester.getObjectives()) {
-                                        target.sendMessage(s);
-                                    }
-
-                                    quester.saveData();
+                                    index++;
 
                                 }
 
                             }
 
-                        } else {
+                            for (Quest q : quests) {
 
-                            cs.sendMessage(RED + "You do not have access to that command.");
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase("points")) {
-
-                        if (cs.hasPermission("quests.admin.points")) {
-
-                            Player target = null;
-
-                            for (Player p : getServer().getOnlinePlayers()) {
-
-                                if (p.getName().equalsIgnoreCase(args[1])) {
-                                    target = p;
+                                if (q.name.toLowerCase().contains(name)) {
+                                    questToGive = q;
                                     break;
                                 }
 
                             }
 
-                            if (target == null) {
+                            if (questToGive == null) {
 
-                                cs.sendMessage(YELLOW + "Player not found.");
+                                cs.sendMessage(YELLOW + "Quest not found.");
 
                             } else {
 
-                                int points;
-
-                                try {
-
-                                    points = Integer.parseInt(args[2]);
-
-                                } catch (Exception e) {
-
-                                    cs.sendMessage(YELLOW + "Amount must be a number.");
-                                    return true;
-
-                                }
-
                                 Quester quester = getQuester(target.getName());
-                                quester.questPoints = points;
-                                cs.sendMessage(GREEN + target.getName() + GOLD + "\'s Quest Points have been set to " + PURPLE + points + GOLD + ".");
-                                target.sendMessage(GREEN + cs.getName() + GOLD + " has set your Quest Points to " + PURPLE + points + GOLD + ".");
+
+                                quester.resetObjectives();
+
+                                quester.currentQuest = questToGive;
+                                quester.currentStage = questToGive.stages.getFirst();
+                                quester.addEmpties();
+                                cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly started the Quest " + PURPLE + questToGive.name + GOLD + ".");
+                                target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
+                                target.sendMessage(GOLD + "---(Objectives)---");
+                                for (String s : quester.getObjectives()) {
+                                    target.sendMessage(s);
+                                }
 
                                 quester.saveData();
 
                             }
 
-                        } else {
-
-                            cs.sendMessage(RED + "You do not have access to that command.");
-
                         }
 
-                    } else if (args[0].equalsIgnoreCase("takepoints")) {
-
-                        if (cs.hasPermission("quests.admin.takepoints")) {
-
-                            Player target = null;
-
-                            for (Player p : getServer().getOnlinePlayers()) {
-
-                                if (p.getName().equalsIgnoreCase(args[1])) {
-                                    target = p;
-                                    break;
-                                }
-
-                            }
-
-                            if (target == null) {
-
-                                cs.sendMessage(YELLOW + "Player not found.");
-
-                            } else {
-
-                                int points;
-
-                                try {
-
-                                    points = Integer.parseInt(args[2]);
-
-                                } catch (Exception e) {
-
-                                    cs.sendMessage(YELLOW + "Amount must be a number.");
-                                    return true;
-
-                                }
-                                Quester quester = getQuester(target.getName());
-                                quester.questPoints -= Math.abs(points);
-                                cs.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
-                                target.sendMessage(GREEN + cs.getName() + GOLD + " took away " + PURPLE + points + GOLD + " Quest Points.");
-
-                                quester.saveData();
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(RED + "You do not have access to that command.");
-
-                        }
-                    } else if (args[0].equalsIgnoreCase("givepoints")) {
-
-                        if (cs.hasPermission("quests.admin.givepoints")) {
-
-                            Player target = null;
-
-                            for (Player p : getServer().getOnlinePlayers()) {
-
-                                if (p.getName().equalsIgnoreCase(args[1])) {
-                                    target = p;
-                                    break;
-                                }
-
-                            }
-
-                            if (target == null) {
-
-                                cs.sendMessage(YELLOW + "Player not found.");
-
-                            } else {
-
-                                int points;
-
-                                try {
-
-                                    points = Integer.parseInt(args[2]);
-
-                                    Quester quester = getQuester(target.getName());
-                                    quester.questPoints += Math.abs(points);
-                                    cs.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + ".");
-                                    target.sendMessage(GREEN + cs.getName() + GOLD + " gave you " + PURPLE + points + GOLD + " Quest Points.");
-
-                                    quester.saveData();
-
-                    				return true;
-
-                                } catch (Exception e) {
-
-                                    cs.sendMessage(YELLOW + "Amount must be a number.");
-
-                                }
-
-
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(RED + "You do not have access to that command.");
-
-                        }
                     } else {
 
-                        cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
+                        cs.sendMessage(RED + "You do not have access to that command.");
 
                     }
 
+                } else if (args[0].equalsIgnoreCase("points")) {
+
+                    if (cs.hasPermission("quests.admin.points")) {
+
+                        Player target = null;
+
+                        for (Player p : getServer().getOnlinePlayers()) {
+
+                            if (p.getName().equalsIgnoreCase(args[1])) {
+                                target = p;
+                                break;
+                            }
+
+                        }
+
+                        if (target == null) {
+
+                            cs.sendMessage(YELLOW + "Player not found.");
+
+                        } else {
+
+                            int points;
+
+                            try {
+
+                                points = Integer.parseInt(args[2]);
+
+                            } catch (NumberFormatException e) {
+
+                                cs.sendMessage(YELLOW + "Amount must be a number.");
+                                return true;
+
+                            }
+
+                            Quester quester = getQuester(target.getName());
+                            quester.questPoints = points;
+                            cs.sendMessage(GREEN + target.getName() + GOLD + "\'s Quest Points have been set to " + PURPLE + points + GOLD + ".");
+                            target.sendMessage(GREEN + cs.getName() + GOLD + " has set your Quest Points to " + PURPLE + points + GOLD + ".");
+
+                            quester.saveData();
+
+                        }
+
+                    } else {
+
+                        cs.sendMessage(RED + "You do not have access to that command.");
+
+                    }
+
+                } else if (args[0].equalsIgnoreCase("takepoints")) {
+
+                    if (cs.hasPermission("quests.admin.takepoints")) {
+
+                        Player target = null;
+
+                        for (Player p : getServer().getOnlinePlayers()) {
+
+                            if (p.getName().equalsIgnoreCase(args[1])) {
+                                target = p;
+                                break;
+                            }
+
+                        }
+
+                        if (target == null) {
+
+                            cs.sendMessage(YELLOW + "Player not found.");
+
+                        } else {
+
+                            int points;
+
+                            try {
+
+                                points = Integer.parseInt(args[2]);
+
+                            } catch (NumberFormatException e) {
+
+                                cs.sendMessage(YELLOW + "Amount must be a number.");
+                                return true;
+
+                            }
+                            Quester quester = getQuester(target.getName());
+                            quester.questPoints -= Math.abs(points);
+                            cs.sendMessage(GOLD + "Took away " + PURPLE + points + GOLD + " Quest Points from " + GREEN + target.getName() + GOLD + "\'s.");
+                            target.sendMessage(GREEN + cs.getName() + GOLD + " took away " + PURPLE + points + GOLD + " Quest Points.");
+
+                            quester.saveData();
+
+                        }
+
+                    } else {
+
+                        cs.sendMessage(RED + "You do not have access to that command.");
+
+                    }
+                } else if (args[0].equalsIgnoreCase("givepoints")) {
+
+                    if (cs.hasPermission("quests.admin.givepoints")) {
+
+                        Player target = null;
+
+                        for (Player p : getServer().getOnlinePlayers()) {
+
+                            if (p.getName().equalsIgnoreCase(args[1])) {
+                                target = p;
+                                break;
+                            }
+
+                        }
+
+                        if (target == null) {
+
+                            cs.sendMessage(YELLOW + "Player not found.");
+
+                        } else {
+
+                            int points;
+
+                            try {
+
+                                points = Integer.parseInt(args[2]);
+
+                                Quester quester = getQuester(target.getName());
+                                quester.questPoints += Math.abs(points);
+                                cs.sendMessage(GOLD + "Gave " + PURPLE + points + GOLD + " Quest Points to " + GREEN + target.getName() + GOLD + ".");
+                                target.sendMessage(GREEN + cs.getName() + GOLD + " gave you " + PURPLE + points + GOLD + " Quest Points.");
+
+                                quester.saveData();
+
+                                return true;
+
+                            } catch (NumberFormatException e) {
+
+                                cs.sendMessage(YELLOW + "Amount must be a number.");
+
+                            }
+
+                        }
+
+                    } else {
+
+                        cs.sendMessage(RED + "You do not have access to that command.");
+
+                    }
+                } else {
+
+                    cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
+
                 }
+
+            }
 
             return true;
 
         }
-
 
         return false;
 
@@ -1711,7 +1744,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             config.load(file);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
 
@@ -1834,7 +1869,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             continue;
                         }
 
-
                         if (config.contains("quests." + s + ".requirements.remove-items")) {
 
                             if (Quests.checkList(config.getList("quests." + s + ".requirements.remove-items"), Boolean.class)) {
@@ -1873,11 +1907,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-                    if (config.contains("quests." + s + ".requirements.noQuests")) {
+                    if (config.contains("quests." + s + ".requirements.quest-blocks")) {
 
-                        if (Quests.checkList(config.getList("quests." + s + ".requirements.noQuests"), String.class)) {
+                        if (Quests.checkList(config.getList("quests." + s + ".requirements.quest-blocks"), String.class)) {
 
-                            List<String> names = config.getStringList("quests." + s + ".requirements.noQuests");
+                            List<String> names = config.getStringList("quests." + s + ".requirements.quest-blocks");
 
                             boolean failed = false;
                             String failedQuest = "NULL";
@@ -1910,7 +1944,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            printSevere("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
+                            printSevere("[Quests] quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
                             continue;
                         }
 
@@ -1959,7 +1993,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-
                     if (config.contains("quests." + s + ".requirements.permissions")) {
 
                         if (Quests.checkList(config.getList("quests." + s + ".requirements.permissions"), String.class)) {
@@ -1967,6 +2000,42 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             quest.permissionReqs.addAll(config.getStringList("quests." + s + ".requirements.permissions"));
                         } else {
                             printSevere("[Quests] permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
+                            continue;
+                        }
+
+                    }
+
+                    if (config.contains("quests." + s + ".requirements.mcmmo-skills")) {
+
+                        if (Quests.checkList(config.getList("quests." + s + ".requirements.mcmmo-skills"), String.class)) {
+
+                            if (config.contains("quests." + s + ".requirements.mcmmo-amounts")) {
+
+                                if (Quests.checkList(config.getList("quests." + s + ".requirements.mcmmo-amounts"), Integer.class)) {
+
+                                    List<String> skills = config.getStringList("quests." + s + ".requirements.mcmmo-skills");
+                                    List<Integer> amounts = config.getIntegerList("quests." + s + ".requirements.mcmmo-amounts");
+
+                                    if (skills.size() != amounts.size()) {
+                                        printSevere("[Quests] mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " + quest.name + " are not the same size!");
+                                        continue;
+                                    }
+
+                                    quest.mcMMOSkillReqs.addAll(skills);
+                                    quest.mcMMOAmountReqs.addAll(amounts);
+
+                                } else {
+                                    printSevere("[Quests] mcmmo-amounts: Requirement for Quest " + quest.name + " is not a list of numbers!");
+                                    continue;
+                                }
+
+                            } else {
+                                printSevere("[Quests] Requirements for Quest " + quest.name + " is missing mcmmo-amounts:");
+                                continue;
+                            }
+
+                        } else {
+                            printSevere("[Quests] mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
                             continue;
                         }
 
@@ -2010,7 +2079,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     List<Integer> cutamounts = new LinkedList<Integer>();
 
                     //Denizen script load
-
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
 
                         if (ScriptRegistry.containsScript(config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run"))) {
@@ -2025,7 +2093,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     }
 
                     //
-
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-ids")) {
 
                         if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
@@ -2296,7 +2363,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             break;
                         }
 
-
                         if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts")) {
 
                             if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts"), Integer.class)) {
@@ -2316,7 +2382,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             stageFailed = true;
                             break;
                         }
-
 
                     }
 
@@ -2603,7 +2668,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         x = Double.parseDouble(info[1]);
                                         y = Double.parseDouble(info[2]);
                                         z = Double.parseDouble(info[3]);
-                                    } catch (Exception e) {
+                                    } catch (NumberFormatException e) {
                                         printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
                                         printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
                                         stageFailed = true;
@@ -2680,7 +2745,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             break;
                         }
 
-
                     }
 
                     stage.mobsToKill = mobsToKill;
@@ -2732,7 +2796,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         x = Double.parseDouble(info[1]);
                                         y = Double.parseDouble(info[2]);
                                         z = Double.parseDouble(info[3]);
-                                    } catch (Exception e) {
+                                    } catch (NumberFormatException e) {
                                         printSevere("[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
                                         printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
                                         stageFailed = true;
@@ -3178,46 +3242,46 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     if (Quests.checkList(config.getList("quests." + s + ".rewards.rpgitem-ids"), Integer.class)) {
 
-                        if(config.contains("quests." + s + ".rewards.rpgitem-amounts")){
+                        if (config.contains("quests." + s + ".rewards.rpgitem-amounts")) {
 
-                                if(Quests.checkList(config.getList("quests." + s + ".rewards.rpgitem-amounts"), Integer.class)){
+                            if (Quests.checkList(config.getList("quests." + s + ".rewards.rpgitem-amounts"), Integer.class)) {
 
-                                    boolean failed = false;
-                                    for (Integer id : config.getIntegerList("quests." + s + ".rewards.rpgitem-ids")) {
+                                boolean failed = false;
+                                for (Integer id : config.getIntegerList("quests." + s + ".rewards.rpgitem-ids")) {
 
-                                        try {
-                                            RPGItem item = ItemManager.getItemById(id);
-                                            if (item != null) {
-                                                quest.rpgItemRewardIDs.add(id);
-                                            } else {
-                                                printSevere("[Quests] " + id + " in rpgitem-ids: Reward in Quest " + quest.name + " is not a valid RPGItem id!");
-                                                failed = true;
-                                                break;
-                                            }
-                                        } catch (Exception e) {
-                                            printSevere("[Quests] " + id + " in rpgitem-ids: Reward in Quest " + quest.name + " is not properly formatted!");
+                                    try {
+                                        RPGItem item = ItemManager.getItemById(id);
+                                        if (item != null) {
+                                            quest.rpgItemRewardIDs.add(id);
+                                        } else {
+                                            printSevere("[Quests] " + id + " in rpgitem-ids: Reward in Quest " + quest.name + " is not a valid RPGItem id!");
                                             failed = true;
                                             break;
                                         }
-
+                                    } catch (Exception e) {
+                                        printSevere("[Quests] " + id + " in rpgitem-ids: Reward in Quest " + quest.name + " is not properly formatted!");
+                                        failed = true;
+                                        break;
                                     }
 
-                                    for(Integer amount : config.getIntegerList("quests." + s + ".rewards.rpgitem-amounts")) {
-
-                                        quest.rpgItemRewardAmounts.add(amount);
-
-                                    }
-
-                                    if (failed) {
-                                        continue;
-                                    }
-
-                                }else{
-                                    printSevere("[Quests] rpgitem-amounts: Reward in Quest " + quest.name + " is not a list of numbers!");
-                                    break;
                                 }
 
-                        }else {
+                                for (Integer amount : config.getIntegerList("quests." + s + ".rewards.rpgitem-amounts")) {
+
+                                    quest.rpgItemRewardAmounts.add(amount);
+
+                                }
+
+                                if (failed) {
+                                    continue;
+                                }
+
+                            } else {
+                                printSevere("[Quests] rpgitem-amounts: Reward in Quest " + quest.name + " is not a list of numbers!");
+                                break;
+                            }
+
+                        } else {
                             printSevere("[Quests] Rewards for Quest " + quest.name + " is missing rpgitem-amounts");
                             continue;
                         }
@@ -3331,7 +3395,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     config.save(file);
                 }
 
-            } catch (Exception e) {
+            } catch (IOException e) {
 
                 if (debug == false) {
                     log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + s + "\". Skipping.");
@@ -3357,7 +3421,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         try {
             config.load(eventsFile);
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
 
@@ -3485,7 +3551,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         return parsed;
 
-
     }
 
     private boolean setupEconomy() {
@@ -3531,8 +3596,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         });
 
         Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
-        for (Iterator<Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
-            Entry<String, Integer> entry = it.next();
+        for (Entry<String, Integer> entry : list) {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
         return sortedMap;
@@ -3575,12 +3639,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
 
         }
-
-        if (playerAmount >= is.getAmount()) {
-            return true;
-        } else {
-            return false;
-        }
+        return playerAmount >= is.getAmount();
 
     }
 
@@ -3599,7 +3658,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             x = Double.parseDouble(info[1]);
             y = Double.parseDouble(info[2]);
             z = Double.parseDouble(info[3]);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             return null;
         }
 
@@ -3782,7 +3841,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     public static String getTime(long milliseconds) {
 
-
         String message = "";
 
         Calendar calendar = Calendar.getInstance();
@@ -3912,7 +3970,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             return null;
         }
 
-
         return new PotionEffect(potionType, duration, amplifier);
 
     }
@@ -3935,6 +3992,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             return SkillType.MINING;
         } else if (s.equalsIgnoreCase("Repair")) {
             return SkillType.REPAIR;
+        } else if (s.equalsIgnoreCase("Smelting")) {
+            return SkillType.SMELTING;
         } else if (s.equalsIgnoreCase("Swords")) {
             return SkillType.SWORDS;
         } else if (s.equalsIgnoreCase("Taming")) {
@@ -4053,37 +4112,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (check.endsWith("*") && check.startsWith("*") == false) {
 
             check = check.substring(0, check.length());
-            if (name.endsWith(check)) {
-                return true;
-            } else {
-                return false;
-            }
+            return name.endsWith(check);
 
         } else if (check.endsWith("*") == false && check.startsWith("*")) {
 
             check = check.substring(1);
-            if (name.startsWith(check)) {
-                return true;
-            } else {
-                return false;
-            }
+            return name.startsWith(check);
 
         } else if (check.endsWith("*") && check.startsWith("*")) {
 
             check = check.substring(1, check.length());
-            if (name.contains(check)) {
-                return true;
-            } else {
-                return false;
-            }
+            return name.contains(check);
 
         } else {
-
-            if (name.equalsIgnoreCase(check)) {
-                return true;
-            } else {
-                return false;
-            }
+            return name.equalsIgnoreCase(check);
 
         }
 
@@ -4478,12 +4520,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             String name = getServer().getServerName().replaceAll("'", "''").replaceAll("\"", "''");
             String motd = getServer().getMotd().replaceAll("'", "''").replaceAll("\"", "''");
             String ip = getServer().getIp().trim();
-            if(ip.isEmpty())
+            if (ip.isEmpty()) {
                 ip = "localhost";
+            }
             String port = ((Integer) getServer().getPort()).toString();
 
             statement.executeUpdate("INSERT INTO entries VALUES ('" + ip + ":" + port + "', '" + name + "', '" + motd + "', " + quests.size() + ", '" + cit + "', '" + stamp.toString() + "')");
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
+        } catch (IllegalAccessException e) {
+        } catch (InstantiationException e) {
+        } catch (SQLException e) {
         }
 
     }
@@ -4516,4 +4562,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         return null;
 
     }
+
+    public static int getMCMMOSkillLevel(SkillType st, String player) {
+
+        McMMOPlayer mPlayer = UserManager.getPlayer(player);
+        if (mPlayer == null) {
+            return -1;
+        }
+
+        return mPlayer.getProfile().getSkillLevel(st);
+
+    }
+
 }

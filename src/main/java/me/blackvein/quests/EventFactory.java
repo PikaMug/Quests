@@ -1,6 +1,7 @@
 package me.blackvein.quests;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
@@ -898,7 +900,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         try{
             eventsFile = new File(quests.getDataFolder(), "events.yml");
             data.load(eventsFile);
-        }catch(Exception e){
+        }catch(IOException e){
+            e.printStackTrace();
+            ((Player)context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
+            return;
+        } catch (InvalidConfigurationException e) {
             e.printStackTrace();
             ((Player)context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
             return;
@@ -910,7 +916,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         try{
             data.save(eventsFile);
-        }catch (Exception e){
+        }catch (IOException e){
             ((Player)context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorSaving"));
             return;
         }
@@ -934,7 +940,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         try{
             eventsFile = new File(quests.getDataFolder(), "events.yml");
             data.load(eventsFile);
-        }catch(Exception e){
+        }catch(IOException e){
+            e.printStackTrace();
+            ((Player)context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
+            return;
+        } catch (InvalidConfigurationException e) {
             e.printStackTrace();
             ((Player)context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
             return;
@@ -1098,7 +1108,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         try{
             data.save(eventsFile);
-        }catch (Exception e){
+        }catch (IOException e){
             ((Player)context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorSaving"));
             return;
         }
@@ -1922,10 +1932,10 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         		}
         	} else {
         		LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
-        		int inp = -1;
+        		int inp;
         		try {
         			inp = Integer.parseInt(input);
-        		} catch (Exception e) {
+        		} catch (NumberFormatException e) {
         			context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorNotANumber"));
         			return new MobPrompt();
         		}
@@ -1953,7 +1963,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
     	private QuestMob questMob;
     	private Integer itemIndex = -1;
-    	private Integer mobIndex;
+    	private final Integer mobIndex;
 
         public QuestMobPrompt(int mobIndex, QuestMob questMob) {
 			this.questMob = questMob;
@@ -2081,8 +2091,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
     private class MobNamePrompt extends StringPrompt {
 
-    	private QuestMob questMob;
-    	private Integer mobIndex;
+    	private final QuestMob questMob;
+    	private final Integer mobIndex;
 
     	public MobNamePrompt (int mobIndex, QuestMob questMob) {
     		this.questMob = questMob;
@@ -2113,8 +2123,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
     private class MobTypePrompt extends StringPrompt {
 
-    	private QuestMob questMob;
-    	private Integer mobIndex;
+    	private final QuestMob questMob;
+    	private final Integer mobIndex;
 
     	public MobTypePrompt (int mobIndex, QuestMob questMob) {
     		this.questMob = questMob;
@@ -2178,8 +2188,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
     private class MobAmountPrompt extends StringPrompt {
 
-    	private QuestMob questMob;
-    	private Integer mobIndex;
+    	private final QuestMob questMob;
+    	private final Integer mobIndex;
 
     	public MobAmountPrompt (int mobIndex, QuestMob questMob) {
     		this.questMob = questMob;
@@ -2211,7 +2221,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                         questMob.setSpawnAmounts(i);
                         return new QuestMobPrompt(mobIndex, questMob);
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(PINK + input + " " + RED + Lang.get("eventEditorNotANumber"));
                         return new MobAmountPrompt(mobIndex, questMob);
                     }
@@ -2225,8 +2235,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
     private class MobLocationPrompt extends StringPrompt {
 
-    	private QuestMob questMob;
-    	private Integer mobIndex;
+    	private final QuestMob questMob;
+    	private final Integer mobIndex;
 
     	public MobLocationPrompt (int mobIndex, QuestMob questMob) {
     		this.questMob = questMob;
@@ -2276,9 +2286,9 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
     private class MobDropPrompt extends StringPrompt {
 
-    	private QuestMob questMob;
-    	private Integer mobIndex;
-    	private Integer invIndex;
+    	private final QuestMob questMob;
+    	private final Integer mobIndex;
+    	private final Integer invIndex;
 
     	public MobDropPrompt (int invIndex, int mobIndex ,QuestMob questMob) {
     		this.questMob = questMob;
@@ -2294,7 +2304,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			float chance = 0.0F;
+			
+                        float chance;
 
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 				return new QuestMobPrompt(mobIndex, questMob);
@@ -2302,7 +2313,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
 			try {
     			chance = Float.parseFloat(input);
-    		} catch (Exception e) {
+    		} catch (NumberFormatException e) {
     			context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorInvalidDropChance"));
     			return new MobDropPrompt(invIndex, mobIndex, questMob);
     		}
@@ -2572,7 +2583,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                         effDurations.add(l / 50L);
 
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(PINK + s + " " + RED + Lang.get("eventEditorNotANumber"));
                         return new PotionDurationsPrompt();
                     }
@@ -2619,7 +2630,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                         magAmounts.add(i);
 
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(PINK + s + " " + RED + Lang.get("eventEditorNotANumber"));
                         return new PotionMagnitudesPrompt();
                     }

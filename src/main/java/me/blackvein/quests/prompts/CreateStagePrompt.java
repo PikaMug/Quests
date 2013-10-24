@@ -577,7 +577,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new BreakBlockIdsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNotListofNumbers") + "\n" + PINK + s);
                         return new BreakBlockIdsPrompt();
                     }
@@ -618,7 +618,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new BreakBlockAmountsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new BreakBlockAmountsPrompt();
                     }
@@ -768,7 +768,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new DamageBlockIdsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(PINK + s + RED +  Lang.get("stageEditorNotListofNumbers"));
                         return new DamageBlockIdsPrompt();
                     }
@@ -809,7 +809,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new DamageBlockAmountsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new DamageBlockAmountsPrompt();
                     }
@@ -959,7 +959,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new PlaceBlockIdsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new PlaceBlockIdsPrompt();
                     }
@@ -1000,7 +1000,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new PlaceBlockAmountsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                     	context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new PlaceBlockAmountsPrompt();
                     }
@@ -1150,7 +1150,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new UseBlockIdsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new UseBlockIdsPrompt();
                     }
@@ -1191,7 +1191,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new UseBlockAmountsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                     	context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new UseBlockAmountsPrompt();
                     }
@@ -1341,7 +1341,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new CutBlockIdsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new CutBlockIdsPrompt();
                     }
@@ -1382,7 +1382,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new CutBlockAmountsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                     	context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new CutBlockAmountsPrompt();
                     }
@@ -1681,7 +1681,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new EnchantItemsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new EnchantItemsPrompt();
                     }
@@ -1722,7 +1722,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new EnchantAmountsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new EnchantAmountsPrompt();
                     }
@@ -1926,7 +1926,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new DeliveryNPCsPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
 
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new DeliveryNPCsPrompt();
@@ -1999,7 +1999,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new NPCIDsToTalkToPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
 
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new NPCIDsToTalkToPrompt();
@@ -2151,7 +2151,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new npcIdsToKillPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
 
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new npcIdsToKillPrompt();
@@ -2194,7 +2194,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             return new npcAmountsToKillPrompt();
                         }
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
                         return new npcAmountsToKillPrompt();
                     }
@@ -2534,7 +2534,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                         mobAmounts.add(i);
 
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(PINK + input + " " + RED + Lang.get("stageEditorInvalidNumber"));
                         return new MobAmountsPrompt();
                     }
@@ -2632,7 +2632,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                         radii.add(i);
 
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(PINK + input + " " + RED + Lang.get("stageEditorInvalidItemID"));
                         return new MobRadiiPrompt();
                     }
@@ -2895,7 +2895,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                         radii.add(i);
 
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(PINK + input + " " + RED + Lang.get("stageEditorInvalidNumber"));
                         return new ReachRadiiPrompt();
                     }
@@ -3139,7 +3139,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                         mobAmounts.add(i);
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(PINK + input + " " + RED + Lang.get("stageEditorInvalidNumber"));
                         return new TameAmountsPrompt();
                     }
@@ -3345,7 +3345,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                         shearAmounts.add(i);
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(PINK + input + " " + RED + Lang.get("stageEditorInvalidNumber"));
                         return new ShearAmountsPrompt();
                     }
@@ -3810,7 +3810,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     l = Long.parseLong(input);
 
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     player.sendMessage(YELLOW + Lang.get("stageEditorNoNumber"));
                     return new DelayPrompt();
                 }
@@ -4084,7 +4084,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                         amountList.add(i);
 
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         cc.getForWhom().sendRawMessage(RED + amount + " " + Lang.get("stageEditorInvalidNumber"));
                         return new EpicBossAmountListPrompt();
                     }

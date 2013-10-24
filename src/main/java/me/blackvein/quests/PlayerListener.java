@@ -1,7 +1,6 @@
 package me.blackvein.quests;
 
 import java.io.File;
-import java.util.UUID;
 import me.ThaH3lper.com.Mobs.EpicMobs;
 import me.ThaH3lper.com.Mobs.MobCommon;
 import net.citizensnpcs.api.CitizensAPI;

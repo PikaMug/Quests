@@ -56,7 +56,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
         int numInput = -1;
         try {
             numInput = Integer.parseInt(input);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             //Continue
         }
 

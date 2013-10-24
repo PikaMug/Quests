@@ -32,7 +32,7 @@ public class ItemData {
 				byte mdata = 0;
 				try {
 					id = Integer.parseInt(str[0]);
-				} catch (Exception e) {
+				} catch (NumberFormatException e) {
 				}
 				if (str.length > 1) {
 					mdata = Byte.parseByte(str[1]);

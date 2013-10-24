@@ -44,7 +44,7 @@ public enum ParticleEffect {
     ICONCRACK("iconcrack_"),
     TILECRACK("tilecrack_");
 
-    private String particleName;
+    private final String particleName;
 
     ParticleEffect(String particleName) {
         this.particleName = particleName;

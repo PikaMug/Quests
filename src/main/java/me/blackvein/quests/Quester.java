@@ -1,6 +1,7 @@
 package me.blackvein.quests;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -10,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -519,140 +521,55 @@ public class Quester {
         }
 
         if (s.equalsIgnoreCase("damageBlock")) {
-
-            if (currentStage.blocksToDamage.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.blocksToDamage.isEmpty();
 
         } else if (s.equalsIgnoreCase("breakBlock")) {
-
-            if (currentStage.blocksToBreak.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.blocksToBreak.isEmpty();
 
         } else if (s.equalsIgnoreCase("placeBlock")) {
-
-            if (currentStage.blocksToPlace.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.blocksToPlace.isEmpty();
 
         } else if (s.equalsIgnoreCase("useBlock")) {
-
-            if (currentStage.blocksToUse.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.blocksToUse.isEmpty();
 
         } else if (s.equalsIgnoreCase("cutBlock")) {
-
-            if (currentStage.blocksToCut.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.blocksToCut.isEmpty();
 
         } else if (s.equalsIgnoreCase("catchFish")) {
-
-            if (currentStage.fishToCatch == null) {
-                return false;
-            } else {
-                return true;
-            }
+            return currentStage.fishToCatch != null;
 
         } else if (s.equalsIgnoreCase("enchantItem")) {
-
-            if (currentStage.itemsToEnchant.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.itemsToEnchant.isEmpty();
 
         } else if (s.equalsIgnoreCase("killMob")) {
-
-            if (currentStage.mobsToKill.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.mobsToKill.isEmpty();
 
         } else if (s.equalsIgnoreCase("deliverItem")) {
-
-            if (currentStage.itemsToDeliver.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.itemsToDeliver.isEmpty();
 
         } else if (s.equalsIgnoreCase("killPlayer")) {
-
-            if (currentStage.playersToKill == null) {
-                return false;
-            } else {
-                return true;
-            }
+            return currentStage.playersToKill != null;
 
         } else if (s.equalsIgnoreCase("talkToNPC")) {
-
-            if (currentStage.citizensToInteract.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.citizensToInteract.isEmpty();
 
         } else if (s.equalsIgnoreCase("killNPC")) {
-
-            if (currentStage.citizensToKill.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.citizensToKill.isEmpty();
 
         } else if (s.equalsIgnoreCase("killBoss")) {
-
-            if (currentStage.bossesToKill.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.bossesToKill.isEmpty();
 
         } else if (s.equalsIgnoreCase("tameMob")) {
-
-            if (currentStage.mobsToTame.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.mobsToTame.isEmpty();
 
         } else if (s.equalsIgnoreCase("shearSheep")) {
-
-            if (currentStage.sheepToShear.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.sheepToShear.isEmpty();
 
         } else if (s.equalsIgnoreCase("craftItem")) {
-
-            if (currentStage.itemsToCraft.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.itemsToCraft.isEmpty();
 
         } else {
-
-            if (currentStage.locationsToReach.isEmpty()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !currentStage.locationsToReach.isEmpty();
 
         }
 
@@ -1643,7 +1560,7 @@ public class Quester {
         FileConfiguration data = getBaseData();
         try {
             data.save(new File(plugin.getDataFolder(), "data/" + name + ".yml"));
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -2029,7 +1946,9 @@ public class Quester {
         FileConfiguration data = new YamlConfiguration();
         try {
             data.load(new File(plugin.getDataFolder(), "data/" + name + ".yml"));
-        } catch (Exception e) {
+        } catch (IOException e) {
+            return false;
+        } catch (InvalidConfigurationException e) {
             return false;
         }
 
@@ -2651,10 +2570,7 @@ public class Quester {
         if(questPoints > 1)
             return true;
 
-        if(completedQuests.isEmpty() == false)
-            return true;
-
-        return false;
+        return completedQuests.isEmpty() == false;
 
     }
 

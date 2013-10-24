@@ -49,7 +49,7 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
 
             i = Integer.parseInt(string);
 
-        }catch(Exception e){
+        }catch(NumberFormatException e){
             return new StagesPrompt(questFactory);
         }
 
