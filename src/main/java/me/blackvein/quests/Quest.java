@@ -37,6 +37,8 @@ public class Quest {
     List<String> permissionReqs = new LinkedList<String>();
     List<String> mcMMOSkillReqs = new LinkedList<String>();
     List<Integer> mcMMOAmountReqs = new LinkedList<Integer>();
+    String heroesPrimaryClassReq = null;
+    String heroesSecondaryClassReq = null;
     public String failRequirements = null;
     //
     //Rewards
@@ -182,6 +184,20 @@ public class Quest {
             final SkillType st = Quests.getMcMMOSkill(s);
             final int lvl = mcMMOAmountReqs.get(mcMMOSkillReqs.indexOf(s));
             if(UserManager.getPlayer(player).getProfile().getSkillLevel(st) < lvl)
+                return false;
+
+        }
+
+        if(heroesPrimaryClassReq != null){
+
+            if(plugin.testPrimaryHeroesClass(heroesPrimaryClassReq, player.getName()) == false)
+                return false;
+
+        }
+
+        if(heroesSecondaryClassReq != null){
+
+            if(plugin.testSecondaryHeroesClass(heroesSecondaryClassReq, player.getName()) == false)
                 return false;
 
         }
@@ -462,6 +478,26 @@ public class Quest {
                 return false;
             }
 
+            if (other.heroesPrimaryClassReq != null && heroesPrimaryClassReq != null) {
+                if (other.heroesPrimaryClassReq.equals(heroesPrimaryClassReq) == false) {
+                    return false;
+                }
+            } else if (other.heroesPrimaryClassReq != null && heroesPrimaryClassReq == null) {
+                return false;
+            } else if (other.heroesPrimaryClassReq == null && heroesPrimaryClassReq != null) {
+                return false;
+            }
+
+            if (other.heroesSecondaryClassReq != null && heroesSecondaryClassReq != null) {
+                if (other.heroesSecondaryClassReq.equals(heroesSecondaryClassReq) == false) {
+                    return false;
+                }
+            } else if (other.heroesSecondaryClassReq != null && heroesSecondaryClassReq == null) {
+                return false;
+            } else if (other.heroesSecondaryClassReq == null && heroesSecondaryClassReq != null) {
+                return false;
+            }
+
             if (other.permissions.equals(permissions) == false) {
                 return false;
             }
@@ -496,4 +532,5 @@ public class Quest {
         return true;
 
     }
+
 }

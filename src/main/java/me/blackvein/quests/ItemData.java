@@ -54,9 +54,9 @@ public class ItemData {
 	}
 
 	public class Data {
-		private String name_;
-		private int id_;
-		private byte data_;
+		private final String name_;
+		private final int id_;
+		private final byte data_;
 
 		public Data(String name, int id, byte mdata) {
 			this.name_ = name;

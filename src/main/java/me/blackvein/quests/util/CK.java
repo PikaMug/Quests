@@ -22,8 +22,10 @@ public class CK {
 	public static final String REQ_ITEMS = "itemReqs";
 	public static final String REQ_ITEMS_REMOVE = "removeItemReqs";
 	public static final String REQ_PERMISSION = "permissionReqs";
-        public static final String REQ_MCMMO_SKILLS = "mcMMOSkillReqs";
-        public static final String REQ_MCMMO_SKILL_AMOUNTS = "mcMMOSkillAmountReqs";
+    public static final String REQ_MCMMO_SKILLS = "mcMMOSkillReqs";
+    public static final String REQ_MCMMO_SKILL_AMOUNTS = "mcMMOSkillAmountReqs";
+    public static final String REQ_HEROES_PRIMARY_CLASS = "heroesPrimaryClassReq";
+    public static final String REQ_HEROES_SECONDARY_CLASS = "heroesSecondaryClassReq";
 	public static final String REQ_QUEST = "questReqs";
 	public static final String REQ_QUEST_BLOCK= "questBlocks";
 

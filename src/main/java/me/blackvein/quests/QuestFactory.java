@@ -82,13 +82,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text =
-                    GOLD + "- Quest Editor -\n"
+            String text
+                    = GOLD + "- Quest Editor -\n"
                     + BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("questEditorCreate") + "\n"
                     + BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("questEditorEdit") + "\n"
                     + BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("questEditorDelete") + "\n"
                     + GOLD + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("exit");
-
 
             return text;
 
@@ -153,8 +152,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text =
-                    GOLD + "- Quest: " + AQUA + context.getSessionData(CK.Q_NAME) + GOLD + " -\n";
+            String text
+                    = GOLD + "- Quest: " + AQUA + context.getSessionData(CK.Q_NAME) + GOLD + " -\n";
 
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("questEditorName") + "\n";
 
@@ -164,13 +163,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("questEditorAskMessage") + " (\"" + context.getSessionData(CK.Q_ASK_MESSAGE) + "\")\n";
             }
 
-
             if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
                 text += BLUE + "" + BOLD + "3" + RESET + RED + " - " + Lang.get("questEditorFinishMessage") + " " + DARKRED + "(Required, none set)\n";
             } else {
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("questEditorFinishMessage") + " (\"" + context.getSessionData(CK.Q_FINISH_MESSAGE) + "\")\n";
             }
-
 
             if (context.getSessionData(CK.Q_REDO_DELAY) == null) {
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("questEditorRedoDelay") + " (None set)\n";
@@ -212,7 +209,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
 
                 if (quests.citizens != null) {
@@ -239,7 +235,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 text += BLUE + "" + BOLD + "7" + RESET + DARKAQUA + " - " + Lang.get("questEditorReqs") + "\n";
             }
 
-
             if (quests.citizens != null) {
                 text += BLUE + "" + BOLD + "9" + RESET + PINK + " - " + Lang.get("questEditorStages") + "\n";
             } else {
@@ -252,7 +247,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 text += BLUE + "" + BOLD + "9" + RESET + GREEN + " - " + Lang.get("questEditorRews") + "\n";
             }
 
-
             if (quests.citizens != null) {
                 text += BLUE + "" + BOLD + "11" + RESET + GOLD + " - " + Lang.get("save") + "\n";
             } else {
@@ -264,7 +258,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             } else {
                 text += BLUE + "" + BOLD + "11" + RESET + RED + " - " + Lang.get("exit") + "\n";
             }
-
 
             return text;
 
@@ -537,7 +530,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 } else {
                     selectedBlockStarts.remove(player);
                 }
-
 
                 return new CreateMenuPrompt();
 
@@ -892,8 +884,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> mcMMOSkillRews = null;
         LinkedList<Integer> mcMMOSkillAmounts = null;
 
-
-
         if (cc.getSessionData(CK.Q_REDO_DELAY) != null) {
             redo = (Long) cc.getSessionData(CK.Q_REDO_DELAY);
         }
@@ -905,8 +895,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (cc.getSessionData(CK.Q_START_BLOCK) != null) {
             blockStart = Quests.getLocationInfo((Location) cc.getSessionData(CK.Q_START_BLOCK));
         }
-
-
 
         if (cc.getSessionData(CK.REQ_MONEY) != null) {
             moneyReq = (Integer) cc.getSessionData(CK.REQ_MONEY);
@@ -932,7 +920,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (cc.getSessionData(CK.REQ_QUEST_BLOCK) != null) {
             questBlocks = (LinkedList<String>) cc.getSessionData(CK.REQ_QUEST_BLOCK);
         }
-        
+
         if (cc.getSessionData(CK.REQ_MCMMO_SKILLS) != null) {
             mcMMOSkillReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
             mcMMOAmountReqs = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
@@ -989,8 +977,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             mcMMOSkillAmounts = (LinkedList<Integer>) cc.getSessionData(CK.REW_MCMMO_AMOUNTS);
         }
 
-
-
         cs.set("name", name);
         cs.set("npc-giver-id", npcStart);
         cs.set("block-start", blockStart);
@@ -999,8 +985,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("finish-message", finish);
         cs.set(CK.S_FINISH_EVENT, initialEvent);
 
-
-        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) ||(mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false)) {
+        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false)) {
 
             ConfigurationSection reqs = cs.createSection("requirements");
             List<String> items = new LinkedList<String>();
@@ -1026,7 +1011,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         } else {
             cs.set("requirements", null);
         }
-
 
         ConfigurationSection stages = cs.createSection("stages");
         ConfigurationSection ordered = stages.createSection("ordered");
@@ -1357,7 +1341,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-
         if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null) {
 
             ConfigurationSection rews = cs.createSection("rewards");
@@ -1418,8 +1401,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (q.blockQuests.isEmpty() == false) {
             cc.setSessionData(CK.REQ_QUEST_BLOCK, q.blockQuests);
         }
-        
-        if(q.mcMMOSkillReqs.isEmpty() == false){
+
+        if (q.mcMMOSkillReqs.isEmpty() == false) {
             cc.setSessionData(CK.REQ_MCMMO_SKILLS, q.mcMMOSkillReqs);
             cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, q.mcMMOAmountReqs);
         }
@@ -1428,11 +1411,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             cc.setSessionData(CK.REQ_PERMISSION, q.permissionReqs);
         }
 
-        if(q.mcMMOSkillReqs.isEmpty() == false) {
+        if (q.heroesPrimaryClassReq != null) {
+            cc.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, q.heroesPrimaryClassReq);
+        }
+
+        if (q.heroesSecondaryClassReq != null) {
+            cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, q.heroesSecondaryClassReq);
+        }
+
+        if (q.mcMMOSkillReqs.isEmpty() == false) {
             cc.setSessionData(CK.REQ_MCMMO_SKILLS, q.mcMMOSkillReqs);
             cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, q.mcMMOAmountReqs);
         }
-        
+
         if (q.failRequirements != null) {
             cc.setSessionData(CK.Q_FAIL_MESSAGE, q.failRequirements);
         }
@@ -1464,7 +1455,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             cc.setSessionData(CK.REW_MCMMO_AMOUNTS, q.mcmmoAmounts);
         }
 
-        if(q.rpgItemRewardIDs.isEmpty() == false) {
+        if (q.rpgItemRewardIDs.isEmpty() == false) {
             cc.setSessionData(CK.REW_RPG_ITEM_IDS, q.rpgItemRewardIDs);
             cc.setSessionData(CK.REW_RPG_ITEM_AMOUNTS, q.rpgItemRewardAmounts);
         }
@@ -1492,7 +1483,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (stage.blocksToDamage != null) {
 
                 LinkedList<Integer> ids = new LinkedList<Integer>();
@@ -1509,7 +1499,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 cc.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amnts);
 
             }
-
 
             if (stage.blocksToPlace != null) {
 
@@ -1545,7 +1534,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (stage.blocksToCut != null) {
 
                 LinkedList<Integer> ids = new LinkedList<Integer>();
@@ -1563,16 +1551,13 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (stage.fishToCatch != null) {
                 cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
             }
 
-
             if (stage.playersToKill != null) {
                 cc.setSessionData(pref + CK.S_PLAYER_KILL, stage.playersToKill);
             }
-
 
             if (stage.itemsToEnchant.isEmpty() == false) {
 
@@ -1598,7 +1583,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (stage.itemsToDeliver.isEmpty() == false) {
 
                 LinkedList<ItemStack> items = new LinkedList<ItemStack>();
@@ -1618,7 +1602,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (stage.citizensToInteract.isEmpty() == false) {
 
                 LinkedList<Integer> npcs = new LinkedList<Integer>();
@@ -1629,7 +1612,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 cc.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
 
             }
-
 
             if (stage.citizensToKill.isEmpty() == false) {
 
@@ -1643,14 +1625,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (stage.bossesToKill.isEmpty() == false) {
 
                 cc.setSessionData(pref + CK.S_BOSS_IDS, stage.bossesToKill);
                 cc.setSessionData(pref + CK.S_BOSS_AMOUNTS, stage.bossAmountsToKill);
 
             }
-
 
             if (stage.mobsToKill.isEmpty() == false) {
 
@@ -1677,7 +1657,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (stage.locationsToReach.isEmpty() == false) {
 
                 LinkedList<String> locs = new LinkedList<String>();
@@ -1690,7 +1669,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 cc.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, stage.locationNames);
 
             }
-
 
             if (stage.mobsToTame.isEmpty() == false) {
 
@@ -1709,7 +1687,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
 
-
             if (stage.sheepToShear.isEmpty() == false) {
 
                 LinkedList<String> colors = new LinkedList<String>();
@@ -1724,7 +1701,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 cc.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amnts);
 
             }
-
 
             if (stage.startEvent != null) {
                 cc.setSessionData(pref + CK.S_START_EVENT, stage.startEvent.getName());
@@ -1754,7 +1730,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 cc.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
 
             }
-
 
             if (stage.delay != -1) {
                 cc.setSessionData(pref + CK.S_DELAY, stage.delay);
@@ -1847,8 +1822,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text =
-                    RED + Lang.get("questEditorDeleted") + " \"" + GOLD + (String) context.getSessionData(CK.ED_QUEST_DELETE) + RED + "\"?\n";
+            String text
+                    = RED + Lang.get("questEditorDeleted") + " \"" + GOLD + (String) context.getSessionData(CK.ED_QUEST_DELETE) + RED + "\"?\n";
             text += YELLOW + Lang.get("yes") + "/" + Lang.get(Lang.get("no"));
 
             return text;
@@ -1897,7 +1872,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-
         try {
             data.save(questsFile);
         } catch (IOException e) {
@@ -1908,7 +1882,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         quests.reloadQuests();
 
         context.getForWhom().sendRawMessage(WHITE + "" + BOLD + "Quest deleted! Quests and Events have been reloaded.");
-
 
     }
 }

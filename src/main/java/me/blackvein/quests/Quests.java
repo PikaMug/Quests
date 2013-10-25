@@ -5,6 +5,8 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
+import com.herocraftonline.heroes.characters.Hero;
+import com.herocraftonline.heroes.characters.classes.HeroClass;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -26,8 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.Mobs.EpicMobs;
-import static me.blackvein.quests.ColorUtil.GREEN;
-import static me.blackvein.quests.ColorUtil.RED;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -559,6 +559,26 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                 cs.sendMessage(RED + "Permission: " + perm);
                                             }
 
+                                        }
+
+                                    }
+
+                                    if(quest.heroesPrimaryClassReq != null){
+
+                                        if(this.testPrimaryHeroesClass(quest.heroesPrimaryClassReq, player.getName())){
+                                            cs.sendMessage(BOLD + "" + DARKRED + quest.heroesPrimaryClassReq + RESET + "" + RED + " class");
+                                        }else{
+                                            cs.sendMessage(BOLD + "" + GREEN + quest.heroesPrimaryClassReq + RESET + "" + DARKGREEN + " class");
+                                        }
+
+                                    }
+
+                                    if(quest.heroesSecondaryClassReq != null){
+
+                                        if(this.testSecondaryHeroesClass(quest.heroesSecondaryClassReq, player.getName())){
+                                            cs.sendMessage(BOLD + "" + DARKRED + quest.heroesSecondaryClassReq + RESET + "" + RED + " class");
+                                        }else{
+                                            cs.sendMessage(BOLD + "" + GREEN + quest.heroesSecondaryClassReq + RESET + "" + DARKGREEN + " class");
                                         }
 
                                     }
@@ -2036,6 +2056,38 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
                             printSevere("[Quests] mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
+                            continue;
+                        }
+
+                    }
+
+                    if (config.contains("quests." + s + ".requirements.heroes-primary-class")) {
+
+                        String className = config.getString("quests." + s + ".requirements.heroes-primary-class");
+                        HeroClass hc = heroes.getClassManager().getClass(className);
+                        if(hc != null && hc.isPrimary()){
+                            quest.heroesPrimaryClassReq = hc.getName();
+                        }else if(hc != null){
+                            printSevere("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a primary Heroes class!");
+                            continue;
+                        }else{
+                            printSevere("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
+                            continue;
+                        }
+
+                    }
+
+                    if (config.contains("quests." + s + ".requirements.heroes-secondary-class")) {
+
+                        String className = config.getString("quests." + s + ".requirements.heroes-secondary-class");
+                        HeroClass hc = heroes.getClassManager().getClass(className);
+                        if(hc != null && hc.isSecondary()){
+                            quest.heroesSecondaryClassReq = hc.getName();
+                        }else if(hc != null){
+                            printSevere("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a secondary Heroes class!");
+                            continue;
+                        }else{
+                            printSevere("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
                             continue;
                         }
 
@@ -4571,6 +4623,30 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         return mPlayer.getProfile().getSkillLevel(st);
+
+    }
+
+    public Hero getHero(String player){
+
+        Player p = getServer().getPlayer(player);
+        if(p == null)
+            return null;
+
+        return heroes.getCharacterManager().getHero(p);
+
+    }
+
+    public boolean testPrimaryHeroesClass(String primaryClass, String player){
+
+        Hero hero = getHero(player);
+        return hero.getHeroClass().getName().equalsIgnoreCase(primaryClass);
+
+    }
+
+    public boolean testSecondaryHeroesClass(String secondaryClass, String player){
+
+        Hero hero = getHero(player);
+        return hero.getHeroClass().getName().equalsIgnoreCase(secondaryClass);
 
     }
 
