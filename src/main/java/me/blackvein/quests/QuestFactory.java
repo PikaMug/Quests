@@ -4,6 +4,7 @@ import me.blackvein.quests.util.ColorUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
     Map<Player, Block> selectedBlockStarts = new HashMap<Player, Block>();
     public Map<Player, Block> selectedKillLocations = new HashMap<Player, Block>();
     public Map<Player, Block> selectedReachLocations = new HashMap<Player, Block>();
+    public HashSet<Player> selectingNPCs = new HashSet<Player>();
     public List<String> names = new LinkedList<String>();
     ConversationFactory convoCreator;
     File questsFile;
@@ -471,7 +473,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return ChatColor.YELLOW + Lang.get("questEditorEnterNPCStart");
+            selectingNPCs.add((Player) context.getForWhom());
+            return ChatColor.YELLOW + Lang.get("questEditorEnterNPCStart") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
 
         }
 
@@ -486,12 +489,15 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 }
 
                 context.setSessionData(CK.Q_START_NPC, input.intValue());
+                selectingNPCs.remove((Player) context.getForWhom());
                 return new CreateMenuPrompt();
 
             } else if (input.intValue() == -1) {
                 context.setSessionData(CK.Q_START_NPC, null);
+                selectingNPCs.remove((Player) context.getForWhom());
                 return new CreateMenuPrompt();
             } else if (input.intValue() == -2) {
+                selectingNPCs.remove((Player) context.getForWhom());
                 return new CreateMenuPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
@@ -888,7 +894,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> heroesClassRews = null;
         LinkedList<Double> heroesExpRews = null;
 
-        
+
         if (cc.getSessionData(CK.Q_REDO_DELAY) != null) {
             redo = (Long) cc.getSessionData(CK.Q_REDO_DELAY);
         }
@@ -930,11 +936,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             mcMMOSkillReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
             mcMMOAmountReqs = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
         }
-        
+
         if (cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
             heroesPrimaryReq = (String) cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
         }
-        
+
         if (cc.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
             heroesSecondaryReq = (String) cc.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS);
         }
@@ -989,7 +995,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             mcMMOSkillRews = (LinkedList<String>) cc.getSessionData(CK.REW_MCMMO_SKILLS);
             mcMMOSkillAmounts = (LinkedList<Integer>) cc.getSessionData(CK.REW_MCMMO_AMOUNTS);
         }
-        
+
         if (cc.getSessionData(CK.REW_HEROES_CLASSES) != null) {
             heroesClassRews = (LinkedList<String>) cc.getSessionData(CK.REW_HEROES_CLASSES);
             heroesExpRews = (LinkedList<Double>) cc.getSessionData(CK.REW_HEROES_AMOUNTS);
@@ -1362,11 +1368,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
 
         System.out.println("HERE 1");
-        
+
         if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false) {
 
             System.out.println("HERE 2");
-            
+
             ConfigurationSection rews = cs.createSection("rewards");
 
             rews.set("items", (itemRews != null && itemRews.isEmpty() == false) ? itemRews : null);
@@ -1385,7 +1391,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         } else {
             cs.set("rewards", null);
         }
-        
+
         System.out.println("HERE 3");
 
     }
@@ -1482,7 +1488,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             cc.setSessionData(CK.REW_MCMMO_SKILLS, q.mcmmoSkills);
             cc.setSessionData(CK.REW_MCMMO_AMOUNTS, q.mcmmoAmounts);
         }
-        
+
         if (q.heroesClasses.isEmpty() == false) {
             cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
             cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
@@ -1492,7 +1498,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             cc.setSessionData(CK.REW_RPG_ITEM_IDS, q.rpgItemRewardIDs);
             cc.setSessionData(CK.REW_RPG_ITEM_AMOUNTS, q.rpgItemRewardAmounts);
         }
-        
+
         if(q.heroesClasses.isEmpty() == false) {
             cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
             cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
@@ -1818,29 +1824,28 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 LinkedList<String> used = new LinkedList<String>();
 
-                for (Quest quest : quests.quests) {
+                Quest found = quests.findQuest(input);
 
-                    if (quest.name.equalsIgnoreCase(input) || quest.name.toLowerCase().contains(input.toLowerCase())) {
+                if (found != null) {
 
-                        for (Quest q : quests.quests) {
+                    for (Quest q : quests.quests) {
 
-                            if (q.neededQuests.contains(q.name) || q.blockQuests.contains(q.name)) {
-                                used.add(q.name);
-                            }
-
+                        if (q.neededQuests.contains(q.name) || q.blockQuests.contains(q.name)) {
+                            used.add(q.name);
                         }
 
-                        if (used.isEmpty()) {
-                            context.setSessionData(CK.ED_QUEST_DELETE, quest.name);
-                            return new DeletePrompt();
-                        } else {
-                            ((Player) context.getForWhom()).sendMessage(RED + Lang.get("questEditorQuestAsRequirement1") + " \"" + PURPLE + context.getSessionData(CK.ED_QUEST_DELETE) + RED + "\" " + Lang.get("questEditorQuestAsRequirement2"));
-                            for (String s : used) {
-                                ((Player) context.getForWhom()).sendMessage(RED + "- " + DARKRED + s);
-                            }
-                            ((Player) context.getForWhom()).sendMessage(RED + Lang.get("questEditorQuestAsRequirement3"));
-                            return new SelectDeletePrompt();
+                    }
+
+                    if (used.isEmpty()) {
+                        context.setSessionData(CK.ED_QUEST_DELETE, found.name);
+                        return new DeletePrompt();
+                    } else {
+                        ((Player) context.getForWhom()).sendMessage(RED + Lang.get("questEditorQuestAsRequirement1") + " \"" + PURPLE + context.getSessionData(CK.ED_QUEST_DELETE) + RED + "\" " + Lang.get("questEditorQuestAsRequirement2"));
+                        for (String s : used) {
+                            ((Player) context.getForWhom()).sendMessage(RED + "- " + DARKRED + s);
                         }
+                        ((Player) context.getForWhom()).sendMessage(RED + Lang.get("questEditorQuestAsRequirement3"));
+                        return new SelectDeletePrompt();
                     }
 
                 }
@@ -1862,7 +1867,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             String text
                     = RED + Lang.get("questEditorDeleted") + " \"" + GOLD + (String) context.getSessionData(CK.ED_QUEST_DELETE) + RED + "\"?\n";
-            text += YELLOW + Lang.get("yes") + "/" + Lang.get(Lang.get("no"));
+            text += YELLOW + Lang.get("yes") + "/" + Lang.get("no");
 
             return text;
 
@@ -1874,7 +1879,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (input.equalsIgnoreCase(Lang.get("yes"))) {
                 deleteQuest(context);
                 return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase(Lang.get(Lang.get("no")))) {
+            } else if (input.equalsIgnoreCase(Lang.get("no"))) {
                 return new MenuPrompt();
             } else {
                 return new DeletePrompt();

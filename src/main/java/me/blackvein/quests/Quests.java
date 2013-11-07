@@ -511,16 +511,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 }
                             }
 
-                            Quest quest = null;
-
-                            for (Quest q : quests) {
-
-                                if (q.name.toLowerCase().contains(name)) {
-                                    quest = q;
-                                    break;
-                                }
-
-                            }
+                            Quest quest = findQuest(name);
 
                             if (quest != null) {
 
@@ -815,16 +806,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                     }
 
-                                    Quest questToFind = null;
-
-                                    for (Quest q : quests) {
-
-                                        if (q.name.toLowerCase().contains(name)) {
-                                            questToFind = q;
-                                            break;
-                                        }
-
-                                    }
+                                    Quest questToFind = findQuest(name);
 
                                     if (questToFind != null) {
 
@@ -1407,14 +1389,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                             }
 
-                            for (Quest q : quests) {
-
-                                if (q.name.toLowerCase().contains(name)) {
-                                    questToGive = q;
-                                    break;
-                                }
-
-                            }
+                            questToGive = findQuest(name);
 
                             if (questToGive == null) {
 
@@ -3409,7 +3384,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (Quests.checkList(config.getList("quests." + s + ".rewards.mcmmo-skills"), String.class)) {
 
                         if (config.contains("quests." + s + ".rewards.mcmmo-levels")) {
-                            
+
                             if(Quests.checkList(config.getList("quests." + s + ".rewards.mcmmo-levels"), Integer.class)){
 
                                 boolean failed = false;
@@ -3431,7 +3406,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 quest.mcmmoSkills.addAll(config.getStringList("quests." + s + ".rewards.mcmmo-skills"));
                                 quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + s + ".rewards.mcmmo-levels"));
-                            
+
                             } else {
                                 printSevere("[Quests] mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
                                 continue;
@@ -3447,13 +3422,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         continue;
                     }
                 }
-                
+
                 if (config.contains("quests." + s + ".rewards.heroes-exp-classes")) {
 
                     if (Quests.checkList(config.getList("quests." + s + ".rewards.heroes-exp-classes"), String.class)) {
 
                         if (config.contains("quests." + s + ".rewards.heroes-exp-amounts")) {
-                            
+
                             if (Quests.checkList(config.getList("quests." + s + ".rewards.heroes-exp-amounts"), Double.class)) {
 
                                 boolean failed = false;
@@ -3475,7 +3450,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 quest.heroesClasses.addAll(config.getStringList("quests." + s + ".rewards.heroes-exp-classes"));
                                 quest.heroesAmounts.addAll(config.getDoubleList("quests." + s + ".rewards.heroes-exp-amounts"));
-                            
+
                             } else {
                                 printSevere("[Quests] heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
                                 continue;
@@ -4262,6 +4237,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         return null;
+    }
+
+    public Quest findQuest(String s) {
+
+        for(Quest q : quests) {
+            if(q.name.equalsIgnoreCase(s))
+                return q;
+        }
+
+        for(Quest q : quests) {
+            if(q.name.toLowerCase().contains(s.toLowerCase()))
+                return q;
+        }
+
+        return null;
+
     }
 
     public Event getEvent(String s) {

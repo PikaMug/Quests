@@ -174,7 +174,7 @@ public class Lang {
 		en.put("stageEditorItemIDsPrompt", "Enter item IDs, separating each one by a space, or enter \'cancel\' to return.");
 		en.put("stageEditorNPCPrompt", "Enter NPC ids, separating each one by a space, or enter \'cancel\' to return.");
 		en.put("stageEditorNPCToTalkToPrompt", "Enter NPC IDs, separating each one by a space, or enter \'clear\' to clear the NPC ID list, or \'cancel\' to return.");
-		en.put("stageEditorDeliveryMessagesPrompt", "Enter delivery messages, separating each one by a \"semi-colon\" or enter \'cancel\' to return");
+		en.put("stageEditorDeliveryMessagesPrompt", "Enter delivery messages, separating each one by a semi-colon or enter \'cancel\' to return");
 		en.put("stageEditorKillNPCsPrompt", "Enter kill amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
 		en.put("stageEditorMobsPrompt", "Enter mob names separating each one by a space, or enter \"cancel\" to return");
 		en.put("stageEditorMobAmountsPrompt", "Enter mob amounts separating each one by a space, or enter \"cancel\" to return");
@@ -482,6 +482,7 @@ public class Lang {
 		en.put("worlds", "Worlds");
 		en.put("mobs", "Mobs");
 		en.put("invalidOption", "Invalid option!");
+        en.put("npcHint", "Note: You can left or right click on NPC's to get their ID.");
 		//
 		//
 

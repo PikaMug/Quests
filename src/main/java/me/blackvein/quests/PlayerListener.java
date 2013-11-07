@@ -653,6 +653,8 @@ public class PlayerListener implements Listener {
                 quester.saveData();
             }
 
+            if(plugin.questFactory.selectingNPCs.contains(evt.getPlayer()))
+                plugin.questFactory.selectingNPCs.remove(evt.getPlayer());
             plugin.questers.remove(quester.name);
 
         }

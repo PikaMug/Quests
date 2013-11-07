@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
+import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
@@ -31,6 +32,11 @@ public class NpcListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(NPCRightClickEvent evt) {
+
+        if(plugin.questFactory.selectingNPCs.contains(evt.getClicker())){
+            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + "ID " + evt.getNPC().getId());
+            return;
+        }
 
         if (evt.getClicker().isConversing() == false) {
 
@@ -111,11 +117,11 @@ public class NpcListener implements Listener {
                                     quester.questToTake = q.name;
 
                                     String s = extracted(quester);
-                                    
+
                                     for (String msg : s.split("<br>")) {
                                     	player.sendMessage(msg);
                                     }
-                                    
+
                                     plugin.conversationFactory.buildConversation((Conversable) player).begin();
 
                                 } else if (quester.currentQuest.equals(q) == false) {
@@ -135,7 +141,7 @@ public class NpcListener implements Listener {
                                     } else {
                                         quester.questToTake = q.name;
                                         String s = extracted(quester);
-                                        
+
                                         for (String msg : s.split("<br>")) {
                                         	player.sendMessage(msg);
                                         }
@@ -161,6 +167,15 @@ public class NpcListener implements Listener {
             }
 
         }
+    }
+
+    @EventHandler
+    public void onNPCLeftClick(NPCLeftClickEvent evt){
+
+        if(plugin.questFactory.selectingNPCs.contains(evt.getClicker())){
+            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + "ID " + evt.getNPC().getId());
+        }
+
     }
 
     @EventHandler

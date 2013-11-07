@@ -1769,7 +1769,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String text = GOLD + "- " + Lang.get("stageEditorDeliverItems") + " -\n";
             if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
                 text += GRAY + " (" + Lang.get("noneSet") + ")\n";
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorAddItem") + "\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
                 text += GRAY + "2 - " + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("stageEditorNoItemsSet") + ")\n";
                 if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null) {
                     text += BLUE + "3 - " + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
@@ -1792,7 +1792,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                 }
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorAddItem") + "\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
 
                 if (context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null) {
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("noneSet") + ")\n";
@@ -1956,7 +1956,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if (input.equalsIgnoreCase("cmdCancel") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
                 String[] args = input.split(";");
                 LinkedList<String> messages = new LinkedList<String>();
@@ -1976,7 +1976,8 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + Lang.get("stageEditorNPCToTalkToPrompt");
+            questFactory.selectingNPCs.add((Player) context.getForWhom());
+            return YELLOW + Lang.get("stageEditorNPCToTalkToPrompt") + "\n" + GOLD + Lang.get("npcHint");
         }
 
         @Override
@@ -2008,6 +2009,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                 }
 
+                questFactory.selectingNPCs.remove((Player) context.getForWhom());
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -2015,6 +2017,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, null);
 
             }
+
 
             return new CreateStagePrompt(stageNum, questFactory, citizens);
 
@@ -2073,13 +2076,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase("1")) {
-                return new npcIdsToKillPrompt();
+                return new NpcIdsToKillPrompt();
             } else if (input.equalsIgnoreCase("2")) {
                 if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
                     context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoNPCs"));
                     return new NPCKillListPrompt();
                 } else {
-                    return new npcAmountsToKillPrompt();
+                    return new NpcAmountsToKillPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorKillNPCsCleared"));
@@ -2123,12 +2126,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
     }
 
-    private class npcIdsToKillPrompt extends StringPrompt {
+    private class NpcIdsToKillPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + Lang.get("stageEditorNPCPrompt");
+            questFactory.selectingNPCs.add((Player) context.getForWhom());
+            return YELLOW + Lang.get("stageEditorNPCPrompt") + "\n" + GOLD + Lang.get("npcHint");
         }
 
         @Override
@@ -2148,13 +2152,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             npcs.add(i);
                         } else {
                             context.getForWhom().sendRawMessage(PINK + "" + i + RED + " " + Lang.get("stageEditorInvalidNPC"));
-                            return new npcIdsToKillPrompt();
+                            return new NpcIdsToKillPrompt();
                         }
 
                     } catch (NumberFormatException e) {
 
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
-                        return new npcIdsToKillPrompt();
+                        return new NpcIdsToKillPrompt();
 
                     }
 
@@ -2164,12 +2168,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             }
 
+            questFactory.selectingNPCs.remove((Player) context.getForWhom());
             return new NPCKillListPrompt();
 
         }
     }
 
-    private class npcAmountsToKillPrompt extends StringPrompt {
+    private class NpcAmountsToKillPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -2191,12 +2196,12 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                             amounts.add(Integer.parseInt(s));
                         } else {
                             context.getForWhom().sendRawMessage(PINK + s + RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
-                            return new npcAmountsToKillPrompt();
+                            return new NpcAmountsToKillPrompt();
                         }
 
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage( PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
-                        return new npcAmountsToKillPrompt();
+                        return new NpcAmountsToKillPrompt();
                     }
 
                 }
@@ -2295,7 +2300,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                 }
 
-                text += DARKGRAY + "|--------------------------|";
+                text += DARKGRAY + "|--------------------------|\n";
 
                 text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("done");
@@ -2486,7 +2491,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     if (Quests.getMobType(s) != null) {
 
-                        mobTypes.add(Quester.prettyMobString(Quests.getMobType(s)));
+                        mobTypes.add(s);
                         context.setSessionData(pref + CK.S_MOB_TYPES, mobTypes);
 
                     } else {
