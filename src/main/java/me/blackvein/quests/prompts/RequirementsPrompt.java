@@ -1,12 +1,13 @@
 package me.blackvein.quests.prompts;
 
+import com.herocraftonline.heroes.characters.classes.HeroClass;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import me.blackvein.quests.ColorUtil;
+import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
@@ -29,7 +30,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
     public RequirementsPrompt(Quests plugin, QuestFactory qf) {
 
-        super("1", "2", "3", "4", "5", "6", "7", "8", "9");
+        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
         quests = plugin;
         factory = qf;
 
@@ -98,7 +99,6 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         if (Quests.mcmmo != null) {
 
-
             if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
                 text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set mcMMO requirements " + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
@@ -115,18 +115,35 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             text += GRAY + "6 - Set mcMMO requirements (mcMMO not installed)\n";
         }
 
+        if (Quests.heroes != null) {
 
+            if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
+                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - Set Heroes requirements " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - Set Heroes requirements\n";
 
-        if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
-            text += GRAY + "" + BOLD + "8 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
-        } else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
-            text += RED + "" + BOLD + "8 - " + RESET + RED + "Set fail requirements message (Required)\n";
+                if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
+                    text += AQUA + "    Primary Class: " + BLUE + (String) context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) + "\n";
+                }
+
+                if (context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
+                    text += AQUA + "    Secondary Class: " + BLUE + (String) context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) + "\n";
+                }
+            }
+
         } else {
-            text += BLUE + "" + BOLD + "8 - " + RESET + YELLOW + "Set fail requirements message" + GRAY + "(" + AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + GRAY + ")\n";
+            text += GRAY + "8 - Set Heroes requirements (Heroes not installed)\n";
         }
 
-        text += GREEN + "" + BOLD + "9" + RESET + YELLOW + " - Done";
+        if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
+            text += GRAY + "" + BOLD + "9 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
+        } else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
+            text += RED + "" + BOLD + "9 - " + RESET + RED + "Set fail requirements message (Required)\n";
+        } else {
+            text += BLUE + "" + BOLD + "9 - " + RESET + YELLOW + "Set fail requirements message" + GRAY + "(" + AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + GRAY + ")\n";
+        }
 
+        text += GREEN + "" + BOLD + "10" + RESET + YELLOW + " - Done";
 
         return text;
 
@@ -148,14 +165,21 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
         } else if (input.equalsIgnoreCase("6")) {
             return new QuestListPrompt(false);
         } else if (input.equalsIgnoreCase("7")) {
-            if(Quests.mcmmo != null)
+            if (Quests.mcmmo != null) {
                 return new mcMMOPrompt();
-            else
+            } else {
                 return new RequirementsPrompt(quests, factory);
+            }
         } else if (input.equalsIgnoreCase("8")) {
-            return new FailMessagePrompt();
+            if (Quests.heroes != null) {
+                return new HeroesPrompt();
+            } else {
+                return new RequirementsPrompt(quests, factory);
+            }
         } else if (input.equalsIgnoreCase("9")) {
-            if (context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null || context.getSessionData(CK.REQ_ITEMS) != null || context.getSessionData(CK.REQ_PERMISSION) != null || context.getSessionData(CK.REQ_QUEST) != null || context.getSessionData(CK.REQ_QUEST_BLOCK) != null || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null) {
+            return new FailMessagePrompt();
+        } else if (input.equalsIgnoreCase("10")) {
+            if (context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null || context.getSessionData(CK.REQ_ITEMS) != null || context.getSessionData(CK.REQ_PERMISSION) != null || context.getSessionData(CK.REQ_QUEST) != null || context.getSessionData(CK.REQ_QUEST_BLOCK) != null || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null || context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
 
                 if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
                     context.getForWhom().sendRawMessage(RED + "You must set a fail requirements message!");
@@ -365,7 +389,6 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
 
-
                 if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set remove items (No values set)\n";
                 } else {
@@ -505,79 +528,79 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
-    
+
     private class mcMMOPrompt extends FixedSetPrompt {
 
-        public mcMMOPrompt(){
+        public mcMMOPrompt() {
             super("1", "2", "3");
         }
-        
+
         @Override
         public String getPromptText(ConversationContext cc) {
-            
+
             String text = DARKGREEN + "- mcMMO Requirements -\n";
-            if(cc.getSessionData(CK.REQ_MCMMO_SKILLS) == null){
+            if (cc.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
                 text += BOLD + "" + GREEN + "1" + RESET + GREEN + " - Set skills (None set)\n";
-            }else{
+            } else {
                 text += BOLD + "" + GREEN + "1" + RESET + GREEN + " - Set skills\n";
                 LinkedList<String> skills = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
-                for(String skill : skills){
+                for (String skill : skills) {
                     text += GRAY + "    - " + AQUA + skill + "\n";
                 }
             }
-            
-            if(cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) == null){
+
+            if (cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) == null) {
                 text += BOLD + "" + GREEN + "2" + RESET + GREEN + " - Set skill amounts (None set)\n";
-            }else{
+            } else {
                 text += BOLD + "" + GREEN + "2" + RESET + GREEN + " - Set skill amounts\n";
                 LinkedList<Integer> amounts = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
-                for(int i : amounts){
+                for (int i : amounts) {
                     text += GRAY + "    - " + AQUA + i + "\n";
                 }
             }
-            
+
             text += BOLD + "" + GREEN + "3" + RESET + GREEN + " - Done";
-            
+
             return text;
         }
 
         @Override
         protected Prompt acceptValidatedInput(ConversationContext cc, String input) {
-            
-            if(input.equalsIgnoreCase("1")){
+
+            if (input.equalsIgnoreCase("1")) {
                 return new mcMMOSkillsPrompt();
-            }else if(input.equalsIgnoreCase("2")){
+            } else if (input.equalsIgnoreCase("2")) {
                 return new mcMMOAmountsPrompt();
-            }else if(input.equalsIgnoreCase("3")){
+            } else if (input.equalsIgnoreCase("3")) {
                 return new RequirementsPrompt(quests, factory);
             }
-            
+
             return null;
-            
+
         }
     }
-    
+
     private class mcMMOSkillsPrompt extends StringPrompt {
-        
+
         @Override
         public String getPromptText(ConversationContext context) {
-            
-            String skillList =
-                    DARKGREEN + "-Skill List-\n" +
-                    GREEN + "Acrobatics\n" +
-                    GREEN + "All\n" +
-                    GREEN + "Archery\n" +
-                    GREEN + "Axes\n" +
-                    GREEN + "Excavation\n" +
-                    GREEN + "Fishing\n" +
-                    GREEN + "Herbalism\n" +
-                    GREEN + "Mining\n" +
-                    GREEN + "Repair\n" +
-                    GREEN + "Smelting\n" +
-                    GREEN + "Swords\n" +
-                    GREEN + "Taming\n" +
-                    GREEN + "Unarmed\n" +
-                    GREEN + "Woodcutting\n\n";
+
+            String skillList
+                    = DARKGREEN + "-Skill List-\n"
+                    + GREEN + "Acrobatics\n"
+                    + GREEN + "All\n"
+                    + GREEN + "Archery\n"
+                    + GREEN + "Axes\n"
+                    + GREEN + "Excavation\n"
+                    + GREEN + "Fishing\n"
+                    + GREEN + "Herbalism\n"
+                    + GREEN + "Mining\n"
+                    + GREEN + "Repair\n"
+                    + GREEN + "Smelting\n"
+                    + GREEN + "Swords\n"
+                    + GREEN + "Taming\n"
+                    + GREEN + "Unarmed\n"
+                    + GREEN + "Woodcutting\n\n";
 
             return skillList + YELLOW + "Enter mcMMO skills, separating each one by a space, or enter \'clear\' to clear the list, "
                     + "or \'cancel\' to return.\n";
@@ -587,44 +610,44 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext cc, String input) {
 
             if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
-                
+
                 LinkedList<String> skills = new LinkedList<String>();
-                
-                for(String s : input.split(" ")){
-                    
+
+                for (String s : input.split(" ")) {
+
                     String formatted = MiscUtil.getCapitalized(s);
-                    
-                    if(Quests.getMcMMOSkill(formatted) != null){
+
+                    if (Quests.getMcMMOSkill(formatted) != null) {
                         skills.add(formatted);
-                    }else if(skills.contains(formatted)){
+                    } else if (skills.contains(formatted)) {
                         cc.getForWhom().sendRawMessage(YELLOW + "Error: List contains duplicates!");
                         return new mcMMOSkillsPrompt();
-                    }else{
+                    } else {
                         cc.getForWhom().sendRawMessage(YELLOW + "Error: " + RED + s + YELLOW + " is not an mcMMO skill name!");
                         return new mcMMOSkillsPrompt();
                     }
-                    
+
                 }
-                
+
                 cc.setSessionData(CK.REQ_MCMMO_SKILLS, skills);
                 return new mcMMOPrompt();
-                
-            }else if(input.equalsIgnoreCase("clear")){
+
+            } else if (input.equalsIgnoreCase("clear")) {
                 cc.getForWhom().sendRawMessage(YELLOW + "mcMMO skill requirements cleared.");
                 cc.setSessionData(CK.REQ_MCMMO_SKILLS, null);
                 return new mcMMOPrompt();
-            }else if(input.equalsIgnoreCase("cancel")){
+            } else if (input.equalsIgnoreCase("cancel")) {
                 return new mcMMOPrompt();
             }
 
             return new mcMMOSkillsPrompt();
 
         }
-        
+
     }
-    
+
     private class mcMMOAmountsPrompt extends StringPrompt {
-        
+
         @Override
         public String getPromptText(ConversationContext context) {
 
@@ -636,38 +659,217 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext cc, String input) {
 
             if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
-                
+
                 LinkedList<Integer> amounts = new LinkedList<Integer>();
-                
-                for(String s : input.split(" ")){
-                    
-                    try{
-                        
+
+                for (String s : input.split(" ")) {
+
+                    try {
+
                         int i = Integer.parseInt(s);
                         amounts.add(i);
-                        
-                    }catch(NumberFormatException nfe){
+
+                    } catch (NumberFormatException nfe) {
                         cc.getForWhom().sendRawMessage(YELLOW + "Error: " + RED + s + YELLOW + " is not a number!");
                         return new mcMMOAmountsPrompt();
                     }
-                    
+
                 }
-                
+
                 cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, amounts);
                 return new mcMMOPrompt();
-                
-            }else if(input.equalsIgnoreCase("clear")){
+
+            } else if (input.equalsIgnoreCase("clear")) {
                 cc.getForWhom().sendRawMessage(YELLOW + "mcMMO skill amount requirements cleared.");
                 cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, null);
                 return new mcMMOPrompt();
-            }else if(input.equalsIgnoreCase("cancel")){
+            } else if (input.equalsIgnoreCase("cancel")) {
                 return new mcMMOPrompt();
             }
 
             return new mcMMOAmountsPrompt();
 
         }
-        
+
+    }
+
+    private class HeroesPrompt extends FixedSetPrompt {
+
+        public HeroesPrompt() {
+            super("1", "2", "3");
+        }
+
+        @Override
+        public String getPromptText(ConversationContext cc) {
+
+            String text = DARKGREEN + "- Heroes Requirements -\n";
+            if (cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null) {
+                text += BOLD + "" + GREEN + "1" + RESET + GREEN + " - Set Primary Class (None set)\n";
+            } else {
+                text += BOLD + "" + GREEN + "1" + RESET + GREEN + " - Set Primary Class (" + AQUA + (String) cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) + GREEN + ")\n";
+            }
+
+            if (cc.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
+                text += BOLD + "" + GREEN + "2" + RESET + GREEN + " - Set Secondary Class (None set)\n";
+            } else {
+                text += BOLD + "" + GREEN + "2" + RESET + GREEN + " - Set Secondary Class (" + AQUA + (String) cc.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) + GREEN + ")\n";
+            }
+
+            text += BOLD + "" + GREEN + "3" + RESET + GREEN + " - Done";
+
+            return text;
+        }
+
+        @Override
+        protected Prompt acceptValidatedInput(ConversationContext cc, String input) {
+
+            if (input.equalsIgnoreCase("1")) {
+                return new HeroesPrimaryPrompt();
+            } else if (input.equalsIgnoreCase("2")) {
+                return new HeroesSecondaryPrompt();
+            } else if (input.equalsIgnoreCase("3")) {
+                return new RequirementsPrompt(quests, factory);
+            }
+
+            return null;
+
+        }
+    }
+
+    private class HeroesPrimaryPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext cc) {
+
+            String text = PURPLE + "- " + PINK + "Primary Classes" + PURPLE + " -\n";
+            LinkedList<String> list = new LinkedList<String>();
+            for (HeroClass hc : Quests.heroes.getClassManager().getClasses()) {
+                if (hc.isPrimary()) {
+                    list.add(hc.getName());
+                }
+            }
+
+            if (list.isEmpty()) {
+                text += GRAY + "(None)";
+            } else {
+
+                Collections.sort(list);
+
+                for (String s : list) {
+                    text += PURPLE + "- " + PINK + s + "\n";
+                }
+
+            }
+
+            text += YELLOW + "Enter a Heroes Primary Class name, or enter \"clear\" to clear the requirement, or \"cancel\" to return.";
+
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext cc, String input) {
+
+            if (input.equalsIgnoreCase("clear") == false && input.equalsIgnoreCase("cancel") == false) {
+
+                HeroClass hc = Quests.heroes.getClassManager().getClass(input);
+                if (hc != null) {
+
+                    if (hc.isPrimary()) {
+
+                        cc.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, hc.getName());
+                        return new HeroesPrompt();
+
+                    } else {
+                        cc.getForWhom().sendRawMessage(RED + "The " + PINK + hc.getName() + RED + " class is not primary!");
+                        return new HeroesPrimaryPrompt();
+                    }
+
+                } else {
+                    cc.getForWhom().sendRawMessage(RED + "Class not found!");
+                    return new HeroesPrimaryPrompt();
+                }
+
+            } else if (input.equalsIgnoreCase("clear")) {
+
+                cc.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, null);
+                cc.getForWhom().sendRawMessage(YELLOW + "Heroes Primary Class requirement cleared.");
+                return new HeroesPrompt();
+
+            } else {
+
+                return new HeroesPrompt();
+
+            }
+
+        }
+    }
+    
+    private class HeroesSecondaryPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext cc) {
+
+            String text = PURPLE + "- " + PINK + "Secondary Classes" + PURPLE + " -\n";
+            LinkedList<String> list = new LinkedList<String>();
+            for (HeroClass hc : Quests.heroes.getClassManager().getClasses()) {
+                if (hc.isSecondary()) {
+                    list.add(hc.getName());
+                }
+            }
+
+            if (list.isEmpty()) {
+                text += GRAY + "(None)";
+            } else {
+
+                Collections.sort(list);
+
+                for (String s : list) {
+                    text += PURPLE + "- " + PINK + s + "\n";
+                }
+
+            }
+
+            text += YELLOW + "Enter a Heroes Secondary Class name, or enter \"clear\" to clear the requirement, or \"cancel\" to return.";
+
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext cc, String input) {
+
+            if (input.equalsIgnoreCase("clear") == false && input.equalsIgnoreCase("cancel") == false) {
+
+                HeroClass hc = Quests.heroes.getClassManager().getClass(input);
+                if (hc != null) {
+
+                    if (hc.isSecondary()) {
+
+                        cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, hc.getName());
+                        return new HeroesPrompt();
+
+                    } else {
+                        cc.getForWhom().sendRawMessage(RED + "The " + PINK + hc.getName() + RED + " class is not secondary!");
+                        return new HeroesSecondaryPrompt();
+                    }
+
+                } else {
+                    cc.getForWhom().sendRawMessage(RED + "Class not found!");
+                    return new HeroesSecondaryPrompt();
+                }
+
+            } else if (input.equalsIgnoreCase("clear")) {
+
+                cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, null);
+                cc.getForWhom().sendRawMessage(YELLOW + "Heroes Secondary Class requirement cleared.");
+                return new HeroesPrompt();
+
+            } else {
+
+                return new HeroesPrompt();
+
+            }
+
+        }
     }
 
     private class FailMessagePrompt extends StringPrompt {

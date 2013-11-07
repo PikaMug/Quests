@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import me.blackvein.quests.ColorUtil;
+import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.ItemData;
 import me.blackvein.quests.ItemData.Data;
 import me.blackvein.quests.Quester;

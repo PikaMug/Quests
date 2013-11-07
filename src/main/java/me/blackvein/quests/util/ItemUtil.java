@@ -2,7 +2,6 @@ package me.blackvein.quests.util;
 
 import java.util.LinkedList;
 import java.util.Map.Entry;
-import me.blackvein.quests.ColorUtil;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import org.bukkit.ChatColor;

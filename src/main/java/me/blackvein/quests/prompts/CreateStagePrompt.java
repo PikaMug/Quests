@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import me.ThaH3lper.com.Mobs.EpicMobs;
-import me.blackvein.quests.ColorUtil;
+import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Event;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quester;
@@ -2254,7 +2254,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                 }
 
-                text += DARKGRAY + "|---------" + Lang.get("stageEditorOptional") + "---------|";
+                text += DARKGRAY + "|---------" + Lang.get("stageEditorOptional") + "---------|\n";
 
                 if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
                     text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetKillLocations") + " (" + Lang.get("noneSet") + ")\n";

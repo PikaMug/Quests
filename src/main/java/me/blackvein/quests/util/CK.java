@@ -22,10 +22,10 @@ public class CK {
 	public static final String REQ_ITEMS = "itemReqs";
 	public static final String REQ_ITEMS_REMOVE = "removeItemReqs";
 	public static final String REQ_PERMISSION = "permissionReqs";
-    public static final String REQ_MCMMO_SKILLS = "mcMMOSkillReqs";
-    public static final String REQ_MCMMO_SKILL_AMOUNTS = "mcMMOSkillAmountReqs";
-    public static final String REQ_HEROES_PRIMARY_CLASS = "heroesPrimaryClassReq";
-    public static final String REQ_HEROES_SECONDARY_CLASS = "heroesSecondaryClassReq";
+        public static final String REQ_MCMMO_SKILLS = "mcMMOSkillReqs";
+        public static final String REQ_MCMMO_SKILL_AMOUNTS = "mcMMOSkillAmountReqs";
+        public static final String REQ_HEROES_PRIMARY_CLASS = "heroesPrimaryClassReq";
+        public static final String REQ_HEROES_SECONDARY_CLASS = "heroesSecondaryClassReq";
 	public static final String REQ_QUEST = "questReqs";
 	public static final String REQ_QUEST_BLOCK= "questBlocks";
 
@@ -40,6 +40,8 @@ public class CK {
 	public static final String REW_PERMISSION = "permissionRews";
 	public static final String REW_MCMMO_SKILLS = "mcMMOSkillRews";
 	public static final String REW_MCMMO_AMOUNTS = "mcMMOSkillAmounts";
+        public static final String REW_HEROES_CLASSES = "heroesClassRews";
+        public static final String REW_HEROES_AMOUNTS = "heroesAmountRews";
 
 	//Stages
 	public static final String S_BREAK_IDS = "breakIds";

@@ -1,5 +1,6 @@
 package me.blackvein.quests;
 
+import me.blackvein.quests.util.ColorUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -828,7 +829,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static void saveQuest(ConversationContext cc, ConfigurationSection cs) {
 
         String edit = null;
@@ -871,6 +871,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> questBlocks = null;
         LinkedList<String> mcMMOSkillReqs = null;
         LinkedList<Integer> mcMMOAmountReqs = null;
+        String heroesPrimaryReq = null;
+        String heroesSecondaryReq = null;
         String failMessage = null;
 
         Integer moneyRew = null;
@@ -883,7 +885,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> permRews = null;
         LinkedList<String> mcMMOSkillRews = null;
         LinkedList<Integer> mcMMOSkillAmounts = null;
+        LinkedList<String> heroesClassRews = null;
+        LinkedList<Double> heroesExpRews = null;
 
+        
         if (cc.getSessionData(CK.Q_REDO_DELAY) != null) {
             redo = (Long) cc.getSessionData(CK.Q_REDO_DELAY);
         }
@@ -924,6 +929,14 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (cc.getSessionData(CK.REQ_MCMMO_SKILLS) != null) {
             mcMMOSkillReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
             mcMMOAmountReqs = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
+        }
+        
+        if (cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
+            heroesPrimaryReq = (String) cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
+        }
+        
+        if (cc.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
+            heroesSecondaryReq = (String) cc.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS);
         }
 
         if (cc.getSessionData(CK.Q_FAIL_MESSAGE) != null) {
@@ -976,6 +989,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             mcMMOSkillRews = (LinkedList<String>) cc.getSessionData(CK.REW_MCMMO_SKILLS);
             mcMMOSkillAmounts = (LinkedList<Integer>) cc.getSessionData(CK.REW_MCMMO_AMOUNTS);
         }
+        
+        if (cc.getSessionData(CK.REW_HEROES_CLASSES) != null) {
+            heroesClassRews = (LinkedList<String>) cc.getSessionData(CK.REW_HEROES_CLASSES);
+            heroesExpRews = (LinkedList<Double>) cc.getSessionData(CK.REW_HEROES_AMOUNTS);
+        }
 
         cs.set("name", name);
         cs.set("npc-giver-id", npcStart);
@@ -985,7 +1003,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("finish-message", finish);
         cs.set(CK.S_FINISH_EVENT, initialEvent);
 
-        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false)) {
+        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) || heroesPrimaryReq != null || heroesSecondaryReq != null) {
 
             ConfigurationSection reqs = cs.createSection("requirements");
             List<String> items = new LinkedList<String>();
@@ -1006,6 +1024,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             reqs.set("quest-blocks", questBlocks);
             reqs.set("mcmmo-skills", mcMMOSkillReqs);
             reqs.set("mcmmo-amounts", mcMMOAmountReqs);
+            reqs.set("heroes-primary-class", heroesPrimaryReq);
+            reqs.set("heroes-secondary-class", heroesSecondaryReq);
             reqs.set("fail-requirement-message", failMessage);
 
         } else {
@@ -1341,11 +1361,15 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null) {
+        System.out.println("HERE 1");
+        
+        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false) {
 
+            System.out.println("HERE 2");
+            
             ConfigurationSection rews = cs.createSection("rewards");
 
-            rews.set("items", (itemRews.isEmpty() == false) ? itemRews : null);
+            rews.set("items", (itemRews != null && itemRews.isEmpty() == false) ? itemRews : null);
             rews.set("money", moneyRew);
             rews.set("quest-points", questPointsRew);
             rews.set("exp", expRew);
@@ -1355,10 +1379,14 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             rews.set("mcmmo-levels", mcMMOSkillAmounts);
             rews.set("rpgitem-ids", RPGItemRews);
             rews.set("rpgitem-amounts", RPGItemAmounts);
+            rews.set("heroes-exp-classes", heroesClassRews);
+            rews.set("heroes-exp-amounts", heroesExpRews);
 
         } else {
             cs.set("rewards", null);
         }
+        
+        System.out.println("HERE 3");
 
     }
 
@@ -1454,10 +1482,20 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             cc.setSessionData(CK.REW_MCMMO_SKILLS, q.mcmmoSkills);
             cc.setSessionData(CK.REW_MCMMO_AMOUNTS, q.mcmmoAmounts);
         }
+        
+        if (q.heroesClasses.isEmpty() == false) {
+            cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
+            cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
+        }
 
         if (q.rpgItemRewardIDs.isEmpty() == false) {
             cc.setSessionData(CK.REW_RPG_ITEM_IDS, q.rpgItemRewardIDs);
             cc.setSessionData(CK.REW_RPG_ITEM_AMOUNTS, q.rpgItemRewardAmounts);
+        }
+        
+        if(q.heroesClasses.isEmpty() == false) {
+            cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
+            cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
         }
         //
 

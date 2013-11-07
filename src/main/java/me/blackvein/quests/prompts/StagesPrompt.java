@@ -1,6 +1,6 @@
 package me.blackvein.quests.prompts;
 
-import me.blackvein.quests.ColorUtil;
+import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;

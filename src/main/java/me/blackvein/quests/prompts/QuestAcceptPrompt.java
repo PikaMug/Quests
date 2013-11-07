@@ -2,7 +2,7 @@ package me.blackvein.quests.prompts;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
-import me.blackvein.quests.ColorUtil;
+import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;

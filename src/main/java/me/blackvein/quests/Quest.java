@@ -2,6 +2,7 @@ package me.blackvein.quests;
 
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
+import com.herocraftonline.heroes.characters.Hero;
 import java.util.LinkedList;
 import java.util.List;
 import me.blackvein.quests.util.ItemUtil;
@@ -50,10 +51,10 @@ public class Quest {
     LinkedList<ItemStack> itemRewards = new LinkedList<ItemStack>();
     LinkedList<Integer> rpgItemRewardIDs = new LinkedList<Integer>();
     LinkedList<Integer> rpgItemRewardAmounts = new LinkedList<Integer>();
-    //mcMMO
     List<String> mcmmoSkills = new LinkedList<String>();
     List<Integer> mcmmoAmounts = new LinkedList<Integer>();
-    //
+    List<String> heroesClasses = new LinkedList<String>();
+    List<Double> heroesAmounts = new LinkedList<Double>();
 
     //
     public void nextStage(Quester q) {
@@ -179,26 +180,29 @@ public class Quest {
 
         }
 
-        for(String s : mcMMOSkillReqs) {
+        for (String s : mcMMOSkillReqs) {
 
             final SkillType st = Quests.getMcMMOSkill(s);
             final int lvl = mcMMOAmountReqs.get(mcMMOSkillReqs.indexOf(s));
-            if(UserManager.getPlayer(player).getProfile().getSkillLevel(st) < lvl)
+            if (UserManager.getPlayer(player).getProfile().getSkillLevel(st) < lvl) {
                 return false;
+            }
 
         }
 
-        if(heroesPrimaryClassReq != null){
+        if (heroesPrimaryClassReq != null) {
 
-            if(plugin.testPrimaryHeroesClass(heroesPrimaryClassReq, player.getName()) == false)
+            if (plugin.testPrimaryHeroesClass(heroesPrimaryClassReq, player.getName()) == false) {
                 return false;
+            }
 
         }
 
-        if(heroesSecondaryClassReq != null){
+        if (heroesSecondaryClassReq != null) {
 
-            if(plugin.testSecondaryHeroesClass(heroesSecondaryClassReq, player.getName()) == false)
+            if (plugin.testSecondaryHeroesClass(heroesSecondaryClassReq, player.getName()) == false) {
                 return false;
+            }
 
         }
 
@@ -276,6 +280,14 @@ public class Quest {
 
         }
 
+        for (String s : heroesClasses) {
+
+            Hero hero = plugin.getHero(player.getName());
+            hero.addExp(heroesAmounts.get(heroesClasses.indexOf(s)), Quests.heroes.getClassManager().getClass(s), player.getLocation());
+            none = null;
+
+        }
+
         if (exp > 0) {
             player.giveExp(exp);
             none = null;
@@ -325,6 +337,12 @@ public class Quest {
         if (mcmmoSkills.isEmpty() == false) {
             for (String s : mcmmoSkills) {
                 player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " Experience");
+            }
+        }
+
+        if (heroesClasses.isEmpty() == false) {
+            for (String s : heroesClasses) {
+                player.sendMessage("- " + ChatColor.AQUA + heroesAmounts.get(heroesClasses.indexOf(s)) + " " + ChatColor.BLUE + s + " Experience");
             }
         }
 
@@ -444,6 +462,14 @@ public class Quest {
                 return false;
             }
 
+            if (other.heroesClasses.equals(heroesClasses) == false) {
+                return false;
+            }
+
+            if (other.heroesAmounts.equals(heroesAmounts) == false) {
+                return false;
+            }
+
             if (other.moneyReq != moneyReq) {
                 return false;
             }
@@ -521,7 +547,6 @@ public class Quest {
             if (other.redoDelay != redoDelay) {
                 return false;
             }
-
 
             if (other.stages.equals(stages) == false) {
                 return false;

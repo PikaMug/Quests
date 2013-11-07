@@ -1,5 +1,6 @@
 package me.blackvein.quests;
 
+import me.blackvein.quests.util.ColorUtil;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.mcMMO;
@@ -566,9 +567,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     if(quest.heroesPrimaryClassReq != null){
 
                                         if(this.testPrimaryHeroesClass(quest.heroesPrimaryClassReq, player.getName())){
-                                            cs.sendMessage(BOLD + "" + DARKRED + quest.heroesPrimaryClassReq + RESET + "" + RED + " class");
-                                        }else{
                                             cs.sendMessage(BOLD + "" + GREEN + quest.heroesPrimaryClassReq + RESET + "" + DARKGREEN + " class");
+                                        }else{
+                                            cs.sendMessage(BOLD + "" + DARKRED + quest.heroesPrimaryClassReq + RESET + "" + RED + " class");
                                         }
 
                                     }
@@ -3408,26 +3409,33 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (Quests.checkList(config.getList("quests." + s + ".rewards.mcmmo-skills"), String.class)) {
 
                         if (config.contains("quests." + s + ".rewards.mcmmo-levels")) {
+                            
+                            if(Quests.checkList(config.getList("quests." + s + ".rewards.mcmmo-levels"), Integer.class)){
 
-                            boolean failed = false;
-                            for (String skill : config.getStringList("quests." + s + ".rewards.mcmmo-skills")) {
+                                boolean failed = false;
+                                for (String skill : config.getStringList("quests." + s + ".rewards.mcmmo-skills")) {
 
-                                if (Quests.getMcMMOSkill(skill) == null) {
-                                    printSevere("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
-                                    failed = true;
-                                    break;
+                                    if (Quests.getMcMMOSkill(skill) == null) {
+                                        printSevere("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
+                                        failed = true;
+                                        break;
+                                    }
+
+                                }
+                                if (failed) {
+                                    continue;
                                 }
 
-                            }
-                            if (failed) {
+                                quest.mcmmoSkills.clear();
+                                quest.mcmmoAmounts.clear();
+
+                                quest.mcmmoSkills.addAll(config.getStringList("quests." + s + ".rewards.mcmmo-skills"));
+                                quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + s + ".rewards.mcmmo-levels"));
+                            
+                            } else {
+                                printSevere("[Quests] mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
                                 continue;
                             }
-
-                            quest.mcmmoSkills.clear();
-                            quest.mcmmoAmounts.clear();
-
-                            quest.mcmmoSkills.addAll(config.getStringList("quests." + s + ".rewards.mcmmo-skills"));
-                            quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + s + ".rewards.mcmmo-levels"));
 
                         } else {
                             printSevere("[Quests] Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
@@ -3436,6 +3444,50 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else {
                         printSevere("[Quests] mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
+                        continue;
+                    }
+                }
+                
+                if (config.contains("quests." + s + ".rewards.heroes-exp-classes")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".rewards.heroes-exp-classes"), String.class)) {
+
+                        if (config.contains("quests." + s + ".rewards.heroes-exp-amounts")) {
+                            
+                            if (Quests.checkList(config.getList("quests." + s + ".rewards.heroes-exp-amounts"), Double.class)) {
+
+                                boolean failed = false;
+                                for (String heroClass : config.getStringList("quests." + s + ".rewards.heroes-exp-classes")) {
+
+                                    if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
+                                        printSevere("[Quests] " + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
+                                        failed = true;
+                                        break;
+                                    }
+
+                                }
+                                if (failed) {
+                                    continue;
+                                }
+
+                                quest.heroesClasses.clear();
+                                quest.heroesAmounts.clear();
+
+                                quest.heroesClasses.addAll(config.getStringList("quests." + s + ".rewards.heroes-exp-classes"));
+                                quest.heroesAmounts.addAll(config.getDoubleList("quests." + s + ".rewards.heroes-exp-amounts"));
+                            
+                            } else {
+                                printSevere("[Quests] heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
+                                continue;
+                            }
+
+                        } else {
+                            printSevere("[Quests] Rewards for Quest " + quest.name + " is missing heroes-exp-amounts:");
+                            continue;
+                        }
+
+                    } else {
+                        printSevere("[Quests] heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
                         continue;
                     }
                 }
