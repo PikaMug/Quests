@@ -1,5 +1,7 @@
 package me.blackvein.quests;
 
+import com.codisimus.plugins.phatloots.PhatLoots;
+import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import me.blackvein.quests.util.ColorUtil;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
@@ -8,6 +10,9 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -20,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +53,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -80,10 +87,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public final static Logger log = Logger.getLogger("Minecraft");
     public static Economy economy = null;
     public static Permission permission = null;
+    public static WorldGuardPlugin worldGuard = null;
     public static mcMMO mcmmo = null;
     public static EpicBoss epicBoss = null;
     public static Plugin rpgItems = null;
     public static Heroes heroes = null;
+    public static PhatLoots phatLoots = null;
     public static boolean snoop = true;
     public static boolean npcEffects = true;
     public static boolean broadcastPartyCreation = true;
@@ -156,6 +165,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         } catch (Exception e) {
             printWarning("[Quests] Legacy version of Citizens found. Citizens in Quests not enabled.");
         }
+        
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+        }
 
         if (getServer().getPluginManager().getPlugin("Denizen") != null) {
             denizen = (Denizen) getServer().getPluginManager().getPlugin("Denizen");
@@ -179,6 +192,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         if (getServer().getPluginManager().getPlugin("RPG Items") != null) {
             rpgItems = think.rpgitems.Plugin.plugin;
+        }
+        
+        if (getServer().getPluginManager().getPlugin("PhatLoots") != null) {
+            phatLoots = (PhatLoots) getServer().getPluginManager().getPlugin("PhatLoots");
         }
 
         if (!setupEconomy()) {
@@ -211,6 +228,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         lang.save();
 
         if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
+            
             printInfo("[Quests] Quest data not found, writing default to file.");
             FileConfiguration data = new YamlConfiguration();
             try {
@@ -430,7 +448,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (player.hasPermission("quests.top")) {
             player.sendMessage(YELLOW + "/quests top <number> - View top Questers");
         }
-        player.sendMessage(GOLD + "/quests party - Quest Party commands");
+        //player.sendMessage(GOLD + "/quests party - Quest Party commands");
         player.sendMessage(YELLOW + "/quests info - Display plugin information");
         player.sendMessage(" ");
         player.sendMessage(YELLOW + "/quest - Display current Quest objectives");
@@ -824,6 +842,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         } else {
 
                                             boolean takeable = true;
+                                            
                                             if (quester.completedQuests.contains(quest.name)) {
 
                                                 if (quester.getDifference(quest) > 0) {
@@ -831,6 +850,27 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                     takeable = false;
                                                 }
 
+                                            }
+                                            
+                                            if(quest.region != null){
+                                                
+                                                boolean inRegion = false;
+                                                Player p = quester.getPlayer();
+                                                RegionManager rm = worldGuard.getRegionManager(p.getWorld());
+                                                Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
+                                                while(it.hasNext()){
+                                                    ProtectedRegion pr = it.next();
+                                                    if(pr.getId().equalsIgnoreCase(quest.region)){
+                                                        inRegion = true;
+                                                        break;
+                                                    }
+                                                }
+                                                
+                                                if(inRegion == false){
+                                                    cs.sendMessage(YELLOW + "You may not take " + AQUA + quest.name + YELLOW + " at this location.");
+                                                    takeable = false;
+                                                }
+                                                
                                             }
 
                                             if (takeable == true) {
@@ -1350,7 +1390,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            Quest questToGive = null;
+                            Quest questToGive;
 
                             String name = null;
 
@@ -1791,6 +1831,31 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 }
 
+                if(config.contains("quests." + s + ".region")){
+                    
+                    String region = config.getString("quests." + s + ".region");
+                    boolean exists = false;
+                    for(World world : getServer().getWorlds()){
+                        
+                        RegionManager rm = worldGuard.getRegionManager(world);
+                        if(rm != null){
+                            ProtectedRegion pr = rm.getRegionExact(region);
+                            if(pr != null){
+                                quest.region = region;
+                                exists = true;
+                                break;
+                            }
+                        }
+                        
+                    }
+                    
+                    if(!exists){
+                        printSevere("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
+                        continue;
+                    }
+                    
+                }
+                
                 if (config.contains("quests." + s + ".redo-delay")) {
 
                     if (config.getInt("quests." + s + ".redo-delay", -999) != -999) {
@@ -3463,6 +3528,33 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else {
                         printSevere("[Quests] heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
+                        continue;
+                    }
+                }
+                
+                if (config.contains("quests." + s + ".rewards.phat-loots")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".rewards.phat-loots"), String.class)) {
+
+                        boolean failed = false;
+                        for (String loot : config.getStringList("quests." + s + ".rewards.phat-loots")) {
+
+                            if (PhatLootsAPI.getPhatLoot(loot) == null) {
+                                printSevere("[Quests] " + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
+                                failed = true;
+                                break;
+                            }
+
+                        }
+                        if (failed) {
+                            continue;
+                        }
+
+                        quest.phatLootRewards.clear();
+                        quest.phatLootRewards.addAll(config.getStringList("quests." + s + ".rewards.phat-loots"));
+
+                    } else {
+                        printSevere("[Quests] phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
                         continue;
                     }
                 }

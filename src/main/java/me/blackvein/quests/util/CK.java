@@ -15,6 +15,7 @@ public class CK {
 	public static final String Q_START_BLOCK= "blockStart";
 	public static final String Q_FAIL_MESSAGE = "failMessage";
 	public static final String Q_INITIAL_EVENT = "initialEvent";
+        public static final String Q_REGION = "region";
 
 	//Requirements
 	public static final String REQ_MONEY = "moneyReq";
@@ -42,6 +43,7 @@ public class CK {
 	public static final String REW_MCMMO_AMOUNTS = "mcMMOSkillAmounts";
         public static final String REW_HEROES_CLASSES = "heroesClassRews";
         public static final String REW_HEROES_AMOUNTS = "heroesAmountRews";
+        public static final String REW_PHAT_LOOTS = "phatLootRews";
 
 	//Stages
 	public static final String S_BREAK_IDS = "breakIds";
@@ -80,12 +82,12 @@ public class CK {
 	public static final String S_SHEAR_COLORS = "shearColors";
 	public static final String S_SHEAR_AMOUNTS = "shearAmounts";
 	public static final String S_START_EVENT = "startEvent";
-    public static final String S_FINISH_EVENT = "finishEvent";
-    public static final String S_CHAT_EVENTS = "chatEvents";
-    public static final String S_CHAT_EVENT_TRIGGERS = "chatEventTriggers";
-    public static final String S_CHAT_TEMP_EVENT = "chatTempEvent";
-    public static final String S_DEATH_EVENT = "deathEvent";
-    public static final String S_DISCONNECT_EVENT = "disconnectEvent";
+        public static final String S_FINISH_EVENT = "finishEvent";
+        public static final String S_CHAT_EVENTS = "chatEvents";
+        public static final String S_CHAT_EVENT_TRIGGERS = "chatEventTriggers";
+        public static final String S_CHAT_TEMP_EVENT = "chatTempEvent";
+        public static final String S_DEATH_EVENT = "deathEvent";
+        public static final String S_DISCONNECT_EVENT = "disconnectEvent";
 	public static final String S_DELAY = "delay";
 	public static final String S_DELAY_MESSAGE = "delayMessage";
 	public static final String S_DENIZEN = "denizen";

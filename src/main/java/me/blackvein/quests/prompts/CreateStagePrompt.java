@@ -44,7 +44,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public String getPromptText(ConversationContext context) {
 
         context.setSessionData(pref, Boolean.TRUE);
@@ -1902,8 +1902,8 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-
-            return YELLOW + Lang.get("stageEditorNPCPrompt");
+            questFactory.selectingNPCs.add((Player) context.getForWhom());
+            return YELLOW + Lang.get("stageEditorNPCPrompt") + "\n" + GOLD + Lang.get("npcHint");
         }
 
         @Override
@@ -1939,6 +1939,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             }
 
+            questFactory.selectingNPCs.remove((Player) context.getForWhom());
             return new DeliveryListPrompt();
 
         }

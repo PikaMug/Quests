@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>1.6.9-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <name>quests</name>
     <url>http://dev.bukkit.org/server-mods/quests/</url>
     <packaging>jar</packaging>
@@ -86,6 +86,27 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/rpgitems.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.codisimus.phatloots</groupId>
+            <artifactId>PhatLoots</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/PhatLoots.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>WorldEdit</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/WorldEdit.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>WorldGuard</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/WorldGuard.jar</systemPath>
         </dependency>
     </dependencies>
 

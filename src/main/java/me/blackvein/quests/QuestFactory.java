@@ -1,5 +1,7 @@
 package me.blackvein.quests;
 
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.blackvein.quests.util.ColorUtil;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -148,7 +151,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         public CreateMenuPrompt() {
 
-            super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
+            super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13");
 
         }
 
@@ -211,55 +214,87 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 }
 
             }
+            
+            if(Quests.worldGuard != null){
+                
+                if (context.getSessionData(CK.Q_REGION) == null){
+
+                    if (quests.citizens != null) {
+                        text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set Region (None set)\n";
+                    } else {
+                        text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Region (None set)\n";
+                    }
+
+                } else {
+
+                    if (quests.citizens != null) {
+                        String s = (String) context.getSessionData(CK.Q_REGION);
+                        text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set Region (" + GREEN + s + YELLOW + ")\n";
+                    } else {
+                        String s = (String) context.getSessionData(CK.Q_REGION);
+                        text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set Region (" + GREEN + s + YELLOW + ")\n";
+                    }
+
+                }
+            
+            }else {
+                
+                if (quests.citizens != null) {
+                    text += GRAY + "7 - Set Region (WorldGuard not installed)\n";
+                } else {
+                    text += GRAY + "6 - Set Region (WorldGuard not installed)\n";
+                }
+                
+            }
 
             if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
 
                 if (quests.citizens != null) {
-                    text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (None set)\n";
+                    text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (None set)\n";
                 } else {
-                    text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (None set)\n";
+                    text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (None set)\n";
                 }
 
             } else {
 
                 if (quests.citizens != null) {
                     String s = (String) context.getSessionData(CK.Q_INITIAL_EVENT);
-                    text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + s + ")\n";
+                    text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + s + ")\n";
                 } else {
                     String s = (String) context.getSessionData(CK.Q_INITIAL_EVENT);
-                    text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + s + ")\n";
+                    text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + s + ")\n";
                 }
 
             }
 
             if (quests.citizens != null) {
+                text += BLUE + "" + BOLD + "9" + RESET + DARKAQUA + " - " + Lang.get("questEditorReqs") + "\n";
+            } else {
                 text += BLUE + "" + BOLD + "8" + RESET + DARKAQUA + " - " + Lang.get("questEditorReqs") + "\n";
-            } else {
-                text += BLUE + "" + BOLD + "7" + RESET + DARKAQUA + " - " + Lang.get("questEditorReqs") + "\n";
             }
 
             if (quests.citizens != null) {
+                text += BLUE + "" + BOLD + "10" + RESET + PINK + " - " + Lang.get("questEditorStages") + "\n";
+            } else {
                 text += BLUE + "" + BOLD + "9" + RESET + PINK + " - " + Lang.get("questEditorStages") + "\n";
-            } else {
-                text += BLUE + "" + BOLD + "8" + RESET + PINK + " - " + Lang.get("questEditorStages") + "\n";
             }
 
             if (quests.citizens != null) {
+                text += BLUE + "" + BOLD + "11" + RESET + GREEN + " - " + Lang.get("questEditorRews") + "\n";
+            } else {
                 text += BLUE + "" + BOLD + "10" + RESET + GREEN + " - " + Lang.get("questEditorRews") + "\n";
-            } else {
-                text += BLUE + "" + BOLD + "9" + RESET + GREEN + " - " + Lang.get("questEditorRews") + "\n";
             }
 
             if (quests.citizens != null) {
+                text += BLUE + "" + BOLD + "12" + RESET + GOLD + " - " + Lang.get("save") + "\n";
+            } else {
                 text += BLUE + "" + BOLD + "11" + RESET + GOLD + " - " + Lang.get("save") + "\n";
-            } else {
-                text += BLUE + "" + BOLD + "10" + RESET + GOLD + " - " + Lang.get("save") + "\n";
             }
 
             if (quests.citizens != null) {
-                text += BLUE + "" + BOLD + "12" + RESET + RED + " - " + Lang.get("exit") + "\n";
+                text += BLUE + "" + BOLD + "13" + RESET + RED + " - " + Lang.get("exit") + "\n";
             } else {
-                text += BLUE + "" + BOLD + "11" + RESET + RED + " - " + Lang.get("exit") + "\n";
+                text += BLUE + "" + BOLD + "12" + RESET + RED + " - " + Lang.get("exit") + "\n";
             }
 
             return text;
@@ -299,58 +334,70 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 if (quests.citizens != null) {
                     selectedBlockStarts.put((Player) context.getForWhom(), null);
                     return new BlockStartPrompt();
+                } else if (Quests.worldGuard != null) {
+                    return new RegionPrompt();
                 } else {
-                    return new InitialEventPrompt();
+                    return new CreateMenuPrompt();
                 }
 
             } else if (input.equalsIgnoreCase("7")) {
 
-                if (quests.citizens != null) {
-                    return new InitialEventPrompt();
+                if (quests.citizens != null && Quests.worldGuard != null) {
+                    return new RegionPrompt();
+                }else if (quests.citizens != null) {
+                    return new CreateMenuPrompt();
                 } else {
-                    return new RequirementsPrompt(quests, QuestFactory.this);
+                    return new InitialEventPrompt();
                 }
 
             } else if (input.equalsIgnoreCase("8")) {
 
                 if (quests.citizens != null) {
-                    return new RequirementsPrompt(quests, QuestFactory.this);
+                    return new InitialEventPrompt();
                 } else {
-                    return new StagesPrompt(QuestFactory.this);
+                    return new RequirementsPrompt(quests, QuestFactory.this);
                 }
 
             } else if (input.equalsIgnoreCase("9")) {
 
                 if (quests.citizens != null) {
-                    return new StagesPrompt(QuestFactory.this);
+                    return new RequirementsPrompt(quests, QuestFactory.this);
                 } else {
-                    return new RewardsPrompt(quests, QuestFactory.this);
+                    return new StagesPrompt(QuestFactory.this);
                 }
 
             } else if (input.equalsIgnoreCase("10")) {
 
                 if (quests.citizens != null) {
-                    return new RewardsPrompt(quests, QuestFactory.this);
+                    return new StagesPrompt(QuestFactory.this);
                 } else {
-                    return new SavePrompt();
+                    return new RewardsPrompt(quests, QuestFactory.this);
                 }
 
             } else if (input.equalsIgnoreCase("11")) {
 
                 if (quests.citizens != null) {
-                    return new SavePrompt();
+                    return new RewardsPrompt(quests, QuestFactory.this);
                 } else {
-                    return new ExitPrompt();
+                    return new SavePrompt();
                 }
 
             } else if (input.equalsIgnoreCase("12")) {
 
                 if (quests.citizens != null) {
-                    return new ExitPrompt();
+                    return new SavePrompt();
                 } else {
-                    return new CreateMenuPrompt();
+                    return new ExitPrompt();
                 }
 
+            } else if (input.equalsIgnoreCase("13")) {
+                
+                if (quests.citizens != null) {
+                    return new ExitPrompt();
+                }else{
+                    return new CreateMenuPrompt();
+                }
+                
             }
 
             return null;
@@ -714,6 +761,83 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
     }
+    
+    private class RegionPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+
+            String text = DARKGREEN + "- Quest Region -\n";
+            boolean any = false;
+            
+            for(World world : quests.getServer().getWorlds()){
+                
+                RegionManager rm = Quests.worldGuard.getRegionManager(world);
+                for(String region : rm.getRegions().keySet()){
+                    
+                    any = true;
+                    text += GREEN + region + ", ";
+                    
+                }
+                
+            }
+            
+            if(any) {
+                text = text.substring(0, text.length() - 2);
+                text += "\n\n";
+            }else {
+                text += GRAY + "(None)\n\n";
+            }
+
+            return text + YELLOW + "Enter WorldGuard region, or enter \"clear\" to clear the region, or \"cancel\" to return.";
+
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            Player player = (Player) context.getForWhom();
+
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+
+                String found = null;
+                boolean done = false;
+                
+                for(World world : quests.getServer().getWorlds()){
+                
+                    RegionManager rm = Quests.worldGuard.getRegionManager(world);
+                    for(String region : rm.getRegions().keySet()){
+
+                        if(region.equalsIgnoreCase(input)){
+                            found = region;
+                            done = true;
+                            break;
+                        }
+
+                    }
+
+                    if(done)
+                        break;
+                }
+
+                if (found == null) {
+                    player.sendMessage(RED + input + YELLOW + " is not a valid WorldGuard region!");
+                    return new RegionPrompt();
+                } else {
+                    context.setSessionData(CK.Q_REGION, found);
+                    return new CreateMenuPrompt();
+                }
+
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(CK.Q_REGION, null);
+                player.sendMessage(YELLOW + "Quest region cleared.");
+                return new CreateMenuPrompt();
+            } else {
+                return new CreateMenuPrompt();
+            }
+
+        }
+    }
 
     private class RedoDelayPrompt extends NumericPrompt {
 
@@ -867,6 +991,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         Integer npcStart = null;
         String blockStart = null;
         String initialEvent = null;
+        String region = null;
 
         Integer moneyReq = null;
         Integer questPointsReq = null;
@@ -893,6 +1018,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<Integer> mcMMOSkillAmounts = null;
         LinkedList<String> heroesClassRews = null;
         LinkedList<Double> heroesExpRews = null;
+        LinkedList<String> phatLootRews = null;
 
 
         if (cc.getSessionData(CK.Q_REDO_DELAY) != null) {
@@ -952,6 +1078,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (cc.getSessionData(CK.Q_INITIAL_EVENT) != null) {
             initialEvent = (String) cc.getSessionData(CK.Q_INITIAL_EVENT);
         }
+        
+        if (cc.getSessionData(CK.Q_REGION) != null) {
+            region = (String) cc.getSessionData(CK.Q_REGION);
+        }
 
         if (cc.getSessionData(CK.REW_MONEY) != null) {
             moneyRew = (Integer) cc.getSessionData(CK.REW_MONEY);
@@ -1000,6 +1130,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             heroesClassRews = (LinkedList<String>) cc.getSessionData(CK.REW_HEROES_CLASSES);
             heroesExpRews = (LinkedList<Double>) cc.getSessionData(CK.REW_HEROES_AMOUNTS);
         }
+        
+        if (cc.getSessionData(CK.REW_PHAT_LOOTS) != null) {
+            phatLootRews = (LinkedList<String>) cc.getSessionData(CK.REW_PHAT_LOOTS);
+        }
 
         cs.set("name", name);
         cs.set("npc-giver-id", npcStart);
@@ -1007,7 +1141,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("redo-delay", redo);
         cs.set("ask-message", desc);
         cs.set("finish-message", finish);
-        cs.set(CK.S_FINISH_EVENT, initialEvent);
+        cs.set("initial-event", initialEvent);
+        cs.set("region", region);
 
         if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) || heroesPrimaryReq != null || heroesSecondaryReq != null) {
 
@@ -1367,11 +1502,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        System.out.println("HERE 1");
-
-        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false) {
-
-            System.out.println("HERE 2");
+        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false || phatLootRews != null && phatLootRews.isEmpty() == false) {
 
             ConfigurationSection rews = cs.createSection("rewards");
 
@@ -1387,12 +1518,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             rews.set("rpgitem-amounts", RPGItemAmounts);
             rews.set("heroes-exp-classes", heroesClassRews);
             rews.set("heroes-exp-amounts", heroesExpRews);
+            rews.set("phat-loots", phatLootRews);
 
         } else {
             cs.set("rewards", null);
         }
-
-        System.out.println("HERE 3");
 
     }
 
@@ -1411,6 +1541,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cc.setSessionData(CK.Q_FINISH_MESSAGE, q.finished);
         if (q.initialEvent != null) {
             cc.setSessionData(CK.Q_INITIAL_EVENT, q.initialEvent.getName());
+        }
+        
+        if(q.region != null) {
+            cc.setSessionData(CK.Q_REGION, q.region);
         }
 
         //Requirements
@@ -1502,6 +1636,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if(q.heroesClasses.isEmpty() == false) {
             cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
             cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
+        }
+        
+        if(q.phatLootRewards.isEmpty() == false) {
+            cc.setSessionData(CK.REW_PHAT_LOOTS, q.phatLootRewards);
         }
         //
 

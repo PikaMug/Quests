@@ -1,8 +1,14 @@
 package me.blackvein.quests;
 
+import com.codisimus.plugins.phatloots.PhatLootsAPI;
+import com.codisimus.plugins.phatloots.loot.CommandLoot;
+import com.codisimus.plugins.phatloots.loot.LootBundle;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import me.blackvein.quests.util.ItemUtil;
@@ -22,6 +28,7 @@ public class Quest {
     public String description;
     public String finished;
     public long redoDelay = -1;
+    public String region = null;
     public int parties = 0;
     LinkedList<Stage> stages = new LinkedList<Stage>();
     NPC npcStart;
@@ -55,6 +62,7 @@ public class Quest {
     List<Integer> mcmmoAmounts = new LinkedList<Integer>();
     List<String> heroesClasses = new LinkedList<String>();
     List<Double> heroesAmounts = new LinkedList<Double>();
+    List<String> phatLootRewards = new LinkedList<String>();
 
     //
     public void nextStage(Quester q) {
@@ -287,6 +295,42 @@ public class Quest {
             none = null;
 
         }
+        
+        LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
+        int phatLootExp = 0;
+        int phatLootMoney = 0;
+        
+        LinkedList<String> phatLootMessages = new LinkedList<String>();
+        
+        for(String s : phatLootRewards) {
+            
+            LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
+            
+            if(lb.getExp() > 0){
+                phatLootExp += lb.getExp();
+                player.giveExp(lb.getExp());
+            }
+            
+            if(lb.getMoney() > 0){
+                phatLootMoney += lb.getMoney();
+                Quests.economy.depositPlayer(player.getName(), lb.getMoney());
+            }
+            
+            if(lb.getItemList().isEmpty() == false){
+                phatLootItems.addAll(lb.getItemList());
+                for(ItemStack is : lb.getItemList())
+                    Quests.addItem(player, is);
+            }
+            
+            if(lb.getCommandList().isEmpty() == false){
+                for(CommandLoot cl : lb.getCommandList())
+                    cl.execute(player);
+            }
+            
+            if(lb.getMessageList().isEmpty() == false)
+                phatLootMessages.addAll(lb.getMessageList());
+            
+        }
 
         if (exp > 0) {
             player.giveExp(exp);
@@ -310,6 +354,20 @@ public class Quest {
         }
 
         for (ItemStack i : itemRewards) {
+            
+            if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
+                player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
+            } else if (i.getDurability() != 0) {
+                player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
+            } else {
+                player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
+            }
+
+            none = null;
+        }
+        
+        for (ItemStack i : phatLootItems) {
+            
             if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
                 player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
             } else if (i.getDurability() != 0) {
@@ -329,8 +387,10 @@ public class Quest {
             none = null;
         }
 
-        if (exp > 0) {
-            player.sendMessage("- " + ChatColor.DARK_GREEN + exp + ChatColor.DARK_PURPLE + " Experience");
+        if (exp > 0 || phatLootExp > 0) {
+            
+            int tot = exp + phatLootExp;
+            player.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " Experience");
             none = null;
         }
 
@@ -338,17 +398,27 @@ public class Quest {
             for (String s : mcmmoSkills) {
                 player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " Experience");
             }
+            none = null;
         }
 
         if (heroesClasses.isEmpty() == false) {
             for (String s : heroesClasses) {
                 player.sendMessage("- " + ChatColor.AQUA + heroesAmounts.get(heroesClasses.indexOf(s)) + " " + ChatColor.BLUE + s + " Experience");
             }
+            none = null;
+        }
+        
+        if(phatLootMessages.isEmpty() == false) {
+            for (String s : phatLootMessages){
+                player.sendMessage("- " + s);
+            }
+            none = null;
         }
 
         if (none != null) {
             player.sendMessage(none);
         }
+        
         q.currentQuest = null;
 
         q.currentStage = null;
@@ -469,6 +539,10 @@ public class Quest {
             if (other.heroesAmounts.equals(heroesAmounts) == false) {
                 return false;
             }
+            
+            if(other.phatLootRewards.equals(phatLootRewards) == false) {
+                return false;
+            }
 
             if (other.moneyReq != moneyReq) {
                 return false;
@@ -556,6 +630,25 @@ public class Quest {
 
         return true;
 
+    }
+    
+    public boolean isInRegion(Player player){
+        
+        if(region == null){
+            return true;
+        }else{
+            ApplicableRegionSet ars = Quests.worldGuard.getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
+            Iterator<ProtectedRegion> i = ars.iterator();
+            while(i.hasNext()){
+                
+                ProtectedRegion pr = i.next();
+                if(pr.getId().equalsIgnoreCase(region))
+                    return true;
+                
+            }
+            return false;
+        }
+        
     }
 
 }

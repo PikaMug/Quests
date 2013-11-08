@@ -1,5 +1,7 @@
 package me.blackvein.quests.prompts;
 
+import com.codisimus.plugins.phatloots.PhatLoot;
+import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,7 +31,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
     public RewardsPrompt(Quests plugin, QuestFactory qf) {
 
-        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
         quests = plugin;
         factory = qf;
 
@@ -158,7 +160,28 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
 
-        text += GREEN + "" + BOLD + "10" + RESET + YELLOW + " - Done";
+        if (Quests.phatLoots != null) {
+
+            if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
+                text += BLUE + "" + BOLD + "10" + RESET + YELLOW + " - Set PhatLoot rewards (None set)\n";
+            } else {
+                text += BLUE + "" + BOLD + "10" + RESET + YELLOW + " - Set PhatLoot rewards\n";
+                List<String> phatLoots = (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS);
+
+                for (String phatLoot : phatLoots) {
+
+                    text += GRAY + "    - " + AQUA + phatLoot + "\n";
+
+                }
+            }
+
+        } else {
+
+            text += GRAY + "10 - Set PhatLoot rewards (PhatLoots not installed)\n";
+
+        }
+
+        text += GREEN + "" + BOLD + "11" + RESET + YELLOW + " - Done";
 
         return text;
 
@@ -198,6 +221,12 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 return new RewardsPrompt(quests, factory);
             }
         } else if (input.equalsIgnoreCase("10")) {
+            if (Quests.phatLoots != null) {
+                return new PhatLootsPrompt();
+            } else {
+                return new RewardsPrompt(quests, factory);
+            }
+        } else if (input.equalsIgnoreCase("11")) {
             return factory.returnToMenu();
         }
         return null;
@@ -1021,6 +1050,58 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
             } else {
                 return new HeroesListPrompt();
+            }
+
+        }
+    }
+
+    private class PhatLootsPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext cc) {
+
+            String text = DARKAQUA + "- " + AQUA + "PhatLoots" + DARKAQUA + " -\n";
+
+            for (PhatLoot pl : PhatLootsAPI.getAllPhatLoots()) {
+
+                text += GRAY + "- " + BLUE + pl.name + "\n";
+
+            }
+
+            text += YELLOW + "Enter PhatLoots separating each one by a space, or enter \"clear\" to clear the list, or \"cancel\" to return.";
+
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext cc, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+
+                String[] arr = input.split(" ");
+                LinkedList<String> loots = new LinkedList<String>();
+
+                for (String s : arr) {
+
+                    if (PhatLootsAPI.getPhatLoot(s) == null) {
+                        cc.getForWhom().sendRawMessage(DARKRED + s + RED + " is not a valid PhatLoot name!");
+                        return new PhatLootsPrompt();
+                    }
+
+                }
+
+                loots.addAll(Arrays.asList(arr));
+                cc.setSessionData(CK.REW_PHAT_LOOTS, loots);
+                return new RewardsPrompt(quests, factory);
+
+            } else if (input.equalsIgnoreCase("clear")) {
+
+                cc.setSessionData(CK.REW_PHAT_LOOTS, null);
+                cc.getForWhom().sendRawMessage(YELLOW + "PhatLoots reward cleared.");
+                return new RewardsPrompt(quests, factory);
+
+            } else {
+                return new RewardsPrompt(quests, factory);
             }
 
         }
