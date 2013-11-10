@@ -81,30 +81,23 @@
             <systemPath>${project.basedir}/lib/Heroes.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>think.rpgitems</groupId>
-            <artifactId>rpgitems</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/rpgitems.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>com.codisimus.phatloots</groupId>
             <artifactId>PhatLoots</artifactId>
-            <version>1.0</version>
+            <version>3.6.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/PhatLoots.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>WorldEdit</artifactId>
-            <version>1.0</version>
+            <version>5.5.8</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/WorldEdit.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>WorldGuard</artifactId>
-            <version>1.0</version>
+            <version>5.8</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/WorldGuard.jar</systemPath>
         </dependency>
