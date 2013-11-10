@@ -1644,8 +1644,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         //
 
         //Stages
-        for (Stage stage : q.stages) {
-            final String pref = "stage" + (q.stages.indexOf(stage) + 1);
+        for (Stage stage : q.orderedStages) {
+            final String pref = "stage" + (q.orderedStages.indexOf(stage) + 1);
             cc.setSessionData(pref, Boolean.TRUE);
 
             if (stage.blocksToBreak != null) {

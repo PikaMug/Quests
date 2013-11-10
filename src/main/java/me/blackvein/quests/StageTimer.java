@@ -24,7 +24,7 @@ public class StageTimer implements Runnable{
 
             if(quester.currentQuest != null){
 
-                if(quester.currentQuest.stages.indexOf(quester.currentStage) == (quester.currentQuest.stages.size() - 1)){
+                if(quester.currentQuest.orderedStages.indexOf(quester.currentStage) == (quester.currentQuest.orderedStages.size() - 1)){
 
                     if(quester.currentStage.script != null)
                         plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, player);
@@ -40,7 +40,7 @@ public class StageTimer implements Runnable{
                         plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, player);
                     if(quester.currentStage.finishEvent != null)
                         quester.currentStage.finishEvent.fire(quester);
-                    quester.currentStage = quester.currentQuest.stages.get(quester.currentStageIndex +  1);
+                    quester.currentStage = quester.currentQuest.orderedStages.get(quester.currentStageIndex +  1);
                     quester.currentStageIndex++;
                     quester.addEmpties();
                     quester.delayStartTime = 0;

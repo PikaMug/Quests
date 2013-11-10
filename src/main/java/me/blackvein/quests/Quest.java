@@ -30,7 +30,7 @@ public class Quest {
     public long redoDelay = -1;
     public String region = null;
     public int parties = 0;
-    LinkedList<Stage> stages = new LinkedList<Stage>();
+    LinkedList<Stage> orderedStages = new LinkedList<Stage>();
     NPC npcStart;
     Location blockStart;
     Quests plugin;
@@ -75,7 +75,7 @@ public class Quest {
         if (q.currentStage.delay < 0) {
 
             Player player = q.getPlayer();
-            if (q.currentStageIndex == (q.currentQuest.stages.size() - 1)) {
+            if (q.currentStageIndex == (q.currentQuest.orderedStages.size() - 1)) {
 
                 if (q.currentStage.script != null) {
                     plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
@@ -105,7 +105,7 @@ public class Quest {
 
     public void setStage(Quester q, int stage) {
 
-        if (stages.size() - 1 < stage) {
+        if (orderedStages.size() - 1 < stage) {
             return;
         }
 
@@ -119,7 +119,7 @@ public class Quest {
             q.currentStage.finishEvent.fire(q);
         }
 
-        q.currentStage = stages.get(stage);
+        q.currentStage = orderedStages.get(stage);
 
         if (q.currentStage.startEvent != null) {
             q.currentStage.startEvent.fire(q);
@@ -295,41 +295,41 @@ public class Quest {
             none = null;
 
         }
-        
+
         LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
         int phatLootExp = 0;
         int phatLootMoney = 0;
-        
+
         LinkedList<String> phatLootMessages = new LinkedList<String>();
-        
+
         for(String s : phatLootRewards) {
-            
+
             LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
-            
+
             if(lb.getExp() > 0){
                 phatLootExp += lb.getExp();
                 player.giveExp(lb.getExp());
             }
-            
+
             if(lb.getMoney() > 0){
                 phatLootMoney += lb.getMoney();
                 Quests.economy.depositPlayer(player.getName(), lb.getMoney());
             }
-            
+
             if(lb.getItemList().isEmpty() == false){
                 phatLootItems.addAll(lb.getItemList());
                 for(ItemStack is : lb.getItemList())
                     Quests.addItem(player, is);
             }
-            
+
             if(lb.getCommandList().isEmpty() == false){
                 for(CommandLoot cl : lb.getCommandList())
                     cl.execute(player);
             }
-            
+
             if(lb.getMessageList().isEmpty() == false)
                 phatLootMessages.addAll(lb.getMessageList());
-            
+
         }
 
         if (exp > 0) {
@@ -354,7 +354,7 @@ public class Quest {
         }
 
         for (ItemStack i : itemRewards) {
-            
+
             if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
                 player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
             } else if (i.getDurability() != 0) {
@@ -365,9 +365,9 @@ public class Quest {
 
             none = null;
         }
-        
+
         for (ItemStack i : phatLootItems) {
-            
+
             if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
                 player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
             } else if (i.getDurability() != 0) {
@@ -388,7 +388,7 @@ public class Quest {
         }
 
         if (exp > 0 || phatLootExp > 0) {
-            
+
             int tot = exp + phatLootExp;
             player.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " Experience");
             none = null;
@@ -407,7 +407,7 @@ public class Quest {
             }
             none = null;
         }
-        
+
         if(phatLootMessages.isEmpty() == false) {
             for (String s : phatLootMessages){
                 player.sendMessage("- " + s);
@@ -418,7 +418,7 @@ public class Quest {
         if (none != null) {
             player.sendMessage(none);
         }
-        
+
         q.currentQuest = null;
 
         q.currentStage = null;
@@ -539,7 +539,7 @@ public class Quest {
             if (other.heroesAmounts.equals(heroesAmounts) == false) {
                 return false;
             }
-            
+
             if(other.phatLootRewards.equals(phatLootRewards) == false) {
                 return false;
             }
@@ -622,7 +622,7 @@ public class Quest {
                 return false;
             }
 
-            if (other.stages.equals(stages) == false) {
+            if (other.orderedStages.equals(orderedStages) == false) {
                 return false;
             }
 
@@ -631,24 +631,24 @@ public class Quest {
         return true;
 
     }
-    
+
     public boolean isInRegion(Player player){
-        
+
         if(region == null){
             return true;
         }else{
             ApplicableRegionSet ars = Quests.worldGuard.getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
             Iterator<ProtectedRegion> i = ars.iterator();
             while(i.hasNext()){
-                
+
                 ProtectedRegion pr = i.next();
                 if(pr.getId().equalsIgnoreCase(region))
                     return true;
-                
+
             }
             return false;
         }
-        
+
     }
 
 }

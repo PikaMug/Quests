@@ -416,7 +416,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                         for(Quest quest : quests.getQuests()){
 
-                            for(Stage stage : quest.stages){
+                            for(Stage stage : quest.orderedStages){
 
                                 if(stage.finishEvent != null && stage.finishEvent.name.equalsIgnoreCase(evt.name)){
                                     used.add(quest.name);
@@ -803,7 +803,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 modName = modifiedName;
                 for(Quest q : quests.getQuests()){
 
-                    for(Stage s : q.stages){
+                    for(Stage s : q.orderedStages){
 
                         if(s.finishEvent != null && s.finishEvent.name != null){
 

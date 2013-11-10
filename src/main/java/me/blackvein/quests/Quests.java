@@ -165,7 +165,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         } catch (Exception e) {
             printWarning("[Quests] Legacy version of Citizens found. Citizens in Quests not enabled.");
         }
-        
+
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
         }
@@ -193,7 +193,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (getServer().getPluginManager().getPlugin("RPG Items") != null) {
             rpgItems = think.rpgitems.Plugin.plugin;
         }
-        
+
         if (getServer().getPluginManager().getPlugin("PhatLoots") != null) {
             phatLoots = (PhatLoots) getServer().getPluginManager().getPlugin("PhatLoots");
         }
@@ -228,7 +228,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         lang.save();
 
         if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
-            
+
             printInfo("[Quests] Quest data not found, writing default to file.");
             FileConfiguration data = new YamlConfiguration();
             try {
@@ -842,7 +842,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         } else {
 
                                             boolean takeable = true;
-                                            
+
                                             if (quester.completedQuests.contains(quest.name)) {
 
                                                 if (quester.getDifference(quest) > 0) {
@@ -851,9 +851,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                 }
 
                                             }
-                                            
+
                                             if(quest.region != null){
-                                                
+
                                                 boolean inRegion = false;
                                                 Player p = quester.getPlayer();
                                                 RegionManager rm = worldGuard.getRegionManager(p.getWorld());
@@ -865,12 +865,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                                         break;
                                                     }
                                                 }
-                                                
+
                                                 if(inRegion == false){
                                                     cs.sendMessage(YELLOW + "You may not take " + AQUA + quest.name + YELLOW + " at this location.");
                                                     takeable = false;
                                                 }
-                                                
+
                                             }
 
                                             if (takeable == true) {
@@ -1442,7 +1442,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 quester.resetObjectives();
 
                                 quester.currentQuest = questToGive;
-                                quester.currentStage = questToGive.stages.getFirst();
+                                quester.currentStage = questToGive.orderedStages.getFirst();
                                 quester.addEmpties();
                                 cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly started the Quest " + PURPLE + questToGive.name + GOLD + ".");
                                 target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
@@ -1832,11 +1832,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 }
 
                 if(config.contains("quests." + s + ".region")){
-                    
+
                     String region = config.getString("quests." + s + ".region");
                     boolean exists = false;
                     for(World world : getServer().getWorlds()){
-                        
+
                         RegionManager rm = worldGuard.getRegionManager(world);
                         if(rm != null){
                             ProtectedRegion pr = rm.getRegionExact(region);
@@ -1846,16 +1846,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 break;
                             }
                         }
-                        
+
                     }
-                    
+
                     if(!exists){
                         printSevere("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
                         continue;
                     }
-                    
+
                 }
-                
+
                 if (config.contains("quests." + s + ".redo-delay")) {
 
                     if (config.getInt("quests." + s + ".redo-delay", -999) != -999) {
@@ -2142,9 +2142,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 int index = 1;
                 boolean stageFailed = false;
+
                 for (String s2 : section2.getKeys(false)) {
 
-                    Stage stage = new Stage();
+                    Stage oStage = new Stage();
 
                     LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
                     LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
@@ -2176,7 +2177,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         if (ScriptRegistry.containsScript(config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run"))) {
                             trigger = new QuestTaskTrigger();
-                            stage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
+                            oStage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
                         } else {
                             printSevere("[Quests] script-to-run: in Stage " + s2 + " of Quest " + quest.name + " is not a Denizen script!");
                             stageFailed = true;
@@ -2245,7 +2246,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     for (int i : damageids) {
 
                         if (Material.getMaterial(i) != null) {
-                            stage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
+                            oStage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
                         } else {
                             printSevere("[Quests] " + i + " inside damage-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
                             stageFailed = true;
@@ -2285,7 +2286,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     for (int i : placeids) {
 
                         if (Material.getMaterial(i) != null) {
-                            stage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
+                            oStage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
                         } else {
                             printSevere("[Quests] " + +i + " inside place-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
                             stageFailed = true;
@@ -2325,7 +2326,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     for (int i : useids) {
 
                         if (Material.getMaterial(i) != null) {
-                            stage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
+                            oStage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
                         } else {
                             printSevere("[Quests] " + RED + i + " inside use-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
                             stageFailed = true;
@@ -2365,7 +2366,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     for (int i : cutids) {
 
                         if (Material.getMaterial(i) != null) {
-                            stage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
+                            oStage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
                         } else {
                             printSevere("[Quests] " + i + " inside cut-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
                             stageFailed = true;
@@ -2377,7 +2378,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch")) {
 
                         if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
-                            stage.fishToCatch = config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch");
+                            oStage.fishToCatch = config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch");
                         } else {
                             printSevere("[Quests] fish-to-catch: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                             stageFailed = true;
@@ -2389,7 +2390,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".players-to-kill")) {
 
                         if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
-                            stage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
+                            oStage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
                         } else {
                             printSevere("[Quests] players-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                             stageFailed = true;
@@ -2536,9 +2537,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                                 if (npc != null) {
 
-                                                    stage.itemsToDeliver.add(is);
-                                                    stage.itemDeliveryTargets.add(npcId);
-                                                    stage.deliverMessages = deliveryMessages;
+                                                    oStage.itemsToDeliver.add(is);
+                                                    oStage.itemDeliveryTargets.add(npcId);
+                                                    oStage.deliverMessages = deliveryMessages;
 
                                                 } else {
                                                     printSevere("[Quests] " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
@@ -2598,8 +2599,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         if (CitizensAPI.getNPCRegistry().getById(i) != null) {
 
                                             if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
-                                                stage.citizensToKill.add(i);
-                                                stage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
+                                                oStage.citizensToKill.add(i);
+                                                oStage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
                                                 questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
                                             } else {
                                                 printSevere("[Quests] " + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
@@ -2653,8 +2654,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         if (Quests.getBoss(boss) != null) {
 
                                             if (bossKillAmounts.get(bossIdsToKill.indexOf(boss)) > 0) {
-                                                stage.bossesToKill.add(boss);
-                                                stage.bossAmountsToKill.add(bossKillAmounts.get(bossIdsToKill.indexOf(boss)));
+                                                oStage.bossesToKill.add(boss);
+                                                oStage.bossAmountsToKill.add(bossKillAmounts.get(bossIdsToKill.indexOf(boss)));
                                             } else {
                                                 printSevere("[Quests] " + bossKillAmounts.get(bossIdsToKill.indexOf(boss)) + GOLD + " inside boss-amounts-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
                                                 stageFailed = true;
@@ -2840,11 +2841,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-                    stage.mobsToKill = mobsToKill;
-                    stage.mobNumToKill = mobNumToKill;
-                    stage.locationsToKillWithin = locationsToKillWithin;
-                    stage.radiiToKillWithin = radiiToKillWithin;
-                    stage.areaNames = areaNames;
+                    oStage.mobsToKill = mobsToKill;
+                    oStage.mobNumToKill = mobNumToKill;
+                    oStage.locationsToKillWithin = locationsToKillWithin;
+                    oStage.radiiToKillWithin = radiiToKillWithin;
+                    oStage.areaNames = areaNames;
 
                     Map<Map<Enchantment, Material>, Integer> enchants = new HashMap<Map<Enchantment, Material>, Integer>();
 
@@ -2856,7 +2857,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-                    stage.itemsToEnchant = enchants;
+                    oStage.itemsToEnchant = enchants;
 
                     Map<Material, Integer> breakMap = new EnumMap<Material, Integer>(Material.class);
 
@@ -2866,7 +2867,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
-                    stage.blocksToBreak = breakMap;
+                    oStage.blocksToBreak = breakMap;
 
                     if (index < section2.getKeys(false).size()) {
                         index++;
@@ -2898,7 +2899,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                     if (getServer().getWorld(info[0]) != null) {
                                         Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-                                        stage.locationsToReach.add(finalLocation);
+                                        oStage.locationsToReach.add(finalLocation);
                                     } else {
                                         printSevere("[Quests] " + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
                                         stageFailed = true;
@@ -2927,7 +2928,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii");
                                 for (int i : radii) {
 
-                                    stage.radiiToReachWithin.add(i);
+                                    oStage.radiiToReachWithin.add(i);
 
                                 }
 
@@ -2950,7 +2951,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names");
                                 for (String name : locationNames) {
 
-                                    stage.locationNames.add(name);
+                                    oStage.locationNames.add(name);
 
                                 }
 
@@ -2983,11 +2984,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                         if (mob.equalsIgnoreCase("Wolf")) {
 
-                                            stage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
+                                            oStage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
 
                                         } else if (mob.equalsIgnoreCase("Ocelot")) {
 
-                                            stage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
+                                            oStage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
 
                                         } else {
                                             printSevere("[Quests] " + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
@@ -3032,67 +3033,67 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                         if (color.equalsIgnoreCase("Black")) {
 
-                                            stage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Blue")) {
 
-                                            stage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Brown")) {
 
-                                            stage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Cyan")) {
 
-                                            stage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Gray")) {
 
-                                            stage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Green")) {
 
-                                            stage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("LightBlue")) {
 
-                                            stage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Lime")) {
 
-                                            stage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Magenta")) {
 
-                                            stage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Orange")) {
 
-                                            stage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Pink")) {
 
-                                            stage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Purple")) {
 
-                                            stage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Red")) {
 
-                                            stage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Silver")) {
 
-                                            stage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("White")) {
 
-                                            stage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else if (color.equalsIgnoreCase("Yellow")) {
 
-                                            stage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
+                                            oStage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
 
                                         } else {
 
@@ -3129,7 +3130,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".start-event"), this);
 
                         if (evt != null) {
-                            stage.startEvent = evt;
+                            oStage.startEvent = evt;
                         } else {
                             printSevere("[Quests] start-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
@@ -3143,7 +3144,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".finish-event"), this);
 
                         if (evt != null) {
-                            stage.finishEvent = evt;
+                            oStage.finishEvent = evt;
                         } else {
                             printSevere("[Quests] finish-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
@@ -3158,7 +3159,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this);
 
                         if (evt != null) {
-                            stage.finishEvent = evt;
+                            oStage.finishEvent = evt;
                             printInfo("[Quests] Converting event: in Stage " + s2 + " of Quest " + quest.name + " to finish-event:");
                             String old = config.getString("quests." + s + ".stages.ordered." + s2 + ".event");
                             config.set("quests." + s + ".stages.ordered." + s2 + ".finish-event", old);
@@ -3178,7 +3179,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".death-event"), this);
 
                         if (evt != null) {
-                            stage.deathEvent = evt;
+                            oStage.deathEvent = evt;
                         } else {
                             printSevere("[Quests] death-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
@@ -3192,7 +3193,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".disconnect-event"), this);
 
                         if (evt != null) {
-                            stage.disconnectEvent = evt;
+                            oStage.disconnectEvent = evt;
                         } else {
                             printSevere("[Quests] disconnect-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                             stageFailed = true;
@@ -3218,7 +3219,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         Event evt = Event.loadEvent(chatEvents.get(i), this);
 
                                         if (evt != null) {
-                                            stage.chatEvents.put(chatEventTriggers.get(i), evt);
+                                            oStage.chatEvents.put(chatEventTriggers.get(i), evt);
                                         } else {
                                             printSevere("[Quests] " + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                                             stageFailed = true;
@@ -3255,7 +3256,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay")) {
 
                         if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999) {
-                            stage.delay = config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay");
+                            oStage.delay = config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay");
                         } else {
                             printSevere("[Quests] delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                             stageFailed = true;
@@ -3266,19 +3267,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay-message")) {
 
-                        stage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
+                        oStage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
 
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-message")) {
 
-                        stage.startMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".start-message");
+                        oStage.startMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".start-message");
 
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".complete-message")) {
 
-                        stage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
+                        oStage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
 
                     }
 
@@ -3286,12 +3287,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (npcIdsToTalkTo != null) {
                         ids.addAll(npcIdsToTalkTo);
                     }
-                    stage.citizensToInteract = ids;
+                    oStage.citizensToInteract = ids;
 
                     if (stageFailed) {
                         break;
                     }
-                    quest.stages.add(stage);
+
+                    quest.orderedStages.add(oStage);
 
                 }
 
@@ -3531,7 +3533,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         continue;
                     }
                 }
-                
+
                 if (config.contains("quests." + s + ".rewards.phat-loots")) {
 
                     if (Quests.checkList(config.getList("quests." + s + ".rewards.phat-loots"), String.class)) {
@@ -4707,9 +4709,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             String name = getServer().getServerName().replaceAll("'", "''").replaceAll("\"", "''");
             String motd = getServer().getMotd().replaceAll("'", "''").replaceAll("\"", "''");
             String ip = getServer().getIp().trim();
-            if (ip.isEmpty()) {
-                ip = "localhost";
-            }
+            if (ip.isEmpty() || ip.startsWith("192") || ip.startsWith("localhost") || ip.startsWith("127") || ip.startsWith("0.0"))
+                return;
             String port = ((Integer) getServer().getPort()).toString();
 
             statement.executeUpdate("INSERT INTO entries VALUES ('" + ip + ":" + port + "', '" + name + "', '" + motd + "', " + quests.size() + ", '" + cit + "', '" + stamp.toString() + "')");

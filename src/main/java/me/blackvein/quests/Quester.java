@@ -85,7 +85,7 @@ public class Quester {
         if (q.testRequirements(player) == true) {
 
             currentQuest = q;
-            currentStage = q.stages.getFirst();
+            currentStage = q.orderedStages.getFirst();
             addEmpties();
             if (q.moneyReq > 0) {
                 Quests.economy.withdrawPlayer(name, q.moneyReq);
@@ -427,7 +427,7 @@ public class Quester {
 
         for (String boss : currentStage.bossesToKill) {
 
-            String bossName = Quests.getBoss(boss).Display;
+            String bossName = ChatColor.stripColor(Quests.getBoss(boss).Display);
 
             if (bossAmountsKilled.get(bossesKilled.indexOf(boss)) < currentStage.bossAmountsToKill.get(currentStage.bossesToKill.indexOf(boss))) {
 
@@ -2014,9 +2014,9 @@ public class Quester {
 
             currentStageIndex = data.getInt("currentStage");
 
-            for (Stage s : quest.stages) {
+            for (Stage s : quest.orderedStages) {
 
-                if (quest.stages.indexOf(s) == (currentStageIndex)) {
+                if (quest.orderedStages.indexOf(s) == (currentStageIndex)) {
                     stage = s;
                     break;
                 }
