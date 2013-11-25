@@ -172,6 +172,7 @@ public class PlayerListener implements Listener {
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getName());
+
             if (quester.currentStage != null) {
 
                 if (quester.currentStage.chatEvents.isEmpty() == false) {
@@ -181,7 +182,7 @@ public class PlayerListener implements Listener {
 
                         if (s.equalsIgnoreCase(chat)) {
 
-                            if (quester.eventFired.get(s) == false) {
+                            if (quester.eventFired.get(s) == null || quester.eventFired.get(s) == false) {
 
                                 quester.currentStage.chatEvents.get(s).fire(quester);
                                 quester.eventFired.put(s, true);

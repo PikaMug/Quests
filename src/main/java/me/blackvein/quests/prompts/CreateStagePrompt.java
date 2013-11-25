@@ -97,9 +97,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
 
         if (context.getSessionData(pref + CK.S_USE_IDS) == null) {
-            text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorPlaceBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorUseBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorPlaceBlocks") + "\n";
+            text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorUseBlocks") + "\n";
 
             LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_IDS);
             LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);

@@ -1773,6 +1773,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     public void loadQuests() {
 
+        boolean failedToLoad = false;
+        totalQuestPoints = 0;
+        boolean needsSaving = false;
+
         FileConfiguration config = new YamlConfiguration();
         File file = new File(this.getDataFolder(), "quests.yml");
 
@@ -1786,10 +1790,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             e.printStackTrace();
         }
 
-        ConfigurationSection section1 = config.getConfigurationSection("quests");
-        boolean failedToLoad = false;
-        totalQuestPoints = 0;
-        boolean needsSaving = false;
+        ConfigurationSection section1;
+        if(config.contains("quests"))
+            section1 = config.getConfigurationSection("quests");
+        else{
+            section1 = config.createSection("quests");
+            needsSaving = true;
+        }
+
+
         for (String s : section1.getKeys(false)) {
 
             try {
