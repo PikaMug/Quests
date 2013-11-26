@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+
 import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -1169,7 +1171,7 @@ public class Quester {
         fishCaught = 0;
 
         if (currentStage.itemsToEnchant.isEmpty() == false) {
-            for (Entry e : currentStage.itemsToEnchant.entrySet()) {
+            for (Entry<Map<Enchantment, Material>, Integer> e : currentStage.itemsToEnchant.entrySet()) {
 
                 Map<Enchantment, Material> map = (Map<Enchantment, Material>) e.getKey();
                 itemsEnchanted.put(map, 0);
@@ -1700,11 +1702,11 @@ public class Quester {
                 LinkedList<Integer> itemIds = new LinkedList<Integer>();
                 LinkedList<Integer> enchAmounts = new LinkedList<Integer>();
 
-                for (Entry e : itemsEnchanted.entrySet()) {
+                for (Entry<Map<Enchantment, Material>, Integer> e : itemsEnchanted.entrySet()) {
 
                     Map<Enchantment, Material> enchMap = (Map<Enchantment, Material>) e.getKey();
                     enchAmounts.add(itemsEnchanted.get(enchMap));
-                    for (Entry e2 : enchMap.entrySet()) {
+                    for (Entry<Enchantment, Material> e2 : enchMap.entrySet()) {
 
                         enchantments.add(Quester.prettyEnchantmentString((Enchantment) e2.getKey()));
                         itemIds.add(((Material) e2.getValue()).getId());
@@ -1847,7 +1849,7 @@ public class Quester {
                 LinkedList<Integer> potionIds = new LinkedList<Integer>();
                 LinkedList<Integer> potionAmounts = new LinkedList<Integer>();
 
-                for (Entry entry : potionsBrewed.entrySet()) {
+                for (Entry<Integer, Integer> entry : potionsBrewed.entrySet()) {
 
                     potionIds.add((Integer) entry.getKey());
                     potionAmounts.add((Integer) entry.getValue());

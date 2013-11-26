@@ -6,11 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import me.blackvein.quests.util.ColorUtil;
+
+import javax.xml.crypto.Data;
+
 import me.blackvein.quests.ItemData;
-import me.blackvein.quests.ItemData.Data;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.ColorUtil;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
@@ -225,38 +228,38 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
-            if(input.equalsIgnoreCase("cancel") == false){
+        	if(input.equalsIgnoreCase("cancel") == false){
 
-                try{
-                    Material mat = Material.getMaterial(Integer.parseInt(input));
-                    if(mat == null){
-                        cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
-                        return new IDPrompt();
-                    }else{
-                        cc.setSessionData("tempId", Integer.parseInt(input));
-                        return new ItemStackPrompt(oldPrompt);
-                    }
+        		String dataString = null;
+        		if (input.contains(":")) {
+        			String[] splitInput = input.split(":");
+        			input = splitInput[0];
+        			if (splitInput.length > 1) {
+        				dataString = splitInput[1];
+        			}
+        		}
 
-                }catch(NumberFormatException e){
-                	try {
-	                	Data data = ItemData.getInstance().getItem(input);
-	                	if (data == null) {
-	                		cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
-	                		return new IDPrompt();
-	                	} else {
+        		Material mat = ItemData.getMaterial(input);
+        		if(mat == null){
+        			cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
+        			return new IDPrompt();
+        		} else {
 
-	                		cc.setSessionData("tempId", data.getId());
-	                		cc.setSessionData("tempData", (data.getData() == 0) ? null : (short)data.getData());
-	                		return new ItemStackPrompt(oldPrompt);
-	                	}
-                	} catch (Exception e1) {
-                		e1.printStackTrace();
-                		cc.getForWhom().sendRawMessage(RED + "Invalid item ID!");
-                		return new IDPrompt();
-                	}
-                }
+        			cc.setSessionData("tempId", mat.getId());
 
-            }else{
+        			if (dataString != null) {
+        				try {
+        					short data = Short.parseShort(dataString);
+        					cc.setSessionData("tempData", data);
+        				} catch (NumberFormatException e) {
+        					cc.getForWhom().sendRawMessage(RED + "Invalid item data!");
+        					return new IDPrompt();
+        				}
+        			}
+        			return new ItemStackPrompt(oldPrompt);
+        		}
+
+        	}else{
 
                 return new ItemStackPrompt(oldPrompt);
 
