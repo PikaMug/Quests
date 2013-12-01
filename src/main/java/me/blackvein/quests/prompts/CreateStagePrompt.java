@@ -2695,7 +2695,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetLocations") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("stageEditorSetLocationRadii") + " (" + Lang.get("stageEditorNoLocationsSet") + ")\n";
-                text += GRAY + "3 - " + Lang.get("stageEditorSetLocationNames") + " (" + Lang.get(Lang.get("stageEditorNoLocationsSet")) + ")\n";
+                text += GRAY + "3 - " + Lang.get("stageEditorSetLocationNames") + " (" + Lang.get("stageEditorNoLocationsSet") + ")\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -2721,10 +2721,10 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 }
 
                 if (context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES) == null) {
-                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get(Lang.get("stageEditorSetLocationNames")) + " (" + Lang.get("noneSet") + ")\n";
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetLocationNames") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get(Lang.get("stageEditorSetLocationNames")) + "\n";
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetLocationNames") + "\n";
                     for (String s : getLocationNames(context)) {
 
                         text += GRAY + "    - " + AQUA + s + "\n";
