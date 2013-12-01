@@ -1,18 +1,5 @@
 package me.blackvein.quests;
 
-import com.codisimus.plugins.phatloots.PhatLoots;
-import com.codisimus.plugins.phatloots.PhatLootsAPI;
-import me.blackvein.quests.util.ColorUtil;
-import com.gmail.nossr50.datatypes.player.McMMOPlayer;
-import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.gmail.nossr50.mcMMO;
-import com.gmail.nossr50.util.player.UserManager;
-import com.herocraftonline.heroes.Heroes;
-import com.herocraftonline.heroes.characters.Hero;
-import com.herocraftonline.heroes.characters.classes.HeroClass;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -33,9 +20,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import me.ThaH3lper.com.EpicBoss;
 import me.ThaH3lper.com.Mobs.EpicMobs;
+import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
+import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -47,6 +37,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -78,9 +69,23 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
 import think.rpgitems.Plugin;
 import think.rpgitems.item.ItemManager;
 import think.rpgitems.item.RPGItem;
+
+import com.codisimus.plugins.phatloots.PhatLoots;
+import com.codisimus.plugins.phatloots.PhatLootsAPI;
+import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.util.player.UserManager;
+import com.herocraftonline.heroes.Heroes;
+import com.herocraftonline.heroes.characters.Hero;
+import com.herocraftonline.heroes.characters.classes.HeroClass;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
 
@@ -1142,7 +1147,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 }
 
-            } else if (args.length == 2) {
+            } else if (args.length >= 2) {
 
                 if (args[0].equalsIgnoreCase("quit")) {
 
@@ -1233,6 +1238,76 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         cs.sendMessage(RED + "You do not have access to that command.");
 
                     }
+                    
+                } else if (args[0].equalsIgnoreCase("setstage")) {
+                	
+                	 if (cs.hasPermission("quests.admin.setstage")) {
+
+                         Player target = null;
+
+                         for (Player p : getServer().getOnlinePlayers()) {
+
+                        	 //To ensure the correct player is selected
+                        	 if (p.getName().equalsIgnoreCase(args[1])) {
+                        		 target = p;
+                        		 break;
+                        	 }
+
+                         }
+                         
+                         if (target == null) {
+                        	 //
+                        	 for (Player p : getServer().getOnlinePlayers()) {
+                        		 
+                        		 if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+                                     target = p;
+                                     break;
+                                 }
+                        	 }
+                         }
+                         int stage = -1;
+                         if (args.length > 2) {
+                        	 try { 
+                        		 stage = Integer.parseInt(args[2]);
+                        	 } catch (NumberFormatException e) {
+                        		 cs.sendMessage(YELLOW + "Invalid number");
+                        	 }
+                         } else {
+                        	 cs.sendMessage(YELLOW + "Enter a stage");
+                        	 return true;
+                         }
+                         
+                         if (target == null) {
+
+                             cs.sendMessage(YELLOW + "Player not found.");
+
+                         } else {
+
+                             Quester quester = getQuester(target.getName());
+                             if (quester.currentQuest == null) {
+
+                                 cs.sendMessage(YELLOW + target.getName() + " does not currently have an active Quest.");
+
+                             } else {
+
+                                 try {
+									quester.currentQuest.setStage(quester, stage);
+								} catch (InvalidStageException e) {
+									cs.sendMessage(ChatColor.RED + "Advancing " + target.getName() + " to Stage: " + stage + ", has failed.");
+									cs.sendMessage(ChatColor.RED + "Not enough stages.");
+								}
+
+                                 quester.saveData();
+
+                             }
+
+                         }
+
+                     } else {
+
+                         cs.sendMessage(RED + "You do not have access to that command.");
+
+                     }
 
                 } else if (args[0].equalsIgnoreCase("finish")) {
 

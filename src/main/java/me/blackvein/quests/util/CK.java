@@ -100,6 +100,7 @@ public class CK {
 	public static final String E_NAME = "evtName";
 	public static final String E_MESSAGE = "evtMessage";
 	public static final String E_CLEAR_INVENTORY = "evtClearInv";
+	public static final String E_FAIL_QUEST = "evtFailQuest";
 	public static final String E_ITEMS = "evtItems";
 	public static final String E_ITEMS_AMOUNTS = "evtItemAmounts";
 	public static final String E_EXPLOSIONS = "evtExplosions";

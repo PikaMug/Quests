@@ -316,6 +316,7 @@ public class Lang {
 		en.put("eventEditorSetMessage", "Set message");
 
 		en.put("eventEditorClearInv", "Clear player inventory");
+		en.put("eventEditorFailQuest", "Fail the quest");
 		en.put("eventEditorSetExplosions", "Set explosion locations");
 		en.put("eventEditorSetLightning", "Set lightning strike locations");
 		en.put("eventEditorSetEffects", "Set effects");

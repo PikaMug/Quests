@@ -8,17 +8,22 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
 import think.rpgitems.item.ItemManager;
 import think.rpgitems.item.RPGItem;
 
@@ -89,7 +94,11 @@ public class Quest {
             } else {
 
                 q.currentStageIndex++;
+                try {
                 setStage(q, q.currentStageIndex);
+                } catch (InvalidStageException e) {
+                	e.printStackTrace();
+                }
 
             }
 
@@ -103,40 +112,42 @@ public class Quest {
 
     }
 
-    public void setStage(Quester q, int stage) {
+    public void setStage(Quester quester, int stage) throws InvalidStageException {
 
+    	quester.currentStageIndex = stage;
+    	
         if (orderedStages.size() - 1 < stage) {
-            return;
+        	throw new InvalidStageException(this, stage);
         }
 
-        q.resetObjectives();
+        quester.resetObjectives();
 
-        if (q.currentStage.script != null) {
-            plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, q.getPlayer());
+        if (quester.currentStage.script != null) {
+            plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, quester.getPlayer());
         }
 
-        if (q.currentStage.finishEvent != null) {
-            q.currentStage.finishEvent.fire(q);
+        if (quester.currentStage.finishEvent != null) {
+            quester.currentStage.finishEvent.fire(quester);
         }
 
-        q.currentStage = orderedStages.get(stage);
+        quester.currentStage = orderedStages.get(stage);
 
-        if (q.currentStage.startEvent != null) {
-            q.currentStage.startEvent.fire(q);
+        if (quester.currentStage.startEvent != null) {
+            quester.currentStage.startEvent.fire(quester);
         }
 
-        q.addEmpties();
+        quester.addEmpties();
 
-        q.getPlayer().sendMessage(ChatColor.GOLD + "---(Objectives)---");
-        for (String s : q.getObjectives()) {
+        quester.getPlayer().sendMessage(ChatColor.GOLD + "---(Objectives)---");
+        for (String s : quester.getObjectives()) {
 
-            q.getPlayer().sendMessage(s);
+            quester.getPlayer().sendMessage(s);
 
         }
 
-        String stageStartMessage = q.currentStage.startMessage;
+        String stageStartMessage = quester.currentStage.startMessage;
         if (stageStartMessage != null) {
-            q.getPlayer().sendMessage(Quests.parseString(stageStartMessage, q.currentQuest));
+            quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quester.currentQuest));
         }
 
     }
