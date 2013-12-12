@@ -2,7 +2,9 @@ package me.blackvein.quests;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
 import me.blackvein.quests.util.ColorUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,13 +13,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import net.citizensnpcs.api.CitizensAPI;
+
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -839,7 +844,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
     }
 
-    private class RedoDelayPrompt extends NumericPrompt {
+    private class RedoDelayPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -849,19 +854,31 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-
-            if (input.longValue() < -1) {
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+        		return new CreateMenuPrompt();
+        	}
+			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				context.setSessionData(CK.Q_REDO_DELAY, null);
+			}
+        	long delay = -1;
+        	try {
+        		delay = Long.parseLong(input);
+        	} catch (NumberFormatException e) {
+        		delay = MiscUtil.getTimeFromString(input);
+        	}
+        	
+    		if (delay < -1) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
-            } else if (input.longValue() == 0) {
+            } else if (delay == 0) {
                 context.setSessionData(CK.Q_REDO_DELAY, null);
-            } else if (input.longValue() != -1) {
-                context.setSessionData(CK.Q_REDO_DELAY, input.longValue());
-            }
+            } else if (delay != -1) {
+                context.setSessionData(CK.Q_REDO_DELAY, delay);
+            }            
 
             return new CreateMenuPrompt();
 
-        }
+		}
     }
 
     private class SavePrompt extends StringPrompt {

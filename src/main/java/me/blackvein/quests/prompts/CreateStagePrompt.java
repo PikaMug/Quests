@@ -3,6 +3,7 @@ package me.blackvein.quests.prompts;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import me.ThaH3lper.com.Mobs.EpicMobs;
 import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Event;
@@ -12,8 +13,10 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import net.aufdemrand.denizen.scripts.ScriptRegistry;
 import net.citizensnpcs.api.CitizensPlugin;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -3807,35 +3810,39 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
 
             Player player = (Player) context.getForWhom();
-
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-
-                long l;
-
-                try {
-
-                    l = Long.parseLong(input);
-
-                } catch (NumberFormatException e) {
-                    player.sendMessage(YELLOW + Lang.get("stageEditorNoNumber"));
-                    return new DelayPrompt();
-                }
-
-
-                if (l < 1000) {
-                    player.sendMessage(YELLOW + Lang.get("stageEditorInvalidDelay"));
-                    return new DelayPrompt();
-                } else {
-                    context.setSessionData(pref + CK.S_DELAY, l);
-                    return new CreateStagePrompt(stageNum, questFactory, citizens);
-                }
-
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(pref + CK.S_DELAY, null);
-                player.sendMessage(YELLOW + "Delay cleared.");
+            
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+            	return new CreateStagePrompt(stageNum, questFactory, citizens);
+            }
+            if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+            	context.setSessionData(pref + CK.S_DELAY, null);
+                player.sendMessage(GREEN + "Delay cleared.");
                 return new CreateStagePrompt(stageNum, questFactory, citizens);
+            }
+
+
+            long l;
+
+            try {
+
+            	l = Long.parseLong(input);
+
+            } catch (NumberFormatException e) {
+            	//returns -1 if incorrect input
+            	l = MiscUtil.getTimeFromString(input);
+
+            	if (l == -1) {
+            		player.sendMessage(RED + Lang.get("stageEditorNoNumber"));
+            		return new DelayPrompt();
+            	}
+            }
+
+            if (l < 1000) {
+            	player.sendMessage(RED + Lang.get("stageEditorInvalidDelay"));
+            	return new DelayPrompt();
             } else {
-                return new CreateStagePrompt(stageNum, questFactory, citizens);
+            	context.setSessionData(pref + CK.S_DELAY, l);
+            	return new CreateStagePrompt(stageNum, questFactory, citizens);
             }
 
         }
