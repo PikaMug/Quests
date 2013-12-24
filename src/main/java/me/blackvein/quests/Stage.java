@@ -106,9 +106,6 @@ public class Stage {
     };
     public LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
 
-    public LinkedList<String> bossesToKill = new LinkedList<String>();
-    public LinkedList<Integer> bossAmountsToKill = new LinkedList<Integer>();
-
     public LinkedList<Location> locationsToReach = new LinkedList<Location>();
     public LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
     public LinkedList<World> worldsToReachWithin = new LinkedList<World>();
@@ -219,14 +216,6 @@ public class Stage {
             }
 
             if (other.citizenNumToKill.equals(citizenNumToKill) == false) {
-                return false;
-            }
-
-            if(other.bossesToKill.equals(bossesToKill) == false){
-                return false;
-            }
-
-            if(other.bossAmountsToKill.equals(bossAmountsToKill) == false){
                 return false;
             }
 

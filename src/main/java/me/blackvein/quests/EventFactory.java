@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.util.CK;
+import static me.blackvein.quests.util.ColorUtil.PURPLE;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.QuestMob;
@@ -218,7 +219,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             context.setSessionData(CK.E_CLEAR_INVENTORY, "Yes");
         else
             context.setSessionData(CK.E_CLEAR_INVENTORY, "No");
-        
+
         if (event.failQuest == true)
         	context.setSessionData(CK.E_FAIL_QUEST, "Yes");
         else
@@ -512,7 +513,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
                 context.setSessionData(CK.E_CLEAR_INVENTORY, "No");
             }
-            
+
             if (context.getSessionData(CK.E_FAIL_QUEST) == null) {
             	context.setSessionData(CK.E_FAIL_QUEST, "No");
             }
@@ -696,9 +697,9 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                 }
 
                 return new CreateMenuPrompt();
-                
+
             } else if (input.equalsIgnoreCase("4")) {
-            	
+
             	String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
                 if (s.equalsIgnoreCase("Yes")) {
                     context.setSessionData(CK.E_FAIL_QUEST, "No");
@@ -989,7 +990,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             if(s.equalsIgnoreCase("Yes"))
                 section.set("clear-inventory", true);
         }
-        
+
         if (context.getSessionData(CK.E_FAIL_QUEST) != null) {
         	String s = getCString(context, CK.E_FAIL_QUEST);
         	if (s.equalsIgnoreCase("Yes"))
@@ -2172,6 +2173,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             mobs += PURPLE + "EnderDragon, ";
             mobs += PURPLE + "Ghast, ";
             mobs += PURPLE + "Giant, ";
+            mobs += PURPLE + "Horse, ";
             mobs += PURPLE + "IronGolem, ";
             mobs += PURPLE + "MagmaCube, ";
             mobs += PURPLE + "MushroomCow, ";
@@ -2332,7 +2334,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			
+
                         float chance;
 
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {

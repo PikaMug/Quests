@@ -67,8 +67,6 @@ public class CK {
 	public static final String S_NPCS_TO_TALK_TO = "npcIdsToTalkTo";
 	public static final String S_NPCS_TO_KILL = "npcIdsToKill";
 	public static final String S_NPCS_TO_KILL_AMOUNTS = "npcAmountsToKill";
-	public static final String S_BOSS_IDS = "bossIds";
-	public static final String S_BOSS_AMOUNTS = "bossAmounts";
 	public static final String S_MOB_TYPES = "mobTypes";
 	public static final String S_MOB_AMOUNTS = "mobAmounts";
 	public static final String S_MOB_KILL_LOCATIONS = "killLocations";

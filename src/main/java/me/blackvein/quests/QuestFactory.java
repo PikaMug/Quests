@@ -1,7 +1,6 @@
 package me.blackvein.quests;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import me.blackvein.quests.util.ColorUtil;
 
@@ -219,9 +218,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 }
 
             }
-            
+
             if(Quests.worldGuard != null){
-                
+
                 if (context.getSessionData(CK.Q_REGION) == null){
 
                     if (quests.citizens != null) {
@@ -241,15 +240,15 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     }
 
                 }
-            
+
             }else {
-                
+
                 if (quests.citizens != null) {
                     text += GRAY + "7 - Set Region (WorldGuard not installed)\n";
                 } else {
                     text += GRAY + "6 - Set Region (WorldGuard not installed)\n";
                 }
-                
+
             }
 
             if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
@@ -396,13 +395,13 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 }
 
             } else if (input.equalsIgnoreCase("13")) {
-                
+
                 if (quests.citizens != null) {
                     return new ExitPrompt();
                 }else{
                     return new CreateMenuPrompt();
                 }
-                
+
             }
 
             return null;
@@ -766,7 +765,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
     }
-    
+
     private class RegionPrompt extends StringPrompt {
 
         @Override
@@ -774,19 +773,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             String text = DARKGREEN + "- Quest Region -\n";
             boolean any = false;
-            
+
             for(World world : quests.getServer().getWorlds()){
-                
+
                 RegionManager rm = Quests.worldGuard.getRegionManager(world);
                 for(String region : rm.getRegions().keySet()){
-                    
+
                     any = true;
                     text += GREEN + region + ", ";
-                    
+
                 }
-                
+
             }
-            
+
             if(any) {
                 text = text.substring(0, text.length() - 2);
                 text += "\n\n";
@@ -807,9 +806,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 String found = null;
                 boolean done = false;
-                
+
                 for(World world : quests.getServer().getWorlds()){
-                
+
                     RegionManager rm = Quests.worldGuard.getRegionManager(world);
                     for(String region : rm.getRegions().keySet()){
 
@@ -867,14 +866,14 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         	} catch (NumberFormatException e) {
         		delay = MiscUtil.getTimeFromString(input);
         	}
-        	
+
     		if (delay < -1) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
             } else if (delay == 0) {
                 context.setSessionData(CK.Q_REDO_DELAY, null);
             } else if (delay != -1) {
                 context.setSessionData(CK.Q_REDO_DELAY, delay);
-            }            
+            }
 
             return new CreateMenuPrompt();
 
@@ -1095,7 +1094,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (cc.getSessionData(CK.Q_INITIAL_EVENT) != null) {
             initialEvent = (String) cc.getSessionData(CK.Q_INITIAL_EVENT);
         }
-        
+
         if (cc.getSessionData(CK.Q_REGION) != null) {
             region = (String) cc.getSessionData(CK.Q_REGION);
         }
@@ -1147,7 +1146,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             heroesClassRews = (LinkedList<String>) cc.getSessionData(CK.REW_HEROES_CLASSES);
             heroesExpRews = (LinkedList<Double>) cc.getSessionData(CK.REW_HEROES_AMOUNTS);
         }
-        
+
         if (cc.getSessionData(CK.REW_PHAT_LOOTS) != null) {
             phatLootRews = (LinkedList<String>) cc.getSessionData(CK.REW_PHAT_LOOTS);
         }
@@ -1226,9 +1225,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<Integer> npcKillIds;
         LinkedList<Integer> npcKillAmounts;
 
-        LinkedList<String> bossIds;
-        LinkedList<Integer> bossAmounts;
-
         LinkedList<String> mobs;
         LinkedList<Integer> mobAmounts;
         LinkedList<String> mobLocs;
@@ -1292,9 +1288,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             npcKillIds = null;
             npcKillAmounts = null;
-
-            bossIds = null;
-            bossAmounts = null;
 
             mobs = null;
             mobAmounts = null;
@@ -1376,11 +1369,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (cc.getSessionData(pref + CK.S_NPCS_TO_KILL) != null) {
                 npcKillIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_NPCS_TO_KILL);
                 npcKillAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
-            }
-
-            if (cc.getSessionData(pref + CK.S_BOSS_IDS) != null) {
-                bossIds = (LinkedList<String>) cc.getSessionData(pref + CK.S_BOSS_IDS);
-                bossAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BOSS_AMOUNTS);
             }
 
             if (cc.getSessionData(pref + CK.S_MOB_TYPES) != null) {
@@ -1491,8 +1479,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             stage.set("npc-ids-to-talk-to", npcTalkIds);
             stage.set("npc-ids-to-kill", npcKillIds);
             stage.set("npc-kill-amounts", npcKillAmounts);
-            stage.set("boss-ids-to-kill", bossIds);
-            stage.set("boss-amounts-to-kill", bossAmounts);
             stage.set("mobs-to-kill", mobs);
             stage.set("mob-amounts", mobAmounts);
             stage.set("locations-to-kill", mobLocs);
@@ -1559,7 +1545,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (q.initialEvent != null) {
             cc.setSessionData(CK.Q_INITIAL_EVENT, q.initialEvent.getName());
         }
-        
+
         if(q.region != null) {
             cc.setSessionData(CK.Q_REGION, q.region);
         }
@@ -1654,7 +1640,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
             cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
         }
-        
+
         if(q.phatLootRewards.isEmpty() == false) {
             cc.setSessionData(CK.REW_PHAT_LOOTS, q.phatLootRewards);
         }
@@ -1821,13 +1807,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 cc.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
                 cc.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, stage.citizenNumToKill);
-
-            }
-
-            if (stage.bossesToKill.isEmpty() == false) {
-
-                cc.setSessionData(pref + CK.S_BOSS_IDS, stage.bossesToKill);
-                cc.setSessionData(pref + CK.S_BOSS_AMOUNTS, stage.bossAmountsToKill);
 
             }
 

@@ -108,7 +108,6 @@ public class Lang {
 		en.put("stageEditorDeliverItems", "Deliver Items");
 		en.put("stageEditorTalkToNPCs", "Talk to NPCs");
 		en.put("stageEditorKillNPCs", "Kill NPCs");
-		en.put("stageEditorKillBosses", "Kill Bosses");
 		en.put("stageEditorKillMobs", "Kill Mobs");
 		en.put("stageEditorReachLocs", "Reach locations");
 		en.put("stageEditorReachRadii1", "Reach within");
@@ -159,7 +158,6 @@ public class Lang {
 		en.put("stageEditorSetTameAmounts", "Set tame amounts");
 		en.put("stageEditorSetShearColors", "Set sheep colors");
 		en.put("stageEditorSetShearAmounts", "Set shear amounts");
-		en.put("stageEditorSetBosses", "Set Bosses");
 
 		en.put("stageEditorEnterBlockIds", "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.");
 		en.put("stageEditorBreakBlocksPrompt", "Enter block amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
@@ -194,8 +192,6 @@ public class Lang {
 		en.put("stageEditorDelayPrompt", "Enter time (in milliseconds), or enter \"clear\" to clear the delay, or \"cancel\" to return");
 		en.put("stageEditorDelayMessagePrompt", "Enter delay message, or enter \"clear\" to clear the message, or \"cancel\" to return");
 		en.put("stageEditorScriptPrompt", "Enter script name, or enter \"clear\" to clear the script, or \"cancel\" to return");
-		en.put("stageEditorBossNamePrompt", "Enter Boss names, separating each one by a space, or \"cancel\" to return.");
-		en.put("stageEditorBossAmountPrompt", "Enter kill amounts (numbers), separating each one by a space, or \"cancel\" to return.");
 		en.put("stageEditorStartMessagePrompt", "Enter start message, or enter \"clear\" to clear the message, or \"cancel\" to return");
 		en.put("stageEditorCompleteMessagePrompt", "Enter complete message, or enter \"clear\" to clear the message, or \"cancel\" to return");
 
@@ -215,10 +211,8 @@ public class Lang {
         en.put("stageEditorDuplicateEvent", "Event is already in the list!");
 		en.put("stageEditorInvalidDelay", "Delay must be at least one second!");
 		en.put("stageEditorInvalidScript", "Denizen script not found!");
-		en.put("stageEditorInvalidBoss", "Could not find Boss with the name:");
 
 		en.put("stageEditorNoCitizens", "Citizens is not installed!");
-		en.put("stageEditorNoEpicBoss", "EpicBoss is not installed!");
 		en.put("stageEditorNoDenizen", "Denizen is not installed!");
 
 		en.put("stageEditorPositiveAmount", "You must enter a positive number!");
@@ -250,7 +244,6 @@ public class Lang {
 		en.put("stageEditorMobTypesNotSameSize", "The mob types list and the mob amounts list are not the same size!");
 		en.put("stageEditorTameMobsNotSameSize", "The mob types list and the tame amounts list are not the same size!");
 		en.put("stageEditorShearNotSameSize", "The sheep colors list and the shear amounts list are not the same size!");
-		en.put("stageEditorBossesNotSameSize", "The Boss IDs list and the Boss amounts list are not the same size!");
 
 		en.put("stageEditorListContainsDuplicates", " List contains duplicates!");
 
@@ -265,7 +258,6 @@ public class Lang {
 		en.put("stageEditorKillMobsCleared", "Kill Mobs objective cleared.");
 		en.put("stageEditorTameCleared", "Tame Mobs objective cleared.");
 		en.put("stageEditorShearCleared", "Shear Sheep objective cleared.");
-		en.put("stageEditorBossesCleared", "Kill Bosses objective cleared.");
 		en.put("stageEditorStartMessageCleared", "Start message cleared.");
 		en.put("stageEditorCompleteMessageCleared", "Complete message cleared.");
 
@@ -277,7 +269,6 @@ public class Lang {
 		en.put("stageEditorNPCNote", "Note: You may specify the name of the NPC with <npc>");
 		en.put("stageEditorOptional", "Optional");
 		en.put("stageEditorColors", "Sheep Colors");
-		en.put("stageEditorBosses", "Bosses");
 
 
 		//Events

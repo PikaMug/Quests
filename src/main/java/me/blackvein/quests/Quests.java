@@ -21,8 +21,6 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.ThaH3lper.com.EpicBoss;
-import me.ThaH3lper.com.Mobs.EpicMobs;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
 import me.blackvein.quests.util.ColorUtil;
@@ -94,7 +92,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static Permission permission = null;
     public static WorldGuardPlugin worldGuard = null;
     public static mcMMO mcmmo = null;
-    public static EpicBoss epicBoss = null;
     public static Plugin rpgItems = null;
     public static Heroes heroes = null;
     public static PhatLoots phatLoots = null;
@@ -185,10 +182,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         if (getServer().getPluginManager().getPlugin("RPG Items") != null) {
             rpgItems = (Plugin) getServer().getPluginManager().getPlugin("RPG Items");
-        }
-
-        if (getServer().getPluginManager().getPlugin("EpicBoss Gold Edition") != null) {
-            epicBoss = (EpicBoss) getServer().getPluginManager().getPlugin("EpicBoss Gold Edition");
         }
 
         if (getServer().getPluginManager().getPlugin("Heroes") != null) {
@@ -1238,9 +1231,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         cs.sendMessage(RED + "You do not have access to that command.");
 
                     }
-                    
+
                 } else if (args[0].equalsIgnoreCase("setstage")) {
-                	
+
                 	 if (cs.hasPermission("quests.admin.setstage")) {
 
                          Player target = null;
@@ -1254,11 +1247,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         	 }
 
                          }
-                         
+
                          if (target == null) {
                         	 //
                         	 for (Player p : getServer().getOnlinePlayers()) {
-                        		 
+
                         		 if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
                                      target = p;
                                      break;
@@ -1267,7 +1260,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                          }
                          int stage = -1;
                          if (args.length > 2) {
-                        	 try { 
+                        	 try {
                         		 stage = Integer.parseInt(args[2]);
                         	 } catch (NumberFormatException e) {
                         		 cs.sendMessage(YELLOW + "Invalid number");
@@ -1276,7 +1269,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         	 cs.sendMessage(YELLOW + "Enter a stage");
                         	 return true;
                          }
-                         
+
                          if (target == null) {
 
                              cs.sendMessage(YELLOW + "Player not found.");
@@ -2714,60 +2707,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
                             printSevere("[Quests] npc-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    List<String> bossIdsToKill;
-                    List<Integer> bossKillAmounts;
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".boss-ids-to-kill")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".boss-ids-to-kill"), String.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".boss-amounts-to-kill")) {
-
-                                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".boss-amounts-to-kill"), Integer.class)) {
-
-                                    bossIdsToKill = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".boss-ids-to-kill");
-                                    bossKillAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".boss-amounts-to-kill");
-                                    for (String boss : bossIdsToKill) {
-
-                                        if (Quests.getBoss(boss) != null) {
-
-                                            if (bossKillAmounts.get(bossIdsToKill.indexOf(boss)) > 0) {
-                                                oStage.bossesToKill.add(boss);
-                                                oStage.bossAmountsToKill.add(bossKillAmounts.get(bossIdsToKill.indexOf(boss)));
-                                            } else {
-                                                printSevere("[Quests] " + bossKillAmounts.get(bossIdsToKill.indexOf(boss)) + GOLD + " inside boss-amounts-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
-                                                stageFailed = true;
-                                                break;
-                                            }
-
-                                        } else {
-                                            printSevere("[Quests] " + boss + " inside boss-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid EpicBoss name!");
-                                            stageFailed = true;
-                                            break;
-                                        }
-
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] boss-amounts-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing boss-amounts-to-kill:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] boss-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of IDs!");
                             stageFailed = true;
                             break;
                         }
@@ -4822,19 +4761,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         return false;
     }
-
-    public static EpicMobs getBoss(String name) {
-
-        for (EpicMobs em : Quests.epicBoss.listMobs) {
-            if (em.cmdName.equalsIgnoreCase(name)) {
-                return em;
-            }
-        }
-
-        return null;
-
-    }
-
+    
     public static int getMCMMOSkillLevel(SkillType st, String player) {
 
         McMMOPlayer mPlayer = UserManager.getPlayer(player);
