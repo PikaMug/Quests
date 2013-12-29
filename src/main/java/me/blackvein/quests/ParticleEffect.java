@@ -13,7 +13,7 @@ public enum ParticleEffect {
     LARGE_EXPLODE("largeexplode"),
     FIREWORKS_SPARK("fireworksSpark"),
     BUBBLE("bubble"),
-    SUSPEND("suspend"),
+    SUSPEND("susgpend"),
     DEPTH_SUSPEND("depthSuspend"),
     TOWN_AURA("townaura"),
     CRIT("crit"),
