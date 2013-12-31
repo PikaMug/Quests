@@ -38,6 +38,7 @@ public class Quester {
     Quests plugin;
     public LinkedList<String> completedQuests = new LinkedList<String>();
     Map<String, Long> completedTimes = new HashMap<String, Long>();
+    Map<String, Integer> amountsCompleted = new HashMap<String, Integer>();
     Map<Material, Integer> blocksDamaged = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksBroken = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksPlaced = new EnumMap<Material, Integer>(Material.class);
@@ -78,27 +79,34 @@ public class Quester {
 
     }
 
-    public void takeQuest(Quest q) {
+    public void takeQuest(Quest q, boolean override) {
 
         Player player = plugin.getServer().getPlayer(name);
 
-        if (q.testRequirements(player) == true) {
+        if (q.testRequirements(player) == true || override) {
 
             currentQuest = q;
             currentStage = q.orderedStages.getFirst();
             addEmpties();
-            if (q.moneyReq > 0) {
-                Quests.economy.withdrawPlayer(name, q.moneyReq);
-            }
-
-            for (ItemStack is : q.items) {
-                if (q.removeItems.get(q.items.indexOf(is)) == true) {
-                    Quests.removeItem(player.getInventory(), is);
+            
+            if(!override){
+                
+                if (q.moneyReq > 0) {
+                    Quests.economy.withdrawPlayer(name, q.moneyReq);
                 }
+
+                for (ItemStack is : q.items) {
+                    if (q.removeItems.get(q.items.indexOf(is)) == true) {
+                        Quests.removeItem(player.getInventory(), is);
+                    }
+                }
+                
+                player.sendMessage(ChatColor.GREEN + "Quest accepted: " + q.name);
+                player.sendMessage("");
+            
             }
 
-            player.sendMessage(ChatColor.GREEN + "Quest accepted: " + q.name);
-            player.sendMessage("");
+            
             player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
             for (String s : getObjectives()) {
                 player.sendMessage(s);
@@ -124,6 +132,8 @@ public class Quester {
             if(currentStage.startEvent != null)
                 currentStage.startEvent.fire(this);
 
+            saveData();
+            
         } else {
 
             player.sendMessage(q.failRequirements);
@@ -992,7 +1002,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("deliverItem")) {
 
-            String message = ChatColor.GREEN + "(Completed) Deliver " + ItemUtil.getString(currentStage.itemsToDeliver.get(currentStage.itemsToDeliver.indexOf(itemstack))) + " " + ItemUtil.getName(itemstack) + " to " + plugin.getNPCName(currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(itemstack)));
+            String message = ChatColor.GREEN + "(Completed) Deliver " + ItemUtil.getString(currentStage.itemsToDeliver.get(currentStage.itemsToDeliver.indexOf(itemstack))) + " to " + plugin.getNPCName(currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(itemstack)));
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1529,23 +1539,6 @@ public class Quester {
 
         FileConfiguration data = new YamlConfiguration();
 
-        if (completedTimes.isEmpty() == false) {
-
-            List<String> questTimeNames = new LinkedList<String>();
-            List<Long> questTimes = new LinkedList<Long>();
-
-            for (String s : completedTimes.keySet()) {
-
-                questTimeNames.add(s);
-                questTimes.add(completedTimes.get(s));
-
-            }
-
-            data.set("completedRedoableQuests", questTimeNames);
-            data.set("completedQuestTimes", questTimes);
-
-        }
-
         if (currentQuest != null) {
 
             data.set("currentQuest", currentQuest.name);
@@ -1870,6 +1863,40 @@ public class Quester {
             data.set("completed-Quests", completed);
 
         }
+        
+        if (completedTimes.isEmpty() == false) {
+
+            List<String> questTimeNames = new LinkedList<String>();
+            List<Long> questTimes = new LinkedList<Long>();
+
+            for (String s : completedTimes.keySet()) {
+
+                questTimeNames.add(s);
+                questTimes.add(completedTimes.get(s));
+
+            }
+
+            data.set("completedRedoableQuests", questTimeNames);
+            data.set("completedQuestTimes", questTimes);
+
+        }
+        
+        if (amountsCompleted.isEmpty() == false) {
+            
+            List<String> list1 = new LinkedList<String>();
+            List<Integer> list2 = new LinkedList<Integer>();
+            
+            for(Entry<String, Integer> entry : amountsCompleted.entrySet()){
+                
+                list1.add(entry.getKey());
+                list2.add(entry.getValue());
+                
+            }
+            
+            data.set("amountsCompletedQuests", list1);
+            data.set("amountsCompleted", list2);
+            
+        }
 
         return data;
 
@@ -1905,6 +1932,21 @@ public class Quester {
 
             }
 
+        }
+        
+        amountsCompleted.clear();
+        
+        if (data.contains("amountsCompletedQuests")) {
+            
+            List<String> list1 = data.getStringList("amountsCompletedQuests");
+            List<Integer> list2 = data.getIntegerList("amountsCompleted");
+            
+            for(int i = 0; i < list1.size(); i++){
+                
+                amountsCompleted.put(list1.get(i), list2.get(i));
+                
+            }
+            
         }
 
         questPoints = data.getInt("quest-points");

@@ -957,7 +957,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             }
 
             if (list.isEmpty()) {
-                text += GRAY + "(None)";
+                text += GRAY + "(None)\n";
             } else {
 
                 Collections.sort(list);

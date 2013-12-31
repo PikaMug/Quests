@@ -335,7 +335,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (s.equalsIgnoreCase("Yes")) {
 
-                getQuester(player.getName()).takeQuest(getQuest(getQuester(player.getName()).questToTake));
+                getQuester(player.getName()).takeQuest(getQuest(getQuester(player.getName()).questToTake), false);
                 return Prompt.END_OF_CONVERSATION;
 
             } else if (s.equalsIgnoreCase("No")) {
@@ -983,10 +983,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             completed = PURPLE + "";
                             for (String s : quester.completedQuests) {
 
+                                completed += s;
+                                
+                                if (quester.amountsCompleted.containsKey(s) && quester.amountsCompleted.get(s) > 1){
+                                    completed += PINK + " (x" + quester.amountsCompleted.get(s) + ")";
+                                }
+                                
                                 if (quester.completedQuests.indexOf(s) < (quester.completedQuests.size() - 1)) {
-                                    completed = completed + s + ", ";
-                                } else {
-                                    completed = completed + s;
+                                    completed += ", ";
                                 }
 
                             }
@@ -1387,16 +1391,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                         } catch (IOException e) {
 
-                                            if (failCount < 4) {
+                                            if (failCount < 10) {
                                                 cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", skipping..");
+                                                failCount++;
                                             } else if (suppressed == false) {
                                                 cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", suppressing further errors.");
                                                 suppressed = true;
                                             }
 
                                         } catch (InvalidConfigurationException e) {
-                                            if (failCount < 4) {
+                                            if (failCount < 10) {
                                                 cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", skipping..");
+                                                failCount++;
                                             } else if (suppressed == false) {
                                                 cs.sendMessage(RED + "Error reading " + DARKAQUA + f.getName() + RED + ", suppressing further errors.");
                                                 suppressed = true;
@@ -1506,20 +1512,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             } else {
 
                                 Quester quester = getQuester(target.getName());
-
                                 quester.resetObjectives();
 
-                                quester.currentQuest = questToGive;
-                                quester.currentStage = questToGive.orderedStages.getFirst();
-                                quester.addEmpties();
                                 cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly started the Quest " + PURPLE + questToGive.name + GOLD + ".");
-                                target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
-                                target.sendMessage(GOLD + "---(Objectives)---");
-                                for (String s : quester.getObjectives()) {
-                                    target.sendMessage(s);
-                                }
-
-                                quester.saveData();
+                                target.sendMessage(GREEN + "You have been forced to take the Quest " + PURPLE + questToGive.name + GOLD + ".");
+                                quester.takeQuest(questToGive, true);
 
                             }
 

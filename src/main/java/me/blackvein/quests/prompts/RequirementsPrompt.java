@@ -750,7 +750,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             }
 
             if (list.isEmpty()) {
-                text += GRAY + "(None)";
+                text += GRAY + "(None)\n";
             } else {
 
                 Collections.sort(list);
@@ -818,7 +818,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             }
 
             if (list.isEmpty()) {
-                text += GRAY + "(None)";
+                text += GRAY + "(None)\n";
             } else {
 
                 Collections.sort(list);
