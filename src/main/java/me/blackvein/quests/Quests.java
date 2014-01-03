@@ -2,10 +2,6 @@ package me.blackvein.quests;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
@@ -84,6 +80,12 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.sql.Date;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
 
@@ -4716,30 +4718,74 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public void snoop() {
-
+        
+        String ip = getServer().getIp().trim();
+        if (ip.isEmpty() || ip.startsWith("192") || ip.startsWith("localhost") || ip.startsWith("127") || ip.startsWith("0.0"))
+           return;
+        
+        snoop_delete();
+        snoop_insert();
+        
+    }
+    
+    private void snoop_insert() {
+        
         try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            String url = "jdbc:mysql://173.234.237.34:3306/bigal_quests";
-            Connection conn = DriverManager.getConnection(url, "bigal_snooper", "merv41");
-            Statement statement = conn.createStatement();
-            java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
+            
+            Date date = new Date(System.currentTimeMillis());
             Timestamp stamp = new Timestamp(date.getTime());
-            statement.executeUpdate("DELETE FROM entries WHERE server='" + getServer().getIp() + ":" + ((Integer) getServer().getPort()).toString() + "'");
-            String cit = citizens != null ? "true" : "false";
-            String name = getServer().getServerName().replaceAll("'", "''").replaceAll("\"", "''");
-            String motd = getServer().getMotd().replaceAll("'", "''").replaceAll("\"", "''");
-            String ip = getServer().getIp().trim();
-            if (ip.isEmpty() || ip.startsWith("192") || ip.startsWith("localhost") || ip.startsWith("127") || ip.startsWith("0.0"))
-                return;
-            String port = ((Integer) getServer().getPort()).toString();
+            String arguments = "arg1=" + getServer().getIp()
+                    + "&arg2=" + ((Integer) getServer().getPort()).toString()
+                    + "&arg3=" + URLEncoder.encode(getServer().getServerName().replaceAll("'", "''").replaceAll("\"", "''"), "UTF-8")
+                    + "&arg4=" + URLEncoder.encode(getServer().getMotd().replaceAll("'", "''").replaceAll("\"", "''"), "UTF-8")
+                    + "&arg5=" + quests.size()
+                    + "&arg6=" + (citizens != null ? "true" : "false")
+                    + "&arg7=" + URLEncoder.encode(stamp.toString(), "UTF-8");
+            System.out.println("Arguments");
+            System.out.println(arguments);
+            URL url = new URL("http://www.bcitdnd.net/php/quests.php?" + arguments);
+            URLConnection yc = url.openConnection();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            yc.getInputStream()));
+            String inputLine;
 
-            statement.executeUpdate("INSERT INTO entries VALUES ('" + ip + ":" + port + "', '" + name + "', '" + motd + "', " + quests.size() + ", '" + cit + "', '" + stamp.toString() + "')");
-        } catch (ClassNotFoundException e) {
-        } catch (IllegalAccessException e) {
-        } catch (InstantiationException e) {
-        } catch (SQLException e) {
+            while ((inputLine = in.readLine()) != null) {
+                if(inputLine.equalsIgnoreCase("false"))
+                    printWarning("[Quests] An error occurred inserting data into the snooper database!");
+            }
+            in.close();
+
+        } catch (Exception e) {
+            printWarning("[Quests] An error occurred inserting data into the snooper database!");
         }
+        
+    }
+    
+    private void snoop_delete() {
+        
+        try {
+            
+            String arguments = "arg1=" + getServer().getIp() + "&arg2=" + ((Integer) getServer().getPort()).toString();
+            URL url = new URL("http://www.bcitdnd.net/php/quests_del.php?" + arguments);
+            System.out.println("Delete arguments");
+            System.out.println(arguments);
+            URLConnection yc = url.openConnection();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            yc.getInputStream()));
+            String inputLine;
 
+            while ((inputLine = in.readLine()) != null) {
+                if(inputLine.equalsIgnoreCase("false"))
+                    printWarning("[Quests] An error occurred removing old data from the snooper database!");
+            }
+            in.close();
+
+        } catch (Exception e) {
+            printWarning("[Quests] An error occurred removing old data from the snooper database!");
+        }
+        
     }
 
     public boolean hasQuest(NPC npc, Quester quester) {

@@ -65,7 +65,7 @@
         <dependency>
             <groupId>com.herocraftonline</groupId>
             <artifactId>Heroes</artifactId>
-            <version>1.5.4-SNAPSHOT</version>
+            <version>1.5.5</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/Heroes.jar</systemPath>
         </dependency>
