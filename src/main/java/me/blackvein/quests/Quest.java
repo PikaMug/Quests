@@ -52,6 +52,7 @@ public class Quest {
     List<Integer> mcMMOAmountReqs = new LinkedList<Integer>();
     String heroesPrimaryClassReq = null;
     String heroesSecondaryClassReq = null;
+    List<String> customRequirements = new LinkedList<String>();
     public String failRequirements = null;
     //
     //Rewards
@@ -223,6 +224,25 @@ public class Quest {
                 return false;
             }
 
+        }
+        
+        for (String s : customRequirements){
+            
+            CustomRequirement found = null;
+            for(CustomRequirement cr : plugin.customRequirements){
+                if(cr.getName().equalsIgnoreCase(s)){
+                    found = cr;
+                    break;
+                }
+            }
+            
+            if(found != null){
+                if(found.testRequirement(player) == false)
+                    return false;
+            }else{
+                Quests.printWarning("[Quests] Quester \"" + player.getName() + "\" attempted to take Quest \"" + name + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");
+            }
+            
         }
 
         if (quester.questPoints < questPointsReq) {
@@ -606,6 +626,10 @@ public class Quest {
             } else if (other.heroesSecondaryClassReq != null && heroesSecondaryClassReq == null) {
                 return false;
             } else if (other.heroesSecondaryClassReq == null && heroesSecondaryClassReq != null) {
+                return false;
+            }
+            
+            if (other.customRequirements.equals(customRequirements) == false){
                 return false;
             }
 

@@ -1020,6 +1020,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<Integer> mcMMOAmountReqs = null;
         String heroesPrimaryReq = null;
         String heroesSecondaryReq = null;
+        LinkedList<String> customReqs = null;
         String failMessage = null;
 
         Integer moneyRew = null;
@@ -1085,6 +1086,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (cc.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
             heroesSecondaryReq = (String) cc.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS);
+        }
+        
+        if (cc.getSessionData(CK.REQ_CUSTOM) != null) {
+            customReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_CUSTOM);
         }
 
         if (cc.getSessionData(CK.Q_FAIL_MESSAGE) != null) {
@@ -1160,7 +1165,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("initial-event", initialEvent);
         cs.set("region", region);
 
-        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) || heroesPrimaryReq != null || heroesSecondaryReq != null) {
+        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) || heroesPrimaryReq != null || heroesSecondaryReq != null || customReqs != null) {
 
             ConfigurationSection reqs = cs.createSection("requirements");
             List<String> items = new LinkedList<String>();
@@ -1183,6 +1188,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             reqs.set("mcmmo-amounts", mcMMOAmountReqs);
             reqs.set("heroes-primary-class", heroesPrimaryReq);
             reqs.set("heroes-secondary-class", heroesSecondaryReq);
+            reqs.set("custom-requirements", customReqs);
             reqs.set("fail-requirement-message", failMessage);
 
         } else {

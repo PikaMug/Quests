@@ -82,10 +82,15 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Date;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
 
@@ -108,6 +113,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static String effect = "note";
     public final Map<String, Quester> questers = new HashMap<String, Quester>();
     public final List<String> questerBlacklist = new LinkedList<String>();
+    public final List<CustomRequirement> customRequirements = new LinkedList<CustomRequirement>();
     public final LinkedList<Quest> quests = new LinkedList<Quest>();
     public final LinkedList<Event> events = new LinkedList<Event>();
     public final LinkedList<NPC> questNPCs = new LinkedList<NPC>();
@@ -223,6 +229,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         loadConfig();
+        loadModules();
         lang = new Lang(this);
         lang.initPhrases();
         lang.save();
@@ -421,6 +428,66 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             e.printStackTrace();
         }
 
+    }
+    
+    public void loadModules() {
+        
+        File f = new File(this.getDataFolder(), "modules");
+        if(f.exists() && f.isDirectory()){
+            
+            File[] modules = f.listFiles();
+            for(File module : modules){
+                
+                loadModule(module);
+                
+            }
+            
+        }else {
+            
+            f.mkdir();
+            
+        }
+        
+    }
+    
+    public void loadModule(File jar){
+        
+        try{
+           
+            JarFile jarFile = new JarFile(jar);
+            Enumeration e = jarFile.entries();
+ 
+            URL[] urls = { new URL("jar:file:" + jar.getPath() + "!/") };
+           
+            ClassLoader cl = URLClassLoader.newInstance(urls, getClassLoader());
+ 
+            while (e.hasMoreElements()) {
+               
+                JarEntry je = (JarEntry) e.nextElement();
+                if(je.isDirectory() || !je.getName().endsWith(".class")){
+                    continue;
+                }
+               
+                String className = je.getName().substring(0,je.getName().length()-6);
+                className = className.replace('/', '.');
+                Class<?> c = Class.forName(className, true, cl);
+                Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
+                Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
+                CustomRequirement requirement = cstrctr.newInstance();
+                customRequirements.add(requirement);
+                String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
+                String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
+                printInfo("[Quests] Loaded Module: " + name + " by " + author);
+            }
+       
+        }catch (Exception e){
+            printSevere("[Quests] Error: Unable to load module from file: " + jar.getName());
+            if(debug){
+                printSevere("[Quests] Error log:");
+                e.printStackTrace();
+            }
+        }
+        
     }
 
     public void printHelp(Player player) {
@@ -2208,6 +2275,27 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             continue;
                         }
 
+                    }
+                    
+                    if (config.contains("quests." + s + ".requirements.custom-requirements")) {
+                        quest.customRequirements = config.getStringList("quests." + s + ".requirements.custom-requirements");
+                        
+                        for(String req : quest.customRequirements){
+                            
+                            boolean found = false;
+                            
+                            for(CustomRequirement cr : customRequirements){
+                                if(cr.getName().equalsIgnoreCase(req)){
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            
+                            if(!found){
+                                printWarning("[Quests] Custom requirement \"" + req + "\" for Quest \"" + quest.name + "\" could not be found!");
+                            }
+                            
+                        }
                     }
 
                 }

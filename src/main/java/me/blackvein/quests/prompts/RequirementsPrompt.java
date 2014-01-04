@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import me.blackvein.quests.CustomRequirement;
 
 import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Quest;
@@ -30,7 +31,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
     public RequirementsPrompt(Quests plugin, QuestFactory qf) {
 
-        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
         quests = plugin;
         factory = qf;
 
@@ -135,15 +136,27 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             text += GRAY + "8 - Set Heroes requirements (Heroes not installed)\n";
         }
 
-        if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
-            text += GRAY + "" + BOLD + "9 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
-        } else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
-            text += RED + "" + BOLD + "9 - " + RESET + RED + "Set fail requirements message (Required)\n";
+        if (context.getSessionData(CK.REQ_CUSTOM) == null) {
+            text += BLUE + "" + BOLD + "9 - " + RESET + ITALIC + PURPLE + "Custom Requirements (None set)\n";
         } else {
-            text += BLUE + "" + BOLD + "9 - " + RESET + YELLOW + "Set fail requirements message" + GRAY + "(" + AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + GRAY + ")\n";
+            text += BLUE + "" + BOLD + "9 - " + RESET + ITALIC + PURPLE + "Custom Requirements\n";
+            LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+            for(String s : customReqs){
+                
+                text += RESET + "" + PURPLE + "  - " + PINK + s + "\n";
+                
+            }
         }
 
-        text += GREEN + "" + BOLD + "10" + RESET + YELLOW + " - Done";
+        if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null && context.getSessionData(CK.REQ_CUSTOM) == null) {
+            text += GRAY + "" + BOLD + "10 - " + RESET + GRAY + "Set fail requirements message (No requirements set)\n";
+        } else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
+            text += RED + "" + BOLD + "10 - " + RESET + RED + "Set fail requirements message (Required)\n";
+        } else {
+            text += BLUE + "" + BOLD + "10 - " + RESET + YELLOW + "Set fail requirements message" + GRAY + "(" + AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + GRAY + ")\n";
+        }
+
+        text += GREEN + "" + BOLD + "11" + RESET + YELLOW + " - Done";
 
         return text;
 
@@ -177,9 +190,11 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
                 return new RequirementsPrompt(quests, factory);
             }
         } else if (input.equalsIgnoreCase("9")) {
-            return new FailMessagePrompt();
+            return new CustomRequirementsPrompt();
         } else if (input.equalsIgnoreCase("10")) {
-            if (context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null || context.getSessionData(CK.REQ_ITEMS) != null || context.getSessionData(CK.REQ_PERMISSION) != null || context.getSessionData(CK.REQ_QUEST) != null || context.getSessionData(CK.REQ_QUEST_BLOCK) != null || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null || context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
+            return new FailMessagePrompt();
+        } else if (input.equalsIgnoreCase("11")) {
+            if (context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null || context.getSessionData(CK.REQ_ITEMS) != null || context.getSessionData(CK.REQ_PERMISSION) != null || context.getSessionData(CK.REQ_QUEST) != null || context.getSessionData(CK.REQ_QUEST_BLOCK) != null || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null || context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null || context.getSessionData(CK.REQ_CUSTOM) != null) {
 
                 if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
                     context.getForWhom().sendRawMessage(RED + "You must set a fail requirements message!");
@@ -528,6 +543,74 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
+    
+    private class CustomRequirementsPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            String text = PINK + "- Custom Requirements -\n";
+            if(quests.customRequirements.isEmpty()){
+                text += BOLD + "" + PURPLE + "(No modules loaded)";
+            }else {
+                for(CustomRequirement cr : quests.customRequirements)
+                    text += PURPLE + " - " + cr.getName() + "\n";
+            }
+            
+            return text + YELLOW + "Enter the name of a custom requirement to add, or enter \'clear\' to clear all custom requirements, or \'cancel\' to return.";
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+
+                CustomRequirement found = null;
+                for(CustomRequirement cr : quests.customRequirements){
+                    if(cr.getName().equalsIgnoreCase(input)){
+                        found = cr;
+                        break;
+                    }
+                }
+                
+                if(found == null){
+                    for(CustomRequirement cr : quests.customRequirements){
+                        if(cr.getName().toLowerCase().contains(input.toLowerCase())){
+                            found = cr;
+                            break;
+                        }
+                    }
+                }
+                
+                if(found != null){
+                    
+                    if(context.getSessionData(CK.REQ_CUSTOM) != null){
+                        LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+                        if(list.contains(found.getName()) == false){
+                            list.add(found.getName());
+                        }else{
+                            context.getForWhom().sendRawMessage(YELLOW + "That custom requirement has already been added!");
+                            return new CustomRequirementsPrompt();
+                        }
+                    }else{
+                        LinkedList<String> list = new LinkedList<String>();
+                        list.add(found.getName());
+                        context.setSessionData(CK.REQ_CUSTOM, list);
+                    }
+                    
+                }else{
+                    context.getForWhom().sendRawMessage(YELLOW + "Custom requirement module not found.");
+                    return new CustomRequirementsPrompt();
+                }
+
+            } else if (input.equalsIgnoreCase("clear")) {
+                context.setSessionData(CK.REQ_CUSTOM, null);
+                context.getForWhom().sendRawMessage(YELLOW + "Custom requirements cleared.");
+            }
+
+            return new RequirementsPrompt(quests, factory);
+
+        }
+    }
 
     private class mcMMOPrompt extends FixedSetPrompt {
 
@@ -803,7 +886,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
-    
+
     private class HeroesSecondaryPrompt extends StringPrompt {
 
         @Override

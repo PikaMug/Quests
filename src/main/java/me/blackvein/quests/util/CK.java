@@ -28,7 +28,8 @@ public class CK {
         public static final String REQ_HEROES_PRIMARY_CLASS = "heroesPrimaryClassReq";
         public static final String REQ_HEROES_SECONDARY_CLASS = "heroesSecondaryClassReq";
 	public static final String REQ_QUEST = "questReqs";
-	public static final String REQ_QUEST_BLOCK= "questBlocks";
+	public static final String REQ_QUEST_BLOCK = "questBlocks";
+        public static final String REQ_CUSTOM = "customReqs";
 
 	//Rewards
 	public static final String REW_MONEY = "moneyRew";
