@@ -455,7 +455,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         try{
            
             JarFile jarFile = new JarFile(jar);
-            Enumeration e = jarFile.entries();
+            Enumeration<JarEntry> e = jarFile.entries();
  
             URL[] urls = { new URL("jar:file:" + jar.getPath() + "!/") };
            
@@ -463,24 +463,39 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
  
             while (e.hasMoreElements()) {
                
-                JarEntry je = (JarEntry) e.nextElement();
-                if(je.isDirectory() || !je.getName().endsWith(".class")){
-                    continue;
-                }
-               
-                String className = je.getName().substring(0,je.getName().length()-6);
-                className = className.replace('/', '.');
-                Class<?> c = Class.forName(className, true, cl);
-                Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
-                Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
-                CustomRequirement requirement = cstrctr.newInstance();
-                customRequirements.add(requirement);
-                String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
-                String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
-                printInfo("[Quests] Loaded Module: " + name + " by " + author);
+            	JarEntry je = e.nextElement();
+            	if(je.isDirectory() || !je.getName().endsWith(".class")){
+            		continue;
+            	}
+	               
+            	String className = je.getName().replaceAll("\\.class$", "");
+            	className = className.replace('/', '.');
+	                
+            	try {
+	                Class<?> c = Class.forName(className, true, cl);
+	                //If CustomRequirement.class is not the super class of 'c', continue.
+	                if (!CustomRequirement.class.isAssignableFrom(c)) {
+	                	continue;
+	                }
+	                
+	                Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
+	                CustomRequirement requirement = requirementClass.newInstance();
+	                
+	                customRequirements.add(requirement);
+	                
+	                String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
+	                String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
+	                printInfo("[Quests] Loaded Module: " + name + " by " + author);
+	                
+            	} catch (Exception exception) {
+            		//If this class fails to load, go to next class instead of failing the whole module.
+            		printSevere("[Quests] Error: Unable to load module: " + className + " from file: " + jar.getName());
+            		continue;
+            	}
             }
        
-        }catch (Exception e){
+            jarFile.close();
+        } catch (Exception e) {
             printSevere("[Quests] Error: Unable to load module from file: " + jar.getName());
             if(debug){
                 printSevere("[Quests] Error log:");
@@ -488,6 +503,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
         }
         
+    }
+    
+    /**
+     * Add custom requirements to Quests, 
+     * @param requirement, the requirement that is to be added.
+     * @param plugin, the plugin that adds this requirement.
+     */
+    public void addCustomRequirement(CustomRequirement requirement, Plugin plugin) {
+    	customRequirements.add(requirement);
+    	printInfo("[Quests] Loaded custom requirement from: " + plugin.getName());
     }
 
     public void printHelp(Player player) {
