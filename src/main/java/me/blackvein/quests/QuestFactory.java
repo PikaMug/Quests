@@ -1021,6 +1021,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         String heroesPrimaryReq = null;
         String heroesSecondaryReq = null;
         LinkedList<String> customReqs = null;
+        LinkedList<Map<String, Object>> customReqsData = null;
         String failMessage = null;
 
         Integer moneyRew = null;
@@ -1090,6 +1091,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         
         if (cc.getSessionData(CK.REQ_CUSTOM) != null) {
             customReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_CUSTOM);
+            customReqsData = (LinkedList<Map<String, Object>>) cc.getSessionData(CK.REQ_CUSTOM_DATA);
         }
 
         if (cc.getSessionData(CK.Q_FAIL_MESSAGE) != null) {
@@ -1188,7 +1190,14 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             reqs.set("mcmmo-amounts", mcMMOAmountReqs);
             reqs.set("heroes-primary-class", heroesPrimaryReq);
             reqs.set("heroes-secondary-class", heroesSecondaryReq);
-            reqs.set("custom-requirements", customReqs);
+            if(customReqs != null){
+                ConfigurationSection customReqsSec = reqs.createSection("custom-requirements");
+                for(int i = 0; i < customReqs.size(); i++){
+                    ConfigurationSection customReqSec = customReqsSec.createSection("req" + (i + 1));
+                    customReqSec.set("name", customReqs.get(i));
+                    customReqSec.set("data", customReqsData.get(i));
+                }
+            }
             reqs.set("fail-requirement-message", failMessage);
 
         } else {
@@ -1603,6 +1612,23 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (q.failRequirements != null) {
             cc.setSessionData(CK.Q_FAIL_MESSAGE, q.failRequirements);
+        }
+        
+        if (q.customRequirements.isEmpty() == false) {
+            
+            LinkedList<String> list = new LinkedList<String>();
+            LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+            
+            for(Entry<String, Map<String, Object>> entry : q.customRequirements.entrySet()){
+                
+                list.add(entry.getKey());
+                datamapList.add(entry.getValue());
+                
+            }
+            
+            cc.setSessionData(CK.REQ_CUSTOM, list);
+            cc.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
+            
         }
         //
 

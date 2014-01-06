@@ -8,10 +8,12 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.util.HashMap;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
@@ -52,7 +54,7 @@ public class Quest {
     List<Integer> mcMMOAmountReqs = new LinkedList<Integer>();
     String heroesPrimaryClassReq = null;
     String heroesSecondaryClassReq = null;
-    List<String> customRequirements = new LinkedList<String>();
+    Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
     public String failRequirements = null;
     //
     //Rewards
@@ -226,7 +228,7 @@ public class Quest {
 
         }
         
-        for (String s : customRequirements){
+        for (String s : customRequirements.keySet()){
             
             CustomRequirement found = null;
             for(CustomRequirement cr : plugin.customRequirements){
@@ -237,7 +239,7 @@ public class Quest {
             }
             
             if(found != null){
-                if(found.testRequirement(player) == false)
+                if(found.testRequirement(player, customRequirements.get(s)) == false)
                     return false;
             }else{
                 Quests.printWarning("[Quests] Quester \"" + player.getName() + "\" attempted to take Quest \"" + name + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");

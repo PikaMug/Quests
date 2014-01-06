@@ -455,7 +455,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         try{
            
             JarFile jarFile = new JarFile(jar);
-            Enumeration<JarEntry> e = jarFile.entries();
+            Enumeration e = jarFile.entries();
  
             URL[] urls = { new URL("jar:file:" + jar.getPath() + "!/") };
            
@@ -463,39 +463,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
  
             while (e.hasMoreElements()) {
                
-            	JarEntry je = e.nextElement();
-            	if(je.isDirectory() || !je.getName().endsWith(".class")){
-            		continue;
-            	}
-	               
-            	String className = je.getName().replaceAll("\\.class$", "");
-            	className = className.replace('/', '.');
-	                
-            	try {
-	                Class<?> c = Class.forName(className, true, cl);
-	                //If CustomRequirement.class is not the super class of 'c', continue.
-	                if (!CustomRequirement.class.isAssignableFrom(c)) {
-	                	continue;
-	                }
-	                
-	                Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
-	                CustomRequirement requirement = requirementClass.newInstance();
-	                
-	                customRequirements.add(requirement);
-	                
-	                String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
-	                String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
-	                printInfo("[Quests] Loaded Module: " + name + " by " + author);
-	                
-            	} catch (Exception exception) {
-            		//If this class fails to load, go to next class instead of failing the whole module.
-            		printSevere("[Quests] Error: Unable to load module: " + className + " from file: " + jar.getName());
-            		continue;
-            	}
+                JarEntry je = (JarEntry) e.nextElement();
+                if(je.isDirectory() || !je.getName().endsWith(".class")){
+                    continue;
+                }
+               
+                String className = je.getName().substring(0,je.getName().length()-6);
+                className = className.replace('/', '.');
+                Class<?> c = Class.forName(className, true, cl);
+                Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
+                Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
+                CustomRequirement requirement = cstrctr.newInstance();
+                customRequirements.add(requirement);
+                String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
+                String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
+                printInfo("[Quests] Loaded Module: " + name + " by " + author);
             }
        
-            jarFile.close();
-        } catch (Exception e) {
+        }catch (Exception e){
             printSevere("[Quests] Error: Unable to load module from file: " + jar.getName());
             if(debug){
                 printSevere("[Quests] Error log:");
@@ -503,16 +488,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
         }
         
-    }
-    
-    /**
-     * Add custom requirements to Quests, 
-     * @param requirement, the requirement that is to be added.
-     * @param plugin, the plugin that adds this requirement.
-     */
-    public void addCustomRequirement(CustomRequirement requirement, Plugin plugin) {
-    	customRequirements.add(requirement);
-    	printInfo("[Quests] Loaded custom requirement from: " + plugin.getName());
     }
 
     public void printHelp(Player player) {
@@ -2303,24 +2278,37 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     }
                     
                     if (config.contains("quests." + s + ".requirements.custom-requirements")) {
-                        quest.customRequirements = config.getStringList("quests." + s + ".requirements.custom-requirements");
                         
-                        for(String req : quest.customRequirements){
+                        ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".requirements.custom-requirements");
+                        for(String path : sec.getKeys(false)){
                             
+                            String name = sec.getString(path + ".name");
                             boolean found = false;
                             
                             for(CustomRequirement cr : customRequirements){
-                                if(cr.getName().equalsIgnoreCase(req)){
+                                if(cr.getName().equalsIgnoreCase(name)){
                                     found = true;
                                     break;
                                 }
                             }
                             
                             if(!found){
-                                printWarning("[Quests] Custom requirement \"" + req + "\" for Quest \"" + quest.name + "\" could not be found!");
+                                printWarning("[Quests] Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
+                                continue;
                             }
                             
+                            Map<String, Object> data = new HashMap<String, Object>();
+                            ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+                            if(sec2 != null){
+                                for(String dataPath : sec2.getKeys(false)){
+                                    data.put(dataPath, sec2.get(dataPath));
+                                }
+                            }
+                            
+                            quest.customRequirements.put(name, data);
+                            
                         }
+                        
                     }
 
                 }
@@ -4854,9 +4842,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     + "&arg5=" + quests.size()
                     + "&arg6=" + (citizens != null ? "true" : "false")
                     + "&arg7=" + URLEncoder.encode(stamp.toString(), "UTF-8");
-            System.out.println("Arguments");
-            System.out.println(arguments);
-            URL url = new URL("http://www.bcitdnd.net/php/quests.php?" + arguments);
+            URL url = new URL("http://www.blackvein.net/php/quests.php?" + arguments);
             URLConnection yc = url.openConnection();
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(
@@ -4880,9 +4866,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         try {
             
             String arguments = "arg1=" + getServer().getIp() + "&arg2=" + ((Integer) getServer().getPort()).toString();
-            URL url = new URL("http://www.bcitdnd.net/php/quests_del.php?" + arguments);
-            System.out.println("Delete arguments");
-            System.out.println(arguments);
+            URL url = new URL("http://www.blackvein.net/php/quests_del.php?" + arguments);
             URLConnection yc = url.openConnection();
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(

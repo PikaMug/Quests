@@ -30,6 +30,9 @@ public class CK {
 	public static final String REQ_QUEST = "questReqs";
 	public static final String REQ_QUEST_BLOCK = "questBlocks";
         public static final String REQ_CUSTOM = "customReqs";
+        public static final String REQ_CUSTOM_DATA = "customReqData";
+        public static final String REQ_CUSTOM_DATA_DESCRIPTIONS = "customReqDataDesc";
+        public static final String REQ_CUSTOM_DATA_TEMP = "customReqDataTemp";
 
 	//Rewards
 	public static final String REW_MONEY = "moneyRew";

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import me.blackvein.quests.CustomRequirement;
 
 import me.blackvein.quests.util.ColorUtil;
@@ -585,17 +586,31 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
                     
                     if(context.getSessionData(CK.REQ_CUSTOM) != null){
                         LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+                        LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
                         if(list.contains(found.getName()) == false){
                             list.add(found.getName());
+                            datamapList.add(found.datamap);
                         }else{
                             context.getForWhom().sendRawMessage(YELLOW + "That custom requirement has already been added!");
                             return new CustomRequirementsPrompt();
                         }
                     }else{
+                        LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+                        datamapList.add(found.datamap);
                         LinkedList<String> list = new LinkedList<String>();
                         list.add(found.getName());
                         context.setSessionData(CK.REQ_CUSTOM, list);
+                        context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
                     }
+                    
+                    //Send user to the custom data prompt if there is any needed
+                    if(found.datamap.isEmpty() == false){
+                        
+                        context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.descriptions);
+                        return new RequirementCustomDataListPrompt();
+                        
+                    }
+                    //
                     
                 }else{
                     context.getForWhom().sendRawMessage(YELLOW + "Custom requirement module not found.");
@@ -604,6 +619,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
             } else if (input.equalsIgnoreCase("clear")) {
                 context.setSessionData(CK.REQ_CUSTOM, null);
+                context.setSessionData(CK.REQ_CUSTOM_DATA, null);
                 context.getForWhom().sendRawMessage(YELLOW + "Custom requirements cleared.");
             }
 
@@ -611,7 +627,114 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
+    
+    private class RequirementCustomDataListPrompt extends StringPrompt {
 
+        @Override
+        public String getPromptText(ConversationContext context) {
+            
+            String text = BOLD + "" + AQUA + "- ";
+            
+            LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+            
+            String reqName = list.getLast();
+            Map<String, Object> datamap = datamapList.getLast();
+            
+            text += reqName + " -\n";
+            int index = 1;
+            
+            LinkedList<String> datamapKeys = new LinkedList<String>();
+            for(String key : datamap.keySet())
+                datamapKeys.add(key);
+            Collections.sort(datamapKeys);
+            
+            for(String dataKey : datamapKeys){
+                
+                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
+                if(datamap.get(dataKey) != null)
+                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+                else
+                    text += RED + " (Value required)\n";
+                
+                index++;
+                
+            }
+            
+            text += BOLD + "" + DARKBLUE + index + " - " + AQUA + "Finish";
+            
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            
+            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+            Map<String, Object> datamap = datamapList.getLast();
+            
+            int numInput;
+            
+            try{
+                numInput = Integer.parseInt(input);
+            }catch(NumberFormatException nfe){
+                return new RequirementCustomDataListPrompt();
+            }
+            
+            if(numInput < 1 || numInput > datamap.size() + 1)
+                return new RequirementCustomDataListPrompt();
+            
+            if(numInput < datamap.size() + 1){
+                
+                LinkedList<String> datamapKeys = new LinkedList<String>();
+                for(String key : datamap.keySet())
+                    datamapKeys.add(key);
+                Collections.sort(datamapKeys);
+
+                String selectedKey = datamapKeys.get(numInput - 1);
+                context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, selectedKey);
+                return new RequirementCustomDataPrompt();
+                
+            }else{
+                
+                if(datamap.containsValue(null)){
+                    return new RequirementCustomDataListPrompt();
+                }else{
+                    context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, null);
+                    return new RequirementsPrompt(quests, factory);
+                }
+                
+            }
+
+        }
+        
+    }
+    
+    private class RequirementCustomDataPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            String text = "";
+            String temp = (String)context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
+            Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS);
+            if(descriptions.get(temp) != null)
+                text += GOLD + descriptions.get(temp) + "\n";
+                
+            text += YELLOW + "Enter value for ";
+            text += BOLD + temp + RESET + YELLOW + ":";
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+            Map<String, Object> datamap = datamapList.getLast();
+            datamap.put((String)context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP), input);
+            context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
+            return new RequirementCustomDataListPrompt();
+        }
+        
+    }
+    
     private class mcMMOPrompt extends FixedSetPrompt {
 
         public mcMMOPrompt() {
