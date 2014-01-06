@@ -29,12 +29,12 @@ public abstract class CustomRequirement {
         this.author = author;
     }
     
-    public void setData(String key, Object val) {
-        datamap.put(key, val);
+    public void addData(String name) {
+        datamap.put(name, null);
     }
     
-    public void setDescription(String key, String description){
-        descriptions.put(key, description);
+    public void addDescription(String data, String description){
+        descriptions.put(data, description);
     }
     
 }
