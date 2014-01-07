@@ -246,6 +246,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
         		} else {
 
         			cc.setSessionData("tempId", mat.getId());
+                                cc.setSessionData("tempAmount", 1);
 
         			if (dataString != null) {
         				try {
@@ -415,11 +416,13 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
                             Map<Enchantment, Integer> enchs = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
                             enchs.put((Enchantment)cc.getSessionData("tempEnchant"), num);
+                            cc.setSessionData("tempEnchantments", enchs);
 
                         }else{
 
                             Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
                             enchs.put((Enchantment)cc.getSessionData("tempEnchant"), num);
+                            cc.setSessionData("tempEnchantments", enchs);
 
                         }
                         return new ItemStackPrompt(oldPrompt);

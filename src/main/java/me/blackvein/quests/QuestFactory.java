@@ -1511,8 +1511,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             stage.set("finish-event", finishEvent);
             stage.set("death-event", deathEvent);
             stage.set("disconnect-event", disconnectEvent);
-            stage.set("chat-events", chatEvents);
-            stage.set("chat-event-triggers", chatEventTriggers);
+            if(chatEvents != null && chatEvents.isEmpty() == false){
+                stage.set("chat-events", chatEvents);
+                stage.set("chat-event-triggers", chatEventTriggers);
+            }
             stage.set("delay", delay);
             stage.set("delay-message", delayMessage);
             stage.set("start-message", startMessage);
@@ -1643,6 +1645,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (q.exp != 0) {
             cc.setSessionData(CK.REW_EXP, q.exp);
+        }
+        
+        if(q.itemRewards.isEmpty() == false) {
+            cc.setSessionData(CK.REW_ITEMS, q.itemRewards);
         }
 
         if (q.commands.isEmpty() == false) {
