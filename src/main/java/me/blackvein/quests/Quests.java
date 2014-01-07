@@ -114,6 +114,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public final Map<String, Quester> questers = new HashMap<String, Quester>();
     public final List<String> questerBlacklist = new LinkedList<String>();
     public final List<CustomRequirement> customRequirements = new LinkedList<CustomRequirement>();
+    public final List<CustomReward> customRewards = new LinkedList<CustomReward>();
     public final LinkedList<Quest> quests = new LinkedList<Quest>();
     public final LinkedList<Event> events = new LinkedList<Event>();
     public final LinkedList<NPC> questNPCs = new LinkedList<NPC>();
@@ -471,13 +472,30 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 String className = je.getName().substring(0, je.getName().length() - 6);
                 className = className.replace('/', '.');
                 Class<?> c = Class.forName(className, true, cl);
-                Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
-                Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
-                CustomRequirement requirement = cstrctr.newInstance();
-                customRequirements.add(requirement);
-                String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
-                String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
-                printInfo("[Quests] Loaded Module: " + name + " by " + author);
+                
+                if(CustomRequirement.class.isAssignableFrom(c)){
+                    
+                    Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
+                    Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
+                    CustomRequirement requirement = cstrctr.newInstance();
+                    customRequirements.add(requirement);
+                    String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
+                    String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
+                    printInfo("[Quests] Loaded Module: " + name + " by " + author);
+                
+                }else if(CustomReward.class.isAssignableFrom(c)){
+                    
+                    Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
+                    Constructor<? extends CustomReward> cstrctr = rewardClass.getConstructor();
+                    CustomReward reward = cstrctr.newInstance();
+                    customRewards.add(reward);
+                    String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
+                    String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
+                    printInfo("[Quests] Loaded Module: " + name + " by " + author);
+                    
+                }else{
+                    printSevere("[Quests] Error: Unable to load module from file: " + jar.getName() + ", jar file is not a valid module!");
+                }
             }
 
         } catch (Exception e) {
@@ -3673,6 +3691,40 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         printSevere("[Quests] phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
                         continue;
                     }
+                }
+                
+                if (config.contains("quests." + s + ".rewards.custom-rewards")) {
+
+                    ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".rewards.custom-rewards");
+                    for (String path : sec.getKeys(false)) {
+
+                        String name = sec.getString(path + ".name");
+                        boolean found = false;
+
+                        for (CustomReward cr : customRewards) {
+                            if (cr.getName().equalsIgnoreCase(name)) {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found) {
+                            printWarning("[Quests] Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
+                            continue;
+                        }
+
+                        Map<String, Object> data = new HashMap<String, Object>();
+                        ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+                        if (sec2 != null) {
+                            for (String dataPath : sec2.getKeys(false)) {
+                                data.put(dataPath, sec2.get(dataPath));
+                            }
+                        }
+
+                        quest.customRewards.put(name, data);
+
+                    }
+
                 }
 
                 //

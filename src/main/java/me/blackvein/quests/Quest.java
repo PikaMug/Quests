@@ -55,6 +55,7 @@ public class Quest {
     String heroesPrimaryClassReq = null;
     String heroesSecondaryClassReq = null;
     Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
+    Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
     public String failRequirements = null;
     //
     //Rewards
@@ -477,6 +478,27 @@ public class Quest {
             }
             none = null;
         }
+        
+        for (String s : customRewards.keySet()){
+            
+            CustomReward found = null;
+            for(CustomReward cr : plugin.customRewards){
+                if(cr.getName().equalsIgnoreCase(s)){
+                    found = cr;
+                    break;
+                }
+            }
+            
+            if(found != null){
+                player.sendMessage("- " + ChatColor.GOLD + found.getRewardName());
+                found.giveReward(player, customRewards.get(s));
+            }else{
+                Quests.printWarning("[Quests] Quester \"" + player.getName() + "\" completed the Quest \"" + name + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
+            }
+            
+            none = null;
+            
+        }
 
         if (none != null) {
             player.sendMessage(none);
@@ -662,6 +684,10 @@ public class Quest {
             }
             
             if (other.customRequirements.equals(customRequirements) == false){
+                return false;
+            }
+            
+            if (other.customRewards.equals(customRewards) == false){
                 return false;
             }
 
