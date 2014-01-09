@@ -620,6 +620,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             } else if (input.equalsIgnoreCase("clear")) {
                 context.setSessionData(CK.REQ_CUSTOM, null);
                 context.setSessionData(CK.REQ_CUSTOM_DATA, null);
+                context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(YELLOW + "Custom requirements cleared.");
             }
 

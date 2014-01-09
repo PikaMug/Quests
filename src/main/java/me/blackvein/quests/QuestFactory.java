@@ -1037,7 +1037,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> heroesClassRews = null;
         LinkedList<Double> heroesExpRews = null;
         LinkedList<String> phatLootRews = null;
-
+        LinkedList<String> customRews = null;
+        LinkedList<Map<String, Object>> customRewsData = null;
 
         if (cc.getSessionData(CK.Q_REDO_DELAY) != null) {
             redo = (Long) cc.getSessionData(CK.Q_REDO_DELAY);
@@ -1156,6 +1157,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (cc.getSessionData(CK.REW_PHAT_LOOTS) != null) {
             phatLootRews = (LinkedList<String>) cc.getSessionData(CK.REW_PHAT_LOOTS);
+        }
+        
+        if (cc.getSessionData(CK.REW_CUSTOM) != null) {
+            customRews = (LinkedList<String>) cc.getSessionData(CK.REW_CUSTOM);
+            customRewsData = (LinkedList<Map<String, Object>>) cc.getSessionData(CK.REW_CUSTOM_DATA);
         }
 
         cs.set("name", name);
@@ -1522,7 +1528,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false || phatLootRews != null && phatLootRews.isEmpty() == false) {
+        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false || phatLootRews != null && phatLootRews.isEmpty() == false || customRews != null && customRews.isEmpty() == false) {
 
             ConfigurationSection rews = cs.createSection("rewards");
 
@@ -1539,6 +1545,15 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             rews.set("heroes-exp-classes", heroesClassRews);
             rews.set("heroes-exp-amounts", heroesExpRews);
             rews.set("phat-loots", phatLootRews);
+            
+            if(customRews != null){
+                ConfigurationSection customRewsSec = rews.createSection("custom-rewards");
+                for(int i = 0; i < customRews.size(); i++){
+                    ConfigurationSection customRewSec = customRewsSec.createSection("req" + (i + 1));
+                    customRewSec.set("name", customRews.get(i));
+                    customRewSec.set("data", customRewsData.get(i));
+                }
+            }
 
         } else {
             cs.set("rewards", null);
@@ -1681,6 +1696,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         if(q.phatLootRewards.isEmpty() == false) {
             cc.setSessionData(CK.REW_PHAT_LOOTS, q.phatLootRewards);
+        }
+        
+        if(q.customRewards.isEmpty() == false) {
+            cc.setSessionData(CK.REW_CUSTOM, q.customRewards);
         }
         //
 
