@@ -113,6 +113,10 @@ public class Stage {
     public Map<EntityType, Integer> mobsToTame = new EnumMap<EntityType, Integer>(EntityType.class);
     public Map<DyeColor, Integer> sheepToShear = new EnumMap<DyeColor, Integer>(DyeColor.class);
     public Map<EnumMap<Material, Integer>, Boolean> itemsToCraft = new HashMap<EnumMap<Material, Integer>, Boolean>();
+    public LinkedList<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
+    public LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
+    public LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
+    public LinkedList<Map<String, Object>> customObjectiveData = new LinkedList<Map<String, Object>>();
     public String script;
     public Event startEvent = null;
     public Event deathEvent = null;
@@ -244,6 +248,10 @@ public class Stage {
             }
 
             if (other.itemsToCraft.equals(itemsToCraft) == false) {
+                return false;
+            }
+            
+            if (other.customObjectives.equals(customObjectives) == false) {
                 return false;
             }
 

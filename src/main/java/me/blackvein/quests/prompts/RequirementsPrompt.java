@@ -590,6 +590,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
                         if(list.contains(found.getName()) == false){
                             list.add(found.getName());
                             datamapList.add(found.datamap);
+                            context.setSessionData(CK.REQ_CUSTOM, list);
+                            context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
                         }else{
                             context.getForWhom().sendRawMessage(YELLOW + "That custom requirement has already been added!");
                             return new CustomRequirementsPrompt();

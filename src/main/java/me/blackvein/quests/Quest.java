@@ -56,6 +56,16 @@ public class Quest {
     String heroesSecondaryClassReq = null;
     Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
     Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
+    /**
+     * Somehow I need to make customObjectives in the Stage class have the same
+     * sort of thing here ^ where it stores the custom data for the custom objective
+     * set by the questmaker. 
+     * 
+     * 
+     * 
+     * 
+     */
+    
     public String failRequirements = null;
     //
     //Rewards

@@ -115,6 +115,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public final List<String> questerBlacklist = new LinkedList<String>();
     public final List<CustomRequirement> customRequirements = new LinkedList<CustomRequirement>();
     public final List<CustomReward> customRewards = new LinkedList<CustomReward>();
+    public final List<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
     public final LinkedList<Quest> quests = new LinkedList<Quest>();
     public final LinkedList<Event> events = new LinkedList<Event>();
     public final LinkedList<NPC> questNPCs = new LinkedList<NPC>();
@@ -491,6 +492,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     customRewards.add(reward);
                     String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
                     String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
+                    printInfo("[Quests] Loaded Module: " + name + " by " + author);
+                    
+                }else if(CustomObjective.class.isAssignableFrom(c)){
+                    
+                    Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
+                    Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
+                    CustomObjective objective = cstrctr.newInstance();
+                    customObjectives.add(objective);
+                    String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
+                    String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
                     printInfo("[Quests] Loaded Module: " + name + " by " + author);
                     
                 }else{
@@ -3257,6 +3268,55 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     }
 
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".custom-objectives")) {
+
+                        ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".stages.ordered." + s2 + ".custom-objectives");
+                        for (String path : sec.getKeys(false)) {
+
+                            String name = sec.getString(path + ".name");
+                            int count = sec.getInt(path + ".count");
+                            CustomObjective found = null;
+
+                            for (CustomObjective cr : customObjectives) {
+                                if (cr.getName().equalsIgnoreCase(name)) {
+                                    found = cr;
+                                    break;
+                                }
+                            }
+
+                            if (found == null) {
+                                printWarning("[Quests] Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
+                                continue;
+                            }
+
+                            Map<String, Object> data = new HashMap<String, Object>();
+                            ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+                            if (sec2 != null) {
+                                for (String dataPath : sec2.getKeys(false)) {
+                                    data.put(dataPath, sec2.get(dataPath));
+                                }
+                            }
+
+                            oStage.customObjectives.add(found);
+                            oStage.customObjectiveCounts.add(count);
+                            oStage.customObjectiveData.add(data);
+
+                            try{
+                                
+                                getServer().getPluginManager().registerEvents(found, this);
+                                
+                            }catch (Exception e){
+                                printWarning("[Quests] Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
+                                if(debug){
+                                    printWarning("[Quests] Error log:");
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                    }
+                    
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-event")) {
 
                         Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".start-event"), this);

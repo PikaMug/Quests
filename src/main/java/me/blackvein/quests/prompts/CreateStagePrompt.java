@@ -1,8 +1,11 @@
 package me.blackvein.quests.prompts;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import me.blackvein.quests.CustomObjective;
 
 import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Event;
@@ -311,21 +314,31 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             }
 
         }
+        
+        if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) == null) {
+            text += PINK + "" + BOLD + "20 " + RESET + PINK + "- Custom Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        } else {
+            LinkedList<String> customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+            text += PINK + "" + BOLD + "20 " + RESET + PINK + "- Custom Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            for(String s : customObjs){
+                text += PINK + "    - " + GOLD + s + "\n";
+            }
+        }
 
         if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
-            text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + GRAY + ")\n";
+            text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + GRAY + ")\n";
         }
 
         if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
-            text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + GRAY + ")\n";
+            text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + GRAY + ")\n";
         }
 
-        text += RED + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
-        text += GREEN + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
+        text += RED + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
+        text += GREEN + "" + BOLD + "24 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
 
         return text;
 
@@ -398,12 +411,14 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 return new DenizenPrompt();
             }
         } else if (input.equalsIgnoreCase("20")) {
-            return new StartMessagePrompt();
+            return new CustomObjectivesPrompt();
         } else if (input.equalsIgnoreCase("21")) {
-            return new CompleteMessagePrompt();
+            return new StartMessagePrompt();
         } else if (input.equalsIgnoreCase("22")) {
-            return new DeletePrompt();
+            return new CompleteMessagePrompt();
         } else if (input.equalsIgnoreCase("23")) {
+            return new DeletePrompt();
+        } else if (input.equalsIgnoreCase("24")) {
             return new StagesPrompt(questFactory);
         } else {
             return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -3974,4 +3989,278 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
 
     }
+    
+    private class CustomObjectivesPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            String text = PINK + "- Custom Objectives -\n";
+            if(questFactory.quests.customObjectives.isEmpty()){
+                text += BOLD + "" + PURPLE + "(No modules loaded)";
+            }else {
+                for(CustomObjective co : questFactory.quests.customObjectives)
+                    text += PURPLE + " - " + co.getName() + "\n";
+            }
+            
+            return text + YELLOW + "Enter the name of a custom objective to add, or enter \'clear\' to clear all custom objectives, or \'cancel\' to return.";
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+
+                CustomObjective found = null;
+                for(CustomObjective co : questFactory.quests.customObjectives){
+                    if(co.getName().equalsIgnoreCase(input)){
+                        found = co;
+                        break;
+                    }
+                }
+                
+                if(found == null){
+                    for(CustomObjective co : questFactory.quests.customObjectives){
+                        if(co.getName().toLowerCase().contains(input.toLowerCase())){
+                            found = co;
+                            break;
+                        }
+                    }
+                }
+                
+                if(found != null){
+                    
+                    if(context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null){
+                        LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+                        LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+                        LinkedList<Integer> countList = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
+                        if(list.contains(found.getName()) == false){
+                            list.add(found.getName());
+                            datamapList.add(found.datamap);
+                            countList.add(-999);
+                            context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
+                            context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
+                        }else{
+                            context.getForWhom().sendRawMessage(YELLOW + "That custom objective has already been added!");
+                            return new CustomObjectivesPrompt();
+                        }
+                    }else{
+                        LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+                        LinkedList<Integer> countList = new LinkedList<Integer>();
+                        datamapList.add(found.datamap);
+                        countList.add(-999);
+                        LinkedList<String> list = new LinkedList<String>();
+                        list.add(found.getName());
+                        context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
+                        context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
+                        context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
+                    }
+                    
+                    //Send user to the count prompt / custom data prompt if there is any needed
+                    
+                    if(found.isEnableCount())
+                        return new CustomObjectiveCountPrompt();
+                    
+                    if(found.datamap.isEmpty() == false){
+                        
+                        context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.descriptions);
+                        return new ObjectiveCustomDataListPrompt();
+                        
+                    }
+                    //
+                    
+                }else{
+                    context.getForWhom().sendRawMessage(YELLOW + "Custom objective module not found.");
+                    return new CustomObjectivesPrompt();
+                }
+
+            } else if (input.equalsIgnoreCase("clear")) {
+                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, null);
+                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, null);
+                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
+                context.getForWhom().sendRawMessage(YELLOW + "Custom objectives cleared.");
+            }
+
+            return new CreateStagePrompt(stageNum, questFactory, citizens);
+
+        }
+        
+    }
+    
+    private class CustomObjectiveCountPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            
+            String text = BOLD + "" + AQUA + "- ";
+            
+            LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+            
+            String objName = list.getLast();
+            
+            text += objName + " -\n";
+            
+            CustomObjective found = null;
+            for(CustomObjective co : questFactory.quests.customObjectives){
+                
+                if(co.getName().equals(objName)){
+                    found = co;
+                    break;
+                }
+                
+            }
+            
+            text += BLUE + found.getCountPrompt() + "\n\n";
+            
+            return text;
+            
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            
+            try{
+                
+                int num = Integer.parseInt(input);
+                LinkedList<Integer> counts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
+                counts.set(counts.size() - 1, num);
+                
+                LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+                String objName = list.getLast();
+                
+                CustomObjective found = null;
+                for(CustomObjective co : questFactory.quests.customObjectives){
+
+                    if(co.getName().equals(objName)){
+                        found = co;
+                        break;
+                    }
+
+                }
+                
+                if(found.datamap.isEmpty() == false){
+                    context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.descriptions);
+                    return new ObjectiveCustomDataListPrompt();
+                }else{
+                    return new CreateStagePrompt(stageNum, questFactory, citizens);
+                }
+                
+                
+            }catch (NumberFormatException e){
+                context.getForWhom().sendRawMessage(RED + "Input was not a number!");
+                return new CustomObjectiveCountPrompt();
+            }
+            
+        }
+        
+        
+        
+    }
+    
+    private class ObjectiveCustomDataListPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            
+            String text = BOLD + "" + AQUA + "- ";
+            
+            LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+            
+            String objName = list.getLast();
+            Map<String, Object> datamap = datamapList.getLast();
+            
+            text += objName + " -\n";
+            int index = 1;
+            
+            LinkedList<String> datamapKeys = new LinkedList<String>();
+            for(String key : datamap.keySet())
+                datamapKeys.add(key);
+            Collections.sort(datamapKeys);
+            
+            for(String dataKey : datamapKeys){
+                
+                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
+                if(datamap.get(dataKey) != null)
+                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+                else
+                    text += RED + " (Value required)\n";
+                
+                index++;
+                
+            }
+            
+            text += BOLD + "" + DARKBLUE + index + " - " + AQUA + "Finish";
+            
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            
+            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+            Map<String, Object> datamap = datamapList.getLast();
+            
+            int numInput;
+            
+            try{
+                numInput = Integer.parseInt(input);
+            }catch(NumberFormatException nfe){
+                return new ObjectiveCustomDataListPrompt();
+            }
+            
+            if(numInput < 1 || numInput > datamap.size() + 1)
+                return new ObjectiveCustomDataListPrompt();
+            
+            if(numInput < datamap.size() + 1){
+                
+                LinkedList<String> datamapKeys = new LinkedList<String>();
+                for(String key : datamap.keySet())
+                    datamapKeys.add(key);
+                Collections.sort(datamapKeys);
+
+                String selectedKey = datamapKeys.get(numInput - 1);
+                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, selectedKey);
+                return new ObjectiveCustomDataPrompt();
+                
+            }else{
+                
+                if(datamap.containsValue(null)){
+                    return new ObjectiveCustomDataListPrompt();
+                }else{
+                    context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, null);
+                    return new CreateStagePrompt(stageNum, questFactory, citizens);
+                }
+                
+            }
+
+        }
+        
+    }
+    
+    private class ObjectiveCustomDataPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            String text = "";
+            String temp = (String)context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP);
+            Map<String, String> descriptions = (Map<String, String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS);
+            if(descriptions.get(temp) != null)
+                text += GOLD + descriptions.get(temp) + "\n";
+                
+            text += YELLOW + "Enter value for ";
+            text += BOLD + temp + RESET + YELLOW + ":";
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+            Map<String, Object> datamap = datamapList.getLast();
+            datamap.put((String)context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP), input);
+            context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
+            return new ObjectiveCustomDataListPrompt();
+        }
+        
+    }
+    
 }

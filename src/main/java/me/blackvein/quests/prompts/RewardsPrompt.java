@@ -1168,6 +1168,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                         if(list.contains(found.getName()) == false){
                             list.add(found.getName());
                             datamapList.add(found.datamap);
+                            context.setSessionData(CK.REW_CUSTOM, list);
+                            context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
                         }else{
                             context.getForWhom().sendRawMessage(YELLOW + "That custom reward has already been added!");
                             return new CustomRewardsPrompt();

@@ -860,7 +860,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.Q_REDO_DELAY, null);
 			}
-        	long delay = -1;
+        	long delay;
         	try {
         		delay = Long.parseLong(input);
         	} catch (NumberFormatException e) {
@@ -1262,6 +1262,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> shearColors;
         LinkedList<Integer> shearAmounts;
 
+        LinkedList<String> customObjs = null;
+        LinkedList<Integer> customObjCounts = null;
+        LinkedList<Map<String, Object>> customObjsData = null;
+        
         String script;
         String startEvent;
         String finishEvent;
@@ -1418,6 +1422,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 shearAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
             }
 
+            if (cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
+                customObjs = (LinkedList<String>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+                customObjCounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
+                customObjsData = (LinkedList<Map<String, Object>>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+            }
+            
             if (cc.getSessionData(pref + CK.S_START_EVENT) != null) {
                 startEvent = (String) cc.getSessionData(pref + CK.S_START_EVENT);
             }
@@ -1512,6 +1522,20 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             stage.set("mob-tame-amounts", tameAmounts);
             stage.set("sheep-to-shear", shearColors);
             stage.set("sheep-amounts", shearAmounts);
+            if(customObjs != null && customObjs.isEmpty() == false){
+                
+                ConfigurationSection sec = stage.createSection("custom-objectives");
+                for(int index = 0; index < customObjs.size(); index++){
+                    
+                    ConfigurationSection sec2 = sec.createSection("custom" + (index + 1));
+                    sec2.set("name", customObjs.get(index));
+                    sec2.set("count", customObjCounts.get(index));
+                    if(customObjsData.get(index).isEmpty() == false)
+                        sec2.set("data", customObjsData.get(index));
+                    
+                }
+                
+            }
             stage.set("script-to-run", script);
             stage.set("start-event", startEvent);
             stage.set("finish-event", finishEvent);
@@ -1934,6 +1958,26 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 cc.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
                 cc.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amnts);
+
+            }
+            
+            if (stage.customObjectives.isEmpty() == false) {
+            
+                LinkedList<String> list = new LinkedList<String>();
+                LinkedList<Integer> countList = new LinkedList<Integer>();
+                LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+
+                for(int i = 0; i < stage.customObjectives.size(); i++){
+
+                    list.add(stage.customObjectives.get(i).getName());
+                    countList.add(stage.customObjectiveCounts.get(i));
+                    datamapList.add(stage.customObjectiveData.get(i));
+
+                }
+
+                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
+                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
+                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
 
             }
 

@@ -98,7 +98,11 @@ public class CK {
 	public static final String S_DENIZEN = "denizen";
 	public static final String S_COMPLETE_MESSAGE = "completeMessage";
 	public static final String S_START_MESSAGE = "startMessage";
-	public static final String S_MINI_EVENTS = "miniEvents";
+	public static final String S_CUSTOM_OBJECTIVES = "customObjectives";
+        public static final String S_CUSTOM_OBJECTIVES_COUNT = "customObjectiveCounts";
+        public static final String S_CUSTOM_OBJECTIVES_DATA = "customObjectiveData";
+        public static final String S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS = "customObjectiveDataDescriptions";
+        public static final String S_CUSTOM_OBJECTIVES_DATA_TEMP = "customObjectiveDataTemp";
 
 	//Events
 	public static final String E_OLD_EVENT = "oldEvent";
