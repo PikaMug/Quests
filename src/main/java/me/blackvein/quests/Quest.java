@@ -56,15 +56,6 @@ public class Quest {
     String heroesSecondaryClassReq = null;
     Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
     Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
-    /**
-     * Somehow I need to make customObjectives in the Stage class have the same
-     * sort of thing here ^ where it stores the custom data for the custom objective
-     * set by the questmaker. 
-     * 
-     * 
-     * 
-     * 
-     */
     
     public String failRequirements = null;
     //
@@ -500,6 +491,12 @@ public class Quest {
             }
             
             if(found != null){
+                Map<String, Object> datamap = customRewards.get(found.getName());
+                String message = found.getRewardName();
+                
+                for(String key : datamap.keySet()){
+                    message = message.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
+                }
                 player.sendMessage("- " + ChatColor.GOLD + found.getRewardName());
                 found.giveReward(player, customRewards.get(s));
             }else{

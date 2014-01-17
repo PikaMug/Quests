@@ -2,10 +2,6 @@ package me.blackvein.quests;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -20,7 +16,7 @@ public abstract class CustomObjective implements Listener {
     private boolean enableCount = true;
     private boolean showCount = true;
     private int count = 1;
-
+    
     public String getName() {
         return name;
     }
