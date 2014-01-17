@@ -1193,7 +1193,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     } else if (args[0].equalsIgnoreCase("info")) {
 
                         cs.sendMessage(GOLD + "Quests " + this.getDescription().getVersion());
-                        cs.sendMessage(GOLD + "Made by " + DARKRED + "Blackvein" + GOLD + " and " + RED + "BlockCat");
+                        cs.sendMessage(GOLD + "Made by " + DARKRED + "Blackvein");
                         return true;
 
                     } else {
