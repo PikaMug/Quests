@@ -117,6 +117,7 @@ public class Stage {
     public LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
     public LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
     public LinkedList<Map<String, Object>> customObjectiveData = new LinkedList<Map<String, Object>>();
+    public LinkedList<String> 
     public String script;
     public Event startEvent = null;
     public Event deathEvent = null;
@@ -127,6 +128,7 @@ public class Stage {
     public String delayMessage = null;
     public String completeMessage = null;
     public String startMessage = null;
+    public String objectiveOverride = null;
 
     @Override
     public boolean equals(Object o) {
@@ -328,6 +330,16 @@ public class Stage {
             } else if (other.completeMessage != null && completeMessage == null) {
                 return false;
             } else if (other.completeMessage == null && completeMessage != null) {
+                return false;
+            }
+            
+            if (other.objectiveOverride != null && objectiveOverride != null) {
+                if (other.objectiveOverride.equals(objectiveOverride) == false) {
+                    return false;
+                }
+            } else if (other.objectiveOverride != null && objectiveOverride == null) {
+                return false;
+            } else if (other.objectiveOverride == null && objectiveOverride != null) {
                 return false;
             }
 

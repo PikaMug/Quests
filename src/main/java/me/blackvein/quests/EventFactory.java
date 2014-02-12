@@ -490,7 +490,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
     private class CreateMenuPrompt extends FixedSetPrompt {
 
-        public CreateMenuPrompt() {
+       public CreateMenuPrompt() {
 
             super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19");
 
@@ -581,7 +581,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
 
             if (context.getSessionData(CK.E_MOB_TYPES) == null) {
-                text += BLUE + "" + BOLD + "19" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += BLUE + "" + BOLD + "10" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
                 LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
 
