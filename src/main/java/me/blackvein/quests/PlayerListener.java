@@ -192,6 +192,12 @@ public class PlayerListener implements Listener {
                     }
 
                 }
+                
+                if (quester.hasObjective("password")) {
+                    
+                    quester.sayPass(evt.getMessage());
+                    
+                }
 
             }
 

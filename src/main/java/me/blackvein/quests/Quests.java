@@ -3267,6 +3267,32 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     }
+                    
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-displays")) {
+                        
+                        List<String> displays = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-displays");
+                        
+                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-phrases")) {
+                            
+                            List<String> phrases = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-phrases");
+                            if(displays.size() == phrases.size()) {
+                                
+                                oStage.passwordDisplays.addAll(displays);
+                                oStage.passwordPhrases.addAll(phrases);
+                                
+                            } else {
+                                printSevere("[Quests] password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
+                                stageFailed = true;
+                                break;
+                            }
+                            
+                        } else {
+                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing password-phrases!");
+                            stageFailed = true;
+                            break;
+                        }
+                        
+                    }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".custom-objectives")) {
 
@@ -3315,6 +3341,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         }
 
+                    }
+                    
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".objective-override")) {
+                        
+                        oStage.objectiveOverride = config.getString("quests." + s + ".stages.ordered." + s2 + ".objective-override");
+                        
                     }
                     
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-event")) {

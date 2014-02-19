@@ -117,7 +117,8 @@ public class Stage {
     public LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
     public LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
     public LinkedList<Map<String, Object>> customObjectiveData = new LinkedList<Map<String, Object>>();
-    public LinkedList<String> 
+    public LinkedList<String> passwordDisplays = new LinkedList<String>();
+    public LinkedList<String> passwordPhrases = new LinkedList<String>();
     public String script;
     public Event startEvent = null;
     public Event deathEvent = null;
@@ -254,6 +255,22 @@ public class Stage {
             }
             
             if (other.customObjectives.equals(customObjectives) == false) {
+                return false;
+            }
+            
+            if (other.customObjectiveDisplays.equals(customObjectiveDisplays) == false) {
+                return false;
+            }
+            
+            if (other.customObjectiveData.equals(customObjectiveData) == false) {
+                return false;
+            }
+            
+            if (other.passwordDisplays.equals(passwordDisplays) == false) {
+                return false;
+            }
+            
+            if (other.passwordPhrases.equals(passwordPhrases) == false) {
                 return false;
             }
 

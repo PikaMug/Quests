@@ -64,6 +64,7 @@ public class Quester {
     LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
     Map<EntityType, Integer> mobsTamed = new EnumMap<EntityType, Integer>(EntityType.class);
     Map<DyeColor, Integer> sheepSheared = new EnumMap<DyeColor, Integer>(DyeColor.class);
+    Map<String, Boolean> passwordsSaid = new HashMap<String, Boolean>();
     public Map<String, Integer> customObjectiveCounts = new HashMap<String, Integer>();
     public Map<String, Boolean> eventFired = new HashMap<String, Boolean>();
     final Random random = new Random();
@@ -150,6 +151,11 @@ public class Quester {
         LinkedList<String> unfinishedObjectives = new LinkedList<String>();
         LinkedList<String> finishedObjectives = new LinkedList<String>();
         LinkedList<String> objectives = new LinkedList<String>();
+
+        if (currentStage.objectiveOverride != null) {
+            objectives.add(ChatColor.GREEN + currentStage.objectiveOverride);
+            return objectives;
+        }
 
         for (Entry<Material, Integer> e : currentStage.blocksToDamage.entrySet()) {
 
@@ -504,37 +510,50 @@ public class Quester {
 
         }
 
+        for (String s : currentStage.passwordPhrases) {
+
+            if (passwordsSaid.get(s) == false) {
+
+                unfinishedObjectives.add(ChatColor.GREEN + currentStage.passwordDisplays.get(currentStage.passwordPhrases.indexOf(s)));
+
+            } else {
+
+                finishedObjectives.add(ChatColor.GRAY + currentStage.passwordDisplays.get(currentStage.passwordPhrases.indexOf(s)));
+
+            }
+
+        }
+
         int index = 0;
         for (CustomObjective co : currentStage.customObjectives) {
 
             for (Entry<String, Integer> entry : customObjectiveCounts.entrySet()) {
-                
+
                 if (co.getName().equals(entry.getKey())) {
-                    
+
                     String display = co.getDisplay();
-                    
+
                     Map<String, Object> datamap = currentStage.customObjectiveData.get(index);
-                    for(String key : co.datamap.keySet()){
+                    for (String key : co.datamap.keySet()) {
                         display = display.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
                     }
-                   
-                    
-                    if (entry.getValue() < currentStage.customObjectiveCounts.get(index)){
-                        if(co.isCountShown() && co.isEnableCount()){
+
+                    if (entry.getValue() < currentStage.customObjectiveCounts.get(index)) {
+                        if (co.isCountShown() && co.isEnableCount()) {
                             display = display.replaceAll("%count%", entry.getValue() + "/" + currentStage.customObjectiveCounts.get(index));
                         }
-                        unfinishedObjectives.add(ChatColor.GREEN + display);                        
-                    }else{
-                        if(co.isCountShown() && co.isEnableCount()){
+                        unfinishedObjectives.add(ChatColor.GREEN + display);
+                    } else {
+                        if (co.isCountShown() && co.isEnableCount()) {
                             display = display.replaceAll("%count%", currentStage.customObjectiveCounts.get(index) + "/" + currentStage.customObjectiveCounts.get(index));
                         }
                         finishedObjectives.add(ChatColor.GRAY + display);
                     }
-                    
+
                 }
-                
+
             }
-            
+
             index++;
 
         }
@@ -597,35 +616,38 @@ public class Quester {
         } else if (s.equalsIgnoreCase("craftItem")) {
             return !currentStage.itemsToCraft.isEmpty();
 
+        } else if (s.equalsIgnoreCase("password")) {
+            return !currentStage.passwordPhrases.isEmpty();
+
         } else {
             return !currentStage.locationsToReach.isEmpty();
 
         }
 
     }
-    
-    public boolean hasCustomObjective(String s){
-        
-        if(customObjectiveCounts.containsKey(s)){
-            
+
+    public boolean hasCustomObjective(String s) {
+
+        if (customObjectiveCounts.containsKey(s)) {
+
             int count = customObjectiveCounts.get(s);
-            
+
             int index = -1;
-            for(int i = 0; i < currentStage.customObjectives.size(); i++){
-                if(currentStage.customObjectives.get(i).getName().equals(s)){
+            for (int i = 0; i < currentStage.customObjectives.size(); i++) {
+                if (currentStage.customObjectives.get(i).getName().equals(s)) {
                     index = i;
                     break;
                 }
             }
-            
+
             int count2 = currentStage.customObjectiveCounts.get(index);
-            
+
             return count <= count2;
-            
+
         }
-        
+
         return false;
-        
+
     }
 
     public void damageBlock(Material m) {
@@ -637,7 +659,7 @@ public class Quester {
                 blocksDamaged.put(m, (i + 1));
 
                 if (blocksDamaged.get(m).equals(currentStage.blocksToDamage.get(m))) {
-                    finishObjective("damageBlock", m, null, null, null, null, null, null, null, null);
+                    finishObjective("damageBlock", m, null, null, null, null, null, null, null, null, null);
                 }
 
             }
@@ -655,7 +677,7 @@ public class Quester {
                 blocksBroken.put(m, (i + 1));
 
                 if (blocksBroken.get(m).equals(currentStage.blocksToBreak.get(m))) {
-                    finishObjective("breakBlock", m, null, null, null, null, null, null, null, null);
+                    finishObjective("breakBlock", m, null, null, null, null, null, null, null, null, null);
                 }
             }
 
@@ -672,7 +694,7 @@ public class Quester {
                 blocksPlaced.put(m, (i + 1));
 
                 if (blocksPlaced.get(m).equals(currentStage.blocksToPlace.get(m))) {
-                    finishObjective("placeBlock", m, null, null, null, null, null, null, null, null);
+                    finishObjective("placeBlock", m, null, null, null, null, null, null, null, null, null);
                 }
             }
 
@@ -689,7 +711,7 @@ public class Quester {
                 blocksUsed.put(m, (i + 1));
 
                 if (blocksUsed.get(m).equals(currentStage.blocksToUse.get(m))) {
-                    finishObjective("useBlock", m, null, null, null, null, null, null, null, null);
+                    finishObjective("useBlock", m, null, null, null, null, null, null, null, null, null);
                 }
 
             }
@@ -707,7 +729,7 @@ public class Quester {
                 blocksCut.put(m, (i + 1));
 
                 if (blocksCut.get(m).equals(currentStage.blocksToCut.get(m))) {
-                    finishObjective("cutBlock", m, null, null, null, null, null, null, null, null);
+                    finishObjective("cutBlock", m, null, null, null, null, null, null, null, null, null);
                 }
 
             }
@@ -722,7 +744,7 @@ public class Quester {
             fishCaught++;
 
             if (((Integer) fishCaught).equals(currentStage.fishToCatch)) {
-                finishObjective("catchFish", null, null, null, null, null, null, null, null, null);
+                finishObjective("catchFish", null, null, null, null, null, null, null, null, null, null);
             }
 
         }
@@ -745,7 +767,7 @@ public class Quester {
                             itemsEnchanted.put(entry.getKey(), num);
 
                             if (num.equals(entry2.getValue())) {
-                                finishObjective("enchantItem", m, null, e, null, null, null, null, null, null);
+                                finishObjective("enchantItem", m, null, e, null, null, null, null, null, null, null);
                             }
 
                         }
@@ -786,7 +808,7 @@ public class Quester {
                                 mobNumKilled.set(index, numKilledInteger);
 
                                 if ((numKilledInteger).equals(currentStage.mobNumToKill.get(index))) {
-                                    finishObjective("killMob", null, null, null, e, null, null, null, null, null);
+                                    finishObjective("killMob", null, null, null, e, null, null, null, null, null, null);
                                 }
 
                             }
@@ -804,7 +826,7 @@ public class Quester {
                     mobNumKilled.set(mobsKilled.indexOf(e), mobNumKilled.get(mobsKilled.indexOf(e)) + 1);
 
                     if ((mobNumKilled.get(mobsKilled.indexOf(e))).equals(currentStage.mobNumToKill.get(mobsKilled.indexOf(e)))) {
-                        finishObjective("killMob", null, null, null, e, null, null, null, null, null);
+                        finishObjective("killMob", null, null, null, e, null, null, null, null, null, null);
                     }
 
                 }
@@ -838,7 +860,7 @@ public class Quester {
             playersKilled++;
 
             if (((Integer) playersKilled).equals(currentStage.playersToKill)) {
-                finishObjective("killPlayer", null, null, null, null, null, null, null, null, null);
+                finishObjective("killPlayer", null, null, null, null, null, null, null, null, null, null);
             }
 
         }
@@ -851,7 +873,7 @@ public class Quester {
 
             if (citizensInteracted.get(n.getId()) == false) {
                 citizensInteracted.put(n.getId(), true);
-                finishObjective("talkToNPC", null, null, null, null, null, n, null, null, null);
+                finishObjective("talkToNPC", null, null, null, null, null, n, null, null, null, null);
             }
 
         }
@@ -866,7 +888,7 @@ public class Quester {
             if (citizenNumKilled.get(index) < currentStage.citizenNumToKill.get(index)) {
                 citizenNumKilled.set(index, citizenNumKilled.get(index) + 1);
                 if (citizenNumKilled.get(index) == currentStage.citizenNumToKill.get(index)) {
-                    finishObjective("killNPC", null, null, null, null, null, n, null, null, null);
+                    finishObjective("killNPC", null, null, null, null, null, n, null, null, null, null);
                 }
             }
 
@@ -890,7 +912,7 @@ public class Quester {
                         if (hasReached.get(index) == false) {
 
                             hasReached.set(index, true);
-                            finishObjective("reachLocation", null, null, null, null, null, null, location, null, null);
+                            finishObjective("reachLocation", null, null, null, null, null, null, location, null, null, null);
 
                         }
 
@@ -911,7 +933,7 @@ public class Quester {
             mobsTamed.put(entity, (mobsTamed.get(entity) + 1));
 
             if (mobsTamed.get(entity).equals(currentStage.mobsToTame.get(entity))) {
-                finishObjective("tameMob", null, null, null, entity, null, null, null, null, null);
+                finishObjective("tameMob", null, null, null, entity, null, null, null, null, null, null);
             }
 
         }
@@ -925,7 +947,7 @@ public class Quester {
             sheepSheared.put(color, (sheepSheared.get(color) + 1));
 
             if (sheepSheared.get(color).equals(currentStage.sheepToShear.get(color))) {
-                finishObjective("shearSheep", null, null, null, null, null, null, null, color, null);
+                finishObjective("shearSheep", null, null, null, null, null, null, null, color, null, null);
             }
 
         }
@@ -960,14 +982,14 @@ public class Quester {
                     i.setAmount(i.getAmount() - (req - amount)); //Take away the remaining amount needed to be delivered from the item stack
                     player.getInventory().setItem(index, i);
                     player.updateInventory();
-                    finishObjective("deliverItem", null, found, null, null, null, null, null, null, null);
+                    finishObjective("deliverItem", null, found, null, null, null, null, null, null, null, null);
 
                 } else if ((i.getAmount() + amount) == req) {
 
                     itemsDelivered.put(found, req);
                     player.getInventory().setItem(player.getInventory().first(i), null);
                     player.updateInventory();
-                    finishObjective("deliverItem", null, found, null, null, null, null, null, null, null);
+                    finishObjective("deliverItem", null, found, null, null, null, null, null, null, null, null);
 
                 } else {
 
@@ -985,11 +1007,46 @@ public class Quester {
 
     }
 
-    public void finishObjective(String objective, Material material, ItemStack itemstack, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, CustomObjective co) {
+    public void sayPass(String s) {
+
+        for (String pass : currentStage.passwordPhrases) {
+
+            if (pass.equalsIgnoreCase(s)) {
+
+                String display = currentStage.passwordDisplays.get(currentStage.passwordPhrases.indexOf(pass));
+                passwordsSaid.put(pass, true);
+                finishObjective("password", null, null, null, null, null, null, null, null, display, null);
+
+            }
+
+        }
+
+    }
+
+    public void finishObjective(String objective, Material material, ItemStack itemstack, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
 
         Player p = plugin.getServer().getPlayerExact(name);
 
-        if (objective.equalsIgnoreCase("damageBlock")) {
+        if (currentStage.objectiveOverride != null) {
+
+            if (testComplete()) {
+                String message = ChatColor.GREEN + "(Completed) " + currentStage.objectiveOverride;
+                p.sendMessage(message);
+                currentQuest.nextStage(this);
+            }
+            return;
+
+        }
+
+        if (objective.equalsIgnoreCase("password")) {
+
+            String message = ChatColor.GREEN + "(Completed) " + pass;
+            p.sendMessage(message);
+            if (testComplete()) {
+                currentQuest.nextStage(this);
+            }
+
+        } else if (objective.equalsIgnoreCase("damageBlock")) {
 
             String message = ChatColor.GREEN + "(Completed) Damage " + prettyItemString(material.getId());
             message = message + " " + currentStage.blocksToDamage.get(material) + "/" + currentStage.blocksToDamage.get(material);
@@ -1132,29 +1189,30 @@ public class Quester {
             }
 
         } else if (co != null) {
-            
+
             String message = ChatColor.GREEN + "(Completed) " + co.getDisplay();
-            
+
             int index = -1;
-            for(int i = 0; i < currentStage.customObjectives.size(); i++){
-                if(currentStage.customObjectives.get(i).getName().equals(co.getName())){
+            for (int i = 0; i < currentStage.customObjectives.size(); i++) {
+                if (currentStage.customObjectives.get(i).getName().equals(co.getName())) {
                     index = i;
                     break;
                 }
             }
-            
+
             Map<String, Object> datamap = currentStage.customObjectiveData.get(index);
-            for(String key : co.datamap.keySet()){
+            for (String key : co.datamap.keySet()) {
                 message = message.replaceAll("%" + ((String) key) + "%", (String) datamap.get(key));
             }
-            
-            if(co.isCountShown() && co.isEnableCount())
+
+            if (co.isCountShown() && co.isEnableCount()) {
                 message = message.replaceAll("%count%", currentStage.customObjectiveCounts.get(index) + "/" + currentStage.customObjectiveCounts.get(index));
+            }
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
             }
-            
+
         }
 
     }
@@ -1300,9 +1358,15 @@ public class Quester {
 
             }
         }
-        
+
+        if (currentStage.passwordPhrases.isEmpty() == false) {
+            for (String pass : currentStage.passwordPhrases) {
+                passwordsSaid.put(pass, false);
+            }
+        }
+
         if (currentStage.customObjectives.isEmpty() == false) {
-            for(CustomObjective co : currentStage.customObjectives){
+            for (CustomObjective co : currentStage.customObjectives) {
                 customObjectiveCounts.put(co.getName(), 0);
             }
         }
@@ -1910,22 +1974,39 @@ public class Quester {
                 data.set("sheep-sheared", shearAmounts);
 
             }
-            
-            if (customObjectiveCounts.isEmpty() == false){
-                
+
+            if (passwordsSaid.isEmpty() == false) {
+
+                LinkedList<String> passwords = new LinkedList<String>();
+                LinkedList<Boolean> said = new LinkedList<Boolean>();
+
+                for (Entry<String, Boolean> entry : passwordsSaid.entrySet()) {
+
+                    passwords.add(entry.getKey());
+                    said.add(entry.getValue());
+
+                }
+
+                data.set("passwords", passwords);
+                data.set("passwords-said", said);
+
+            }
+
+            if (customObjectiveCounts.isEmpty() == false) {
+
                 LinkedList<String> customObj = new LinkedList<String>();
                 LinkedList<Integer> customObjCounts = new LinkedList<Integer>();
-                
-                for(Entry<String, Integer> entry : customObjectiveCounts.entrySet()){
-                    
+
+                for (Entry<String, Integer> entry : customObjectiveCounts.entrySet()) {
+
                     customObj.add(entry.getKey());
                     customObjCounts.add(entry.getValue());
-                    
+
                 }
-                
+
                 data.set("custom-objectives", customObj);
                 data.set("custom-objective-counts", customObjCounts);
-                
+
             }
 
             if (delayTimeLeft > 0) {
@@ -1948,7 +2029,7 @@ public class Quester {
                 }
 
             }
-            
+
         } else {
 
             data.set("currentQuest", "none");
@@ -2564,16 +2645,26 @@ public class Quester {
                 }
 
             }
-            
-            if (data.contains("custom-objectives")){
-                
-                List<String> customObj = data.getStringList("custom-objectives");
-                List<Integer> customObjCount = data.getIntegerList("custom-objective-counts");
-                
-                for(int i = 0; i < customObj.size(); i++){
-                    customObjectiveCounts.put(customObj.get(i), customObjCount.get(i));
+
+            if (data.contains("passwords")) {
+
+                List<String> passwords = data.getStringList("passwords");
+                List<Boolean> said = data.getBooleanList("passwords-said");
+                for(int i = 0; i < passwords.size(); i++){
+                    passwordsSaid.put(passwords.get(i), said.get(i));
                 }
                 
+            }
+
+            if (data.contains("custom-objectives")) {
+
+                List<String> customObj = data.getStringList("custom-objectives");
+                List<Integer> customObjCount = data.getIntegerList("custom-objective-counts");
+
+                for (int i = 0; i < customObj.size(); i++) {
+                    customObjectiveCounts.put(customObj.get(i), customObjCount.get(i));
+                }
+
             }
 
             if (data.contains("stage-delay")) {

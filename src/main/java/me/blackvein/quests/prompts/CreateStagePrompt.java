@@ -40,7 +40,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
     public CreateStagePrompt(int stageNum, QuestFactory qf, CitizensPlugin cit) {
 
-        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24");
+        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26");
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
         this.citizens = cit;
@@ -315,30 +315,47 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         }
         
+        if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
+            text += PINK + "" + BOLD + "20 " + RESET + PINK + "- Password Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        } else {
+            LinkedList<String> passPhrases = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+            LinkedList<String> passDisplays = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
+            text += PINK + "" + BOLD + "20 " + RESET + PINK + "- Password Objectives\n";
+            for(int i = 0; i < passPhrases.size(); i++){
+                text += AQUA + "    - " + ITALIC + "\"" + passDisplays.get(i) + "\"" + RESET + DARKAQUA + "(" + passPhrases.get(i) + ")" + "\n";
+            }
+        }
+        
         if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) == null) {
-            text += PINK + "" + BOLD + "20 " + RESET + PINK + "- Custom Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "21 " + RESET + PINK + "- Custom Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             LinkedList<String> customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-            text += PINK + "" + BOLD + "20 " + RESET + PINK + "- Custom Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "21 " + RESET + PINK + "- Custom Objectives\n";
             for(String s : customObjs){
                 text += PINK + "    - " + GOLD + s + "\n";
             }
         }
 
         if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
-            text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "21 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + GRAY + ")\n";
+            text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + GRAY + ")\n";
         }
 
         if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
-            text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + GRAY + ")\n";
+            text += PINK + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + GRAY + ")\n";
         }
 
-        text += RED + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
-        text += GREEN + "" + BOLD + "24 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
+        if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
+            text += PINK + "" + BOLD + "24 " + RESET + PURPLE + "- Objective Display Override " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+        } else {
+            text += PINK + "" + BOLD + "24 " + RESET + PURPLE + "- Objective Display Override " + GRAY + "(" + DARKAQUA + "\"" + context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) + "\"" + GRAY + ")\n";
+        }
+        
+        text += RED + "" + BOLD + "25 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
+        text += GREEN + "" + BOLD + "26 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
 
         return text;
 
@@ -411,19 +428,126 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 return new DenizenPrompt();
             }
         } else if (input.equalsIgnoreCase("20")) {
-            return new CustomObjectivesPrompt();
+            return new PasswordListPrompt();
         } else if (input.equalsIgnoreCase("21")) {
-            return new StartMessagePrompt();
+            return new CustomObjectivesPrompt();
         } else if (input.equalsIgnoreCase("22")) {
-            return new CompleteMessagePrompt();
+            return new StartMessagePrompt();
         } else if (input.equalsIgnoreCase("23")) {
-            return new DeletePrompt();
+            return new CompleteMessagePrompt();
         } else if (input.equalsIgnoreCase("24")) {
+            return new OverrideDisplayPrompt();
+        } else if (input.equalsIgnoreCase("25")) {
+            return new DeletePrompt();
+        } else if (input.equalsIgnoreCase("26")) {
             return new StagesPrompt(questFactory);
         } else {
             return new CreateStagePrompt(stageNum, questFactory, citizens);
         }
 
+    }
+    
+    private class PasswordListPrompt extends FixedSetPrompt {
+        
+        public PasswordListPrompt() {
+
+            super("1", "2", "3", "4");
+
+        }
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+
+            String text = GOLD + "- Password Objectives -\n";
+            if (context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) == null) {
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add password display (" + Lang.get("noneSet") + ")\n";
+                text += GRAY + "2 - " + "Add password phrase (No password displays set)\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+            } else {
+
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add password display\n";
+                for (String display : getPasswordDisplays(context)) {
+
+                    text += GRAY + "    - " + AQUA + display + "\n";
+
+                }
+
+                if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
+                    text += GRAY + "2 - " + "Add password phrase (" + Lang.get("noneSet") + ")\n";
+                } else {
+
+                    text += GRAY + "2 - " + "Add password phrase\n";
+                    for (String phrase : getPasswordPhrases(context)) {
+
+                        text += GRAY + "    - " + DARKAQUA + phrase + "\n";
+
+                    }
+
+                }
+
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+
+            }
+
+            return text;
+
+        }
+
+        @Override
+        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("1")) {
+                return new PasswordDisplayPrompt();
+            } else if (input.equalsIgnoreCase("2")) {
+                if (context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) == null) {
+                    context.getForWhom().sendRawMessage(RED + "You must add at least one password display first!");
+                    return new PasswordListPrompt();
+                } else {
+                    return new PasswordPhrasePrompt();
+                }
+            } else if (input.equalsIgnoreCase("3")) {
+                context.getForWhom().sendRawMessage(YELLOW + "Password Objectives cleared.");
+                context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, null);
+                context.setSessionData(pref + CK.S_PASSWORD_PHRASES, null);
+                return new PasswordListPrompt();
+            } else if (input.equalsIgnoreCase("4")) {
+
+                int one;
+                int two;
+
+                if (context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null) {
+                    one = ((List<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS)).size();
+                } else {
+                    one = 0;
+                }
+
+                if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
+                    two = ((List<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES)).size();
+                } else {
+                    two = 0;
+                }
+
+                if (one == two) {
+                    return new CreateStagePrompt(stageNum, questFactory, citizens);
+                } else {
+                    context.getForWhom().sendRawMessage(RED + "The password display and password phrase lists are not the same size!");
+                    return new PasswordListPrompt();
+                }
+            }
+            return null;
+
+        }
+        
+        private List<String> getPasswordDisplays(ConversationContext context) {
+            return (List<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
+        }
+
+        private List<String> getPasswordPhrases(ConversationContext context) {
+            return (List<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+        }
+        
     }
 
     private class BreakBlockListPrompt extends FixedSetPrompt {

@@ -98,6 +98,9 @@ public class CK {
 	public static final String S_DENIZEN = "denizen";
 	public static final String S_COMPLETE_MESSAGE = "completeMessage";
 	public static final String S_START_MESSAGE = "startMessage";
+        public static final String S_OVERRIDE_DISPLAY = "overrideDisplay";
+        public static final String S_PASSWORD_DISPLAYS = "passwordDisplays";
+        public static final String S_PASSWORD_PHRASES = "passwordPhrases";
 	public static final String S_CUSTOM_OBJECTIVES = "customObjectives";
         public static final String S_CUSTOM_OBJECTIVES_COUNT = "customObjectiveCounts";
         public static final String S_CUSTOM_OBJECTIVES_DATA = "customObjectiveData";

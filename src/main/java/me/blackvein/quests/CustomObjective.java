@@ -150,7 +150,7 @@ public abstract class CustomObjective implements Listener {
                 if(index > -1){
 
                     if(quester.customObjectiveCounts.get(obj.getName()) >= quester.currentStage.customObjectiveCounts.get(index)){
-                       quester.finishObjective("customObj", null, null, null, null, null, null, null, null, obj);
+                       quester.finishObjective("customObj", null, null, null, null, null, null, null, null, null, obj);
                     }
 
                 }
