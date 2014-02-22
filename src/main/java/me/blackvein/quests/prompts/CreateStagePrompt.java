@@ -316,13 +316,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
         
         if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
-            text += PINK + "" + BOLD + "20 " + RESET + PINK + "- Password Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += PURPLE + "" + BOLD + "20 " + RESET + PURPLE + "- Password Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
             LinkedList<String> passPhrases = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
             LinkedList<String> passDisplays = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
-            text += PINK + "" + BOLD + "20 " + RESET + PINK + "- Password Objectives\n";
+            text += PURPLE + "" + BOLD + "20 " + RESET + PURPLE + "- Password Objectives\n";
             for(int i = 0; i < passPhrases.size(); i++){
-                text += AQUA + "    - " + ITALIC + "\"" + passDisplays.get(i) + "\"" + RESET + DARKAQUA + "(" + passPhrases.get(i) + ")" + "\n";
+                text += AQUA + "    - \"" + passDisplays.get(i) + "\"" + RESET + DARKAQUA + " (" + passPhrases.get(i) + ")" + "\n";
             }
         }
         
@@ -474,10 +474,10 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 }
 
                 if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
-                    text += GRAY + "2 - " + "Add password phrase (" + Lang.get("noneSet") + ")\n";
+                    text += YELLOW + "2 - " + "Add password phrase (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    text += GRAY + "2 - " + "Add password phrase\n";
+                    text += YELLOW + "2 - " + "Add password phrase\n";
                     for (String phrase : getPasswordPhrases(context)) {
 
                         text += GRAY + "    - " + DARKAQUA + phrase + "\n";
@@ -546,6 +546,116 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         private List<String> getPasswordPhrases(ConversationContext context) {
             return (List<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+        }
+        
+    }
+    
+    private class PasswordDisplayPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+
+            String text = YELLOW + "Enter a password display, or 'cancel' to return\n";
+            text += ITALIC + "" + GOLD + "(This is the text that will be displayed to the player as their objective)";
+
+            return text;
+
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false) {
+                
+                if(context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null) {
+                    
+                    List<String> displays = (List<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
+                    displays.add(input);
+                    context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, displays);
+                    
+                } else {
+                    
+                    List<String> displays = new LinkedList<String>();
+                    displays.add(input);
+                    context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, displays);
+                    
+                }
+                
+            }
+            
+            return new PasswordListPrompt();
+
+        }
+        
+    }
+    
+    private class PasswordPhrasePrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+
+            String text = YELLOW + "Enter a password phrase, or 'cancel' to return\n";
+            text += ITALIC + "" + GOLD + "(This is the text that a player has to say to complete the objective)";
+
+            return text;
+
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("cancel") == false) {
+                
+                if(context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
+                    
+                    List<String> phrases = (List<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+                    phrases.add(input);
+                    context.setSessionData(pref + CK.S_PASSWORD_PHRASES, phrases);
+                    
+                } else {
+                    
+                    List<String> phrases = new LinkedList<String>();
+                    phrases.add(input);
+                    context.setSessionData(pref + CK.S_PASSWORD_PHRASES, phrases);
+                    
+                }
+                
+            }
+            
+            return new PasswordListPrompt();
+
+        }
+        
+    }
+    
+    private class OverrideDisplayPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+
+            String text = YELLOW + "Enter objective display override, or 'clear' to clear the override, or 'cancel' to return.\n";
+            text += ITALIC + "" + GOLD + "(The objective display override will show up as the players current objective)";
+
+            return text;
+
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase("clear") == false && input.equalsIgnoreCase("cancel") == false) {
+                
+                context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, input);
+                
+            }else if(input.equalsIgnoreCase("clear")) {
+                
+                context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, null);
+                context.getForWhom().sendRawMessage(YELLOW + "Objective display override cleared.");
+                
+            }
+            
+            return new CreateStagePrompt(stageNum, questFactory, citizens);
+
         }
         
     }

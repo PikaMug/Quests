@@ -1262,9 +1262,12 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> shearColors;
         LinkedList<Integer> shearAmounts;
 
-        LinkedList<String> customObjs = null;
-        LinkedList<Integer> customObjCounts = null;
-        LinkedList<Map<String, Object>> customObjsData = null;
+        LinkedList<String> passDisplays;
+        LinkedList<String> passPhrases;
+        
+        LinkedList<String> customObjs;
+        LinkedList<Integer> customObjCounts;
+        LinkedList<Map<String, Object>> customObjsData;
         
         String script;
         String startEvent;
@@ -1274,6 +1277,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         LinkedList<String> chatEvents;
         LinkedList<String> chatEventTriggers;
         Long delay;
+        String overrideDisplay;
         String delayMessage;
         String startMessage;
         String completeMessage;
@@ -1330,6 +1334,13 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             shearColors = null;
             shearAmounts = null;
 
+            passDisplays = null;
+            passPhrases = null;
+            
+            customObjs = null;
+            customObjCounts = null;
+            customObjsData = null;
+            
             script = null;
             startEvent = null;
             finishEvent = null;
@@ -1338,6 +1349,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             chatEvents = null;
             chatEventTriggers = null;
             delay = null;
+            overrideDisplay = null;
             delayMessage = null;
             startMessage = null;
             completeMessage = null;
@@ -1422,6 +1434,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 shearAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
             }
 
+            if (cc.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null) {
+                passDisplays = (LinkedList<String>) cc.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
+                passPhrases = (LinkedList<String>) cc.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+            }
+            
             if (cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
                 customObjs = (LinkedList<String>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
                 customObjCounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
@@ -1456,6 +1473,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (cc.getSessionData(pref + CK.S_DENIZEN) != null) {
                 script = (String) cc.getSessionData(pref + CK.S_DENIZEN);
+            }
+            
+            if (cc.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) != null) {
+                overrideDisplay = (String) cc.getSessionData(pref + CK.S_OVERRIDE_DISPLAY);
             }
 
             if (cc.getSessionData(pref + CK.S_START_MESSAGE) != null) {
@@ -1522,6 +1543,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             stage.set("mob-tame-amounts", tameAmounts);
             stage.set("sheep-to-shear", shearColors);
             stage.set("sheep-amounts", shearAmounts);
+            stage.set("password-displays", passDisplays);
+            stage.set("password-phrases", passPhrases);
             if(customObjs != null && customObjs.isEmpty() == false){
                 
                 ConfigurationSection sec = stage.createSection("custom-objectives");
@@ -1547,6 +1570,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
             stage.set("delay", delay);
             stage.set("delay-message", delayMessage);
+            stage.set("objective-override", overrideDisplay);
             stage.set("start-message", startMessage);
             stage.set("complete-message", completeMessage);
 
@@ -1961,6 +1985,13 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             }
             
+            if (stage.passwordDisplays.isEmpty() == false) {
+                
+                cc.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.passwordDisplays);
+                cc.setSessionData(pref + CK.S_PASSWORD_PHRASES, stage.passwordPhrases);
+                
+            }
+            
             if (stage.customObjectives.isEmpty() == false) {
             
                 LinkedList<String> list = new LinkedList<String>();
@@ -2021,6 +2052,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 cc.setSessionData(pref + CK.S_DENIZEN, stage.script);
             }
 
+            if (stage.objectiveOverride != null) {
+                cc.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.objectiveOverride);
+            }
+            
             if (stage.completeMessage != null) {
                 cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.completeMessage);
             }

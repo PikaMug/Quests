@@ -61,6 +61,8 @@ quests:
         - id-276:amount-1
       exp: 100
       quest-points: 1
+
+
   CatchFish:
     name: 'Catch Fish'
     ask-message: '<yellow>Catch some fish!'

@@ -195,7 +195,7 @@ public class PlayerListener implements Listener {
                 
                 if (quester.hasObjective("password")) {
                     
-                    quester.sayPass(evt.getMessage());
+                    quester.sayPass(evt);
                     
                 }
 
@@ -244,40 +244,34 @@ public class PlayerListener implements Listener {
 
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
-            boolean canOpen = true;
+            Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            if (quester.hasObjective("breakBlock")) {
 
-            if (canOpen == true) {
-
-                Quester quester = plugin.getQuester(evt.getPlayer().getName());
-                if (quester.hasObjective("breakBlock")) {
-
-                    if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false && evt.isCancelled() == false) {
-                        quester.breakBlock(evt.getBlock().getType());
-                    }
-
+                if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false && evt.isCancelled() == false) {
+                    quester.breakBlock(evt.getBlock().getType());
                 }
 
-                if (quester.hasObjective("placeBlock")) {
+            }
 
-                    if (quester.blocksPlaced.containsKey(evt.getBlock().getType())) {
+            if (quester.hasObjective("placeBlock")) {
 
-                        if (quester.blocksPlaced.get(evt.getBlock().getType()) > 0) {
+                if (quester.blocksPlaced.containsKey(evt.getBlock().getType())) {
 
-                            if (evt.isCancelled() == false) {
-                                quester.blocksPlaced.put(evt.getBlock().getType(), quester.blocksPlaced.get(evt.getBlock().getType()) - 1);
-                            }
+                    if (quester.blocksPlaced.get(evt.getBlock().getType()) > 0) {
 
+                        if (evt.isCancelled() == false) {
+                            quester.blocksPlaced.put(evt.getBlock().getType(), quester.blocksPlaced.get(evt.getBlock().getType()) - 1);
                         }
 
                     }
 
                 }
 
-                if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS) && quester.hasObjective("cutBlock")) {
+            }
 
-                    quester.cutBlock(evt.getBlock().getType());
+            if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS) && quester.hasObjective("cutBlock")) {
 
-                }
+                quester.cutBlock(evt.getBlock().getType());
 
             }
 

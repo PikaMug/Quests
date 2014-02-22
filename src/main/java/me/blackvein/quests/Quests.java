@@ -588,7 +588,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 cs.sendMessage(GOLD + "---(Objectives)---");
                             }
 
-                            for (String s : getQuester(cs.getName()).getObjectives()) {
+                            for (String s : getQuester(cs.getName()).getObjectivesReal()) {
 
                                 cs.sendMessage(s);
 
@@ -1035,6 +1035,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                     quester.resetObjectives();
                                     quester.currentStage = null;
+                                    quester.currentStageIndex = 0;
                                     cs.sendMessage(YELLOW + "You have quit " + PURPLE + quester.currentQuest.name + YELLOW + ".");
                                     quester.currentQuest = null;
                                     quester.saveData();
@@ -1274,6 +1275,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 quester.resetObjectives();
                                 quester.currentStage = null;
+                                quester.currentStageIndex = 0;
                                 cs.sendMessage(GREEN + target.getName() + GOLD + " has forcibly quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
                                 target.sendMessage(GREEN + cs.getName() + GOLD + " has forced you to quit the Quest " + PURPLE + quester.currentQuest.name + GOLD + ".");
                                 quester.currentQuest = null;

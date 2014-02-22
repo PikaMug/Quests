@@ -156,10 +156,26 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
                 cc.setSessionData(newPref + CK.S_SHEAR_COLORS, cc.getSessionData(pref + CK.S_SHEAR_COLORS));
                 cc.setSessionData(newPref + CK.S_SHEAR_AMOUNTS, cc.getSessionData(pref + CK.S_SHEAR_AMOUNTS));
 
+                cc.setSessionData(newPref + CK.S_START_EVENT, cc.getSessionData(pref + CK.S_START_EVENT));
+                cc.setSessionData(newPref + CK.S_DISCONNECT_EVENT, cc.getSessionData(pref + CK.S_DISCONNECT_EVENT));
+                cc.setSessionData(newPref + CK.S_DEATH_EVENT, cc.getSessionData(pref + CK.S_DEATH_EVENT));
+                cc.setSessionData(newPref + CK.S_CHAT_EVENTS, cc.getSessionData(pref + CK.S_CHAT_EVENTS));
+                cc.setSessionData(newPref + CK.S_CHAT_EVENT_TRIGGERS, cc.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS));
                 cc.setSessionData(newPref + CK.S_FINISH_EVENT, cc.getSessionData(pref + CK.S_FINISH_EVENT));
 
+                cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES));
+                cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT));
+                cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_COUNT, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT));
+                cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS));
+                cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP));
+                
+                cc.setSessionData(newPref + CK.S_PASSWORD_DISPLAYS, cc.getSessionData(pref + CK.S_PASSWORD_DISPLAYS));
+                cc.setSessionData(newPref + CK.S_PASSWORD_PHRASES, cc.getSessionData(pref + CK.S_PASSWORD_PHRASES));
+                
+                cc.setSessionData(newPref + CK.S_OVERRIDE_DISPLAY, cc.getSessionData(pref + CK.S_OVERRIDE_DISPLAY));
+                
                 cc.setSessionData(newPref + CK.S_DELAY, cc.getSessionData(pref + CK.S_DELAY));
-                cc.setSessionData(newPref +CK.S_DELAY_MESSAGE, cc.getSessionData(pref + CK.S_DELAY_MESSAGE));
+                cc.setSessionData(newPref + CK.S_DELAY_MESSAGE, cc.getSessionData(pref + CK.S_DELAY_MESSAGE));
 
                 cc.setSessionData(newPref + CK.S_DENIZEN, cc.getSessionData(pref + CK.S_DENIZEN));
 
@@ -218,7 +234,23 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
             cc.setSessionData(pref + CK.S_SHEAR_AMOUNTS, null);
 
             cc.setSessionData(pref + CK.S_FINISH_EVENT, null);
+            cc.setSessionData(pref + CK.S_START_EVENT, null);
+            cc.setSessionData(pref + CK.S_DEATH_EVENT, null);
+            cc.setSessionData(pref + CK.S_CHAT_EVENTS, null);
+            cc.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, null);
+            cc.setSessionData(pref + CK.S_DISCONNECT_EVENT, null);
 
+            cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, null);
+            cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, null);
+            cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, null);
+            cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, null);
+            cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
+            
+            cc.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, null);
+            cc.setSessionData(pref + CK.S_PASSWORD_PHRASES, null);
+
+            cc.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, null);
+            
             cc.setSessionData(pref + CK.S_DELAY, null);
             cc.setSessionData(pref + CK.S_DELAY_MESSAGE, null);
 

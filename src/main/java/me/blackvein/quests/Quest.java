@@ -42,6 +42,7 @@ public class Quest {
     Location blockStart;
     Quests plugin;
     Event initialEvent;
+    
     //Requirements
     int moneyReq = 0;
     int questPointsReq = 0;
@@ -59,6 +60,7 @@ public class Quest {
     
     public String failRequirements = null;
     //
+    
     //Rewards
     int moneyReward = 0;
     int questPoints = 0;
@@ -73,8 +75,8 @@ public class Quest {
     List<String> heroesClasses = new LinkedList<String>();
     List<Double> heroesAmounts = new LinkedList<Double>();
     List<String> phatLootRewards = new LinkedList<String>();
-
     //
+    
     public void nextStage(Quester q) {
 
         String stageCompleteMessage = q.currentStage.completeMessage;
@@ -100,9 +102,9 @@ public class Quest {
 
                 q.currentStageIndex++;
                 try {
-                setStage(q, q.currentStageIndex);
+                    setStage(q, q.currentStageIndex);
                 } catch (InvalidStageException e) {
-                	e.printStackTrace();
+                    e.printStackTrace();
                 }
 
             }
@@ -144,7 +146,7 @@ public class Quest {
         quester.addEmpties();
 
         quester.getPlayer().sendMessage(ChatColor.GOLD + "---(Objectives)---");
-        for (String s : quester.getObjectives()) {
+        for (String s : quester.getObjectivesReal()) {
 
             quester.getPlayer().sendMessage(s);
 

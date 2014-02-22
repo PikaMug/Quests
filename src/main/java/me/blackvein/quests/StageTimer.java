@@ -47,16 +47,16 @@ public class StageTimer implements Runnable{
                     quester.delayTimeLeft = -1;
 
                     player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
-                    for(String s : quester.getObjectives()){
+                    for(String s : quester.getObjectivesReal()){
 
                         player.sendMessage(s);
 
                     }
 
                     String stageStartMessage = quester.currentStage.startMessage;
-                	if (stageStartMessage != null) {
-                		quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quester.currentQuest));
-                	}
+                    if (stageStartMessage != null) {
+                            quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quester.currentQuest));
+                    }
 
                 }
 

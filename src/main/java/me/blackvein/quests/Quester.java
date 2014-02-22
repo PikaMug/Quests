@@ -20,6 +20,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
@@ -110,7 +111,7 @@ public class Quester {
 
             player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
 
-            for (String s : getObjectives()) {
+            for (String s : getObjectivesReal()) {
                 player.sendMessage(s);
             }
 
@@ -146,16 +147,23 @@ public class Quester {
 
     }
 
+    public LinkedList<String> getObjectivesReal() {
+        
+        if (currentStage.objectiveOverride != null) {
+            LinkedList<String> objectives = new LinkedList<String>();
+            objectives.add(ChatColor.GREEN + currentStage.objectiveOverride);
+            return objectives;
+        } else {
+            return getObjectives();
+        }
+        
+    }
+    
     public LinkedList<String> getObjectives() {
 
         LinkedList<String> unfinishedObjectives = new LinkedList<String>();
         LinkedList<String> finishedObjectives = new LinkedList<String>();
         LinkedList<String> objectives = new LinkedList<String>();
-
-        if (currentStage.objectiveOverride != null) {
-            objectives.add(ChatColor.GREEN + currentStage.objectiveOverride);
-            return objectives;
-        }
 
         for (Entry<Material, Integer> e : currentStage.blocksToDamage.entrySet()) {
 
@@ -1007,12 +1015,13 @@ public class Quester {
 
     }
 
-    public void sayPass(String s) {
+    public void sayPass(AsyncPlayerChatEvent evt) {
 
         for (String pass : currentStage.passwordPhrases) {
 
-            if (pass.equalsIgnoreCase(s)) {
+            if (pass.equalsIgnoreCase(evt.getMessage())) {
 
+                evt.setCancelled(true);
                 String display = currentStage.passwordDisplays.get(currentStage.passwordPhrases.indexOf(pass));
                 passwordsSaid.put(pass, true);
                 finishObjective("password", null, null, null, null, null, null, null, null, display, null);
@@ -1397,6 +1406,7 @@ public class Quester {
         mobsTamed.clear();
         sheepSheared.clear();
         customObjectiveCounts.clear();
+        passwordsSaid.clear();
 
     }
 
@@ -2765,6 +2775,7 @@ public class Quester {
                     if (q.equals(currentQuest) == false) {
 
                         currentStage = null;
+                        currentStageIndex = 0;
                         resetObjectives();
                         if (plugin.getServer().getPlayer(name) != null) {
                             plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " has been modified. You have been forced to quit the Quest.");
@@ -2782,6 +2793,7 @@ public class Quester {
             if (exists == false) {
 
                 currentStage = null;
+                currentStageIndex = 0;
                 resetObjectives();
                 if (plugin.getServer().getPlayer(name) != null) {
                     plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " no longer exists. You have been forced to quit the Quest.");
