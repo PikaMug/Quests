@@ -118,7 +118,7 @@ public class Stage {
     public LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
     public LinkedList<Map<String, Object>> customObjectiveData = new LinkedList<Map<String, Object>>();
     public LinkedList<String> passwordDisplays = new LinkedList<String>();
-    public LinkedList<String> passwordPhrases = new LinkedList<String>();
+    public LinkedList<LinkedList<String>> passwordPhrases = new LinkedList<LinkedList<String>>();
     public String script;
     public Event startEvent = null;
     public Event deathEvent = null;

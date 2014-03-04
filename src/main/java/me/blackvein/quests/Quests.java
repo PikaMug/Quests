@@ -88,6 +88,7 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -3279,6 +3280,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             List<String> phrases = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-phrases");
                             if(displays.size() == phrases.size()) {
                                 
+                                for(int index = 0; index < displays.size(); index++){
+                                    
+                                    oStage.passwordDisplays.add(displays.get(index));
+                                    LinkedList<String> answers = new LinkedList<String>();
+                                    answers.addAll(Arrays.asList(phrases.get(index).split("")));
+                                    
+                                }
                                 oStage.passwordDisplays.addAll(displays);
                                 oStage.passwordPhrases.addAll(phrases);
                                 
