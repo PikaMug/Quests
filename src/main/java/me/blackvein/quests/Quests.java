@@ -3280,15 +3280,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             List<String> phrases = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-phrases");
                             if(displays.size() == phrases.size()) {
                                 
-                                for(int index = 0; index < displays.size(); index++){
+                                for(int passIndex = 0; passIndex < displays.size(); passIndex++){
                                     
-                                    oStage.passwordDisplays.add(displays.get(index));
+                                    oStage.passwordDisplays.add(displays.get(passIndex));
                                     LinkedList<String> answers = new LinkedList<String>();
-                                    answers.addAll(Arrays.asList(phrases.get(index).split("")));
+                                    answers.addAll(Arrays.asList(phrases.get(passIndex).split("\\|")));
+                                    oStage.passwordPhrases.add(answers);
                                     
                                 }
-                                oStage.passwordDisplays.addAll(displays);
-                                oStage.passwordPhrases.addAll(phrases);
                                 
                             } else {
                                 printSevere("[Quests] password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
@@ -4284,17 +4283,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         String message = "";
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliseconds);
-
-        Calendar epoch = Calendar.getInstance();
-        epoch.setTimeInMillis(0);
-
-        long days = calendar.get(Calendar.DAY_OF_YEAR) - epoch.get(Calendar.DAY_OF_YEAR);
-        long hours = calendar.get(Calendar.HOUR_OF_DAY) - epoch.get(Calendar.HOUR_OF_DAY);
-        long minutes = calendar.get(Calendar.MINUTE);
-        long seconds = calendar.get(Calendar.SECOND);
-        long milliSeconds2 = calendar.get(Calendar.MILLISECOND);
+        long days = milliseconds / 86400000;
+        long hours = (milliseconds % 86400000) / 3600000;
+        long minutes = ((milliseconds % 86400000) % 3600000) / 60000;
+        long seconds = (((milliseconds % 86400000) % 3600000) % 60000) / 1000;
+        long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
+        
         if (days > 0) {
 
             if (days == 1) {

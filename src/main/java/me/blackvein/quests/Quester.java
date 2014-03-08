@@ -518,15 +518,15 @@ public class Quester {
 
         }
 
-        for (String s : currentStage.passwordPhrases) {
+        for (String s : currentStage.passwordDisplays) {
 
             if (passwordsSaid.get(s) == false) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + currentStage.passwordDisplays.get(currentStage.passwordPhrases.indexOf(s)));
+                unfinishedObjectives.add(ChatColor.GREEN + s);
 
             } else {
 
-                finishedObjectives.add(ChatColor.GRAY + currentStage.passwordDisplays.get(currentStage.passwordPhrases.indexOf(s)));
+                finishedObjectives.add(ChatColor.GRAY + s);
 
             }
 
@@ -1017,16 +1017,28 @@ public class Quester {
 
     public void sayPass(AsyncPlayerChatEvent evt) {
 
-        for (String pass : currentStage.passwordPhrases) {
+        boolean done;
+        for (LinkedList<String> passes : currentStage.passwordPhrases) {
 
-            if (pass.equalsIgnoreCase(evt.getMessage())) {
+            done = false;
+            
+            for(String pass : passes){
+                
+                if (pass.equalsIgnoreCase(evt.getMessage())) {
 
-                evt.setCancelled(true);
-                String display = currentStage.passwordDisplays.get(currentStage.passwordPhrases.indexOf(pass));
-                passwordsSaid.put(pass, true);
-                finishObjective("password", null, null, null, null, null, null, null, null, display, null);
+                    evt.setCancelled(true);
+                    String display = currentStage.passwordDisplays.get(currentStage.passwordPhrases.indexOf(passes));
+                    passwordsSaid.put(display, true);
+                    done = true;
+                    finishObjective("password", null, null, null, null, null, null, null, null, display, null);
+                    break;
 
+                }
+            
             }
+            
+            if(done)
+                break;
 
         }
 
@@ -1368,9 +1380,9 @@ public class Quester {
             }
         }
 
-        if (currentStage.passwordPhrases.isEmpty() == false) {
-            for (String pass : currentStage.passwordPhrases) {
-                passwordsSaid.put(pass, false);
+        if (currentStage.passwordDisplays.isEmpty() == false) {
+            for (String display : currentStage.passwordDisplays) {
+                passwordsSaid.put(display, false);
             }
         }
 

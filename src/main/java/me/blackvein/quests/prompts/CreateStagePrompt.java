@@ -316,13 +316,16 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
         
         if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
-            text += PURPLE + "" + BOLD + "20 " + RESET + PURPLE + "- Password Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- Password Objectives" + GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            LinkedList<String> passPhrases = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+            LinkedList<LinkedList<String>> passPhrases = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
             LinkedList<String> passDisplays = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
-            text += PURPLE + "" + BOLD + "20 " + RESET + PURPLE + "- Password Objectives\n";
+            text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- Password Objectives\n";
             for(int i = 0; i < passPhrases.size(); i++){
-                text += AQUA + "    - \"" + passDisplays.get(i) + "\"" + RESET + DARKAQUA + " (" + passPhrases.get(i) + ")" + "\n";
+                text += AQUA + "    - \"" + passDisplays.get(i) + "\"\n";
+                LinkedList<String> phrases = passPhrases.get(i);
+                for(String phrase : phrases)
+                    text += DARKAQUA + "      - " + phrase + "\n";
             }
         }
         
@@ -461,7 +464,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String text = GOLD + "- Password Objectives -\n";
             if (context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add password display (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + "Add password phrase (No password displays set)\n";
+                text += GRAY + "2 - " + "Add password phrase(s) (No password displays set)\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -474,13 +477,19 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 }
 
                 if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
-                    text += YELLOW + "2 - " + "Add password phrase (" + Lang.get("noneSet") + ")\n";
+                    text += YELLOW + "2 - " + "Add password phrase(s) (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    text += YELLOW + "2 - " + "Add password phrase\n";
-                    for (String phrase : getPasswordPhrases(context)) {
-
-                        text += GRAY + "    - " + DARKAQUA + phrase + "\n";
+                    text += YELLOW + "2 - " + "Add password phrase(s)\n";
+                    for (LinkedList<String> phraseList : getPasswordPhrases(context)) {
+                        
+                        text += GRAY + "    - ";
+                        for(String s : phraseList){
+                            if(phraseList.getLast().equals(s) == false)
+                                text += DARKAQUA + s + GRAY + "|";
+                            else
+                                text += DARKAQUA + s + "\n";
+                        }
 
                     }
 
@@ -524,7 +533,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 }
 
                 if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
-                    two = ((List<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES)).size();
+                    two = ((LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES)).size();
                 } else {
                     two = 0;
                 }
@@ -544,8 +553,8 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             return (List<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
         }
 
-        private List<String> getPasswordPhrases(ConversationContext context) {
-            return (List<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+        private LinkedList<LinkedList<String>> getPasswordPhrases(ConversationContext context) {
+            return (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
         }
         
     }
@@ -595,7 +604,8 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         public String getPromptText(ConversationContext context) {
 
             String text = YELLOW + "Enter a password phrase, or 'cancel' to return\n";
-            text += ITALIC + "" + GOLD + "(This is the text that a player has to say to complete the objective)";
+            text += ITALIC + "" + GOLD + "(This is the text that a player has to say to complete the objective)\n";
+            text += RESET + "" + YELLOW + "If you want multiple password phrases, seperate them by a | (pipe)";
 
             return text;
 
@@ -608,14 +618,18 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 
                 if(context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
                     
-                    List<String> phrases = (List<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
-                    phrases.add(input);
+                    LinkedList<LinkedList<String>> phrases = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+                    LinkedList<String> newPhrases = new LinkedList<String>();
+                    newPhrases.addAll(Arrays.asList(input.split("\\|")));
+                    phrases.add(newPhrases);
                     context.setSessionData(pref + CK.S_PASSWORD_PHRASES, phrases);
                     
                 } else {
                     
-                    List<String> phrases = new LinkedList<String>();
-                    phrases.add(input);
+                    LinkedList<LinkedList<String>> phrases = new LinkedList<LinkedList<String>>();
+                    LinkedList<String> newPhrases = new LinkedList<String>();
+                    newPhrases.addAll(Arrays.asList(input.split("\\|")));
+                    phrases.add(newPhrases);
                     context.setSessionData(pref + CK.S_PASSWORD_PHRASES, phrases);
                     
                 }
