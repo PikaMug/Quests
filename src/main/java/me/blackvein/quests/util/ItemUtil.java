@@ -45,7 +45,6 @@ public class ItemUtil implements ColorUtil{
                 return -4;
             else if(one.hasItemMeta() == false && two.hasItemMeta())
                 return -4;
-
             else if(one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() == false)
                 return -4;
             else if(one.getItemMeta().hasDisplayName() == false && two.getItemMeta().hasDisplayName())
@@ -56,7 +55,7 @@ public class ItemUtil implements ColorUtil{
             else if(one.getItemMeta().hasLore() == false && two.getItemMeta().hasLore())
                 return -4;
 
-            else if(ChatColor.stripColor(one.getItemMeta().getDisplayName()).equals(ChatColor.stripColor(two.getItemMeta().getDisplayName())) == false)
+            else if(one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() && ChatColor.stripColor(one.getItemMeta().getDisplayName()).equals(ChatColor.stripColor(two.getItemMeta().getDisplayName())) == false)
                 return -4;
 
             else if(one.getItemMeta().hasLore() && two.getItemMeta().hasLore() && one.getItemMeta().getLore().equals(two.getItemMeta().getLore()) == false)
