@@ -36,6 +36,7 @@ public class Quest {
     public String finished;
     public long redoDelay = -1;
     public String region = null;
+    public ItemStack guiDisplay = null;
     public int parties = 0;
     LinkedList<Stage> orderedStages = new LinkedList<Stage>();
     NPC npcStart;

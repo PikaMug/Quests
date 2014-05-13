@@ -16,6 +16,7 @@ public class CK {
 	public static final String Q_FAIL_MESSAGE = "failMessage";
 	public static final String Q_INITIAL_EVENT = "initialEvent";
         public static final String Q_REGION = "region";
+        public static final String Q_GUIDISPLAY = "guiDisplay";
 
 	//Requirements
 	public static final String REQ_MONEY = "moneyReq";

@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import me.blackvein.quests.prompts.ItemStackPrompt;
 
 import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
@@ -19,7 +20,6 @@ import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.MiscUtil;
 import net.citizensnpcs.api.CitizensAPI;
 
 import org.bukkit.ChatColor;
@@ -155,7 +155,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         public CreateMenuPrompt() {
 
-            super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13");
+            super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14");
 
         }
 
@@ -272,33 +272,39 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
             if (quests.citizens != null) {
+                text += GRAY + "9 - Set GUI Item Display (Feature coming soon)\n";
+            } else {
+                text += GRAY + "8 - Set GUI Item Display (Feature coming soon)\n";
+            }
+            
+            if (quests.citizens != null) {
+                text += BLUE + "" + BOLD + "10" + RESET + DARKAQUA + " - " + Lang.get("questEditorReqs") + "\n";
+            } else {
                 text += BLUE + "" + BOLD + "9" + RESET + DARKAQUA + " - " + Lang.get("questEditorReqs") + "\n";
-            } else {
-                text += BLUE + "" + BOLD + "8" + RESET + DARKAQUA + " - " + Lang.get("questEditorReqs") + "\n";
             }
 
             if (quests.citizens != null) {
+                text += BLUE + "" + BOLD + "11" + RESET + PINK + " - " + Lang.get("questEditorStages") + "\n";
+            } else {
                 text += BLUE + "" + BOLD + "10" + RESET + PINK + " - " + Lang.get("questEditorStages") + "\n";
-            } else {
-                text += BLUE + "" + BOLD + "9" + RESET + PINK + " - " + Lang.get("questEditorStages") + "\n";
             }
 
             if (quests.citizens != null) {
+                text += BLUE + "" + BOLD + "12" + RESET + GREEN + " - " + Lang.get("questEditorRews") + "\n";
+            } else {
                 text += BLUE + "" + BOLD + "11" + RESET + GREEN + " - " + Lang.get("questEditorRews") + "\n";
-            } else {
-                text += BLUE + "" + BOLD + "10" + RESET + GREEN + " - " + Lang.get("questEditorRews") + "\n";
             }
 
             if (quests.citizens != null) {
+                text += BLUE + "" + BOLD + "13" + RESET + GOLD + " - " + Lang.get("save") + "\n";
+            } else {
                 text += BLUE + "" + BOLD + "12" + RESET + GOLD + " - " + Lang.get("save") + "\n";
-            } else {
-                text += BLUE + "" + BOLD + "11" + RESET + GOLD + " - " + Lang.get("save") + "\n";
             }
 
             if (quests.citizens != null) {
-                text += BLUE + "" + BOLD + "13" + RESET + RED + " - " + Lang.get("exit") + "\n";
+                text += BLUE + "" + BOLD + "14" + RESET + RED + " - " + Lang.get("exit") + "\n";
             } else {
-                text += BLUE + "" + BOLD + "12" + RESET + RED + " - " + Lang.get("exit") + "\n";
+                text += BLUE + "" + BOLD + "13" + RESET + RED + " - " + Lang.get("exit") + "\n";
             }
 
             return text;
@@ -359,10 +365,18 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 if (quests.citizens != null) {
                     return new InitialEventPrompt();
                 } else {
-                    return new RequirementsPrompt(quests, QuestFactory.this);
+                    return new CreateMenuPrompt();
                 }
 
             } else if (input.equalsIgnoreCase("9")) {
+
+                if (quests.citizens != null) {
+                    return new CreateMenuPrompt();
+                } else {
+                    return new RequirementsPrompt(quests, QuestFactory.this);
+                }
+
+            } else if (input.equalsIgnoreCase("10")) {
 
                 if (quests.citizens != null) {
                     return new RequirementsPrompt(quests, QuestFactory.this);
@@ -370,7 +384,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     return new StagesPrompt(QuestFactory.this);
                 }
 
-            } else if (input.equalsIgnoreCase("10")) {
+            } else if (input.equalsIgnoreCase("11")) {
 
                 if (quests.citizens != null) {
                     return new StagesPrompt(QuestFactory.this);
@@ -378,7 +392,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     return new RewardsPrompt(quests, QuestFactory.this);
                 }
 
-            } else if (input.equalsIgnoreCase("11")) {
+            } else if (input.equalsIgnoreCase("12")) {
 
                 if (quests.citizens != null) {
                     return new RewardsPrompt(quests, QuestFactory.this);
@@ -386,7 +400,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     return new SavePrompt();
                 }
 
-            } else if (input.equalsIgnoreCase("12")) {
+            } else if (input.equalsIgnoreCase("13")) {
 
                 if (quests.citizens != null) {
                     return new SavePrompt();
@@ -394,7 +408,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     return new ExitPrompt();
                 }
 
-            } else if (input.equalsIgnoreCase("13")) {
+            } else if (input.equalsIgnoreCase("14")) {
 
                 if (quests.citizens != null) {
                     return new ExitPrompt();
@@ -764,6 +778,62 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
         }
+    }
+    
+    private class GUIDisplayPrompt extends FixedSetPrompt {
+        
+        public GUIDisplayPrompt(){
+            
+            super("1", "2", "3");
+            
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            
+            if(context.getSessionData("tempStack") != null){
+                context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
+                context.setSessionData("tempStack", null);
+            }
+            
+            String text = GREEN + "- GUI Item Display -\n";
+            if(context.getSessionData(CK.Q_GUIDISPLAY) != null){
+                ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
+                text += DARKGREEN + "Current item: " + RESET + ItemUtil.getDisplayString(stack) + "\n\n";
+            }else {
+                text += DARKGREEN + "Current item: " + GRAY + "(None)\n\n";
+            }
+            text += GREEN + "" + BOLD + "1 -" + RESET + DARKGREEN + " Set Item\n";
+            text += GREEN + "" + BOLD + "1 -" + RESET + DARKGREEN + " Clear Item\n";
+            text += GREEN + "" + BOLD + "1 -" + RESET + GREEN + " Done\n"; 
+            
+            
+            return text;
+            
+        }
+        
+
+        @Override
+        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+            
+            if(input.equalsIgnoreCase("1")) {
+                
+                return new ItemStackPrompt(GUIDisplayPrompt.this);
+                
+            }else if(input.equalsIgnoreCase("2")) {
+                
+                context.setSessionData(CK.Q_GUIDISPLAY, null);
+                context.getForWhom().sendRawMessage(YELLOW + "Quest GUI Item Display cleared.");
+                return new GUIDisplayPrompt();
+                
+            }else {
+                
+                return new CreateMenuPrompt();
+                
+            }
+            
+        }
+
     }
 
     private class RegionPrompt extends StringPrompt {
