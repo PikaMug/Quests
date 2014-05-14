@@ -89,11 +89,11 @@ public class NpcListener implements Listener {
 
                             if (q.npcStart != null && q.npcStart.getId() == evt.getNPC().getId()) {
                             	if (Quests.ignoreLockedQuests) {
-                            		if (q.testRequirements(quester) && (q.redoDelay <= 0)) {
-                            			npcQuests.add(q);
-                            		}
-                            	} else {
-                            		npcQuests.add(q);
+                                    if (q.testRequirements(quester) && (q.redoDelay <= 0)) {
+                                            npcQuests.add(q);
+                                    }
+                            	} else if (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1) {
+                                    npcQuests.add(q);
                             	}
                             }
 
@@ -101,6 +101,13 @@ public class NpcListener implements Listener {
 
                         if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
 
+                            if(plugin.questNPCGUIs.contains(evt.getNPC().getId())) {
+                                
+                                quester.showGUIDisplay(npcQuests);
+                                return;
+                                
+                            }
+                            
                             Conversation c = plugin.NPCConversationFactory.buildConversation((Conversable) player);
                             c.getContext().setSessionData("quests", npcQuests);
                             c.getContext().setSessionData("npc", evt.getNPC().getName());

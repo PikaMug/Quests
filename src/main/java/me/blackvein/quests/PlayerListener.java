@@ -1,6 +1,10 @@
 package me.blackvein.quests;
 
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.File;
+import java.util.Iterator;
+import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,10 +25,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerFishEvent.State;
+import org.bukkit.inventory.ItemStack;
 
-public class PlayerListener implements Listener {
+public class PlayerListener implements Listener, ColorUtil {
 
     final Quests plugin;
 
@@ -164,6 +170,85 @@ public class PlayerListener implements Listener {
 
     }
 
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent evt) {
+
+        Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
+        Player player = (Player) evt.getWhoClicked();
+        
+        if (evt.getInventory().getTitle().equals("Quests")) {
+            
+            ItemStack clicked = evt.getCurrentItem();
+            if(clicked != null) {
+
+                    for(Quest quest : plugin.quests) {
+
+                        if(quest.guiDisplay != null) {
+
+                            if(ItemUtil.compareItems(clicked, quest.guiDisplay, false) == 0) {
+
+                                if (quester.currentQuest != null) {
+                                    player.sendMessage(YELLOW + "You may only have one active Quest.");
+                                } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
+                                    player.sendMessage(YELLOW + "You have already completed " + PURPLE + quest.name + YELLOW + ".");
+                                } else {
+
+                                    boolean takeable = true;
+
+                                    if (quester.completedQuests.contains(quest.name)) {
+
+                                        if (quester.getDifference(quest) > 0) {
+                                            player.sendMessage(YELLOW + "You may not take " + AQUA + quest.name + YELLOW + " again for another " + PURPLE + Quests.getTime(quester.getDifference(quest)) + YELLOW + ".");
+                                            takeable = false;
+                                        }
+
+                                    }
+
+                                    if (quest.region != null) {
+
+                                        boolean inRegion = false;
+                                        Player p = quester.getPlayer();
+                                        RegionManager rm = Quests.worldGuard.getRegionManager(p.getWorld());
+                                        Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
+                                        while (it.hasNext()) {
+                                            ProtectedRegion pr = it.next();
+                                            if (pr.getId().equalsIgnoreCase(quest.region)) {
+                                                inRegion = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (inRegion == false) {
+                                            player.sendMessage(YELLOW + "You may not take " + AQUA + quest.name + YELLOW + " at this location.");
+                                            takeable = false;
+                                        }
+
+                                    }
+
+                                    if (takeable == true) {
+
+                                        quester.takeQuest(quest, false);
+
+                                    }
+
+                                evt.getWhoClicked().closeInventory();
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                evt.setCancelled(true);
+                
+            }
+
+        }
+        
+    }
+    
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent evt) {
 

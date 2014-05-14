@@ -272,9 +272,18 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
             if (quests.citizens != null) {
-                text += GRAY + "9 - Set GUI Item Display (Feature coming soon)\n";
+                
+                if(context.getSessionData(CK.Q_GUIDISPLAY) == null) {
+                    text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - Set GUI Item Display (None set)\n";
+                } else {
+                    
+                    ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
+                    text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - Set GUI Item Display (" + ItemUtil.getDisplayString(stack) + RESET + YELLOW + ")\n";
+                    
+                }
+                
             } else {
-                text += GRAY + "8 - Set GUI Item Display (Feature coming soon)\n";
+                text += GRAY + "8 - Set GUI Item Display (Citizens not installed) \n";
             }
             
             if (quests.citizens != null) {
@@ -365,13 +374,13 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 if (quests.citizens != null) {
                     return new InitialEventPrompt();
                 } else {
-                    return new CreateMenuPrompt();
+                    return new GUIDisplayPrompt();
                 }
 
             } else if (input.equalsIgnoreCase("9")) {
 
                 if (quests.citizens != null) {
-                    return new CreateMenuPrompt();
+                    return new GUIDisplayPrompt();
                 } else {
                     return new RequirementsPrompt(quests, QuestFactory.this);
                 }
@@ -792,8 +801,31 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         public String getPromptText(ConversationContext context) {
             
             if(context.getSessionData("tempStack") != null){
-                context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
+                
+                ItemStack stack = (ItemStack) context.getSessionData("tempStack");
+                boolean failed = false;
+                
+                for(Quest quest : quests.quests) {
+                    
+                    if(quest.guiDisplay != null) {
+                        
+                        if(ItemUtil.compareItems(stack, quest.guiDisplay, false) != 0) {
+                            
+                            context.getForWhom().sendRawMessage(RED + "Error: That item is already being used as the GUI Display for the Quest " + PURPLE + quest.name);
+                            failed = true;
+                            break;
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                if(!failed)
+                    context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
+                
                 context.setSessionData("tempStack", null);
+                
             }
             
             String text = GREEN + "- GUI Item Display -\n";
@@ -804,8 +836,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 text += DARKGREEN + "Current item: " + GRAY + "(None)\n\n";
             }
             text += GREEN + "" + BOLD + "1 -" + RESET + DARKGREEN + " Set Item\n";
-            text += GREEN + "" + BOLD + "1 -" + RESET + DARKGREEN + " Clear Item\n";
-            text += GREEN + "" + BOLD + "1 -" + RESET + GREEN + " Done\n"; 
+            text += GREEN + "" + BOLD + "2 -" + RESET + DARKGREEN + " Clear Item\n";
+            text += GREEN + "" + BOLD + "3 -" + RESET + GREEN + " Done\n"; 
             
             
             return text;
@@ -1082,6 +1114,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         String blockStart = null;
         String initialEvent = null;
         String region = null;
+        ItemStack guiDisplay = null;
 
         Integer moneyReq = null;
         Integer questPointsReq = null;
@@ -1181,6 +1214,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             region = (String) cc.getSessionData(CK.Q_REGION);
         }
 
+        if (cc.getSessionData(CK.Q_GUIDISPLAY) != null) {
+            guiDisplay = (ItemStack) cc.getSessionData(CK.Q_GUIDISPLAY);
+        }
+        
         if (cc.getSessionData(CK.REW_MONEY) != null) {
             moneyRew = (Integer) cc.getSessionData(CK.REW_MONEY);
         }
@@ -1193,17 +1230,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             itemRews = new LinkedList<String>();
             for (ItemStack is : (LinkedList<ItemStack>) cc.getSessionData(CK.REW_ITEMS)) {
                 itemRews.add(ItemUtil.serialize(is));
-            }
-        }
-
-        if (cc.getSessionData(CK.REW_RPG_ITEM_IDS) != null) {
-            RPGItemRews = new LinkedList<Integer>();
-            RPGItemAmounts = new LinkedList<Integer>();
-            for (Integer i : (LinkedList<Integer>) cc.getSessionData(CK.REW_RPG_ITEM_IDS)) {
-                RPGItemRews.add(i);
-            }
-            for (Integer i : (LinkedList<Integer>) cc.getSessionData(CK.REW_RPG_ITEM_AMOUNTS)) {
-                RPGItemAmounts.add(i);
             }
         }
 
@@ -1246,6 +1272,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("finish-message", finish);
         cs.set("initial-event", initialEvent);
         cs.set("region", region);
+        cs.set("guiDisplay", ItemUtil.serialize(guiDisplay));
 
         if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) || heroesPrimaryReq != null || heroesSecondaryReq != null || customReqs != null) {
 
@@ -1823,11 +1850,6 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (q.heroesClasses.isEmpty() == false) {
             cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
             cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
-        }
-
-        if (q.rpgItemRewardIDs.isEmpty() == false) {
-            cc.setSessionData(CK.REW_RPG_ITEM_IDS, q.rpgItemRewardIDs);
-            cc.setSessionData(CK.REW_RPG_ITEM_AMOUNTS, q.rpgItemRewardAmounts);
         }
 
         if (q.heroesClasses.isEmpty() == false) {

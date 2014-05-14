@@ -63,10 +63,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import think.rpgitems.Plugin;
-import think.rpgitems.item.ItemManager;
-import think.rpgitems.item.RPGItem;
-
 import com.codisimus.plugins.phatloots.PhatLoots;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.mcMMO;
@@ -99,7 +95,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static Permission permission = null;
     public static WorldGuardPlugin worldGuard = null;
     public static mcMMO mcmmo = null;
-    public static Plugin rpgItems = null;
     public static Heroes heroes = null;
     public static PhatLoots phatLoots = null;
     public static boolean snoop = true;
@@ -119,6 +114,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public final LinkedList<Quest> quests = new LinkedList<Quest>();
     public final LinkedList<Event> events = new LinkedList<Event>();
     public final LinkedList<NPC> questNPCs = new LinkedList<NPC>();
+    public final LinkedList<Integer> questNPCGUIs = new LinkedList<Integer>();
     public ConversationFactory conversationFactory;
     public ConversationFactory NPCConversationFactory;
     public QuestFactory questFactory;
@@ -190,18 +186,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             mcmmo = (mcMMO) getServer().getPluginManager().getPlugin("mcMMO");
         }
 
-        if (getServer().getPluginManager().getPlugin("RPG Items") != null) {
-            rpgItems = (Plugin) getServer().getPluginManager().getPlugin("RPG Items");
-        }
-
         if (getServer().getPluginManager().getPlugin("Heroes") != null) {
             heroes = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
         }
-
-        if (getServer().getPluginManager().getPlugin("RPG Items") != null) {
-            rpgItems = think.rpgitems.Plugin.plugin;
-        }
-
+        
         if (getServer().getPluginManager().getPlugin("PhatLoots") != null) {
             phatLoots = (PhatLoots) getServer().getPluginManager().getPlugin("PhatLoots");
         }
@@ -260,6 +248,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             try {
                 data.load(this.getResource("events.yml"));
                 data.save(new File(this.getDataFolder(), "events.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+
+        }
+        
+        if (new File(this.getDataFolder(), "data.yml").exists() == false) {
+            printInfo("[Quests] Data file not found, writing default to file.");
+            FileConfiguration data = new YamlConfiguration();
+            data.options().copyHeader(true);
+            data.options().copyDefaults(true);
+            try {
+                data.load(this.getResource("data.yml"));
+                data.save(new File(this.getDataFolder(), "data.yml"));
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InvalidConfigurationException e) {
@@ -432,6 +436,26 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     }
 
+    public void loadData() {
+        
+        YamlConfiguration config = new YamlConfiguration();
+        File dataFile = new File(this.getDataFolder(), "data.yml");
+        
+        try {
+            config.load(dataFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(config.contains("npc-gui")) {
+            
+            List<Integer> ids = config.getIntegerList("npc-gui");
+            questNPCGUIs.addAll(ids);
+            
+        }
+        
+    }
+    
     public void loadModules() {
 
         File f = new File(this.getDataFolder(), "modules");
@@ -1765,6 +1789,32 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         cs.sendMessage(RED + "You do not have access to that command.");
 
                     }
+                } else if (args[0].equalsIgnoreCase("togglegui")) {
+
+                    if (cs.hasPermission("quests.admin.togglegui")) {
+
+                        try {
+                            
+                            int i = Integer.parseInt(args[1]);
+                            if (citizens.getNPCRegistry().getById(i) == null) {
+                                cs.sendMessage(RED + "Error: There is no NPC with ID " + PURPLE + i);
+                            }else if (questNPCGUIs.contains(i)) {
+                                questNPCGUIs.remove(i);
+                                a
+                            }
+                            
+                        } catch (NumberFormatException nfe) {
+                            cs.sendMessage(RED + "Input was not a number! Usage: /questadmin togglegui <npc id>");
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            cs.sendMessage(RED + "An unknown error occurred. See console output.");
+                        }
+
+                    } else {
+
+                        cs.sendMessage(RED + "You do not have access to that command.");
+
+                    }
                 } else {
 
                     cs.sendMessage(YELLOW + "Unknown Questadmin command. Type /questadmin for help.");
@@ -1809,6 +1859,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
         if (cs.hasPermission("quests.admin.nextstage")) {
             cs.sendMessage(DARKRED + "/questadmin nextstage <player>" + RED + " - Immediately force Stage completion for a player");
+        }
+        if (citizens != null && cs.hasPermission("quests.admin.togglegui")) {
+            cs.sendMessage(DARKRED + "/questadmin togglegui <npc id>" + RED + " - Toggle GUI Quest Display on an NPC");
         }
         if (cs.hasPermission("quests.admin.reload")) {
             cs.sendMessage(DARKRED + "/questadmin reload" + RED + " - Reload all Quests");
@@ -3565,61 +3618,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 }
 
-                if (config.contains("quests." + s + ".rewards.rpgitem-ids")) {
-
-                    if (Quests.checkList(config.getList("quests." + s + ".rewards.rpgitem-ids"), Integer.class)) {
-
-                        if (config.contains("quests." + s + ".rewards.rpgitem-amounts")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".rewards.rpgitem-amounts"), Integer.class)) {
-
-                                boolean failed = false;
-                                for (Integer id : config.getIntegerList("quests." + s + ".rewards.rpgitem-ids")) {
-
-                                    try {
-                                        RPGItem item = ItemManager.getItemById(id);
-                                        if (item != null) {
-                                            quest.rpgItemRewardIDs.add(id);
-                                        } else {
-                                            printSevere("[Quests] " + id + " in rpgitem-ids: Reward in Quest " + quest.name + " is not a valid RPGItem id!");
-                                            failed = true;
-                                            break;
-                                        }
-                                    } catch (Exception e) {
-                                        printSevere("[Quests] " + id + " in rpgitem-ids: Reward in Quest " + quest.name + " is not properly formatted!");
-                                        failed = true;
-                                        break;
-                                    }
-
-                                }
-
-                                for (Integer amount : config.getIntegerList("quests." + s + ".rewards.rpgitem-amounts")) {
-
-                                    quest.rpgItemRewardAmounts.add(amount);
-
-                                }
-
-                                if (failed) {
-                                    continue;
-                                }
-
-                            } else {
-                                printSevere("[Quests] rpgitem-amounts: Reward in Quest " + quest.name + " is not a list of numbers!");
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Rewards for Quest " + quest.name + " is missing rpgitem-amounts");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] rpgitem-ids: Reward in Quest " + quest.name + " is not a list of numbers!");
-                        continue;
-                    }
-
-                }
-
                 if (config.contains("quests." + s + ".rewards.money")) {
 
                     if (config.getInt("quests." + s + ".rewards.money", -999) != -999) {
@@ -5079,6 +5077,26 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         Hero hero = getHero(player);
         return hero.getHeroClass().getName().equalsIgnoreCase(secondaryClass);
 
+    }
+    
+    public void updateData() {
+        
+        aYamlConfiguration config = new YamlConfiguration();
+        File dataFile = new File(this.getDataFolder(), "data.yml");
+        
+        try {
+            config.load(dataFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(config.contains("npc-gui")) {
+            
+            List<Integer> ids = config.getIntegerList("npc-gui");
+            questNPCGUIs.addAll(ids);
+            
+        }
+        
     }
 
 }

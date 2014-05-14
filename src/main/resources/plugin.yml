@@ -61,6 +61,9 @@ permissions:
     quests.admin.nextstage:
         description: Immediately force Stage completion for a player
         default: op
+    quests.admin.togglegui:
+        description: Toggle GUI Quest Display on NPC's
+        default: op
     quests.admin.reload:
         description: Reload all Quests
         default: op

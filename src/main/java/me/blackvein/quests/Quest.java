@@ -26,9 +26,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import think.rpgitems.item.ItemManager;
-import think.rpgitems.item.RPGItem;
-
 public class Quest {
 
     public String name;
@@ -296,13 +293,6 @@ public class Quest {
             none = null;
         }
 
-        for (Integer i : rpgItemRewardIDs) {
-            ItemStack is = ItemManager.getItemById(i).toItemStack(null);
-            is.setAmount(rpgItemRewardAmounts.get(rpgItemRewardIDs.indexOf(i)));
-            Quests.addItem(player, is);
-            none = null;
-        }
-
         for (String s : commands) {
 
             s = s.replaceAll("<player>", player.getName());
@@ -382,13 +372,6 @@ public class Quest {
             player.sendMessage("- " + ChatColor.DARK_GREEN + questPoints + " Quest Points");
             q.questPoints += questPoints;
             none = null;
-        }
-
-        for (Integer i : rpgItemRewardIDs) {
-
-            RPGItem item = ItemManager.getItemById(i);
-            player.sendMessage("- " + ChatColor.LIGHT_PURPLE + "- " + ChatColor.ITALIC + item.getName() + ChatColor.GRAY + " x " + rpgItemRewardAmounts.get(rpgItemRewardIDs.indexOf(i)));
-
         }
 
         for (ItemStack i : itemRewards) {

@@ -8,6 +8,7 @@ import java.util.logging.Level;
 
 import me.blackvein.quests.util.ItemUtil;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
 
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -2926,4 +2927,26 @@ public class Quester {
         }
         return changed;
     }
+    
+    public void showGUIDisplay(LinkedList<Quest> quests) {
+        
+        Player player = getPlayer();
+        int size = ((quests.size() / 9) + 1) * 9;
+        
+        Inventory inv = Bukkit.getServer().createInventory(player, size, "Quests");
+        
+        int inc = 0;
+        for(int i = 0; i < quests.size(); i++) {
+            
+            if(quests.get(i).guiDisplay != null) {
+                inv.setItem(inc, quests.get(i).guiDisplay);
+                inc++;
+            }
+            
+        }
+        
+        player.openInventory(inv);
+        
+    }
+    
 }
