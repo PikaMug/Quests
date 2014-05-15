@@ -262,14 +262,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             data.options().copyHeader(true);
             data.options().copyDefaults(true);
             try {
-                data.load(this.getResource("data.yml"));
                 data.save(new File(this.getDataFolder(), "data.yml"));
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
             }
 
+        } else {
+            loadData();
         }
 
         getServer().getPluginManager().registerEvents(pListener, this);
@@ -450,6 +449,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if(config.contains("npc-gui")) {
             
             List<Integer> ids = config.getIntegerList("npc-gui");
+            questNPCGUIs.clear();
             questNPCGUIs.addAll(ids);
             
         }
@@ -1799,8 +1799,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             if (citizens.getNPCRegistry().getById(i) == null) {
                                 cs.sendMessage(RED + "Error: There is no NPC with ID " + PURPLE + i);
                             }else if (questNPCGUIs.contains(i)) {
-                                questNPCGUIs.remove(i);
-                                a
+                                questNPCGUIs.remove(questNPCGUIs.indexOf(i));
+                                updateData();
+                                cs.sendMessage(PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW + " will no longer provide a GUI Quest Display.");
+                            }else {
+                                questNPCGUIs.add(i);
+                                updateData();
+                                cs.sendMessage(PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW + " will now provide a GUI Quest Display.");
                             }
                             
                         } catch (NumberFormatException nfe) {
@@ -2071,6 +2076,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         printSevere("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
                         continue;
                     }
+
+                }
+                
+                if (config.contains("quests." + s + ".guiDisplay")) {
+
+                    String item = config.getString("quests." + s + ".guiDisplay");
+                    quest.guiDisplay = ItemUtil.readItemStack(item);
 
                 }
 
@@ -5081,22 +5093,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     
     public void updateData() {
         
-        aYamlConfiguration config = new YamlConfiguration();
+        YamlConfiguration config = new YamlConfiguration();
         File dataFile = new File(this.getDataFolder(), "data.yml");
         
         try {
             config.load(dataFile);
+            config.set("npc-gui", questNPCGUIs);
+            config.save(dataFile);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.severe("[Quests] Unable to update data file.");
+            if(debug) {
+                log.severe("[Quests] Error log:");
+                e.printStackTrace();
+            }else {
+                log.severe("[Quests] Enable debug to view the error log.");
+            }
+            return;
         }
 
-        if(config.contains("npc-gui")) {
-            
-            List<Integer> ids = config.getIntegerList("npc-gui");
-            questNPCGUIs.addAll(ids);
-            
-        }
-        
     }
 
 }

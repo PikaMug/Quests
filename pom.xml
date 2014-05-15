@@ -63,9 +63,9 @@
             <systemPath>${project.basedir}/lib/Heroes.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.codisimus.phatloots</groupId>
+            <groupId>com.codisimus</groupId>
             <artifactId>PhatLoots</artifactId>
-            <version>3.6.0</version>
+            <version>3.8.1</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/PhatLoots.jar</systemPath>
         </dependency>

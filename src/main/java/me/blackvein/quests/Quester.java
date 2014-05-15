@@ -2935,6 +2935,8 @@ public class Quester {
         
         Inventory inv = Bukkit.getServer().createInventory(player, size, "Quests");
         
+        
+        
         int inc = 0;
         for(int i = 0; i < quests.size(); i++) {
             
