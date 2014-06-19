@@ -136,10 +136,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public int totalQuestPoints = 0;
     public Lang lang;
     private static Quests instance = null;
+    public static final String validVersion = "1.7.9-R0.2";
 
     @Override
     public void onEnable() {
 
+        if(getServer().getBukkitVersion().equalsIgnoreCase(validVersion) == false) {
+            
+            log.severe("[Quests] Your current version of CraftBukkit is " + getServer().getBukkitVersion() + ", this version of Quests is built for version " + validVersion);
+            log.severe("[Quests] Disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+            
+        }        
+        
         pListener = new PlayerListener(this);
         effListener = new NpcEffectThread(this);
         npcListener = new NpcListener(this);

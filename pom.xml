@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>1.8.2-SNAPSHOT</version>
+    <version>1.8.2</version>
     <name>quests</name>
     <url>http://dev.bukkit.org/server-mods/quests/</url>
     <packaging>jar</packaging>
@@ -25,7 +25,9 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>LATEST</version>
+            <version>1.7.9-R0.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/craftbukkit-1.7.9-R0.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.citizensnpcs</groupId>
