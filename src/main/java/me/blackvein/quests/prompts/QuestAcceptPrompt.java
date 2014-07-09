@@ -6,6 +6,7 @@ import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.Lang;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
@@ -32,20 +33,22 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
         quester = plugin.getQuester(((Player) cc.getForWhom()).getName());
 
         String npc = (String) cc.getSessionData("npc");
-        String menu = YELLOW + "- " + GOLD + "Quests" + " | " + npc + YELLOW + " -\n";
+        String text = Lang.get("questNPCListTitle");
+        text = text.replaceAll("<npc>", npc);
+        String menu = text + "\n";
         for (int i = 1; i <= quests.size(); i++) {
 
             Quest quest = quests.get(i - 1);
             if (quester.completedQuests.contains(quest.getName())) {
-                menu += DARKGREEN + "" + BOLD + "" + i + ". " + RESET + "" + GREEN + "" + ITALIC + quest.getName() + RESET + "" + GREEN + " (Completed)\n";
+                menu += DARKGREEN + "" + BOLD + "" + i + ". " + RESET + "" + GREEN + "" + ITALIC + quest.getName() + RESET + "" + GREEN + " (" + Lang.get("completed") + ")\n";
             } else {
                 menu += GOLD + "" + BOLD + "" + i + ". " + RESET + "" + YELLOW + "" + ITALIC + quest.getName() + "\n";
             }
 
         }
 
-        menu += GOLD + "" + BOLD + "" + (quests.size() + 1) + ". " + RESET + "" + ColorUtil.GRAY + "Cancel\n";
-        menu += WHITE + "Enter an option";
+        menu += GOLD + "" + BOLD + "" + (quests.size() + 1) + ". " + RESET + "" + ColorUtil.GRAY + Lang.get("cancel") + "\n";
+        menu += WHITE + Lang.get("enterAnOption");
 
         return menu;
     }
@@ -60,8 +63,8 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
             //Continue
         }
 
-        if (input.equalsIgnoreCase("Cancel") || numInput == (quests.size() + 1)) {
-            cc.getForWhom().sendRawMessage(YELLOW + "Cancelled.");
+        if (input.equalsIgnoreCase(Lang.get("cancel")) || numInput == (quests.size() + 1)) {
+            cc.getForWhom().sendRawMessage(YELLOW + Lang.get("cancelled"));
             return Prompt.END_OF_CONVERSATION;
         } else {
 
@@ -97,7 +100,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 	            }
             
             if (q == null) {
-                cc.getForWhom().sendRawMessage(RED + "Invalid Selection!");
+                cc.getForWhom().sendRawMessage(RED + Lang.get("invalidSelection"));
                 return new QuestAcceptPrompt(plugin);
             } else {
 
@@ -125,7 +128,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
                     } else if (quester.currentQuest.equals(q) == false) {
 
-                        player.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
+                        player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
 
                     }
 
@@ -134,9 +137,14 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
                     if (quester.currentQuest == null) {
 
                         if (quester.getDifference(q) > 0) {
-                            player.sendMessage(ChatColor.YELLOW + "You may not take " + ChatColor.AQUA + q.name + ChatColor.YELLOW + " again for another " + ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW + ".");
+                            String early = Lang.get("questTooEarly");
+                            early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                            early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+                            player.sendMessage(ChatColor.YELLOW + early);
                         } else if (q.redoDelay < 0) {
-                            player.sendMessage(ChatColor.YELLOW + "You have already completed " + ChatColor.AQUA + q.name + ChatColor.YELLOW + ".");
+                            String completed = Lang.get("questAlreadyCompleted");
+                            completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                            player.sendMessage(ChatColor.YELLOW + completed);
                         } else {
                             quester.questToTake = q.name;
                             String s = extracted(quester);
@@ -150,7 +158,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
                     } else if (quester.currentQuest.equals(q) == false) {
 
-                        player.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
+                        player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
 
                     }
 

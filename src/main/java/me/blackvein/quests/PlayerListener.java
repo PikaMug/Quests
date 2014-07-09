@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.File;
 import java.util.Iterator;
 import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -59,56 +60,56 @@ public class PlayerListener implements Listener, ColorUtil {
                     Block block = evt.getClickedBlock();
                     Location loc = block.getLocation();
                     plugin.questFactory.selectedBlockStarts.put(evt.getPlayer(), block);
-                    evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                    evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
                 } else if (plugin.eventFactory.selectedExplosionLocations.containsKey(evt.getPlayer())) {
 
                     Block block = evt.getClickedBlock();
                     Location loc = block.getLocation();
                     plugin.eventFactory.selectedExplosionLocations.put(evt.getPlayer(), block);
-                    evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                    evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
                 } else if (plugin.eventFactory.selectedEffectLocations.containsKey(evt.getPlayer())) {
 
                     Block block = evt.getClickedBlock();
                     Location loc = block.getLocation();
                     plugin.eventFactory.selectedEffectLocations.put(evt.getPlayer(), block);
-                    evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                    evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
                 } else if (plugin.eventFactory.selectedMobLocations.containsKey(evt.getPlayer())) {
 
                     Block block = evt.getClickedBlock();
                     Location loc = block.getLocation();
                     plugin.eventFactory.selectedMobLocations.put(evt.getPlayer(), block);
-                    evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                    evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
                 } else if (plugin.eventFactory.selectedLightningLocations.containsKey(evt.getPlayer())) {
 
                     Block block = evt.getClickedBlock();
                     Location loc = block.getLocation();
                     plugin.eventFactory.selectedLightningLocations.put(evt.getPlayer(), block);
-                    evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                    evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
                 } else if (plugin.eventFactory.selectedTeleportLocations.containsKey(evt.getPlayer())) {
 
                     Block block = evt.getClickedBlock();
                     Location loc = block.getLocation();
                     plugin.eventFactory.selectedTeleportLocations.put(evt.getPlayer(), block);
-                    evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                    evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
                 } else if (plugin.questFactory.selectedKillLocations.containsKey(evt.getPlayer())) {
 
                     Block block = evt.getClickedBlock();
                     Location loc = block.getLocation();
                     plugin.questFactory.selectedKillLocations.put(evt.getPlayer(), block);
-                    evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                    evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
                 } else if (plugin.questFactory.selectedReachLocations.containsKey(evt.getPlayer())) {
 
                     Block block = evt.getClickedBlock();
                     Location loc = block.getLocation();
                     plugin.questFactory.selectedReachLocations.put(evt.getPlayer(), block);
-                    evt.getPlayer().sendMessage(ChatColor.GOLD + "Selected location " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                    evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
 
                 } else if (player.isConversing() == false) {
 
@@ -120,7 +121,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
                                 if (quester.currentQuest != null) {
 
-                                    player.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
+                                    player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
 
                                 } else {
 
@@ -128,12 +129,17 @@ public class PlayerListener implements Listener, ColorUtil {
 
                                         if (q.redoDelay > -1 && (quester.getDifference(q)) > 0) {
 
-                                            player.sendMessage(ChatColor.YELLOW + "You may not take " + ChatColor.AQUA + q.name + ChatColor.YELLOW + " again for another " + ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW + ".");
+                                            String early = Lang.get("questTooEarly");
+                                            early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                                            early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+                                            player.sendMessage(ChatColor.YELLOW + early);
                                             return;
 
                                         } else if (quester.completedQuests.contains(q.name) && q.redoDelay < 0) {
 
-                                            player.sendMessage(ChatColor.YELLOW + "You have already completed " + ChatColor.AQUA + q.name + ChatColor.YELLOW + ".");
+                                            String completed = Lang.get("questAlreadyCompleted");
+                                            completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                                            player.sendMessage(ChatColor.YELLOW + completed);
                                             return;
 
                                         }
@@ -188,9 +194,11 @@ public class PlayerListener implements Listener, ColorUtil {
                             if(ItemUtil.compareItems(clicked, quest.guiDisplay, false) == 0) {
 
                                 if (quester.currentQuest != null) {
-                                    player.sendMessage(YELLOW + "You may only have one active Quest.");
+                                    player.sendMessage(YELLOW + Lang.get("questOneActive"));
                                 } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
-                                    player.sendMessage(YELLOW + "You have already completed " + PURPLE + quest.name + YELLOW + ".");
+                                    String completed = Lang.get("questAlreadyCompleted");
+                                    completed = completed.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
+                                    player.sendMessage(ChatColor.YELLOW + completed);
                                 } else {
 
                                     boolean takeable = true;
@@ -198,7 +206,10 @@ public class PlayerListener implements Listener, ColorUtil {
                                     if (quester.completedQuests.contains(quest.name)) {
 
                                         if (quester.getDifference(quest) > 0) {
-                                            player.sendMessage(YELLOW + "You may not take " + AQUA + quest.name + YELLOW + " again for another " + PURPLE + Quests.getTime(quester.getDifference(quest)) + YELLOW + ".");
+                                            String early = Lang.get("questTooEarly");
+                                            early = early.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
+                                            early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
+                                            player.sendMessage(ChatColor.YELLOW + early);
                                             takeable = false;
                                         }
 
@@ -219,7 +230,9 @@ public class PlayerListener implements Listener, ColorUtil {
                                         }
 
                                         if (inRegion == false) {
-                                            player.sendMessage(YELLOW + "You may not take " + AQUA + quest.name + YELLOW + " at this location.");
+                                            String invalidLoc = Lang.get("questInvalidLocation");
+                                            invalidLoc = invalidLoc.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
+                                            player.sendMessage(ChatColor.YELLOW + invalidLoc);
                                             takeable = false;
                                         }
 

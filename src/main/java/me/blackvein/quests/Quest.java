@@ -143,7 +143,7 @@ public class Quest {
 
         quester.addEmpties();
 
-        quester.getPlayer().sendMessage(ChatColor.GOLD + "---(Objectives)---");
+        quester.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questObjectivesTitle"));
         for (String s : quester.getObjectivesReal()) {
 
             quester.getPlayer().sendMessage(s);
@@ -272,7 +272,7 @@ public class Quest {
         Player player = plugin.getServer().getPlayerExact(q.name);
         q.resetObjectives();
         q.completedQuests.add(name);
-        String none = ChatColor.GRAY + "- (None)";
+        String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
 
         String ps = Quests.parseString(finished, q.currentQuest);
 
@@ -365,11 +365,13 @@ public class Quest {
             none = null;
         }
 
-        player.sendMessage(ChatColor.GOLD + "**QUEST COMPLETE: " + ChatColor.YELLOW + q.currentQuest.name + ChatColor.GOLD + "**");
-        player.sendMessage(ChatColor.GREEN + "Rewards:");
+        String complete = Lang.get("questCompleteTitle");
+        complete = complete.replaceAll("<quest>", ChatColor.YELLOW + q.currentQuest.name + ChatColor.GOLD);
+        player.sendMessage(ChatColor.GOLD + complete);
+        player.sendMessage(ChatColor.GREEN + Lang.get("questRewardsTitle"));
 
         if (questPoints > 0) {
-            player.sendMessage("- " + ChatColor.DARK_GREEN + questPoints + " Quest Points");
+            player.sendMessage("- " + ChatColor.DARK_GREEN + questPoints + " " + Lang.get("questPoints"));
             q.questPoints += questPoints;
             none = null;
         }
@@ -381,21 +383,21 @@ public class Quest {
                 if(i.getEnchantments().isEmpty())
                     player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
                 else
-                    player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " *Enchanted*");
+                    player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
             
             } else if (i.getDurability() != 0) {
                 
                 if(i.getEnchantments().isEmpty())
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
                 else
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " *Enchanted*");
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
             
             } else {
                 
                 if(i.getEnchantments().isEmpty())
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
                 else
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " *Enchanted*");
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
                 
             }
 
@@ -409,21 +411,21 @@ public class Quest {
                 if(i.getEnchantments().isEmpty())
                     player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
                 else
-                    player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " *Enchanted*");
+                    player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
             
             } else if (i.getDurability() != 0) {
                 
                 if(i.getEnchantments().isEmpty())
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
                 else
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " *Enchanted*");
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
             
             } else {
                 
                 if(i.getEnchantments().isEmpty())
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
                 else
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " *Enchanted*");
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
                 
             }
 
@@ -441,20 +443,20 @@ public class Quest {
         if (exp > 0 || phatLootExp > 0) {
 
             int tot = exp + phatLootExp;
-            player.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " Experience");
+            player.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " " + Lang.get("experience"));
             none = null;
         }
 
         if (mcmmoSkills.isEmpty() == false) {
             for (String s : mcmmoSkills) {
-                player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " Experience");
+                player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " " + Lang.get("experience"));
             }
             none = null;
         }
 
         if (heroesClasses.isEmpty() == false) {
             for (String s : heroesClasses) {
-                player.sendMessage("- " + ChatColor.AQUA + heroesAmounts.get(heroesClasses.indexOf(s)) + " " + ChatColor.BLUE + s + " Experience");
+                player.sendMessage("- " + ChatColor.AQUA + heroesAmounts.get(heroesClasses.indexOf(s)) + " " + ChatColor.BLUE + s + " " + Lang.get("experience"));
             }
             none = null;
         }
@@ -512,7 +514,9 @@ public class Quest {
         Player player = plugin.getServer().getPlayerExact(q.name);
         q.resetObjectives();
 
-        player.sendMessage(ChatColor.AQUA + "-- " + ChatColor.DARK_PURPLE + q.currentQuest.name + ChatColor.AQUA + " -- ");
+        String title = Lang.get("questTitle");
+        title = title.replaceAll("<quest>", ChatColor.DARK_PURPLE + q.currentQuest.name + ChatColor.AQUA);
+        player.sendMessage(ChatColor.AQUA + title);
         player.sendMessage(ChatColor.RED + Lang.get("questFailed"));
 
         q.currentQuest = null;

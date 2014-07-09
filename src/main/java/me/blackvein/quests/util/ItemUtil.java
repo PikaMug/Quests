@@ -156,7 +156,7 @@ public class ItemUtil implements ColorUtil{
             text += AQUA + " x " + is.getAmount();
 
             if(is.getEnchantments().isEmpty() == false)
-                text += " " + PURPLE + "*Enchanted*";
+                text += " " + PURPLE + Lang.get("enchantedItem");
 
         }
 

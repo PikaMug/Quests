@@ -4,8 +4,8 @@ import me.blackvein.quests.Quest;
 
 public class InvalidStageException extends Exception {
 	
-	private Quest quest;
-	private int stage;
+	private final Quest quest;
+	private final int stage;
 
 	public InvalidStageException(Quest quest, int stage) {
 		this.quest = quest;
@@ -20,9 +20,6 @@ public class InvalidStageException extends Exception {
 		return stage;
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1778748295752972651L;
 
 	@Override

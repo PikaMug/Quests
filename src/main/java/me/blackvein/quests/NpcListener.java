@@ -3,6 +3,7 @@ package me.blackvein.quests;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
@@ -133,7 +134,7 @@ public class NpcListener implements Listener {
 
                                 } else if (quester.currentQuest.equals(q) == false) {
 
-                                    player.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
+                                    player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
 
                                 }
 
@@ -142,9 +143,14 @@ public class NpcListener implements Listener {
                                 if (quester.currentQuest == null) {
 
                                     if (quester.getDifference(q) > 0) {
-                                        player.sendMessage(ChatColor.YELLOW + "You may not take " + ChatColor.AQUA + q.name + ChatColor.YELLOW + " again for another " + ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW + ".");
+                                        String early = Lang.get("questTooEarly");
+                                        early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                                        early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+                                        player.sendMessage(ChatColor.YELLOW + early);
                                     } else if (q.redoDelay < 0) {
-                                        player.sendMessage(ChatColor.YELLOW + "You have already completed " + ChatColor.AQUA + q.name + ChatColor.YELLOW + ".");
+                                        String completed = Lang.get("questAlreadyCompleted");
+                                        completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                                        player.sendMessage(ChatColor.YELLOW + completed);
                                     } else {
                                         quester.questToTake = q.name;
                                         String s = extracted(quester);
@@ -158,7 +164,7 @@ public class NpcListener implements Listener {
 
                                 } else if (quester.currentQuest.equals(q) == false) {
 
-                                    player.sendMessage(ChatColor.YELLOW + "You may only have one active Quest.");
+                                    player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
 
                                 }
 
@@ -180,7 +186,7 @@ public class NpcListener implements Listener {
     public void onNPCLeftClick(NPCLeftClickEvent evt){
 
         if(plugin.questFactory.selectingNPCs.contains(evt.getClicker())){
-            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + "ID " + evt.getNPC().getId());
+            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + Lang.get("id") + " " + evt.getNPC().getId());
         }
 
     }

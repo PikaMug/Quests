@@ -1,5 +1,7 @@
 package me.blackvein.quests.util;
 
+import org.bukkit.entity.EntityType;
+
 public class MiscUtil {
     
     public static String getCapitalized(String s){
@@ -54,5 +56,58 @@ public class MiscUtil {
     	if (timeMilliSeconds > -1) timeMilliSeconds++;
     	
     	return timeMilliSeconds;
+    }
+    
+    public static String getProperMobName(EntityType type) {
+        
+        String name = type.name().toLowerCase();
+        
+        name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        while(fixUnderscore(name) != null) 
+            name = fixUnderscore(name);
+        
+        return name;
+    }
+    
+    public static EntityType getProperMobType(String properName) {
+        
+        properName = unfixUnderscores(properName);
+        properName = properName.toUpperCase();
+        for(EntityType et : EntityType.values()) {
+            
+            if(et.isAlive() && et.name().equalsIgnoreCase(properName))
+                return et;
+            
+        }
+        
+        return null;
+        
+    }
+    
+    private static String fixUnderscore(String s) {
+        
+        int index = s.indexOf('_');
+        if(index == -1)
+            return null;
+        
+        s = s.substring(0, (index + 1)) + Character.toUpperCase(s.charAt(index + 1)) + s.substring(index + 2);
+        s = s.replaceFirst("_", "");
+        
+        return s;
+    }
+    
+    private static String unfixUnderscores(String s) {
+        
+        for(int i = 1; i < s.length(); i++) {
+            
+            if(Character.isUpperCase(s.charAt(i))) {
+                
+                s = s.substring(0, i) + "_" + s.substring(i);
+                
+            }
+            
+        }
+        
+        return s;
     }
 }

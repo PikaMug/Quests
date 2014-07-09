@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>1.8.2</version>
+    <version>1.9.0</version>
     <name>quests</name>
     <url>http://dev.bukkit.org/server-mods/quests/</url>
     <packaging>jar</packaging>
@@ -24,10 +24,17 @@
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.7.9-R0.2</version>
+            <artifactId>craftbukkit1</artifactId>
+            <version>1.7.9-R0.3</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/craftbukkit-1.7.9-R0.2.jar</systemPath>
+            <systemPath>${project.basedir}/lib/craftbukkit-1.7.2-R0.4.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit2</artifactId>
+            <version>1.7.9-R0.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/craftbukkit-1.7.9-R0.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.citizensnpcs</groupId>
@@ -46,21 +53,21 @@
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
-            <version>1.2.27</version>
+            <version>1.4.1</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>1.4.07-beta1-b2226</version>
+            <version>1.5.00</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/mcMMO.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.herocraftonline</groupId>
             <artifactId>Heroes</artifactId>
-            <version>1.5.5</version>
+            <version>1.5.5.3</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/Heroes.jar</systemPath>
         </dependency>
@@ -74,14 +81,14 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>WorldEdit</artifactId>
-            <version>5.5.8</version>
+            <version>5.6.2</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/WorldEdit.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>WorldGuard</artifactId>
-            <version>5.8</version>
+            <version>5.9</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/WorldGuard.jar</systemPath>
         </dependency>

@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 
@@ -105,12 +106,15 @@ public class Quester {
                     }
                 }
 
-                player.sendMessage(ChatColor.GREEN + "Quest accepted: " + q.name);
+                String accepted = Lang.get("questAccepted");
+                accepted = accepted.replaceAll("<quest>", q.name);
+                
+                player.sendMessage(ChatColor.GREEN + accepted);
                 player.sendMessage("");
 
             }
 
-            player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
+            player.sendMessage(ChatColor.GOLD + Lang.get("questObjectivesTitle"));
 
             for (String s : getObjectivesReal()) {
                 player.sendMessage(s);
@@ -174,11 +178,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Damage " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("damage") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Damage " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("damage") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -196,11 +200,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Break " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("break") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Break " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("break") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -218,11 +222,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Place " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("place") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Place " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("place") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -240,11 +244,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Use " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("use") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Use " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("use") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -262,11 +266,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Cut " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("cut") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Cut " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("cut") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -280,11 +284,11 @@ public class Quester {
 
             if (fishCaught < currentStage.fishToCatch) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + "Catch Fish: " + fishCaught + "/" + currentStage.fishToCatch);
+                unfinishedObjectives.add(ChatColor.GREEN + Lang.get("catchFish") + ": " + fishCaught + "/" + currentStage.fishToCatch);
 
             } else {
 
-                finishedObjectives.add(ChatColor.GRAY + "Catch Fish: " + fishCaught + "/" + currentStage.fishToCatch);
+                finishedObjectives.add(ChatColor.GRAY + Lang.get("catchFish") + ": " + fishCaught + "/" + currentStage.fishToCatch);
 
             }
 
@@ -334,11 +338,17 @@ public class Quester {
 
                     if (num1 < num2) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Enchant " + Quester.prettyItemString(mat.getId()) + " with " + Quester.prettyEnchantmentString(enchantment) + ": " + num1 + "/" + num2);
+                        String obj = Lang.get("enchantItem");
+                        obj = obj.replaceAll("<item>", Quester.prettyItemString(mat.getId()));
+                        obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
+                        unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + num1 + "/" + num2);
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Enchant " + Quester.prettyItemString(mat.getId()) + " with " + Quester.prettyEnchantmentString(enchantment) + ": " + num1 + "/" + num2);
+                        String obj = Lang.get("enchantItem");
+                        obj = obj.replaceAll("<item>", Quester.prettyItemString(mat.getId()));
+                        obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
+                        finishedObjectives.add(ChatColor.GRAY + obj + ": " + num1 + "/" + num2);
 
                     }
 
@@ -357,16 +367,22 @@ public class Quester {
                     if (mobNumKilled.get(mobsKilled.indexOf(e2)) < currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))) {
 
                         if (currentStage.locationsToKillWithin.isEmpty()) {
-                            unfinishedObjectives.add(ChatColor.GREEN + "Kill " + Quester.prettyMobString(e) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
+                            unfinishedObjectives.add(ChatColor.GREEN + Lang.get("kill") + " " + Quester.prettyMobString(e) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
                         } else {
-                            unfinishedObjectives.add(ChatColor.GREEN + "Kill " + Quester.prettyMobString(e) + " at " + currentStage.areaNames.get(currentStage.mobsToKill.indexOf(e)) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
+                            String obj = Lang.get("killAtLocation");
+                            obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
+                            obj = obj.replaceAll("<location>", currentStage.areaNames.get(currentStage.mobsToKill.indexOf(e)));
+                            unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
                         }
                     } else {
 
                         if (currentStage.locationsToKillWithin.isEmpty()) {
-                            finishedObjectives.add(ChatColor.GRAY + "Kill " + Quester.prettyMobString(e) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
+                            finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + Quester.prettyMobString(e) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
                         } else {
-                            finishedObjectives.add(ChatColor.GRAY + "Kill " + Quester.prettyMobString(e) + " at " + currentStage.areaNames.get(currentStage.mobsToKill.indexOf(e)) + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
+                            String obj = Lang.get("killAtLocation");
+                            obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
+                            obj = obj.replaceAll("<location>", currentStage.areaNames.get(currentStage.mobsToKill.indexOf(e)));
+                            finishedObjectives.add(ChatColor.GRAY + obj + ": " + (mobNumKilled.get(mobsKilled.indexOf(e2))) + "/" + (currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(e))));
                         }
 
                     }
@@ -381,11 +397,11 @@ public class Quester {
 
             if (playersKilled < currentStage.playersToKill) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + "Kill a Player: " + playersKilled + "/" + currentStage.playersToKill);
+                unfinishedObjectives.add(ChatColor.GREEN + Lang.get("killPlayer") + ": " + playersKilled + "/" + currentStage.playersToKill);
 
             } else {
 
-                finishedObjectives.add(ChatColor.GRAY + "Kill a Player: " + playersKilled + "/" + currentStage.playersToKill);
+                finishedObjectives.add(ChatColor.GRAY + Lang.get("killPlayer") + ": " + playersKilled + "/" + currentStage.playersToKill);
 
             }
 
@@ -399,11 +415,17 @@ public class Quester {
 
             if (delivered < amt) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + "Deliver " + ItemUtil.getName(is) + " to " + plugin.getNPCName(npc) + ": " + delivered + "/" + amt);
+                String obj = Lang.get("deliver");
+                obj = obj.replaceAll("<item>", ItemUtil.getName(is));
+                obj = obj.replaceAll("<npc>", plugin.getNPCName(npc));
+                unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + delivered + "/" + amt);
 
             } else {
 
-                finishedObjectives.add(ChatColor.GRAY + "Deliver " + ItemUtil.getName(is) + " to " + plugin.getNPCName(npc) + ": " + delivered + "/" + amt);
+                String obj = Lang.get("deliver");
+                obj = obj.replaceAll("<item>", ItemUtil.getName(is));
+                obj = obj.replaceAll("<npc>", plugin.getNPCName(npc));
+                finishedObjectives.add(ChatColor.GRAY + obj + ": " + delivered + "/" + amt);
 
             }
 
@@ -417,11 +439,15 @@ public class Quester {
 
                     if (e.getValue() == false) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Talk to " + plugin.getNPCName(n));
+                        String obj = Lang.get("talkTo");
+                        obj = obj.replaceAll("<npc>", plugin.getNPCName(n));
+                        unfinishedObjectives.add(ChatColor.GREEN + obj);
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Talk to " + plugin.getNPCName(n));
+                        String obj = Lang.get("talkTo");
+                        obj = obj.replaceAll("<npc>", plugin.getNPCName(n));
+                        finishedObjectives.add(ChatColor.GRAY + obj);
 
                     }
 
@@ -439,11 +465,11 @@ public class Quester {
 
                     if (citizenNumKilled.get(citizensKilled.indexOf(n2)) < currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n))) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Kill " + plugin.getNPCName(n) + ChatColor.GREEN + " " + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("kill") + " " + plugin.getNPCName(n) + ChatColor.GREEN + " " + citizenNumKilled.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Kill " + plugin.getNPCName(n) + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + plugin.getNPCName(n) + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(n)));
 
                     }
 
@@ -461,11 +487,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Tame " + getCapitalized(e.getKey().getName()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("tame") + " " + getCapitalized(e.getKey().getName()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Tame " + getCapitalized(e.getKey().getName()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("tame") + " " + getCapitalized(e.getKey().getName()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -483,11 +509,15 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Shear " + e.getKey().name().toString().toLowerCase() + " sheep: " + e2.getValue() + "/" + e.getValue());
+                        String obj = Lang.get("shearSheep");
+                        obj = obj.replaceAll("<color>", e.getKey().name().toString().toLowerCase());
+                        unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Shear " + e.getKey().name().toString().toLowerCase() + " sheep: " + e2.getValue() + "/" + e.getValue());
+                        String obj = Lang.get("shearSheep");
+                        obj = obj.replaceAll("<color>", e.getKey().name().toString().toLowerCase());
+                        finishedObjectives.add(ChatColor.GRAY + obj + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -505,11 +535,15 @@ public class Quester {
 
                     if (hasReached.get(locationsReached.indexOf(l2)) == false) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + "Go to " + currentStage.locationNames.get(currentStage.locationsToReach.indexOf(l)));
+                        String obj = Lang.get("goTo");
+                        obj = obj.replaceAll("<location>", currentStage.locationNames.get(currentStage.locationsToReach.indexOf(l)));
+                        unfinishedObjectives.add(ChatColor.GREEN + obj);
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + "Go to " + currentStage.locationNames.get(currentStage.locationsToReach.indexOf(l)));
+                        String obj = Lang.get("goTo");
+                        obj = obj.replaceAll("<location>", currentStage.locationNames.get(currentStage.locationsToReach.indexOf(l)));
+                        finishedObjectives.add(ChatColor.GRAY + obj);
 
                     }
 
@@ -856,7 +890,10 @@ public class Quester {
 
             if ((currentTime - killTime) < comparator) {
 
-                plugin.getServer().getPlayer(name).sendMessage(ChatColor.RED + "[Quests] Kill did not count. You must wait " + ChatColor.DARK_PURPLE + Quests.getTime(comparator - (currentTime - killTime)) + ChatColor.RED + " before you can kill " + ChatColor.DARK_PURPLE + player + ChatColor.RED + " again.");
+                String error = Lang.get("killNotValid");
+                error = error.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(comparator - (currentTime - killTime)) + ChatColor.RED);
+                error = error.replaceAll("<player>", ChatColor.DARK_PURPLE + player + ChatColor.RED);
+                plugin.getServer().getPlayer(name).sendMessage(ChatColor.RED + error);
                 return;
 
             }
@@ -1052,7 +1089,7 @@ public class Quester {
         if (currentStage.objectiveOverride != null) {
 
             if (testComplete()) {
-                String message = ChatColor.GREEN + "(Completed) " + currentStage.objectiveOverride;
+                String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + currentStage.objectiveOverride;
                 p.sendMessage(message);
                 currentQuest.nextStage(this);
             }
@@ -1062,7 +1099,7 @@ public class Quester {
 
         if (objective.equalsIgnoreCase("password")) {
 
-            String message = ChatColor.GREEN + "(Completed) " + pass;
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + pass;
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1070,7 +1107,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("damageBlock")) {
 
-            String message = ChatColor.GREEN + "(Completed) Damage " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("damage") + " " + prettyItemString(material.getId());
             message = message + " " + currentStage.blocksToDamage.get(material) + "/" + currentStage.blocksToDamage.get(material);
             p.sendMessage(message);
             if (testComplete()) {
@@ -1079,7 +1116,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("breakBlock")) {
 
-            String message = ChatColor.GREEN + "(Completed) Break " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("break") + " " + prettyItemString(material.getId());
             message = message + " " + currentStage.blocksToBreak.get(material) + "/" + currentStage.blocksToBreak.get(material);
             p.sendMessage(message);
             if (testComplete()) {
@@ -1088,7 +1125,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("placeBlock")) {
 
-            String message = ChatColor.GREEN + "(Completed) Place " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("place") + " " + prettyItemString(material.getId());
             message = message + " " + currentStage.blocksToPlace.get(material) + "/" + currentStage.blocksToPlace.get(material);
             p.sendMessage(message);
             if (testComplete()) {
@@ -1097,7 +1134,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("useBlock")) {
 
-            String message = ChatColor.GREEN + "(Completed) Use " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("use") + " " + prettyItemString(material.getId());
             message = message + " " + currentStage.blocksToUse.get(material) + "/" + currentStage.blocksToUse.get(material);
             p.sendMessage(message);
             if (testComplete()) {
@@ -1106,7 +1143,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("cutBlock")) {
 
-            String message = ChatColor.GREEN + "(Completed) Cut " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("cut") + " " + prettyItemString(material.getId());
             message = message + " " + currentStage.blocksToCut.get(material) + "/" + currentStage.blocksToCut.get(material);
             p.sendMessage(message);
             if (testComplete()) {
@@ -1115,7 +1152,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("catchFish")) {
 
-            String message = ChatColor.GREEN + "(Completed) Catch Fish ";
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("catchFish") + " ";
             message = message + " " + currentStage.fishToCatch + "/" + currentStage.fishToCatch;
             p.sendMessage(message);
             if (testComplete()) {
@@ -1124,7 +1161,10 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("enchantItem")) {
 
-            String message = ChatColor.GREEN + "(Completed) Enchant " + prettyItemString(material.getId()) + " with " + Quester.prettyEnchantmentString(enchantment);
+            String obj = Lang.get("enchantItem");
+            obj = obj.replaceAll("<item>", prettyItemString(material.getId()));
+            obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
             for (Map<Enchantment, Material> map : currentStage.itemsToEnchant.keySet()) {
 
                 if (map.containsKey(enchantment)) {
@@ -1143,7 +1183,10 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("deliverItem")) {
 
-            String message = ChatColor.GREEN + "(Completed) Deliver " + ItemUtil.getString(currentStage.itemsToDeliver.get(currentStage.itemsToDeliver.indexOf(itemstack))) + " to " + plugin.getNPCName(currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(itemstack)));
+            String obj = Lang.get("deliver");
+            obj = obj.replaceAll("<item>", ItemUtil.getString(currentStage.itemsToDeliver.get(currentStage.itemsToDeliver.indexOf(itemstack))));
+            obj = obj.replaceAll("<npc>", plugin.getNPCName(currentStage.itemDeliveryTargets.get(currentStage.itemsToDeliver.indexOf(itemstack))));
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1151,7 +1194,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("killMob")) {
 
-            String message = ChatColor.GREEN + "(Completed) Kill " + mob.getName();
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + mob.getName();
             message = message + " " + currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(mob)) + "/" + currentStage.mobNumToKill.get(currentStage.mobsToKill.indexOf(mob));
             p.sendMessage(message);
             if (testComplete()) {
@@ -1160,7 +1203,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("killPlayer")) {
 
-            String message = ChatColor.GREEN + "(Completed) Kill a Player";
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("killPlayer");
             message = message + " " + currentStage.playersToKill + "/" + currentStage.playersToKill;
             p.sendMessage(message);
             if (testComplete()) {
@@ -1169,7 +1212,9 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("talkToNPC")) {
 
-            String message = ChatColor.GREEN + "(Completed) Talk to " + npc.getName();
+            String obj = Lang.get("talkTo");
+            obj = obj.replaceAll("<npc>", plugin.getNPCName(npc.getId()));
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1177,7 +1222,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("killNPC")) {
 
-            String message = ChatColor.GREEN + "(Completed) Kill " + npc.getName();
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + npc.getName();
             message = message + " " + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc.getId())) + "/" + currentStage.citizenNumToKill.get(currentStage.citizensToKill.indexOf(npc.getId()));
             p.sendMessage(message);
             if (testComplete()) {
@@ -1186,7 +1231,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("tameMob")) {
 
-            String message = ChatColor.GREEN + "(Completed) Tame " + getCapitalized(mob.getName());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("tame") + getCapitalized(mob.getName());
             message = message + " " + currentStage.mobsToTame.get(mob) + "/" + currentStage.mobsToTame.get(mob);
             p.sendMessage(message);
             if (testComplete()) {
@@ -1195,7 +1240,9 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("shearSheep")) {
 
-            String message = ChatColor.GREEN + "(Completed) Shear " + color.name().toString().toLowerCase() + " sheep";
+            String obj = Lang.get("shearSheep");
+            obj = obj.replaceAll("<color>", color.name().toString().toLowerCase());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
             message = message + " " + currentStage.sheepToShear.get(color) + "/" + currentStage.sheepToShear.get(color);
             p.sendMessage(message);
             if (testComplete()) {
@@ -1204,7 +1251,9 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("reachLocation")) {
 
-            String message = ChatColor.GREEN + "(Completed) Go to " + currentStage.locationNames.get(currentStage.locationsToReach.indexOf(location));
+            String obj = Lang.get("goTo");
+            obj = obj.replaceAll("<location>", currentStage.locationNames.get(currentStage.locationsToReach.indexOf(location)));
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
             p.sendMessage(message);
             if (testComplete()) {
                 currentQuest.nextStage(this);
@@ -1212,7 +1261,7 @@ public class Quester {
 
         } else if (co != null) {
 
-            String message = ChatColor.GREEN + "(Completed) " + co.getDisplay();
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + co.getDisplay();
 
             int index = -1;
             for (int i = 0; i < currentStage.customObjectives.size(); i++) {
@@ -1540,149 +1589,53 @@ public class Quester {
 
     }
 
+    public static String capitalsToSpaces(String s) {
+        
+        for(int i = 1; i < s.length(); i++) {
+            
+            if(Character.isUpperCase(s.charAt(i))) {
+                
+                s = s.substring(0, i) + " " + s.substring(i);
+                
+            }
+            
+        }
+        
+        return s;
+        
+    }
+    
+    public static String spaceToCapital(String s) {
+        
+        int index = s.indexOf(' ');
+        if(index == -1)
+            return null;
+        
+        s = s.substring(0, (index + 1)) + Character.toUpperCase(s.charAt(index + 1)) + s.substring(index + 2);
+        s = s.replaceFirst(" ", "");
+        
+        return s;
+        
+    }
+    
     public static String prettyEnchantmentString(Enchantment e) {
 
-        String prettyString = "";
-
-        if (e.equals(Enchantment.ARROW_DAMAGE)) {
-            prettyString = "Power";
-        } else if (e.equals(Enchantment.ARROW_FIRE)) {
-            prettyString = "Flame";
-        } else if (e.equals(Enchantment.ARROW_INFINITE)) {
-            prettyString = "Infinity";
-        } else if (e.equals(Enchantment.ARROW_KNOCKBACK)) {
-            prettyString = "Punch";
-        } else if (e.equals(Enchantment.DAMAGE_ALL)) {
-            prettyString = "Sharpness";
-        } else if (e.equals(Enchantment.DAMAGE_ARTHROPODS)) {
-            prettyString = "Bane of Arthropods";
-        } else if (e.equals(Enchantment.DAMAGE_UNDEAD)) {
-            prettyString = "Smite";
-        } else if (e.equals(Enchantment.DIG_SPEED)) {
-            prettyString = "Efficiency";
-        } else if (e.equals(Enchantment.DURABILITY)) {
-            prettyString = "Unbreaking";
-        } else if (e.equals(Enchantment.FIRE_ASPECT)) {
-            prettyString = "Fire Aspect";
-        } else if (e.equals(Enchantment.KNOCKBACK)) {
-            prettyString = "Knockback";
-        } else if (e.equals(Enchantment.LOOT_BONUS_BLOCKS)) {
-            prettyString = "Fortune";
-        } else if (e.equals(Enchantment.LOOT_BONUS_MOBS)) {
-            prettyString = "Looting";
-        } else if (e.equals(Enchantment.OXYGEN)) {
-            prettyString = "Respiration";
-        } else if (e.equals(Enchantment.PROTECTION_ENVIRONMENTAL)) {
-            prettyString = "Protection";
-        } else if (e.equals(Enchantment.PROTECTION_EXPLOSIONS)) {
-            prettyString = "Blast Protection";
-        } else if (e.equals(Enchantment.PROTECTION_FALL)) {
-            prettyString = "Feather Falling";
-        } else if (e.equals(Enchantment.PROTECTION_FIRE)) {
-            prettyString = "Fire Protection";
-        } else if (e.equals(Enchantment.PROTECTION_PROJECTILE)) {
-            prettyString = "Projectile Protection";
-        } else if (e.equals(Enchantment.SILK_TOUCH)) {
-            prettyString = "Silk Touch";
-        } else if (e.equals(Enchantment.THORNS)) {
-            prettyString = "Thorns";
-        } else if (e.equals(Enchantment.WATER_WORKER)) {
-            prettyString = "Aqua Affinity";
-        }
+        String prettyString = enchantmentString(e);
+        prettyString = capitalsToSpaces(prettyString);
 
         return prettyString;
-
+        
     }
 
     public static String enchantmentString(Enchantment e) {
 
-        String string = "";
-
-        if (e.equals(Enchantment.ARROW_DAMAGE)) {
-            string = "Power";
-        } else if (e.equals(Enchantment.ARROW_FIRE)) {
-            string = "Flame";
-        } else if (e.equals(Enchantment.ARROW_INFINITE)) {
-            string = "Infinity";
-        } else if (e.equals(Enchantment.ARROW_KNOCKBACK)) {
-            string = "Punch";
-        } else if (e.equals(Enchantment.DAMAGE_ALL)) {
-            string = "Sharpness";
-        } else if (e.equals(Enchantment.DAMAGE_ARTHROPODS)) {
-            string = "BaneOfArthropods";
-        } else if (e.equals(Enchantment.DAMAGE_UNDEAD)) {
-            string = "Smite";
-        } else if (e.equals(Enchantment.DIG_SPEED)) {
-            string = "Efficiency";
-        } else if (e.equals(Enchantment.DURABILITY)) {
-            string = "Unbreaking";
-        } else if (e.equals(Enchantment.FIRE_ASPECT)) {
-            string = "FireAspect";
-        } else if (e.equals(Enchantment.KNOCKBACK)) {
-            string = "Knockback";
-        } else if (e.equals(Enchantment.LOOT_BONUS_BLOCKS)) {
-            string = "Fortune";
-        } else if (e.equals(Enchantment.LOOT_BONUS_MOBS)) {
-            string = "Looting";
-        } else if (e.equals(Enchantment.OXYGEN)) {
-            string = "Respiration";
-        } else if (e.equals(Enchantment.PROTECTION_ENVIRONMENTAL)) {
-            string = "Protection";
-        } else if (e.equals(Enchantment.PROTECTION_EXPLOSIONS)) {
-            string = "BlastProtection";
-        } else if (e.equals(Enchantment.PROTECTION_FALL)) {
-            string = "FeatherFalling";
-        } else if (e.equals(Enchantment.PROTECTION_FIRE)) {
-            string = "FireProtection";
-        } else if (e.equals(Enchantment.PROTECTION_PROJECTILE)) {
-            string = "ProjectileProtection";
-        } else if (e.equals(Enchantment.SILK_TOUCH)) {
-            string = "SilkTouch";
-        } else if (e.equals(Enchantment.THORNS)) {
-            string = "Thorns";
-        } else if (e.equals(Enchantment.WATER_WORKER)) {
-            string = "AquaAffinity";
-        }
-
-        return string;
+        return(Lang.get("ENCHANTMENT_" + e.getName()));
 
     }
 
     public static String prettyColorString(DyeColor color) {
 
-        if (color.equals(DyeColor.BLACK)) {
-            return "Black";
-        } else if (color.equals(DyeColor.BLUE)) {
-            return "Blue";
-        } else if (color.equals(DyeColor.BROWN)) {
-            return "Brown";
-        } else if (color.equals(DyeColor.CYAN)) {
-            return "Cyan";
-        } else if (color.equals(DyeColor.GRAY)) {
-            return "Gray";
-        } else if (color.equals(DyeColor.GREEN)) {
-            return "Green";
-        } else if (color.equals(DyeColor.LIGHT_BLUE)) {
-            return "LightBlue";
-        } else if (color.equals(DyeColor.LIME)) {
-            return "Lime";
-        } else if (color.equals(DyeColor.MAGENTA)) {
-            return "Magenta";
-        } else if (color.equals(DyeColor.ORANGE)) {
-            return "Orange";
-        } else if (color.equals(DyeColor.PINK)) {
-            return "Pink";
-        } else if (color.equals(DyeColor.PURPLE)) {
-            return "Purple";
-        } else if (color.equals(DyeColor.RED)) {
-            return "Red";
-        } else if (color.equals(DyeColor.SILVER)) {
-            return "Silver";
-        } else if (color.equals(DyeColor.WHITE)) {
-            return "White";
-        } else {
-            return "Yellow";
-        }
+        return Lang.get("COLOR_" + color.name());
 
     }
 
@@ -2319,91 +2272,7 @@ public class Quester {
 
                 for (String s : enchantNames) {
 
-                    if (s.equalsIgnoreCase("Power")) {
-
-                        enchantments.add(Enchantment.ARROW_DAMAGE);
-
-                    } else if (s.equalsIgnoreCase("Flame")) {
-
-                        enchantments.add(Enchantment.ARROW_FIRE);
-
-                    } else if (s.equalsIgnoreCase("Infinity")) {
-
-                        enchantments.add(Enchantment.ARROW_INFINITE);
-
-                    } else if (s.equalsIgnoreCase("Punch")) {
-
-                        enchantments.add(Enchantment.ARROW_KNOCKBACK);
-
-                    } else if (s.equalsIgnoreCase("Sharpness")) {
-
-                        enchantments.add(Enchantment.DAMAGE_ALL);
-
-                    } else if (s.equalsIgnoreCase("BaneOfArthropods")) {
-
-                        enchantments.add(Enchantment.DAMAGE_ARTHROPODS);
-
-                    } else if (s.equalsIgnoreCase("Smite")) {
-
-                        enchantments.add(Enchantment.DAMAGE_UNDEAD);
-
-                    } else if (s.equalsIgnoreCase("Efficiency")) {
-
-                        enchantments.add(Enchantment.DIG_SPEED);
-
-                    } else if (s.equalsIgnoreCase("Unbreaking")) {
-
-                        enchantments.add(Enchantment.DURABILITY);
-
-                    } else if (s.equalsIgnoreCase("FireAspect")) {
-
-                        enchantments.add(Enchantment.FIRE_ASPECT);
-
-                    } else if (s.equalsIgnoreCase("Knockback")) {
-
-                        enchantments.add(Enchantment.KNOCKBACK);
-
-                    } else if (s.equalsIgnoreCase("Fortune")) {
-
-                        enchantments.add(Enchantment.LOOT_BONUS_BLOCKS);
-
-                    } else if (s.equalsIgnoreCase("Looting")) {
-
-                        enchantments.add(Enchantment.LOOT_BONUS_MOBS);
-
-                    } else if (s.equalsIgnoreCase("Respiration")) {
-
-                        enchantments.add(Enchantment.OXYGEN);
-
-                    } else if (s.equalsIgnoreCase("Protection")) {
-
-                        enchantments.add(Enchantment.PROTECTION_ENVIRONMENTAL);
-
-                    } else if (s.equalsIgnoreCase("BlastProtection")) {
-
-                        enchantments.add(Enchantment.PROTECTION_EXPLOSIONS);
-
-                    } else if (s.equalsIgnoreCase("FeatherFalling")) {
-
-                        enchantments.add(Enchantment.PROTECTION_FALL);
-
-                    } else if (s.equalsIgnoreCase("FireProtection")) {
-
-                        enchantments.add(Enchantment.PROTECTION_FIRE);
-
-                    } else if (s.equalsIgnoreCase("ProjectileProtection")) {
-
-                        enchantments.add(Enchantment.PROTECTION_PROJECTILE);
-
-                    } else if (s.equalsIgnoreCase("SilkTouch")) {
-
-                        enchantments.add(Enchantment.SILK_TOUCH);
-
-                    } else if (s.equalsIgnoreCase("AquaAffinity")) {
-
-                        enchantments.add(Enchantment.WATER_WORKER);
-
-                    }
+                    enchantments.add(Quests.getEnchantment(s));
 
                     materials.add(Material.getMaterial(ids.get(enchantNames.indexOf(s))));
                     amounts.add(enchantNames.indexOf(s));
@@ -2585,85 +2454,7 @@ public class Quester {
 
                 for (String color : colors) {
 
-                    if (color.equalsIgnoreCase("Black")) {
-
-                        sheepSheared.put(DyeColor.BLACK, amounts.get(colors.indexOf(color)));
-
-                    } else if (color.equalsIgnoreCase("Blue")) {
-
-                        sheepSheared.put(DyeColor.BLUE, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Brown")) {
-
-                        sheepSheared.put(DyeColor.BROWN, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Cyan")) {
-
-                        sheepSheared.put(DyeColor.CYAN, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Gray")) {
-
-                        sheepSheared.put(DyeColor.GRAY, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Green")) {
-
-                        sheepSheared.put(DyeColor.GREEN, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("LightBlue")) {
-
-                        sheepSheared.put(DyeColor.LIGHT_BLUE, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Lime")) {
-
-                        sheepSheared.put(DyeColor.LIME, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Magenta")) {
-
-                        sheepSheared.put(DyeColor.MAGENTA, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Orange")) {
-
-                        sheepSheared.put(DyeColor.ORANGE, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Pink")) {
-
-                        sheepSheared.put(DyeColor.PINK, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Purple")) {
-
-                        sheepSheared.put(DyeColor.PURPLE, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Red")) {
-
-                        sheepSheared.put(DyeColor.RED, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Silver")) {
-
-                        sheepSheared.put(DyeColor.SILVER, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("White")) {
-
-                        sheepSheared.put(DyeColor.WHITE, amounts.get(colors.indexOf(color)));
-
-                    }
-                    if (color.equalsIgnoreCase("Yellow")) {
-
-                        sheepSheared.put(DyeColor.YELLOW, amounts.get(colors.indexOf(color)));
-
-                    }
+                    sheepSheared.put(Quests.getDyeColor(color), amounts.get(colors.indexOf(color)));
 
                 }
 
@@ -2791,7 +2582,9 @@ public class Quester {
                         currentStageIndex = 0;
                         resetObjectives();
                         if (plugin.getServer().getPlayer(name) != null) {
-                            plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " has been modified. You have been forced to quit the Quest.");
+                            String error = Lang.get("questModified");
+                            error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED);
+                            plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
                         }
                         currentQuest = null;
 
@@ -2809,7 +2602,9 @@ public class Quester {
                 currentStageIndex = 0;
                 resetObjectives();
                 if (plugin.getServer().getPlayer(name) != null) {
-                    plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "Your active Quest " + ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED + " no longer exists. You have been forced to quit the Quest.");
+                    String error = Lang.get("questNotExist");
+                    error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED);
+                    plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
                 }
                 currentQuest = null;
 
@@ -2822,7 +2617,7 @@ public class Quester {
     public static String checkPlacement(Inventory inv, int rawSlot) {
 
         if (rawSlot < 0) {
-            return "You may not drop Quest items.";
+            return Lang.get("questNoDrop");
         }
 
         InventoryType type = inv.getType();
@@ -2830,19 +2625,19 @@ public class Quester {
         if (type.equals(InventoryType.BREWING)) {
 
             if (rawSlot < 4) {
-                return "You may not brew using Quest items.";
+                return Lang.get("questNoBrew");
             }
 
         } else if (type.equals(InventoryType.CHEST)) {
 
             if (inv.getContents().length == 27) {
                 if (rawSlot < 27) {
-                    return "You may not store Quest items.";
+                    return Lang.get("questNoStore");
                 }
 
             } else {
                 if (rawSlot < 54) {
-                    return "You may not store Quest items.";
+                    return Lang.get("questNoStore");
                 }
 
             }
@@ -2850,39 +2645,39 @@ public class Quester {
         } else if (type.equals(InventoryType.CRAFTING)) {
 
             if (rawSlot < 5) {
-                return "You may not craft using Quest items.";
+                return Lang.get("questNoCraft");
             } else if (rawSlot < 9) {
-                return "You may not equip Quest items.";
+                return Lang.get("questNoEquip");
             }
 
         } else if (type.equals(InventoryType.DISPENSER)) {
 
             if (rawSlot < 9) {
-                return "You may not put Quest items in dispensers.";
+                return Lang.get("questNoDispense");
             }
 
         } else if (type.equals(InventoryType.ENCHANTING)) {
 
             if (rawSlot == 0) {
-                return "You may not enchant Quest items.";
+                return Lang.get("questNoEnchant");
             }
 
         } else if (type.equals(InventoryType.ENDER_CHEST)) {
 
             if (rawSlot < 27) {
-                return "You may not store Quest items.";
+                return Lang.get("questNoStore");
             }
 
         } else if (type.equals(InventoryType.FURNACE)) {
 
             if (rawSlot < 3) {
-                return "You may not smelt using Quest items.";
+                return Lang.get("questNoSmelt");
             }
 
         } else if (type.equals(InventoryType.WORKBENCH)) {
 
             if (rawSlot < 10) {
-                return "You may not craft using Quest items.";
+                return Lang.get("questNoCraft");
             }
 
         }

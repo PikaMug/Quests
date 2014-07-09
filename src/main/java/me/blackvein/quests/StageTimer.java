@@ -1,5 +1,6 @@
 package me.blackvein.quests;
 
+import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -46,7 +47,7 @@ public class StageTimer implements Runnable{
                     quester.delayStartTime = 0;
                     quester.delayTimeLeft = -1;
 
-                    player.sendMessage(ChatColor.GOLD + "---(Objectives)---");
+                    player.sendMessage(ChatColor.GOLD + Lang.get("questObjectivesTitle"));
                     for(String s : quester.getObjectivesReal()){
 
                         player.sendMessage(s);

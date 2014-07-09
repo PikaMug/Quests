@@ -15,6 +15,7 @@ import me.blackvein.quests.util.CK;
 import static me.blackvein.quests.util.ColorUtil.PURPLE;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.QuestMob;
 import net.citizensnpcs.api.CitizensAPI;
 
@@ -36,6 +37,7 @@ import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -104,7 +106,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         public String getPromptText(ConversationContext context) {
 
             String text =
-                    GOLD + "- " + Lang.get("eventEditorTitle") + " -\n"
+                    GOLD + Lang.get("eventEditorTitle") + "\n"
                     + BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorCreate") + "\n"
                     + BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorEdit") + "\n"
                     + BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorDelete") + "\n"
@@ -126,7 +128,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                     context.setSessionData(CK.E_OLD_EVENT, "");
                     return new EventNamePrompt();
                 }else{
-                    player.sendMessage(RED + "You do not have permission to create new Events.");
+                    player.sendMessage(RED + Lang.get("eventEditorCreatePermisssions"));
                     return new MenuPrompt();
                 }
 
@@ -143,7 +145,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }else{
 
-                    player.sendMessage(RED + "You do not have permission to edit Events.");
+                    player.sendMessage(RED + Lang.get("eventEditorEditPermisssions"));
                     return new MenuPrompt();
 
                 }
@@ -160,7 +162,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }else{
 
-                    player.sendMessage(RED + "You do not have permission to delete Events.");
+                    player.sendMessage(RED + Lang.get("eventEditorDeletePermisssions"));
                     return new MenuPrompt();
 
                 }
@@ -216,14 +218,14 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             context.setSessionData(CK.E_MESSAGE, event.message);
 
         if(event.clearInv == true)
-            context.setSessionData(CK.E_CLEAR_INVENTORY, "Yes");
+            context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
         else
-            context.setSessionData(CK.E_CLEAR_INVENTORY, "No");
+            context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
 
         if (event.failQuest == true)
-        	context.setSessionData(CK.E_FAIL_QUEST, "Yes");
+        	context.setSessionData(CK.E_FAIL_QUEST, Lang.get("yesWord"));
         else
-        	context.setSessionData(CK.E_FAIL_QUEST, "No");
+        	context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
 
         if(event.items != null && event.items.isEmpty() == false){
 
@@ -466,7 +468,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             String text =
                     RED + Lang.get("eventEditorDeletePrompt") + " \"" + GOLD + (String)context.getSessionData(CK.ED_EVENT_DELETE) + RED + "\"?\n";
-                    text += YELLOW + Lang.get("yes") + "/" + Lang.get("no");
+                    text += YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
 
             return text;
 
@@ -475,10 +477,10 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if(input.equalsIgnoreCase(Lang.get("yes"))){
+            if(input.equalsIgnoreCase(Lang.get("yesWord"))){
                 deleteEvent(context);
                 return new MenuPrompt();
-            }else if(input.equalsIgnoreCase(Lang.get("no"))){
+            }else if(input.equalsIgnoreCase(Lang.get("noWord"))){
                 return new MenuPrompt();
             }else {
                 return new DeletePrompt();
@@ -690,10 +692,10 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             } else if (input.equalsIgnoreCase("3")) {
 
                 String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
-                if (s.equalsIgnoreCase("Yes")) {
-                    context.setSessionData(CK.E_CLEAR_INVENTORY, "No");
+                if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
                 } else {
-                    context.setSessionData(CK.E_CLEAR_INVENTORY, "Yes");
+                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
                 }
 
                 return new CreateMenuPrompt();
@@ -701,10 +703,10 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             } else if (input.equalsIgnoreCase("4")) {
 
             	String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
-                if (s.equalsIgnoreCase("Yes")) {
-                    context.setSessionData(CK.E_FAIL_QUEST, "No");
+                if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+                    context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
                 } else {
-                    context.setSessionData(CK.E_FAIL_QUEST, "Yes");
+                    context.setSessionData(CK.E_FAIL_QUEST, Lang.get("yesWord"));
                 }
 
                 return new CreateMenuPrompt();
@@ -790,7 +792,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             String text =
                     GREEN + Lang.get("eventEditorQuitWithoutSaving") + "\n";
-                    text += YELLOW + Lang.get("yes") + "/" + Lang.get("no");
+                    text += YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
 
             return text;
 
@@ -799,10 +801,10 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if(input.equalsIgnoreCase(Lang.get("yes"))){
+            if(input.equalsIgnoreCase(Lang.get("yesWord"))){
                 clearData(context);
                 return new MenuPrompt();
-            }else if(input.equalsIgnoreCase(Lang.get("no"))){
+            }else if(input.equalsIgnoreCase(Lang.get("noWord"))){
                 return new CreateMenuPrompt();
             }else{
                 ((Player) context.getForWhom()).sendMessage(RED + Lang.get("invalidOption"));
@@ -855,7 +857,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
                             text += GRAY + "    - " + DARKRED + s + "\n";
                         text += RED + Lang.get("eventEditorForcedToQuit") + "\n";
                     }
-                    text += YELLOW + Lang.get("yes") + "/" + Lang.get("no");
+                    text += YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
 
             return text;
 
@@ -864,10 +866,10 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if(input.equalsIgnoreCase(Lang.get("yes"))){
+            if(input.equalsIgnoreCase(Lang.get("yesWord"))){
                 saveEvent(context);
                 return new MenuPrompt();
-            }else if(input.equalsIgnoreCase(Lang.get("no"))){
+            }else if(input.equalsIgnoreCase(Lang.get("noWord"))){
                 return new CreateMenuPrompt();
             }else{
                 ((Player) context.getForWhom()).sendMessage(RED + Lang.get("invalidOption"));
@@ -987,13 +989,13 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
         if (context.getSessionData(CK.E_CLEAR_INVENTORY) != null) {
             String s = getCString(context, CK.E_CLEAR_INVENTORY);
-            if(s.equalsIgnoreCase("Yes"))
+            if(s.equalsIgnoreCase(Lang.get("yesWord")))
                 section.set("clear-inventory", true);
         }
 
         if (context.getSessionData(CK.E_FAIL_QUEST) != null) {
         	String s = getCString(context, CK.E_FAIL_QUEST);
-        	if (s.equalsIgnoreCase("Yes"))
+        	if (s.equalsIgnoreCase(Lang.get("yesWord")))
         		section.set("fail-quest", true);
         }
 
@@ -1352,7 +1354,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase("cmdNone") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdNone")) == false) {
                 context.setSessionData(CK.E_MESSAGE, input);
             } else if (input.equalsIgnoreCase(Lang.get("cmdNone"))) {
                 context.setSessionData(CK.E_MESSAGE, null);
@@ -1391,11 +1393,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
             }
 
-            String text = GOLD + "- Give Items -\n";
+            String text = GOLD + Lang.get("eventEditorGiveItemsTitle") + "\n";
             if(context.getSessionData(CK.E_ITEMS) == null){
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
-                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorAddItem") + "\n";
+                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
             }else{
 
                 for(ItemStack is : getItems(context)){
@@ -1404,10 +1406,10 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 }
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorAddItem") + "\n";
 
-                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -1421,7 +1423,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             if(input.equalsIgnoreCase("1")){
                 return new ItemStackPrompt(ItemListPrompt.this);
             }else if(input.equalsIgnoreCase("2")){
-                context.getForWhom().sendRawMessage(YELLOW + "Event Items cleared.");
+                context.getForWhom().sendRawMessage(YELLOW + Lang.get("eventEditorItemsCleared"));
                 context.setSessionData(CK.E_ITEMS, null);
                 return new ItemListPrompt();
             }else if(input.equalsIgnoreCase("3")){
@@ -1451,7 +1453,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
             String text = GOLD + "- " + Lang.get("eventEditorEffects") + " -\n";
             if (context.getSessionData(CK.E_EFFECTS) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorAddEffect") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - Add effect location (" + Lang.get("eventEditorNoEffects") + ")\n";
+                text += GRAY + "2 - " + Lang.get("eventEditorAddEffectLocation") + " (" + Lang.get("eventEditorNoEffects") + ")\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -1596,7 +1598,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String effects = PINK + "- Effects - \n";
+            String effects = PINK + Lang.get("eventEditorEffectsTitle") + "\n";
             effects += PURPLE + "BLAZE_SHOOT " + GRAY + "- " + Lang.get("effBlazeShoot") + "\n";
             effects += PURPLE + "BOW_FIRE " + GRAY + "- " + Lang.get("effBowFire") + "\n";
             effects += PURPLE + "CLICK1 " + GRAY + "- " + Lang.get("effClick1") + "\n";
@@ -1659,7 +1661,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + "- " + Lang.get("eventEditorStorm") + " -\n";
+            String text = GOLD + Lang.get("eventEditorStormTitle") + "\n";
             if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
@@ -1725,7 +1727,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String effects = PINK + "- " + Lang.get("worlds") + " - \n" + PURPLE;
+            String effects = PINK + Lang.get("eventEditorWorldsTitle") + "\n" + PURPLE;
             for (World w : quests.getServer().getWorlds()) {
                 effects += w.getName() + ", ";
             }
@@ -1792,7 +1794,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + "- " + Lang.get("eventEditorThunder") + " -\n";
+            String text = GOLD + Lang.get("eventEditorThunderTitle") + "\n";
 
             if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
 
@@ -1861,7 +1863,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String effects = PINK + "- Worlds - \n" + PURPLE;
+            String effects = PINK + Lang.get("eventEditorWorldsTitle") + "\n" + PURPLE;
             for (World w : quests.getServer().getWorlds()) {
                 effects += w.getName() + ", ";
             }
@@ -1923,7 +1925,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + "- " + Lang.get("eventEditorMobSpawns") + " -\n";
+            String text = GOLD + Lang.get("eventEditorMobSpawnsTitle") + "\n";
             if (context.getSessionData(CK.E_MOB_TYPES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorAddMobTypes") + " (" + Lang.get("noneSet") + ")\n";
                 text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
@@ -1933,7 +1935,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
 
                 for (int i = 0; i < types.size(); i++) {
                   	QuestMob qm = QuestMob.fromString(types.get(i));
-                  	text += GOLD  + "  " + (i + 1) + " - Edit: " + AQUA + qm.getType().getName() + ((qm.getName() != null) ? ": " + qm.getName() : "") + GRAY + " x " + DARKAQUA + qm.getSpawnAmounts() + GRAY + " -> " + GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
+                  	text += GOLD  + "  " + (i + 1) + " - " + Lang.get("edit") + ": " + AQUA + qm.getType().getName() + ((qm.getName() != null) ? ": " + qm.getName() : "") + GRAY + " x " + DARKAQUA + qm.getSpawnAmounts() + GRAY + " -> " + GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
 
                 text += BLUE + "" + BOLD + (types.size() + 1) + RESET + YELLOW + " - " + Lang.get("eventEditorAddMobTypes") + "\n";
@@ -1995,20 +1997,20 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
     	private final Integer mobIndex;
 
         public QuestMobPrompt(int mobIndex, QuestMob questMob) {
-			this.questMob = questMob;
-			this.mobIndex = mobIndex;
-		}
+                this.questMob = questMob;
+                this.mobIndex = mobIndex;
+        }
 
-		@Override
+        @Override
         public String getPromptText(ConversationContext context) {
 
-			String text = GOLD + "- " + Lang.get("eventEditorAddMobTypes") + " - \n";
+            String text = GOLD + Lang.get("eventEditorAddMobTypesTitle") + "\n";
 
-			if (questMob == null) {
-				questMob = new QuestMob();
-			}
+            if (questMob == null) {
+                    questMob = new QuestMob();
+            }
 
-			// Check/add newly made item
+            // Check/add newly made item
 
             if(context.getSessionData("newItem") != null){
                 if(itemIndex >= 0){
@@ -2129,25 +2131,25 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
     	}
 
     	@Override
-		public String getPromptText(ConversationContext context) {
-    		String text = YELLOW + Lang.get("eventEditorSetMobNamePrompt");
-    		return text;
-		}
+        public String getPromptText(ConversationContext context) {
+            String text = YELLOW + Lang.get("eventEditorSetMobNamePrompt");
+            return text;
+        }
 
     	@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(ConversationContext context, String input) {
 
-    		if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-				return new QuestMobPrompt(mobIndex, questMob);
-    		} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-    			questMob.setName(null);
-    			return new QuestMobPrompt(mobIndex, questMob);
-    		} else {
-    			input = ChatColor.translateAlternateColorCodes('&', input);
-    			questMob.setName(input);
-    			return new QuestMobPrompt(mobIndex, questMob);
-    		}
-		}
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                            return new QuestMobPrompt(mobIndex, questMob);
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                    questMob.setName(null);
+                    return new QuestMobPrompt(mobIndex, questMob);
+            } else {
+                    input = ChatColor.translateAlternateColorCodes('&', input);
+                    questMob.setName(input);
+                    return new QuestMobPrompt(mobIndex, questMob);
+            }
+        }
     }
 
     private class MobTypePrompt extends StringPrompt {
@@ -2161,59 +2163,45 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
     	}
 
     	@Override
-		public String getPromptText(ConversationContext arg0) {
-    		 String mobs = PINK + "- " + Lang.get("mobs") + " - \n";
-            mobs += PURPLE + "Bat, ";
-            mobs += PURPLE + "Blaze, ";
-            mobs += PURPLE + "CaveSpider, ";
-            mobs += PURPLE + "Chicken, ";
-            mobs += PURPLE + "Cow, ";
-            mobs += PURPLE + "Creeper, ";
-            mobs += PURPLE + "Enderman, ";
-            mobs += PURPLE + "EnderDragon, ";
-            mobs += PURPLE + "Ghast, ";
-            mobs += PURPLE + "Giant, ";
-            mobs += PURPLE + "Horse, ";
-            mobs += PURPLE + "IronGolem, ";
-            mobs += PURPLE + "MagmaCube, ";
-            mobs += PURPLE + "MushroomCow, ";
-            mobs += PURPLE + "Ocelot, ";
-            mobs += PURPLE + "Pig, ";
-            mobs += PURPLE + "PigZombie, ";
-            mobs += PURPLE + "Sheep, ";
-            mobs += PURPLE + "Silverfish, ";
-            mobs += PURPLE + "Skeleton, ";
-            mobs += PURPLE + "Slime, ";
-            mobs += PURPLE + "Snowman, ";
-            mobs += PURPLE + "Spider, ";
-            mobs += PURPLE + "Squid, ";
-            mobs += PURPLE + "Villager, ";
-            mobs += PURPLE + "Witch, ";
-            mobs += PURPLE + "Wither, ";
-            mobs += PURPLE + "Wolf, ";
-            mobs += PURPLE + "Zombie\n";
+        public String getPromptText(ConversationContext arg0) {
+            
+            String mobs = PINK + Lang.get("eventEditorMobsTitle") + "\n";
+            final EntityType[] mobArr = EntityType.values();
+            for(int i = 0; i < mobArr.length; i++) {
+
+                final EntityType type = mobArr[i];
+                if(type.isAlive() == false)
+                    continue;
+
+                if(i < (mobArr.length - 1)) {
+                   mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
+                } else {
+                   mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
+                }
+            }
 
             return mobs + YELLOW + Lang.get("eventEditorSetMobTypesPrompt");
-		}
+        }
 
     	@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-    		 Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(ConversationContext context, String input) {
+            
+            Player player = (Player) context.getForWhom();
 
-             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
-                     if (Quests.getMobType(input) != null) {
+                    if (MiscUtil.getProperMobType(input) != null) {
 
-                    	 questMob.setType(Quests.getMobType(input));
+                        questMob.setType(MiscUtil.getProperMobType(input));
 
-                     } else {
-                         player.sendMessage(PINK + input + " " + RED + Lang.get("eventEditorInvalidMob"));
-                         return new MobTypePrompt(mobIndex, questMob);
-                     }
-             }
+                    } else {
+                        player.sendMessage(PINK + input + " " + RED + Lang.get("eventEditorInvalidMob"));
+                        return new MobTypePrompt(mobIndex, questMob);
+                    }
+            }
 
-             return new QuestMobPrompt(mobIndex, questMob);
-		}
+            return new QuestMobPrompt(mobIndex, questMob);
+        }
     }
 
     private class MobAmountPrompt extends StringPrompt {
@@ -2426,16 +2414,16 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + "- " + Lang.get("eventEditorPotionEffects") + " -\n";
+            String text = GOLD  + Lang.get("eventEditorPotionEffectsTitle") + "\n";
             if (context.getSessionData(CK.E_POTION_TYPES) == null) {
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionEffects") + " (" + Lang.get("noneSet") + ")\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionEffectTypes") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("eventEditorSetPotionDurations") + " " + Lang.get("eventEditorNoTypesSet") + "\n";
                 text += GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " " + Lang.get("eventEditorNoTypesSet") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += GREEN + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionEffects") + "\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetPotionEffectTypes") + "\n";
                 for (String s : (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES)) {
                     text += GRAY + "    - " + AQUA + s + "\n";
                 }
@@ -2543,7 +2531,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil{
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String effs = PINK + "- " + Lang.get("eventEditorPotionEffects") + " - \n";
+            String effs = PINK + Lang.get("eventEditorPotionTypesTitle") + "\n";
             for (PotionEffectType pet : PotionEffectType.values()) {
                 effs += (pet != null && pet.getName() != null) ? (PURPLE + pet.getName() + "\n") : "";
             }

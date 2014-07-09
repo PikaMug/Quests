@@ -1,3 +1,4 @@
+language: "en"
 allow-command-questing: true
 allow-command-quests-with-npcs: false
 show-requirements: true

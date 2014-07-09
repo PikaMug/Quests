@@ -2,6 +2,7 @@ package me.blackvein.quests.prompts;
 
 import com.codisimus.plugins.phatloots.PhatLoot;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,33 +43,35 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         String text;
 
-        text = DARKAQUA + "- " + AQUA + context.getSessionData(CK.Q_NAME) + AQUA + " | Rewards -\n";
+        String lang = Lang.get("rewardsTitle");
+        lang = lang.replaceAll("<quest>", AQUA + (String) context.getSessionData(CK.Q_NAME) + DARKAQUA);
+        text = DARKAQUA + lang + "\n";
 
         if (context.getSessionData(CK.REW_MONEY) == null) {
-            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money reward (None set)\n";
+            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("rewSetMoney") + " (" + Lang.get("noneSet") + ")\n";
         } else {
             int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
-            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set money reward (" + moneyRew + " " + (moneyRew > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
+            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("rewSetMoney") + " (" + moneyRew + " " + (moneyRew > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
         }
 
         if (context.getSessionData(CK.REW_QUEST_POINTS) == null) {
-            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points reward (None set)\n";
+            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set Quest Points reward (" + context.getSessionData(CK.REW_QUEST_POINTS) + " Quest Points)\n";
+            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ")\n";
         }
 
-        text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Set item rewards\n";
+        text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("rewSetItems") + "\n";
 
         if (context.getSessionData(CK.REW_EXP) == null) {
-            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set experience reward (None set)\n";
+            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("rewSetExperience") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Set experience reward (" + context.getSessionData(CK.REW_EXP) + " points)\n";
+            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("rewSetExperience") + " (" + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ")\n";
         }
 
         if (context.getSessionData(CK.REW_COMMAND) == null) {
-            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set command rewards (None set)\n";
+            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - Set command rewards\n";
+            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
             List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
 
             for (String cmd : commands) {
@@ -79,9 +82,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         }
 
         if (context.getSessionData(CK.REW_PERMISSION) == null) {
-            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set permission rewards (None set)\n";
+            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("rewSetPermission") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - Set permission rewards\n";
+            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("rewSetPermission") + "\n";
             List<String> permissions = (List<String>) context.getSessionData(CK.REW_PERMISSION);
 
             for (String perm : permissions) {
@@ -94,9 +97,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         if (Quests.mcmmo != null) {
 
             if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set mcMMO skill rewards (None set)\n";
+                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - Set mcMMO skill rewards\n";
+                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("rewSetMcMMO") + "\n";
                 List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
                 List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
 
@@ -109,38 +112,38 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         } else {
 
-            text += GRAY + "7 - Set mcMMO skill rewards (mcMMO not installed)\n";
+            text += GRAY + "7 - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
 
         }
 
         if (Quests.heroes != null) {
 
             if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - Set Heroes experience rewards (None set)\n";
+                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("rewSetHeroes") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - Set Heroes experience rewards\n";
+                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("rewSetHeroes") + "\n";
                 List<String> heroClasses = (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
                 List<Double> amounts = (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
 
                 for (String heroClass : heroClasses) {
 
-                    text += GRAY + "    - " + AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + DARKAQUA + heroClass + " Experience\n";
+                    text += GRAY + "    - " + AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + DARKAQUA + heroClass + " " + Lang.get("experience") + "\n";
 
                 }
             }
 
         } else {
 
-            text += GRAY + "8 - Set Heroes experience rewards (Heroes not installed)\n";
-
+            text += GRAY + "8 - " + Lang.get("rewSetHeroes") + " (" + Lang.get("rewNoHeroes") + ")\n";
+            
         }
 
         if (Quests.phatLoots != null) {
 
             if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
-                text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - Set PhatLoot rewards (None set)\n";
+                text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("rewSetPhat") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - Set PhatLoot rewards\n";
+                text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("rewSetPhat") + "\n";
                 List<String> phatLoots = (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS);
 
                 for (String phatLoot : phatLoots) {
@@ -152,14 +155,14 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         } else {
 
-            text += GRAY + "9 - Set PhatLoot rewards (PhatLoots not installed)\n";
+            text += GRAY + "9 - " + Lang.get("rewSetPhat") + " (" + Lang.get("rewNoPhat") + ")\n";
 
         }
         
         if (context.getSessionData(CK.REW_CUSTOM) == null) {
-            text += BLUE + "" + BOLD + "10 - " + RESET + ITALIC + PURPLE + "Custom Rewards (None set)\n";
+            text += BLUE + "" + BOLD + "10 - " + RESET + ITALIC + PURPLE + Lang.get("rewSetCustom") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "10 - " + RESET + ITALIC + PURPLE + "Custom Rewards\n";
+            text += BLUE + "" + BOLD + "10 - " + RESET + ITALIC + PURPLE + Lang.get("rewSetCustom") + "\n";
             LinkedList<String> customRews = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
             for(String s : customRews){
                 
@@ -168,7 +171,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             }
         }
 
-        text += GREEN + "" + BOLD + "11" + RESET + YELLOW + " - Done";
+        text += GREEN + "" + BOLD + "11" + RESET + YELLOW + " - " + Lang.get("done");
 
         return text;
 
@@ -221,7 +224,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + "Enter amount of " + AQUA + (Quests.economy.currencyNamePlural().isEmpty() ? "Money" : Quests.economy.currencyNamePlural()) + YELLOW + ", or 0 to clear the money reward, or -1 to cancel";
+            String text = Lang.get("rewMoneyPrompt");
+            text = text.replaceAll("<money>", AQUA + (Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural()) + YELLOW);
+            return YELLOW + text;
 
         }
 
@@ -229,7 +234,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 
             if (input.intValue() < -1) {
-                context.getForWhom().sendRawMessage(RED + "Amount must be positive!");
+                context.getForWhom().sendRawMessage(RED + Lang.get("inputPosNum"));
                 return new MoneyPrompt();
             } else if (input.intValue() == 0) {
                 context.setSessionData(CK.REW_MONEY, null);
@@ -248,7 +253,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + "Enter amount of experience, or 0 to clear the experience reward, or -1 to cancel";
+            return YELLOW + Lang.get("rewExperiencePrompt");
 
         }
 
@@ -256,7 +261,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 
             if (input.intValue() < -1) {
-                context.getForWhom().sendRawMessage(RED + "Amount must be positive!");
+                context.getForWhom().sendRawMessage(RED + Lang.get("inputPosNum"));
                 return new ExperiencePrompt();
             } else if (input.intValue() == -1) {
                 context.setSessionData(CK.REW_EXP, null);
@@ -275,7 +280,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + "Enter amount of Quest Points, or 0 to clear the Quest Points reward, or -1 to cancel";
+            return YELLOW + Lang.get("rewQuestPointsPrompt");
 
         }
 
@@ -283,7 +288,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 
             if (input.intValue() < -1) {
-                context.getForWhom().sendRawMessage(RED + "Amount must be positive!");
+                context.getForWhom().sendRawMessage(RED + Lang.get("inputPosNum"));
                 return new QuestPointsPrompt();
             } else if (input.intValue() == -1) {
                 context.setSessionData(CK.REW_QUEST_POINTS, null);
@@ -325,12 +330,12 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
             }
 
-            String text = GOLD + "- Item Rewards -\n";
+            String text = GOLD + Lang.get("itemRewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_ITEMS) == null) {
                 text += GRAY + " (" + Lang.get("noneSet") + ")\n";
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
-                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqAddItem") + "\n";
+                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
                 for (ItemStack is : getItems(context)) {
@@ -338,9 +343,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                     text += GRAY + "- " + ItemUtil.getDisplayString(is) + "\n";
 
                 }
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Add item\n";
-                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqAddItem") + "\n";
+                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -354,7 +359,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             if (input.equalsIgnoreCase("1")) {
                 return new ItemStackPrompt(ItemListPrompt.this);
             } else if (input.equalsIgnoreCase("2")) {
-                context.getForWhom().sendRawMessage(YELLOW + "Item rewards cleared.");
+                context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewItemsCleared"));
                 context.setSessionData(CK.REW_ITEMS, null);
                 return new ItemListPrompt();
             } else if (input.equalsIgnoreCase("3")) {
@@ -374,14 +379,16 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String note = GOLD + "\nNote: You may put <player> to specify the player who completed the Quest. e.g. " + AQUA + BOLD + ITALIC + "smite <player>" + RESET;
-            return YELLOW + "Enter command rewards separating each one by a " + BOLD + "comma" + RESET + YELLOW + ", or enter \'clear\' to clear the list, or enter \'cancel\' to return." + note;
+            String lang1 = Lang.get("rewCommandPrompt");
+            lang1 = lang1.replaceAll("<comma>", BOLD + "" + RED + "comma" + RESET + YELLOW);
+            String lang2 = Lang.get("rewCommandPromptHint");
+            return YELLOW + lang1 + "\n" + lang2;
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
                 String[] args = input.split(",");
                 LinkedList<String> commands = new LinkedList<String>();
@@ -397,7 +404,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
                 context.setSessionData(CK.REW_COMMAND, commands);
 
-            } else if (input.equalsIgnoreCase("clear")) {
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_COMMAND, null);
             }
 
@@ -411,13 +418,13 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + "Enter permission rewards separating each one by a space, or enter \'clear\' to clear the list, or enter \'cancel\' to return.";
+            return YELLOW + Lang.get("rewPermissionsPrompt");
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
                 String[] args = input.split(" ");
                 LinkedList<String> permissions = new LinkedList<String>();
@@ -425,7 +432,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
                 context.setSessionData(CK.REW_PERMISSION, permissions);
 
-            } else if (input.equalsIgnoreCase("clear")) {
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PERMISSION, null);
             }
 
@@ -447,15 +454,15 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + "- mcMMO Rewards -\n";
+            String text = GOLD + Lang.get("mcMMORewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set skills (None set)\n";
-                text += GRAY + "2 - Set skill amounts (No skills set)\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqSetSkills") + " (" + Lang.get("noneSet") + ")\n";
+                text += GRAY + "2 - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set skills\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqSetSkills") + "\n";
                 for (String s : getSkills(context)) {
 
                     text += GRAY + "    - " + AQUA + s + "\n";
@@ -463,10 +470,10 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 }
 
                 if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set skill amounts (None set)\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set skill amounts\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetSkillAmounts") + "\n";
                     for (Integer i : getSkillAmounts(context)) {
 
                         text += GRAY + "    - " + AQUA + i + "\n";
@@ -475,8 +482,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
                 }
 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -491,13 +498,13 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 return new mcMMOSkillsPrompt();
             } else if (input.equalsIgnoreCase("2")) {
                 if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                    context.getForWhom().sendRawMessage(RED + "You must set skills first!");
+                    context.getForWhom().sendRawMessage(RED + Lang.get("rewSetMcMMOSkillsFirst"));
                     return new mcMMOListPrompt();
                 } else {
                     return new mcMMOAmountsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
-                context.getForWhom().sendRawMessage(YELLOW + "mcMMO rewards cleared.");
+                context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewMcMMOCleared"));
                 context.setSessionData(CK.REW_MCMMO_SKILLS, null);
                 context.setSessionData(CK.REW_MCMMO_AMOUNTS, null);
                 return new mcMMOListPrompt();
@@ -521,7 +528,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 if (one == two) {
                     return new RewardsPrompt(quests, factory);
                 } else {
-                    context.getForWhom().sendRawMessage(RED + "The " + GOLD + "skills list " + RED + "and " + GOLD + "skill amounts list " + RED + "are not the same size!");
+                    context.getForWhom().sendRawMessage(RED + Lang.get("rewMcMMOListsNotSameSize"));
                     return new mcMMOListPrompt();
                 }
             }
@@ -543,31 +550,25 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String skillList
-                    = GOLD + "-Skill List-\n"
-                    + AQUA + "Acrobatics\n"
-                    + GRAY + "All\n"
-                    + AQUA + "Archery\n"
-                    + AQUA + "Axes\n"
-                    + AQUA + "Excavation\n"
-                    + AQUA + "Fishing\n"
-                    + AQUA + "Herbalism\n"
-                    + AQUA + "Mining\n"
-                    + AQUA + "Repair\n"
-                    + AQUA + "Smelting\n"
-                    + AQUA + "Swords\n"
-                    + AQUA + "Taming\n"
-                    + AQUA + "Unarmed\n"
-                    + AQUA + "Woodcutting\n\n";
+            
+            String skillList = DARKGREEN + Lang.get("skillListTitle") + "\n";
+            SkillType[] skills = SkillType.values();
+            for(int i = 0; i < skills.length; i++) {
+                
+                if(i == (skills.length - 1))
+                    skillList += GREEN + skills[i].getName() + "\n";
+                else
+                    skillList += GREEN + skills[i].getName() + "\n\n";
+                
+            }
 
-            return skillList + YELLOW + "Enter mcMMO skills, separating each one by a space, or enter \'cancel\' to return."
-                    + "\n" + GOLD + "Note: The \'All\' option will give levels to all skills.";
+            return skillList + Lang.get("rewMcMMOPrompt") + "\n" + GOLD + Lang.get("rewMcMMOPromptHint");
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
                 String[] args = input.split(" ");
                 LinkedList<String> skills = new LinkedList<String>();
@@ -578,12 +579,14 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                         if (skills.contains(s) == false) {
                             skills.add(Quester.getCapitalized(s));
                         } else {
-                            context.getForWhom().sendRawMessage(RED + "List contains duplicates!");
+                            context.getForWhom().sendRawMessage(RED + Lang.get("listDuplicate"));
                             return new mcMMOSkillsPrompt();
                         }
 
                     } else {
-                        context.getForWhom().sendRawMessage(PINK + s + RED + " is not a valid mcMMO skill!");
+                        String text = Lang.get("reqMcMMOError");
+                        text = text.replaceAll("<input>", PINK + s + RED);
+                        context.getForWhom().sendRawMessage(RED + text);
                         return new mcMMOSkillsPrompt();
                     }
 
@@ -603,29 +606,26 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + "Enter skill amounts (numbers), separating each one by a space, or enter \'cancel\' to return.";
+            return YELLOW + Lang.get("reqMcMMOAmountsPrompt");
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
                 String[] args = input.split(" ");
                 LinkedList<Integer> amounts = new LinkedList<Integer>();
                 for (String s : args) {
 
                     try {
-
-                        if (Integer.parseInt(s) > 0) {
-                            amounts.add(Integer.parseInt(s));
-                        } else {
-                            context.getForWhom().sendRawMessage(PINK + s + RED + " is not greater than 0!");
-                            return new mcMMOAmountsPrompt();
-                        }
-
+                        
+                        amounts.add(Integer.parseInt(s));
+                        
                     } catch (NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(RED + "Invalid entry " + PINK + s + RED + ". Input was not a list of numbers!");
+                        String text = Lang.get("reqNotANumber");
+                        text = text.replaceAll("<input>", PINK + s + RED);
+                        context.getForWhom().sendRawMessage(RED + text);
                         return new mcMMOAmountsPrompt();
                     }
 
@@ -652,15 +652,15 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + "- Heroes Rewards -\n";
+            String text = GOLD + Lang.get("heroesRewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set classes (None set)\n";
-                text += GRAY + "2 - Set experience amounts (No classes set)\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("rewSetHeroesClasses") + " (" + Lang.get("noneSet") + ")\n";
+                text += GRAY + "2 - " + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - Set classes\n";
+                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("rewSetHeroesClasses") + "\n";
                 for (String s : getClasses(context)) {
 
                     text += GRAY + "    - " + AQUA + s + "\n";
@@ -668,10 +668,10 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 }
 
                 if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set experience amounts (None set)\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - Set experience amounts\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + "\n";
                     for (Double d : getClassAmounts(context)) {
 
                         text += GRAY + "    - " + AQUA + d + "\n";
@@ -680,8 +680,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
                 }
 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - Clear\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - Done";
+                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -696,13 +696,13 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 return new HeroesClassesPrompt();
             } else if (input.equalsIgnoreCase("2")) {
                 if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                    context.getForWhom().sendRawMessage(RED + "You must set classes first!");
+                    context.getForWhom().sendRawMessage(RED + Lang.get("rewSetHeroesClassesFirst"));
                     return new HeroesListPrompt();
                 } else {
                     return new HeroesExperiencePrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
-                context.getForWhom().sendRawMessage(YELLOW + "Heroes rewards cleared.");
+                context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewHeroesCleared"));
                 context.setSessionData(CK.REW_HEROES_CLASSES, null);
                 context.setSessionData(CK.REW_HEROES_AMOUNTS, null);
                 return new HeroesListPrompt();
@@ -726,7 +726,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 if (one == two) {
                     return new RewardsPrompt(quests, factory);
                 } else {
-                    context.getForWhom().sendRawMessage(RED + "The " + GOLD + "classes list " + RED + "and " + GOLD + "experience amounts list " + RED + "are not the same size!");
+                    context.getForWhom().sendRawMessage(RED + Lang.get("rewHeroesListsNotSameSize"));
                     return new HeroesListPrompt();
                 }
             }
@@ -749,14 +749,14 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext cc) {
 
-            String text = PURPLE + "- " + PINK + "Heroes Classes" + PURPLE + " -\n";
+            String text = PURPLE + Lang.get("heroesClassesTitle") + "\n";
             LinkedList<String> list = new LinkedList<String>();
             for (HeroClass hc : Quests.heroes.getClassManager().getClasses()) {
                 list.add(hc.getName());
             }
 
             if (list.isEmpty()) {
-                text += GRAY + "(None)\n";
+                text += GRAY + "(" + Lang.get("none") + ")\n";
             } else {
 
                 Collections.sort(list);
@@ -769,7 +769,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
             }
 
-            text += YELLOW + "Enter Heroes classes separating each one by a space, or enter \"cancel\" to return.";
+            text += YELLOW + Lang.get("rewHeroesClassesPrompt");
 
             return text;
         }
@@ -777,7 +777,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
                 String[] arr = input.split(" ");
                 LinkedList<String> classes = new LinkedList<String>();
@@ -786,7 +786,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
                     HeroClass hc = Quests.heroes.getClassManager().getClass(s);
                     if (hc == null) {
-                        cc.getForWhom().sendRawMessage(RED + "Error: " + PINK + s + RED + " is not a valid Heroes class name!");
+                        String text = Lang.get("rewHeroesInvalidClass");
+                        text = text.replaceAll("<input>", PINK + s + RED);
+                        cc.getForWhom().sendRawMessage(RED + text);
                         return new HeroesClassesPrompt();
                     } else {
                         classes.add(hc.getName());
@@ -810,9 +812,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext cc) {
 
-            String text = PURPLE + "- " + PINK + "Heroes Experience" + PURPLE + " -\n";
+            String text = Lang.get("heroesExperienceTitle") + "\n";
 
-            text += YELLOW + "Enter experience amounts (numbers, decimals are allowed) separating each one by a space, or enter \"cancel\" to return.";
+            text += YELLOW + Lang.get("rewHeroesExperiencePrompt");
 
             return text;
         }
@@ -820,7 +822,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
                 String[] arr = input.split(" ");
                 LinkedList<Double> amounts = new LinkedList<Double>();
@@ -830,15 +832,12 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                     try {
 
                         double d = Double.parseDouble(s);
-                        if (d > 0) {
-                            amounts.add(d);
-                        } else {
-                            cc.getForWhom().sendRawMessage(RED + "Error: " + PINK + s + RED + " is not greater than zero!");
-                            return new HeroesExperiencePrompt();
-                        }
+                        amounts.add(d);
 
                     } catch (NumberFormatException nfe) {
-                        cc.getForWhom().sendRawMessage(RED + "Error: " + PINK + s + RED + " is not a number!");
+                        String text = Lang.get("reqNotANumber");
+                        text = text.replaceAll("<input>", PINK + s + RED);
+                        cc.getForWhom().sendRawMessage(RED + text);
                         return new HeroesExperiencePrompt();
                     }
 
@@ -859,7 +858,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext cc) {
 
-            String text = DARKAQUA + "- " + AQUA + "PhatLoots" + DARKAQUA + " -\n";
+            String text = DARKAQUA + Lang.get("phatLootsRewardsTitle") + "\n";
 
             for (PhatLoot pl : PhatLootsAPI.getAllPhatLoots()) {
 
@@ -867,7 +866,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
             }
 
-            text += YELLOW + "Enter PhatLoots separating each one by a space, or enter \"clear\" to clear the list, or \"cancel\" to return.";
+            text += YELLOW + Lang.get("rewPhatLootsPrompt");
 
             return text;
         }
@@ -875,7 +874,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
                 String[] arr = input.split(" ");
                 LinkedList<String> loots = new LinkedList<String>();
@@ -883,7 +882,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 for (String s : arr) {
 
                     if (PhatLootsAPI.getPhatLoot(s) == null) {
-                        cc.getForWhom().sendRawMessage(DARKRED + s + RED + " is not a valid PhatLoot name!");
+                        String text = Lang.get("rewPhatLootsInvalid");
+                        text = text.replaceAll("<input>", DARKRED + s + RED);
+                        cc.getForWhom().sendRawMessage(RED + text);
                         return new PhatLootsPrompt();
                     }
 
@@ -893,10 +894,10 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 cc.setSessionData(CK.REW_PHAT_LOOTS, loots);
                 return new RewardsPrompt(quests, factory);
 
-            } else if (input.equalsIgnoreCase("clear")) {
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
                 cc.setSessionData(CK.REW_PHAT_LOOTS, null);
-                cc.getForWhom().sendRawMessage(YELLOW + "PhatLoots reward cleared.");
+                cc.getForWhom().sendRawMessage(YELLOW + Lang.get("rewPhatLootsCleared"));
                 return new RewardsPrompt(quests, factory);
 
             } else {
@@ -910,21 +911,21 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = PINK + "- Custom Rewards -\n";
+            String text = PINK + Lang.get("customRewardsTitle") + "\n";
             if(quests.customRewards.isEmpty()){
-                text += BOLD + "" + PURPLE + "(No modules loaded)";
+                text += BOLD + "" + PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
             }else {
                 for(CustomReward cr : quests.customRewards)
                     text += PURPLE + " - " + cr.getName() + "\n";
             }
             
-            return text + YELLOW + "Enter the name of a custom reward to add, or enter \'clear\' to clear all custom rewards, or \'cancel\' to return.";
+            return text + YELLOW + Lang.get("rewCustomRewardPrompt");
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            if (input.equalsIgnoreCase("cancel") == false && input.equalsIgnoreCase("clear") == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
                 CustomReward found = null;
                 for(CustomReward cr : quests.customRewards){
@@ -954,7 +955,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                             context.setSessionData(CK.REW_CUSTOM, list);
                             context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
                         }else{
-                            context.getForWhom().sendRawMessage(YELLOW + "That custom reward has already been added!");
+                            context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewCustomAlreadyAdded"));
                             return new CustomRewardsPrompt();
                         }
                     }else{
@@ -976,15 +977,15 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                     //
                     
                 }else{
-                    context.getForWhom().sendRawMessage(YELLOW + "Custom reward module not found.");
+                    context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewCustomNotFound"));
                     return new CustomRewardsPrompt();
                 }
 
-            } else if (input.equalsIgnoreCase("clear")) {
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_CUSTOM, null);
                 context.setSessionData(CK.REW_CUSTOM_DATA, null);
                 context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);
-                context.getForWhom().sendRawMessage(YELLOW + "Custom rewards cleared.");
+                context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewCustomCleared"));
             }
 
             return new RewardsPrompt(quests, factory);
@@ -1019,13 +1020,13 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 if(datamap.get(dataKey) != null)
                     text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
                 else
-                    text += RED + " (Value required)\n";
+                    text += RED + " (" + Lang.get("valRequired") + ")\n";
                 
                 index++;
                 
             }
             
-            text += BOLD + "" + DARKBLUE + index + " - " + AQUA + "Finish";
+            text += BOLD + "" + DARKBLUE + index + " - " + AQUA + Lang.get("finish");
             
             return text;
         }
@@ -1083,8 +1084,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             if(descriptions.get(temp) != null)
                 text += GOLD + descriptions.get(temp) + "\n";
                 
-            text += YELLOW + "Enter value for ";
-            text += BOLD + temp + RESET + YELLOW + ":";
+            String lang = Lang.get("stageEditorCustomDataPrompt");
+            lang = lang.replaceAll("<data>", temp);
+            text += YELLOW + lang;
             return text;
         }
 
