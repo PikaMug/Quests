@@ -1,6 +1,7 @@
 package me.blackvein.quests;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -65,6 +66,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.codisimus.plugins.phatloots.PhatLoots;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
+import com.evilmidget38.UUIDFetcher;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
@@ -83,8 +85,10 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -5001,6 +5005,124 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             return;
         }
 
+    }
+    
+    public void convertQuesters() {
+        
+        int numQuesters = 0;
+        int succeeded = 0;
+        int failed = 0;
+        
+        final File dataFolder = new File(this.getDataFolder(), "data/");
+        final File oldDataFolder = new File(this.getDataFolder(), "data/old/");
+        
+        if(oldDataFolder.exists() == false || oldDataFolder.exists() && oldDataFolder.isDirectory() == false)
+            oldDataFolder.mkdir();
+        
+        if(dataFolder.exists() && dataFolder.isDirectory()) {
+            
+            final File[] files = dataFolder.listFiles(new FilenameFilter() {
+
+                @Override
+                public boolean accept(File dir, String name) {
+                    return dir.getPath().equals(dataFolder.getPath()) && name.endsWith(".yml");
+                }
+
+
+            });
+            
+            numQuesters = files.length;
+            if(numQuesters > 0) {
+                
+                final ArrayList<String> names = new ArrayList<String>();
+                
+                Quests.printInfo("Gathering Quester information...");
+                for(int i = 0; i < numQuesters; i++) {
+                    
+                    final File file = files[i];
+                    final File old = new File(oldDataFolder, file.getName());
+                    final String name = file.getName().substring(0, file.getName().length() - 4);
+                    final FileConfiguration config = new YamlConfiguration();
+                    
+                    try{
+                        config.load(file);
+                        config.save(old);
+                        config.set("lastKnownName", name);
+                        config.save(file);
+                    }catch (Exception e) {
+                        failed++;
+                    }
+                    
+                    names.add(name);
+                    succeeded++;
+                    
+                }
+                
+                Quests.printInfo("Completed: " + succeeded + "Success(es). " + failed + " Failure(s). " + numQuesters + " Total.");
+                Quests.printInfo("Preparing to convert data.");
+                
+                Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Quests.printInfo("Done. Converting data...");
+                        
+                        int converted = 0;
+                        int failed = 0;
+                        
+                        final UUIDFetcher fetcher = new UUIDFetcher(names);
+                        final Map<String, UUID> idMap;
+                        
+                        try {
+                            
+                            idMap = fetcher.call();
+                            
+                        } catch (Exception ex) {
+                            Quests.printSevere("Error retrieving data from Mojang account database. Error log:");
+                            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
+                            return;
+                        }
+                        
+                        for(Entry<String, UUID> entry : idMap.entrySet()) {
+                        
+                            try {
+
+                                final File found = new File(dataFolder, entry.getKey() + ".yml");
+                                final File copy = new File(dataFolder, entry.getValue() + ".yml");
+
+                                final FileConfiguration config = new YamlConfiguration();
+
+                                config.load(found);
+                                config.save(copy);
+                                
+                                found.delete();
+                                
+                                converted++;
+                                
+                            } catch (Exception ex) {
+                                failed++;
+                            }
+                        
+                        }
+                        
+                        Quests.printInfo("Conversion completed: " + converted + " Converted. " + failed + " Failed.");
+                        Quests.printInfo("Old data files stored in /Quests/data/old");
+                    }
+                    
+                });
+                
+            } else {
+                Quests.printInfo("No Questers to convert!");
+            }
+            
+        } else {
+            Quests.printInfo("Data folder does not exist!");
+        }
+        
+        
+        
+        
+        
     }
 
 }

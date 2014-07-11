@@ -98,11 +98,15 @@ public class MiscUtil {
     
     private static String unfixUnderscores(String s) {
         
-        for(int i = 1; i < s.length(); i++) {
+        int max = s.length();
+        
+        for(int i = 1; i < max; i++) {
             
             if(Character.isUpperCase(s.charAt(i))) {
                 
                 s = s.substring(0, i) + "_" + s.substring(i);
+                i++;
+                max++;
                 
             }
             
