@@ -144,7 +144,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     @SuppressWarnings("serial")
 	class StageFailedException extends Exception { }
-    
+
     @SuppressWarnings("serial")
     class SkipQuest extends Exception { }
 
@@ -2280,111 +2280,112 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         for (String key : questsSection.getKeys(false)) {
-        	
+
         	try { // main "skip quest" try/catch block
 
 	    		questName = key;
-	
+
 	            quest = new Quest();
 	            failedToLoad = false;
-	
+
 	            if (config.contains("quests." + questName + ".name")) {
 	            	// TODO why have a name attr then path key can be guest name?
 	                quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
 	            } else {
 	            	skipQuestProcess("[Quests] Quest block \'" + questName + "\' is missing " + RED + "name:");
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".npc-giver-id")) {
 	                if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")) != null) {
-	
+
 	                    quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id"));
 	                    questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")));
-	
+
 	                } else {
 	                	skipQuestProcess("[Quests] npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
-	                }	                
+	                }
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".block-start")) {
-	
+
 	                Location location = getLocation(config.getString("quests." + questName + ".block-start"));
 	                if (location != null) {
 	                    quest.blockStart = location;
 	                } else {
-	                    printSevere("[Quests] block-start: for Quest " + quest.name + " is not in proper location format!");
-	                    skipQuestProcess("[Quests] Proper location format is: \"WorldName x y z\"");
+	                    skipQuestProcess(new String[]{
+                    		"[Quests] block-start: for Quest " + quest.name + " is not in proper location format!",
+                    		"[Quests] Proper location format is: \"WorldName x y z\""});
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".region")) {
-	
+
 	                String region = config.getString("quests." + questName + ".region");
 	                boolean exists = regionFound(quest, region);
-	
+
 	                if (!exists) {
 	                	skipQuestProcess("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".guiDisplay")) {
-	
+
 	                String item = config.getString("quests." + questName + ".guiDisplay");
 	                quest.guiDisplay = ItemUtil.readItemStack(item);
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".redo-delay")) {
-	
+
 	                if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
 	                    quest.redoDelay = config.getInt("quests." + questName + ".redo-delay");
 	                } else {
 	                	skipQuestProcess("[Quests] redo-delay: for Quest " + quest.name + " is not a number!");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".finish-message")) {
 	                quest.finished = parseString(config.getString("quests." + questName + ".finish-message"), quest);
 	            } else {
 	            	skipQuestProcess("[Quests] Quest " + quest.name + " is missing finish-message:");
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".ask-message")) {
 	                quest.description = parseString(config.getString("quests." + questName + ".ask-message"), quest);
 	            } else {
 	            	skipQuestProcess("[Quests] Quest " + quest.name + " is missing ask-message:");
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".event")) {
-	
+
 	                Event evt = Event.loadEvent(config.getString("quests." + questName + ".event"), this);
-	
+
 	                if (evt != null) {
 	                    quest.initialEvent = evt;
 	                } else {
 	                	skipQuestProcess("[Quests] Initial Event in Quest " + quest.name + " failed to load.");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".requirements")) {
-	
+
 	                if (config.contains("quests." + questName + ".requirements.fail-requirement-message")) {
 	                    quest.failRequirements = parseString(config.getString("quests." + questName + ".requirements.fail-requirement-message"), quest);
 	                } else {
 	                	skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.items")) {
-	
+
 	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.items"), String.class)) {
 	                        List<String> itemReqs = config.getStringList("quests." + questName + ".requirements.items");
 	                        boolean failed = false;
 	                        for (String item : itemReqs) {
-	
+
 	                            ItemStack stack = ItemUtil.readItemStack(item);
 	                            if (stack != null) {
 	                                quest.items.add(stack);
@@ -2392,178 +2393,180 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	                                failed = true;
 	                                break;
 	                            }
-	
+
 	                        }
-	
+
 	                        if (failed == true) {
 	                        	skipQuestProcess("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
 	                        }
-	
+
 	                    } else {
 	                    	skipQuestProcess("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
 	                    }
-	
+
 	                    if (config.contains("quests." + questName + ".requirements.remove-items")) {
-	
+
 	                        if (Quests.checkList(config.getList("quests." + questName + ".requirements.remove-items"), Boolean.class)) {
 	                            quest.removeItems.clear();
 	                            quest.removeItems.addAll(config.getBooleanList("quests." + questName + ".requirements.remove-items"));
 	                        } else {
 	                        	skipQuestProcess("[Quests] remove-items: Requirement for Quest " + quest.name + " is not a list of true/false values!");
 	                        }
-	
+
 	                    } else {
 	                    	skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing remove-items:");
 	                    }
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.money")) {
-	
+
 	                    if (config.getInt("quests." + questName + ".requirements.money", -999) != -999) {
 	                        quest.moneyReq = config.getInt("quests." + questName + ".requirements.money");
 	                    } else {
 	                    	skipQuestProcess("[Quests] money: Requirement for Quest " + quest.name + " is not a number!");
 	                    }
-	
+
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.quest-points")) {
-	
+
 	                    if (config.getInt("quests." + questName + ".requirements.quest-points", -999) != -999) {
 	                        quest.questPointsReq = config.getInt("quests." + questName + ".requirements.quest-points");
 	                    } else {
 	                    	skipQuestProcess("[Quests] quest-points: Requirement for Quest " + quest.name + " is not a number!");
 	                    }
-	
+
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.quest-blocks")) {
-	
+
 	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.quest-blocks"), String.class)) {
-	
+
 	                        List<String> names = config.getStringList("quests." + questName + ".requirements.quest-blocks");
-	
+
 	                        boolean failed = false;
 	                        String failedQuest = "NULL";
-	
+
 	                        for (String name : names) {
-	
+
 	                            boolean done = false;
 	                            for (String string : questsSection.getKeys(false)) {
-	
+
 	                                if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
 	                                    quest.blockQuests.add(name);
 	                                    done = true;
 	                                    break;
 	                                }
-	
+
 	                            }
-	
+
 	                            if (!done) {
 	                                failed = true;
 	                                failedQuest = name;
 	                                break;
 	                            }
-	
+
 	                        }
-	
+
 	                        if (failed) {
-	                            printSevere("[Quests] " + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
-	                            skipQuestProcess("Make sure you are using the Quest name: value, and not the block name.");
+	                            skipQuestProcess(new String[]{
+                                    "[Quests] " + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
+	                                "Make sure you are using the Quest name: value, and not the block name."});
 	                        }
-	
+
 	                    } else {
 	                    	skipQuestProcess("[Quests] quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
 	                    }
-	
+
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.quests")) {
-	
+
 	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.quests"), String.class)) {
-	
+
 	                        List<String> names = config.getStringList("quests." + questName + ".requirements.quests");
-	
+
 	                        boolean failed = false;
 	                        String failedQuest = "NULL";
-	
+
 	                        for (String name : names) {
-	
+
 	                            boolean done = false;
 	                            for (String string : questsSection.getKeys(false)) {
-	
+
 	                                if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
 	                                    quest.neededQuests.add(name);
 	                                    done = true;
 	                                    break;
 	                                }
-	
+
 	                            }
-	
+
 	                            if (!done) {
 	                                failed = true;
 	                                failedQuest = name;
 	                                break;
 	                            }
-	
+
 	                        }
-	
+
 	                        if (failed) {
-	                            printSevere("[Quests] " + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
-	                            skipQuestProcess("Make sure you are using the Quest name: value, and not the block name.");
+	                        	skipQuestProcess(new String[]{
+                        			"[Quests] " + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
+                        			"Make sure you are using the Quest name: value, and not the block name."});
 	                        }
-	
+
 	                    } else {
 	                    	skipQuestProcess("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
 	                    }
-	
+
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.permissions")) {
-	
+
 	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.permissions"), String.class)) {
 	                        quest.permissionReqs.clear();
 	                        quest.permissionReqs.addAll(config.getStringList("quests." + questName + ".requirements.permissions"));
 	                    } else {
 	                    	skipQuestProcess("[Quests] permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
 	                    }
-	
+
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.mcmmo-skills")) {
-	
+
 	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.mcmmo-skills"), String.class)) {
-	
+
 	                        if (config.contains("quests." + questName + ".requirements.mcmmo-amounts")) {
-	
+
 	                            if (Quests.checkList(config.getList("quests." + questName + ".requirements.mcmmo-amounts"), Integer.class)) {
-	
+
 	                                List<String> skills = config.getStringList("quests." + questName + ".requirements.mcmmo-skills");
 	                                List<Integer> amounts = config.getIntegerList("quests." + questName + ".requirements.mcmmo-amounts");
-	
+
 	                                if (skills.size() != amounts.size()) {
 	                                	skipQuestProcess("[Quests] mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " + quest.name + " are not the same size!");
 	                                }
-	
+
 	                                quest.mcMMOSkillReqs.addAll(skills);
 	                                quest.mcMMOAmountReqs.addAll(amounts);
-	
+
 	                            } else {
 	                            	skipQuestProcess("[Quests] mcmmo-amounts: Requirement for Quest " + quest.name + " is not a list of numbers!");
 	                            }
-	
+
 	                        } else {
 	                        	skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing mcmmo-amounts:");
 	                        }
-	
+
 	                    } else {
 	                    	skipQuestProcess("[Quests] mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
 	                    }
-	
+
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.heroes-primary-class")) {
-	
+
 	                    String className = config.getString("quests." + questName + ".requirements.heroes-primary-class");
 	                    HeroClass hc = heroes.getClassManager().getClass(className);
 	                    if (hc != null && hc.isPrimary()) {
@@ -2573,11 +2576,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	                    } else {
 	                    	skipQuestProcess("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
 	                    }
-	
+
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.heroes-secondary-class")) {
-	
+
 	                    String className = config.getString("quests." + questName + ".requirements.heroes-secondary-class");
 	                    HeroClass hc = heroes.getClassManager().getClass(className);
 	                    if (hc != null && hc.isSecondary()) {
@@ -2587,29 +2590,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	                    } else {
 	                    	skipQuestProcess("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
 	                    }
-	
+
 	                }
-	
+
 	                if (config.contains("quests." + questName + ".requirements.custom-requirements")) {
-	
+
 	                    ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".requirements.custom-requirements");
 	                    for (String path : sec.getKeys(false)) {
-	
+
 	                        String name = sec.getString(path + ".name");
 	                        boolean found = false;
-	
+
 	                        for (CustomRequirement cr : customRequirements) {
 	                            if (cr.getName().equalsIgnoreCase(name)) {
 	                                found = true;
 	                                break;
 	                            }
 	                        }
-	
+
 	                        if (!found) {
 	                            printWarning("[Quests] Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
-	    	                    skipQuestProcess(null);
+	    	                    skipQuestProcess((String)null); // null bc we warn, not severe for this one
 	                        }
-	
+
 	                        Map<String, Object> data = new HashMap<String, Object>();
 	                        ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
 	                        if (sec2 != null) {
@@ -2617,26 +2620,26 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	                                data.put(dataPath, sec2.get(dataPath));
 	                            }
 	                        }
-	
+
 	                        quest.customRequirements.put(name, data);
-	
+
 	                    }
-	
+
 	                }
-	
+
 	            }
-	
+
 	            quest.plugin = this;
-	
+
                 processStages(quest, config, questName); // needsSaving may be modified as a side-effect
-	
+
 	            //Load rewards
 	            if (config.contains("quests." + questName + ".rewards.items")) {
-	
+
 	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.items"), String.class)) {
-	
+
 	                    for (String item : config.getStringList("quests." + questName + ".rewards.items")) {
-	
+
 	                        try {
 	                            ItemStack stack = ItemUtil.readItemStack(item);
 	                            if (stack != null) {
@@ -2645,181 +2648,181 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	                        } catch (Exception e) {
 	                        	skipQuestProcess("[Quests] " + item + " in items: Reward in Quest " + quest.name + " is not properly formatted!");
 	                        }
-	
+
 	                    }
-	
-	
+
+
 	                } else {
 	                	skipQuestProcess("[Quests] items: Reward in Quest " + quest.name + " is not a list of strings!");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.money")) {
-	
+
 	                if (config.getInt("quests." + questName + ".rewards.money", -999) != -999) {
 	                    quest.moneyReward = config.getInt("quests." + questName + ".rewards.money");
 	                } else {
 	                	skipQuestProcess("[Quests] money: Reward in Quest " + quest.name + " is not a number!");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.exp")) {
-	
+
 	                if (config.getInt("quests." + questName + ".rewards.exp", -999) != -999) {
 	                    quest.exp = config.getInt("quests." + questName + ".rewards.exp");
 	                } else {
 	                	skipQuestProcess("[Quests] exp: Reward in Quest " + quest.name + " is not a number!");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.commands")) {
-	
+
 	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.commands"), String.class)) {
 	                    quest.commands.clear();
 	                    quest.commands.addAll(config.getStringList("quests." + questName + ".rewards.commands"));
 	                } else {
 	                	skipQuestProcess("[Quests] commands: Reward in Quest " + quest.name + " is not a list of commands!");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.permissions")) {
-	
+
 	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.permissions"), String.class)) {
 	                    quest.permissions.clear();
 	                    quest.permissions.addAll(config.getStringList("quests." + questName + ".rewards.permissions"));
 	                } else {
 	                	skipQuestProcess("[Quests] permissions: Reward in Quest " + quest.name + " is not a list of permissions!");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.quest-points")) {
-	
+
 	                if (config.getInt("quests." + questName + ".rewards.quest-points", -999) != -999) {
 	                    quest.questPoints = config.getInt("quests." + questName + ".rewards.quest-points");
 	                    totalQuestPoints += quest.questPoints;
 	                } else {
 	                	skipQuestProcess("[Quests] quest-points: Reward in Quest " + quest.name + " is not a number!");
 	                }
-	
+
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.mcmmo-skills")) {
-	
+
 	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-skills"), String.class)) {
-	
+
 	                    if (config.contains("quests." + questName + ".rewards.mcmmo-levels")) {
-	
+
 	                        if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-levels"), Integer.class)) {
-	
+
 	                            for (String skill : config.getStringList("quests." + questName + ".rewards.mcmmo-skills")) {
-	
+
 	                                if (Quests.getMcMMOSkill(skill) == null) {
 	                                	skipQuestProcess("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
 	                                }
-	
+
 	                            }
 
 	                            quest.mcmmoSkills.clear();
 	                            quest.mcmmoAmounts.clear();
-	
+
 	                            quest.mcmmoSkills.addAll(config.getStringList("quests." + questName + ".rewards.mcmmo-skills"));
 	                            quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
-	
+
 	                        } else {
 	                        	skipQuestProcess("[Quests] mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
 	                        }
-	
+
 	                    } else {
 	                    	skipQuestProcess("[Quests] Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
 	                    }
-	
+
 	                } else {
 	                	skipQuestProcess("[Quests] mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
 	                }
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.heroes-exp-classes")) {
-	
+
 	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-classes"), String.class)) {
-	
+
 	                    if (config.contains("quests." + questName + ".rewards.heroes-exp-amounts")) {
-	
+
 	                        if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-amounts"), Double.class)) {
-	
+
 	                            for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
-	
+
 	                                if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
 	                                	skipQuestProcess("[Quests] " + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
 	                                }
-	
+
 	                            }
-	
+
 	                            quest.heroesClasses.clear();
 	                            quest.heroesAmounts.clear();
-	
+
 	                            quest.heroesClasses.addAll(config.getStringList("quests." + questName + ".rewards.heroes-exp-classes"));
 	                            quest.heroesAmounts.addAll(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
-	
+
 	                        } else {
 	                        	skipQuestProcess("[Quests] heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
 	                        }
-	
+
 	                    } else {
 	                    	skipQuestProcess("[Quests] Rewards for Quest " + quest.name + " is missing heroes-exp-amounts:");
 	                    }
-	
+
 	                } else {
 	                	skipQuestProcess("[Quests] heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
 	                }
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.phat-loots")) {
-	
+
 	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.phat-loots"), String.class)) {
-	
+
 	                    for (String loot : config.getStringList("quests." + questName + ".rewards.phat-loots")) {
-	
+
 	                        if (PhatLootsAPI.getPhatLoot(loot) == null) {
 	                        	skipQuestProcess("[Quests] " + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
 	                        }
-	
+
 	                    }
 
 	                    quest.phatLootRewards.clear();
 	                    quest.phatLootRewards.addAll(config.getStringList("quests." + questName + ".rewards.phat-loots"));
-	
+
 	                } else {
 	                	skipQuestProcess("[Quests] phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
 	                }
 	            }
-	
+
 	            if (config.contains("quests." + questName + ".rewards.custom-rewards")) {
 	                populateCustomRewards(config);
 	            }
-	
+
 	            quests.add(quest);
-	
+
 	            if (needsSaving) {
 		            try {
 	                    config.save(file);
-		
+
 		            } catch (IOException e) {
-		
+
 		                if (debug == false) {
 		                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
 		                } else {
 		                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Error log:");
 		                    e.printStackTrace();
 		                }
-		
+
 		            }
 	            }
-	
+
 	            if (failedToLoad == true) {
 	                log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
 	            }
@@ -2832,10 +2835,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         	}
         } // for()
     }
-    
-    private void skipQuestProcess(String msg) throws SkipQuest {
-    	printSevere(msg);
+
+    private void skipQuestProcess(String[] msgs) throws SkipQuest {
+    	for (String msg : msgs) {
+    		if (msg != null) {
+    			printSevere(msg);
+    		}
+    	}
     	throw new SkipQuest();
+    }
+
+    private void skipQuestProcess(String msg) throws SkipQuest {
+    	skipQuestProcess(new String[]{msg});
     }
 
 	private void populateCustomRewards(FileConfiguration config) {
@@ -2871,7 +2882,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
 	private boolean regionFound(Quest quest, String region) {
 		boolean exists = false;
-		
+
 		for (World world : getServer().getWorlds()) {
 
 		    RegionManager rm = worldGuard.getRegionManager(world);
@@ -2884,7 +2895,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		        }
 		    }
 		}
-		
+
 		return exists;
 	}
 
@@ -3367,8 +3378,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 y = Double.parseDouble(info[2]);
                                 z = Double.parseDouble(info[3]);
                             } catch (NumberFormatException e) {
-                                printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                stageFailed("[Quests] Proper location format is: \"WorldName x y z\"");
+                            	stageFailed(new String[]{
+                        			"[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                					"[Quests] Proper location format is: \"WorldName x y z\""});
                             }
 
                             if (getServer().getWorld(info[0]) != null) {
@@ -3379,8 +3391,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                            stageFailed("[Quests] Proper location format is: \"WorldName x y z\"");
+                        	stageFailed(new String[]{
+                             "[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                            "[Quests] Proper location format is: \"WorldName x y z\""});
                         }
 
                     }
@@ -3479,8 +3492,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 y = Double.parseDouble(info[2]);
                                 z = Double.parseDouble(info[3]);
                             } catch (NumberFormatException e) {
-                                printSevere("[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                stageFailed("[Quests] Proper location format is: \"WorldName x y z\"");
+                            	stageFailed(new String[]{
+                    				"[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                        			"[Quests] Proper location format is: \"WorldName x y z\""});
                             }
 
                             if (getServer().getWorld(info[0]) != null) {
@@ -3491,8 +3505,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                            stageFailed("[Quests] Proper location format is: \"WorldName x y z\"");
+                        	stageFailed(new String[]{
+                				"[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                    			"[Quests] Proper location format is: \"WorldName x y z\""});
                         }
 
                     }
@@ -3912,13 +3927,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    private void throwStageFailed() throws StageFailedException {
-    	throw new StageFailedException();
+    private void stageFailed(String msg) throws StageFailedException {
+    	stageFailed(new String[]{msg});
     }
 
-    private void stageFailed(String msg) throws StageFailedException {
-    	printSevere(msg);
-    	throwStageFailed();
+    private void stageFailed(String[] msgs) throws StageFailedException {
+    	for (String msg : msgs) {
+    		if (msg != null) {
+    			printSevere(msg);
+    		}
+    	}
+    	throw new StageFailedException();
     }
 
     public void loadEvents() {
