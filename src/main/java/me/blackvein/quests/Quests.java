@@ -144,6 +144,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     @SuppressWarnings("serial")
 	class StageFailedException extends Exception { }
+    
+    @SuppressWarnings("serial")
+    class SkipQuest extends Exception { }
 
     @Override
     public void onEnable() {
@@ -2246,6 +2249,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private boolean needsSaving = false;
+    private String questName = "";
+    private Quest quest;
 
     public void loadQuests() {
 
@@ -2274,652 +2279,659 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             needsSaving = true;
         }
 
-        for (String questName : questsSection.getKeys(false)) {
-
-            Quest quest = new Quest();
-            failedToLoad = false;
-
-            if (config.contains("quests." + questName + ".name")) {
-            	// TODO why have a name attr then path key can be guest name?
-                quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
-            } else {
-                printSevere("[Quests] Quest block \'" + questName + "\' is missing " + RED + "name:");
-                continue;
-            }
-
-            if (config.contains("quests." + questName + ".npc-giver-id")) {
-
-                if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")) != null) {
-
-                    quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id"));
-                    questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")));
-
-                } else {
-                    printSevere("[Quests] npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".block-start")) {
-
-                Location location = getLocation(config.getString("quests." + questName + ".block-start"));
-                if (location != null) {
-                    quest.blockStart = location;
-                } else {
-                    printSevere("[Quests] block-start: for Quest " + quest.name + " is not in proper location format!");
-                    printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".region")) {
-
-                String region = config.getString("quests." + questName + ".region");
-                boolean exists = regionFound(quest, region);
-
-                if (!exists) {
-                    printSevere("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".guiDisplay")) {
-
-                String item = config.getString("quests." + questName + ".guiDisplay");
-                quest.guiDisplay = ItemUtil.readItemStack(item);
-
-            }
-
-            if (config.contains("quests." + questName + ".redo-delay")) {
-
-                if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
-                    quest.redoDelay = config.getInt("quests." + questName + ".redo-delay");
-                } else {
-                    printSevere("[Quests] redo-delay: for Quest " + quest.name + " is not a number!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".finish-message")) {
-                quest.finished = parseString(config.getString("quests." + questName + ".finish-message"), quest);
-            } else {
-                printSevere("[Quests] Quest " + quest.name + " is missing finish-message:");
-                continue;
-            }
-
-            if (config.contains("quests." + questName + ".ask-message")) {
-                quest.description = parseString(config.getString("quests." + questName + ".ask-message"), quest);
-            } else {
-                printSevere("[Quests] Quest " + quest.name + " is missing ask-message:");
-                continue;
-            }
-
-            if (config.contains("quests." + questName + ".event")) {
-
-                Event evt = Event.loadEvent(config.getString("quests." + questName + ".event"), this);
-
-                if (evt != null) {
-                    quest.initialEvent = evt;
-                } else {
-                    printSevere("[Quests] Initial Event in Quest " + quest.name + " failed to load.");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".requirements")) {
-
-                if (config.contains("quests." + questName + ".requirements.fail-requirement-message")) {
-                    quest.failRequirements = parseString(config.getString("quests." + questName + ".requirements.fail-requirement-message"), quest);
-                } else {
-                    printSevere("[Quests] Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
-                    continue;
-                }
-
-                if (config.contains("quests." + questName + ".requirements.items")) {
-
-                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.items"), String.class)) {
-                        List<String> itemReqs = config.getStringList("quests." + questName + ".requirements.items");
-                        boolean failed = false;
-                        for (String item : itemReqs) {
-
-                            ItemStack stack = ItemUtil.readItemStack(item);
-                            if (stack != null) {
-                                quest.items.add(stack);
-                            } else {
-                                failed = true;
-                                break;
-                            }
-
-                        }
-
-                        if (failed == true) {
-                            printSevere("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
-                        continue;
-                    }
-
-                    if (config.contains("quests." + questName + ".requirements.remove-items")) {
-
-                        if (Quests.checkList(config.getList("quests." + questName + ".requirements.remove-items"), Boolean.class)) {
-                            quest.removeItems.clear();
-                            quest.removeItems.addAll(config.getBooleanList("quests." + questName + ".requirements.remove-items"));
-                        } else {
-                            printSevere("[Quests] remove-items: Requirement for Quest " + quest.name + " is not a list of true/false values!");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] Requirements for Quest " + quest.name + " is missing remove-items:");
-                        continue;
-                    }
-                }
-
-                if (config.contains("quests." + questName + ".requirements.money")) {
-
-                    if (config.getInt("quests." + questName + ".requirements.money", -999) != -999) {
-                        quest.moneyReq = config.getInt("quests." + questName + ".requirements.money");
-                    } else {
-                        printSevere("[Quests] money: Requirement for Quest " + quest.name + " is not a number!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + questName + ".requirements.quest-points")) {
-
-                    if (config.getInt("quests." + questName + ".requirements.quest-points", -999) != -999) {
-                        quest.questPointsReq = config.getInt("quests." + questName + ".requirements.quest-points");
-                    } else {
-                        printSevere("[Quests] quest-points: Requirement for Quest " + quest.name + " is not a number!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + questName + ".requirements.quest-blocks")) {
-
-                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.quest-blocks"), String.class)) {
-
-                        List<String> names = config.getStringList("quests." + questName + ".requirements.quest-blocks");
-
-                        boolean failed = false;
-                        String failedQuest = "NULL";
-
-                        for (String name : names) {
-
-                            boolean done = false;
-                            for (String string : questsSection.getKeys(false)) {
-
-                                if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
-                                    quest.blockQuests.add(name);
-                                    done = true;
-                                    break;
-                                }
-
-                            }
-
-                            if (!done) {
-                                failed = true;
-                                failedQuest = name;
-                                break;
-                            }
-
-                        }
-
-                        if (failed) {
-                            printSevere("[Quests] " + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
-                            printSevere("Make sure you are using the Quest name: value, and not the block name.");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + questName + ".requirements.quests")) {
-
-                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.quests"), String.class)) {
-
-                        List<String> names = config.getStringList("quests." + questName + ".requirements.quests");
-
-                        boolean failed = false;
-                        String failedQuest = "NULL";
-
-                        for (String name : names) {
-
-                            boolean done = false;
-                            for (String string : questsSection.getKeys(false)) {
-
-                                if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
-                                    quest.neededQuests.add(name);
-                                    done = true;
-                                    break;
-                                }
-
-                            }
-
-                            if (!done) {
-                                failed = true;
-                                failedQuest = name;
-                                break;
-                            }
-
-                        }
-
-                        if (failed) {
-                            printSevere("[Quests] " + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
-                            printSevere("Make sure you are using the Quest name: value, and not the block name.");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + questName + ".requirements.permissions")) {
-
-                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.permissions"), String.class)) {
-                        quest.permissionReqs.clear();
-                        quest.permissionReqs.addAll(config.getStringList("quests." + questName + ".requirements.permissions"));
-                    } else {
-                        printSevere("[Quests] permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + questName + ".requirements.mcmmo-skills")) {
-
-                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.mcmmo-skills"), String.class)) {
-
-                        if (config.contains("quests." + questName + ".requirements.mcmmo-amounts")) {
-
-                            if (Quests.checkList(config.getList("quests." + questName + ".requirements.mcmmo-amounts"), Integer.class)) {
-
-                                List<String> skills = config.getStringList("quests." + questName + ".requirements.mcmmo-skills");
-                                List<Integer> amounts = config.getIntegerList("quests." + questName + ".requirements.mcmmo-amounts");
-
-                                if (skills.size() != amounts.size()) {
-                                    printSevere("[Quests] mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " + quest.name + " are not the same size!");
-                                    continue;
-                                }
-
-                                quest.mcMMOSkillReqs.addAll(skills);
-                                quest.mcMMOAmountReqs.addAll(amounts);
-
-                            } else {
-                                printSevere("[Quests] mcmmo-amounts: Requirement for Quest " + quest.name + " is not a list of numbers!");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Requirements for Quest " + quest.name + " is missing mcmmo-amounts:");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + questName + ".requirements.heroes-primary-class")) {
-
-                    String className = config.getString("quests." + questName + ".requirements.heroes-primary-class");
-                    HeroClass hc = heroes.getClassManager().getClass(className);
-                    if (hc != null && hc.isPrimary()) {
-                        quest.heroesPrimaryClassReq = hc.getName();
-                    } else if (hc != null) {
-                        printSevere("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a primary Heroes class!");
-                        continue;
-                    } else {
-                        printSevere("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + questName + ".requirements.heroes-secondary-class")) {
-
-                    String className = config.getString("quests." + questName + ".requirements.heroes-secondary-class");
-                    HeroClass hc = heroes.getClassManager().getClass(className);
-                    if (hc != null && hc.isSecondary()) {
-                        quest.heroesSecondaryClassReq = hc.getName();
-                    } else if (hc != null) {
-                        printSevere("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a secondary Heroes class!");
-                        continue;
-                    } else {
-                        printSevere("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + questName + ".requirements.custom-requirements")) {
-
-                    ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".requirements.custom-requirements");
-                    for (String path : sec.getKeys(false)) {
-
-                        String name = sec.getString(path + ".name");
-                        boolean found = false;
-
-                        for (CustomRequirement cr : customRequirements) {
-                            if (cr.getName().equalsIgnoreCase(name)) {
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (!found) {
-                            printWarning("[Quests] Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
-                            continue;
-                        }
-
-                        Map<String, Object> data = new HashMap<String, Object>();
-                        ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                        if (sec2 != null) {
-                            for (String dataPath : sec2.getKeys(false)) {
-                                data.put(dataPath, sec2.get(dataPath));
-                            }
-                        }
-
-                        quest.customRequirements.put(name, data);
-
-                    }
-
-                }
-
-            }
-
-            quest.plugin = this;
-
-            try {
-                processStages(quest, config, questName);
-                // needsSaving may be modified as a side-effect
-            }
-            catch (StageFailedException ex) {
-                continue;
-            }
-
-            //Load rewards
-            if (config.contains("quests." + questName + ".rewards.items")) {
-
-                if (Quests.checkList(config.getList("quests." + questName + ".rewards.items"), String.class)) {
-
-                    boolean failed = false;
-                    for (String item : config.getStringList("quests." + questName + ".rewards.items")) {
-
-                        try {
-                            ItemStack stack = ItemUtil.readItemStack(item);
-                            if (stack != null) {
-                                quest.itemRewards.add(stack);
-                            }
-                        } catch (Exception e) {
-                            printSevere("[Quests] " + item + " in items: Reward in Quest " + quest.name + " is not properly formatted!");
-                            failed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (failed) {
-                        continue;
-                    }
-
-                } else {
-                    printSevere("[Quests] items: Reward in Quest " + quest.name + " is not a list of strings!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".rewards.money")) {
-
-                if (config.getInt("quests." + questName + ".rewards.money", -999) != -999) {
-                    quest.moneyReward = config.getInt("quests." + questName + ".rewards.money");
-                } else {
-                    printSevere("[Quests] money: Reward in Quest " + quest.name + " is not a number!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".rewards.exp")) {
-
-                if (config.getInt("quests." + questName + ".rewards.exp", -999) != -999) {
-                    quest.exp = config.getInt("quests." + questName + ".rewards.exp");
-                } else {
-                    printSevere("[Quests] exp: Reward in Quest " + quest.name + " is not a number!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".rewards.commands")) {
-
-                if (Quests.checkList(config.getList("quests." + questName + ".rewards.commands"), String.class)) {
-                    quest.commands.clear();
-                    quest.commands.addAll(config.getStringList("quests." + questName + ".rewards.commands"));
-                } else {
-                    printSevere("[Quests] commands: Reward in Quest " + quest.name + " is not a list of commands!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".rewards.permissions")) {
-
-                if (Quests.checkList(config.getList("quests." + questName + ".rewards.permissions"), String.class)) {
-                    quest.permissions.clear();
-                    quest.permissions.addAll(config.getStringList("quests." + questName + ".rewards.permissions"));
-                } else {
-                    printSevere("[Quests] permissions: Reward in Quest " + quest.name + " is not a list of permissions!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".rewards.quest-points")) {
-
-                if (config.getInt("quests." + questName + ".rewards.quest-points", -999) != -999) {
-                    quest.questPoints = config.getInt("quests." + questName + ".rewards.quest-points");
-                    totalQuestPoints += quest.questPoints;
-                } else {
-                    printSevere("[Quests] quest-points: Reward in Quest " + quest.name + " is not a number!");
-                    continue;
-                }
-
-            }
-
-            if (config.contains("quests." + questName + ".rewards.mcmmo-skills")) {
-
-                if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-skills"), String.class)) {
-
-                    if (config.contains("quests." + questName + ".rewards.mcmmo-levels")) {
-
-                        if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-levels"), Integer.class)) {
-
-                            boolean failed = false;
-                            for (String skill : config.getStringList("quests." + questName + ".rewards.mcmmo-skills")) {
-
-                                if (Quests.getMcMMOSkill(skill) == null) {
-                                    printSevere("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
-                                    failed = true;
-                                    break;
-                                }
-
-                            }
-                            if (failed) {
-                                continue;
-                            }
-
-                            quest.mcmmoSkills.clear();
-                            quest.mcmmoAmounts.clear();
-
-                            quest.mcmmoSkills.addAll(config.getStringList("quests." + questName + ".rewards.mcmmo-skills"));
-                            quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
-
-                        } else {
-                            printSevere("[Quests] mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
-                        continue;
-                    }
-
-                } else {
-                    printSevere("[Quests] mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
-                    continue;
-                }
-            }
-
-            if (config.contains("quests." + questName + ".rewards.heroes-exp-classes")) {
-
-                if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-classes"), String.class)) {
-
-                    if (config.contains("quests." + questName + ".rewards.heroes-exp-amounts")) {
-
-                        if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-amounts"), Double.class)) {
-
-                            boolean failed = false;
-                            for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
-
-                                if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
-                                    printSevere("[Quests] " + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
-                                    failed = true;
-                                    break;
-                                }
-
-                            }
-                            if (failed) {
-                                continue;
-                            }
-
-                            quest.heroesClasses.clear();
-                            quest.heroesAmounts.clear();
-
-                            quest.heroesClasses.addAll(config.getStringList("quests." + questName + ".rewards.heroes-exp-classes"));
-                            quest.heroesAmounts.addAll(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
-
-                        } else {
-                            printSevere("[Quests] heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] Rewards for Quest " + quest.name + " is missing heroes-exp-amounts:");
-                        continue;
-                    }
-
-                } else {
-                    printSevere("[Quests] heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
-                    continue;
-                }
-            }
-
-            if (config.contains("quests." + questName + ".rewards.phat-loots")) {
-
-                if (Quests.checkList(config.getList("quests." + questName + ".rewards.phat-loots"), String.class)) {
-
-                    boolean failed = false;
-                    for (String loot : config.getStringList("quests." + questName + ".rewards.phat-loots")) {
-
-                        if (PhatLootsAPI.getPhatLoot(loot) == null) {
-                            printSevere("[Quests] " + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
-                            failed = true;
-                            break;
-                        }
-
-                    }
-                    if (failed) {
-                        continue;
-                    }
-
-                    quest.phatLootRewards.clear();
-                    quest.phatLootRewards.addAll(config.getStringList("quests." + questName + ".rewards.phat-loots"));
-
-                } else {
-                    printSevere("[Quests] phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
-                    continue;
-                }
-            }
-
-            if (config.contains("quests." + questName + ".rewards.custom-rewards")) {
-
-                ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".rewards.custom-rewards");
-                for (String path : sec.getKeys(false)) {
-
-                    String name = sec.getString(path + ".name");
-                    boolean found = false;
-
-                    for (CustomReward cr : customRewards) {
-                        if (cr.getName().equalsIgnoreCase(name)) {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (!found) {
-                        printWarning("[Quests] Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
-                        continue;
-                    }
-
-                    Map<String, Object> data = new HashMap<String, Object>();
-                    ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                    if (sec2 != null) {
-                        for (String dataPath : sec2.getKeys(false)) {
-                            data.put(dataPath, sec2.get(dataPath));
-                        }
-                    }
-
-                    quest.customRewards.put(name, data);
-
-                }
-
-            }
-
-            //
-            quests.add(quest);
-
-            if (needsSaving) {
-	            try {
-                    config.save(file);
+        for (String key : questsSection.getKeys(false)) {
+        	
+        	try { // main "skip quest" try/catch block
+
+	    		questName = key;
 	
-	            } catch (IOException e) {
+	            quest = new Quest();
+	            failedToLoad = false;
 	
-	                if (debug == false) {
-	                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
+	            if (config.contains("quests." + questName + ".name")) {
+	            	// TODO why have a name attr then path key can be guest name?
+	                quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
+	            } else {
+	                printSevere("[Quests] Quest block \'" + questName + "\' is missing " + RED + "name:");
+                    skipQuestProcess();
+	            }
+	
+	            if (config.contains("quests." + questName + ".npc-giver-id")) {
+	                if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")) != null) {
+	
+	                    quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id"));
+	                    questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")));
+	
 	                } else {
-	                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Error log:");
-	                    e.printStackTrace();
+	                    printSevere("[Quests] npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
+	                    skipQuestProcess();
+	                }	                
+	            }
+	
+	            if (config.contains("quests." + questName + ".block-start")) {
+	
+	                Location location = getLocation(config.getString("quests." + questName + ".block-start"));
+	                if (location != null) {
+	                    quest.blockStart = location;
+	                } else {
+	                    printSevere("[Quests] block-start: for Quest " + quest.name + " is not in proper location format!");
+	                    printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
+	                    skipQuestProcess();
 	                }
 	
 	            }
-            }
-
-            if (failedToLoad == true) {
-                log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
-            }
-        }
+	
+	            if (config.contains("quests." + questName + ".region")) {
+	
+	                String region = config.getString("quests." + questName + ".region");
+	                boolean exists = regionFound(quest, region);
+	
+	                if (!exists) {
+	                    printSevere("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
+	                    skipQuestProcess();
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".guiDisplay")) {
+	
+	                String item = config.getString("quests." + questName + ".guiDisplay");
+	                quest.guiDisplay = ItemUtil.readItemStack(item);
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".redo-delay")) {
+	
+	                if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
+	                    quest.redoDelay = config.getInt("quests." + questName + ".redo-delay");
+	                } else {
+	                    printSevere("[Quests] redo-delay: for Quest " + quest.name + " is not a number!");
+	                    skipQuestProcess();
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".finish-message")) {
+	                quest.finished = parseString(config.getString("quests." + questName + ".finish-message"), quest);
+	            } else {
+	                printSevere("[Quests] Quest " + quest.name + " is missing finish-message:");
+                    skipQuestProcess();
+	            }
+	
+	            if (config.contains("quests." + questName + ".ask-message")) {
+	                quest.description = parseString(config.getString("quests." + questName + ".ask-message"), quest);
+	            } else {
+	                printSevere("[Quests] Quest " + quest.name + " is missing ask-message:");
+                    skipQuestProcess();
+	            }
+	
+	            if (config.contains("quests." + questName + ".event")) {
+	
+	                Event evt = Event.loadEvent(config.getString("quests." + questName + ".event"), this);
+	
+	                if (evt != null) {
+	                    quest.initialEvent = evt;
+	                } else {
+	                    printSevere("[Quests] Initial Event in Quest " + quest.name + " failed to load.");
+	                    skipQuestProcess();
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".requirements")) {
+	
+	                if (config.contains("quests." + questName + ".requirements.fail-requirement-message")) {
+	                    quest.failRequirements = parseString(config.getString("quests." + questName + ".requirements.fail-requirement-message"), quest);
+	                } else {
+	                    printSevere("[Quests] Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
+	                    skipQuestProcess();
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.items")) {
+	
+	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.items"), String.class)) {
+	                        List<String> itemReqs = config.getStringList("quests." + questName + ".requirements.items");
+	                        boolean failed = false;
+	                        for (String item : itemReqs) {
+	
+	                            ItemStack stack = ItemUtil.readItemStack(item);
+	                            if (stack != null) {
+	                                quest.items.add(stack);
+	                            } else {
+	                                failed = true;
+	                                break;
+	                            }
+	
+	                        }
+	
+	                        if (failed == true) {
+	                            printSevere("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
+	    	                    skipQuestProcess();
+	                        }
+	
+	                    } else {
+	                        printSevere("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
+		                    skipQuestProcess();
+	                    }
+	
+	                    if (config.contains("quests." + questName + ".requirements.remove-items")) {
+	
+	                        if (Quests.checkList(config.getList("quests." + questName + ".requirements.remove-items"), Boolean.class)) {
+	                            quest.removeItems.clear();
+	                            quest.removeItems.addAll(config.getBooleanList("quests." + questName + ".requirements.remove-items"));
+	                        } else {
+	                            printSevere("[Quests] remove-items: Requirement for Quest " + quest.name + " is not a list of true/false values!");
+	    	                    skipQuestProcess();
+	                        }
+	
+	                    } else {
+	                        printSevere("[Quests] Requirements for Quest " + quest.name + " is missing remove-items:");
+		                    skipQuestProcess();
+	                    }
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.money")) {
+	
+	                    if (config.getInt("quests." + questName + ".requirements.money", -999) != -999) {
+	                        quest.moneyReq = config.getInt("quests." + questName + ".requirements.money");
+	                    } else {
+	                        printSevere("[Quests] money: Requirement for Quest " + quest.name + " is not a number!");
+		                    skipQuestProcess();
+	                    }
+	
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.quest-points")) {
+	
+	                    if (config.getInt("quests." + questName + ".requirements.quest-points", -999) != -999) {
+	                        quest.questPointsReq = config.getInt("quests." + questName + ".requirements.quest-points");
+	                    } else {
+	                        printSevere("[Quests] quest-points: Requirement for Quest " + quest.name + " is not a number!");
+		                    skipQuestProcess();
+	                    }
+	
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.quest-blocks")) {
+	
+	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.quest-blocks"), String.class)) {
+	
+	                        List<String> names = config.getStringList("quests." + questName + ".requirements.quest-blocks");
+	
+	                        boolean failed = false;
+	                        String failedQuest = "NULL";
+	
+	                        for (String name : names) {
+	
+	                            boolean done = false;
+	                            for (String string : questsSection.getKeys(false)) {
+	
+	                                if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+	                                    quest.blockQuests.add(name);
+	                                    done = true;
+	                                    break;
+	                                }
+	
+	                            }
+	
+	                            if (!done) {
+	                                failed = true;
+	                                failedQuest = name;
+	                                break;
+	                            }
+	
+	                        }
+	
+	                        if (failed) {
+	                            printSevere("[Quests] " + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
+	                            printSevere("Make sure you are using the Quest name: value, and not the block name.");
+	    	                    skipQuestProcess();
+	                        }
+	
+	                    } else {
+	                        printSevere("[Quests] quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
+		                    skipQuestProcess();
+	                    }
+	
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.quests")) {
+	
+	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.quests"), String.class)) {
+	
+	                        List<String> names = config.getStringList("quests." + questName + ".requirements.quests");
+	
+	                        boolean failed = false;
+	                        String failedQuest = "NULL";
+	
+	                        for (String name : names) {
+	
+	                            boolean done = false;
+	                            for (String string : questsSection.getKeys(false)) {
+	
+	                                if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+	                                    quest.neededQuests.add(name);
+	                                    done = true;
+	                                    break;
+	                                }
+	
+	                            }
+	
+	                            if (!done) {
+	                                failed = true;
+	                                failedQuest = name;
+	                                break;
+	                            }
+	
+	                        }
+	
+	                        if (failed) {
+	                            printSevere("[Quests] " + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
+	                            printSevere("Make sure you are using the Quest name: value, and not the block name.");
+	    	                    skipQuestProcess();
+	                        }
+	
+	                    } else {
+	                        printSevere("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
+		                    skipQuestProcess();
+	                    }
+	
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.permissions")) {
+	
+	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.permissions"), String.class)) {
+	                        quest.permissionReqs.clear();
+	                        quest.permissionReqs.addAll(config.getStringList("quests." + questName + ".requirements.permissions"));
+	                    } else {
+	                        printSevere("[Quests] permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
+		                    skipQuestProcess();
+	                    }
+	
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.mcmmo-skills")) {
+	
+	                    if (Quests.checkList(config.getList("quests." + questName + ".requirements.mcmmo-skills"), String.class)) {
+	
+	                        if (config.contains("quests." + questName + ".requirements.mcmmo-amounts")) {
+	
+	                            if (Quests.checkList(config.getList("quests." + questName + ".requirements.mcmmo-amounts"), Integer.class)) {
+	
+	                                List<String> skills = config.getStringList("quests." + questName + ".requirements.mcmmo-skills");
+	                                List<Integer> amounts = config.getIntegerList("quests." + questName + ".requirements.mcmmo-amounts");
+	
+	                                if (skills.size() != amounts.size()) {
+	                                    printSevere("[Quests] mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " + quest.name + " are not the same size!");
+	            	                    skipQuestProcess();
+	                                }
+	
+	                                quest.mcMMOSkillReqs.addAll(skills);
+	                                quest.mcMMOAmountReqs.addAll(amounts);
+	
+	                            } else {
+	                                printSevere("[Quests] mcmmo-amounts: Requirement for Quest " + quest.name + " is not a list of numbers!");
+	        	                    skipQuestProcess();
+	                            }
+	
+	                        } else {
+	                            printSevere("[Quests] Requirements for Quest " + quest.name + " is missing mcmmo-amounts:");
+	    	                    skipQuestProcess();
+	                        }
+	
+	                    } else {
+	                        printSevere("[Quests] mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
+		                    skipQuestProcess();
+	                    }
+	
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.heroes-primary-class")) {
+	
+	                    String className = config.getString("quests." + questName + ".requirements.heroes-primary-class");
+	                    HeroClass hc = heroes.getClassManager().getClass(className);
+	                    if (hc != null && hc.isPrimary()) {
+	                        quest.heroesPrimaryClassReq = hc.getName();
+	                    } else if (hc != null) {
+	                        printSevere("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a primary Heroes class!");
+		                    skipQuestProcess();
+	                    } else {
+	                        printSevere("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
+		                    skipQuestProcess();
+	                    }
+	
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.heroes-secondary-class")) {
+	
+	                    String className = config.getString("quests." + questName + ".requirements.heroes-secondary-class");
+	                    HeroClass hc = heroes.getClassManager().getClass(className);
+	                    if (hc != null && hc.isSecondary()) {
+	                        quest.heroesSecondaryClassReq = hc.getName();
+	                    } else if (hc != null) {
+	                        printSevere("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a secondary Heroes class!");
+		                    skipQuestProcess();
+	                    } else {
+	                        printSevere("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
+		                    skipQuestProcess();
+	                    }
+	
+	                }
+	
+	                if (config.contains("quests." + questName + ".requirements.custom-requirements")) {
+	
+	                    ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".requirements.custom-requirements");
+	                    for (String path : sec.getKeys(false)) {
+	
+	                        String name = sec.getString(path + ".name");
+	                        boolean found = false;
+	
+	                        for (CustomRequirement cr : customRequirements) {
+	                            if (cr.getName().equalsIgnoreCase(name)) {
+	                                found = true;
+	                                break;
+	                            }
+	                        }
+	
+	                        if (!found) {
+	                            printWarning("[Quests] Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
+	    	                    skipQuestProcess();
+	                        }
+	
+	                        Map<String, Object> data = new HashMap<String, Object>();
+	                        ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+	                        if (sec2 != null) {
+	                            for (String dataPath : sec2.getKeys(false)) {
+	                                data.put(dataPath, sec2.get(dataPath));
+	                            }
+	                        }
+	
+	                        quest.customRequirements.put(name, data);
+	
+	                    }
+	
+	                }
+	
+	            }
+	
+	            quest.plugin = this;
+	
+                processStages(quest, config, questName); // needsSaving may be modified as a side-effect
+	
+	            //Load rewards
+	            if (config.contains("quests." + questName + ".rewards.items")) {
+	
+	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.items"), String.class)) {
+	
+	                    boolean failed = false;
+	                    for (String item : config.getStringList("quests." + questName + ".rewards.items")) {
+	
+	                        try {
+	                            ItemStack stack = ItemUtil.readItemStack(item);
+	                            if (stack != null) {
+	                                quest.itemRewards.add(stack);
+	                            }
+	                        } catch (Exception e) {
+	                            printSevere("[Quests] " + item + " in items: Reward in Quest " + quest.name + " is not properly formatted!");
+	                            failed = true;
+	                            break;
+	                        }
+	
+	                    }
+	
+	                    if (failed) {
+		                    skipQuestProcess();
+	                    }
+	
+	                } else {
+	                    printSevere("[Quests] items: Reward in Quest " + quest.name + " is not a list of strings!");
+	                    skipQuestProcess();
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.money")) {
+	
+	                if (config.getInt("quests." + questName + ".rewards.money", -999) != -999) {
+	                    quest.moneyReward = config.getInt("quests." + questName + ".rewards.money");
+	                } else {
+	                    printSevere("[Quests] money: Reward in Quest " + quest.name + " is not a number!");
+	                    continue;
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.exp")) {
+	
+	                if (config.getInt("quests." + questName + ".rewards.exp", -999) != -999) {
+	                    quest.exp = config.getInt("quests." + questName + ".rewards.exp");
+	                } else {
+	                    printSevere("[Quests] exp: Reward in Quest " + quest.name + " is not a number!");
+	                    skipQuestProcess();
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.commands")) {
+	
+	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.commands"), String.class)) {
+	                    quest.commands.clear();
+	                    quest.commands.addAll(config.getStringList("quests." + questName + ".rewards.commands"));
+	                } else {
+	                    printSevere("[Quests] commands: Reward in Quest " + quest.name + " is not a list of commands!");
+	                    skipQuestProcess();
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.permissions")) {
+	
+	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.permissions"), String.class)) {
+	                    quest.permissions.clear();
+	                    quest.permissions.addAll(config.getStringList("quests." + questName + ".rewards.permissions"));
+	                } else {
+	                    printSevere("[Quests] permissions: Reward in Quest " + quest.name + " is not a list of permissions!");
+	                    skipQuestProcess();
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.quest-points")) {
+	
+	                if (config.getInt("quests." + questName + ".rewards.quest-points", -999) != -999) {
+	                    quest.questPoints = config.getInt("quests." + questName + ".rewards.quest-points");
+	                    totalQuestPoints += quest.questPoints;
+	                } else {
+	                    printSevere("[Quests] quest-points: Reward in Quest " + quest.name + " is not a number!");
+	                    skipQuestProcess();
+	                }
+	
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.mcmmo-skills")) {
+	
+	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-skills"), String.class)) {
+	
+	                    if (config.contains("quests." + questName + ".rewards.mcmmo-levels")) {
+	
+	                        if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-levels"), Integer.class)) {
+	
+	                            boolean failed = false;
+	                            for (String skill : config.getStringList("quests." + questName + ".rewards.mcmmo-skills")) {
+	
+	                                if (Quests.getMcMMOSkill(skill) == null) {
+	                                    printSevere("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
+	                                    failed = true;
+	                                    break;
+	                                }
+	
+	                            }
+	                            if (failed) {
+	        	                    skipQuestProcess();
+	                            }
+	
+	                            quest.mcmmoSkills.clear();
+	                            quest.mcmmoAmounts.clear();
+	
+	                            quest.mcmmoSkills.addAll(config.getStringList("quests." + questName + ".rewards.mcmmo-skills"));
+	                            quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
+	
+	                        } else {
+	                            printSevere("[Quests] mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
+	    	                    skipQuestProcess();
+	                        }
+	
+	                    } else {
+	                        printSevere("[Quests] Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
+		                    skipQuestProcess();
+	                    }
+	
+	                } else {
+	                    printSevere("[Quests] mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
+	                    skipQuestProcess();
+	                }
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.heroes-exp-classes")) {
+	
+	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-classes"), String.class)) {
+	
+	                    if (config.contains("quests." + questName + ".rewards.heroes-exp-amounts")) {
+	
+	                        if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-amounts"), Double.class)) {
+	
+	                            boolean failed = false;
+	                            for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
+	
+	                                if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
+	                                    printSevere("[Quests] " + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
+	                                    failed = true;
+	                                    break;
+	                                }
+	
+	                            }
+	                            if (failed) {
+	        	                    skipQuestProcess();
+	                            }
+	
+	                            quest.heroesClasses.clear();
+	                            quest.heroesAmounts.clear();
+	
+	                            quest.heroesClasses.addAll(config.getStringList("quests." + questName + ".rewards.heroes-exp-classes"));
+	                            quest.heroesAmounts.addAll(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
+	
+	                        } else {
+	                            printSevere("[Quests] heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
+	    	                    skipQuestProcess();
+	                        }
+	
+	                    } else {
+	                        printSevere("[Quests] Rewards for Quest " + quest.name + " is missing heroes-exp-amounts:");
+		                    skipQuestProcess();
+	                    }
+	
+	                } else {
+	                    printSevere("[Quests] heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
+	                    skipQuestProcess();
+	                }
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.phat-loots")) {
+	
+	                if (Quests.checkList(config.getList("quests." + questName + ".rewards.phat-loots"), String.class)) {
+	
+	                    boolean failed = false;
+	                    for (String loot : config.getStringList("quests." + questName + ".rewards.phat-loots")) {
+	
+	                        if (PhatLootsAPI.getPhatLoot(loot) == null) {
+	                            printSevere("[Quests] " + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
+	                            failed = true;
+	                            break;
+	                        }
+	
+	                    }
+	                    if (failed) {
+		                    skipQuestProcess();
+	                    }
+	
+	                    quest.phatLootRewards.clear();
+	                    quest.phatLootRewards.addAll(config.getStringList("quests." + questName + ".rewards.phat-loots"));
+	
+	                } else {
+	                    printSevere("[Quests] phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
+	                    skipQuestProcess();
+	                }
+	            }
+	
+	            if (config.contains("quests." + questName + ".rewards.custom-rewards")) {
+	                populateCustomRewards(config);
+	            }
+	
+	            quests.add(quest);
+	
+	            if (needsSaving) {
+		            try {
+	                    config.save(file);
+		
+		            } catch (IOException e) {
+		
+		                if (debug == false) {
+		                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
+		                } else {
+		                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Error log:");
+		                    e.printStackTrace();
+		                }
+		
+		            }
+	            }
+	
+	            if (failedToLoad == true) {
+	                log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
+	            }
+        	}
+        	catch (SkipQuest ex) {
+        		continue;
+        	}
+        	catch (StageFailedException ex) {
+        		continue;
+        	}
+        } // for()
     }
+    
+    private void skipQuestProcess() throws SkipQuest {
+    	throw new SkipQuest();
+    }
+
+	private void populateCustomRewards(FileConfiguration config) {
+		ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".rewards.custom-rewards");
+		for (String path : sec.getKeys(false)) {
+
+		    String name = sec.getString(path + ".name");
+		    boolean found = false;
+
+		    for (CustomReward cr : customRewards) {
+		        if (cr.getName().equalsIgnoreCase(name)) {
+		            found = true;
+		            break;
+		        }
+		    }
+
+		    if (!found) {
+		        printWarning("[Quests] Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
+		        continue;
+		    }
+
+		    Map<String, Object> data = new HashMap<String, Object>();
+		    ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+		    if (sec2 != null) {
+		        for (String dataPath : sec2.getKeys(false)) {
+		            data.put(dataPath, sec2.get(dataPath));
+		        }
+		    }
+
+		    quest.customRewards.put(name, data);
+		}
+	}
 
 	private boolean regionFound(Quest quest, String region) {
 		boolean exists = false;
