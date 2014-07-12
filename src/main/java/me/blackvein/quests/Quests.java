@@ -146,14 +146,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public void onEnable() {
 
         /*if(getServer().getBukkitVersion().equalsIgnoreCase(validVersion) == false) {
-            
+
             log.severe("[Quests] Your current version of CraftBukkit is " + getServer().getBukkitVersion() + ", this version of Quests is built for version " + validVersion);
             log.severe("[Quests] Disabling...");
             getServer().getPluginManager().disablePlugin(this);
             return;
-            
-        }  */      
-        
+
+        }  */
+
         pListener = new PlayerListener(this);
         effListener = new NpcEffectThread(this);
         npcListener = new NpcListener(this);
@@ -177,7 +177,123 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         questFactory = new QuestFactory(this);
         eventFactory = new EventFactory(this);
 
-        try {
+        linkOtherPlugins();
+
+        defaultConfigFile();
+
+		loadConfig();
+		loadModules();
+
+		defaultLangFile();
+        defaultQuestsFile();
+        defaultEventsFile();
+        defaultDataFile();
+
+        getServer().getPluginManager().registerEvents(pListener, this);
+        if (npcEffects) {
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
+        }
+        printInfo("[Quests] Enabled.");
+
+        delayLoadQuestInfo();
+    }
+
+	private void defaultLangFile() {
+		lang = new Lang(this);
+		lang.initPhrases();
+		if (new File(this.getDataFolder(), "/lang/en.yml").exists() == false) {
+			printInfo("[Quests] Translation data not found, writing defaults to file.");
+			lang.saveNewLang();
+		} else {
+			lang.loadLang();
+		}
+	}
+
+	private void delayLoadQuestInfo() {
+		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run() {
+                loadQuests();
+                loadEvents();
+                log.log(Level.INFO, "[Quests] " + quests.size() + " Quest(s) loaded.");
+                log.log(Level.INFO, "[Quests] " + events.size() + " Event(s) loaded.");
+                log.log(Level.INFO, "[Quests] " + Lang.getPhrases() + " Phrase(s) loaded.");
+                questers.putAll(getOnlineQuesters());
+                if (snoop) {
+                    snoop();
+                }
+            }
+        }, 5L);
+	}
+
+	private void defaultDataFile() {
+		if (new File(this.getDataFolder(), "data.yml").exists() == false) {
+            printInfo("[Quests] Data file not found, writing default to file.");
+            FileConfiguration data = new YamlConfiguration();
+            data.options().copyHeader(true);
+            data.options().copyDefaults(true);
+            try {
+                data.save(new File(this.getDataFolder(), "data.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            loadData();
+        }
+	}
+
+	private void defaultEventsFile() {
+		if (new File(this.getDataFolder(), "events.yml").exists() == false) {
+            printInfo("[Quests] Events data not found, writing defaults to file.");
+            FileConfiguration data = new YamlConfiguration();
+            data.options().copyHeader(true);
+            data.options().copyDefaults(true);
+            try {
+                data.load(this.getResource("events.yml"));
+                data.save(new File(this.getDataFolder(), "events.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+	}
+
+	private void defaultQuestsFile() {
+		if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
+
+            printInfo("[Quests] Quest data not found, writing defaults to file.");
+            FileConfiguration data = new YamlConfiguration();
+            try {
+                data.load(this.getResource("quests.yml"));
+                data.set("events", null);
+                data.save(new File(this.getDataFolder(), "quests.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+
+        }
+	}
+
+	private void defaultConfigFile() {
+		if (new File(this.getDataFolder(), "config.yml").exists() == false) {
+            printInfo("[Quests] Config not found, writing default to file.");
+            FileConfiguration config = new YamlConfiguration();
+            try {
+                config.load(this.getResource("config.yml"));
+                config.save(new File(this.getDataFolder(), "config.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+	}
+
+	private void linkOtherPlugins() {
+		try {
             if (getServer().getPluginManager().getPlugin("Citizens") != null) {
                 citizens = (CitizensPlugin) getServer().getPluginManager().getPlugin("Citizens");
             }
@@ -203,7 +319,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (getServer().getPluginManager().getPlugin("Heroes") != null) {
             heroes = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
         }
-        
+
         if (getServer().getPluginManager().getPlugin("PhatLoots") != null) {
             phatLoots = (PhatLoots) getServer().getPluginManager().getPlugin("PhatLoots");
         }
@@ -217,100 +333,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         vault = (Vault) getServer().getPluginManager().getPlugin("Vault");
-
-        if (new File(this.getDataFolder(), "config.yml").exists() == false) {
-            printInfo("[Quests] Config not found, writing default to file.");
-            FileConfiguration config = new YamlConfiguration();
-            try {
-                config.load(this.getResource("config.yml"));
-                config.save(new File(this.getDataFolder(), "config.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        loadConfig();
-        loadModules();
-        lang = new Lang(this);
-        lang.initPhrases();
-        if(new File(this.getDataFolder(), "/lang/en.yml").exists() == false) {
-            printInfo("[Quests] Translation data not found, writing defaults to file.");
-            lang.saveNewLang();
-        }else
-            lang.loadLang();
-
-        if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
-
-            printInfo("[Quests] Quest data not found, writing defaults to file.");
-            FileConfiguration data = new YamlConfiguration();
-            try {
-                data.load(this.getResource("quests.yml"));
-                data.set("events", null);
-                data.save(new File(this.getDataFolder(), "quests.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        if (new File(this.getDataFolder(), "events.yml").exists() == false) {
-            printInfo("[Quests] Events data not found, writing defaults to file.");
-            FileConfiguration data = new YamlConfiguration();
-            data.options().copyHeader(true);
-            data.options().copyDefaults(true);
-            try {
-                data.load(this.getResource("events.yml"));
-                data.save(new File(this.getDataFolder(), "events.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-
-        }
-        
-        if (new File(this.getDataFolder(), "data.yml").exists() == false) {
-            printInfo("[Quests] Data file not found, writing default to file.");
-            FileConfiguration data = new YamlConfiguration();
-            data.options().copyHeader(true);
-            data.options().copyDefaults(true);
-            try {
-                data.save(new File(this.getDataFolder(), "data.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            loadData();
-        }
-
-        getServer().getPluginManager().registerEvents(pListener, this);
-        if (npcEffects) {
-            getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
-        }
-        printInfo("[Quests] Enabled.");
-
-        getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            @Override
-            public void run() {
-                loadQuests();
-                loadEvents();
-                log.log(Level.INFO, "[Quests] " + quests.size() + " Quest(s) loaded.");
-                log.log(Level.INFO, "[Quests] " + events.size() + " Event(s) loaded.");
-                log.log(Level.INFO, "[Quests] " + Lang.getPhrases() + " Phrase(s) loaded.");
-                questers.putAll(getOnlineQuesters());
-                if (snoop) {
-                    snoop();
-                }
-            }
-        }, 5L);
-
-    }
+	}
 
     @Override
     public void onDisable() {
@@ -456,10 +479,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public void loadData() {
-        
+
         YamlConfiguration config = new YamlConfiguration();
         File dataFile = new File(this.getDataFolder(), "data.yml");
-        
+
         try {
             config.load(dataFile);
         } catch (Exception e) {
@@ -467,15 +490,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         if(config.contains("npc-gui")) {
-            
+
             List<Integer> ids = config.getIntegerList("npc-gui");
             questNPCGUIs.clear();
             questNPCGUIs.addAll(ids);
-            
+
         }
-        
+
     }
-    
+
     public void loadModules() {
 
         File f = new File(this.getDataFolder(), "modules");
@@ -501,7 +524,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         try {
 
             JarFile jarFile = new JarFile(jar);
-            Enumeration e = jarFile.entries();
+            Enumeration<JarEntry> e = jarFile.entries();
 
             URL[] urls = {new URL("jar:file:" + jar.getPath() + "!/")};
 
@@ -517,9 +540,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 String className = je.getName().substring(0, je.getName().length() - 6);
                 className = className.replace('/', '.');
                 Class<?> c = Class.forName(className, true, cl);
-                
+
                 if(CustomRequirement.class.isAssignableFrom(c)){
-                    
+
                     Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
                     Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
                     CustomRequirement requirement = cstrctr.newInstance();
@@ -527,9 +550,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
                     String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
                     printInfo("[Quests] Loaded Module: " + name + " by " + author);
-                
+
                 }else if(CustomReward.class.isAssignableFrom(c)){
-                    
+
                     Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
                     Constructor<? extends CustomReward> cstrctr = rewardClass.getConstructor();
                     CustomReward reward = cstrctr.newInstance();
@@ -537,9 +560,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
                     String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
                     printInfo("[Quests] Loaded Module: " + name + " by " + author);
-                    
+
                 }else if(CustomObjective.class.isAssignableFrom(c)){
-                    
+
                     Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
                     Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
                     CustomObjective objective = cstrctr.newInstance();
@@ -547,7 +570,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
                     String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
                     printInfo("[Quests] Loaded Module: " + name + " by " + author);
-                    
+
                 }else{
                     printSevere("[Quests] Error: Unable to load module from file: " + jar.getName() + ", jar file is not a valid module!");
                 }
@@ -620,1340 +643,1444 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         if (cmd.getName().equalsIgnoreCase("quest")) {
 
-            if (cs instanceof Player) {
-
-                if (((Player) cs).hasPermission("quests.quest")) {
-
-                    if (args.length == 0) {
-
-                        if (getQuester(cs.getName()).currentQuest != null) {
-
-                            if (getQuester(cs.getName()).delayStartTime == 0) {
-                                cs.sendMessage(GOLD + Lang.get("questObjectivesTitle"));
-                            }
-
-                            for (String s : getQuester(cs.getName()).getObjectivesReal()) {
-
-                                cs.sendMessage(s);
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(YELLOW + Lang.get("noActiveQuest"));
-                            return true;
-
-                        }
-
-                    } else {
-
-                        if (((Player) cs).hasPermission("quests.questinfo")) {
-
-                            String name = "";
-
-                            if (args.length == 1) {
-                                name = args[0].toLowerCase();
-                            } else {
-
-                                int index = 0;
-                                for (String s : args) {
-
-                                    if (index == (args.length - 1)) {
-                                        name = name + s.toLowerCase();
-                                    } else {
-                                        name = name + s.toLowerCase() + " ";
-                                    }
-
-                                    index++;
-
-                                }
-                            }
-
-                            Quest quest = findQuest(name);
-
-                            if (quest != null) {
-
-                                Player player = (Player) cs;
-                                Quester quester = getQuester(player.getName());
-
-                                cs.sendMessage(GOLD + "- " + quest.name + " -");
-                                cs.sendMessage(" ");
-                                if (quest.redoDelay > -1) {
-
-                                    if (quest.redoDelay == 0) {
-                                        cs.sendMessage(DARKAQUA + Lang.get("readoable"));
-                                    } else {
-                                        String msg = Lang.get("redoableEvery");
-                                        msg = msg.replaceAll("<time>", AQUA + getTime(quest.redoDelay) + DARKAQUA);
-                                        cs.sendMessage(DARKAQUA + msg);
-                                    }
-
-                                }
-                                if (quest.npcStart != null) {
-                                    String msg = Lang.get("speakTo");
-                                    msg = msg.replaceAll("<npc>", quest.npcStart.getName());
-                                    cs.sendMessage(YELLOW + msg);
-                                } else {
-                                    cs.sendMessage(YELLOW + quest.description);
-                                }
-
-                                cs.sendMessage(" ");
-
-                                if (showQuestReqs == true) {
-
-                                    cs.sendMessage(GOLD + Lang.get("requirements"));
-
-                                    if (quest.permissionReqs.isEmpty() == false) {
-
-                                        for (String perm : quest.permissionReqs) {
-
-                                            if (permission.has(player, perm)) {
-                                                cs.sendMessage(GREEN + Lang.get("permissionDisplay") + " " + perm);
-                                            } else {
-                                                cs.sendMessage(RED + Lang.get("permissionDisplay") + " " + perm);
-                                            }
-
-                                        }
-
-                                    }
-
-                                    if (quest.heroesPrimaryClassReq != null) {
-
-                                        if (this.testPrimaryHeroesClass(quest.heroesPrimaryClassReq, player.getName())) {
-                                            cs.sendMessage(BOLD + "" + GREEN + quest.heroesPrimaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
-                                        } else {
-                                            cs.sendMessage(BOLD + "" + DARKRED + quest.heroesPrimaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
-                                        }
-
-                                    }
-
-                                    if (quest.heroesSecondaryClassReq != null) {
-
-                                        if (this.testSecondaryHeroesClass(quest.heroesSecondaryClassReq, player.getName())) {
-                                            cs.sendMessage(BOLD + "" + DARKRED + quest.heroesSecondaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
-                                        } else {
-                                            cs.sendMessage(BOLD + "" + GREEN + quest.heroesSecondaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
-                                        }
-
-                                    }
-
-                                    if (quest.mcMMOSkillReqs.isEmpty() == false) {
-
-                                        for (String skill : quest.mcMMOSkillReqs) {
-
-                                            int level = Quests.getMCMMOSkillLevel(Quests.getMcMMOSkill(skill), player.getName());
-                                            int req = quest.mcMMOAmountReqs.get(quest.mcMMOSkillReqs.indexOf(skill));
-                                            String skillName = MiscUtil.getCapitalized(skill);
-
-                                            if (level >= req) {
-                                                cs.sendMessage(GREEN + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
-                                            } else {
-                                                cs.sendMessage(RED + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
-                                            }
-
-                                        }
-
-                                    }
-
-                                    if (quest.questPointsReq != 0) {
-
-                                        if (quester.questPoints >= quest.questPointsReq) {
-                                            cs.sendMessage(GRAY + "- " + GREEN + quest.questPointsReq + " " + Lang.get("questPoints"));
-                                        } else {
-                                            cs.sendMessage(GRAY + "- " + RED + quest.questPointsReq + " " + Lang.get("questPoints"));
-                                        }
-
-                                    }
-
-                                    if (quest.moneyReq != 0) {
-
-                                        if (economy.getBalance(quester.name) >= quest.moneyReq) {
-                                            if (quest.moneyReq == 1) {
-                                                cs.sendMessage(GRAY + "- " + GREEN + quest.moneyReq + " " + Quests.getCurrency(false));
-                                            } else {
-                                                cs.sendMessage(GRAY + "- " + GREEN + quest.moneyReq + " " + Quests.getCurrency(true));
-                                            }
-                                        } else {
-                                            if (quest.moneyReq == 1) {
-                                                cs.sendMessage(GRAY + "- " + RED + quest.moneyReq + " " + Quests.getCurrency(false));
-                                            } else {
-                                                cs.sendMessage(GRAY + "- " + RED + quest.moneyReq + " " + Quests.getCurrency(true));
-                                            }
-                                        }
-
-                                    }
-
-                                    if (quest.items.isEmpty() == false) {
-
-                                        for (ItemStack is : quest.items) {
-
-                                            if (hasItem(player, is) == true) {
-                                                cs.sendMessage(GRAY + "- " + GREEN + ItemUtil.getString(is));
-                                            } else {
-                                                cs.sendMessage(GRAY + "- " + RED + ItemUtil.getString(is));
-                                            }
-
-                                        }
-
-                                    }
-
-                                    if (quest.neededQuests.isEmpty() == false) {
-
-                                        for (String s : quest.neededQuests) {
-
-                                            if (quester.completedQuests.contains(s)) {
-                                                cs.sendMessage(GRAY + "- " + GREEN + Lang.get("complete") + " " + ITALIC + s);
-                                            } else {
-                                                cs.sendMessage(GRAY + "- " + RED + Lang.get("complete") + " " + ITALIC + s);
-                                            }
-
-                                        }
-
-                                    }
-
-                                    if (quest.blockQuests.isEmpty() == false) {
-
-                                        for (String s : quest.blockQuests) {
-
-                                            if (quester.completedQuests.contains(s)) {
-                                                String msg = Lang.get("haveCompleted");
-                                                msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + RED);
-                                                cs.sendMessage(GRAY + "- " + RED + msg );
-                                            } else {
-                                                String msg = Lang.get("cannotComplete");
-                                                msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + GREEN);
-                                                cs.sendMessage(GRAY + "- " + GREEN + msg);
-                                            }
-
-                                        }
-
-                                    }
-
-                                }
-
-                            } else {
-
-                                cs.sendMessage(YELLOW + Lang.get("questNotFound"));
-                                return true;
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(RED + Lang.get("questInfoNoPerms"));
-                            return true;
-
-                        }
-
-                    }
-
-                } else {
-
-                    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-                    return true;
-
-                }
-
-            } else {
-
-                cs.sendMessage(YELLOW + "This command may only be performed in-game.");
-                return true;
-
-            }
-
-            return true;
+            return questCommandHandler(cs, args);
 
         } else if (cmd.getName().equalsIgnoreCase("quests")) {
 
-            if (cs instanceof Player) {
-
-                if (args.length == 0) {
-
-                    if (((Player) cs).hasPermission("quests.quests")) {
-
-                        Player p = (Player) cs;
-                        printHelp(p);
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-                        return true;
-
-                    }
-
-                } else {
-
-                    if (args[0].equalsIgnoreCase(Lang.get("COMMAND_LIST"))) {
-
-                        if (((Player) cs).hasPermission("quests.list")) {
-
-                            if (args.length == 1) {
-                                listQuests((Player) cs, 1);
-                            } else if (args.length == 2) {
-
-                                int page;
-
-                                try {
-
-                                    page = Integer.parseInt(args[1]);
-                                    if (page < 1) {
-
-                                        cs.sendMessage(YELLOW + Lang.get("pageSelectionPosNum"));
-                                        return true;
-
-                                    }
-
-                                } catch (NumberFormatException e) {
-
-                                    cs.sendMessage(YELLOW + Lang.get("pageSelectionNum"));
-                                    return true;
-
-                                }
-
-                                listQuests((Player) cs, page);
-                                return true;
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(RED + Lang.get("questListNoPerms"));
-                            return true;
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TAKE"))) {
-
-                        if (allowCommands == true) {
-
-                            if (((Player) cs).hasPermission("quests.take")) {
-
-                                if (args.length == 1) {
-
-                                    cs.sendMessage(YELLOW + Lang.get("COMMAND_TAKE_USAGE"));
-                                    return true;
-
-                                } else {
-
-                                    String name = null;
-
-                                    if (args.length == 2) {
-                                        name = args[1].toLowerCase();
-                                    } else {
-
-                                        boolean first = true;
-                                        int lastIndex = (args.length - 1);
-                                        int index = 0;
-
-                                        for (String s : args) {
-
-                                            if (index != 0) {
-
-                                                if (first) {
-
-                                                    first = false;
-                                                    if (args.length > 2) {
-                                                        name = s.toLowerCase() + " ";
-                                                    } else {
-                                                        name = s.toLowerCase();
-                                                    }
-
-                                                } else if (index == lastIndex) {
-                                                    name = name + s.toLowerCase();
-                                                } else {
-                                                    name = name + s.toLowerCase() + " ";
-                                                }
-
-                                            }
-
-                                            index++;
-
-                                        }
-
-                                    }
-
-                                    Quest questToFind = findQuest(name);
-
-                                    if (questToFind != null) {
-
-                                        final Quest quest = questToFind;
-                                        final Quester quester = getQuester(cs.getName());
-
-                                        if (quester.currentQuest != null) {
-                                            cs.sendMessage(YELLOW + Lang.get("questOneActive"));
-                                        } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
-                                            String msg = Lang.get("questAlreadyCompleted");
-                                            msg = msg.replaceAll("<quest>", PURPLE + quest.name + YELLOW);
-                                            cs.sendMessage(YELLOW + msg);
-                                        } else if (quest.npcStart != null && allowCommandsForNpcQuests == false) {
-                                            String msg = Lang.get("mustSpeakTo");
-                                            msg = msg.replaceAll("<npc>", PURPLE + quest.npcStart.getName() + YELLOW);
-                                            cs.sendMessage(YELLOW + msg);
-                                        } else if (quest.blockStart != null) {
-                                            String msg = Lang.get("noCommandStart");
-                                            msg = msg.replaceAll("<quest>", PURPLE + quest.name + YELLOW);
-                                            cs.sendMessage(YELLOW + msg);
-                                        } else {
-
-                                            boolean takeable = true;
-
-                                            if (quester.completedQuests.contains(quest.name)) {
-
-                                                if (quester.getDifference(quest) > 0) {
-                                                    String early = Lang.get("questTooEarly");
-                                                    early = early.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
-                                                    early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
-                                                    cs.sendMessage(YELLOW + early);
-                                                    takeable = false;
-                                                }
-
-                                            }
-
-                                            if (quest.region != null) {
-
-                                                boolean inRegion = false;
-                                                Player p = quester.getPlayer();
-                                                RegionManager rm = worldGuard.getRegionManager(p.getWorld());
-                                                Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
-                                                while (it.hasNext()) {
-                                                    ProtectedRegion pr = it.next();
-                                                    if (pr.getId().equalsIgnoreCase(quest.region)) {
-                                                        inRegion = true;
-                                                        break;
-                                                    }
-                                                }
-
-                                                if (inRegion == false) {
-                                                    String msg = Lang.get("questInvalidLocation");
-                                                    msg = msg.replaceAll("<quest>", AQUA + quest.name + YELLOW);
-                                                    cs.sendMessage(YELLOW + msg);
-                                                    takeable = false;
-                                                }
-
-                                            }
-
-                                            if (takeable == true) {
-
-                                                if (cs instanceof Conversable) {
-
-                                                    if (((Player) cs).isConversing() == false) {
-
-                                                        quester.questToTake = quest.name;
-
-                                                        String s
-                                                                = GOLD + "- " + PURPLE + quester.questToTake + GOLD + " -\n"
-                                                                + "\n"
-                                                                + RESET + getQuest(quester.questToTake).description + "\n";
-
-                                                        for (String msg : s.split("<br>")) {
-                                                            cs.sendMessage(msg);
-                                                        }
-
-                                                        conversationFactory.buildConversation((Conversable) cs).begin();
-
-                                                    } else {
-
-                                                        cs.sendMessage(YELLOW + Lang.get("alreadyConversing"));
-
-                                                    }
-
-                                                    return true;
-                                                } else {
-                                                    return false;
-                                                }
-
-                                            }
-
-                                        }
-
-                                    } else {
-                                        cs.sendMessage(YELLOW + Lang.get("questNotFound"));
-                                        return true;
-                                    }
-
-                                }
-
-                            } else {
-
-                                cs.sendMessage(RED + Lang.get("questTakeNoPerms"));
-                                return true;
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(YELLOW + Lang.get("questTakeDisabled"));
-                            return true;
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUIT"))) {
-
-                        if (allowQuitting == true) {
-
-                            if (((Player) cs).hasPermission("quests.quit")) {
-
-                                Quester quester = getQuester(cs.getName());
-                                if (quester.currentQuest != null) {
-
-                                    quester.resetObjectives();
-                                    quester.currentStage = null;
-                                    quester.currentStageIndex = 0;
-                                    String msg = Lang.get("questQuit");
-                                    msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + YELLOW);
-                                    cs.sendMessage(YELLOW + msg);
-                                    quester.currentQuest = null;
-                                    quester.saveData();
-                                    quester.loadData();
-                                    return true;
-
-                                } else {
-
-                                    cs.sendMessage(YELLOW + Lang.get("noActiveQuest"));
-                                    return true;
-
-                                }
-
-                            } else {
-
-                                cs.sendMessage(RED + Lang.get("questQuitNoPerms"));
-                                return true;
-                            }
-
-                        } else {
-
-                            cs.sendMessage(YELLOW + Lang.get("questQuitDisabled"));
-                            return true;
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
-
-                        Quester quester = getQuester(cs.getName());
-                        cs.sendMessage(GOLD + "- " + cs.getName() + " -");
-                        cs.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
-                        if (quester.currentQuest == null) {
-                            cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
-                        } else {
-                            cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + quester.currentQuest.name);
-                        }
-
-                        String completed;
-
-                        if (quester.completedQuests.isEmpty()) {
-                            completed = PURPLE + Lang.get("none");
-                        } else {
-
-                            completed = PURPLE + "";
-                            for (String s : quester.completedQuests) {
-
-                                completed += s;
-
-                                if (quester.amountsCompleted.containsKey(s) && quester.amountsCompleted.get(s) > 1) {
-                                    completed += PINK + " (x" + quester.amountsCompleted.get(s) + ")";
-                                }
-
-                                if (quester.completedQuests.indexOf(s) < (quester.completedQuests.size() - 1)) {
-                                    completed += ", ";
-                                }
-
-                            }
-
-                        }
-
-                        cs.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
-                        cs.sendMessage(completed);
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TOP"))) {
-
-                        if (args.length == 1 || args.length > 2) {
-
-                            cs.sendMessage(YELLOW + Lang.get("COMMAND_TOP_USAGE"));
-
-                        } else {
-
-                            int topNumber;
-
-                            try {
-
-                                topNumber = Integer.parseInt(args[1]);
-
-                            } catch (NumberFormatException e) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-                                return true;
-
-                            }
-
-                            if (topNumber < 1) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputPosNum"));
-                                return true;
-
-                            }
-
-                            File folder = new File(this.getDataFolder(), "data");
-                            File[] playerFiles = folder.listFiles();
-
-                            Map<String, Integer> questPoints = new HashMap<String, Integer>();
-
-                            for (File f : playerFiles) {
-
-                                FileConfiguration data = new YamlConfiguration();
-                                try {
-
-                                    data.load(f);
-
-                                } catch (IOException e) {
-
-                                    e.printStackTrace();
-
-                                } catch (InvalidConfigurationException e) {
-                                    e.printStackTrace();
-                                }
-
-                                String name = f.getName().substring(0, (f.getName().indexOf(".")));
-                                questPoints.put(name, data.getInt("quest-points"));
-
-                            }
-
-                            LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) Quests.sort(questPoints);
-
-                            int numPrinted = 0;
-
-                            String msg = Lang.get("topQuestersTitle");
-                            msg = msg.replaceAll("<number>", PURPLE + "" + topNumber + GOLD);
-                            cs.sendMessage(GOLD + msg);
-                            for (String s : sortedMap.keySet()) {
-
-                                int i = (Integer) sortedMap.get(s);
-                                numPrinted++;
-                                cs.sendMessage(YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + PURPLE + i + YELLOW + " " + Lang.get("questPoints"));
-
-                                if (numPrinted == topNumber) {
-                                    break;
-                                }
-
-                            }
-
-                        }
-
-                        return true;
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EDITOR"))) {
-
-                        if (cs.hasPermission("quests.editor.editor")) {
-                            questFactory.convoCreator.buildConversation((Conversable) cs).begin();
-                        } else {
-                            cs.sendMessage(RED + Lang.get("questEditorNoPerms"));
-                        }
-                        return true;
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EVENTS"))) {
-
-                        if (cs.hasPermission("quests.editor.events.editor")) {
-                            eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
-                        } else {
-                            cs.sendMessage(RED + Lang.get("eventEditorNoPerms"));
-                        }
-                        return true;
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
-
-                        cs.sendMessage(GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
-                        cs.sendMessage(GOLD + Lang.get("createdBy") + " " + DARKRED + "Blackvein");
-                        return true;
-
-                    } else {
-
-                        cs.sendMessage(YELLOW + Lang.get("questsUnknownCommand"));
-                        return true;
-
-                    }
-
-                }
-
-            } else {
-
-                cs.sendMessage(YELLOW + "This command may only be performed in-game.");
-                return true;
-
-            }
-
-            return true;
+            return questActionsCommandHandler(cs, args);
 
         } else if (cmd.getName().equalsIgnoreCase("questadmin")) {
 
-            if (args.length == 0) {
-
-                if (cs.hasPermission("quests.admin")) {
-                    printAdminHelp(cs);
-                } else {
-                    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-                }
-
-            } else if (args.length == 1) {
-
-                if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
-
-                    if (cs.hasPermission("quests.admin.reload")) {
-                        reloadQuests();
-                        cs.sendMessage(GOLD + Lang.get("questsReloaded"));
-                        String msg = Lang.get("numQuestsLoaded");
-                        msg = msg.replaceAll("<number>", PURPLE + String.valueOf(quests.size()) + GOLD);
-                        cs.sendMessage(GOLD + msg);
-                    } else {
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-                    }
-
-                } else {
-
-                    
-                    cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
-
-                }
-
-            } else if (args.length >= 2) {
-
-                if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
-
-                    if (cs.hasPermission("quests.admin.quit")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quester quester = getQuester(target.getName());
-                            if (quester.currentQuest == null) {
-
-                                String msg = Lang.get("noCurrentQuest");
-                                msg = msg.replaceAll("<player>", target.getName());
-                                cs.sendMessage(YELLOW + msg);
-
-                            } else {
-
-                                quester.resetObjectives();
-                                quester.currentStage = null;
-                                quester.currentStageIndex = 0;
-                                String msg1 = Lang.get("questForceQuit");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questForcedQuit");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-                                quester.currentQuest = null;
-
-                                quester.saveData();
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
-
-                    if (cs.hasPermission("quests.admin.nextstage")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quester quester = getQuester(target.getName());
-                            if (quester.currentQuest == null) {
-
-                                String msg = Lang.get("noCurrentQuest");
-                                msg = msg.replaceAll("<player>", target.getName());
-                                cs.sendMessage(YELLOW + msg);
-
-                            } else {
-
-                                String msg1 = Lang.get("questForceNextStage");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questForcedNextStage");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-                                quester.currentQuest.nextStage(quester);
-
-                                quester.saveData();
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
-
-                    if (cs.hasPermission("quests.admin.setstage")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            //To ensure the correct player is selected
-                            if (p.getName().equalsIgnoreCase(args[1])) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-                            //
-                            for (Player p : getServer().getOnlinePlayers()) {
-
-                                if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                    target = p;
-                                    break;
-                                }
-                            }
-                        }
-                        int stage = -1;
-                        if (args.length > 2) {
-                            try {
-                                stage = Integer.parseInt(args[2]);
-                            } catch (NumberFormatException e) {
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-                            }
-                        } else {
-                            cs.sendMessage(YELLOW + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_USAGE"));
-                            return true;
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quester quester = getQuester(target.getName());
-                            if (quester.currentQuest == null) {
-
-                                String msg = Lang.get("noCurrentQuest");
-                                msg = msg.replaceAll("<player>", target.getName());
-                                cs.sendMessage(YELLOW + msg);
-
-                            } else {
-
-                                try {
-                                    quester.currentQuest.setStage(quester, stage);
-                                } catch (InvalidStageException e) {
-                                    String msg = Lang.get("invalidStageNum");
-                                    msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + RED);
-                                    cs.sendMessage(ChatColor.RED + msg);
-                                }
-
-                                quester.saveData();
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
-
-                    if (cs.hasPermission("quests.admin.finish")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quester quester = getQuester(target.getName());
-                            if (quester.currentQuest == null) {
-
-                                String msg = Lang.get("noCurrentQuest");
-                                msg = msg.replaceAll("<player>", target.getName());
-                                cs.sendMessage(YELLOW + msg);
-
-                            } else {
-
-                                String msg1 = Lang.get("questForceFinish");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questForcedFinish");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-                                quester.currentQuest.completeQuest(quester);
-
-                                quester.saveData();
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
-
-                    if (cs.hasPermission("quests.admin.points.all")) {
-
-                        final int amount;
-
-                        try {
-
-                            amount = Integer.parseInt(args[1]);
-
-                            if (amount < 0) {
-                                cs.sendMessage(RED + Lang.get("inputPosNum"));
-                                return true;
-                            }
-
-                        } catch (NumberFormatException e) {
-                            cs.sendMessage(RED + Lang.get("inputNum"));
-                            return true;
-                        }
-
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                File questerFolder = new File(Quests.this.getDataFolder(), "data");
-                                if (questerFolder.exists() && questerFolder.isDirectory()) {
-
-                                    FileConfiguration data = new YamlConfiguration();
-                                    int failCount = 0;
-                                    boolean suppressed = false;
-
-                                    for (File f : questerFolder.listFiles()) {
-
-                                        try {
-
-                                            data.load(f);
-                                            data.set("quest-points", amount);
-                                            data.save(f);
-
-                                        } catch (IOException e) {
-
-                                            if (failCount < 10) {
-                                                String msg = Lang.get("errorReading");
-                                                msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                                cs.sendMessage(RED + msg);
-                                                failCount++;
-                                            } else if (suppressed == false) {
-                                                String msg = Lang.get("errorReadingSuppress");
-                                                msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                                cs.sendMessage(RED + msg);
-                                                suppressed = true;
-                                            }
-
-                                        } catch (InvalidConfigurationException e) {
-                                            
-                                            if (failCount < 10) {
-                                                String msg = Lang.get("errorReading");
-                                                msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                                cs.sendMessage(RED + msg);
-                                                failCount++;
-                                            } else if (suppressed == false) {
-                                                String msg = Lang.get("errorReadingSuppress");
-                                                msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                                cs.sendMessage(RED + msg);
-                                                suppressed = true;
-                                            }
-                                            
-                                        }
-
-                                    }
-
-                                    cs.sendMessage(GREEN + Lang.get("done"));
-                                    
-                                    String msg = Lang.get("allQuestPointsSet");
-                                    msg = msg.replaceAll("<number>", AQUA + "" + amount + GOLD);
-                                    getServer().broadcastMessage(YELLOW + "[Quests] " + GOLD + msg);
-
-                                } else {
-                                    cs.sendMessage(RED + Lang.get("errorDataFolder"));
-                                }
-
-                            }
-                        });
-
-                        cs.sendMessage(YELLOW + Lang.get("settingAllQuestPoints"));
-                        for (Quester q : questers.values()) {
-
-                            q.questPoints = amount;
-
-                        }
-                        thread.start();
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
-
-                    if (cs.hasPermission("quests.admin.give")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quest questToGive;
-
-                            String name = null;
-
-                            if (args.length == 3) {
-                                name = args[2].toLowerCase();
-                            } else {
-
-                                boolean first = true;
-                                int lastIndex = (args.length - 1);
-                                int index = 0;
-
-                                for (String s : args) {
-
-                                    if (index != 0) {
-
-                                        if (first) {
-
-                                            first = false;
-                                            if (args.length > 2) {
-                                                name = s.toLowerCase() + " ";
-                                            } else {
-                                                name = s.toLowerCase();
-                                            }
-
-                                        } else if (index == lastIndex) {
-                                            name = name + s.toLowerCase();
-                                        } else {
-                                            name = name + s.toLowerCase() + " ";
-                                        }
-
-                                    }
-
-                                    index++;
-
-                                }
-
-                            }
-
-                            questToGive = findQuest(name);
-
-                            if (questToGive == null) {
-
-                                cs.sendMessage(YELLOW + Lang.get("questNotFound"));
-
-                            } else {
-
-                                Quester quester = getQuester(target.getName());
-                                quester.resetObjectives();
-
-                                String msg1 = Lang.get("questForceTake");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questForcedTake");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-                                quester.takeQuest(questToGive, true);
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
-
-                    if (cs.hasPermission("quests.admin.points")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().equalsIgnoreCase(args[1])) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            int points;
-
-                            try {
-
-                                points = Integer.parseInt(args[2]);
-
-                            } catch (NumberFormatException e) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-                                return true;
-
-                            }
-
-                            Quester quester = getQuester(target.getName());
-                            quester.questPoints = points;
-                            
-                            String msg1 = Lang.get("setQuestPoints");
-                            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                            cs.sendMessage(GOLD + msg1);
-                            String msg2 = Lang.get("questPointsSet");
-                            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                            target.sendMessage(GREEN + msg2);
-
-                            quester.saveData();
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
-
-                    if (cs.hasPermission("quests.admin.takepoints")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().equalsIgnoreCase(args[1])) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            int points;
-
-                            try {
-
-                                points = Integer.parseInt(args[2]);
-
-                            } catch (NumberFormatException e) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-                                return true;
-
-                            }
-                            Quester quester = getQuester(target.getName());
-                            quester.questPoints -= Math.abs(points);
-                            
-                            String msg1 = Lang.get("takeQuestPoints");
-                            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                            cs.sendMessage(GOLD + msg1);
-                            String msg2 = Lang.get("questPointsTaken");
-                            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                            target.sendMessage(GREEN + msg2);
-
-                            quester.saveData();
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
-
-                    if (cs.hasPermission("quests.admin.givepoints")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().equalsIgnoreCase(args[1])) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            int points;
-
-                            try {
-
-                                points = Integer.parseInt(args[2]);
-
-                                Quester quester = getQuester(target.getName());
-                                quester.questPoints += Math.abs(points);
-                                
-                                String msg1 = Lang.get("giveQuestPoints");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questPointsGiven");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-
-                                quester.saveData();
-
-                                return true;
-
-                            } catch (NumberFormatException e) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"))) {
-
-                    if (cs.hasPermission("quests.admin.togglegui")) {
-
-                        try {
-                            
-                            int i = Integer.parseInt(args[1]);
-                            if (citizens.getNPCRegistry().getById(i) == null) {
-                                String msg = Lang.get("errorNPCID");
-                                msg = msg.replaceAll("errorNPCID", PURPLE + "" + i + RED);
-                                cs.sendMessage(RED + msg);
-                            }else if (questNPCGUIs.contains(i)) {
-                                questNPCGUIs.remove(questNPCGUIs.indexOf(i));
-                                updateData();
-                                String msg = Lang.get("enableNPCGUI");
-                                msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
-                                cs.sendMessage(YELLOW + msg);
-                            }else {
-                                questNPCGUIs.add(i);
-                                updateData();
-                                String msg = Lang.get("disableNPCGUI");
-                                msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
-                                cs.sendMessage(YELLOW + msg);
-                            }
-                            
-                        } catch (NumberFormatException nfe) {
-                            cs.sendMessage(RED + Lang.get("inputNum"));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            cs.sendMessage(RED + Lang.get("unknownError"));
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-                } else {
-
-                    cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
-
-                }
-
-            }
-
-            return true;
+            return questAdminCommandHandler(cs, args);
 
         }
 
         return false;
 
     }
+
+	private boolean questAdminCommandHandler(final CommandSender cs, String[] args) {
+		if (args.length == 0) {
+
+		    adminHelp(cs);
+
+		} else if (args.length == 1) {
+
+		    if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
+
+		        adminReload(cs);
+
+		    } else {
+
+		        cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
+
+		    }
+
+		} else if (args.length >= 2) {
+
+		    if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
+
+		        adminQuit(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
+
+		        adminNextStage(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
+
+		        adminSetStage(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
+
+		        adminFinish(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
+
+		        adminPointsAll(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
+
+		        adminGive(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
+
+		        adminPoints(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
+
+		        adminTakePoints(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
+
+		        adminGivePoints(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"))) {
+
+		        adminToggieGUI(cs, args);
+
+		    } else {
+
+		        cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
+
+		    }
+
+		}
+
+		return true;
+	}
+
+	private void adminHelp(final CommandSender cs) {
+		if (cs.hasPermission("quests.admin")) {
+		    printAdminHelp(cs);
+		} else {
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+		}
+	}
+
+	private void adminReload(final CommandSender cs) {
+		if (cs.hasPermission("quests.admin.reload")) {
+		    reloadQuests();
+		    cs.sendMessage(GOLD + Lang.get("questsReloaded"));
+		    String msg = Lang.get("numQuestsLoaded");
+		    msg = msg.replaceAll("<number>", PURPLE + String.valueOf(quests.size()) + GOLD);
+		    cs.sendMessage(GOLD + msg);
+		} else {
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+		}
+	}
+
+	private void adminToggieGUI(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.togglegui")) {
+
+		    try {
+
+		        int i = Integer.parseInt(args[1]);
+		        if (citizens.getNPCRegistry().getById(i) == null) {
+		            String msg = Lang.get("errorNPCID");
+		            msg = msg.replaceAll("errorNPCID", PURPLE + "" + i + RED);
+		            cs.sendMessage(RED + msg);
+		        }else if (questNPCGUIs.contains(i)) {
+		            questNPCGUIs.remove(questNPCGUIs.indexOf(i));
+		            updateData();
+		            String msg = Lang.get("enableNPCGUI");
+		            msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
+		            cs.sendMessage(YELLOW + msg);
+		        }else {
+		            questNPCGUIs.add(i);
+		            updateData();
+		            String msg = Lang.get("disableNPCGUI");
+		            msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
+		            cs.sendMessage(YELLOW + msg);
+		        }
+
+		    } catch (NumberFormatException nfe) {
+		        cs.sendMessage(RED + Lang.get("inputNum"));
+		    } catch (Exception ex) {
+		        ex.printStackTrace();
+		        cs.sendMessage(RED + Lang.get("unknownError"));
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminGivePoints(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.givepoints")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().equalsIgnoreCase(args[1])) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        int points;
+
+		        try {
+
+		            points = Integer.parseInt(args[2]);
+
+		            Quester quester = getQuester(target.getName());
+		            quester.questPoints += Math.abs(points);
+
+		            String msg1 = Lang.get("giveQuestPoints");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questPointsGiven");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+
+		            quester.saveData();
+
+		            return;
+
+		        } catch (NumberFormatException e) {
+
+		            cs.sendMessage(YELLOW + Lang.get("inputNum"));
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminTakePoints(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.takepoints")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().equalsIgnoreCase(args[1])) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        int points;
+
+		        try {
+
+		            points = Integer.parseInt(args[2]);
+
+		        } catch (NumberFormatException e) {
+
+		            cs.sendMessage(YELLOW + Lang.get("inputNum"));
+		            return;
+
+		        }
+		        Quester quester = getQuester(target.getName());
+		        quester.questPoints -= Math.abs(points);
+
+		        String msg1 = Lang.get("takeQuestPoints");
+		        msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		        msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		        cs.sendMessage(GOLD + msg1);
+		        String msg2 = Lang.get("questPointsTaken");
+		        msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		        msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		        target.sendMessage(GREEN + msg2);
+
+		        quester.saveData();
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminPoints(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.points")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().equalsIgnoreCase(args[1])) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        int points;
+
+		        try {
+
+		            points = Integer.parseInt(args[2]);
+
+		        } catch (NumberFormatException e) {
+
+		            cs.sendMessage(YELLOW + Lang.get("inputNum"));
+		            return;
+
+		        }
+
+		        Quester quester = getQuester(target.getName());
+		        quester.questPoints = points;
+
+		        String msg1 = Lang.get("setQuestPoints");
+		        msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		        msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		        cs.sendMessage(GOLD + msg1);
+		        String msg2 = Lang.get("questPointsSet");
+		        msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		        msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		        target.sendMessage(GREEN + msg2);
+
+		        quester.saveData();
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminGive(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.give")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quest questToGive;
+
+		        String name = null;
+
+		        if (args.length == 3) {
+		            name = args[2].toLowerCase();
+		        } else {
+
+		            boolean first = true;
+		            int lastIndex = (args.length - 1);
+		            int index = 0;
+
+		            for (String s : args) {
+
+		                if (index != 0) {
+
+		                    if (first) {
+
+		                        first = false;
+		                        if (args.length > 2) {
+		                            name = s.toLowerCase() + " ";
+		                        } else {
+		                            name = s.toLowerCase();
+		                        }
+
+		                    } else if (index == lastIndex) {
+		                        name = name + s.toLowerCase();
+		                    } else {
+		                        name = name + s.toLowerCase() + " ";
+		                    }
+
+		                }
+
+		                index++;
+
+		            }
+
+		        }
+
+		        questToGive = findQuest(name);
+
+		        if (questToGive == null) {
+
+		            cs.sendMessage(YELLOW + Lang.get("questNotFound"));
+
+		        } else {
+
+		            Quester quester = getQuester(target.getName());
+		            quester.resetObjectives();
+
+		            String msg1 = Lang.get("questForceTake");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questForcedTake");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+		            quester.takeQuest(questToGive, true);
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminPointsAll(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.points.all")) {
+
+		    final int amount;
+
+		    try {
+
+		        amount = Integer.parseInt(args[1]);
+
+		        if (amount < 0) {
+		            cs.sendMessage(RED + Lang.get("inputPosNum"));
+		            return;
+		        }
+
+		    } catch (NumberFormatException e) {
+		        cs.sendMessage(RED + Lang.get("inputNum"));
+		        return;
+		    }
+
+		    Thread thread = new Thread(new Runnable() {
+		        @Override
+		        public void run() {
+
+		            File questerFolder = new File(Quests.this.getDataFolder(), "data");
+		            if (questerFolder.exists() && questerFolder.isDirectory()) {
+
+		                FileConfiguration data = new YamlConfiguration();
+		                int failCount = 0;
+		                boolean suppressed = false;
+
+		                for (File f : questerFolder.listFiles()) {
+
+		                    try {
+
+		                        data.load(f);
+		                        data.set("quest-points", amount);
+		                        data.save(f);
+
+		                    } catch (IOException e) {
+
+		                        if (failCount < 10) {
+		                            String msg = Lang.get("errorReading");
+		                            msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
+		                            cs.sendMessage(RED + msg);
+		                            failCount++;
+		                        } else if (suppressed == false) {
+		                            String msg = Lang.get("errorReadingSuppress");
+		                            msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
+		                            cs.sendMessage(RED + msg);
+		                            suppressed = true;
+		                        }
+
+		                    } catch (InvalidConfigurationException e) {
+
+		                        if (failCount < 10) {
+		                            String msg = Lang.get("errorReading");
+		                            msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
+		                            cs.sendMessage(RED + msg);
+		                            failCount++;
+		                        } else if (suppressed == false) {
+		                            String msg = Lang.get("errorReadingSuppress");
+		                            msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
+		                            cs.sendMessage(RED + msg);
+		                            suppressed = true;
+		                        }
+
+		                    }
+
+		                }
+
+		                cs.sendMessage(GREEN + Lang.get("done"));
+
+		                String msg = Lang.get("allQuestPointsSet");
+		                msg = msg.replaceAll("<number>", AQUA + "" + amount + GOLD);
+		                getServer().broadcastMessage(YELLOW + "[Quests] " + GOLD + msg);
+
+		            } else {
+		                cs.sendMessage(RED + Lang.get("errorDataFolder"));
+		            }
+
+		        }
+		    });
+
+		    cs.sendMessage(YELLOW + Lang.get("settingAllQuestPoints"));
+		    for (Quester q : questers.values()) {
+
+		        q.questPoints = amount;
+
+		    }
+		    thread.start();
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminFinish(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.finish")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quester quester = getQuester(target.getName());
+		        if (quester.currentQuest == null) {
+
+		            String msg = Lang.get("noCurrentQuest");
+		            msg = msg.replaceAll("<player>", target.getName());
+		            cs.sendMessage(YELLOW + msg);
+
+		        } else {
+
+		            String msg1 = Lang.get("questForceFinish");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questForcedFinish");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+		            quester.currentQuest.completeQuest(quester);
+
+		            quester.saveData();
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminSetStage(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.setstage")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        //To ensure the correct player is selected
+		        if (p.getName().equalsIgnoreCase(args[1])) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+		        //
+		        for (Player p : getServer().getOnlinePlayers()) {
+
+		            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		                target = p;
+		                break;
+		            }
+		        }
+		    }
+		    int stage = -1;
+		    if (args.length > 2) {
+		        try {
+		            stage = Integer.parseInt(args[2]);
+		        } catch (NumberFormatException e) {
+		            cs.sendMessage(YELLOW + Lang.get("inputNum"));
+		        }
+		    } else {
+		        cs.sendMessage(YELLOW + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_USAGE"));
+		        return;
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quester quester = getQuester(target.getName());
+		        if (quester.currentQuest == null) {
+
+		            String msg = Lang.get("noCurrentQuest");
+		            msg = msg.replaceAll("<player>", target.getName());
+		            cs.sendMessage(YELLOW + msg);
+
+		        } else {
+
+		            try {
+		                quester.currentQuest.setStage(quester, stage);
+		            } catch (InvalidStageException e) {
+		                String msg = Lang.get("invalidStageNum");
+		                msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + RED);
+		                cs.sendMessage(ChatColor.RED + msg);
+		            }
+
+		            quester.saveData();
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminNextStage(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.nextstage")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quester quester = getQuester(target.getName());
+		        if (quester.currentQuest == null) {
+
+		            String msg = Lang.get("noCurrentQuest");
+		            msg = msg.replaceAll("<player>", target.getName());
+		            cs.sendMessage(YELLOW + msg);
+
+		        } else {
+
+		            String msg1 = Lang.get("questForceNextStage");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questForcedNextStage");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+		            quester.currentQuest.nextStage(quester);
+
+		            quester.saveData();
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminQuit(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.quit")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quester quester = getQuester(target.getName());
+		        if (quester.currentQuest == null) {
+
+		            String msg = Lang.get("noCurrentQuest");
+		            msg = msg.replaceAll("<player>", target.getName());
+		            cs.sendMessage(YELLOW + msg);
+
+		        } else {
+
+		            quester.resetObjectives();
+		            quester.currentStage = null;
+		            quester.currentStageIndex = 0;
+		            String msg1 = Lang.get("questForceQuit");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questForcedQuit");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+		            quester.currentQuest = null;
+
+		            quester.saveData();
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private boolean questActionsCommandHandler(final CommandSender cs, String[] args) {
+		if (cs instanceof Player) {
+
+		    if (args.length == 0) {
+
+		        questsHelp(cs);
+
+		    } else {
+
+		        if (args[0].equalsIgnoreCase(Lang.get("COMMAND_LIST"))) {
+
+		            questsList(cs, args);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TAKE"))) {
+
+		            questsTake(cs, args);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUIT"))) {
+
+		            questsQuit(cs);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
+
+		            questsStats(cs);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TOP"))) {
+
+		            questsTop(cs, args);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EDITOR"))) {
+
+		            questsEditor(cs);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EVENTS"))) {
+
+		            questsEvents(cs);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
+
+		            questsInfo(cs);
+
+		        } else {
+
+		            cs.sendMessage(YELLOW + Lang.get("questsUnknownCommand"));
+		            return true;
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + "This command may only be performed in-game.");
+		    return true;
+
+		}
+
+		return true;
+	}
+
+	private boolean questsInfo(final CommandSender cs) {
+		cs.sendMessage(GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
+		cs.sendMessage(GOLD + Lang.get("createdBy") + " " + DARKRED + "Blackvein");
+		return true;
+	}
+
+	private boolean questsEvents(final CommandSender cs) {
+		if (cs.hasPermission("quests.editor.events.editor")) {
+		    eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
+		} else {
+		    cs.sendMessage(RED + Lang.get("eventEditorNoPerms"));
+		}
+		return true;
+	}
+
+	private boolean questsEditor(final CommandSender cs) {
+		if (cs.hasPermission("quests.editor.editor")) {
+		    questFactory.convoCreator.buildConversation((Conversable) cs).begin();
+		} else {
+		    cs.sendMessage(RED + Lang.get("questEditorNoPerms"));
+		}
+		return true;
+	}
+
+	private boolean questsTop(final CommandSender cs, String[] args) {
+		if (args.length == 1 || args.length > 2) {
+
+		    cs.sendMessage(YELLOW + Lang.get("COMMAND_TOP_USAGE"));
+
+		} else {
+
+		    int topNumber;
+
+		    try {
+
+		        topNumber = Integer.parseInt(args[1]);
+
+		    } catch (NumberFormatException e) {
+
+		        cs.sendMessage(YELLOW + Lang.get("inputNum"));
+		        return true;
+
+		    }
+
+		    if (topNumber < 1) {
+
+		        cs.sendMessage(YELLOW + Lang.get("inputPosNum"));
+		        return true;
+
+		    }
+
+		    File folder = new File(this.getDataFolder(), "data");
+		    File[] playerFiles = folder.listFiles();
+
+		    Map<String, Integer> questPoints = new HashMap<String, Integer>();
+
+		    for (File f : playerFiles) {
+
+		        FileConfiguration data = new YamlConfiguration();
+		        try {
+
+		            data.load(f);
+
+		        } catch (IOException e) {
+
+		            e.printStackTrace();
+
+		        } catch (InvalidConfigurationException e) {
+		            e.printStackTrace();
+		        }
+
+		        String name = f.getName().substring(0, (f.getName().indexOf(".")));
+		        questPoints.put(name, data.getInt("quest-points"));
+
+		    }
+
+		    LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) Quests.sort(questPoints);
+
+		    int numPrinted = 0;
+
+		    String msg = Lang.get("topQuestersTitle");
+		    msg = msg.replaceAll("<number>", PURPLE + "" + topNumber + GOLD);
+		    cs.sendMessage(GOLD + msg);
+		    for (String s : sortedMap.keySet()) {
+
+		        int i = (Integer) sortedMap.get(s);
+		        numPrinted++;
+		        cs.sendMessage(YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + PURPLE + i + YELLOW + " " + Lang.get("questPoints"));
+
+		        if (numPrinted == topNumber) {
+		            break;
+		        }
+
+		    }
+
+		}
+
+		return true;
+	}
+
+	private void questsStats(final CommandSender cs) {
+		Quester quester = getQuester(cs.getName());
+		cs.sendMessage(GOLD + "- " + cs.getName() + " -");
+		cs.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
+		if (quester.currentQuest == null) {
+		    cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
+		} else {
+		    cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + quester.currentQuest.name);
+		}
+
+		String completed;
+
+		if (quester.completedQuests.isEmpty()) {
+		    completed = PURPLE + Lang.get("none");
+		} else {
+
+		    completed = PURPLE + "";
+		    for (String s : quester.completedQuests) {
+
+		        completed += s;
+
+		        if (quester.amountsCompleted.containsKey(s) && quester.amountsCompleted.get(s) > 1) {
+		            completed += PINK + " (x" + quester.amountsCompleted.get(s) + ")";
+		        }
+
+		        if (quester.completedQuests.indexOf(s) < (quester.completedQuests.size() - 1)) {
+		            completed += ", ";
+		        }
+
+		    }
+
+		}
+
+		cs.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
+		cs.sendMessage(completed);
+	}
+
+	private boolean questsQuit(final CommandSender cs) {
+		if (allowQuitting == true) {
+
+		    if (((Player) cs).hasPermission("quests.quit")) {
+
+		        Quester quester = getQuester(cs.getName());
+		        if (quester.currentQuest != null) {
+
+		            quester.resetObjectives();
+		            quester.currentStage = null;
+		            quester.currentStageIndex = 0;
+		            String msg = Lang.get("questQuit");
+		            msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + YELLOW);
+		            cs.sendMessage(YELLOW + msg);
+		            quester.currentQuest = null;
+		            quester.saveData();
+		            quester.loadData();
+		            return true;
+
+		        } else {
+
+		            cs.sendMessage(YELLOW + Lang.get("noActiveQuest"));
+		            return true;
+
+		        }
+
+		    } else {
+
+		        cs.sendMessage(RED + Lang.get("questQuitNoPerms"));
+		        return true;
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + Lang.get("questQuitDisabled"));
+		    return true;
+
+		}
+	}
+
+	private void questsTake(final CommandSender cs, String[] args) {
+		if (allowCommands == true) {
+
+		    if (((Player) cs).hasPermission("quests.take")) {
+
+		        if (args.length == 1) {
+
+		            cs.sendMessage(YELLOW + Lang.get("COMMAND_TAKE_USAGE"));
+		            return;
+
+		        } else {
+
+		            String name = null;
+
+		            if (args.length == 2) {
+		                name = args[1].toLowerCase();
+		            } else {
+
+		                boolean first = true;
+		                int lastIndex = (args.length - 1);
+		                int index = 0;
+
+		                for (String s : args) {
+
+		                    if (index != 0) {
+
+		                        if (first) {
+
+		                            first = false;
+		                            if (args.length > 2) {
+		                                name = s.toLowerCase() + " ";
+		                            } else {
+		                                name = s.toLowerCase();
+		                            }
+
+		                        } else if (index == lastIndex) {
+		                            name = name + s.toLowerCase();
+		                        } else {
+		                            name = name + s.toLowerCase() + " ";
+		                        }
+
+		                    }
+
+		                    index++;
+
+		                }
+
+		            }
+
+		            Quest questToFind = findQuest(name);
+
+		            if (questToFind != null) {
+
+		                final Quest quest = questToFind;
+		                final Quester quester = getQuester(cs.getName());
+
+		                if (quester.currentQuest != null) {
+		                    cs.sendMessage(YELLOW + Lang.get("questOneActive"));
+		                } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
+		                    String msg = Lang.get("questAlreadyCompleted");
+		                    msg = msg.replaceAll("<quest>", PURPLE + quest.name + YELLOW);
+		                    cs.sendMessage(YELLOW + msg);
+		                } else if (quest.npcStart != null && allowCommandsForNpcQuests == false) {
+		                    String msg = Lang.get("mustSpeakTo");
+		                    msg = msg.replaceAll("<npc>", PURPLE + quest.npcStart.getName() + YELLOW);
+		                    cs.sendMessage(YELLOW + msg);
+		                } else if (quest.blockStart != null) {
+		                    String msg = Lang.get("noCommandStart");
+		                    msg = msg.replaceAll("<quest>", PURPLE + quest.name + YELLOW);
+		                    cs.sendMessage(YELLOW + msg);
+		                } else {
+
+		                    boolean takeable = true;
+
+		                    if (quester.completedQuests.contains(quest.name)) {
+
+		                        if (quester.getDifference(quest) > 0) {
+		                            String early = Lang.get("questTooEarly");
+		                            early = early.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
+		                            early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
+		                            cs.sendMessage(YELLOW + early);
+		                            takeable = false;
+		                        }
+
+		                    }
+
+		                    if (quest.region != null) {
+
+		                        boolean inRegion = false;
+		                        Player p = quester.getPlayer();
+		                        RegionManager rm = worldGuard.getRegionManager(p.getWorld());
+		                        Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
+		                        while (it.hasNext()) {
+		                            ProtectedRegion pr = it.next();
+		                            if (pr.getId().equalsIgnoreCase(quest.region)) {
+		                                inRegion = true;
+		                                break;
+		                            }
+		                        }
+
+		                        if (inRegion == false) {
+		                            String msg = Lang.get("questInvalidLocation");
+		                            msg = msg.replaceAll("<quest>", AQUA + quest.name + YELLOW);
+		                            cs.sendMessage(YELLOW + msg);
+		                            takeable = false;
+		                        }
+
+		                    }
+
+		                    if (takeable == true) {
+
+		                        if (cs instanceof Conversable) {
+
+		                            if (((Player) cs).isConversing() == false) {
+
+		                                quester.questToTake = quest.name;
+
+		                                String s
+		                                        = GOLD + "- " + PURPLE + quester.questToTake + GOLD + " -\n"
+		                                        + "\n"
+		                                        + RESET + getQuest(quester.questToTake).description + "\n";
+
+		                                for (String msg : s.split("<br>")) {
+		                                    cs.sendMessage(msg);
+		                                }
+
+		                                conversationFactory.buildConversation((Conversable) cs).begin();
+
+		                            } else {
+
+		                                cs.sendMessage(YELLOW + Lang.get("alreadyConversing"));
+
+		                            }
+
+		                            return;
+		                        } else {
+		                            return;
+		                        }
+
+		                    }
+
+		                }
+
+		            } else {
+		                cs.sendMessage(YELLOW + Lang.get("questNotFound"));
+		                return;
+		            }
+
+		        }
+
+		    } else {
+
+		        cs.sendMessage(RED + Lang.get("questTakeNoPerms"));
+		        return;
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + Lang.get("questTakeDisabled"));
+		    return;
+
+		}
+	}
+
+	private void questsList(final CommandSender cs, String[] args) {
+		if (((Player) cs).hasPermission("quests.list")) {
+
+		    if (args.length == 1) {
+		        listQuests((Player) cs, 1);
+		    } else if (args.length == 2) {
+
+		        int page;
+
+		        try {
+
+		            page = Integer.parseInt(args[1]);
+		            if (page < 1) {
+
+		                cs.sendMessage(YELLOW + Lang.get("pageSelectionPosNum"));
+		                return;
+
+		            }
+
+		        } catch (NumberFormatException e) {
+
+		            cs.sendMessage(YELLOW + Lang.get("pageSelectionNum"));
+		            return;
+
+		        }
+
+		        listQuests((Player) cs, page);
+		        return;
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questListNoPerms"));
+		    return;
+
+		}
+	}
+
+	private void questsHelp(final CommandSender cs) {
+		if (((Player) cs).hasPermission("quests.quests")) {
+
+		    Player p = (Player) cs;
+		    printHelp(p);
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+		}
+	}
+
+	private boolean questCommandHandler(final CommandSender cs, String[] args) {
+		if (cs instanceof Player) {
+
+		    if (((Player) cs).hasPermission("quests.quest")) {
+
+		        if (args.length == 0) {
+
+		            showObjectives(cs);
+
+		        } else {
+
+		            showQuestDetails(cs, args);
+
+		        }
+
+		    } else {
+
+		        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+		        return true;
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + "This command may only be performed in-game.");
+		    return true;
+
+		}
+
+		return true;
+	}
+
+	private void showQuestDetails(final CommandSender cs, String[] args) {
+		if (((Player) cs).hasPermission("quests.questinfo")) {
+
+		    String name = "";
+
+		    if (args.length == 1) {
+		        name = args[0].toLowerCase();
+		    } else {
+
+		        int index = 0;
+		        for (String s : args) {
+
+		            if (index == (args.length - 1)) {
+		                name = name + s.toLowerCase();
+		            } else {
+		                name = name + s.toLowerCase() + " ";
+		            }
+
+		            index++;
+
+		        }
+		    }
+
+		    Quest quest = findQuest(name);
+
+		    if (quest != null) {
+
+		        Player player = (Player) cs;
+		        Quester quester = getQuester(player.getName());
+
+		        cs.sendMessage(GOLD + "- " + quest.name + " -");
+		        cs.sendMessage(" ");
+		        if (quest.redoDelay > -1) {
+
+		            if (quest.redoDelay == 0) {
+		                cs.sendMessage(DARKAQUA + Lang.get("readoable"));
+		            } else {
+		                String msg = Lang.get("redoableEvery");
+		                msg = msg.replaceAll("<time>", AQUA + getTime(quest.redoDelay) + DARKAQUA);
+		                cs.sendMessage(DARKAQUA + msg);
+		            }
+
+		        }
+		        if (quest.npcStart != null) {
+		            String msg = Lang.get("speakTo");
+		            msg = msg.replaceAll("<npc>", quest.npcStart.getName());
+		            cs.sendMessage(YELLOW + msg);
+		        } else {
+		            cs.sendMessage(YELLOW + quest.description);
+		        }
+
+		        cs.sendMessage(" ");
+
+		        if (showQuestReqs == true) {
+
+		            cs.sendMessage(GOLD + Lang.get("requirements"));
+
+		            if (quest.permissionReqs.isEmpty() == false) {
+
+		                for (String perm : quest.permissionReqs) {
+
+		                    if (permission.has(player, perm)) {
+		                        cs.sendMessage(GREEN + Lang.get("permissionDisplay") + " " + perm);
+		                    } else {
+		                        cs.sendMessage(RED + Lang.get("permissionDisplay") + " " + perm);
+		                    }
+
+		                }
+
+		            }
+
+		            if (quest.heroesPrimaryClassReq != null) {
+
+		                if (this.testPrimaryHeroesClass(quest.heroesPrimaryClassReq, player.getName())) {
+		                    cs.sendMessage(BOLD + "" + GREEN + quest.heroesPrimaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
+		                } else {
+		                    cs.sendMessage(BOLD + "" + DARKRED + quest.heroesPrimaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
+		                }
+
+		            }
+
+		            if (quest.heroesSecondaryClassReq != null) {
+
+		                if (this.testSecondaryHeroesClass(quest.heroesSecondaryClassReq, player.getName())) {
+		                    cs.sendMessage(BOLD + "" + DARKRED + quest.heroesSecondaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
+		                } else {
+		                    cs.sendMessage(BOLD + "" + GREEN + quest.heroesSecondaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
+		                }
+
+		            }
+
+		            if (quest.mcMMOSkillReqs.isEmpty() == false) {
+
+		                for (String skill : quest.mcMMOSkillReqs) {
+
+		                    int level = Quests.getMCMMOSkillLevel(Quests.getMcMMOSkill(skill), player.getName());
+		                    int req = quest.mcMMOAmountReqs.get(quest.mcMMOSkillReqs.indexOf(skill));
+		                    String skillName = MiscUtil.getCapitalized(skill);
+
+		                    if (level >= req) {
+		                        cs.sendMessage(GREEN + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
+		                    } else {
+		                        cs.sendMessage(RED + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
+		                    }
+
+		                }
+
+		            }
+
+		            if (quest.questPointsReq != 0) {
+
+		                if (quester.questPoints >= quest.questPointsReq) {
+		                    cs.sendMessage(GRAY + "- " + GREEN + quest.questPointsReq + " " + Lang.get("questPoints"));
+		                } else {
+		                    cs.sendMessage(GRAY + "- " + RED + quest.questPointsReq + " " + Lang.get("questPoints"));
+		                }
+
+		            }
+
+		            if (quest.moneyReq != 0) {
+
+		                if (economy.getBalance(quester.name) >= quest.moneyReq) {
+		                    if (quest.moneyReq == 1) {
+		                        cs.sendMessage(GRAY + "- " + GREEN + quest.moneyReq + " " + Quests.getCurrency(false));
+		                    } else {
+		                        cs.sendMessage(GRAY + "- " + GREEN + quest.moneyReq + " " + Quests.getCurrency(true));
+		                    }
+		                } else {
+		                    if (quest.moneyReq == 1) {
+		                        cs.sendMessage(GRAY + "- " + RED + quest.moneyReq + " " + Quests.getCurrency(false));
+		                    } else {
+		                        cs.sendMessage(GRAY + "- " + RED + quest.moneyReq + " " + Quests.getCurrency(true));
+		                    }
+		                }
+
+		            }
+
+		            if (quest.items.isEmpty() == false) {
+
+		                for (ItemStack is : quest.items) {
+
+		                    if (hasItem(player, is) == true) {
+		                        cs.sendMessage(GRAY + "- " + GREEN + ItemUtil.getString(is));
+		                    } else {
+		                        cs.sendMessage(GRAY + "- " + RED + ItemUtil.getString(is));
+		                    }
+
+		                }
+
+		            }
+
+		            if (quest.neededQuests.isEmpty() == false) {
+
+		                for (String s : quest.neededQuests) {
+
+		                    if (quester.completedQuests.contains(s)) {
+		                        cs.sendMessage(GRAY + "- " + GREEN + Lang.get("complete") + " " + ITALIC + s);
+		                    } else {
+		                        cs.sendMessage(GRAY + "- " + RED + Lang.get("complete") + " " + ITALIC + s);
+		                    }
+
+		                }
+
+		            }
+
+		            if (quest.blockQuests.isEmpty() == false) {
+
+		                for (String s : quest.blockQuests) {
+
+		                    if (quester.completedQuests.contains(s)) {
+		                        String msg = Lang.get("haveCompleted");
+		                        msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + RED);
+		                        cs.sendMessage(GRAY + "- " + RED + msg );
+		                    } else {
+		                        String msg = Lang.get("cannotComplete");
+		                        msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + GREEN);
+		                        cs.sendMessage(GRAY + "- " + GREEN + msg);
+		                    }
+
+		                }
+
+		            }
+
+		        }
+
+		    } else {
+
+		        cs.sendMessage(YELLOW + Lang.get("questNotFound"));
+		        return;
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questInfoNoPerms"));
+		    return;
+
+		}
+	}
+
+	private void showObjectives(final CommandSender cs) {
+		if (getQuester(cs.getName()).currentQuest != null) {
+
+		    if (getQuester(cs.getName()).delayStartTime == 0) {
+		        cs.sendMessage(GOLD + Lang.get("questObjectivesTitle"));
+		    }
+
+		    for (String s : getQuester(cs.getName()).getObjectivesReal()) {
+
+		        cs.sendMessage(s);
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + Lang.get("noActiveQuest"));
+		    return;
+
+		}
+	}
 
     public void printAdminHelp(CommandSender cs) {
 
@@ -2059,7 +2186,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         Lang.clearPhrases();
         lang.initPhrases();
         lang.loadLang();
-        
+
         for (Quester quester : questers.values()) {
             quester.checkQuest();
         }
@@ -2207,7 +2334,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     }
 
                 }
-                
+
                 if (config.contains("quests." + s + ".guiDisplay")) {
 
                     String item = config.getString("quests." + s + ".guiDisplay");
@@ -3463,37 +3590,37 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     }
-                    
+
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-displays")) {
-                        
+
                         List<String> displays = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-displays");
-                        
+
                         if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-phrases")) {
-                            
+
                             List<String> phrases = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-phrases");
                             if(displays.size() == phrases.size()) {
-                                
+
                                 for(int passIndex = 0; passIndex < displays.size(); passIndex++){
-                                    
+
                                     oStage.passwordDisplays.add(displays.get(passIndex));
                                     LinkedList<String> answers = new LinkedList<String>();
                                     answers.addAll(Arrays.asList(phrases.get(passIndex).split("\\|")));
                                     oStage.passwordPhrases.add(answers);
-                                    
+
                                 }
-                                
+
                             } else {
                                 printSevere("[Quests] password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
                                 stageFailed = true;
                                 break;
                             }
-                            
+
                         } else {
                             printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing password-phrases!");
                             stageFailed = true;
                             break;
                         }
-                        
+
                     }
 
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".custom-objectives")) {
@@ -3530,9 +3657,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             oStage.customObjectiveData.add(data);
 
                             try{
-                                
+
                                 getServer().getPluginManager().registerEvents(found, this);
-                                
+
                             }catch (Exception e){
                                 printWarning("[Quests] Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
                                 if(debug){
@@ -3544,13 +3671,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     }
-                    
+
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".objective-override")) {
-                        
+
                         oStage.objectiveOverride = config.getString("quests." + s + ".stages.ordered." + s2 + ".objective-override");
-                        
+
                     }
-                    
+
                     if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-event")) {
 
                         Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".start-event"), this);
@@ -3931,7 +4058,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         continue;
                     }
                 }
-                
+
                 if (config.contains("quests." + s + ".rewards.custom-rewards")) {
 
                     ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".rewards.custom-rewards");
@@ -4307,7 +4434,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         long minutes = ((milliseconds % 86400000) % 3600000) / 60000;
         long seconds = (((milliseconds % 86400000) % 3600000) % 60000) / 1000;
         long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
-        
+
         if (days > 0) {
 
             if (days == 1) {
@@ -4651,12 +4778,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         String ench = Lang.getKey(enchant);
         ench = ench.replace("ENCHANTMENT_", "");
         Enchantment e = Enchantment.getByName(ench);
-        
+
         return e != null ? e : getEnchantmentLegacy(ench);
     }
 
     public static Enchantment getEnchantmentLegacy(String enchant) {
-        
+
         if (enchant.equalsIgnoreCase("Power")) {
 
             return Enchantment.ARROW_DAMAGE;
@@ -4758,18 +4885,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             return null;
 
         }
-        
+
     }
-    
+
     public static Enchantment getEnchantmentPretty(String enchant) {
 
         while(Quester.spaceToCapital(enchant) != null) {
-            
+
             enchant = Quester.spaceToCapital(enchant);
-            
+
         }
         return getEnchantment(enchant);
-        
+
     }
 
     public static DyeColor getDyeColor(String s) {
@@ -4777,11 +4904,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         String col = Lang.getKey(s);
         col = col.replace("COLOR_", "");
         DyeColor color = DyeColor.valueOf(col);
-        
+
         return color != null ? color : getDyeColorLegacy(s);
 
     }
-    
+
     public static DyeColor getDyeColorLegacy(String s) {
 
         if (s.equalsIgnoreCase("Black")) {
@@ -4984,12 +5111,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         return hero.getHeroClass().getName().equalsIgnoreCase(secondaryClass);
 
     }
-    
+
     public void updateData() {
-        
+
         YamlConfiguration config = new YamlConfiguration();
         File dataFile = new File(this.getDataFolder(), "data.yml");
-        
+
         try {
             config.load(dataFile);
             config.set("npc-gui", questNPCGUIs);
