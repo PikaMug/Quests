@@ -2280,6 +2280,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             failedToLoad = false;
 
             if (config.contains("quests." + questName + ".name")) {
+            	// TODO why have a name attr then path key can be guest name?
                 quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
             } else {
                 printSevere("[Quests] Quest block \'" + questName + "\' is missing " + RED + "name:");
@@ -2316,20 +2317,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (config.contains("quests." + questName + ".region")) {
 
                 String region = config.getString("quests." + questName + ".region");
-                boolean exists = false;
-                for (World world : getServer().getWorlds()) {
-
-                    RegionManager rm = worldGuard.getRegionManager(world);
-                    if (rm != null) {
-                        ProtectedRegion pr = rm.getRegionExact(region);
-                        if (pr != null) {
-                            quest.region = region;
-                            exists = true;
-                            break;
-                        }
-                    }
-
-                }
+                boolean exists = regionFound(quest, region);
 
                 if (!exists) {
                     printSevere("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
@@ -2932,6 +2920,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
         }
     }
+
+	private boolean regionFound(Quest quest, String region) {
+		boolean exists = false;
+		
+		for (World world : getServer().getWorlds()) {
+
+		    RegionManager rm = worldGuard.getRegionManager(world);
+		    if (rm != null) {
+		        ProtectedRegion pr = rm.getRegionExact(region);
+		        if (pr != null) {
+		            quest.region = region;
+		            exists = true;
+		            break;
+		        }
+		    }
+		}
+		
+		return exists;
+	}
 
     private void processStages(Quest quest, FileConfiguration config, String questName) throws StageFailedException {
         int index = 1;
