@@ -141,6 +141,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public Lang lang;
     private static Quests instance = null;
     public static final String validVersion = "1.7.9-R0.2";
+    
+    @SuppressWarnings("serial")
+	class StageFailedException extends Exception { }
 
     @Override
     public void onEnable() {
@@ -2242,11 +2245,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     }
 
+    private boolean needsSaving = false;
+    
     public void loadQuests() {
 
         boolean failedToLoad = false;
         totalQuestPoints = 0;
-        boolean needsSaving = false;
+        needsSaving = false;
 
         FileConfiguration config = new YamlConfiguration();
         File file = new File(this.getDataFolder(), "quests.yml");
@@ -2660,1198 +2665,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 ConfigurationSection section2 = config.getConfigurationSection("quests." + s + ".stages.ordered");
 
-                int index = 1;
-                boolean stageFailed = false;
-
-                for (String s2 : section2.getKeys(false)) {
-
-                    Stage oStage = new Stage();
-
-                    LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
-                    LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
-                    LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
-                    LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-                    LinkedList<String> areaNames = new LinkedList<String>();
-
-                    LinkedList<Enchantment> enchantments = new LinkedList<Enchantment>();
-                    LinkedList<Material> itemsToEnchant = new LinkedList<Material>();
-                    List<Integer> amountsToEnchant = new LinkedList<Integer>();
-
-                    List<Integer> breakids = new LinkedList<Integer>();
-                    List<Integer> breakamounts = new LinkedList<Integer>();
-
-                    List<Integer> damageids = new LinkedList<Integer>();
-                    List<Integer> damageamounts = new LinkedList<Integer>();
-
-                    List<Integer> placeids = new LinkedList<Integer>();
-                    List<Integer> placeamounts = new LinkedList<Integer>();
-
-                    List<Integer> useids = new LinkedList<Integer>();
-                    List<Integer> useamounts = new LinkedList<Integer>();
-
-                    List<Integer> cutids = new LinkedList<Integer>();
-                    List<Integer> cutamounts = new LinkedList<Integer>();
-
-                    //Denizen script load
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
-
-                        if (ScriptRegistry.containsScript(config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run"))) {
-                            trigger = new QuestTaskTrigger();
-                            oStage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
-                        } else {
-                            printSevere("[Quests] script-to-run: in Stage " + s2 + " of Quest " + quest.name + " is not a Denizen script!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    //
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-ids")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
-                            breakids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids");
-                        } else {
-                            printSevere("[Quests] break-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
-                                breakamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts");
-                            } else {
-                                printSevere("[Quests] break-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing break-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids"), Integer.class)) {
-                            damageids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids");
-                        } else {
-                            printSevere("[Quests] damage-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
-                                damageamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts");
-                            } else {
-                                printSevere("[Quests] damage-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    for (int i : damageids) {
-
-                        if (Material.getMaterial(i) != null) {
-                            oStage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
-                        } else {
-                            printSevere("[Quests] " + i + " inside damage-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-ids")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids"), Integer.class)) {
-                            placeids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids");
-                        } else {
-                            printSevere("[Quests] place-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
-                                placeamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts");
-                            } else {
-                                printSevere("[Quests] place-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing place-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    for (int i : placeids) {
-
-                        if (Material.getMaterial(i) != null) {
-                            oStage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
-                        } else {
-                            printSevere("[Quests] " + +i + " inside place-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-ids")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids"), Integer.class)) {
-                            useids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids");
-                        } else {
-                            printSevere("[Quests] use-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
-                                useamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts");
-                            } else {
-                                printSevere("[Quests] use-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing use-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    for (int i : useids) {
-
-                        if (Material.getMaterial(i) != null) {
-                            oStage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
-                        } else {
-                            printSevere("[Quests] " + RED + i + " inside use-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids"), Integer.class)) {
-                            cutids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids");
-                        } else {
-                            printSevere("[Quests] cut-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
-                                cutamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts");
-                            } else {
-                                printSevere("[Quests] cut-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    for (int i : cutids) {
-
-                        if (Material.getMaterial(i) != null) {
-                            oStage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
-                        } else {
-                            printSevere("[Quests] " + i + " inside cut-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch")) {
-
-                        if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
-                            oStage.fishToCatch = config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch");
-                        } else {
-                            printSevere("[Quests] fish-to-catch: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".players-to-kill")) {
-
-                        if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
-                            oStage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
-                        } else {
-                            printSevere("[Quests] players-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantments"), String.class)) {
-
-                            for (String enchant : config.getStringList("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
-
-                                Enchantment e = Quests.getEnchantment(enchant);
-
-                                if (e != null) {
-
-                                    enchantments.add(e);
-
-                                } else {
-
-                                    printSevere("[Quests] " + enchant + " inside enchantments: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid enchantment!");
-                                    stageFailed = true;
-                                    break;
-
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids"), Integer.class)) {
-
-                                for (int item : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
-
-                                    if (Material.getMaterial(item) != null) {
-                                        itemsToEnchant.add(Material.getMaterial(item));
-                                    } else {
-                                        printSevere("[Quests] " + item + " inside enchantment-item-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item id!");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                }
-
-                            } else {
-
-                                printSevere("[Quests] enchantment-item-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-ids:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts"), Integer.class)) {
-
-                                amountsToEnchant = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts");
-
-                            } else {
-
-                                printSevere("[Quests] enchantment-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    List<Integer> npcIdsToTalkTo = null;
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to"), Integer.class)) {
-
-                            npcIdsToTalkTo = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
-                            for (int i : npcIdsToTalkTo) {
-
-                                if (CitizensAPI.getNPCRegistry().getById(i) != null) {
-
-                                    questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
-
-                                } else {
-                                    printSevere("[Quests] " + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    List<String> itemsToDeliver;
-                    List<Integer> itemDeliveryTargetIds;
-                    LinkedList<String> deliveryMessages = new LinkedList<String>();
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver"), String.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids")) {
-
-                                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids"), Integer.class)) {
-
-                                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delivery-messages")) {
-
-                                        itemsToDeliver = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver");
-                                        itemDeliveryTargetIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids");
-                                        deliveryMessages.addAll(config.getStringList("quests." + s + ".stages.ordered." + s2 + ".delivery-messages"));
-
-                                        for (String item : itemsToDeliver) {
-
-                                            ItemStack is = ItemUtil.readItemStack(item);
-
-                                            if (is != null) {
-
-                                                int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
-                                                NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
-
-                                                if (npc != null) {
-
-                                                    oStage.itemsToDeliver.add(is);
-                                                    oStage.itemDeliveryTargets.add(npcId);
-                                                    oStage.deliverMessages = deliveryMessages;
-
-                                                } else {
-                                                    printSevere("[Quests] " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
-                                                    stageFailed = true;
-                                                    break;
-                                                }
-
-                                            } else {
-                                                printSevere("[Quests] " + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
-                                                stageFailed = true;
-                                                break;
-                                            }
-
-                                        }
-
-                                    } else {
-                                        printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing delivery-messages:");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] npc-delivery-ids: in Stage " + s2 + " of Quest " + PURPLE + quest.name + " is not a list of NPC ids!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-delivery-ids:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] items-to-deliver: in Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    List<Integer> npcIds;
-                    List<Integer> npcAmounts;
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill"), Integer.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts")) {
-
-                                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts"), Integer.class)) {
-
-                                    npcIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill");
-                                    npcAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts");
-                                    for (int i : npcIds) {
-
-                                        if (CitizensAPI.getNPCRegistry().getById(i) != null) {
-
-                                            if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
-                                                oStage.citizensToKill.add(i);
-                                                oStage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
-                                                questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
-                                            } else {
-                                                printSevere("[Quests] " + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
-                                                stageFailed = true;
-                                                break;
-                                            }
-
-                                        } else {
-                                            printSevere("[Quests] " + i + " inside npc-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
-                                            stageFailed = true;
-                                            break;
-                                        }
-
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] npc-kill-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-kill-amounts:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] npc-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill"), String.class)) {
-
-                            List<String> mobNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill");
-                            for (String mob : mobNames) {
-
-                                EntityType type = getMobType(mob);
-
-                                if (type != null) {
-
-                                    mobsToKill.add(type);
-
-                                } else {
-
-                                    printSevere("[Quests] " + mob + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid mob name!");
-                                    stageFailed = true;
-                                    break;
-
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] mobs-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts"), Integer.class)) {
-
-                                for (int i : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
-
-                                    mobNumToKill.add(i);
-
-                                }
-
-                            } else {
-
-                                printSevere("[Quests] mob-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + PURPLE + quest.name + " is missing mob-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill"), String.class)) {
-
-                            List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill");
-
-                            for (String loc : locations) {
-
-                                String[] info = loc.split(" ");
-                                if (info.length == 4) {
-                                    double x;
-                                    double y;
-                                    double z;
-                                    try {
-                                        x = Double.parseDouble(info[1]);
-                                        y = Double.parseDouble(info[2]);
-                                        z = Double.parseDouble(info[3]);
-                                    } catch (NumberFormatException e) {
-                                        printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                        printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                    if (getServer().getWorld(info[0]) != null) {
-                                        Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-                                        locationsToKillWithin.add(finalLocation);
-                                    } else {
-                                        printSevere("[Quests] " + info[0] + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                    printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] locations-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii"), Integer.class)) {
-
-                                List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii");
-                                for (int i : radii) {
-
-                                    radiiToKillWithin.add(i);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] kill-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-radii:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".kill-location-names")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names"), String.class)) {
-
-                                List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names");
-                                for (String name : locationNames) {
-
-                                    areaNames.add(name);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] kill-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-names:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    oStage.mobsToKill = mobsToKill;
-                    oStage.mobNumToKill = mobNumToKill;
-                    oStage.locationsToKillWithin = locationsToKillWithin;
-                    oStage.radiiToKillWithin = radiiToKillWithin;
-                    oStage.areaNames = areaNames;
-
-                    Map<Map<Enchantment, Material>, Integer> enchants = new HashMap<Map<Enchantment, Material>, Integer>();
-
-                    for (Enchantment e : enchantments) {
-
-                        Map<Enchantment, Material> map = new HashMap<Enchantment, Material>();
-                        map.put(e, itemsToEnchant.get(enchantments.indexOf(e)));
-                        enchants.put(map, amountsToEnchant.get(enchantments.indexOf(e)));
-
-                    }
-
-                    oStage.itemsToEnchant = enchants;
-
-                    Map<Material, Integer> breakMap = new EnumMap<Material, Integer>(Material.class);
-
-                    for (int i : breakids) {
-
-                        breakMap.put(Material.getMaterial(i), breakamounts.get(breakids.indexOf(i)));
-
-                    }
-
-                    oStage.blocksToBreak = breakMap;
-
-                    if (index < section2.getKeys(false).size()) {
-                        index++;
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach"), String.class)) {
-
-                            List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach");
-
-                            for (String loc : locations) {
-
-                                String[] info = loc.split(" ");
-                                if (info.length == 4) {
-                                    double x;
-                                    double y;
-                                    double z;
-                                    try {
-                                        x = Double.parseDouble(info[1]);
-                                        y = Double.parseDouble(info[2]);
-                                        z = Double.parseDouble(info[3]);
-                                    } catch (NumberFormatException e) {
-                                        printSevere("[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                        printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                    if (getServer().getWorld(info[0]) != null) {
-                                        Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-                                        oStage.locationsToReach.add(finalLocation);
-                                    } else {
-                                        printSevere("[Quests] " + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                    printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] locations-to-reach: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii"), Integer.class)) {
-
-                                List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii");
-                                for (int i : radii) {
-
-                                    oStage.radiiToReachWithin.add(i);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] reach-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-radii:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".reach-location-names")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names"), String.class)) {
-
-                                List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names");
-                                for (String name : locationNames) {
-
-                                    oStage.locationNames.add(name);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] reach-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-names:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame"), String.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts")) {
-
-                                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts"), Integer.class)) {
-
-                                    List<String> mobs = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame");
-                                    List<Integer> mobAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts");
-
-                                    for (String mob : mobs) {
-
-                                        if (mob.equalsIgnoreCase("Wolf")) {
-
-                                            oStage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
-
-                                        } else if (mob.equalsIgnoreCase("Ocelot")) {
-
-                                            oStage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
-
-                                        } else {
-                                            printSevere("[Quests] " + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
-                                            stageFailed = true;
-                                            break;
-                                        }
-
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] mob-tame-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing mob-tame-amounts:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] mobs-to-tame: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear"), String.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts")) {
-
-                                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts"), Integer.class)) {
-
-                                    List<String> sheep = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear");
-                                    List<Integer> shearAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts");
-
-                                    for (String color : sheep) {
-
-                                        if (color.equalsIgnoreCase("Black")) {
-
-                                            oStage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Blue")) {
-
-                                            oStage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Brown")) {
-
-                                            oStage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Cyan")) {
-
-                                            oStage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Gray")) {
-
-                                            oStage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Green")) {
-
-                                            oStage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("LightBlue")) {
-
-                                            oStage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Lime")) {
-
-                                            oStage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Magenta")) {
-
-                                            oStage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Orange")) {
-
-                                            oStage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Pink")) {
-
-                                            oStage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Purple")) {
-
-                                            oStage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Red")) {
-
-                                            oStage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Silver")) {
-
-                                            oStage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("White")) {
-
-                                            oStage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Yellow")) {
-
-                                            oStage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else {
-
-                                            printSevere("[Quests] " + color + " inside sheep-to-shear: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid color!");
-                                            stageFailed = true;
-                                            break;
-
-                                        }
-
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] sheep-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing sheep-amounts:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] sheep-to-shear: in Stage " + s2 + " of Quest " + quest.name + " is not a list of colors!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-displays")) {
-
-                        List<String> displays = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-displays");
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-phrases")) {
-
-                            List<String> phrases = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-phrases");
-                            if(displays.size() == phrases.size()) {
-
-                                for(int passIndex = 0; passIndex < displays.size(); passIndex++){
-
-                                    oStage.passwordDisplays.add(displays.get(passIndex));
-                                    LinkedList<String> answers = new LinkedList<String>();
-                                    answers.addAll(Arrays.asList(phrases.get(passIndex).split("\\|")));
-                                    oStage.passwordPhrases.add(answers);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing password-phrases!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".custom-objectives")) {
-
-                        ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".stages.ordered." + s2 + ".custom-objectives");
-                        for (String path : sec.getKeys(false)) {
-
-                            String name = sec.getString(path + ".name");
-                            int count = sec.getInt(path + ".count");
-                            CustomObjective found = null;
-
-                            for (CustomObjective cr : customObjectives) {
-                                if (cr.getName().equalsIgnoreCase(name)) {
-                                    found = cr;
-                                    break;
-                                }
-                            }
-
-                            if (found == null) {
-                                printWarning("[Quests] Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
-                                continue;
-                            }
-
-                            Map<String, Object> data = new HashMap<String, Object>();
-                            ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                            if (sec2 != null) {
-                                for (String dataPath : sec2.getKeys(false)) {
-                                    data.put(dataPath, sec2.get(dataPath));
-                                }
-                            }
-
-                            oStage.customObjectives.add(found);
-                            oStage.customObjectiveCounts.add(count);
-                            oStage.customObjectiveData.add(data);
-
-                            try{
-
-                                getServer().getPluginManager().registerEvents(found, this);
-
-                            }catch (Exception e){
-                                printWarning("[Quests] Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
-                                if(debug){
-                                    printWarning("[Quests] Error log:");
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".objective-override")) {
-
-                        oStage.objectiveOverride = config.getString("quests." + s + ".stages.ordered." + s2 + ".objective-override");
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".start-event"), this);
-
-                        if (evt != null) {
-                            oStage.startEvent = evt;
-                        } else {
-                            printSevere("[Quests] start-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".finish-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".finish-event"), this);
-
-                        if (evt != null) {
-                            oStage.finishEvent = evt;
-                        } else {
-                            printSevere("[Quests] finish-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    //Legacy support
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this);
-
-                        if (evt != null) {
-                            oStage.finishEvent = evt;
-                            printInfo("[Quests] Converting event: in Stage " + s2 + " of Quest " + quest.name + " to finish-event:");
-                            String old = config.getString("quests." + s + ".stages.ordered." + s2 + ".event");
-                            config.set("quests." + s + ".stages.ordered." + s2 + ".finish-event", old);
-                            config.set("quests." + s + ".stages.ordered." + s2 + ".event", null);
-                            needsSaving = true;
-                        } else {
-                            printSevere("[Quests] event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-                    //
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".death-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".death-event"), this);
-
-                        if (evt != null) {
-                            oStage.deathEvent = evt;
-                        } else {
-                            printSevere("[Quests] death-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".disconnect-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".disconnect-event"), this);
-
-                        if (evt != null) {
-                            oStage.disconnectEvent = evt;
-                        } else {
-                            printSevere("[Quests] disconnect-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".chat-events")) {
-
-                        if (config.isList("quests." + s + ".stages.ordered." + s2 + ".chat-events")) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers")) {
-
-                                if (config.isList("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers")) {
-
-                                    List<String> chatEvents = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".chat-events");
-                                    List<String> chatEventTriggers = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers");
-                                    boolean loadEventFailed = false;
-
-                                    for (int i = 0; i < chatEvents.size(); i++) {
-
-                                        Event evt = Event.loadEvent(chatEvents.get(i), this);
-
-                                        if (evt != null) {
-                                            oStage.chatEvents.put(chatEventTriggers.get(i), evt);
-                                        } else {
-                                            printSevere("[Quests] " + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                                            stageFailed = true;
-                                            loadEventFailed = true;
-                                            break;
-                                        }
-
-                                    }
-
-                                    if (loadEventFailed) {
-                                        break;
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] chat-event-triggers in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing chat-event-triggers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] chat-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay")) {
-
-                        if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999) {
-                            oStage.delay = config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay");
-                        } else {
-                            printSevere("[Quests] delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay-message")) {
-
-                        oStage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-message")) {
-
-                        oStage.startMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".start-message");
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".complete-message")) {
-
-                        oStage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
-
-                    }
-
-                    LinkedList<Integer> ids = new LinkedList<Integer>();
-                    if (npcIdsToTalkTo != null) {
-                        ids.addAll(npcIdsToTalkTo);
-                    }
-                    oStage.citizensToInteract = ids;
-
-                    if (stageFailed) {
-                        break;
-                    }
-
-                    quest.orderedStages.add(oStage);
-
+                try {
+                    processStages(quest, config, section2, s);
+                    // needsSaving may be modified as a side-effect
                 }
-
-                if (stageFailed) {
-                    continue;
+                catch (StageFailedException ex) {
+                	continue;
                 }
 
                 //Load rewards
@@ -4117,6 +2936,1115 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         }
 
+    }
+
+    private void processStages(Quest quest, FileConfiguration config, ConfigurationSection section2, String s) throws StageFailedException {
+        int index = 1;
+
+        for (String s2 : section2.getKeys(false)) {
+
+            Stage oStage = new Stage();
+
+            LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
+            LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
+            LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
+            LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
+            LinkedList<String> areaNames = new LinkedList<String>();
+
+            LinkedList<Enchantment> enchantments = new LinkedList<Enchantment>();
+            LinkedList<Material> itemsToEnchant = new LinkedList<Material>();
+            List<Integer> amountsToEnchant = new LinkedList<Integer>();
+
+            List<Integer> breakids = new LinkedList<Integer>();
+            List<Integer> breakamounts = new LinkedList<Integer>();
+
+            List<Integer> damageids = new LinkedList<Integer>();
+            List<Integer> damageamounts = new LinkedList<Integer>();
+
+            List<Integer> placeids = new LinkedList<Integer>();
+            List<Integer> placeamounts = new LinkedList<Integer>();
+
+            List<Integer> useids = new LinkedList<Integer>();
+            List<Integer> useamounts = new LinkedList<Integer>();
+
+            List<Integer> cutids = new LinkedList<Integer>();
+            List<Integer> cutamounts = new LinkedList<Integer>();
+
+            //Denizen script load
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
+
+                if (ScriptRegistry.containsScript(config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run"))) {
+                    trigger = new QuestTaskTrigger();
+                    oStage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
+                } else {
+                    printSevere("[Quests] script-to-run: in Stage " + s2 + " of Quest " + quest.name + " is not a Denizen script!");
+                    stageFailed();
+                }
+
+            }
+
+            //
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-ids")) {
+
+                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
+                    breakids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids");
+                } else {
+                    printSevere("[Quests] break-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
+                        breakamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts");
+                    } else {
+                        printSevere("[Quests] break-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing break-block-amounts:");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids")) {
+
+                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids"), Integer.class)) {
+                    damageids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids");
+                } else {
+                    printSevere("[Quests] damage-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
+                        damageamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts");
+                    } else {
+                        printSevere("[Quests] damage-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-amounts:");
+                    stageFailed();
+                }
+
+            }
+
+            for (int i : damageids) {
+
+                if (Material.getMaterial(i) != null) {
+                    oStage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
+                } else {
+                    printSevere("[Quests] " + i + " inside damage-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-ids")) {
+
+                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids"), Integer.class)) {
+                    placeids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids");
+                } else {
+                    printSevere("[Quests] place-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
+                        placeamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts");
+                    } else {
+                        printSevere("[Quests] place-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing place-block-amounts:");
+                    stageFailed();
+                }
+
+            }
+
+            for (int i : placeids) {
+
+                if (Material.getMaterial(i) != null) {
+                    oStage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
+                } else {
+                    printSevere("[Quests] " + +i + " inside place-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-ids")) {
+
+                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids"), Integer.class)) {
+                    useids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids");
+                } else {
+                    printSevere("[Quests] use-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
+                        useamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts");
+                    } else {
+                        printSevere("[Quests] use-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing use-block-amounts:");
+                    stageFailed();
+                }
+
+            }
+
+            for (int i : useids) {
+
+                if (Material.getMaterial(i) != null) {
+                    oStage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
+                } else {
+                    printSevere("[Quests] " + RED + i + " inside use-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids")) {
+
+                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids"), Integer.class)) {
+                    cutids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids");
+                } else {
+                    printSevere("[Quests] cut-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
+                        cutamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts");
+                    } else {
+                        printSevere("[Quests] cut-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-amounts:");
+                    stageFailed();
+                }
+
+            }
+
+            for (int i : cutids) {
+
+                if (Material.getMaterial(i) != null) {
+                    oStage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
+                } else {
+                    printSevere("[Quests] " + i + " inside cut-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch")) {
+
+                if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
+                    oStage.fishToCatch = config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch");
+                } else {
+                    printSevere("[Quests] fish-to-catch: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".players-to-kill")) {
+
+                if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
+                    oStage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
+                } else {
+                    printSevere("[Quests] players-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
+
+                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantments"), String.class)) {
+
+                    for (String enchant : config.getStringList("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
+
+                        Enchantment e = Quests.getEnchantment(enchant);
+
+                        if (e != null) {
+
+                            enchantments.add(e);
+
+                        } else {
+
+                            printSevere("[Quests] " + enchant + " inside enchantments: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid enchantment!");
+                            stageFailed();
+                            
+                        }
+
+                    }
+
+                } else {
+                    printSevere("[Quests] enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids"), Integer.class)) {
+
+                        for (int item : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
+
+                            if (Material.getMaterial(item) != null) {
+                                itemsToEnchant.add(Material.getMaterial(item));
+                            } else {
+                                printSevere("[Quests] " + item + " inside enchantment-item-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item id!");
+                                stageFailed();
+                            }
+
+                        }
+
+                    } else {
+
+                        printSevere("[Quests] enchantment-item-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-ids:");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts"), Integer.class)) {
+
+                        amountsToEnchant = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts");
+
+                    } else {
+
+                        printSevere("[Quests] enchantment-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-amounts:");
+                    stageFailed();
+                }
+
+            }
+
+            List<Integer> npcIdsToTalkTo = null;
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to")) {
+
+                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to"), Integer.class)) {
+
+                    npcIdsToTalkTo = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
+                    for (int i : npcIdsToTalkTo) {
+
+                        if (CitizensAPI.getNPCRegistry().getById(i) != null) {
+
+                            questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
+
+                        } else {
+                            printSevere("[Quests] " + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
+                            stageFailed();
+                        }
+
+                    }
+
+                } else {
+                    printSevere("[Quests] npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed();
+                }
+
+            }
+
+            List<String> itemsToDeliver;
+            List<Integer> itemDeliveryTargetIds;
+            LinkedList<String> deliveryMessages = new LinkedList<String>();
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver")) {
+
+                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver"), String.class)) {
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids")) {
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids"), Integer.class)) {
+
+                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delivery-messages")) {
+
+                                itemsToDeliver = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver");
+                                itemDeliveryTargetIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids");
+                                deliveryMessages.addAll(config.getStringList("quests." + s + ".stages.ordered." + s2 + ".delivery-messages"));
+
+                                for (String item : itemsToDeliver) {
+
+                                    ItemStack is = ItemUtil.readItemStack(item);
+
+                                    if (is != null) {
+
+                                        int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
+                                        NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
+
+                                        if (npc != null) {
+
+                                            oStage.itemsToDeliver.add(is);
+                                            oStage.itemDeliveryTargets.add(npcId);
+                                            oStage.deliverMessages = deliveryMessages;
+
+                                        } else {
+                                            printSevere("[Quests] " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
+                                            stageFailed();
+                                        }
+
+                                    } else {
+                                        printSevere("[Quests] " + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
+                                        stageFailed();
+                                    }
+
+                                }
+
+                            } else {
+                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing delivery-messages:");
+                                stageFailed();
+                            }
+
+                        } else {
+                            printSevere("[Quests] npc-delivery-ids: in Stage " + s2 + " of Quest " + PURPLE + quest.name + " is not a list of NPC ids!");
+                            stageFailed();
+                        }
+
+                    } else {
+                        printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-delivery-ids:");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] items-to-deliver: in Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
+                    stageFailed();
+                }
+
+            }
+
+            List<Integer> npcIds;
+            List<Integer> npcAmounts;
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill")) {
+
+                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill"), Integer.class)) {
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts")) {
+
+                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts"), Integer.class)) {
+
+                            npcIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill");
+                            npcAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts");
+                            for (int i : npcIds) {
+
+                                if (CitizensAPI.getNPCRegistry().getById(i) != null) {
+
+                                    if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
+                                        oStage.citizensToKill.add(i);
+                                        oStage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
+                                        questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
+                                    } else {
+                                        printSevere("[Quests] " + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
+                                        stageFailed();
+                                    }
+
+                                } else {
+                                    printSevere("[Quests] " + i + " inside npc-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
+                                    stageFailed();
+                                }
+
+                            }
+
+                        } else {
+                            printSevere("[Quests] npc-kill-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                            stageFailed();
+                        }
+
+                    } else {
+                        printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-kill-amounts:");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] npc-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill")) {
+
+                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill"), String.class)) {
+
+                    List<String> mobNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill");
+                    for (String mob : mobNames) {
+
+                        EntityType type = getMobType(mob);
+
+                        if (type != null) {
+
+                            mobsToKill.add(type);
+
+                        } else {
+
+                            printSevere("[Quests] " + mob + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid mob name!");
+                            stageFailed();
+
+                        }
+
+                    }
+
+                } else {
+                    printSevere("[Quests] mobs-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts"), Integer.class)) {
+
+                        for (int i : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
+
+                            mobNumToKill.add(i);
+
+                        }
+
+                    } else {
+
+                        printSevere("[Quests] mob-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + PURPLE + quest.name + " is missing mob-amounts:");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill")) {
+
+                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill"), String.class)) {
+
+                    List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill");
+
+                    for (String loc : locations) {
+
+                        String[] info = loc.split(" ");
+                        if (info.length == 4) {
+                            double x = 0;
+                            double y = 0;
+                            double z = 0;
+                            try {
+                                x = Double.parseDouble(info[1]);
+                                y = Double.parseDouble(info[2]);
+                                z = Double.parseDouble(info[3]);
+                            } catch (NumberFormatException e) {
+                                printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
+                                printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
+                                stageFailed();
+                            }
+
+                            if (getServer().getWorld(info[0]) != null) {
+                                Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
+                                locationsToKillWithin.add(finalLocation);
+                            } else {
+                                printSevere("[Quests] " + info[0] + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
+                                stageFailed();
+                            }
+
+                        } else {
+                            printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
+                            printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
+                            stageFailed();
+                        }
+
+                    }
+
+                } else {
+                    printSevere("[Quests] locations-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii"), Integer.class)) {
+
+                        List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii");
+                        for (int i : radii) {
+
+                            radiiToKillWithin.add(i);
+
+                        }
+
+                    } else {
+                        printSevere("[Quests] kill-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-radii:");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".kill-location-names")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names"), String.class)) {
+
+                        List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names");
+                        for (String name : locationNames) {
+
+                            areaNames.add(name);
+
+                        }
+
+                    } else {
+                        printSevere("[Quests] kill-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-names:");
+                    stageFailed();
+                }
+
+            }
+
+            oStage.mobsToKill = mobsToKill;
+            oStage.mobNumToKill = mobNumToKill;
+            oStage.locationsToKillWithin = locationsToKillWithin;
+            oStage.radiiToKillWithin = radiiToKillWithin;
+            oStage.areaNames = areaNames;
+
+            Map<Map<Enchantment, Material>, Integer> enchants = new HashMap<Map<Enchantment, Material>, Integer>();
+
+            for (Enchantment e : enchantments) {
+
+                Map<Enchantment, Material> map = new HashMap<Enchantment, Material>();
+                map.put(e, itemsToEnchant.get(enchantments.indexOf(e)));
+                enchants.put(map, amountsToEnchant.get(enchantments.indexOf(e)));
+
+            }
+
+            oStage.itemsToEnchant = enchants;
+
+            Map<Material, Integer> breakMap = new EnumMap<Material, Integer>(Material.class);
+
+            for (int i : breakids) {
+
+                breakMap.put(Material.getMaterial(i), breakamounts.get(breakids.indexOf(i)));
+
+            }
+
+            oStage.blocksToBreak = breakMap;
+
+            if (index < section2.getKeys(false).size()) {
+                index++;
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach")) {
+
+                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach"), String.class)) {
+
+                    List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach");
+
+                    for (String loc : locations) {
+
+                        String[] info = loc.split(" ");
+                        if (info.length == 4) {
+                            double x = 0;
+                            double y = 0;
+                            double z = 0;
+                            try {
+                                x = Double.parseDouble(info[1]);
+                                y = Double.parseDouble(info[2]);
+                                z = Double.parseDouble(info[3]);
+                            } catch (NumberFormatException e) {
+                                printSevere("[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
+                                printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
+                                stageFailed();
+                            }
+
+                            if (getServer().getWorld(info[0]) != null) {
+                                Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
+                                oStage.locationsToReach.add(finalLocation);
+                            } else {
+                                printSevere("[Quests] " + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
+                                stageFailed();
+                            }
+
+                        } else {
+                            printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
+                            printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
+                            stageFailed();
+                        }
+
+                    }
+
+                } else {
+                    printSevere("[Quests] locations-to-reach: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii"), Integer.class)) {
+
+                        List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii");
+                        for (int i : radii) {
+
+                            oStage.radiiToReachWithin.add(i);
+
+                        }
+
+                    } else {
+                        printSevere("[Quests] reach-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-radii:");
+                    stageFailed();
+                }
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".reach-location-names")) {
+
+                    if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names"), String.class)) {
+
+                        List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names");
+                        for (String name : locationNames) {
+
+                            oStage.locationNames.add(name);
+
+                        }
+
+                    } else {
+                        printSevere("[Quests] reach-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-names:");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame")) {
+
+                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame"), String.class)) {
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts")) {
+
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts"), Integer.class)) {
+
+                            List<String> mobs = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame");
+                            List<Integer> mobAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts");
+
+                            for (String mob : mobs) {
+
+                                if (mob.equalsIgnoreCase("Wolf")) {
+
+                                    oStage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
+
+                                } else if (mob.equalsIgnoreCase("Ocelot")) {
+
+                                    oStage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
+
+                                } else {
+                                    printSevere("[Quests] " + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
+                                    stageFailed();
+                                }
+
+                            }
+
+                        } else {
+                            printSevere("[Quests] mob-tame-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                            stageFailed();
+                        }
+
+                    } else {
+                        printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing mob-tame-amounts:");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] mobs-to-tame: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear")) {
+
+                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear"), String.class)) {
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts")) {
+
+                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts"), Integer.class)) {
+
+                            List<String> sheep = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear");
+                            List<Integer> shearAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts");
+
+                            for (String color : sheep) {
+
+                                if (color.equalsIgnoreCase("Black")) {
+
+                                    oStage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Blue")) {
+
+                                    oStage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Brown")) {
+
+                                    oStage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Cyan")) {
+
+                                    oStage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Gray")) {
+
+                                    oStage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Green")) {
+
+                                    oStage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("LightBlue")) {
+
+                                    oStage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Lime")) {
+
+                                    oStage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Magenta")) {
+
+                                    oStage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Orange")) {
+
+                                    oStage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Pink")) {
+
+                                    oStage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Purple")) {
+
+                                    oStage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Red")) {
+
+                                    oStage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Silver")) {
+
+                                    oStage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("White")) {
+
+                                    oStage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Yellow")) {
+
+                                    oStage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else {
+
+                                    printSevere("[Quests] " + color + " inside sheep-to-shear: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid color!");
+                                    stageFailed();
+
+                                }
+
+                            }
+
+                        } else {
+                            printSevere("[Quests] sheep-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                            stageFailed();
+                        }
+
+                    } else {
+                        printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing sheep-amounts:");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] sheep-to-shear: in Stage " + s2 + " of Quest " + quest.name + " is not a list of colors!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-displays")) {
+
+                List<String> displays = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-displays");
+
+                if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-phrases")) {
+
+                    List<String> phrases = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-phrases");
+                    if(displays.size() == phrases.size()) {
+
+                        for(int passIndex = 0; passIndex < displays.size(); passIndex++){
+
+                            oStage.passwordDisplays.add(displays.get(passIndex));
+                            LinkedList<String> answers = new LinkedList<String>();
+                            answers.addAll(Arrays.asList(phrases.get(passIndex).split("\\|")));
+                            oStage.passwordPhrases.add(answers);
+
+                        }
+
+                    } else {
+                        printSevere("[Quests] password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing password-phrases!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".custom-objectives")) {
+
+                ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".stages.ordered." + s2 + ".custom-objectives");
+                for (String path : sec.getKeys(false)) {
+
+                    String name = sec.getString(path + ".name");
+                    int count = sec.getInt(path + ".count");
+                    CustomObjective found = null;
+
+                    for (CustomObjective cr : customObjectives) {
+                        if (cr.getName().equalsIgnoreCase(name)) {
+                            found = cr;
+                            break;
+                        }
+                    }
+
+                    if (found == null) {
+                        printWarning("[Quests] Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
+                        continue;
+                    }
+
+                    Map<String, Object> data = new HashMap<String, Object>();
+                    ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+                    if (sec2 != null) {
+                        for (String dataPath : sec2.getKeys(false)) {
+                            data.put(dataPath, sec2.get(dataPath));
+                        }
+                    }
+
+                    oStage.customObjectives.add(found);
+                    oStage.customObjectiveCounts.add(count);
+                    oStage.customObjectiveData.add(data);
+
+                    try{
+
+                        getServer().getPluginManager().registerEvents(found, this);
+
+                    }catch (Exception e){
+                        printWarning("[Quests] Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
+                        if(debug){
+                            printWarning("[Quests] Error log:");
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".objective-override")) {
+
+                oStage.objectiveOverride = config.getString("quests." + s + ".stages.ordered." + s2 + ".objective-override");
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".start-event"), this);
+
+                if (evt != null) {
+                    oStage.startEvent = evt;
+                } else {
+                    printSevere("[Quests] start-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".finish-event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".finish-event"), this);
+
+                if (evt != null) {
+                    oStage.finishEvent = evt;
+                } else {
+                    printSevere("[Quests] finish-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed();
+                }
+
+            }
+
+            //Legacy support
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this);
+
+                if (evt != null) {
+                    oStage.finishEvent = evt;
+                    printInfo("[Quests] Converting event: in Stage " + s2 + " of Quest " + quest.name + " to finish-event:");
+                    String old = config.getString("quests." + s + ".stages.ordered." + s2 + ".event");
+                    config.set("quests." + s + ".stages.ordered." + s2 + ".finish-event", old);
+                    config.set("quests." + s + ".stages.ordered." + s2 + ".event", null);
+                    needsSaving = true;
+                } else {
+                    printSevere("[Quests] event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed();
+                }
+
+            }
+            //
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".death-event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".death-event"), this);
+
+                if (evt != null) {
+                    oStage.deathEvent = evt;
+                } else {
+                    printSevere("[Quests] death-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".disconnect-event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".disconnect-event"), this);
+
+                if (evt != null) {
+                    oStage.disconnectEvent = evt;
+                } else {
+                    printSevere("[Quests] disconnect-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".chat-events")) {
+
+                if (config.isList("quests." + s + ".stages.ordered." + s2 + ".chat-events")) {
+
+                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers")) {
+
+                        if (config.isList("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers")) {
+
+                            List<String> chatEvents = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".chat-events");
+                            List<String> chatEventTriggers = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers");
+                            boolean loadEventFailed = false;
+
+                            for (int i = 0; i < chatEvents.size(); i++) {
+
+                                Event evt = Event.loadEvent(chatEvents.get(i), this);
+
+                                if (evt != null) {
+                                    oStage.chatEvents.put(chatEventTriggers.get(i), evt);
+                                } else {
+                                	loadEventFailed = true;
+                                    printSevere("[Quests] " + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                                    stageFailed();
+                                }
+
+                            }
+
+                            if (loadEventFailed) {
+                                break;
+                            }
+
+                        } else {
+                            printSevere("[Quests] chat-event-triggers in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+                            stageFailed();
+                        }
+
+                    } else {
+                        printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing chat-event-triggers!");
+                        stageFailed();
+                    }
+
+                } else {
+                    printSevere("[Quests] chat-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay")) {
+
+                if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999) {
+                    oStage.delay = config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay");
+                } else {
+                    printSevere("[Quests] delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                    stageFailed();
+                }
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay-message")) {
+
+                oStage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-message")) {
+
+                oStage.startMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".start-message");
+
+            }
+
+            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".complete-message")) {
+
+                oStage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
+
+            }
+
+            LinkedList<Integer> ids = new LinkedList<Integer>();
+            if (npcIdsToTalkTo != null) {
+                ids.addAll(npcIdsToTalkTo);
+            }
+            oStage.citizensToInteract = ids;
+
+            quest.orderedStages.add(oStage);
+
+        }
+    }
+    
+    private void stageFailed() throws StageFailedException {
+    	throw new StageFailedException();
     }
 
     public void loadEvents() {
