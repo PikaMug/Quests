@@ -48,7 +48,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
             if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 
-                final Quester quester = plugin.getQuester(evt.getPlayer().getName());
+                final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
                 final Player player = evt.getPlayer();
 
                 if (quester.hasObjective("useBlock")) {
@@ -179,7 +179,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent evt) {
 
-        Quester quester = plugin.getQuester(evt.getWhoClicked().getName());
+        Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
         Player player = (Player) evt.getWhoClicked();
         
         if (evt.getInventory().getTitle().equals("Quests")) {
@@ -267,7 +267,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
-            Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
             if (quester.currentStage != null) {
 
@@ -308,7 +308,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
-            Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             if (quester.hasObjective("damageBlock")) {
 
                 quester.damageBlock(evt.getBlock().getType());
@@ -324,7 +324,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
-            Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             if (quester.hasObjective("placeBlock")) {
 
                 if (evt.isCancelled() == false) {
@@ -342,7 +342,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
-            Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             if (quester.hasObjective("breakBlock")) {
 
                 if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false && evt.isCancelled() == false) {
@@ -382,7 +382,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
-            Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             if (evt.getEntity().getType().equals(EntityType.SHEEP) && quester.hasObjective("shearSheep")) {
 
                 Sheep sheep = (Sheep) evt.getEntity();
@@ -402,7 +402,7 @@ public class PlayerListener implements Listener, ColorUtil {
             Player p = (Player) evt.getOwner();
             if (plugin.checkQuester(p.getName()) == false) {
 
-                Quester quester = plugin.getQuester(p.getName());
+                Quester quester = plugin.getQuester(p.getUniqueId());
                 if (quester.hasObjective("tameMob")) {
 
                     quester.tameMob(evt.getEntityType());
@@ -420,7 +420,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
         if (plugin.checkQuester(evt.getEnchanter().getName()) == false) {
 
-            Quester quester = plugin.getQuester(evt.getEnchanter().getName());
+            Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             if (quester.hasObjective("enchantItem")) {
 
                 for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
@@ -533,7 +533,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
                             if (okay) {
 
-                                Quester quester = plugin.getQuester(player.getName());
+                                Quester quester = plugin.getQuester(player.getUniqueId());
 
                                 if (quester.hasObjective("killMob")) {
                                     quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
@@ -555,7 +555,7 @@ public class PlayerListener implements Listener, ColorUtil {
                         if (okay) {
 
                             Player player = (Player) damager;
-                            Quester quester = plugin.getQuester(player.getName());
+                            Quester quester = plugin.getQuester(player.getUniqueId());
                             if (quester.hasObjective("killMob")) {
                                 quester.killMob(evt.getEntity().getLocation(), evt.getEntity().getType());
                             }
@@ -600,7 +600,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
                             if (okay) {
 
-                                Quester quester = plugin.getQuester(player.getName());
+                                Quester quester = plugin.getQuester(player.getUniqueId());
 
                                 if (quester.hasObjective("killPlayer")) {
                                     quester.killPlayer(evt.getEntity().getName());
@@ -630,7 +630,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
                         if (okay) {
 
-                            Quester quester = plugin.getQuester(player.getName());
+                            Quester quester = plugin.getQuester(player.getUniqueId());
                             if (quester.hasObjective("killPlayer")) {
                                 quester.killPlayer(evt.getEntity().getName());
                             }
@@ -647,7 +647,7 @@ public class PlayerListener implements Listener, ColorUtil {
         Player player = evt.getEntity();
         if (plugin.checkQuester(player.getName()) == false) {
 
-            Quester quester = plugin.getQuester(player.getName());
+            Quester quester = plugin.getQuester(player.getUniqueId());
             if(quester.currentStage != null){
                 if(quester.currentStage.deathEvent != null){
                     quester.currentStage.deathEvent.fire(quester);
@@ -664,7 +664,7 @@ public class PlayerListener implements Listener, ColorUtil {
         Player player = evt.getPlayer();
         if (plugin.checkQuester(player.getName()) == false) {
 
-            Quester quester = plugin.getQuester(player.getName());
+            Quester quester = plugin.getQuester(player.getUniqueId());
             if (quester.hasObjective("catchFish") && evt.getState().equals(State.CAUGHT_FISH)) {
                 quester.catchFish();
             }
@@ -676,17 +676,19 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent evt) {
 
+        System.out.println("Joined: " + evt.getPlayer().getUniqueId());
+        
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
             Quester quester = new Quester(plugin);
-            quester.name = evt.getPlayer().getName();
-            if (new File(plugin.getDataFolder(), "data/" + quester.name + ".yml").exists()) {
+            quester.id = evt.getPlayer().getUniqueId();
+            if (new File(plugin.getDataFolder(), "data/" + quester.id + ".yml").exists()) {
                 quester.loadData();
             } else if (Quests.genFilesOnJoin) {
                 quester.saveData();
             }
 
-            plugin.questers.put(evt.getPlayer().getName(), quester);
+            plugin.questers.put(evt.getPlayer().getUniqueId(), quester);
 
             for (String s : quester.completedQuests) {
 
@@ -723,7 +725,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
         if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
 
-            Quester quester = plugin.getQuester(evt.getPlayer().getName());
+            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             if (quester.currentQuest != null) {
 
                 if (quester.currentStage.delay > -1) {
@@ -742,7 +744,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
             if(plugin.questFactory.selectingNPCs.contains(evt.getPlayer()))
                 plugin.questFactory.selectingNPCs.remove(evt.getPlayer());
-            plugin.questers.remove(quester.name);
+            plugin.questers.remove(quester.id);
 
         }
 
@@ -762,7 +764,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
             if (isPlayer) {
 
-                Quester quester = plugin.getQuester(evt.getPlayer().getName());
+                Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
                 if (quester.hasObjective("reachLocation")) {
 

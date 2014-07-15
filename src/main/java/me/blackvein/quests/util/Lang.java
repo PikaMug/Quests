@@ -991,6 +991,7 @@ public class Lang {
 		langMap.put("exited", "Exited");
 		langMap.put("cancel", "Cancel");
                 langMap.put("cancelled", "Cancelled");
+                langMap.put("questTimeout", "Cancelled.");
                 langMap.put("back", "Back");
 		langMap.put("yesWord", "Yes");
 		langMap.put("noWord", "No");
@@ -1108,7 +1109,6 @@ public class Lang {
                         } else {
                             
                             newLangs = true;
-                            System.out.println("COULD NOT FIND KEY FOR: \"" + entry.getKey() + "\"");
                             newMap.put(entry.getKey(), entry.getValue());
                             
                         }

@@ -83,7 +83,7 @@ public abstract class CustomObjective implements Listener {
     
     public Map<String, Object> getDatamap(Player player, CustomObjective obj){
         
-        Quester quester = Quests.getInstance().getQuester(player.getName());
+        Quester quester = Quests.getInstance().getQuester(player.getUniqueId());
         if(quester != null){
             
             int index = -1;
@@ -114,7 +114,7 @@ public abstract class CustomObjective implements Listener {
     
     public static void incrementObjective(Player player, CustomObjective obj, int count){
         
-        Quester quester = Quests.getInstance().getQuester(player.getName());
+        Quester quester = Quests.getInstance().getQuester(player.getUniqueId());
         if(quester != null){
         
             //Check if the player has Quest with objective
@@ -134,9 +134,9 @@ public abstract class CustomObjective implements Listener {
                 
                 if(quester.customObjectiveCounts.containsKey(obj.getName())){
                     int old = quester.customObjectiveCounts.get(obj.getName());
-                    Quests.getInstance().getQuester(player.getName()).customObjectiveCounts.put(obj.getName(), old + count);
+                    Quests.getInstance().getQuester(player.getUniqueId()).customObjectiveCounts.put(obj.getName(), old + count);
                 }else{
-                    Quests.getInstance().getQuester(player.getName()).customObjectiveCounts.put(obj.getName(), count);
+                    Quests.getInstance().getQuester(player.getUniqueId()).customObjectiveCounts.put(obj.getName(), count);
                 }
 
                 int index = -1;

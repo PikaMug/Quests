@@ -42,7 +42,7 @@ public class NpcListener implements Listener {
         if (evt.getClicker().isConversing() == false) {
 
             final Player player = evt.getClicker();
-            final Quester quester = plugin.getQuester(player.getName());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             boolean delivery = false;
 
             if (quester.hasObjective("deliverItem") && player.getItemInHand() != null) {
@@ -217,7 +217,7 @@ public class NpcListener implements Listener {
 
                         if (okay) {
 
-                            Quester quester = plugin.getQuester(player.getName());
+                            Quester quester = plugin.getQuester(player.getUniqueId());
                             if (quester.hasObjective("killNPC")) {
                                 quester.killNPC(evt.getNPC());
                             }
@@ -238,7 +238,7 @@ public class NpcListener implements Listener {
                     if (okay) {
 
                         Player player = (Player) damager;
-                        Quester quester = plugin.getQuester(player.getName());
+                        Quester quester = plugin.getQuester(player.getUniqueId());
                         if (quester.hasObjective("killNPC")) {
                             quester.killNPC(evt.getNPC());
                         }

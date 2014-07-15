@@ -54,6 +54,8 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
     @Override
     public String getPromptText(ConversationContext context) {
 
+        try {
+        
         context.setSessionData(pref, Boolean.TRUE);
 
         String text = PINK + "- " + AQUA + (String) context.getSessionData(CK.Q_NAME) + PINK + " | " + Lang.get("stageEditorStage") + " " + PURPLE + stageNum + PINK + " -\n";
@@ -104,14 +106,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorUseBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
         } else {
             text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorUseBlocks") + "\n";
-
+            
             LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_IDS);
             LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
 
             for (int i = 0; i < ids.size(); i++) {
                 text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
             }
-
         }
 
         if (context.getSessionData(pref + CK.S_CUT_IDS) == null) {
@@ -364,7 +365,13 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         text += RED + "" + BOLD + "25 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
         text += GREEN + "" + BOLD + "26 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
 
+        
         return text;
+        
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "a";
+        }
 
     }
 

@@ -25,16 +25,23 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit1</artifactId>
+            <version>1.7.10-R0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/craftbukkit-1.7.10-R0.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit3</artifactId>
             <version>1.7.9-R0.3</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/craftbukkit-1.7.2-R0.4.jar</systemPath>
+            <systemPath>${project.basedir}/lib/craftbukkit-1.7.9-R0.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit2</artifactId>
-            <version>1.7.9-R0.3</version>
+            <version>1.7.2-R0.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/craftbukkit-1.7.9-R0.3.jar</systemPath>
+            <systemPath>${project.basedir}/lib/craftbukkit-1.7.2-R0.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.citizensnpcs</groupId>

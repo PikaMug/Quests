@@ -1,6 +1,9 @@
 package me.blackvein.quests.util;
 
+import me.blackvein.quests.Quester;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class MiscUtil {
     
@@ -114,4 +117,5 @@ public class MiscUtil {
         
         return s;
     }
+    
 }

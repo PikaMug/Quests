@@ -58,8 +58,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
         menu += YELLOW + "" + BOLD + "4. " + RESET + "" + GOLD + Lang.get("itemCreateSetEnchs") + "\n";
         menu += YELLOW + "" + BOLD + "5. " + RESET + "" + ITALIC + GOLD + Lang.get("itemCreateSetName") + "\n";
         menu += YELLOW + "" + BOLD + "6. " + RESET + "" + ITALIC + GOLD + Lang.get("itemCreateSetLore") + "\n";
-        menu += YELLOW + "" + BOLD + "7. " + RESET + "" + GREEN + Lang.get("cancel") + "\n";
-        menu += YELLOW + "" + BOLD + "8. " + RESET + "" + RED + Lang.get("done") + "\n";
+        menu += YELLOW + "" + BOLD + "7. " + RESET + "" + RED + Lang.get("cancel") + "\n";
+        menu += YELLOW + "" + BOLD + "8. " + RESET + "" + GREEN + Lang.get("done") + "\n";
         return menu;
     }
 
@@ -154,7 +154,17 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                 return new ItemStackPrompt(oldPrompt);
             }
 
-        }else if(input.equalsIgnoreCase("7")){
+        }else if(input.equalsIgnoreCase("7")) {
+            
+            cc.setSessionData("tempStack", null);
+            cc.setSessionData("tempId", null);
+            cc.setSessionData("tempAmount", null);
+            cc.setSessionData("tempData", null);
+            cc.setSessionData("tempEnchantments", null);
+            cc.setSessionData("tempName", null);
+            cc.setSessionData("tempLore", null);
+
+        }else if(input.equalsIgnoreCase("8")){
 
             if(cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null){
 
@@ -199,15 +209,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                 return new ItemStackPrompt(oldPrompt);
             }
 
-        }else if(input.equalsIgnoreCase("8"))
-            cc.setSessionData("tempStack", null);
-
-        cc.setSessionData("tempId", null);
-        cc.setSessionData("tempAmount", null);
-        cc.setSessionData("tempData", null);
-        cc.setSessionData("tempEnchantments", null);
-        cc.setSessionData("tempName", null);
-        cc.setSessionData("tempLore", null);
+        }
 
         try{
             return oldPrompt;

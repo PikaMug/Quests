@@ -30,7 +30,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
     public String getPromptText(ConversationContext cc) {
 
         quests = (LinkedList<Quest>) cc.getSessionData("quests");
-        quester = plugin.getQuester(((Player) cc.getForWhom()).getName());
+        quester = plugin.getQuester(((Player) cc.getForWhom()).getUniqueId());
 
         String npc = (String) cc.getSessionData("npc");
         String text = Lang.get("questNPCListTitle");

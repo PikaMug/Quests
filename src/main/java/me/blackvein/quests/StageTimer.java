@@ -21,7 +21,7 @@ public class StageTimer implements Runnable{
 
         if(quester.delayOver){
 
-            Player player = plugin.getServer().getPlayerExact(quester.name);
+            Player player = quester.getPlayer();
 
             if(quester.currentQuest != null){
 

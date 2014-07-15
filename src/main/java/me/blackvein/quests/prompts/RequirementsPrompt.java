@@ -49,14 +49,14 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
         text = DARKAQUA + lang + "\n";
 
         if (context.getSessionData(CK.REQ_MONEY) == null) {
-            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqSetMoney") + " " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqSetMoney") + " " + GRAY + "(" + Lang.get("noneSet") + ")\n";
         } else {
             int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqSetMoney") + " (" + moneyReq + " " + (moneyReq > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
         }
 
         if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
-            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetQuestPoints") + " " + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetQuestPoints") + " " + GRAY + "(" + Lang.get("noneSet") + ")\n";
         } else {
             text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetQuestPoints") + " " + GRAY + "(" + AQUA + context.getSessionData(CK.REQ_QUEST_POINTS) + " " + Lang.get("questPoints") + GRAY + ")\n";
         }
@@ -398,7 +398,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             String text = GOLD + Lang.get("itemRequirementsTitle") + "\n";
             if (context.getSessionData(CK.REQ_ITEMS) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqAddItem") + "\n";
-                text += GRAY + "2 - " + Lang.get("reqSetRemoveItems") + "(" + Lang.get("reqNoItemsSet") + ")\n";
+                text += GRAY + "2 - " + Lang.get("reqSetRemoveItems") + " (" + Lang.get("reqNoItemsSet") + ")\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -412,7 +412,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqAddItem") + "\n";
 
                 if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetRemoveItems") + "(" + Lang.get("reqNoValuesSet") + ")\n";
+                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetRemoveItems") + " (" + Lang.get("reqNoValuesSet") + ")\n";
                 } else {
 
                     text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetRemoveItems") + "\n";

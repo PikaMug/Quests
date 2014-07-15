@@ -60,7 +60,7 @@ public class CK {
 	public static final String S_PLACE_AMOUNTS = "placeAmounts";
 	public static final String S_USE_IDS = "useIds";
 	public static final String S_USE_AMOUNTS = "useAmounts";
-	public static final String S_CUT_IDS = "useIds";
+	public static final String S_CUT_IDS = "cutIds";
 	public static final String S_CUT_AMOUNTS = "cutAmounts";
 	public static final String S_FISH = "fish";
 	public static final String S_PLAYER_KILL = "playerKill";

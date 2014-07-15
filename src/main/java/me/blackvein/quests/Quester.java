@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,7 +30,7 @@ import org.bukkit.potion.Potion;
 
 public class Quester {
 
-    String name;
+    UUID id;
     boolean editorMode = false;
     boolean holdingQuestItemFromStorage = false;
     boolean delayOver = true;
@@ -79,14 +80,20 @@ public class Quester {
     }
 
     public Player getPlayer() {
-
-        return plugin.getServer().getPlayerExact(name);
-
+        
+        return Bukkit.getServer().getPlayer(id);
+        
+    }
+    
+    public OfflinePlayer getOfflinePlayer() {
+        
+        return Bukkit.getServer().getOfflinePlayer(id);
+        
     }
 
     public void takeQuest(Quest q, boolean override) {
 
-        Player player = plugin.getServer().getPlayer(name);
+        Player player = getPlayer();
 
         if (q.testRequirements(player) == true || override) {
 
@@ -97,7 +104,7 @@ public class Quester {
             if (!override) {
 
                 if (q.moneyReq > 0) {
-                    Quests.economy.withdrawPlayer(name, q.moneyReq);
+                    Quests.economy.withdrawPlayer(getOfflinePlayer(), q.moneyReq);
                 }
 
                 for (ItemStack is : q.items) {
@@ -893,7 +900,7 @@ public class Quester {
                 String error = Lang.get("killNotValid");
                 error = error.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(comparator - (currentTime - killTime)) + ChatColor.RED);
                 error = error.replaceAll("<player>", ChatColor.DARK_PURPLE + player + ChatColor.RED);
-                plugin.getServer().getPlayer(name).sendMessage(ChatColor.RED + error);
+                getPlayer().sendMessage(ChatColor.RED + error);
                 return;
 
             }
@@ -1002,7 +1009,7 @@ public class Quester {
 
     public void deliverItem(ItemStack i) {
 
-        Player player = plugin.getServer().getPlayer(name);
+        Player player = getPlayer();
 
         ItemStack found = null;
 
@@ -1084,7 +1091,7 @@ public class Quester {
 
     public void finishObjective(String objective, Material material, ItemStack itemstack, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
 
-        Player p = plugin.getServer().getPlayerExact(name);
+        Player p = getPlayer();
 
         if (currentStage.objectiveOverride != null) {
 
@@ -1643,7 +1650,7 @@ public class Quester {
 
         FileConfiguration data = getBaseData();
         try {
-            data.save(new File(plugin.getDataFolder(), "data/" + name + ".yml"));
+            data.save(new File(plugin.getDataFolder(), "data/" + id + ".yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2072,7 +2079,17 @@ public class Quester {
 
         FileConfiguration data = new YamlConfiguration();
         try {
-            data.load(new File(plugin.getDataFolder(), "data/" + name + ".yml"));
+            
+            File dataFile = new File(plugin.getDataFolder(), "data/" + id.toString() + ".yml");
+            if(dataFile.exists() == false) {
+                OfflinePlayer p = getOfflinePlayer();
+                dataFile = new File(plugin.getDataFolder(), "data/" + p.getName() + ".yml");
+                if(dataFile.exists() == false)
+                    return false;
+            }
+            
+            data.load(dataFile);
+            
         } catch (IOException e) {
             return false;
         } catch (InvalidConfigurationException e) {
@@ -2168,7 +2185,7 @@ public class Quester {
             if (stage == null) {
                 currentQuest = quest;
                 currentQuest.completeQuest(this);
-                Quests.log.log(Level.SEVERE, "[Quests] Invalid stage for player: \"" + name + "\". Quest ended.");
+                Quests.log.log(Level.SEVERE, "[Quests] Invalid stage for player: \"" + id + "\". Quest ended.");
                 return true;
             }
 
@@ -2521,7 +2538,7 @@ public class Quester {
         } else {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this), (long) (currentStage.delay * 0.02));
             if (currentStage.delayMessage != null) {
-                plugin.getServer().getPlayer(name).sendMessage(Quests.parseString((currentStage.delayMessage), currentQuest));
+                plugin.getServer().getPlayer(id).sendMessage(Quests.parseString((currentStage.delayMessage), currentQuest));
             }
         }
 
@@ -2581,10 +2598,10 @@ public class Quester {
                         currentStage = null;
                         currentStageIndex = 0;
                         resetObjectives();
-                        if (plugin.getServer().getPlayer(name) != null) {
+                        if (plugin.getServer().getPlayer(id) != null) {
                             String error = Lang.get("questModified");
                             error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED);
-                            plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
+                            plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
                         }
                         currentQuest = null;
 
@@ -2601,10 +2618,10 @@ public class Quester {
                 currentStage = null;
                 currentStageIndex = 0;
                 resetObjectives();
-                if (plugin.getServer().getPlayer(name) != null) {
+                if (plugin.getServer().getPlayer(id) != null) {
                     String error = Lang.get("questNotExist");
                     error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + currentQuest.name + ChatColor.RED);
-                    plugin.getServer().getPlayer(name).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
+                    plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
                 }
                 currentQuest = null;
 

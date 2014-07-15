@@ -167,7 +167,7 @@ public class Quest {
 
     public boolean testRequirements(Player player) {
 
-        Quester quester = plugin.getQuester(player.getName());
+        Quester quester = plugin.getQuester(player.getUniqueId());
 
         if (moneyReq != 0 && Quests.economy.getBalance(player.getName()) < moneyReq) {
             return false;
@@ -269,7 +269,7 @@ public class Quest {
 
     public void completeQuest(Quester q) {
 
-        Player player = plugin.getServer().getPlayerExact(q.name);
+        Player player = plugin.getServer().getPlayer(q.id);
         q.resetObjectives();
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
@@ -281,7 +281,7 @@ public class Quest {
         }
 
         if (moneyReward > 0 && Quests.economy != null) {
-            Quests.economy.depositPlayer(q.name, moneyReward);
+            Quests.economy.depositPlayer(q.getOfflinePlayer(), moneyReward);
             none = null;
         }
         if (redoDelay > -1) {
@@ -511,7 +511,7 @@ public class Quest {
 
     public void failQuest(Quester q) {
 
-        Player player = plugin.getServer().getPlayerExact(q.name);
+        Player player = plugin.getServer().getPlayer(q.id);
         q.resetObjectives();
 
         String title = Lang.get("questTitle");

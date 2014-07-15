@@ -250,8 +250,7 @@ public class Event {
         if (commands.isEmpty() == false) {
 
             for (String s : commands) {
-                quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.name));
-
+                quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
             }
 
         }
