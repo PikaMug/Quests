@@ -142,18 +142,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     private static Quests instance = null;
     public static final String validVersion = "1.7.9-R0.2";
 
+    @SuppressWarnings("serial")
+	class StageFailedException extends Exception { }
+
+    @SuppressWarnings("serial")
+    class SkipQuest extends Exception { }
+
     @Override
     public void onEnable() {
 
         /*if(getServer().getBukkitVersion().equalsIgnoreCase(validVersion) == false) {
-            
+
             log.severe("[Quests] Your current version of CraftBukkit is " + getServer().getBukkitVersion() + ", this version of Quests is built for version " + validVersion);
             log.severe("[Quests] Disabling...");
             getServer().getPluginManager().disablePlugin(this);
             return;
-            
-        }  */      
-        
+
+        }  */
+
         pListener = new PlayerListener(this);
         effListener = new NpcEffectThread(this);
         npcListener = new NpcListener(this);
@@ -177,7 +183,123 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         questFactory = new QuestFactory(this);
         eventFactory = new EventFactory(this);
 
-        try {
+        linkOtherPlugins();
+
+        defaultConfigFile();
+
+		loadConfig();
+		loadModules();
+
+		defaultLangFile();
+        defaultQuestsFile();
+        defaultEventsFile();
+        defaultDataFile();
+
+        getServer().getPluginManager().registerEvents(pListener, this);
+        if (npcEffects) {
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
+        }
+        printInfo("[Quests] Enabled.");
+
+        delayLoadQuestInfo();
+    }
+
+	private void defaultLangFile() {
+		lang = new Lang(this);
+		lang.initPhrases();
+		if (new File(this.getDataFolder(), "/lang/en.yml").exists() == false) {
+			printInfo("[Quests] Translation data not found, writing defaults to file.");
+			lang.saveNewLang();
+		} else {
+			lang.loadLang();
+		}
+	}
+
+	private void delayLoadQuestInfo() {
+		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run() {
+                loadQuests();
+                loadEvents();
+                log.log(Level.INFO, "[Quests] " + quests.size() + " Quest(s) loaded.");
+                log.log(Level.INFO, "[Quests] " + events.size() + " Event(s) loaded.");
+                log.log(Level.INFO, "[Quests] " + Lang.getPhrases() + " Phrase(s) loaded.");
+                questers.putAll(getOnlineQuesters());
+                if (snoop) {
+                    snoop();
+                }
+            }
+        }, 5L);
+	}
+
+	private void defaultDataFile() {
+		if (new File(this.getDataFolder(), "data.yml").exists() == false) {
+            printInfo("[Quests] Data file not found, writing default to file.");
+            FileConfiguration data = new YamlConfiguration();
+            data.options().copyHeader(true);
+            data.options().copyDefaults(true);
+            try {
+                data.save(new File(this.getDataFolder(), "data.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            loadData();
+        }
+	}
+
+	private void defaultEventsFile() {
+		if (new File(this.getDataFolder(), "events.yml").exists() == false) {
+            printInfo("[Quests] Events data not found, writing defaults to file.");
+            FileConfiguration data = new YamlConfiguration();
+            data.options().copyHeader(true);
+            data.options().copyDefaults(true);
+            try {
+                data.load(this.getResource("events.yml"));
+                data.save(new File(this.getDataFolder(), "events.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+	}
+
+	private void defaultQuestsFile() {
+		if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
+
+            printInfo("[Quests] Quest data not found, writing defaults to file.");
+            FileConfiguration data = new YamlConfiguration();
+            try {
+                data.load(this.getResource("quests.yml"));
+                data.set("events", null);
+                data.save(new File(this.getDataFolder(), "quests.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+
+        }
+	}
+
+	private void defaultConfigFile() {
+		if (new File(this.getDataFolder(), "config.yml").exists() == false) {
+            printInfo("[Quests] Config not found, writing default to file.");
+            FileConfiguration config = new YamlConfiguration();
+            try {
+                config.load(this.getResource("config.yml"));
+                config.save(new File(this.getDataFolder(), "config.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+	}
+
+	private void linkOtherPlugins() {
+		try {
             if (getServer().getPluginManager().getPlugin("Citizens") != null) {
                 citizens = (CitizensPlugin) getServer().getPluginManager().getPlugin("Citizens");
             }
@@ -203,7 +325,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (getServer().getPluginManager().getPlugin("Heroes") != null) {
             heroes = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
         }
-        
+
         if (getServer().getPluginManager().getPlugin("PhatLoots") != null) {
             phatLoots = (PhatLoots) getServer().getPluginManager().getPlugin("PhatLoots");
         }
@@ -217,100 +339,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         vault = (Vault) getServer().getPluginManager().getPlugin("Vault");
-
-        if (new File(this.getDataFolder(), "config.yml").exists() == false) {
-            printInfo("[Quests] Config not found, writing default to file.");
-            FileConfiguration config = new YamlConfiguration();
-            try {
-                config.load(this.getResource("config.yml"));
-                config.save(new File(this.getDataFolder(), "config.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        loadConfig();
-        loadModules();
-        lang = new Lang(this);
-        lang.initPhrases();
-        if(new File(this.getDataFolder(), "/lang/en.yml").exists() == false) {
-            printInfo("[Quests] Translation data not found, writing defaults to file.");
-            lang.saveNewLang();
-        }else
-            lang.loadLang();
-
-        if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
-
-            printInfo("[Quests] Quest data not found, writing defaults to file.");
-            FileConfiguration data = new YamlConfiguration();
-            try {
-                data.load(this.getResource("quests.yml"));
-                data.set("events", null);
-                data.save(new File(this.getDataFolder(), "quests.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        if (new File(this.getDataFolder(), "events.yml").exists() == false) {
-            printInfo("[Quests] Events data not found, writing defaults to file.");
-            FileConfiguration data = new YamlConfiguration();
-            data.options().copyHeader(true);
-            data.options().copyDefaults(true);
-            try {
-                data.load(this.getResource("events.yml"));
-                data.save(new File(this.getDataFolder(), "events.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-
-        }
-        
-        if (new File(this.getDataFolder(), "data.yml").exists() == false) {
-            printInfo("[Quests] Data file not found, writing default to file.");
-            FileConfiguration data = new YamlConfiguration();
-            data.options().copyHeader(true);
-            data.options().copyDefaults(true);
-            try {
-                data.save(new File(this.getDataFolder(), "data.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            loadData();
-        }
-
-        getServer().getPluginManager().registerEvents(pListener, this);
-        if (npcEffects) {
-            getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
-        }
-        printInfo("[Quests] Enabled.");
-
-        getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            @Override
-            public void run() {
-                loadQuests();
-                loadEvents();
-                log.log(Level.INFO, "[Quests] " + quests.size() + " Quest(s) loaded.");
-                log.log(Level.INFO, "[Quests] " + events.size() + " Event(s) loaded.");
-                log.log(Level.INFO, "[Quests] " + Lang.getPhrases() + " Phrase(s) loaded.");
-                questers.putAll(getOnlineQuesters());
-                if (snoop) {
-                    snoop();
-                }
-            }
-        }, 5L);
-
-    }
+	}
 
     @Override
     public void onDisable() {
@@ -456,10 +485,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public void loadData() {
-        
+
         YamlConfiguration config = new YamlConfiguration();
         File dataFile = new File(this.getDataFolder(), "data.yml");
-        
+
         try {
             config.load(dataFile);
         } catch (Exception e) {
@@ -467,15 +496,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         if(config.contains("npc-gui")) {
-            
+
             List<Integer> ids = config.getIntegerList("npc-gui");
             questNPCGUIs.clear();
             questNPCGUIs.addAll(ids);
-            
+
         }
-        
+
     }
-    
+
     public void loadModules() {
 
         File f = new File(this.getDataFolder(), "modules");
@@ -501,7 +530,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         try {
 
             JarFile jarFile = new JarFile(jar);
-            Enumeration e = jarFile.entries();
+            Enumeration<JarEntry> e = jarFile.entries();
 
             URL[] urls = {new URL("jar:file:" + jar.getPath() + "!/")};
 
@@ -517,9 +546,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 String className = je.getName().substring(0, je.getName().length() - 6);
                 className = className.replace('/', '.');
                 Class<?> c = Class.forName(className, true, cl);
-                
+
                 if(CustomRequirement.class.isAssignableFrom(c)){
-                    
+
                     Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
                     Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
                     CustomRequirement requirement = cstrctr.newInstance();
@@ -527,9 +556,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
                     String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
                     printInfo("[Quests] Loaded Module: " + name + " by " + author);
-                
+
                 }else if(CustomReward.class.isAssignableFrom(c)){
-                    
+
                     Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
                     Constructor<? extends CustomReward> cstrctr = rewardClass.getConstructor();
                     CustomReward reward = cstrctr.newInstance();
@@ -537,9 +566,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
                     String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
                     printInfo("[Quests] Loaded Module: " + name + " by " + author);
-                    
+
                 }else if(CustomObjective.class.isAssignableFrom(c)){
-                    
+
                     Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
                     Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
                     CustomObjective objective = cstrctr.newInstance();
@@ -547,7 +576,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
                     String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
                     printInfo("[Quests] Loaded Module: " + name + " by " + author);
-                    
+
                 }else{
                     printSevere("[Quests] Error: Unable to load module from file: " + jar.getName() + ", jar file is not a valid module!");
                 }
@@ -620,1340 +649,1444 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         if (cmd.getName().equalsIgnoreCase("quest")) {
 
-            if (cs instanceof Player) {
-
-                if (((Player) cs).hasPermission("quests.quest")) {
-
-                    if (args.length == 0) {
-
-                        if (getQuester(cs.getName()).currentQuest != null) {
-
-                            if (getQuester(cs.getName()).delayStartTime == 0) {
-                                cs.sendMessage(GOLD + Lang.get("questObjectivesTitle"));
-                            }
-
-                            for (String s : getQuester(cs.getName()).getObjectivesReal()) {
-
-                                cs.sendMessage(s);
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(YELLOW + Lang.get("noActiveQuest"));
-                            return true;
-
-                        }
-
-                    } else {
-
-                        if (((Player) cs).hasPermission("quests.questinfo")) {
-
-                            String name = "";
-
-                            if (args.length == 1) {
-                                name = args[0].toLowerCase();
-                            } else {
-
-                                int index = 0;
-                                for (String s : args) {
-
-                                    if (index == (args.length - 1)) {
-                                        name = name + s.toLowerCase();
-                                    } else {
-                                        name = name + s.toLowerCase() + " ";
-                                    }
-
-                                    index++;
-
-                                }
-                            }
-
-                            Quest quest = findQuest(name);
-
-                            if (quest != null) {
-
-                                Player player = (Player) cs;
-                                Quester quester = getQuester(player.getName());
-
-                                cs.sendMessage(GOLD + "- " + quest.name + " -");
-                                cs.sendMessage(" ");
-                                if (quest.redoDelay > -1) {
-
-                                    if (quest.redoDelay == 0) {
-                                        cs.sendMessage(DARKAQUA + Lang.get("readoable"));
-                                    } else {
-                                        String msg = Lang.get("redoableEvery");
-                                        msg = msg.replaceAll("<time>", AQUA + getTime(quest.redoDelay) + DARKAQUA);
-                                        cs.sendMessage(DARKAQUA + msg);
-                                    }
-
-                                }
-                                if (quest.npcStart != null) {
-                                    String msg = Lang.get("speakTo");
-                                    msg = msg.replaceAll("<npc>", quest.npcStart.getName());
-                                    cs.sendMessage(YELLOW + msg);
-                                } else {
-                                    cs.sendMessage(YELLOW + quest.description);
-                                }
-
-                                cs.sendMessage(" ");
-
-                                if (showQuestReqs == true) {
-
-                                    cs.sendMessage(GOLD + Lang.get("requirements"));
-
-                                    if (quest.permissionReqs.isEmpty() == false) {
-
-                                        for (String perm : quest.permissionReqs) {
-
-                                            if (permission.has(player, perm)) {
-                                                cs.sendMessage(GREEN + Lang.get("permissionDisplay") + " " + perm);
-                                            } else {
-                                                cs.sendMessage(RED + Lang.get("permissionDisplay") + " " + perm);
-                                            }
-
-                                        }
-
-                                    }
-
-                                    if (quest.heroesPrimaryClassReq != null) {
-
-                                        if (this.testPrimaryHeroesClass(quest.heroesPrimaryClassReq, player.getName())) {
-                                            cs.sendMessage(BOLD + "" + GREEN + quest.heroesPrimaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
-                                        } else {
-                                            cs.sendMessage(BOLD + "" + DARKRED + quest.heroesPrimaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
-                                        }
-
-                                    }
-
-                                    if (quest.heroesSecondaryClassReq != null) {
-
-                                        if (this.testSecondaryHeroesClass(quest.heroesSecondaryClassReq, player.getName())) {
-                                            cs.sendMessage(BOLD + "" + DARKRED + quest.heroesSecondaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
-                                        } else {
-                                            cs.sendMessage(BOLD + "" + GREEN + quest.heroesSecondaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
-                                        }
-
-                                    }
-
-                                    if (quest.mcMMOSkillReqs.isEmpty() == false) {
-
-                                        for (String skill : quest.mcMMOSkillReqs) {
-
-                                            int level = Quests.getMCMMOSkillLevel(Quests.getMcMMOSkill(skill), player.getName());
-                                            int req = quest.mcMMOAmountReqs.get(quest.mcMMOSkillReqs.indexOf(skill));
-                                            String skillName = MiscUtil.getCapitalized(skill);
-
-                                            if (level >= req) {
-                                                cs.sendMessage(GREEN + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
-                                            } else {
-                                                cs.sendMessage(RED + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
-                                            }
-
-                                        }
-
-                                    }
-
-                                    if (quest.questPointsReq != 0) {
-
-                                        if (quester.questPoints >= quest.questPointsReq) {
-                                            cs.sendMessage(GRAY + "- " + GREEN + quest.questPointsReq + " " + Lang.get("questPoints"));
-                                        } else {
-                                            cs.sendMessage(GRAY + "- " + RED + quest.questPointsReq + " " + Lang.get("questPoints"));
-                                        }
-
-                                    }
-
-                                    if (quest.moneyReq != 0) {
-
-                                        if (economy.getBalance(quester.name) >= quest.moneyReq) {
-                                            if (quest.moneyReq == 1) {
-                                                cs.sendMessage(GRAY + "- " + GREEN + quest.moneyReq + " " + Quests.getCurrency(false));
-                                            } else {
-                                                cs.sendMessage(GRAY + "- " + GREEN + quest.moneyReq + " " + Quests.getCurrency(true));
-                                            }
-                                        } else {
-                                            if (quest.moneyReq == 1) {
-                                                cs.sendMessage(GRAY + "- " + RED + quest.moneyReq + " " + Quests.getCurrency(false));
-                                            } else {
-                                                cs.sendMessage(GRAY + "- " + RED + quest.moneyReq + " " + Quests.getCurrency(true));
-                                            }
-                                        }
-
-                                    }
-
-                                    if (quest.items.isEmpty() == false) {
-
-                                        for (ItemStack is : quest.items) {
-
-                                            if (hasItem(player, is) == true) {
-                                                cs.sendMessage(GRAY + "- " + GREEN + ItemUtil.getString(is));
-                                            } else {
-                                                cs.sendMessage(GRAY + "- " + RED + ItemUtil.getString(is));
-                                            }
-
-                                        }
-
-                                    }
-
-                                    if (quest.neededQuests.isEmpty() == false) {
-
-                                        for (String s : quest.neededQuests) {
-
-                                            if (quester.completedQuests.contains(s)) {
-                                                cs.sendMessage(GRAY + "- " + GREEN + Lang.get("complete") + " " + ITALIC + s);
-                                            } else {
-                                                cs.sendMessage(GRAY + "- " + RED + Lang.get("complete") + " " + ITALIC + s);
-                                            }
-
-                                        }
-
-                                    }
-
-                                    if (quest.blockQuests.isEmpty() == false) {
-
-                                        for (String s : quest.blockQuests) {
-
-                                            if (quester.completedQuests.contains(s)) {
-                                                String msg = Lang.get("haveCompleted");
-                                                msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + RED);
-                                                cs.sendMessage(GRAY + "- " + RED + msg );
-                                            } else {
-                                                String msg = Lang.get("cannotComplete");
-                                                msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + GREEN);
-                                                cs.sendMessage(GRAY + "- " + GREEN + msg);
-                                            }
-
-                                        }
-
-                                    }
-
-                                }
-
-                            } else {
-
-                                cs.sendMessage(YELLOW + Lang.get("questNotFound"));
-                                return true;
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(RED + Lang.get("questInfoNoPerms"));
-                            return true;
-
-                        }
-
-                    }
-
-                } else {
-
-                    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-                    return true;
-
-                }
-
-            } else {
-
-                cs.sendMessage(YELLOW + "This command may only be performed in-game.");
-                return true;
-
-            }
-
-            return true;
+            return questCommandHandler(cs, args);
 
         } else if (cmd.getName().equalsIgnoreCase("quests")) {
 
-            if (cs instanceof Player) {
-
-                if (args.length == 0) {
-
-                    if (((Player) cs).hasPermission("quests.quests")) {
-
-                        Player p = (Player) cs;
-                        printHelp(p);
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-                        return true;
-
-                    }
-
-                } else {
-
-                    if (args[0].equalsIgnoreCase(Lang.get("COMMAND_LIST"))) {
-
-                        if (((Player) cs).hasPermission("quests.list")) {
-
-                            if (args.length == 1) {
-                                listQuests((Player) cs, 1);
-                            } else if (args.length == 2) {
-
-                                int page;
-
-                                try {
-
-                                    page = Integer.parseInt(args[1]);
-                                    if (page < 1) {
-
-                                        cs.sendMessage(YELLOW + Lang.get("pageSelectionPosNum"));
-                                        return true;
-
-                                    }
-
-                                } catch (NumberFormatException e) {
-
-                                    cs.sendMessage(YELLOW + Lang.get("pageSelectionNum"));
-                                    return true;
-
-                                }
-
-                                listQuests((Player) cs, page);
-                                return true;
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(RED + Lang.get("questListNoPerms"));
-                            return true;
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TAKE"))) {
-
-                        if (allowCommands == true) {
-
-                            if (((Player) cs).hasPermission("quests.take")) {
-
-                                if (args.length == 1) {
-
-                                    cs.sendMessage(YELLOW + Lang.get("COMMAND_TAKE_USAGE"));
-                                    return true;
-
-                                } else {
-
-                                    String name = null;
-
-                                    if (args.length == 2) {
-                                        name = args[1].toLowerCase();
-                                    } else {
-
-                                        boolean first = true;
-                                        int lastIndex = (args.length - 1);
-                                        int index = 0;
-
-                                        for (String s : args) {
-
-                                            if (index != 0) {
-
-                                                if (first) {
-
-                                                    first = false;
-                                                    if (args.length > 2) {
-                                                        name = s.toLowerCase() + " ";
-                                                    } else {
-                                                        name = s.toLowerCase();
-                                                    }
-
-                                                } else if (index == lastIndex) {
-                                                    name = name + s.toLowerCase();
-                                                } else {
-                                                    name = name + s.toLowerCase() + " ";
-                                                }
-
-                                            }
-
-                                            index++;
-
-                                        }
-
-                                    }
-
-                                    Quest questToFind = findQuest(name);
-
-                                    if (questToFind != null) {
-
-                                        final Quest quest = questToFind;
-                                        final Quester quester = getQuester(cs.getName());
-
-                                        if (quester.currentQuest != null) {
-                                            cs.sendMessage(YELLOW + Lang.get("questOneActive"));
-                                        } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
-                                            String msg = Lang.get("questAlreadyCompleted");
-                                            msg = msg.replaceAll("<quest>", PURPLE + quest.name + YELLOW);
-                                            cs.sendMessage(YELLOW + msg);
-                                        } else if (quest.npcStart != null && allowCommandsForNpcQuests == false) {
-                                            String msg = Lang.get("mustSpeakTo");
-                                            msg = msg.replaceAll("<npc>", PURPLE + quest.npcStart.getName() + YELLOW);
-                                            cs.sendMessage(YELLOW + msg);
-                                        } else if (quest.blockStart != null) {
-                                            String msg = Lang.get("noCommandStart");
-                                            msg = msg.replaceAll("<quest>", PURPLE + quest.name + YELLOW);
-                                            cs.sendMessage(YELLOW + msg);
-                                        } else {
-
-                                            boolean takeable = true;
-
-                                            if (quester.completedQuests.contains(quest.name)) {
-
-                                                if (quester.getDifference(quest) > 0) {
-                                                    String early = Lang.get("questTooEarly");
-                                                    early = early.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
-                                                    early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
-                                                    cs.sendMessage(YELLOW + early);
-                                                    takeable = false;
-                                                }
-
-                                            }
-
-                                            if (quest.region != null) {
-
-                                                boolean inRegion = false;
-                                                Player p = quester.getPlayer();
-                                                RegionManager rm = worldGuard.getRegionManager(p.getWorld());
-                                                Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
-                                                while (it.hasNext()) {
-                                                    ProtectedRegion pr = it.next();
-                                                    if (pr.getId().equalsIgnoreCase(quest.region)) {
-                                                        inRegion = true;
-                                                        break;
-                                                    }
-                                                }
-
-                                                if (inRegion == false) {
-                                                    String msg = Lang.get("questInvalidLocation");
-                                                    msg = msg.replaceAll("<quest>", AQUA + quest.name + YELLOW);
-                                                    cs.sendMessage(YELLOW + msg);
-                                                    takeable = false;
-                                                }
-
-                                            }
-
-                                            if (takeable == true) {
-
-                                                if (cs instanceof Conversable) {
-
-                                                    if (((Player) cs).isConversing() == false) {
-
-                                                        quester.questToTake = quest.name;
-
-                                                        String s
-                                                                = GOLD + "- " + PURPLE + quester.questToTake + GOLD + " -\n"
-                                                                + "\n"
-                                                                + RESET + getQuest(quester.questToTake).description + "\n";
-
-                                                        for (String msg : s.split("<br>")) {
-                                                            cs.sendMessage(msg);
-                                                        }
-
-                                                        conversationFactory.buildConversation((Conversable) cs).begin();
-
-                                                    } else {
-
-                                                        cs.sendMessage(YELLOW + Lang.get("alreadyConversing"));
-
-                                                    }
-
-                                                    return true;
-                                                } else {
-                                                    return false;
-                                                }
-
-                                            }
-
-                                        }
-
-                                    } else {
-                                        cs.sendMessage(YELLOW + Lang.get("questNotFound"));
-                                        return true;
-                                    }
-
-                                }
-
-                            } else {
-
-                                cs.sendMessage(RED + Lang.get("questTakeNoPerms"));
-                                return true;
-
-                            }
-
-                        } else {
-
-                            cs.sendMessage(YELLOW + Lang.get("questTakeDisabled"));
-                            return true;
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUIT"))) {
-
-                        if (allowQuitting == true) {
-
-                            if (((Player) cs).hasPermission("quests.quit")) {
-
-                                Quester quester = getQuester(cs.getName());
-                                if (quester.currentQuest != null) {
-
-                                    quester.resetObjectives();
-                                    quester.currentStage = null;
-                                    quester.currentStageIndex = 0;
-                                    String msg = Lang.get("questQuit");
-                                    msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + YELLOW);
-                                    cs.sendMessage(YELLOW + msg);
-                                    quester.currentQuest = null;
-                                    quester.saveData();
-                                    quester.loadData();
-                                    return true;
-
-                                } else {
-
-                                    cs.sendMessage(YELLOW + Lang.get("noActiveQuest"));
-                                    return true;
-
-                                }
-
-                            } else {
-
-                                cs.sendMessage(RED + Lang.get("questQuitNoPerms"));
-                                return true;
-                            }
-
-                        } else {
-
-                            cs.sendMessage(YELLOW + Lang.get("questQuitDisabled"));
-                            return true;
-
-                        }
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
-
-                        Quester quester = getQuester(cs.getName());
-                        cs.sendMessage(GOLD + "- " + cs.getName() + " -");
-                        cs.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
-                        if (quester.currentQuest == null) {
-                            cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
-                        } else {
-                            cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + quester.currentQuest.name);
-                        }
-
-                        String completed;
-
-                        if (quester.completedQuests.isEmpty()) {
-                            completed = PURPLE + Lang.get("none");
-                        } else {
-
-                            completed = PURPLE + "";
-                            for (String s : quester.completedQuests) {
-
-                                completed += s;
-
-                                if (quester.amountsCompleted.containsKey(s) && quester.amountsCompleted.get(s) > 1) {
-                                    completed += PINK + " (x" + quester.amountsCompleted.get(s) + ")";
-                                }
-
-                                if (quester.completedQuests.indexOf(s) < (quester.completedQuests.size() - 1)) {
-                                    completed += ", ";
-                                }
-
-                            }
-
-                        }
-
-                        cs.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
-                        cs.sendMessage(completed);
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TOP"))) {
-
-                        if (args.length == 1 || args.length > 2) {
-
-                            cs.sendMessage(YELLOW + Lang.get("COMMAND_TOP_USAGE"));
-
-                        } else {
-
-                            int topNumber;
-
-                            try {
-
-                                topNumber = Integer.parseInt(args[1]);
-
-                            } catch (NumberFormatException e) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-                                return true;
-
-                            }
-
-                            if (topNumber < 1) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputPosNum"));
-                                return true;
-
-                            }
-
-                            File folder = new File(this.getDataFolder(), "data");
-                            File[] playerFiles = folder.listFiles();
-
-                            Map<String, Integer> questPoints = new HashMap<String, Integer>();
-
-                            for (File f : playerFiles) {
-
-                                FileConfiguration data = new YamlConfiguration();
-                                try {
-
-                                    data.load(f);
-
-                                } catch (IOException e) {
-
-                                    e.printStackTrace();
-
-                                } catch (InvalidConfigurationException e) {
-                                    e.printStackTrace();
-                                }
-
-                                String name = f.getName().substring(0, (f.getName().indexOf(".")));
-                                questPoints.put(name, data.getInt("quest-points"));
-
-                            }
-
-                            LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) Quests.sort(questPoints);
-
-                            int numPrinted = 0;
-
-                            String msg = Lang.get("topQuestersTitle");
-                            msg = msg.replaceAll("<number>", PURPLE + "" + topNumber + GOLD);
-                            cs.sendMessage(GOLD + msg);
-                            for (String s : sortedMap.keySet()) {
-
-                                int i = (Integer) sortedMap.get(s);
-                                numPrinted++;
-                                cs.sendMessage(YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + PURPLE + i + YELLOW + " " + Lang.get("questPoints"));
-
-                                if (numPrinted == topNumber) {
-                                    break;
-                                }
-
-                            }
-
-                        }
-
-                        return true;
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EDITOR"))) {
-
-                        if (cs.hasPermission("quests.editor.editor")) {
-                            questFactory.convoCreator.buildConversation((Conversable) cs).begin();
-                        } else {
-                            cs.sendMessage(RED + Lang.get("questEditorNoPerms"));
-                        }
-                        return true;
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EVENTS"))) {
-
-                        if (cs.hasPermission("quests.editor.events.editor")) {
-                            eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
-                        } else {
-                            cs.sendMessage(RED + Lang.get("eventEditorNoPerms"));
-                        }
-                        return true;
-
-                    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
-
-                        cs.sendMessage(GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
-                        cs.sendMessage(GOLD + Lang.get("createdBy") + " " + DARKRED + "Blackvein");
-                        return true;
-
-                    } else {
-
-                        cs.sendMessage(YELLOW + Lang.get("questsUnknownCommand"));
-                        return true;
-
-                    }
-
-                }
-
-            } else {
-
-                cs.sendMessage(YELLOW + "This command may only be performed in-game.");
-                return true;
-
-            }
-
-            return true;
+            return questActionsCommandHandler(cs, args);
 
         } else if (cmd.getName().equalsIgnoreCase("questadmin")) {
 
-            if (args.length == 0) {
-
-                if (cs.hasPermission("quests.admin")) {
-                    printAdminHelp(cs);
-                } else {
-                    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-                }
-
-            } else if (args.length == 1) {
-
-                if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
-
-                    if (cs.hasPermission("quests.admin.reload")) {
-                        reloadQuests();
-                        cs.sendMessage(GOLD + Lang.get("questsReloaded"));
-                        String msg = Lang.get("numQuestsLoaded");
-                        msg = msg.replaceAll("<number>", PURPLE + String.valueOf(quests.size()) + GOLD);
-                        cs.sendMessage(GOLD + msg);
-                    } else {
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-                    }
-
-                } else {
-
-                    
-                    cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
-
-                }
-
-            } else if (args.length >= 2) {
-
-                if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
-
-                    if (cs.hasPermission("quests.admin.quit")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quester quester = getQuester(target.getName());
-                            if (quester.currentQuest == null) {
-
-                                String msg = Lang.get("noCurrentQuest");
-                                msg = msg.replaceAll("<player>", target.getName());
-                                cs.sendMessage(YELLOW + msg);
-
-                            } else {
-
-                                quester.resetObjectives();
-                                quester.currentStage = null;
-                                quester.currentStageIndex = 0;
-                                String msg1 = Lang.get("questForceQuit");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questForcedQuit");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-                                quester.currentQuest = null;
-
-                                quester.saveData();
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
-
-                    if (cs.hasPermission("quests.admin.nextstage")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quester quester = getQuester(target.getName());
-                            if (quester.currentQuest == null) {
-
-                                String msg = Lang.get("noCurrentQuest");
-                                msg = msg.replaceAll("<player>", target.getName());
-                                cs.sendMessage(YELLOW + msg);
-
-                            } else {
-
-                                String msg1 = Lang.get("questForceNextStage");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questForcedNextStage");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-                                quester.currentQuest.nextStage(quester);
-
-                                quester.saveData();
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
-
-                    if (cs.hasPermission("quests.admin.setstage")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            //To ensure the correct player is selected
-                            if (p.getName().equalsIgnoreCase(args[1])) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-                            //
-                            for (Player p : getServer().getOnlinePlayers()) {
-
-                                if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                    target = p;
-                                    break;
-                                }
-                            }
-                        }
-                        int stage = -1;
-                        if (args.length > 2) {
-                            try {
-                                stage = Integer.parseInt(args[2]);
-                            } catch (NumberFormatException e) {
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-                            }
-                        } else {
-                            cs.sendMessage(YELLOW + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_USAGE"));
-                            return true;
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quester quester = getQuester(target.getName());
-                            if (quester.currentQuest == null) {
-
-                                String msg = Lang.get("noCurrentQuest");
-                                msg = msg.replaceAll("<player>", target.getName());
-                                cs.sendMessage(YELLOW + msg);
-
-                            } else {
-
-                                try {
-                                    quester.currentQuest.setStage(quester, stage);
-                                } catch (InvalidStageException e) {
-                                    String msg = Lang.get("invalidStageNum");
-                                    msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + RED);
-                                    cs.sendMessage(ChatColor.RED + msg);
-                                }
-
-                                quester.saveData();
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
-
-                    if (cs.hasPermission("quests.admin.finish")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quester quester = getQuester(target.getName());
-                            if (quester.currentQuest == null) {
-
-                                String msg = Lang.get("noCurrentQuest");
-                                msg = msg.replaceAll("<player>", target.getName());
-                                cs.sendMessage(YELLOW + msg);
-
-                            } else {
-
-                                String msg1 = Lang.get("questForceFinish");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questForcedFinish");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-                                quester.currentQuest.completeQuest(quester);
-
-                                quester.saveData();
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
-
-                    if (cs.hasPermission("quests.admin.points.all")) {
-
-                        final int amount;
-
-                        try {
-
-                            amount = Integer.parseInt(args[1]);
-
-                            if (amount < 0) {
-                                cs.sendMessage(RED + Lang.get("inputPosNum"));
-                                return true;
-                            }
-
-                        } catch (NumberFormatException e) {
-                            cs.sendMessage(RED + Lang.get("inputNum"));
-                            return true;
-                        }
-
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                File questerFolder = new File(Quests.this.getDataFolder(), "data");
-                                if (questerFolder.exists() && questerFolder.isDirectory()) {
-
-                                    FileConfiguration data = new YamlConfiguration();
-                                    int failCount = 0;
-                                    boolean suppressed = false;
-
-                                    for (File f : questerFolder.listFiles()) {
-
-                                        try {
-
-                                            data.load(f);
-                                            data.set("quest-points", amount);
-                                            data.save(f);
-
-                                        } catch (IOException e) {
-
-                                            if (failCount < 10) {
-                                                String msg = Lang.get("errorReading");
-                                                msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                                cs.sendMessage(RED + msg);
-                                                failCount++;
-                                            } else if (suppressed == false) {
-                                                String msg = Lang.get("errorReadingSuppress");
-                                                msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                                cs.sendMessage(RED + msg);
-                                                suppressed = true;
-                                            }
-
-                                        } catch (InvalidConfigurationException e) {
-                                            
-                                            if (failCount < 10) {
-                                                String msg = Lang.get("errorReading");
-                                                msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                                cs.sendMessage(RED + msg);
-                                                failCount++;
-                                            } else if (suppressed == false) {
-                                                String msg = Lang.get("errorReadingSuppress");
-                                                msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                                cs.sendMessage(RED + msg);
-                                                suppressed = true;
-                                            }
-                                            
-                                        }
-
-                                    }
-
-                                    cs.sendMessage(GREEN + Lang.get("done"));
-                                    
-                                    String msg = Lang.get("allQuestPointsSet");
-                                    msg = msg.replaceAll("<number>", AQUA + "" + amount + GOLD);
-                                    getServer().broadcastMessage(YELLOW + "[Quests] " + GOLD + msg);
-
-                                } else {
-                                    cs.sendMessage(RED + Lang.get("errorDataFolder"));
-                                }
-
-                            }
-                        });
-
-                        cs.sendMessage(YELLOW + Lang.get("settingAllQuestPoints"));
-                        for (Quester q : questers.values()) {
-
-                            q.questPoints = amount;
-
-                        }
-                        thread.start();
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
-
-                    if (cs.hasPermission("quests.admin.give")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            Quest questToGive;
-
-                            String name = null;
-
-                            if (args.length == 3) {
-                                name = args[2].toLowerCase();
-                            } else {
-
-                                boolean first = true;
-                                int lastIndex = (args.length - 1);
-                                int index = 0;
-
-                                for (String s : args) {
-
-                                    if (index != 0) {
-
-                                        if (first) {
-
-                                            first = false;
-                                            if (args.length > 2) {
-                                                name = s.toLowerCase() + " ";
-                                            } else {
-                                                name = s.toLowerCase();
-                                            }
-
-                                        } else if (index == lastIndex) {
-                                            name = name + s.toLowerCase();
-                                        } else {
-                                            name = name + s.toLowerCase() + " ";
-                                        }
-
-                                    }
-
-                                    index++;
-
-                                }
-
-                            }
-
-                            questToGive = findQuest(name);
-
-                            if (questToGive == null) {
-
-                                cs.sendMessage(YELLOW + Lang.get("questNotFound"));
-
-                            } else {
-
-                                Quester quester = getQuester(target.getName());
-                                quester.resetObjectives();
-
-                                String msg1 = Lang.get("questForceTake");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questForcedTake");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-                                quester.takeQuest(questToGive, true);
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
-
-                    if (cs.hasPermission("quests.admin.points")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().equalsIgnoreCase(args[1])) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            int points;
-
-                            try {
-
-                                points = Integer.parseInt(args[2]);
-
-                            } catch (NumberFormatException e) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-                                return true;
-
-                            }
-
-                            Quester quester = getQuester(target.getName());
-                            quester.questPoints = points;
-                            
-                            String msg1 = Lang.get("setQuestPoints");
-                            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                            cs.sendMessage(GOLD + msg1);
-                            String msg2 = Lang.get("questPointsSet");
-                            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                            target.sendMessage(GREEN + msg2);
-
-                            quester.saveData();
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
-
-                    if (cs.hasPermission("quests.admin.takepoints")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().equalsIgnoreCase(args[1])) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            int points;
-
-                            try {
-
-                                points = Integer.parseInt(args[2]);
-
-                            } catch (NumberFormatException e) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-                                return true;
-
-                            }
-                            Quester quester = getQuester(target.getName());
-                            quester.questPoints -= Math.abs(points);
-                            
-                            String msg1 = Lang.get("takeQuestPoints");
-                            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                            cs.sendMessage(GOLD + msg1);
-                            String msg2 = Lang.get("questPointsTaken");
-                            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                            target.sendMessage(GREEN + msg2);
-
-                            quester.saveData();
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
-
-                    if (cs.hasPermission("quests.admin.givepoints")) {
-
-                        Player target = null;
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-
-                            if (p.getName().equalsIgnoreCase(args[1])) {
-                                target = p;
-                                break;
-                            }
-
-                        }
-
-                        if (target == null) {
-
-                            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-
-                        } else {
-
-                            int points;
-
-                            try {
-
-                                points = Integer.parseInt(args[2]);
-
-                                Quester quester = getQuester(target.getName());
-                                quester.questPoints += Math.abs(points);
-                                
-                                String msg1 = Lang.get("giveQuestPoints");
-                                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                                msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                cs.sendMessage(GOLD + msg1);
-                                String msg2 = Lang.get("questPointsGiven");
-                                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                                msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
-                                target.sendMessage(GREEN + msg2);
-
-                                quester.saveData();
-
-                                return true;
-
-                            } catch (NumberFormatException e) {
-
-                                cs.sendMessage(YELLOW + Lang.get("inputNum"));
-
-                            }
-
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-                } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"))) {
-
-                    if (cs.hasPermission("quests.admin.togglegui")) {
-
-                        try {
-                            
-                            int i = Integer.parseInt(args[1]);
-                            if (citizens.getNPCRegistry().getById(i) == null) {
-                                String msg = Lang.get("errorNPCID");
-                                msg = msg.replaceAll("errorNPCID", PURPLE + "" + i + RED);
-                                cs.sendMessage(RED + msg);
-                            }else if (questNPCGUIs.contains(i)) {
-                                questNPCGUIs.remove(questNPCGUIs.indexOf(i));
-                                updateData();
-                                String msg = Lang.get("enableNPCGUI");
-                                msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
-                                cs.sendMessage(YELLOW + msg);
-                            }else {
-                                questNPCGUIs.add(i);
-                                updateData();
-                                String msg = Lang.get("disableNPCGUI");
-                                msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
-                                cs.sendMessage(YELLOW + msg);
-                            }
-                            
-                        } catch (NumberFormatException nfe) {
-                            cs.sendMessage(RED + Lang.get("inputNum"));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            cs.sendMessage(RED + Lang.get("unknownError"));
-                        }
-
-                    } else {
-
-                        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-
-                    }
-                } else {
-
-                    cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
-
-                }
-
-            }
-
-            return true;
+            return questAdminCommandHandler(cs, args);
 
         }
 
         return false;
 
     }
+
+	private boolean questAdminCommandHandler(final CommandSender cs, String[] args) {
+		if (args.length == 0) {
+
+		    adminHelp(cs);
+
+		} else if (args.length == 1) {
+
+		    if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
+
+		        adminReload(cs);
+
+		    } else {
+
+		        cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
+
+		    }
+
+		} else if (args.length >= 2) {
+
+		    if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
+
+		        adminQuit(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
+
+		        adminNextStage(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
+
+		        adminSetStage(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
+
+		        adminFinish(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
+
+		        adminPointsAll(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
+
+		        adminGive(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
+
+		        adminPoints(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
+
+		        adminTakePoints(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
+
+		        adminGivePoints(cs, args);
+
+		    } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"))) {
+
+		        adminToggieGUI(cs, args);
+
+		    } else {
+
+		        cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
+
+		    }
+
+		}
+
+		return true;
+	}
+
+	private void adminHelp(final CommandSender cs) {
+		if (cs.hasPermission("quests.admin")) {
+		    printAdminHelp(cs);
+		} else {
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+		}
+	}
+
+	private void adminReload(final CommandSender cs) {
+		if (cs.hasPermission("quests.admin.reload")) {
+		    reloadQuests();
+		    cs.sendMessage(GOLD + Lang.get("questsReloaded"));
+		    String msg = Lang.get("numQuestsLoaded");
+		    msg = msg.replaceAll("<number>", PURPLE + String.valueOf(quests.size()) + GOLD);
+		    cs.sendMessage(GOLD + msg);
+		} else {
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+		}
+	}
+
+	private void adminToggieGUI(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.togglegui")) {
+
+		    try {
+
+		        int i = Integer.parseInt(args[1]);
+		        if (citizens.getNPCRegistry().getById(i) == null) {
+		            String msg = Lang.get("errorNPCID");
+		            msg = msg.replaceAll("errorNPCID", PURPLE + "" + i + RED);
+		            cs.sendMessage(RED + msg);
+		        }else if (questNPCGUIs.contains(i)) {
+		            questNPCGUIs.remove(questNPCGUIs.indexOf(i));
+		            updateData();
+		            String msg = Lang.get("enableNPCGUI");
+		            msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
+		            cs.sendMessage(YELLOW + msg);
+		        }else {
+		            questNPCGUIs.add(i);
+		            updateData();
+		            String msg = Lang.get("disableNPCGUI");
+		            msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
+		            cs.sendMessage(YELLOW + msg);
+		        }
+
+		    } catch (NumberFormatException nfe) {
+		        cs.sendMessage(RED + Lang.get("inputNum"));
+		    } catch (Exception ex) {
+		        ex.printStackTrace();
+		        cs.sendMessage(RED + Lang.get("unknownError"));
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminGivePoints(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.givepoints")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().equalsIgnoreCase(args[1])) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        int points;
+
+		        try {
+
+		            points = Integer.parseInt(args[2]);
+
+		            Quester quester = getQuester(target.getName());
+		            quester.questPoints += Math.abs(points);
+
+		            String msg1 = Lang.get("giveQuestPoints");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questPointsGiven");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+
+		            quester.saveData();
+
+		            return;
+
+		        } catch (NumberFormatException e) {
+
+		            cs.sendMessage(YELLOW + Lang.get("inputNum"));
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminTakePoints(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.takepoints")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().equalsIgnoreCase(args[1])) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        int points;
+
+		        try {
+
+		            points = Integer.parseInt(args[2]);
+
+		        } catch (NumberFormatException e) {
+
+		            cs.sendMessage(YELLOW + Lang.get("inputNum"));
+		            return;
+
+		        }
+		        Quester quester = getQuester(target.getName());
+		        quester.questPoints -= Math.abs(points);
+
+		        String msg1 = Lang.get("takeQuestPoints");
+		        msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		        msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		        cs.sendMessage(GOLD + msg1);
+		        String msg2 = Lang.get("questPointsTaken");
+		        msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		        msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		        target.sendMessage(GREEN + msg2);
+
+		        quester.saveData();
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminPoints(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.points")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().equalsIgnoreCase(args[1])) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        int points;
+
+		        try {
+
+		            points = Integer.parseInt(args[2]);
+
+		        } catch (NumberFormatException e) {
+
+		            cs.sendMessage(YELLOW + Lang.get("inputNum"));
+		            return;
+
+		        }
+
+		        Quester quester = getQuester(target.getName());
+		        quester.questPoints = points;
+
+		        String msg1 = Lang.get("setQuestPoints");
+		        msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		        msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		        cs.sendMessage(GOLD + msg1);
+		        String msg2 = Lang.get("questPointsSet");
+		        msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		        msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		        target.sendMessage(GREEN + msg2);
+
+		        quester.saveData();
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminGive(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.give")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quest questToGive;
+
+		        String name = null;
+
+		        if (args.length == 3) {
+		            name = args[2].toLowerCase();
+		        } else {
+
+		            boolean first = true;
+		            int lastIndex = (args.length - 1);
+		            int index = 0;
+
+		            for (String s : args) {
+
+		                if (index != 0) {
+
+		                    if (first) {
+
+		                        first = false;
+		                        if (args.length > 2) {
+		                            name = s.toLowerCase() + " ";
+		                        } else {
+		                            name = s.toLowerCase();
+		                        }
+
+		                    } else if (index == lastIndex) {
+		                        name = name + s.toLowerCase();
+		                    } else {
+		                        name = name + s.toLowerCase() + " ";
+		                    }
+
+		                }
+
+		                index++;
+
+		            }
+
+		        }
+
+		        questToGive = findQuest(name);
+
+		        if (questToGive == null) {
+
+		            cs.sendMessage(YELLOW + Lang.get("questNotFound"));
+
+		        } else {
+
+		            Quester quester = getQuester(target.getName());
+		            quester.resetObjectives();
+
+		            String msg1 = Lang.get("questForceTake");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questForcedTake");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+		            quester.takeQuest(questToGive, true);
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminPointsAll(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.points.all")) {
+
+		    final int amount;
+
+		    try {
+
+		        amount = Integer.parseInt(args[1]);
+
+		        if (amount < 0) {
+		            cs.sendMessage(RED + Lang.get("inputPosNum"));
+		            return;
+		        }
+
+		    } catch (NumberFormatException e) {
+		        cs.sendMessage(RED + Lang.get("inputNum"));
+		        return;
+		    }
+
+		    Thread thread = new Thread(new Runnable() {
+		        @Override
+		        public void run() {
+
+		            File questerFolder = new File(Quests.this.getDataFolder(), "data");
+		            if (questerFolder.exists() && questerFolder.isDirectory()) {
+
+		                FileConfiguration data = new YamlConfiguration();
+		                int failCount = 0;
+		                boolean suppressed = false;
+
+		                for (File f : questerFolder.listFiles()) {
+
+		                    try {
+
+		                        data.load(f);
+		                        data.set("quest-points", amount);
+		                        data.save(f);
+
+		                    } catch (IOException e) {
+
+		                        if (failCount < 10) {
+		                            String msg = Lang.get("errorReading");
+		                            msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
+		                            cs.sendMessage(RED + msg);
+		                            failCount++;
+		                        } else if (suppressed == false) {
+		                            String msg = Lang.get("errorReadingSuppress");
+		                            msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
+		                            cs.sendMessage(RED + msg);
+		                            suppressed = true;
+		                        }
+
+		                    } catch (InvalidConfigurationException e) {
+
+		                        if (failCount < 10) {
+		                            String msg = Lang.get("errorReading");
+		                            msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
+		                            cs.sendMessage(RED + msg);
+		                            failCount++;
+		                        } else if (suppressed == false) {
+		                            String msg = Lang.get("errorReadingSuppress");
+		                            msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
+		                            cs.sendMessage(RED + msg);
+		                            suppressed = true;
+		                        }
+
+		                    }
+
+		                }
+
+		                cs.sendMessage(GREEN + Lang.get("done"));
+
+		                String msg = Lang.get("allQuestPointsSet");
+		                msg = msg.replaceAll("<number>", AQUA + "" + amount + GOLD);
+		                getServer().broadcastMessage(YELLOW + "[Quests] " + GOLD + msg);
+
+		            } else {
+		                cs.sendMessage(RED + Lang.get("errorDataFolder"));
+		            }
+
+		        }
+		    });
+
+		    cs.sendMessage(YELLOW + Lang.get("settingAllQuestPoints"));
+		    for (Quester q : questers.values()) {
+
+		        q.questPoints = amount;
+
+		    }
+		    thread.start();
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminFinish(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.finish")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quester quester = getQuester(target.getName());
+		        if (quester.currentQuest == null) {
+
+		            String msg = Lang.get("noCurrentQuest");
+		            msg = msg.replaceAll("<player>", target.getName());
+		            cs.sendMessage(YELLOW + msg);
+
+		        } else {
+
+		            String msg1 = Lang.get("questForceFinish");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questForcedFinish");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+		            quester.currentQuest.completeQuest(quester);
+
+		            quester.saveData();
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminSetStage(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.setstage")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        //To ensure the correct player is selected
+		        if (p.getName().equalsIgnoreCase(args[1])) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+		        //
+		        for (Player p : getServer().getOnlinePlayers()) {
+
+		            if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		                target = p;
+		                break;
+		            }
+		        }
+		    }
+		    int stage = -1;
+		    if (args.length > 2) {
+		        try {
+		            stage = Integer.parseInt(args[2]);
+		        } catch (NumberFormatException e) {
+		            cs.sendMessage(YELLOW + Lang.get("inputNum"));
+		        }
+		    } else {
+		        cs.sendMessage(YELLOW + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_USAGE"));
+		        return;
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quester quester = getQuester(target.getName());
+		        if (quester.currentQuest == null) {
+
+		            String msg = Lang.get("noCurrentQuest");
+		            msg = msg.replaceAll("<player>", target.getName());
+		            cs.sendMessage(YELLOW + msg);
+
+		        } else {
+
+		            try {
+		                quester.currentQuest.setStage(quester, stage);
+		            } catch (InvalidStageException e) {
+		                String msg = Lang.get("invalidStageNum");
+		                msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + RED);
+		                cs.sendMessage(ChatColor.RED + msg);
+		            }
+
+		            quester.saveData();
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminNextStage(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.nextstage")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quester quester = getQuester(target.getName());
+		        if (quester.currentQuest == null) {
+
+		            String msg = Lang.get("noCurrentQuest");
+		            msg = msg.replaceAll("<player>", target.getName());
+		            cs.sendMessage(YELLOW + msg);
+
+		        } else {
+
+		            String msg1 = Lang.get("questForceNextStage");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questForcedNextStage");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+		            quester.currentQuest.nextStage(quester);
+
+		            quester.saveData();
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private void adminQuit(final CommandSender cs, String[] args) {
+		if (cs.hasPermission("quests.admin.quit")) {
+
+		    Player target = null;
+
+		    for (Player p : getServer().getOnlinePlayers()) {
+
+		        if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
+		            target = p;
+		            break;
+		        }
+
+		    }
+
+		    if (target == null) {
+
+		        cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+
+		    } else {
+
+		        Quester quester = getQuester(target.getName());
+		        if (quester.currentQuest == null) {
+
+		            String msg = Lang.get("noCurrentQuest");
+		            msg = msg.replaceAll("<player>", target.getName());
+		            cs.sendMessage(YELLOW + msg);
+
+		        } else {
+
+		            quester.resetObjectives();
+		            quester.currentStage = null;
+		            quester.currentStageIndex = 0;
+		            String msg1 = Lang.get("questForceQuit");
+		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            cs.sendMessage(GOLD + msg1);
+		            String msg2 = Lang.get("questForcedQuit");
+		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + quester.currentQuest.name + GOLD);
+		            target.sendMessage(GREEN + msg2);
+		            quester.currentQuest = null;
+
+		            quester.saveData();
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+		}
+	}
+
+	private boolean questActionsCommandHandler(final CommandSender cs, String[] args) {
+		if (cs instanceof Player) {
+
+		    if (args.length == 0) {
+
+		        questsHelp(cs);
+
+		    } else {
+
+		        if (args[0].equalsIgnoreCase(Lang.get("COMMAND_LIST"))) {
+
+		            questsList(cs, args);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TAKE"))) {
+
+		            questsTake(cs, args);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUIT"))) {
+
+		            questsQuit(cs);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
+
+		            questsStats(cs);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TOP"))) {
+
+		            questsTop(cs, args);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EDITOR"))) {
+
+		            questsEditor(cs);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EVENTS"))) {
+
+		            questsEvents(cs);
+
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
+
+		            questsInfo(cs);
+
+		        } else {
+
+		            cs.sendMessage(YELLOW + Lang.get("questsUnknownCommand"));
+		            return true;
+
+		        }
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + "This command may only be performed in-game.");
+		    return true;
+
+		}
+
+		return true;
+	}
+
+	private boolean questsInfo(final CommandSender cs) {
+		cs.sendMessage(GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
+		cs.sendMessage(GOLD + Lang.get("createdBy") + " " + DARKRED + "Blackvein");
+		return true;
+	}
+
+	private boolean questsEvents(final CommandSender cs) {
+		if (cs.hasPermission("quests.editor.events.editor")) {
+		    eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
+		} else {
+		    cs.sendMessage(RED + Lang.get("eventEditorNoPerms"));
+		}
+		return true;
+	}
+
+	private boolean questsEditor(final CommandSender cs) {
+		if (cs.hasPermission("quests.editor.editor")) {
+		    questFactory.convoCreator.buildConversation((Conversable) cs).begin();
+		} else {
+		    cs.sendMessage(RED + Lang.get("questEditorNoPerms"));
+		}
+		return true;
+	}
+
+	private boolean questsTop(final CommandSender cs, String[] args) {
+		if (args.length == 1 || args.length > 2) {
+
+		    cs.sendMessage(YELLOW + Lang.get("COMMAND_TOP_USAGE"));
+
+		} else {
+
+		    int topNumber;
+
+		    try {
+
+		        topNumber = Integer.parseInt(args[1]);
+
+		    } catch (NumberFormatException e) {
+
+		        cs.sendMessage(YELLOW + Lang.get("inputNum"));
+		        return true;
+
+		    }
+
+		    if (topNumber < 1) {
+
+		        cs.sendMessage(YELLOW + Lang.get("inputPosNum"));
+		        return true;
+
+		    }
+
+		    File folder = new File(this.getDataFolder(), "data");
+		    File[] playerFiles = folder.listFiles();
+
+		    Map<String, Integer> questPoints = new HashMap<String, Integer>();
+
+		    for (File f : playerFiles) {
+
+		        FileConfiguration data = new YamlConfiguration();
+		        try {
+
+		            data.load(f);
+
+		        } catch (IOException e) {
+
+		            e.printStackTrace();
+
+		        } catch (InvalidConfigurationException e) {
+		            e.printStackTrace();
+		        }
+
+		        String name = f.getName().substring(0, (f.getName().indexOf(".")));
+		        questPoints.put(name, data.getInt("quest-points"));
+
+		    }
+
+		    LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) Quests.sort(questPoints);
+
+		    int numPrinted = 0;
+
+		    String msg = Lang.get("topQuestersTitle");
+		    msg = msg.replaceAll("<number>", PURPLE + "" + topNumber + GOLD);
+		    cs.sendMessage(GOLD + msg);
+		    for (String s : sortedMap.keySet()) {
+
+		        int i = (Integer) sortedMap.get(s);
+		        numPrinted++;
+		        cs.sendMessage(YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + PURPLE + i + YELLOW + " " + Lang.get("questPoints"));
+
+		        if (numPrinted == topNumber) {
+		            break;
+		        }
+
+		    }
+
+		}
+
+		return true;
+	}
+
+	private void questsStats(final CommandSender cs) {
+		Quester quester = getQuester(cs.getName());
+		cs.sendMessage(GOLD + "- " + cs.getName() + " -");
+		cs.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
+		if (quester.currentQuest == null) {
+		    cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
+		} else {
+		    cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + quester.currentQuest.name);
+		}
+
+		String completed;
+
+		if (quester.completedQuests.isEmpty()) {
+		    completed = PURPLE + Lang.get("none");
+		} else {
+
+		    completed = PURPLE + "";
+		    for (String s : quester.completedQuests) {
+
+		        completed += s;
+
+		        if (quester.amountsCompleted.containsKey(s) && quester.amountsCompleted.get(s) > 1) {
+		            completed += PINK + " (x" + quester.amountsCompleted.get(s) + ")";
+		        }
+
+		        if (quester.completedQuests.indexOf(s) < (quester.completedQuests.size() - 1)) {
+		            completed += ", ";
+		        }
+
+		    }
+
+		}
+
+		cs.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
+		cs.sendMessage(completed);
+	}
+
+	private boolean questsQuit(final CommandSender cs) {
+		if (allowQuitting == true) {
+
+		    if (((Player) cs).hasPermission("quests.quit")) {
+
+		        Quester quester = getQuester(cs.getName());
+		        if (quester.currentQuest != null) {
+
+		            quester.resetObjectives();
+		            quester.currentStage = null;
+		            quester.currentStageIndex = 0;
+		            String msg = Lang.get("questQuit");
+		            msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + YELLOW);
+		            cs.sendMessage(YELLOW + msg);
+		            quester.currentQuest = null;
+		            quester.saveData();
+		            quester.loadData();
+		            return true;
+
+		        } else {
+
+		            cs.sendMessage(YELLOW + Lang.get("noActiveQuest"));
+		            return true;
+
+		        }
+
+		    } else {
+
+		        cs.sendMessage(RED + Lang.get("questQuitNoPerms"));
+		        return true;
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + Lang.get("questQuitDisabled"));
+		    return true;
+
+		}
+	}
+
+	private void questsTake(final CommandSender cs, String[] args) {
+		if (allowCommands == true) {
+
+		    if (((Player) cs).hasPermission("quests.take")) {
+
+		        if (args.length == 1) {
+
+		            cs.sendMessage(YELLOW + Lang.get("COMMAND_TAKE_USAGE"));
+		            return;
+
+		        } else {
+
+		            String name = null;
+
+		            if (args.length == 2) {
+		                name = args[1].toLowerCase();
+		            } else {
+
+		                boolean first = true;
+		                int lastIndex = (args.length - 1);
+		                int index = 0;
+
+		                for (String s : args) {
+
+		                    if (index != 0) {
+
+		                        if (first) {
+
+		                            first = false;
+		                            if (args.length > 2) {
+		                                name = s.toLowerCase() + " ";
+		                            } else {
+		                                name = s.toLowerCase();
+		                            }
+
+		                        } else if (index == lastIndex) {
+		                            name = name + s.toLowerCase();
+		                        } else {
+		                            name = name + s.toLowerCase() + " ";
+		                        }
+
+		                    }
+
+		                    index++;
+
+		                }
+
+		            }
+
+		            Quest questToFind = findQuest(name);
+
+		            if (questToFind != null) {
+
+		                final Quest quest = questToFind;
+		                final Quester quester = getQuester(cs.getName());
+
+		                if (quester.currentQuest != null) {
+		                    cs.sendMessage(YELLOW + Lang.get("questOneActive"));
+		                } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
+		                    String msg = Lang.get("questAlreadyCompleted");
+		                    msg = msg.replaceAll("<quest>", PURPLE + quest.name + YELLOW);
+		                    cs.sendMessage(YELLOW + msg);
+		                } else if (quest.npcStart != null && allowCommandsForNpcQuests == false) {
+		                    String msg = Lang.get("mustSpeakTo");
+		                    msg = msg.replaceAll("<npc>", PURPLE + quest.npcStart.getName() + YELLOW);
+		                    cs.sendMessage(YELLOW + msg);
+		                } else if (quest.blockStart != null) {
+		                    String msg = Lang.get("noCommandStart");
+		                    msg = msg.replaceAll("<quest>", PURPLE + quest.name + YELLOW);
+		                    cs.sendMessage(YELLOW + msg);
+		                } else {
+
+		                    boolean takeable = true;
+
+		                    if (quester.completedQuests.contains(quest.name)) {
+
+		                        if (quester.getDifference(quest) > 0) {
+		                            String early = Lang.get("questTooEarly");
+		                            early = early.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
+		                            early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
+		                            cs.sendMessage(YELLOW + early);
+		                            takeable = false;
+		                        }
+
+		                    }
+
+		                    if (quest.region != null) {
+
+		                        boolean inRegion = false;
+		                        Player p = quester.getPlayer();
+		                        RegionManager rm = worldGuard.getRegionManager(p.getWorld());
+		                        Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
+		                        while (it.hasNext()) {
+		                            ProtectedRegion pr = it.next();
+		                            if (pr.getId().equalsIgnoreCase(quest.region)) {
+		                                inRegion = true;
+		                                break;
+		                            }
+		                        }
+
+		                        if (inRegion == false) {
+		                            String msg = Lang.get("questInvalidLocation");
+		                            msg = msg.replaceAll("<quest>", AQUA + quest.name + YELLOW);
+		                            cs.sendMessage(YELLOW + msg);
+		                            takeable = false;
+		                        }
+
+		                    }
+
+		                    if (takeable == true) {
+
+		                        if (cs instanceof Conversable) {
+
+		                            if (((Player) cs).isConversing() == false) {
+
+		                                quester.questToTake = quest.name;
+
+		                                String s
+		                                        = GOLD + "- " + PURPLE + quester.questToTake + GOLD + " -\n"
+		                                        + "\n"
+		                                        + RESET + getQuest(quester.questToTake).description + "\n";
+
+		                                for (String msg : s.split("<br>")) {
+		                                    cs.sendMessage(msg);
+		                                }
+
+		                                conversationFactory.buildConversation((Conversable) cs).begin();
+
+		                            } else {
+
+		                                cs.sendMessage(YELLOW + Lang.get("alreadyConversing"));
+
+		                            }
+
+		                            return;
+		                        } else {
+		                            return;
+		                        }
+
+		                    }
+
+		                }
+
+		            } else {
+		                cs.sendMessage(YELLOW + Lang.get("questNotFound"));
+		                return;
+		            }
+
+		        }
+
+		    } else {
+
+		        cs.sendMessage(RED + Lang.get("questTakeNoPerms"));
+		        return;
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + Lang.get("questTakeDisabled"));
+		    return;
+
+		}
+	}
+
+	private void questsList(final CommandSender cs, String[] args) {
+		if (((Player) cs).hasPermission("quests.list")) {
+
+		    if (args.length == 1) {
+		        listQuests((Player) cs, 1);
+		    } else if (args.length == 2) {
+
+		        int page;
+
+		        try {
+
+		            page = Integer.parseInt(args[1]);
+		            if (page < 1) {
+
+		                cs.sendMessage(YELLOW + Lang.get("pageSelectionPosNum"));
+		                return;
+
+		            }
+
+		        } catch (NumberFormatException e) {
+
+		            cs.sendMessage(YELLOW + Lang.get("pageSelectionNum"));
+		            return;
+
+		        }
+
+		        listQuests((Player) cs, page);
+		        return;
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questListNoPerms"));
+		    return;
+
+		}
+	}
+
+	private void questsHelp(final CommandSender cs) {
+		if (((Player) cs).hasPermission("quests.quests")) {
+
+		    Player p = (Player) cs;
+		    printHelp(p);
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+		}
+	}
+
+	private boolean questCommandHandler(final CommandSender cs, String[] args) {
+		if (cs instanceof Player) {
+
+		    if (((Player) cs).hasPermission("quests.quest")) {
+
+		        if (args.length == 0) {
+
+		            showObjectives(cs);
+
+		        } else {
+
+		            showQuestDetails(cs, args);
+
+		        }
+
+		    } else {
+
+		        cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+		        return true;
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + "This command may only be performed in-game.");
+		    return true;
+
+		}
+
+		return true;
+	}
+
+	private void showQuestDetails(final CommandSender cs, String[] args) {
+		if (((Player) cs).hasPermission("quests.questinfo")) {
+
+		    String name = "";
+
+		    if (args.length == 1) {
+		        name = args[0].toLowerCase();
+		    } else {
+
+		        int index = 0;
+		        for (String s : args) {
+
+		            if (index == (args.length - 1)) {
+		                name = name + s.toLowerCase();
+		            } else {
+		                name = name + s.toLowerCase() + " ";
+		            }
+
+		            index++;
+
+		        }
+		    }
+
+		    Quest quest = findQuest(name);
+
+		    if (quest != null) {
+
+		        Player player = (Player) cs;
+		        Quester quester = getQuester(player.getName());
+
+		        cs.sendMessage(GOLD + "- " + quest.name + " -");
+		        cs.sendMessage(" ");
+		        if (quest.redoDelay > -1) {
+
+		            if (quest.redoDelay == 0) {
+		                cs.sendMessage(DARKAQUA + Lang.get("readoable"));
+		            } else {
+		                String msg = Lang.get("redoableEvery");
+		                msg = msg.replaceAll("<time>", AQUA + getTime(quest.redoDelay) + DARKAQUA);
+		                cs.sendMessage(DARKAQUA + msg);
+		            }
+
+		        }
+		        if (quest.npcStart != null) {
+		            String msg = Lang.get("speakTo");
+		            msg = msg.replaceAll("<npc>", quest.npcStart.getName());
+		            cs.sendMessage(YELLOW + msg);
+		        } else {
+		            cs.sendMessage(YELLOW + quest.description);
+		        }
+
+		        cs.sendMessage(" ");
+
+		        if (showQuestReqs == true) {
+
+		            cs.sendMessage(GOLD + Lang.get("requirements"));
+
+		            if (quest.permissionReqs.isEmpty() == false) {
+
+		                for (String perm : quest.permissionReqs) {
+
+		                    if (permission.has(player, perm)) {
+		                        cs.sendMessage(GREEN + Lang.get("permissionDisplay") + " " + perm);
+		                    } else {
+		                        cs.sendMessage(RED + Lang.get("permissionDisplay") + " " + perm);
+		                    }
+
+		                }
+
+		            }
+
+		            if (quest.heroesPrimaryClassReq != null) {
+
+		                if (this.testPrimaryHeroesClass(quest.heroesPrimaryClassReq, player.getName())) {
+		                    cs.sendMessage(BOLD + "" + GREEN + quest.heroesPrimaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
+		                } else {
+		                    cs.sendMessage(BOLD + "" + DARKRED + quest.heroesPrimaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
+		                }
+
+		            }
+
+		            if (quest.heroesSecondaryClassReq != null) {
+
+		                if (this.testSecondaryHeroesClass(quest.heroesSecondaryClassReq, player.getName())) {
+		                    cs.sendMessage(BOLD + "" + DARKRED + quest.heroesSecondaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
+		                } else {
+		                    cs.sendMessage(BOLD + "" + GREEN + quest.heroesSecondaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
+		                }
+
+		            }
+
+		            if (quest.mcMMOSkillReqs.isEmpty() == false) {
+
+		                for (String skill : quest.mcMMOSkillReqs) {
+
+		                    int level = Quests.getMCMMOSkillLevel(Quests.getMcMMOSkill(skill), player.getName());
+		                    int req = quest.mcMMOAmountReqs.get(quest.mcMMOSkillReqs.indexOf(skill));
+		                    String skillName = MiscUtil.getCapitalized(skill);
+
+		                    if (level >= req) {
+		                        cs.sendMessage(GREEN + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
+		                    } else {
+		                        cs.sendMessage(RED + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
+		                    }
+
+		                }
+
+		            }
+
+		            if (quest.questPointsReq != 0) {
+
+		                if (quester.questPoints >= quest.questPointsReq) {
+		                    cs.sendMessage(GRAY + "- " + GREEN + quest.questPointsReq + " " + Lang.get("questPoints"));
+		                } else {
+		                    cs.sendMessage(GRAY + "- " + RED + quest.questPointsReq + " " + Lang.get("questPoints"));
+		                }
+
+		            }
+
+		            if (quest.moneyReq != 0) {
+
+		                if (economy.getBalance(quester.name) >= quest.moneyReq) {
+		                    if (quest.moneyReq == 1) {
+		                        cs.sendMessage(GRAY + "- " + GREEN + quest.moneyReq + " " + Quests.getCurrency(false));
+		                    } else {
+		                        cs.sendMessage(GRAY + "- " + GREEN + quest.moneyReq + " " + Quests.getCurrency(true));
+		                    }
+		                } else {
+		                    if (quest.moneyReq == 1) {
+		                        cs.sendMessage(GRAY + "- " + RED + quest.moneyReq + " " + Quests.getCurrency(false));
+		                    } else {
+		                        cs.sendMessage(GRAY + "- " + RED + quest.moneyReq + " " + Quests.getCurrency(true));
+		                    }
+		                }
+
+		            }
+
+		            if (quest.items.isEmpty() == false) {
+
+		                for (ItemStack is : quest.items) {
+
+		                    if (hasItem(player, is) == true) {
+		                        cs.sendMessage(GRAY + "- " + GREEN + ItemUtil.getString(is));
+		                    } else {
+		                        cs.sendMessage(GRAY + "- " + RED + ItemUtil.getString(is));
+		                    }
+
+		                }
+
+		            }
+
+		            if (quest.neededQuests.isEmpty() == false) {
+
+		                for (String s : quest.neededQuests) {
+
+		                    if (quester.completedQuests.contains(s)) {
+		                        cs.sendMessage(GRAY + "- " + GREEN + Lang.get("complete") + " " + ITALIC + s);
+		                    } else {
+		                        cs.sendMessage(GRAY + "- " + RED + Lang.get("complete") + " " + ITALIC + s);
+		                    }
+
+		                }
+
+		            }
+
+		            if (quest.blockQuests.isEmpty() == false) {
+
+		                for (String s : quest.blockQuests) {
+
+		                    if (quester.completedQuests.contains(s)) {
+		                        String msg = Lang.get("haveCompleted");
+		                        msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + RED);
+		                        cs.sendMessage(GRAY + "- " + RED + msg );
+		                    } else {
+		                        String msg = Lang.get("cannotComplete");
+		                        msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + GREEN);
+		                        cs.sendMessage(GRAY + "- " + GREEN + msg);
+		                    }
+
+		                }
+
+		            }
+
+		        }
+
+		    } else {
+
+		        cs.sendMessage(YELLOW + Lang.get("questNotFound"));
+		        return;
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(RED + Lang.get("questInfoNoPerms"));
+		    return;
+
+		}
+	}
+
+	private void showObjectives(final CommandSender cs) {
+		if (getQuester(cs.getName()).currentQuest != null) {
+
+		    if (getQuester(cs.getName()).delayStartTime == 0) {
+		        cs.sendMessage(GOLD + Lang.get("questObjectivesTitle"));
+		    }
+
+		    for (String s : getQuester(cs.getName()).getObjectivesReal()) {
+
+		        cs.sendMessage(s);
+
+		    }
+
+		} else {
+
+		    cs.sendMessage(YELLOW + Lang.get("noActiveQuest"));
+		    return;
+
+		}
+	}
 
     public void printAdminHelp(CommandSender cs) {
 
@@ -2059,7 +2192,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         Lang.clearPhrases();
         lang.initPhrases();
         lang.loadLang();
-        
+
         for (Quester quester : questers.values()) {
             quester.checkQuest();
         }
@@ -2115,11 +2248,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     }
 
+    private boolean needsSaving = false;
+    private String questName = "";
+    private Quest quest;
+
     public void loadQuests() {
 
         boolean failedToLoad = false;
         totalQuestPoints = 0;
-        boolean needsSaving = false;
+        needsSaving = false;
 
         FileConfiguration config = new YamlConfiguration();
         File file = new File(this.getDataFolder(), "quests.yml");
@@ -2134,1862 +2271,1680 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             e.printStackTrace();
         }
 
-        ConfigurationSection section1;
+        ConfigurationSection questsSection;
         if (config.contains("quests")) {
-            section1 = config.getConfigurationSection("quests");
+            questsSection = config.getConfigurationSection("quests");
         } else {
-            section1 = config.createSection("quests");
+            questsSection = config.createSection("quests");
             needsSaving = true;
         }
 
-        for (String s : section1.getKeys(false)) {
+        for (String key : questsSection.getKeys(false)) {
 
-            try {
+        	try { // main "skip quest" try/catch block
 
-                Quest quest = new Quest();
-                failedToLoad = false;
+	    		questName = key;
 
-                if (config.contains("quests." + s + ".name")) {
-                    quest.name = parseString(config.getString("quests." + s + ".name"), quest);
+	            quest = new Quest();
+	            failedToLoad = false;
+
+	            if (config.contains("quests." + questName + ".name")) {
+	            	// TODO why have a name attr then path key can be guest name?
+	                quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
+	            } else {
+	            	skipQuestProcess("[Quests] Quest block \'" + questName + "\' is missing " + RED + "name:");
+	            }
+
+	            if (config.contains("quests." + questName + ".npc-giver-id")) {
+	                if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")) != null) {
+
+	                    quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id"));
+	                    questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")));
+
+	                } else {
+	                	skipQuestProcess("[Quests] npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
+	                }
+	            }
+
+	            if (config.contains("quests." + questName + ".block-start")) {
+
+	                Location location = getLocation(config.getString("quests." + questName + ".block-start"));
+	                if (location != null) {
+	                    quest.blockStart = location;
+	                } else {
+	                    skipQuestProcess(new String[]{
+                    		"[Quests] block-start: for Quest " + quest.name + " is not in proper location format!",
+                    		"[Quests] Proper location format is: \"WorldName x y z\""});
+	                }
+
+	            }
+
+	            if (config.contains("quests." + questName + ".region")) {
+
+	                String region = config.getString("quests." + questName + ".region");
+	                boolean exists = regionFound(quest, region);
+
+	                if (!exists) {
+	                	skipQuestProcess("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
+	                }
+
+	            }
+
+	            if (config.contains("quests." + questName + ".guiDisplay")) {
+
+	                String item = config.getString("quests." + questName + ".guiDisplay");
+	                quest.guiDisplay = ItemUtil.readItemStack(item);
+
+	            }
+
+	            if (config.contains("quests." + questName + ".redo-delay")) {
+
+	                if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
+	                    quest.redoDelay = config.getInt("quests." + questName + ".redo-delay");
+	                } else {
+	                	skipQuestProcess("[Quests] redo-delay: for Quest " + quest.name + " is not a number!");
+	                }
+
+	            }
+
+	            if (config.contains("quests." + questName + ".finish-message")) {
+	                quest.finished = parseString(config.getString("quests." + questName + ".finish-message"), quest);
+	            } else {
+	            	skipQuestProcess("[Quests] Quest " + quest.name + " is missing finish-message:");
+	            }
+
+	            if (config.contains("quests." + questName + ".ask-message")) {
+	                quest.description = parseString(config.getString("quests." + questName + ".ask-message"), quest);
+	            } else {
+	            	skipQuestProcess("[Quests] Quest " + quest.name + " is missing ask-message:");
+	            }
+
+	            if (config.contains("quests." + questName + ".event")) {
+
+	                Event evt = Event.loadEvent(config.getString("quests." + questName + ".event"), this);
+
+	                if (evt != null) {
+	                    quest.initialEvent = evt;
+	                } else {
+	                	skipQuestProcess("[Quests] Initial Event in Quest " + quest.name + " failed to load.");
+	                }
+
+	            }
+
+	            if (config.contains("quests." + questName + ".requirements")) {
+
+	                loadQuestRequirements(config, questsSection);
+
+	            }
+
+	            quest.plugin = this;
+
+                processStages(quest, config, questName); // needsSaving may be modified as a side-effect
+
+	            loadRewards(config);
+
+	            quests.add(quest);
+
+	            if (needsSaving) {
+		            try {
+	                    config.save(file);
+
+		            } catch (IOException e) {
+
+		                if (debug == false) {
+		                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
+		                } else {
+		                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Error log:");
+		                    e.printStackTrace();
+		                }
+
+		            }
+	            }
+
+	            if (failedToLoad == true) {
+	                log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
+	            }
+        	}
+        	catch (SkipQuest ex) {
+        		continue;
+        	}
+        	catch (StageFailedException ex) {
+        		continue;
+        	}
+        }
+    }
+
+	private void loadRewards(FileConfiguration config) throws SkipQuest {
+		if (config.contains("quests." + questName + ".rewards.items")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".rewards.items"), String.class)) {
+
+		        for (String item : config.getStringList("quests." + questName + ".rewards.items")) {
+
+		            try {
+		                ItemStack stack = ItemUtil.readItemStack(item);
+		                if (stack != null) {
+		                    quest.itemRewards.add(stack);
+		                }
+		            } catch (Exception e) {
+		            	skipQuestProcess("[Quests] " + item + " in items: Reward in Quest " + quest.name + " is not properly formatted!");
+		            }
+
+		        }
+
+
+		    } else {
+		    	skipQuestProcess("[Quests] items: Reward in Quest " + quest.name + " is not a list of strings!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".rewards.money")) {
+
+		    if (config.getInt("quests." + questName + ".rewards.money", -999) != -999) {
+		        quest.moneyReward = config.getInt("quests." + questName + ".rewards.money");
+		    } else {
+		    	skipQuestProcess("[Quests] money: Reward in Quest " + quest.name + " is not a number!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".rewards.exp")) {
+
+		    if (config.getInt("quests." + questName + ".rewards.exp", -999) != -999) {
+		        quest.exp = config.getInt("quests." + questName + ".rewards.exp");
+		    } else {
+		    	skipQuestProcess("[Quests] exp: Reward in Quest " + quest.name + " is not a number!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".rewards.commands")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".rewards.commands"), String.class)) {
+		        quest.commands.clear();
+		        quest.commands.addAll(config.getStringList("quests." + questName + ".rewards.commands"));
+		    } else {
+		    	skipQuestProcess("[Quests] commands: Reward in Quest " + quest.name + " is not a list of commands!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".rewards.permissions")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".rewards.permissions"), String.class)) {
+		        quest.permissions.clear();
+		        quest.permissions.addAll(config.getStringList("quests." + questName + ".rewards.permissions"));
+		    } else {
+		    	skipQuestProcess("[Quests] permissions: Reward in Quest " + quest.name + " is not a list of permissions!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".rewards.quest-points")) {
+
+		    if (config.getInt("quests." + questName + ".rewards.quest-points", -999) != -999) {
+		        quest.questPoints = config.getInt("quests." + questName + ".rewards.quest-points");
+		        totalQuestPoints += quest.questPoints;
+		    } else {
+		    	skipQuestProcess("[Quests] quest-points: Reward in Quest " + quest.name + " is not a number!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".rewards.mcmmo-skills")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-skills"), String.class)) {
+
+		        if (config.contains("quests." + questName + ".rewards.mcmmo-levels")) {
+
+		            if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-levels"), Integer.class)) {
+
+		                for (String skill : config.getStringList("quests." + questName + ".rewards.mcmmo-skills")) {
+
+		                    if (Quests.getMcMMOSkill(skill) == null) {
+		                    	skipQuestProcess("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
+		                    }
+
+		                }
+
+		                quest.mcmmoSkills.clear();
+		                quest.mcmmoAmounts.clear();
+
+		                quest.mcmmoSkills.addAll(config.getStringList("quests." + questName + ".rewards.mcmmo-skills"));
+		                quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
+
+		            } else {
+		            	skipQuestProcess("[Quests] mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
+		            }
+
+		        } else {
+		        	skipQuestProcess("[Quests] Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
+		        }
+
+		    } else {
+		    	skipQuestProcess("[Quests] mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
+		    }
+		}
+
+		if (config.contains("quests." + questName + ".rewards.heroes-exp-classes")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-classes"), String.class)) {
+
+		        if (config.contains("quests." + questName + ".rewards.heroes-exp-amounts")) {
+
+		            if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-amounts"), Double.class)) {
+
+		                for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
+
+		                    if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
+		                    	skipQuestProcess("[Quests] " + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
+		                    }
+
+		                }
+
+		                quest.heroesClasses.clear();
+		                quest.heroesAmounts.clear();
+
+		                quest.heroesClasses.addAll(config.getStringList("quests." + questName + ".rewards.heroes-exp-classes"));
+		                quest.heroesAmounts.addAll(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
+
+		            } else {
+		            	skipQuestProcess("[Quests] heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
+		            }
+
+		        } else {
+		        	skipQuestProcess("[Quests] Rewards for Quest " + quest.name + " is missing heroes-exp-amounts:");
+		        }
+
+		    } else {
+		    	skipQuestProcess("[Quests] heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
+		    }
+		}
+
+		if (config.contains("quests." + questName + ".rewards.phat-loots")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".rewards.phat-loots"), String.class)) {
+
+		        for (String loot : config.getStringList("quests." + questName + ".rewards.phat-loots")) {
+
+		            if (PhatLootsAPI.getPhatLoot(loot) == null) {
+		            	skipQuestProcess("[Quests] " + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
+		            }
+
+		        }
+
+		        quest.phatLootRewards.clear();
+		        quest.phatLootRewards.addAll(config.getStringList("quests." + questName + ".rewards.phat-loots"));
+
+		    } else {
+		    	skipQuestProcess("[Quests] phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
+		    }
+		}
+
+		if (config.contains("quests." + questName + ".rewards.custom-rewards")) {
+		    populateCustomRewards(config);
+		}
+	}
+
+	private void loadQuestRequirements(FileConfiguration config, ConfigurationSection questsSection) throws SkipQuest {
+		if (config.contains("quests." + questName + ".requirements.fail-requirement-message")) {
+		    quest.failRequirements = parseString(config.getString("quests." + questName + ".requirements.fail-requirement-message"), quest);
+		} else {
+			skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
+		}
+
+		if (config.contains("quests." + questName + ".requirements.items")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".requirements.items"), String.class)) {
+		        List<String> itemReqs = config.getStringList("quests." + questName + ".requirements.items");
+		        boolean failed = false;
+		        for (String item : itemReqs) {
+
+		            ItemStack stack = ItemUtil.readItemStack(item);
+		            if (stack != null) {
+		                quest.items.add(stack);
+		            } else {
+		                failed = true;
+		                break;
+		            }
+
+		        }
+
+		        if (failed == true) {
+		        	skipQuestProcess("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
+		        }
+
+		    } else {
+		    	skipQuestProcess("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
+		    }
+
+		    if (config.contains("quests." + questName + ".requirements.remove-items")) {
+
+		        if (Quests.checkList(config.getList("quests." + questName + ".requirements.remove-items"), Boolean.class)) {
+		            quest.removeItems.clear();
+		            quest.removeItems.addAll(config.getBooleanList("quests." + questName + ".requirements.remove-items"));
+		        } else {
+		        	skipQuestProcess("[Quests] remove-items: Requirement for Quest " + quest.name + " is not a list of true/false values!");
+		        }
+
+		    } else {
+		    	skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing remove-items:");
+		    }
+		}
+
+		if (config.contains("quests." + questName + ".requirements.money")) {
+
+		    if (config.getInt("quests." + questName + ".requirements.money", -999) != -999) {
+		        quest.moneyReq = config.getInt("quests." + questName + ".requirements.money");
+		    } else {
+		    	skipQuestProcess("[Quests] money: Requirement for Quest " + quest.name + " is not a number!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".requirements.quest-points")) {
+
+		    if (config.getInt("quests." + questName + ".requirements.quest-points", -999) != -999) {
+		        quest.questPointsReq = config.getInt("quests." + questName + ".requirements.quest-points");
+		    } else {
+		    	skipQuestProcess("[Quests] quest-points: Requirement for Quest " + quest.name + " is not a number!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".requirements.quest-blocks")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".requirements.quest-blocks"), String.class)) {
+
+		        List<String> names = config.getStringList("quests." + questName + ".requirements.quest-blocks");
+
+		        boolean failed = false;
+		        String failedQuest = "NULL";
+
+		        for (String name : names) {
+
+		            boolean done = false;
+		            for (String string : questsSection.getKeys(false)) {
+
+		                if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+		                    quest.blockQuests.add(name);
+		                    done = true;
+		                    break;
+		                }
+
+		            }
+
+		            if (!done) {
+		                failed = true;
+		                failedQuest = name;
+		                break;
+		            }
+
+		        }
+
+		        if (failed) {
+		            skipQuestProcess(new String[]{
+		                "[Quests] " + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
+		                "Make sure you are using the Quest name: value, and not the block name."});
+		        }
+
+		    } else {
+		    	skipQuestProcess("[Quests] quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".requirements.quests")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".requirements.quests"), String.class)) {
+
+		        List<String> names = config.getStringList("quests." + questName + ".requirements.quests");
+
+		        boolean failed = false;
+		        String failedQuest = "NULL";
+
+		        for (String name : names) {
+
+		            boolean done = false;
+		            for (String string : questsSection.getKeys(false)) {
+
+		                if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+		                    quest.neededQuests.add(name);
+		                    done = true;
+		                    break;
+		                }
+
+		            }
+
+		            if (!done) {
+		                failed = true;
+		                failedQuest = name;
+		                break;
+		            }
+
+		        }
+
+		        if (failed) {
+		        	skipQuestProcess(new String[]{
+		    			"[Quests] " + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
+		    			"Make sure you are using the Quest name: value, and not the block name."});
+		        }
+
+		    } else {
+		    	skipQuestProcess("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".requirements.permissions")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".requirements.permissions"), String.class)) {
+		        quest.permissionReqs.clear();
+		        quest.permissionReqs.addAll(config.getStringList("quests." + questName + ".requirements.permissions"));
+		    } else {
+		    	skipQuestProcess("[Quests] permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".requirements.mcmmo-skills")) {
+
+		    if (Quests.checkList(config.getList("quests." + questName + ".requirements.mcmmo-skills"), String.class)) {
+
+		        if (config.contains("quests." + questName + ".requirements.mcmmo-amounts")) {
+
+		            if (Quests.checkList(config.getList("quests." + questName + ".requirements.mcmmo-amounts"), Integer.class)) {
+
+		                List<String> skills = config.getStringList("quests." + questName + ".requirements.mcmmo-skills");
+		                List<Integer> amounts = config.getIntegerList("quests." + questName + ".requirements.mcmmo-amounts");
+
+		                if (skills.size() != amounts.size()) {
+		                	skipQuestProcess("[Quests] mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " + quest.name + " are not the same size!");
+		                }
+
+		                quest.mcMMOSkillReqs.addAll(skills);
+		                quest.mcMMOAmountReqs.addAll(amounts);
+
+		            } else {
+		            	skipQuestProcess("[Quests] mcmmo-amounts: Requirement for Quest " + quest.name + " is not a list of numbers!");
+		            }
+
+		        } else {
+		        	skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing mcmmo-amounts:");
+		        }
+
+		    } else {
+		    	skipQuestProcess("[Quests] mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".requirements.heroes-primary-class")) {
+
+		    String className = config.getString("quests." + questName + ".requirements.heroes-primary-class");
+		    HeroClass hc = heroes.getClassManager().getClass(className);
+		    if (hc != null && hc.isPrimary()) {
+		        quest.heroesPrimaryClassReq = hc.getName();
+		    } else if (hc != null) {
+		    	skipQuestProcess("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a primary Heroes class!");
+		    } else {
+		    	skipQuestProcess("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".requirements.heroes-secondary-class")) {
+
+		    String className = config.getString("quests." + questName + ".requirements.heroes-secondary-class");
+		    HeroClass hc = heroes.getClassManager().getClass(className);
+		    if (hc != null && hc.isSecondary()) {
+		        quest.heroesSecondaryClassReq = hc.getName();
+		    } else if (hc != null) {
+		    	skipQuestProcess("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a secondary Heroes class!");
+		    } else {
+		    	skipQuestProcess("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
+		    }
+
+		}
+
+		if (config.contains("quests." + questName + ".requirements.custom-requirements")) {
+
+		    ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".requirements.custom-requirements");
+		    for (String path : sec.getKeys(false)) {
+
+		        String name = sec.getString(path + ".name");
+		        boolean found = false;
+
+		        for (CustomRequirement cr : customRequirements) {
+		            if (cr.getName().equalsIgnoreCase(name)) {
+		                found = true;
+		                break;
+		            }
+		        }
+
+		        if (!found) {
+		            printWarning("[Quests] Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
+		            skipQuestProcess((String)null); // null bc we warn, not severe for this one
+		        }
+
+		        Map<String, Object> data = new HashMap<String, Object>();
+		        ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+		        if (sec2 != null) {
+		            for (String dataPath : sec2.getKeys(false)) {
+		                data.put(dataPath, sec2.get(dataPath));
+		            }
+		        }
+
+		        quest.customRequirements.put(name, data);
+
+		    }
+
+		}
+	}
+
+    private void skipQuestProcess(String[] msgs) throws SkipQuest {
+    	for (String msg : msgs) {
+    		if (msg != null) {
+    			printSevere(msg);
+    		}
+    	}
+    	throw new SkipQuest();
+    }
+
+    private void skipQuestProcess(String msg) throws SkipQuest {
+    	skipQuestProcess(new String[]{msg});
+    }
+
+	private void populateCustomRewards(FileConfiguration config) {
+		ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".rewards.custom-rewards");
+		for (String path : sec.getKeys(false)) {
+
+		    String name = sec.getString(path + ".name");
+		    boolean found = false;
+
+		    for (CustomReward cr : customRewards) {
+		        if (cr.getName().equalsIgnoreCase(name)) {
+		            found = true;
+		            break;
+		        }
+		    }
+
+		    if (!found) {
+		        printWarning("[Quests] Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
+		        continue;
+		    }
+
+		    Map<String, Object> data = new HashMap<String, Object>();
+		    ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+		    if (sec2 != null) {
+		        for (String dataPath : sec2.getKeys(false)) {
+		            data.put(dataPath, sec2.get(dataPath));
+		        }
+		    }
+
+		    quest.customRewards.put(name, data);
+		}
+	}
+
+	private boolean regionFound(Quest quest, String region) {
+		boolean exists = false;
+
+		for (World world : getServer().getWorlds()) {
+
+		    RegionManager rm = worldGuard.getRegionManager(world);
+		    if (rm != null) {
+		        ProtectedRegion pr = rm.getRegionExact(region);
+		        if (pr != null) {
+		            quest.region = region;
+		            exists = true;
+		            break;
+		        }
+		    }
+		}
+
+		return exists;
+	}
+
+    private void processStages(Quest quest, FileConfiguration config, String questName) throws StageFailedException {
+        int index = 1;
+
+        ConfigurationSection questStages = config.getConfigurationSection("quests." + questName + ".stages.ordered");
+
+        for (String s2 : questStages.getKeys(false)) {
+
+            Stage oStage = new Stage();
+
+            LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
+            LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
+            LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
+            LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
+            LinkedList<String> areaNames = new LinkedList<String>();
+
+            LinkedList<Enchantment> enchantments = new LinkedList<Enchantment>();
+            LinkedList<Material> itemsToEnchant = new LinkedList<Material>();
+            List<Integer> amountsToEnchant = new LinkedList<Integer>();
+
+            List<Integer> breakids = new LinkedList<Integer>();
+            List<Integer> breakamounts = new LinkedList<Integer>();
+
+            List<Integer> damageids = new LinkedList<Integer>();
+            List<Integer> damageamounts = new LinkedList<Integer>();
+
+            List<Integer> placeids = new LinkedList<Integer>();
+            List<Integer> placeamounts = new LinkedList<Integer>();
+
+            List<Integer> useids = new LinkedList<Integer>();
+            List<Integer> useamounts = new LinkedList<Integer>();
+
+            List<Integer> cutids = new LinkedList<Integer>();
+            List<Integer> cutamounts = new LinkedList<Integer>();
+
+            //Denizen script load
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".script-to-run")) {
+
+                if (ScriptRegistry.containsScript(config.getString("quests." + questName + ".stages.ordered." + s2 + ".script-to-run"))) {
+                    trigger = new QuestTaskTrigger();
+                    oStage.script = config.getString("quests." + questName + ".stages.ordered." + s2 + ".script-to-run");
                 } else {
-                    printSevere("[Quests] Quest block \'" + s + "\' is missing " + RED + "name:");
-                    continue;
+                	stageFailed("[Quests] script-to-run: in Stage " + s2 + " of Quest " + quest.name + " is not a Denizen script!");
                 }
 
-                if (config.contains("quests." + s + ".npc-giver-id")) {
+            }
 
-                    if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")) != null) {
+            //
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".break-block-ids")) {
 
-                        quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id"));
-                        questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + s + ".npc-giver-id")));
-
-                    } else {
-                        printSevere("[Quests] npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".block-start")) {
-
-                    Location location = getLocation(config.getString("quests." + s + ".block-start"));
-                    if (location != null) {
-                        quest.blockStart = location;
-                    } else {
-                        printSevere("[Quests] block-start: for Quest " + quest.name + " is not in proper location format!");
-                        printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".region")) {
-
-                    String region = config.getString("quests." + s + ".region");
-                    boolean exists = false;
-                    for (World world : getServer().getWorlds()) {
-
-                        RegionManager rm = worldGuard.getRegionManager(world);
-                        if (rm != null) {
-                            ProtectedRegion pr = rm.getRegionExact(region);
-                            if (pr != null) {
-                                quest.region = region;
-                                exists = true;
-                                break;
-                            }
-                        }
-
-                    }
-
-                    if (!exists) {
-                        printSevere("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
-                        continue;
-                    }
-
-                }
-                
-                if (config.contains("quests." + s + ".guiDisplay")) {
-
-                    String item = config.getString("quests." + s + ".guiDisplay");
-                    quest.guiDisplay = ItemUtil.readItemStack(item);
-
-                }
-
-                if (config.contains("quests." + s + ".redo-delay")) {
-
-                    if (config.getInt("quests." + s + ".redo-delay", -999) != -999) {
-                        quest.redoDelay = config.getInt("quests." + s + ".redo-delay");
-                    } else {
-                        printSevere("[Quests] redo-delay: for Quest " + quest.name + " is not a number!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".finish-message")) {
-                    quest.finished = parseString(config.getString("quests." + s + ".finish-message"), quest);
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
+                    breakids = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".break-block-ids");
                 } else {
-                    printSevere("[Quests] Quest " + quest.name + " is missing finish-message:");
-                    continue;
+                	stageFailed("[Quests] break-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
-                if (config.contains("quests." + s + ".ask-message")) {
-                    quest.description = parseString(config.getString("quests." + s + ".ask-message"), quest);
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".break-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
+                        breakamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".break-block-amounts");
+                    } else {
+                    	stageFailed("[Quests] break-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
+
                 } else {
-                    printSevere("[Quests] Quest " + quest.name + " is missing ask-message:");
-                    continue;
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing break-block-amounts:");
                 }
 
-                if (config.contains("quests." + s + ".event")) {
+            }
 
-                    Event evt = Event.loadEvent(config.getString("quests." + s + ".event"), this);
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".damage-block-ids")) {
 
-                    if (evt != null) {
-                        quest.initialEvent = evt;
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-ids"), Integer.class)) {
+                    damageids = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-ids");
+                } else {
+                	stageFailed("[Quests] damage-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".damage-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
+                        damageamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-amounts");
                     } else {
-                        printSevere("[Quests] Initial Event in Quest " + quest.name + " failed to load.");
-                        continue;
+                    	stageFailed("[Quests] damage-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-amounts:");
                 }
 
-                if (config.contains("quests." + s + ".requirements")) {
+            }
 
-                    if (config.contains("quests." + s + ".requirements.fail-requirement-message")) {
-                        quest.failRequirements = parseString(config.getString("quests." + s + ".requirements.fail-requirement-message"), quest);
+            for (int i : damageids) {
+
+                if (Material.getMaterial(i) != null) {
+                    oStage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
+                } else {
+                	stageFailed("[Quests] " + i + " inside damage-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".place-block-ids")) {
+
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".place-block-ids"), Integer.class)) {
+                    placeids = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".place-block-ids");
+                } else {
+                	stageFailed("[Quests] place-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".place-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
+                        placeamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".place-block-amounts");
                     } else {
-                        printSevere("[Quests] Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
-                        continue;
+                    	stageFailed("[Quests] place-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
-                    if (config.contains("quests." + s + ".requirements.items")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".requirements.items"), String.class)) {
-                            List<String> itemReqs = config.getStringList("quests." + s + ".requirements.items");
-                            boolean failed = false;
-                            for (String item : itemReqs) {
-
-                                ItemStack stack = ItemUtil.readItemStack(item);
-                                if (stack != null) {
-                                    quest.items.add(stack);
-                                } else {
-                                    failed = true;
-                                    break;
-                                }
-
-                            }
-
-                            if (failed == true) {
-                                printSevere("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
-                            continue;
-                        }
-
-                        if (config.contains("quests." + s + ".requirements.remove-items")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".requirements.remove-items"), Boolean.class)) {
-                                quest.removeItems.clear();
-                                quest.removeItems.addAll(config.getBooleanList("quests." + s + ".requirements.remove-items"));
-                            } else {
-                                printSevere("[Quests] remove-items: Requirement for Quest " + quest.name + " is not a list of true/false values!");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Requirements for Quest " + quest.name + " is missing remove-items:");
-                            continue;
-                        }
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.money")) {
-
-                        if (config.getInt("quests." + s + ".requirements.money", -999) != -999) {
-                            quest.moneyReq = config.getInt("quests." + s + ".requirements.money");
-                        } else {
-                            printSevere("[Quests] money: Requirement for Quest " + quest.name + " is not a number!");
-                            continue;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.quest-points")) {
-
-                        if (config.getInt("quests." + s + ".requirements.quest-points", -999) != -999) {
-                            quest.questPointsReq = config.getInt("quests." + s + ".requirements.quest-points");
-                        } else {
-                            printSevere("[Quests] quest-points: Requirement for Quest " + quest.name + " is not a number!");
-                            continue;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.quest-blocks")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".requirements.quest-blocks"), String.class)) {
-
-                            List<String> names = config.getStringList("quests." + s + ".requirements.quest-blocks");
-
-                            boolean failed = false;
-                            String failedQuest = "NULL";
-
-                            for (String name : names) {
-
-                                boolean done = false;
-                                for (String string : section1.getKeys(false)) {
-
-                                    if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
-                                        quest.blockQuests.add(name);
-                                        done = true;
-                                        break;
-                                    }
-
-                                }
-
-                                if (!done) {
-                                    failed = true;
-                                    failedQuest = name;
-                                    break;
-                                }
-
-                            }
-
-                            if (failed) {
-                                printSevere("[Quests] " + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
-                                printSevere("Make sure you are using the Quest name: value, and not the block name.");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere("[Quests] quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
-                            continue;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.quests")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".requirements.quests"), String.class)) {
-
-                            List<String> names = config.getStringList("quests." + s + ".requirements.quests");
-
-                            boolean failed = false;
-                            String failedQuest = "NULL";
-
-                            for (String name : names) {
-
-                                boolean done = false;
-                                for (String string : section1.getKeys(false)) {
-
-                                    if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
-                                        quest.neededQuests.add(name);
-                                        done = true;
-                                        break;
-                                    }
-
-                                }
-
-                                if (!done) {
-                                    failed = true;
-                                    failedQuest = name;
-                                    break;
-                                }
-
-                            }
-
-                            if (failed) {
-                                printSevere("[Quests] " + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!");
-                                printSevere("Make sure you are using the Quest name: value, and not the block name.");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
-                            continue;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.permissions")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".requirements.permissions"), String.class)) {
-                            quest.permissionReqs.clear();
-                            quest.permissionReqs.addAll(config.getStringList("quests." + s + ".requirements.permissions"));
-                        } else {
-                            printSevere("[Quests] permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
-                            continue;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.mcmmo-skills")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".requirements.mcmmo-skills"), String.class)) {
-
-                            if (config.contains("quests." + s + ".requirements.mcmmo-amounts")) {
-
-                                if (Quests.checkList(config.getList("quests." + s + ".requirements.mcmmo-amounts"), Integer.class)) {
-
-                                    List<String> skills = config.getStringList("quests." + s + ".requirements.mcmmo-skills");
-                                    List<Integer> amounts = config.getIntegerList("quests." + s + ".requirements.mcmmo-amounts");
-
-                                    if (skills.size() != amounts.size()) {
-                                        printSevere("[Quests] mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " + quest.name + " are not the same size!");
-                                        continue;
-                                    }
-
-                                    quest.mcMMOSkillReqs.addAll(skills);
-                                    quest.mcMMOAmountReqs.addAll(amounts);
-
-                                } else {
-                                    printSevere("[Quests] mcmmo-amounts: Requirement for Quest " + quest.name + " is not a list of numbers!");
-                                    continue;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Requirements for Quest " + quest.name + " is missing mcmmo-amounts:");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere("[Quests] mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
-                            continue;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.heroes-primary-class")) {
-
-                        String className = config.getString("quests." + s + ".requirements.heroes-primary-class");
-                        HeroClass hc = heroes.getClassManager().getClass(className);
-                        if (hc != null && hc.isPrimary()) {
-                            quest.heroesPrimaryClassReq = hc.getName();
-                        } else if (hc != null) {
-                            printSevere("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a primary Heroes class!");
-                            continue;
-                        } else {
-                            printSevere("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
-                            continue;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.heroes-secondary-class")) {
-
-                        String className = config.getString("quests." + s + ".requirements.heroes-secondary-class");
-                        HeroClass hc = heroes.getClassManager().getClass(className);
-                        if (hc != null && hc.isSecondary()) {
-                            quest.heroesSecondaryClassReq = hc.getName();
-                        } else if (hc != null) {
-                            printSevere("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a secondary Heroes class!");
-                            continue;
-                        } else {
-                            printSevere("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
-                            continue;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".requirements.custom-requirements")) {
-
-                        ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".requirements.custom-requirements");
-                        for (String path : sec.getKeys(false)) {
-
-                            String name = sec.getString(path + ".name");
-                            boolean found = false;
-
-                            for (CustomRequirement cr : customRequirements) {
-                                if (cr.getName().equalsIgnoreCase(name)) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            if (!found) {
-                                printWarning("[Quests] Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
-                                continue;
-                            }
-
-                            Map<String, Object> data = new HashMap<String, Object>();
-                            ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                            if (sec2 != null) {
-                                for (String dataPath : sec2.getKeys(false)) {
-                                    data.put(dataPath, sec2.get(dataPath));
-                                }
-                            }
-
-                            quest.customRequirements.put(name, data);
-
-                        }
-
-                    }
-
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing place-block-amounts:");
                 }
 
-                quest.plugin = this;
+            }
 
-                ConfigurationSection section2 = config.getConfigurationSection("quests." + s + ".stages.ordered");
+            for (int i : placeids) {
 
-                int index = 1;
-                boolean stageFailed = false;
+                if (Material.getMaterial(i) != null) {
+                    oStage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
+                } else {
+                	stageFailed("[Quests] " + +i + " inside place-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
+                }
 
-                for (String s2 : section2.getKeys(false)) {
+            }
 
-                    Stage oStage = new Stage();
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".use-block-ids")) {
 
-                    LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
-                    LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
-                    LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
-                    LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-                    LinkedList<String> areaNames = new LinkedList<String>();
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".use-block-ids"), Integer.class)) {
+                    useids = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".use-block-ids");
+                } else {
+                	stageFailed("[Quests] use-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                }
 
-                    LinkedList<Enchantment> enchantments = new LinkedList<Enchantment>();
-                    LinkedList<Material> itemsToEnchant = new LinkedList<Material>();
-                    List<Integer> amountsToEnchant = new LinkedList<Integer>();
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".use-block-amounts")) {
 
-                    List<Integer> breakids = new LinkedList<Integer>();
-                    List<Integer> breakamounts = new LinkedList<Integer>();
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
+                        useamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".use-block-amounts");
+                    } else {
+                    	stageFailed("[Quests] use-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
 
-                    List<Integer> damageids = new LinkedList<Integer>();
-                    List<Integer> damageamounts = new LinkedList<Integer>();
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing use-block-amounts:");
+                }
 
-                    List<Integer> placeids = new LinkedList<Integer>();
-                    List<Integer> placeamounts = new LinkedList<Integer>();
+            }
 
-                    List<Integer> useids = new LinkedList<Integer>();
-                    List<Integer> useamounts = new LinkedList<Integer>();
+            for (int i : useids) {
 
-                    List<Integer> cutids = new LinkedList<Integer>();
-                    List<Integer> cutamounts = new LinkedList<Integer>();
+                if (Material.getMaterial(i) != null) {
+                    oStage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
+                } else {
+                	stageFailed("[Quests] " + RED + i + " inside use-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
+                }
 
-                    //Denizen script load
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".script-to-run")) {
+            }
 
-                        if (ScriptRegistry.containsScript(config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run"))) {
-                            trigger = new QuestTaskTrigger();
-                            oStage.script = config.getString("quests." + s + ".stages.ordered." + s2 + ".script-to-run");
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".cut-block-ids")) {
+
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-ids"), Integer.class)) {
+                    cutids = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-ids");
+                } else {
+                	stageFailed("[Quests] cut-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".cut-block-amounts")) {
+
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
+                        cutamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-amounts");
+                    } else {
+                    	stageFailed("[Quests] cut-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-amounts:");
+                }
+
+            }
+
+            for (int i : cutids) {
+
+                if (Material.getMaterial(i) != null) {
+                    oStage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
+                } else {
+                	stageFailed("[Quests] " + i + " inside cut-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".fish-to-catch")) {
+
+                if (config.getInt("quests." + questName + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
+                    oStage.fishToCatch = config.getInt("quests." + questName + ".stages.ordered." + s2 + ".fish-to-catch");
+                } else {
+                	stageFailed("[Quests] fish-to-catch: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".players-to-kill")) {
+
+                if (config.getInt("quests." + questName + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
+                    oStage.playersToKill = config.getInt("quests." + questName + ".stages.ordered." + s2 + ".players-to-kill");
+                } else {
+                	stageFailed("[Quests] players-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantments")) {
+
+                if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".enchantments"), String.class)) {
+
+                    for (String enchant : config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".enchantments")) {
+
+                        Enchantment e = Quests.getEnchantment(enchant);
+
+                        if (e != null) {
+
+                            enchantments.add(e);
+
                         } else {
-                            printSevere("[Quests] script-to-run: in Stage " + s2 + " of Quest " + quest.name + " is not a Denizen script!");
-                            stageFailed = true;
-                            break;
+
+                        	stageFailed("[Quests] " + enchant + " inside enchantments: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid enchantment!");
+
                         }
 
                     }
 
-                    //
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-ids")) {
+                } else {
+                	stageFailed("[Quests] enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
+                }
 
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids"), Integer.class)) {
-                            breakids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-ids");
-                        } else {
-                            printSevere("[Quests] break-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
 
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts")) {
+                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-ids"), Integer.class)) {
 
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
-                                breakamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".break-block-amounts");
+                        for (int item : config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
+
+                            if (Material.getMaterial(item) != null) {
+                                itemsToEnchant.add(Material.getMaterial(item));
                             } else {
-                                printSevere("[Quests] break-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
+                            	stageFailed("[Quests] " + item + " inside enchantment-item-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item id!");
                             }
 
+                        }
+
+                    } else {
+
+                    	stageFailed("[Quests] enchantment-item-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-ids:");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantment-amounts")) {
+
+                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-amounts"), Integer.class)) {
+
+                        amountsToEnchant = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-amounts");
+
+                    } else {
+
+                    	stageFailed("[Quests] enchantment-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-amounts:");
+                }
+
+            }
+
+            List<Integer> npcIdsToTalkTo = null;
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".npc-ids-to-talk-to")) {
+
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".npc-ids-to-talk-to"), Integer.class)) {
+
+                    npcIdsToTalkTo = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
+                    for (int i : npcIdsToTalkTo) {
+
+                        if (CitizensAPI.getNPCRegistry().getById(i) != null) {
+
+                            questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
+
                         } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing break-block-amounts:");
-                            stageFailed = true;
-                            break;
+                        	stageFailed("[Quests] " + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
                         }
 
                     }
 
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids")) {
+                } else {
+                	stageFailed("[Quests] npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                }
 
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids"), Integer.class)) {
-                            damageids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-ids");
-                        } else {
-                            printSevere("[Quests] damage-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
+            }
 
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts")) {
+            List<String> itemsToDeliver;
+            List<Integer> itemDeliveryTargetIds;
+            LinkedList<String> deliveryMessages = new LinkedList<String>();
 
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
-                                damageamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".damage-block-amounts");
-                            } else {
-                                printSevere("[Quests] damage-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".items-to-deliver")) {
 
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".items-to-deliver"), String.class)) {
 
-                    }
+                    if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".npc-delivery-ids")) {
 
-                    for (int i : damageids) {
+                        if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".npc-delivery-ids"), Integer.class)) {
 
-                        if (Material.getMaterial(i) != null) {
-                            oStage.blocksToDamage.put(Material.getMaterial(i), damageamounts.get(damageids.indexOf(i)));
-                        } else {
-                            printSevere("[Quests] " + i + " inside damage-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
-                            stageFailed = true;
-                            break;
-                        }
+                            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".delivery-messages")) {
 
-                    }
+                                itemsToDeliver = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".items-to-deliver");
+                                itemDeliveryTargetIds = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".npc-delivery-ids");
+                                deliveryMessages.addAll(config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".delivery-messages"));
 
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-ids")) {
+                                for (String item : itemsToDeliver) {
 
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids"), Integer.class)) {
-                            placeids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-ids");
-                        } else {
-                            printSevere("[Quests] place-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
+                                    ItemStack is = ItemUtil.readItemStack(item);
 
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts")) {
+                                    if (is != null) {
 
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
-                                placeamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".place-block-amounts");
-                            } else {
-                                printSevere("[Quests] place-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
+                                        int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
+                                        NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
 
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing place-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
+                                        if (npc != null) {
 
-                    }
+                                            oStage.itemsToDeliver.add(is);
+                                            oStage.itemDeliveryTargets.add(npcId);
+                                            oStage.deliverMessages = deliveryMessages;
 
-                    for (int i : placeids) {
+                                        } else {
+                                        	stageFailed("[Quests] " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
+                                        }
 
-                        if (Material.getMaterial(i) != null) {
-                            oStage.blocksToPlace.put(Material.getMaterial(i), placeamounts.get(placeids.indexOf(i)));
-                        } else {
-                            printSevere("[Quests] " + +i + " inside place-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-ids")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids"), Integer.class)) {
-                            useids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-ids");
-                        } else {
-                            printSevere("[Quests] use-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
-                                useamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".use-block-amounts");
-                            } else {
-                                printSevere("[Quests] use-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing use-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    for (int i : useids) {
-
-                        if (Material.getMaterial(i) != null) {
-                            oStage.blocksToUse.put(Material.getMaterial(i), useamounts.get(useids.indexOf(i)));
-                        } else {
-                            printSevere("[Quests] " + RED + i + " inside use-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids"), Integer.class)) {
-                            cutids = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-ids");
-                        } else {
-                            printSevere("[Quests] cut-block-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts")) {
-
-                            if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
-                                cutamounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".cut-block-amounts");
-                            } else {
-                                printSevere("[Quests] cut-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    for (int i : cutids) {
-
-                        if (Material.getMaterial(i) != null) {
-                            oStage.blocksToCut.put(Material.getMaterial(i), cutamounts.get(cutids.indexOf(i)));
-                        } else {
-                            printSevere("[Quests] " + i + " inside cut-block-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item ID!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch")) {
-
-                        if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
-                            oStage.fishToCatch = config.getInt("quests." + s + ".stages.ordered." + s2 + ".fish-to-catch");
-                        } else {
-                            printSevere("[Quests] fish-to-catch: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".players-to-kill")) {
-
-                        if (config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
-                            oStage.playersToKill = config.getInt("quests." + s + ".stages.ordered." + s2 + ".players-to-kill");
-                        } else {
-                            printSevere("[Quests] players-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantments"), String.class)) {
-
-                            for (String enchant : config.getStringList("quests." + s + ".stages.ordered." + s2 + ".enchantments")) {
-
-                                Enchantment e = Quests.getEnchantment(enchant);
-
-                                if (e != null) {
-
-                                    enchantments.add(e);
-
-                                } else {
-
-                                    printSevere("[Quests] " + enchant + " inside enchantments: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid enchantment!");
-                                    stageFailed = true;
-                                    break;
-
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids"), Integer.class)) {
-
-                                for (int item : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
-
-                                    if (Material.getMaterial(item) != null) {
-                                        itemsToEnchant.add(Material.getMaterial(item));
                                     } else {
-                                        printSevere("[Quests] " + item + " inside enchantment-item-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item id!");
-                                        stageFailed = true;
-                                        break;
+                                    	stageFailed("[Quests] " + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
                                     }
 
                                 }
 
                             } else {
-
-                                printSevere("[Quests] enchantment-item-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-
+                            	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing delivery-messages:");
                             }
 
                         } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-ids:");
-                            stageFailed = true;
-                            break;
+                        	stageFailed("[Quests] npc-delivery-ids: in Stage " + s2 + " of Quest " + PURPLE + quest.name + " is not a list of NPC ids!");
                         }
 
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts"), Integer.class)) {
-
-                                amountsToEnchant = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".enchantment-amounts");
-
-                            } else {
-
-                                printSevere("[Quests] enchantment-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
+                    } else {
+                    	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-delivery-ids:");
                     }
 
-                    List<Integer> npcIdsToTalkTo = null;
+                } else {
+                	stageFailed("[Quests] items-to-deliver: in Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
+                }
 
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to")) {
+            }
 
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to"), Integer.class)) {
+            List<Integer> npcIds;
+            List<Integer> npcAmounts;
 
-                            npcIdsToTalkTo = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
-                            for (int i : npcIdsToTalkTo) {
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".npc-ids-to-kill")) {
+
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".npc-ids-to-kill"), Integer.class)) {
+
+                    if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".npc-kill-amounts")) {
+
+                        if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".npc-kill-amounts"), Integer.class)) {
+
+                            npcIds = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".npc-ids-to-kill");
+                            npcAmounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".npc-kill-amounts");
+                            for (int i : npcIds) {
 
                                 if (CitizensAPI.getNPCRegistry().getById(i) != null) {
 
-                                    questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
-
-                                } else {
-                                    printSevere("[Quests] " + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    List<String> itemsToDeliver;
-                    List<Integer> itemDeliveryTargetIds;
-                    LinkedList<String> deliveryMessages = new LinkedList<String>();
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver"), String.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids")) {
-
-                                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids"), Integer.class)) {
-
-                                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delivery-messages")) {
-
-                                        itemsToDeliver = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".items-to-deliver");
-                                        itemDeliveryTargetIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-delivery-ids");
-                                        deliveryMessages.addAll(config.getStringList("quests." + s + ".stages.ordered." + s2 + ".delivery-messages"));
-
-                                        for (String item : itemsToDeliver) {
-
-                                            ItemStack is = ItemUtil.readItemStack(item);
-
-                                            if (is != null) {
-
-                                                int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
-                                                NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
-
-                                                if (npc != null) {
-
-                                                    oStage.itemsToDeliver.add(is);
-                                                    oStage.itemDeliveryTargets.add(npcId);
-                                                    oStage.deliverMessages = deliveryMessages;
-
-                                                } else {
-                                                    printSevere("[Quests] " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
-                                                    stageFailed = true;
-                                                    break;
-                                                }
-
-                                            } else {
-                                                printSevere("[Quests] " + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
-                                                stageFailed = true;
-                                                break;
-                                            }
-
-                                        }
-
+                                    if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
+                                        oStage.citizensToKill.add(i);
+                                        oStage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
+                                        questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
                                     } else {
-                                        printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing delivery-messages:");
-                                        stageFailed = true;
-                                        break;
+                                    	stageFailed("[Quests] " + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
                                     }
 
                                 } else {
-                                    printSevere("[Quests] npc-delivery-ids: in Stage " + s2 + " of Quest " + PURPLE + quest.name + " is not a list of NPC ids!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-delivery-ids:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] items-to-deliver: in Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    List<Integer> npcIds;
-                    List<Integer> npcAmounts;
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill")) {
-
-                        if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill"), Integer.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts")) {
-
-                                if (checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts"), Integer.class)) {
-
-                                    npcIds = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-ids-to-kill");
-                                    npcAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".npc-kill-amounts");
-                                    for (int i : npcIds) {
-
-                                        if (CitizensAPI.getNPCRegistry().getById(i) != null) {
-
-                                            if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
-                                                oStage.citizensToKill.add(i);
-                                                oStage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
-                                                questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
-                                            } else {
-                                                printSevere("[Quests] " + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
-                                                stageFailed = true;
-                                                break;
-                                            }
-
-                                        } else {
-                                            printSevere("[Quests] " + i + " inside npc-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
-                                            stageFailed = true;
-                                            break;
-                                        }
-
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] npc-kill-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-kill-amounts:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] npc-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill"), String.class)) {
-
-                            List<String> mobNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-kill");
-                            for (String mob : mobNames) {
-
-                                EntityType type = getMobType(mob);
-
-                                if (type != null) {
-
-                                    mobsToKill.add(type);
-
-                                } else {
-
-                                    printSevere("[Quests] " + mob + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid mob name!");
-                                    stageFailed = true;
-                                    break;
-
+                                	stageFailed("[Quests] " + i + " inside npc-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
                                 }
 
                             }
 
                         } else {
-                            printSevere("[Quests] mobs-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts"), Integer.class)) {
-
-                                for (int i : config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-amounts")) {
-
-                                    mobNumToKill.add(i);
-
-                                }
-
-                            } else {
-
-                                printSevere("[Quests] mob-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + PURPLE + quest.name + " is missing mob-amounts:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill"), String.class)) {
-
-                            List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-kill");
-
-                            for (String loc : locations) {
-
-                                String[] info = loc.split(" ");
-                                if (info.length == 4) {
-                                    double x;
-                                    double y;
-                                    double z;
-                                    try {
-                                        x = Double.parseDouble(info[1]);
-                                        y = Double.parseDouble(info[2]);
-                                        z = Double.parseDouble(info[3]);
-                                    } catch (NumberFormatException e) {
-                                        printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                        printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                    if (getServer().getWorld(info[0]) != null) {
-                                        Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-                                        locationsToKillWithin.add(finalLocation);
-                                    } else {
-                                        printSevere("[Quests] " + info[0] + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                    printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] locations-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii"), Integer.class)) {
-
-                                List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".kill-location-radii");
-                                for (int i : radii) {
-
-                                    radiiToKillWithin.add(i);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] kill-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-radii:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".kill-location-names")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names"), String.class)) {
-
-                                List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".kill-location-names");
-                                for (String name : locationNames) {
-
-                                    areaNames.add(name);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] kill-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-names:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    oStage.mobsToKill = mobsToKill;
-                    oStage.mobNumToKill = mobNumToKill;
-                    oStage.locationsToKillWithin = locationsToKillWithin;
-                    oStage.radiiToKillWithin = radiiToKillWithin;
-                    oStage.areaNames = areaNames;
-
-                    Map<Map<Enchantment, Material>, Integer> enchants = new HashMap<Map<Enchantment, Material>, Integer>();
-
-                    for (Enchantment e : enchantments) {
-
-                        Map<Enchantment, Material> map = new HashMap<Enchantment, Material>();
-                        map.put(e, itemsToEnchant.get(enchantments.indexOf(e)));
-                        enchants.put(map, amountsToEnchant.get(enchantments.indexOf(e)));
-
-                    }
-
-                    oStage.itemsToEnchant = enchants;
-
-                    Map<Material, Integer> breakMap = new EnumMap<Material, Integer>(Material.class);
-
-                    for (int i : breakids) {
-
-                        breakMap.put(Material.getMaterial(i), breakamounts.get(breakids.indexOf(i)));
-
-                    }
-
-                    oStage.blocksToBreak = breakMap;
-
-                    if (index < section2.getKeys(false).size()) {
-                        index++;
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach"), String.class)) {
-
-                            List<String> locations = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".locations-to-reach");
-
-                            for (String loc : locations) {
-
-                                String[] info = loc.split(" ");
-                                if (info.length == 4) {
-                                    double x;
-                                    double y;
-                                    double z;
-                                    try {
-                                        x = Double.parseDouble(info[1]);
-                                        y = Double.parseDouble(info[2]);
-                                        z = Double.parseDouble(info[3]);
-                                    } catch (NumberFormatException e) {
-                                        printSevere("[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                        printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                    if (getServer().getWorld(info[0]) != null) {
-                                        Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-                                        oStage.locationsToReach.add(finalLocation);
-                                    } else {
-                                        printSevere("[Quests] " + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
-                                        stageFailed = true;
-                                        break;
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!");
-                                    printSevere("[Quests] Proper location format is: \"WorldName x y z\"");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            }
-
-                        } else {
-                            printSevere("[Quests] locations-to-reach: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii"), Integer.class)) {
-
-                                List<Integer> radii = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".reach-location-radii");
-                                for (int i : radii) {
-
-                                    oStage.radiiToReachWithin.add(i);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] reach-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-radii:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".reach-location-names")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names"), String.class)) {
-
-                                List<String> locationNames = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".reach-location-names");
-                                for (String name : locationNames) {
-
-                                    oStage.locationNames.add(name);
-
-                                }
-
-                            } else {
-                                printSevere("[Quests] reach-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-names:");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame"), String.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts")) {
-
-                                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts"), Integer.class)) {
-
-                                    List<String> mobs = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".mobs-to-tame");
-                                    List<Integer> mobAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".mob-tame-amounts");
-
-                                    for (String mob : mobs) {
-
-                                        if (mob.equalsIgnoreCase("Wolf")) {
-
-                                            oStage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
-
-                                        } else if (mob.equalsIgnoreCase("Ocelot")) {
-
-                                            oStage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
-
-                                        } else {
-                                            printSevere("[Quests] " + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
-                                            stageFailed = true;
-                                            break;
-                                        }
-
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] mob-tame-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing mob-tame-amounts:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] mobs-to-tame: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear")) {
-
-                        if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear"), String.class)) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts")) {
-
-                                if (Quests.checkList(config.getList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts"), Integer.class)) {
-
-                                    List<String> sheep = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".sheep-to-shear");
-                                    List<Integer> shearAmounts = config.getIntegerList("quests." + s + ".stages.ordered." + s2 + ".sheep-amounts");
-
-                                    for (String color : sheep) {
-
-                                        if (color.equalsIgnoreCase("Black")) {
-
-                                            oStage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Blue")) {
-
-                                            oStage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Brown")) {
-
-                                            oStage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Cyan")) {
-
-                                            oStage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Gray")) {
-
-                                            oStage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Green")) {
-
-                                            oStage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("LightBlue")) {
-
-                                            oStage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Lime")) {
-
-                                            oStage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Magenta")) {
-
-                                            oStage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Orange")) {
-
-                                            oStage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Pink")) {
-
-                                            oStage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Purple")) {
-
-                                            oStage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Red")) {
-
-                                            oStage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Silver")) {
-
-                                            oStage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("White")) {
-
-                                            oStage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else if (color.equalsIgnoreCase("Yellow")) {
-
-                                            oStage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
-
-                                        } else {
-
-                                            printSevere("[Quests] " + color + " inside sheep-to-shear: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid color!");
-                                            stageFailed = true;
-                                            break;
-
-                                        }
-
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] sheep-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing sheep-amounts:");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] sheep-to-shear: in Stage " + s2 + " of Quest " + quest.name + " is not a list of colors!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-                    
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-displays")) {
-                        
-                        List<String> displays = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-displays");
-                        
-                        if (config.contains("quests." + s + ".stages.ordered." + s2 + ".password-phrases")) {
-                            
-                            List<String> phrases = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".password-phrases");
-                            if(displays.size() == phrases.size()) {
-                                
-                                for(int passIndex = 0; passIndex < displays.size(); passIndex++){
-                                    
-                                    oStage.passwordDisplays.add(displays.get(passIndex));
-                                    LinkedList<String> answers = new LinkedList<String>();
-                                    answers.addAll(Arrays.asList(phrases.get(passIndex).split("\\|")));
-                                    oStage.passwordPhrases.add(answers);
-                                    
-                                }
-                                
-                            } else {
-                                printSevere("[Quests] password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
-                                stageFailed = true;
-                                break;
-                            }
-                            
-                        } else {
-                            printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing password-phrases!");
-                            stageFailed = true;
-                            break;
-                        }
-                        
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".custom-objectives")) {
-
-                        ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".stages.ordered." + s2 + ".custom-objectives");
-                        for (String path : sec.getKeys(false)) {
-
-                            String name = sec.getString(path + ".name");
-                            int count = sec.getInt(path + ".count");
-                            CustomObjective found = null;
-
-                            for (CustomObjective cr : customObjectives) {
-                                if (cr.getName().equalsIgnoreCase(name)) {
-                                    found = cr;
-                                    break;
-                                }
-                            }
-
-                            if (found == null) {
-                                printWarning("[Quests] Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
-                                continue;
-                            }
-
-                            Map<String, Object> data = new HashMap<String, Object>();
-                            ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                            if (sec2 != null) {
-                                for (String dataPath : sec2.getKeys(false)) {
-                                    data.put(dataPath, sec2.get(dataPath));
-                                }
-                            }
-
-                            oStage.customObjectives.add(found);
-                            oStage.customObjectiveCounts.add(count);
-                            oStage.customObjectiveData.add(data);
-
-                            try{
-                                
-                                getServer().getPluginManager().registerEvents(found, this);
-                                
-                            }catch (Exception e){
-                                printWarning("[Quests] Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
-                                if(debug){
-                                    printWarning("[Quests] Error log:");
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-
-                    }
-                    
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".objective-override")) {
-                        
-                        oStage.objectiveOverride = config.getString("quests." + s + ".stages.ordered." + s2 + ".objective-override");
-                        
-                    }
-                    
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".start-event"), this);
-
-                        if (evt != null) {
-                            oStage.startEvent = evt;
-                        } else {
-                            printSevere("[Quests] start-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".finish-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".finish-event"), this);
-
-                        if (evt != null) {
-                            oStage.finishEvent = evt;
-                        } else {
-                            printSevere("[Quests] finish-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    //Legacy support
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".event"), this);
-
-                        if (evt != null) {
-                            oStage.finishEvent = evt;
-                            printInfo("[Quests] Converting event: in Stage " + s2 + " of Quest " + quest.name + " to finish-event:");
-                            String old = config.getString("quests." + s + ".stages.ordered." + s2 + ".event");
-                            config.set("quests." + s + ".stages.ordered." + s2 + ".finish-event", old);
-                            config.set("quests." + s + ".stages.ordered." + s2 + ".event", null);
-                            needsSaving = true;
-                        } else {
-                            printSevere("[Quests] event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-                    //
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".death-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".death-event"), this);
-
-                        if (evt != null) {
-                            oStage.deathEvent = evt;
-                        } else {
-                            printSevere("[Quests] death-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".disconnect-event")) {
-
-                        Event evt = Event.loadEvent(config.getString("quests." + s + ".stages.ordered." + s2 + ".disconnect-event"), this);
-
-                        if (evt != null) {
-                            oStage.disconnectEvent = evt;
-                        } else {
-                            printSevere("[Quests] disconnect-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".chat-events")) {
-
-                        if (config.isList("quests." + s + ".stages.ordered." + s2 + ".chat-events")) {
-
-                            if (config.contains("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers")) {
-
-                                if (config.isList("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers")) {
-
-                                    List<String> chatEvents = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".chat-events");
-                                    List<String> chatEventTriggers = config.getStringList("quests." + s + ".stages.ordered." + s2 + ".chat-event-triggers");
-                                    boolean loadEventFailed = false;
-
-                                    for (int i = 0; i < chatEvents.size(); i++) {
-
-                                        Event evt = Event.loadEvent(chatEvents.get(i), this);
-
-                                        if (evt != null) {
-                                            oStage.chatEvents.put(chatEventTriggers.get(i), evt);
-                                        } else {
-                                            printSevere("[Quests] " + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
-                                            stageFailed = true;
-                                            loadEventFailed = true;
-                                            break;
-                                        }
-
-                                    }
-
-                                    if (loadEventFailed) {
-                                        break;
-                                    }
-
-                                } else {
-                                    printSevere("[Quests] chat-event-triggers in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
-                                    stageFailed = true;
-                                    break;
-                                }
-
-                            } else {
-                                printSevere("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing chat-event-triggers!");
-                                stageFailed = true;
-                                break;
-                            }
-
-                        } else {
-                            printSevere("[Quests] chat-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay")) {
-
-                        if (config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay", -999) != -999) {
-                            oStage.delay = config.getLong("quests." + s + ".stages.ordered." + s2 + ".delay");
-                        } else {
-                            printSevere("[Quests] delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
-                            stageFailed = true;
-                            break;
-                        }
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".delay-message")) {
-
-                        oStage.delayMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".delay-message");
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".start-message")) {
-
-                        oStage.startMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".start-message");
-
-                    }
-
-                    if (config.contains("quests." + s + ".stages.ordered." + s2 + ".complete-message")) {
-
-                        oStage.completeMessage = config.getString("quests." + s + ".stages.ordered." + s2 + ".complete-message");
-
-                    }
-
-                    LinkedList<Integer> ids = new LinkedList<Integer>();
-                    if (npcIdsToTalkTo != null) {
-                        ids.addAll(npcIdsToTalkTo);
-                    }
-                    oStage.citizensToInteract = ids;
-
-                    if (stageFailed) {
-                        break;
-                    }
-
-                    quest.orderedStages.add(oStage);
-
-                }
-
-                if (stageFailed) {
-                    continue;
-                }
-
-                //Load rewards
-                if (config.contains("quests." + s + ".rewards.items")) {
-
-                    if (Quests.checkList(config.getList("quests." + s + ".rewards.items"), String.class)) {
-
-                        boolean failed = false;
-                        for (String item : config.getStringList("quests." + s + ".rewards.items")) {
-
-                            try {
-                                ItemStack stack = ItemUtil.readItemStack(item);
-                                if (stack != null) {
-                                    quest.itemRewards.add(stack);
-                                }
-                            } catch (Exception e) {
-                                printSevere("[Quests] " + item + " in items: Reward in Quest " + quest.name + " is not properly formatted!");
-                                failed = true;
-                                break;
-                            }
-
-                        }
-
-                        if (failed) {
-                            continue;
+                        	stageFailed("[Quests] npc-kill-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                         }
 
                     } else {
-                        printSevere("[Quests] items: Reward in Quest " + quest.name + " is not a list of strings!");
-                        continue;
+                    	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-kill-amounts:");
                     }
 
-                }
-
-                if (config.contains("quests." + s + ".rewards.money")) {
-
-                    if (config.getInt("quests." + s + ".rewards.money", -999) != -999) {
-                        quest.moneyReward = config.getInt("quests." + s + ".rewards.money");
-                    } else {
-                        printSevere("[Quests] money: Reward in Quest " + quest.name + " is not a number!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".rewards.exp")) {
-
-                    if (config.getInt("quests." + s + ".rewards.exp", -999) != -999) {
-                        quest.exp = config.getInt("quests." + s + ".rewards.exp");
-                    } else {
-                        printSevere("[Quests] exp: Reward in Quest " + quest.name + " is not a number!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".rewards.commands")) {
-
-                    if (Quests.checkList(config.getList("quests." + s + ".rewards.commands"), String.class)) {
-                        quest.commands.clear();
-                        quest.commands.addAll(config.getStringList("quests." + s + ".rewards.commands"));
-                    } else {
-                        printSevere("[Quests] commands: Reward in Quest " + quest.name + " is not a list of commands!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".rewards.permissions")) {
-
-                    if (Quests.checkList(config.getList("quests." + s + ".rewards.permissions"), String.class)) {
-                        quest.permissions.clear();
-                        quest.permissions.addAll(config.getStringList("quests." + s + ".rewards.permissions"));
-                    } else {
-                        printSevere("[Quests] permissions: Reward in Quest " + quest.name + " is not a list of permissions!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".rewards.quest-points")) {
-
-                    if (config.getInt("quests." + s + ".rewards.quest-points", -999) != -999) {
-                        quest.questPoints = config.getInt("quests." + s + ".rewards.quest-points");
-                        totalQuestPoints += quest.questPoints;
-                    } else {
-                        printSevere("[Quests] quest-points: Reward in Quest " + quest.name + " is not a number!");
-                        continue;
-                    }
-
-                }
-
-                if (config.contains("quests." + s + ".rewards.mcmmo-skills")) {
-
-                    if (Quests.checkList(config.getList("quests." + s + ".rewards.mcmmo-skills"), String.class)) {
-
-                        if (config.contains("quests." + s + ".rewards.mcmmo-levels")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".rewards.mcmmo-levels"), Integer.class)) {
-
-                                boolean failed = false;
-                                for (String skill : config.getStringList("quests." + s + ".rewards.mcmmo-skills")) {
-
-                                    if (Quests.getMcMMOSkill(skill) == null) {
-                                        printSevere("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
-                                        failed = true;
-                                        break;
-                                    }
-
-                                }
-                                if (failed) {
-                                    continue;
-                                }
-
-                                quest.mcmmoSkills.clear();
-                                quest.mcmmoAmounts.clear();
-
-                                quest.mcmmoSkills.addAll(config.getStringList("quests." + s + ".rewards.mcmmo-skills"));
-                                quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + s + ".rewards.mcmmo-levels"));
-
-                            } else {
-                                printSevere("[Quests] mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
-                        continue;
-                    }
-                }
-
-                if (config.contains("quests." + s + ".rewards.heroes-exp-classes")) {
-
-                    if (Quests.checkList(config.getList("quests." + s + ".rewards.heroes-exp-classes"), String.class)) {
-
-                        if (config.contains("quests." + s + ".rewards.heroes-exp-amounts")) {
-
-                            if (Quests.checkList(config.getList("quests." + s + ".rewards.heroes-exp-amounts"), Double.class)) {
-
-                                boolean failed = false;
-                                for (String heroClass : config.getStringList("quests." + s + ".rewards.heroes-exp-classes")) {
-
-                                    if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
-                                        printSevere("[Quests] " + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
-                                        failed = true;
-                                        break;
-                                    }
-
-                                }
-                                if (failed) {
-                                    continue;
-                                }
-
-                                quest.heroesClasses.clear();
-                                quest.heroesAmounts.clear();
-
-                                quest.heroesClasses.addAll(config.getStringList("quests." + s + ".rewards.heroes-exp-classes"));
-                                quest.heroesAmounts.addAll(config.getDoubleList("quests." + s + ".rewards.heroes-exp-amounts"));
-
-                            } else {
-                                printSevere("[Quests] heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
-                                continue;
-                            }
-
-                        } else {
-                            printSevere("[Quests] Rewards for Quest " + quest.name + " is missing heroes-exp-amounts:");
-                            continue;
-                        }
-
-                    } else {
-                        printSevere("[Quests] heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
-                        continue;
-                    }
-                }
-
-                if (config.contains("quests." + s + ".rewards.phat-loots")) {
-
-                    if (Quests.checkList(config.getList("quests." + s + ".rewards.phat-loots"), String.class)) {
-
-                        boolean failed = false;
-                        for (String loot : config.getStringList("quests." + s + ".rewards.phat-loots")) {
-
-                            if (PhatLootsAPI.getPhatLoot(loot) == null) {
-                                printSevere("[Quests] " + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
-                                failed = true;
-                                break;
-                            }
-
-                        }
-                        if (failed) {
-                            continue;
-                        }
-
-                        quest.phatLootRewards.clear();
-                        quest.phatLootRewards.addAll(config.getStringList("quests." + s + ".rewards.phat-loots"));
-
-                    } else {
-                        printSevere("[Quests] phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
-                        continue;
-                    }
-                }
-                
-                if (config.contains("quests." + s + ".rewards.custom-rewards")) {
-
-                    ConfigurationSection sec = config.getConfigurationSection("quests." + s + ".rewards.custom-rewards");
-                    for (String path : sec.getKeys(false)) {
-
-                        String name = sec.getString(path + ".name");
-                        boolean found = false;
-
-                        for (CustomReward cr : customRewards) {
-                            if (cr.getName().equalsIgnoreCase(name)) {
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (!found) {
-                            printWarning("[Quests] Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
-                            continue;
-                        }
-
-                        Map<String, Object> data = new HashMap<String, Object>();
-                        ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                        if (sec2 != null) {
-                            for (String dataPath : sec2.getKeys(false)) {
-                                data.put(dataPath, sec2.get(dataPath));
-                            }
-                        }
-
-                        quest.customRewards.put(name, data);
-
-                    }
-
-                }
-
-                //
-                quests.add(quest);
-
-                if (needsSaving) {
-                    config.save(file);
-                }
-
-            } catch (IOException e) {
-
-                if (debug == false) {
-                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + s + "\". Skipping.");
                 } else {
-                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + s + "\". Error log:");
-                    e.printStackTrace();
+                	stageFailed("[Quests] npc-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
             }
 
-            if (failedToLoad == true) {
-                log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + s + "\". Skipping.");
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".mobs-to-kill")) {
+
+                if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".mobs-to-kill"), String.class)) {
+
+                    List<String> mobNames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".mobs-to-kill");
+                    for (String mob : mobNames) {
+
+                        EntityType type = getMobType(mob);
+
+                        if (type != null) {
+
+                            mobsToKill.add(type);
+
+                        } else {
+
+                        	stageFailed("[Quests] " + mob + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid mob name!");
+
+                        }
+
+                    }
+
+                } else {
+                	stageFailed("[Quests] mobs-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".mob-amounts")) {
+
+                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".mob-amounts"), Integer.class)) {
+
+                        for (int i : config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".mob-amounts")) {
+
+                            mobNumToKill.add(i);
+
+                        }
+
+                    } else {
+
+                    	stageFailed("[Quests] mob-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + PURPLE + quest.name + " is missing mob-amounts:");
+                }
+
             }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".locations-to-kill")) {
+
+                if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".locations-to-kill"), String.class)) {
+
+                    List<String> locations = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".locations-to-kill");
+
+                    for (String loc : locations) {
+
+                        String[] info = loc.split(" ");
+                        if (info.length == 4) {
+                            double x = 0;
+                            double y = 0;
+                            double z = 0;
+                            try {
+                                x = Double.parseDouble(info[1]);
+                                y = Double.parseDouble(info[2]);
+                                z = Double.parseDouble(info[3]);
+                            } catch (NumberFormatException e) {
+                            	stageFailed(new String[]{
+                        			"[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                					"[Quests] Proper location format is: \"WorldName x y z\""});
+                            }
+
+                            if (getServer().getWorld(info[0]) != null) {
+                                Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
+                                locationsToKillWithin.add(finalLocation);
+                            } else {
+                            	stageFailed("[Quests] " + info[0] + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
+                            }
+
+                        } else {
+                        	stageFailed(new String[]{
+                             "[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                            "[Quests] Proper location format is: \"WorldName x y z\""});
+                        }
+
+                    }
+
+                } else {
+                	stageFailed("[Quests] locations-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".kill-location-radii")) {
+
+                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".kill-location-radii"), Integer.class)) {
+
+                        List<Integer> radii = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".kill-location-radii");
+                        for (int i : radii) {
+
+                            radiiToKillWithin.add(i);
+
+                        }
+
+                    } else {
+                    	stageFailed("[Quests] kill-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-radii:");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".kill-location-names")) {
+
+                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".kill-location-names"), String.class)) {
+
+                        List<String> locationNames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".kill-location-names");
+                        for (String name : locationNames) {
+
+                            areaNames.add(name);
+
+                        }
+
+                    } else {
+                    	stageFailed("[Quests] kill-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-names:");
+                }
+
+            }
+
+            oStage.mobsToKill = mobsToKill;
+            oStage.mobNumToKill = mobNumToKill;
+            oStage.locationsToKillWithin = locationsToKillWithin;
+            oStage.radiiToKillWithin = radiiToKillWithin;
+            oStage.areaNames = areaNames;
+
+            Map<Map<Enchantment, Material>, Integer> enchants = new HashMap<Map<Enchantment, Material>, Integer>();
+
+            for (Enchantment e : enchantments) {
+
+                Map<Enchantment, Material> map = new HashMap<Enchantment, Material>();
+                map.put(e, itemsToEnchant.get(enchantments.indexOf(e)));
+                enchants.put(map, amountsToEnchant.get(enchantments.indexOf(e)));
+
+            }
+
+            oStage.itemsToEnchant = enchants;
+
+            Map<Material, Integer> breakMap = new EnumMap<Material, Integer>(Material.class);
+
+            for (int i : breakids) {
+
+                breakMap.put(Material.getMaterial(i), breakamounts.get(breakids.indexOf(i)));
+
+            }
+
+            oStage.blocksToBreak = breakMap;
+
+            if (index < questStages.getKeys(false).size()) {
+                index++;
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".locations-to-reach")) {
+
+                if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".locations-to-reach"), String.class)) {
+
+                    List<String> locations = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".locations-to-reach");
+
+                    for (String loc : locations) {
+
+                        String[] info = loc.split(" ");
+                        if (info.length == 4) {
+                            double x = 0;
+                            double y = 0;
+                            double z = 0;
+                            try {
+                                x = Double.parseDouble(info[1]);
+                                y = Double.parseDouble(info[2]);
+                                z = Double.parseDouble(info[3]);
+                            } catch (NumberFormatException e) {
+                            	stageFailed(new String[]{
+                    				"[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                        			"[Quests] Proper location format is: \"WorldName x y z\""});
+                            }
+
+                            if (getServer().getWorld(info[0]) != null) {
+                                Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
+                                oStage.locationsToReach.add(finalLocation);
+                            } else {
+                            	stageFailed("[Quests] " + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
+                            }
+
+                        } else {
+                        	stageFailed(new String[]{
+                				"[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                    			"[Quests] Proper location format is: \"WorldName x y z\""});
+                        }
+
+                    }
+
+                } else {
+                	stageFailed("[Quests] locations-to-reach: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".reach-location-radii")) {
+
+                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".reach-location-radii"), Integer.class)) {
+
+                        List<Integer> radii = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".reach-location-radii");
+                        for (int i : radii) {
+
+                            oStage.radiiToReachWithin.add(i);
+
+                        }
+
+                    } else {
+                    	stageFailed("[Quests] reach-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-radii:");
+                }
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".reach-location-names")) {
+
+                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".reach-location-names"), String.class)) {
+
+                        List<String> locationNames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".reach-location-names");
+                        for (String name : locationNames) {
+
+                            oStage.locationNames.add(name);
+
+                        }
+
+                    } else {
+                    	stageFailed("[Quests] reach-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-names:");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".mobs-to-tame")) {
+
+                if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".mobs-to-tame"), String.class)) {
+
+                    if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".mob-tame-amounts")) {
+
+                        if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".mob-tame-amounts"), Integer.class)) {
+
+                            List<String> mobs = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".mobs-to-tame");
+                            List<Integer> mobAmounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".mob-tame-amounts");
+
+                            for (String mob : mobs) {
+
+                                if (mob.equalsIgnoreCase("Wolf")) {
+
+                                    oStage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
+
+                                } else if (mob.equalsIgnoreCase("Ocelot")) {
+
+                                    oStage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
+
+                                } else {
+                                	stageFailed("[Quests] " + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
+                                }
+
+                            }
+
+                        } else {
+                        	stageFailed("[Quests] mob-tame-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        }
+
+                    } else {
+                    	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing mob-tame-amounts:");
+                    }
+
+                } else {
+                	stageFailed("[Quests] mobs-to-tame: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".sheep-to-shear")) {
+
+                if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".sheep-to-shear"), String.class)) {
+
+                    if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".sheep-amounts")) {
+
+                        if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".sheep-amounts"), Integer.class)) {
+
+                            List<String> sheep = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".sheep-to-shear");
+                            List<Integer> shearAmounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".sheep-amounts");
+
+                            for (String color : sheep) {
+
+                                if (color.equalsIgnoreCase("Black")) {
+
+                                    oStage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Blue")) {
+
+                                    oStage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Brown")) {
+
+                                    oStage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Cyan")) {
+
+                                    oStage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Gray")) {
+
+                                    oStage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Green")) {
+
+                                    oStage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("LightBlue")) {
+
+                                    oStage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Lime")) {
+
+                                    oStage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Magenta")) {
+
+                                    oStage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Orange")) {
+
+                                    oStage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Pink")) {
+
+                                    oStage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Purple")) {
+
+                                    oStage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Red")) {
+
+                                    oStage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Silver")) {
+
+                                    oStage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("White")) {
+
+                                    oStage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else if (color.equalsIgnoreCase("Yellow")) {
+
+                                    oStage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
+
+                                } else {
+
+                                	stageFailed("[Quests] " + color + " inside sheep-to-shear: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid color!");
+                                }
+
+                            }
+
+                        } else {
+                        	stageFailed("[Quests] sheep-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        }
+
+                    } else {
+                    	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing sheep-amounts:");
+                    }
+
+                } else {
+                	stageFailed("[Quests] sheep-to-shear: in Stage " + s2 + " of Quest " + quest.name + " is not a list of colors!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".password-displays")) {
+
+                List<String> displays = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".password-displays");
+
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".password-phrases")) {
+
+                    List<String> phrases = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".password-phrases");
+                    if(displays.size() == phrases.size()) {
+
+                        for(int passIndex = 0; passIndex < displays.size(); passIndex++){
+
+                            oStage.passwordDisplays.add(displays.get(passIndex));
+                            LinkedList<String> answers = new LinkedList<String>();
+                            answers.addAll(Arrays.asList(phrases.get(passIndex).split("\\|")));
+                            oStage.passwordPhrases.add(answers);
+
+                        }
+
+                    } else {
+                    	stageFailed("[Quests] password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
+                    }
+
+                } else {
+                	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing password-phrases!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".custom-objectives")) {
+
+                ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".stages.ordered." + s2 + ".custom-objectives");
+                for (String path : sec.getKeys(false)) {
+
+                    String name = sec.getString(path + ".name");
+                    int count = sec.getInt(path + ".count");
+                    CustomObjective found = null;
+
+                    for (CustomObjective cr : customObjectives) {
+                        if (cr.getName().equalsIgnoreCase(name)) {
+                            found = cr;
+                            break;
+                        }
+                    }
+
+                    if (found == null) {
+                        printWarning("[Quests] Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
+                        continue;
+                    }
+
+                    Map<String, Object> data = new HashMap<String, Object>();
+                    ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+                    if (sec2 != null) {
+                        for (String dataPath : sec2.getKeys(false)) {
+                            data.put(dataPath, sec2.get(dataPath));
+                        }
+                    }
+
+                    oStage.customObjectives.add(found);
+                    oStage.customObjectiveCounts.add(count);
+                    oStage.customObjectiveData.add(data);
+
+                    try{
+
+                        getServer().getPluginManager().registerEvents(found, this);
+
+                    }catch (Exception e){
+                        printWarning("[Quests] Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
+                        if(debug){
+                            printWarning("[Quests] Error log:");
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".objective-override")) {
+
+                oStage.objectiveOverride = config.getString("quests." + questName + ".stages.ordered." + s2 + ".objective-override");
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".start-event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + questName + ".stages.ordered." + s2 + ".start-event"), this);
+
+                if (evt != null) {
+                    oStage.startEvent = evt;
+                } else {
+                	stageFailed("[Quests] start-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".finish-event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + questName + ".stages.ordered." + s2 + ".finish-event"), this);
+
+                if (evt != null) {
+                    oStage.finishEvent = evt;
+                } else {
+                	stageFailed("[Quests] finish-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                }
+
+            }
+
+            //Legacy support
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + questName + ".stages.ordered." + s2 + ".event"), this);
+
+                if (evt != null) {
+                    oStage.finishEvent = evt;
+                    printInfo("[Quests] Converting event: in Stage " + s2 + " of Quest " + quest.name + " to finish-event:");
+                    String old = config.getString("quests." + questName + ".stages.ordered." + s2 + ".event");
+                    config.set("quests." + questName + ".stages.ordered." + s2 + ".finish-event", old);
+                    config.set("quests." + questName + ".stages.ordered." + s2 + ".event", null);
+                    needsSaving = true;
+                } else {
+                	stageFailed("[Quests] event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                }
+
+            }
+            //
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".death-event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + questName + ".stages.ordered." + s2 + ".death-event"), this);
+
+                if (evt != null) {
+                    oStage.deathEvent = evt;
+                } else {
+                	stageFailed("[Quests] death-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".disconnect-event")) {
+
+                Event evt = Event.loadEvent(config.getString("quests." + questName + ".stages.ordered." + s2 + ".disconnect-event"), this);
+
+                if (evt != null) {
+                    oStage.disconnectEvent = evt;
+                } else {
+                	stageFailed("[Quests] disconnect-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".chat-events")) {
+
+                if (config.isList("quests." + questName + ".stages.ordered." + s2 + ".chat-events")) {
+
+                    if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".chat-event-triggers")) {
+
+                        if (config.isList("quests." + questName + ".stages.ordered." + s2 + ".chat-event-triggers")) {
+
+                            List<String> chatEvents = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".chat-events");
+                            List<String> chatEventTriggers = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".chat-event-triggers");
+                            boolean loadEventFailed = false;
+
+                            for (int i = 0; i < chatEvents.size(); i++) {
+
+                                Event evt = Event.loadEvent(chatEvents.get(i), this);
+
+                                if (evt != null) {
+                                    oStage.chatEvents.put(chatEventTriggers.get(i), evt);
+                                } else {
+                                	loadEventFailed = true;
+                                	stageFailed("[Quests] " + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                                }
+
+                            }
+
+                            if (loadEventFailed) {
+                                break;
+                            }
+
+                        } else {
+                        	stageFailed("[Quests] chat-event-triggers in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+                        }
+
+                    } else {
+                    	stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing chat-event-triggers!");
+                    }
+
+                } else {
+                	stageFailed("[Quests] chat-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".delay")) {
+
+                if (config.getLong("quests." + questName + ".stages.ordered." + s2 + ".delay", -999) != -999) {
+                    oStage.delay = config.getLong("quests." + questName + ".stages.ordered." + s2 + ".delay");
+                } else {
+                    stageFailed("[Quests] delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                }
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".delay-message")) {
+
+                oStage.delayMessage = config.getString("quests." + questName + ".stages.ordered." + s2 + ".delay-message");
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".start-message")) {
+
+                oStage.startMessage = config.getString("quests." + questName + ".stages.ordered." + s2 + ".start-message");
+
+            }
+
+            if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".complete-message")) {
+
+                oStage.completeMessage = config.getString("quests." + questName + ".stages.ordered." + s2 + ".complete-message");
+
+            }
+
+            LinkedList<Integer> ids = new LinkedList<Integer>();
+            if (npcIdsToTalkTo != null) {
+                ids.addAll(npcIdsToTalkTo);
+            }
+            oStage.citizensToInteract = ids;
+
+            quest.orderedStages.add(oStage);
 
         }
+    }
 
+    private void stageFailed(String msg) throws StageFailedException {
+    	stageFailed(new String[]{msg});
+    }
+
+    private void stageFailed(String[] msgs) throws StageFailedException {
+    	for (String msg : msgs) {
+    		if (msg != null) {
+    			printSevere(msg);
+    		}
+    	}
+    	throw new StageFailedException();
     }
 
     public void loadEvents() {
@@ -4307,7 +4262,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         long minutes = ((milliseconds % 86400000) % 3600000) / 60000;
         long seconds = (((milliseconds % 86400000) % 3600000) % 60000) / 1000;
         long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
-        
+
         if (days > 0) {
 
             if (days == 1) {
@@ -4651,12 +4606,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         String ench = Lang.getKey(enchant);
         ench = ench.replace("ENCHANTMENT_", "");
         Enchantment e = Enchantment.getByName(ench);
-        
+
         return e != null ? e : getEnchantmentLegacy(ench);
     }
 
     public static Enchantment getEnchantmentLegacy(String enchant) {
-        
+
         if (enchant.equalsIgnoreCase("Power")) {
 
             return Enchantment.ARROW_DAMAGE;
@@ -4758,18 +4713,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             return null;
 
         }
-        
+
     }
-    
+
     public static Enchantment getEnchantmentPretty(String enchant) {
 
         while(Quester.spaceToCapital(enchant) != null) {
-            
+
             enchant = Quester.spaceToCapital(enchant);
-            
+
         }
         return getEnchantment(enchant);
-        
+
     }
 
     public static DyeColor getDyeColor(String s) {
@@ -4777,11 +4732,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         String col = Lang.getKey(s);
         col = col.replace("COLOR_", "");
         DyeColor color = DyeColor.valueOf(col);
-        
+
         return color != null ? color : getDyeColorLegacy(s);
 
     }
-    
+
     public static DyeColor getDyeColorLegacy(String s) {
 
         if (s.equalsIgnoreCase("Black")) {
@@ -4984,12 +4939,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         return hero.getHeroClass().getName().equalsIgnoreCase(secondaryClass);
 
     }
-    
+
     public void updateData() {
-        
+
         YamlConfiguration config = new YamlConfiguration();
         File dataFile = new File(this.getDataFolder(), "data.yml");
-        
+
         try {
             config.load(dataFile);
             config.set("npc-gui", questNPCGUIs);
