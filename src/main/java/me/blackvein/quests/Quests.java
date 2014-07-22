@@ -514,7 +514,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             File[] modules = f.listFiles();
             for (File module : modules) {
 
-                loadModule(module);
+                if(module.isDirectory() == false && module.getName().endsWith(".jar"))
+                    loadModule(module);
 
             }
 
@@ -1415,10 +1416,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
 		            questsEditor(cs);
 
-		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EVENTS"))) {
+		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EVENTS_EDITOR"))) {
 
 		            questsEvents(cs);
-
 		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
 
 		            questsInfo(cs);

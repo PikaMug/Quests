@@ -2070,6 +2070,8 @@ public class Quester {
             data.set("amountsCompleted", list2);
 
         }
+        
+        data.set("lastKnownName", getPlayer().getName());
 
         return data;
 
