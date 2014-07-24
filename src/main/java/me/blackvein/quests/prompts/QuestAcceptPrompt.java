@@ -128,7 +128,9 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
                     } else if (quester.currentQuest.equals(q) == false) {
 
-                        player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
+                        String msg = Lang.get("questMaxAllowed");
+                        msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+                        player.sendMessage(YELLOW + msg);
 
                     }
 
@@ -158,7 +160,9 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
                     } else if (quester.currentQuest.equals(q) == false) {
 
-                        player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
+                        String msg = Lang.get("questMaxAllowed");
+                        msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+                        player.sendMessage(YELLOW + msg);
 
                     }
 

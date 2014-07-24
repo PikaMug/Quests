@@ -104,12 +104,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static PhatLoots phatLoots = null;
     public static boolean snoop = true;
     public static boolean npcEffects = true;
-    public static boolean broadcastPartyCreation = true;
     public static boolean ignoreLockedQuests = false;
     public static boolean genFilesOnJoin = true;
-    public static int maxPartySize = 0;
     public static int acceptTimeout = 20;
-    public static int inviteTimeout = 20;
+    public static int maxQuests = 0;
     public static String effect = "note";
     public final Map<UUID, Quester> questers = new HashMap<UUID, Quester>();
     public final List<String> questerBlacklist = new LinkedList<String>();
@@ -454,23 +452,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         } else {
             config.set("ignore-locked-quests", false);
         }
-
-        if (config.contains("broadcast-party-creation")) {
-            broadcastPartyCreation = config.getBoolean("broadcast-party-creation");
+        
+        if (config.contains("max-quests")) {
+            maxQuests = config.getInt("max-quests");
         } else {
-            config.set("broadcast-party-creation", true);
-        }
-
-        if (config.contains("max-party-size")) {
-            maxPartySize = config.getInt("max-party-size");
-        } else {
-            config.set("max-party-size", 0);
-        }
-
-        if (config.contains("party-invite-timeout")) {
-            inviteTimeout = config.getInt("party-invite-timeout");
-        } else {
-            config.set("party-invite-timeout", 20);
+            config.set("max-quests", maxQuests);
         }
 
         for (String s : config.getStringList("quester-blacklist")) {
@@ -643,7 +629,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         player.sendMessage(PINK + "/quests party invite <player> - Invite a player to your party");
         player.sendMessage(PINK + "/quests party kick <player> - Kick a member from the party");
         player.sendMessage(PINK + "/quests party setleader <player> - Set a party member as the new leader");
-
+        
     }
 
     @Override
@@ -1030,15 +1016,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		        } else {
 
 		            Quester quester = getQuester(target.getUniqueId());
-		            quester.resetObjectives();
+		            quester.resetObjectives(questToGive);
 
 		            String msg1 = Lang.get("questForceTake");
 		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-		            msg1 = msg1.replaceAll("<quest>", PURPLE + (quester.currentQuest == null ? Lang.get("none") : quester.currentQuest.name)+ GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + questToGive.name + GOLD);
 		            cs.sendMessage(GOLD + msg1);
 		            String msg2 = Lang.get("questForcedTake");
 		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-		            msg2 = msg2.replaceAll("<quest>", PURPLE + (quester.currentQuest == null ? Lang.get("none") : quester.currentQuest.name)+ GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + questToGive.name + GOLD);
 		            target.sendMessage(GREEN + msg2);
 		            quester.takeQuest(questToGive, true);
 
@@ -1152,6 +1138,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	}
 
 	private void adminFinish(final CommandSender cs, String[] args) {
+            
 		if (cs.hasPermission("quests.admin.finish")) {
 
 		    Player target = null;
@@ -1172,7 +1159,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		    } else {
 
 		        Quester quester = getQuester(target.getUniqueId());
-		        if (quester.currentQuest == null) {
+		        if (quester.currentQuests.isEmpty()) {
 
 		            String msg = Lang.get("noCurrentQuest");
 		            msg = msg.replaceAll("<player>", target.getName());
@@ -1180,15 +1167,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
 		        } else {
 
+                            Quest found = getQuest(args[2]);
+                            
+                            if(found == null) {
+                                cs.sendMessage(RED + Lang.get("questNotFound"));
+                                return;
+                            }
+                            
 		            String msg1 = Lang.get("questForceFinish");
 		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-		            msg1 = msg1.replaceAll("<quest>", PURPLE + (quester.currentQuest == null ? Lang.get("none") : quester.currentQuest.name)+ GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + found.name + GOLD);
 		            cs.sendMessage(GOLD + msg1);
 		            String msg2 = Lang.get("questForcedFinish");
 		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-		            msg2 = msg2.replaceAll("<quest>", PURPLE + (quester.currentQuest == null ? Lang.get("none") : quester.currentQuest.name)+ GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + found.name + GOLD);
 		            target.sendMessage(GREEN + msg2);
-		            quester.currentQuest.completeQuest(quester);
+		            found.completeQuest(quester);
 
 		            quester.saveData();
 
@@ -1229,7 +1223,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		        }
 		    }
 		    int stage = -1;
-		    if (args.length > 2) {
+		    if (args.length > 3) {
 		        try {
 		            stage = Integer.parseInt(args[2]);
 		        } catch (NumberFormatException e) {
@@ -1247,7 +1241,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		    } else {
 
 		        Quester quester = getQuester(target.getUniqueId());
-		        if (quester.currentQuest == null) {
+		        if (quester.currentQuests.isEmpty()) {
 
 		            String msg = Lang.get("noCurrentQuest");
 		            msg = msg.replaceAll("<player>", target.getName());
@@ -1255,11 +1249,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
 		        } else {
 
+                            Quest found = getQuest(args[2]);
+                            
+                            if(found == null) {
+                                cs.sendMessage(RED + Lang.get("questNotFound"));
+                                return;
+                            }
+                            
 		            try {
-		                quester.currentQuest.setStage(quester, stage);
+		                found.setStage(quester, stage);
 		            } catch (InvalidStageException e) {
 		                String msg = Lang.get("invalidStageNum");
-		                msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + RED);
+		                msg = msg.replaceAll("<quest>", PURPLE + found.name + RED);
 		                cs.sendMessage(ChatColor.RED + msg);
 		            }
 
@@ -1277,6 +1278,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	}
 
 	private void adminNextStage(final CommandSender cs, String[] args) {
+            
 		if (cs.hasPermission("quests.admin.nextstage")) {
 
 		    Player target = null;
@@ -1297,7 +1299,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		    } else {
 
 		        Quester quester = getQuester(target.getUniqueId());
-		        if (quester.currentQuest == null) {
+		        if (quester.currentQuests.isEmpty()) {
 
 		            String msg = Lang.get("noCurrentQuest");
 		            msg = msg.replaceAll("<player>", target.getName());
@@ -1305,15 +1307,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
 		        } else {
 
+                            Quest found = getQuest(args[2]);
+                            
+                            if(found == null) {
+                                cs.sendMessage(RED + Lang.get("questNotFound"));
+                                return;
+                            }
+                            
 		            String msg1 = Lang.get("questForceNextStage");
 		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-		            msg1 = msg1.replaceAll("<quest>", PURPLE + (quester.currentQuest == null ? Lang.get("none") : quester.currentQuest.name)+ GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + found.name + GOLD);
 		            cs.sendMessage(GOLD + msg1);
 		            String msg2 = Lang.get("questForcedNextStage");
 		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-		            msg2 = msg2.replaceAll("<quest>", PURPLE + (quester.currentQuest == null ? Lang.get("none") : quester.currentQuest.name)+ GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + found.name + GOLD);
 		            target.sendMessage(GREEN + msg2);
-		            quester.currentQuest.nextStage(quester);
+		            found.nextStage(quester);
 
 		            quester.saveData();
 
@@ -1329,6 +1338,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	}
 
 	private void adminQuit(final CommandSender cs, String[] args) {
+            
 		if (cs.hasPermission("quests.admin.quit")) {
 
 		    Player target = null;
@@ -1349,7 +1359,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		    } else {
 
 		        Quester quester = getQuester(target.getUniqueId());
-		        if (quester.currentQuest == null) {
+		        if (quester.currentQuests.isEmpty()) {
 
 		            String msg = Lang.get("noCurrentQuest");
 		            msg = msg.replaceAll("<player>", target.getName());
@@ -1357,18 +1367,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
 		        } else {
 
-		            quester.resetObjectives();
-		            quester.currentStage = null;
-		            quester.currentStageIndex = 0;
+                            Quest found = getQuest(args[2]);
+                            
+                            if(found == null) {
+                                cs.sendMessage(RED + Lang.get("questNotFound"));
+                                return;
+                            }
+                            
+		            quester.resetObjectives(found);
+		            quester.currentQuests.remove(found);
+                            quester.questData.remove(found);
 		            String msg1 = Lang.get("questForceQuit");
 		            msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-		            msg1 = msg1.replaceAll("<quest>", PURPLE + (quester.currentQuest == null ? Lang.get("none") : quester.currentQuest.name)+ GOLD);
+		            msg1 = msg1.replaceAll("<quest>", PURPLE + found.name + GOLD);
 		            cs.sendMessage(GOLD + msg1);
 		            String msg2 = Lang.get("questForcedQuit");
 		            msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-		            msg2 = msg2.replaceAll("<quest>", PURPLE + (quester.currentQuest == null ? Lang.get("none") : quester.currentQuest.name)+ GOLD);
+		            msg2 = msg2.replaceAll("<quest>", PURPLE + found.name + GOLD);
 		            target.sendMessage(GREEN + msg2);
-		            quester.currentQuest = null;
 
 		            quester.saveData();
 
@@ -1384,6 +1400,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	}
 
 	private boolean questActionsCommandHandler(final CommandSender cs, String[] args) {
+            
 		if (cs instanceof Player) {
 
 		    if (args.length == 0) {
@@ -1402,7 +1419,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
 		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUIT"))) {
 
-		            questsQuit((Player) cs);
+		            questsQuit((Player) cs, args);
 
 		        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
 
@@ -1563,13 +1580,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	}
 
 	private void questsStats(final Player player) {
+            
 		Quester quester = getQuester(player.getUniqueId());
 		player.sendMessage(GOLD + "- " + player.getName() + " -");
 		player.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
-		if (quester.currentQuest == null) {
+		if (quester.currentQuests.isEmpty()) {
 		    player.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
 		} else {
-		    player.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + quester.currentQuest.name);
+		    player.sendMessage(YELLOW + Lang.get("currentQuest"));
+                    for(Quest q : quester.currentQuests.keySet())
+                        player.sendMessage(PINK + " - " + PURPLE + q.name);
 		}
 
 		String completed;
@@ -1599,21 +1619,28 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		player.sendMessage(completed);
 	}
 
-	private boolean questsQuit(final Player player) {
+	private boolean questsQuit(final Player player, String[] args) {
+            
 		if (allowQuitting == true) {
 
 		    if (((Player) player).hasPermission("quests.quit")) {
 
 		        Quester quester = getQuester(player.getUniqueId());
-		        if (quester.currentQuest != null) {
+		        if (quester.currentQuests.isEmpty() == false) {
 
-		            quester.resetObjectives();
-		            quester.currentStage = null;
-		            quester.currentStageIndex = 0;
+                            Quest found = getQuest(args[1]);
+                            
+                            if(found == null) {
+                                player.sendMessage(RED + Lang.get("questNotFound"));
+                                return true;
+                            }
+                            
+		            quester.resetObjectives(found);
+		            quester.currentQuests.remove(found);
+                            quester.questData.remove(found);
 		            String msg = Lang.get("questQuit");
-		            msg = msg.replaceAll("<quest>", PURPLE + quester.currentQuest.name + YELLOW);
+		            msg = msg.replaceAll("<quest>", PURPLE + found.name + YELLOW);
 		            player.sendMessage(YELLOW + msg);
-		            quester.currentQuest = null;
 		            quester.saveData();
 		            quester.loadData();
 		            return true;
@@ -1694,8 +1721,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		                final Quest q = questToFind;
 		                final Quester quester = getQuester(player.getUniqueId());
 
-		                if (quester.currentQuest != null) {
-		                    player.sendMessage(YELLOW + Lang.get("questOneActive"));
+		                if (quester.currentQuests.size() >= maxQuests) {
+                                    String msg = Lang.get("questMaxAllowed");
+                                    msg = msg.replaceAll("<number>", String.valueOf(maxQuests));
+		                    player.sendMessage(YELLOW + msg);
 		                } else if (quester.completedQuests.contains(q.name) && q.redoDelay < 0) {
 		                    String msg = Lang.get("questAlreadyCompleted");
 		                    msg = msg.replaceAll("<quest>", PURPLE + q.name + YELLOW);
@@ -2077,6 +2106,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	}
 
 	private void showObjectives(final Player player) {
+            
 		if (getQuester(player.getUniqueId()).currentQuest != null) {
 
 		    if (getQuester(player.getUniqueId()).delayStartTime == 0) {
@@ -2094,6 +2124,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 		    player.sendMessage(YELLOW + Lang.get("noActiveQuest"));
 
 		}
+                
 	}
 
     public void printAdminHelp(CommandSender cs) {

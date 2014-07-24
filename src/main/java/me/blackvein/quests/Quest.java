@@ -75,84 +75,89 @@ public class Quest {
     List<String> phatLootRewards = new LinkedList<String>();
     //
     
+    public Stage getStage(int index) {
+        try {
+            return orderedStages.get(index);
+        }catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+    
     public void nextStage(Quester q) {
 
-        String stageCompleteMessage = q.currentStage.completeMessage;
+        String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
         if (stageCompleteMessage != null) {
-            q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, q.currentQuest));
+            q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
         }
 
-        if (q.currentStage.delay < 0) {
+        if (q.getCurrentStage(this).delay < 0) {
 
             Player player = q.getPlayer();
-            if (q.currentStageIndex == (q.currentQuest.orderedStages.size() - 1)) {
+            if (q.currentQuests.get(this) == (orderedStages.size() - 1)) {
 
-                if (q.currentStage.script != null) {
-                    plugin.trigger.parseQuestTaskTrigger(q.currentStage.script, player);
+                if (q.getCurrentStage(this).script != null) {
+                    plugin.trigger.parseQuestTaskTrigger(q.getCurrentStage(this).script, player);
                 }
-                if (q.currentStage.finishEvent != null) {
-                    q.currentStage.finishEvent.fire(q);
+                if (q.getCurrentStage(this).finishEvent != null) {
+                    q.getCurrentStage(this).finishEvent.fire(q);
                 }
 
                 completeQuest(q);
 
             } else {
 
-                q.currentStageIndex++;
+                q.currentQuests.put(this, q.currentQuests.get(this) + 1);
                 try {
-                    setStage(q, q.currentStageIndex);
+                    setStage(q, q.currentQuests.get(this));
                 } catch (InvalidStageException e) {
                     e.printStackTrace();
                 }
 
             }
 
-            q.delayStartTime = 0;
-            q.delayTimeLeft = -1;
+            q.getQuestData(this).delayStartTime = 0;
+            q.getQuestData(this).delayTimeLeft = -1;
 
         } else {
-            q.startStageTimer();
-
+            q.startStageTimer(this);
         }
 
     }
 
     public void setStage(Quester quester, int stage) throws InvalidStageException {
 
-    	quester.currentStageIndex = stage;
+    	quester.currentQuests.put(this, stage);
     	
         if (orderedStages.size() - 1 < stage) {
         	throw new InvalidStageException(this, stage);
         }
 
-        quester.resetObjectives();
+        quester.resetObjectives(this);
 
-        if (quester.currentStage.script != null) {
-            plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, quester.getPlayer());
+        if (quester.getCurrentStage(this).script != null) {
+            plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(this).script, quester.getPlayer());
         }
 
-        /*if (quester.currentStage.finishEvent != null) {
-            quester.currentStage.finishEvent.fire(quester);
+        /*if (quester.getCurrentStage(this).finishEvent != null) {
+            quester.getCurrentStage(this).finishEvent.fire(quester);
         }*/
 
-        quester.currentStage = orderedStages.get(stage);
-
-        if (quester.currentStage.startEvent != null) {
-            quester.currentStage.startEvent.fire(quester);
+        if (quester.getCurrentStage(this).startEvent != null) {
+            quester.getCurrentStage(this).startEvent.fire(quester);
         }
 
-        quester.addEmpties();
+        quester.addEmpties(this);
 
         quester.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questObjectivesTitle"));
-        for (String s : quester.getObjectivesReal()) {
+        for (String s : quester.getObjectivesReal(this)) {
 
             quester.getPlayer().sendMessage(s);
 
         }
 
-        String stageStartMessage = quester.currentStage.startMessage;
+        String stageStartMessage = quester.getCurrentStage(this).startMessage;
         if (stageStartMessage != null) {
-            quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quester.currentQuest));
+            quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this));
         }
 
     }
@@ -270,11 +275,11 @@ public class Quest {
     public void completeQuest(Quester q) {
 
         Player player = plugin.getServer().getPlayer(q.id);
-        q.resetObjectives();
+        q.resetObjectives(this);
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
 
-        String ps = Quests.parseString(finished, q.currentQuest);
+        String ps = Quests.parseString(finished, this);
 
         for (String msg : ps.split("<br>")) {
             player.sendMessage(msg);
@@ -366,7 +371,7 @@ public class Quest {
         }
 
         String complete = Lang.get("questCompleteTitle");
-        complete = complete.replaceAll("<quest>", ChatColor.YELLOW + q.currentQuest.name + ChatColor.GOLD);
+        complete = complete.replaceAll("<quest>", ChatColor.YELLOW + name + ChatColor.GOLD);
         player.sendMessage(ChatColor.GOLD + complete);
         player.sendMessage(ChatColor.GREEN + Lang.get("questRewardsTitle"));
 
@@ -499,10 +504,8 @@ public class Quest {
             player.sendMessage(none);
         }
 
-        q.currentQuest = null;
-
-        q.currentStage = null;
-        q.currentStageIndex = 0;
+        q.currentQuests.remove(this);
+        q.questData.remove(this);
 
         q.saveData();
         player.updateInventory();
@@ -512,17 +515,15 @@ public class Quest {
     public void failQuest(Quester q) {
 
         Player player = plugin.getServer().getPlayer(q.id);
-        q.resetObjectives();
+        q.resetObjectives(this);
 
         String title = Lang.get("questTitle");
-        title = title.replaceAll("<quest>", ChatColor.DARK_PURPLE + q.currentQuest.name + ChatColor.AQUA);
+        title = title.replaceAll("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
         player.sendMessage(ChatColor.AQUA + title);
         player.sendMessage(ChatColor.RED + Lang.get("questFailed"));
 
-        q.currentQuest = null;
-
-        q.currentStage = null;
-        q.currentStageIndex = 0;
+        q.currentQuests.remove(this);
+        q.questData.remove(this);
 
         q.saveData();
         player.updateInventory();

@@ -71,7 +71,7 @@ public class Lang {
 		//Quests
 
                 langMap.put("questFailed", "*QUEST FAILED*");
-                langMap.put("questOneActive", "You may only have one active Quest.");
+                langMap.put("questMaxAllowed", "You may only have up to <number> Quests.");
                 langMap.put("questTooEarly", "You may not take <quest> again for another <time>.");
                 langMap.put("questAlreadyCompleted", "You have already completed <quest>.");
                 langMap.put("questInvalidLocation", "You may not take <quest> at this location.");
@@ -88,7 +88,7 @@ public class Lang {
                 langMap.put("COMMAND_TAKE_USAGE", "Usage: /quests take [quest]");
                 
                 langMap.put("COMMAND_QUIT", "quit");
-                langMap.put("COMMAND_QUIT_HELP", "quit - Quit your current Quest");
+                langMap.put("COMMAND_QUIT_HELP", "quit [quest] - Quit a current Quest");
                 
                 langMap.put("COMMAND_EDITOR", "editor");
                 langMap.put("COMMAND_EDITOR_HELP", "editor - Create/Edit Quests");
@@ -115,7 +115,7 @@ public class Lang {
                 langMap.put("COMMAND_QUESTADMIN_GIVE_HELP", "give [player] [quest] - Force a player to take a Quest");
                 
                 langMap.put("COMMAND_QUESTADMIN_QUIT", "quit");
-                langMap.put("COMMAND_QUESTADMIN_QUIT_HELP", "quit [player] - Force a player to quit their Quest");
+                langMap.put("COMMAND_QUESTADMIN_QUIT_HELP", "quit [player] [quest] - Force a player to quit their Quest");
                 
                 langMap.put("COMMAND_QUESTADMIN_POINTS", "points");
                 langMap.put("COMMAND_QUESTADMIN_POINTS_HELP", "points [player] [amount] - Set a players Quest Points");
@@ -130,14 +130,14 @@ public class Lang {
                 langMap.put("COMMAND_QUESTADMIN_POINTSALL_HELP", "pointsall [amount] - Set ALL players' Quest Points");
                 
                 langMap.put("COMMAND_QUESTADMIN_FINISH", "finish");
-                langMap.put("COMMAND_QUESTADMIN_FINISH_HELP", "finish [player] - Immediately force Quest completion for a player");
+                langMap.put("COMMAND_QUESTADMIN_FINISH_HELP", "finish [player] [quest] - Immediately force Quest completion for a player");
                 
                 langMap.put("COMMAND_QUESTADMIN_NEXTSTAGE", "nextstage");
-                langMap.put("COMMAND_QUESTADMIN_NEXTSTAGE_HELP", "nextstage [player] - Immediately force Stage completion for a player");
+                langMap.put("COMMAND_QUESTADMIN_NEXTSTAGE_HELP", "nextstage [player] [quest] - Immediately force Stage completion for a player");
                 
                 langMap.put("COMMAND_QUESTADMIN_SETSTAGE", "setstage");
-                langMap.put("COMMAND_QUESTADMIN_SETSTAGE_HELP", "setstage [player] [stage] - Set the current Stage for a player");
-                langMap.put("COMMAND_QUESTADMIN_SETSTAGE_USAGE", "Usage: /questadmin setstage [player] [stage]");
+                langMap.put("COMMAND_QUESTADMIN_SETSTAGE_HELP", "setstage [player] [quest] [stage] - Set the current Stage for a player");
+                langMap.put("COMMAND_QUESTADMIN_SETSTAGE_USAGE", "Usage: /questadmin setstage [player] [quest] [stage]");
                 
                 langMap.put("COMMAND_QUESTADMIN_TOGGLEGUI", "togglegui");
                 langMap.put("COMMAND_QUESTADMIN_TOGGLEGUI_HELP", "togglegui [npc id] - Toggle GUI Quest Display on an NPC");
@@ -812,7 +812,7 @@ public class Lang {
                 langMap.put("acceptQuest", "Accept Quest?");
                 langMap.put("enterAnOption", "Enter an option");
                 langMap.put("questAccepted", "Quest accepted: <quest>");
-                langMap.put("currentQuest", "Current Quest:");
+                langMap.put("currentQuest", "Current Quests:");
                 
                     //Objectives
                     langMap.put("damage", "Damage");
@@ -835,7 +835,7 @@ public class Lang {
                     //
                     
                 langMap.put("invalidSelection", "Invalid selection!");
-                langMap.put("noActiveQuest", "You do not currently have an active Quest.");
+                langMap.put("noActiveQuest", "You do not currently have any active Quests.");
                 langMap.put("speakTo", "Start: Speak to <npc>");
                 langMap.put("mustSpeakTo", "You must speak to <npc> to start this Quest.");
                 langMap.put("noCommandStart", "<quest> may not be started via command.");
@@ -913,7 +913,7 @@ public class Lang {
                     langMap.put("disableNPCGUI", "<npc> will no longer provide a GUI Quest Display.");
                     
                     langMap.put("invalidNumber", "Invalid number.");
-                    langMap.put("noCurrentQuest", "<player> does not currently have an active Quest.");
+                    langMap.put("noCurrentQuest", "<player> does not currently have any active Quests.");
                     langMap.put("playerNotFound", "Player not found.");
                     langMap.put("invalidStageNum", "Invalid stage number for Quest <quest>");
                     langMap.put("errorNPCID", "Error: There is no NPC with ID <number>");

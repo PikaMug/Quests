@@ -121,7 +121,9 @@ public class PlayerListener implements Listener, ColorUtil {
 
                                 if (quester.currentQuest != null) {
 
-                                    player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
+                                    String msg = Lang.get("questMaxAllowed");
+                                    msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+		                    player.sendMessage(ChatColor.YELLOW + msg);
 
                                 } else {
 
@@ -194,7 +196,11 @@ public class PlayerListener implements Listener, ColorUtil {
                             if(ItemUtil.compareItems(clicked, quest.guiDisplay, false) == 0) {
 
                                 if (quester.currentQuest != null) {
-                                    player.sendMessage(YELLOW + Lang.get("questOneActive"));
+                                    
+                                    String msg = Lang.get("questMaxAllowed");
+                                    msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+		                    player.sendMessage(YELLOW + msg);
+                                    
                                 } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
                                     String completed = Lang.get("questAlreadyCompleted");
                                     completed = completed.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);

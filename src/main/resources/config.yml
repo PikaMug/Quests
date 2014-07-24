@@ -10,9 +10,7 @@ accept-timeout: 20
 snoop: true
 show-npc-effects: true
 npc-effect: "note"
-max-party-size: 0
-party-invite-timeout: 20
-broadcast-party-creation: true
+max-quests: 0
 quester-blacklist:
   - "SomeGuy12345"
   - "somePrefix*"

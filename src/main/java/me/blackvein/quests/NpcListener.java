@@ -134,7 +134,9 @@ public class NpcListener implements Listener {
 
                                 } else if (quester.currentQuest.equals(q) == false) {
 
-                                    player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
+                                    String msg = Lang.get("questMaxAllowed");
+                                    msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+		                    player.sendMessage(ChatColor.YELLOW + msg);
 
                                 }
 
@@ -164,7 +166,9 @@ public class NpcListener implements Listener {
 
                                 } else if (quester.currentQuest.equals(q) == false) {
 
-                                    player.sendMessage(ChatColor.YELLOW + Lang.get("questOneActive"));
+                                    String msg = Lang.get("questMaxAllowed");
+                                    msg = msg.replaceAll("<number>", String.valueOf(maxQuests));
+		                    player.sendMessage(ChatColor.YELLOW + msg);
 
                                 }
 
