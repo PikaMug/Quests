@@ -12,7 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public class QuestData {
-    
+
     public Map<Material, Integer> blocksDamaged = new EnumMap<Material, Integer>(Material.class);
     public Map<Material, Integer> blocksBroken = new EnumMap<Material, Integer>(Material.class);
     public Map<Material, Integer> blocksPlaced = new EnumMap<Material, Integer>(Material.class);
@@ -41,5 +41,6 @@ public class QuestData {
     public Map<String, Boolean> passwordsSaid = new HashMap<String, Boolean>();
     public Map<String, Integer> customObjectiveCounts = new HashMap<String, Integer>();
     public Map<String, Boolean> eventFired = new HashMap<String, Boolean>();
-    
+    public boolean delayOver = true;
+
 }

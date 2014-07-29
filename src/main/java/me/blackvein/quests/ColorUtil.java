@@ -27,5 +27,4 @@ public interface ColorUtil {
     static final ChatColor DARKRED = ChatColor.DARK_RED;
     static final ChatColor YELLOW = ChatColor.YELLOW;
 
-
 }

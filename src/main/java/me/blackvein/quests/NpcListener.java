@@ -34,7 +34,7 @@ public class NpcListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(NPCRightClickEvent evt) {
 
-        if(plugin.questFactory.selectingNPCs.contains(evt.getClicker())){
+        if (plugin.questFactory.selectingNPCs.contains(evt.getClicker())) {
             evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + "ID " + evt.getNPC().getId());
             return;
         }
@@ -45,70 +45,92 @@ public class NpcListener implements Listener {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             boolean delivery = false;
 
-            if (quester.hasObjective("deliverItem") && player.getItemInHand() != null) {
+            for (Quest quest : quester.currentQuests.keySet()) {
 
-                ItemStack hand = player.getItemInHand();
+                if (quester.hasObjective(quest, "deliverItem") && player.getItemInHand() != null) {
 
-                ItemStack found = null;
+                    ItemStack hand = player.getItemInHand();
 
-                for(ItemStack is : quester.currentStage.itemsToDeliver){
+                    ItemStack found = null;
 
-                    if(ItemUtil.compareItems(is, hand, true) == 0){
-                        found = is;
-                        break;
-                    }
+                    for (ItemStack is : quester.getCurrentStage(quest).itemsToDeliver) {
 
-                }
-
-                if (found != null) {
-
-                    NPC clicked = evt.getNPC();
-
-                    for (Integer n : quester.currentStage.itemDeliveryTargets) {
-                        if (n == clicked.getId()) {
-                            quester.deliverItem(hand);
-                            delivery = true;
+                        if (ItemUtil.compareItems(is, hand, true) == 0) {
+                            found = is;
                             break;
                         }
+
+                    }
+
+                    if (found != null) {
+
+                        NPC clicked = evt.getNPC();
+
+                        for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
+                            if (n == clicked.getId()) {
+                                quester.deliverItem(quest, hand);
+                                delivery = true;
+                                break;
+                            }
+                        }
+
+                        break;
+
                     }
 
                 }
+
             }
 
             if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
 
                 if (plugin.checkQuester(player.getName()) == false) {
-                    if (quester.hasObjective("talkToNPC")) {
 
-                        quester.interactWithNPC(evt.getNPC());
+                    boolean hasObjective = false;
 
-                    } else {
+                    for (Quest quest : quester.currentQuests.keySet()) {
+
+                        if (quester.hasObjective(quest, "talkToNPC")) {
+
+                            quester.interactWithNPC(quest, evt.getNPC());
+                            if (quester.getQuestData(quest).citizensInteracted.containsKey(evt.getNPC().getId()) && quester.getQuestData(quest).citizensInteracted.get(evt.getNPC().getId()) == false) {
+                                hasObjective = true;
+                            }
+
+                        }
+
+                    }
+
+                    if (!hasObjective) {
 
                         LinkedList<Quest> npcQuests = new LinkedList<Quest>();
 
                         for (Quest q : plugin.getQuests()) {
 
+                            if(quester.currentQuests.containsKey(q))
+                                continue;
+                            
                             if (q.npcStart != null && q.npcStart.getId() == evt.getNPC().getId()) {
-                            	if (Quests.ignoreLockedQuests) {
-                                    if (q.testRequirements(quester) && (q.redoDelay <= 0)) {
-                                            npcQuests.add(q);
+                                if (Quests.ignoreLockedQuests) {
+                                    if (q.testRequirements(quester)) {
+                                        npcQuests.add(q);
                                     }
-                            	} else if (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1) {
+                                } else if (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1) {
                                     npcQuests.add(q);
-                            	}
+                                }
                             }
 
                         }
 
                         if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
 
-                            if(plugin.questNPCGUIs.contains(evt.getNPC().getId())) {
-                                
+                            if (plugin.questNPCGUIs.contains(evt.getNPC().getId())) {
+
                                 quester.showGUIDisplay(npcQuests);
                                 return;
-                                
+
                             }
-                            
+
                             Conversation c = plugin.NPCConversationFactory.buildConversation((Conversable) player);
                             c.getContext().setSessionData("quests", npcQuests);
                             c.getContext().setSessionData("npc", evt.getNPC().getName());
@@ -120,62 +142,57 @@ public class NpcListener implements Listener {
 
                             if (!quester.completedQuests.contains(q.name)) {
 
-                                if (quester.currentQuest == null) {
+                                if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
 
                                     quester.questToTake = q.name;
 
                                     String s = extracted(quester);
 
                                     for (String msg : s.split("<br>")) {
-                                    	player.sendMessage(msg);
+                                        player.sendMessage(msg);
                                     }
 
                                     plugin.conversationFactory.buildConversation((Conversable) player).begin();
 
-                                } else if (quester.currentQuest.equals(q) == false) {
+                                } else if (quester.currentQuests.containsKey(q) == false) {
 
                                     String msg = Lang.get("questMaxAllowed");
                                     msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
-		                    player.sendMessage(ChatColor.YELLOW + msg);
+                                    player.sendMessage(ChatColor.YELLOW + msg);
 
                                 }
 
-                            } else if (quester.completedQuests.contains(q.name)) {
+                            } else if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
 
-                                if (quester.currentQuest == null) {
+                                if (quester.getDifference(q) > 0) {
+                                    String early = Lang.get("questTooEarly");
+                                    early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                                    early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+                                    player.sendMessage(ChatColor.YELLOW + early);
+                                } else if (q.redoDelay < 0) {
+                                    String completed = Lang.get("questAlreadyCompleted");
+                                    completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                                    player.sendMessage(ChatColor.YELLOW + completed);
+                                } else {
+                                    quester.questToTake = q.name;
+                                    String s = extracted(quester);
 
-                                    if (quester.getDifference(q) > 0) {
-                                        String early = Lang.get("questTooEarly");
-                                        early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
-                                        early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
-                                        player.sendMessage(ChatColor.YELLOW + early);
-                                    } else if (q.redoDelay < 0) {
-                                        String completed = Lang.get("questAlreadyCompleted");
-                                        completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
-                                        player.sendMessage(ChatColor.YELLOW + completed);
-                                    } else {
-                                        quester.questToTake = q.name;
-                                        String s = extracted(quester);
-
-                                        for (String msg : s.split("<br>")) {
-                                        	player.sendMessage(msg);
-                                        }
-
-                                        plugin.conversationFactory.buildConversation((Conversable) player).begin();
+                                    for (String msg : s.split("<br>")) {
+                                        player.sendMessage(msg);
                                     }
 
-                                } else if (quester.currentQuest.equals(q) == false) {
-
-                                    String msg = Lang.get("questMaxAllowed");
-                                    msg = msg.replaceAll("<number>", String.valueOf(maxQuests));
-		                    player.sendMessage(ChatColor.YELLOW + msg);
-
+                                    plugin.conversationFactory.buildConversation((Conversable) player).begin();
                                 }
+
+                            } else if (quester.currentQuests.containsKey(q) == false) {
+
+                                String msg = Lang.get("questMaxAllowed");
+                                msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+                                player.sendMessage(ChatColor.YELLOW + msg);
 
                             }
 
                         }
-
 
                     }
 
@@ -187,9 +204,9 @@ public class NpcListener implements Listener {
     }
 
     @EventHandler
-    public void onNPCLeftClick(NPCLeftClickEvent evt){
+    public void onNPCLeftClick(NPCLeftClickEvent evt) {
 
-        if(plugin.questFactory.selectingNPCs.contains(evt.getClicker())){
+        if (plugin.questFactory.selectingNPCs.contains(evt.getClicker())) {
             evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + Lang.get("id") + " " + evt.getNPC().getId());
         }
 
@@ -222,8 +239,13 @@ public class NpcListener implements Listener {
                         if (okay) {
 
                             Quester quester = plugin.getQuester(player.getUniqueId());
-                            if (quester.hasObjective("killNPC")) {
-                                quester.killNPC(evt.getNPC());
+
+                            for (Quest quest : quester.currentQuests.keySet()) {
+
+                                if (quester.hasObjective(quest, "killNPC")) {
+                                    quester.killNPC(quest, evt.getNPC());
+                                }
+
                             }
 
                         }
@@ -243,8 +265,12 @@ public class NpcListener implements Listener {
 
                         Player player = (Player) damager;
                         Quester quester = plugin.getQuester(player.getUniqueId());
-                        if (quester.hasObjective("killNPC")) {
-                            quester.killNPC(evt.getNPC());
+                        for (Quest quest : quester.currentQuests.keySet()) {
+
+                            if (quester.hasObjective(quest, "killNPC")) {
+                                quester.killNPC(quest, evt.getNPC());
+                            }
+
                         }
 
                     }

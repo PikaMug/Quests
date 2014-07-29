@@ -30,7 +30,7 @@ public class Stage {
     LinkedList<String> areaNames = new LinkedList<String>();
 
     LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
-    LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>(){
+    LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
 
         @Override
         public boolean equals(Object o) {
@@ -56,7 +56,7 @@ public class Stage {
     };
     public LinkedList<String> deliverMessages = new LinkedList<String>();
 
-    public LinkedList<Integer> citizensToInteract = new LinkedList<Integer>(){
+    public LinkedList<Integer> citizensToInteract = new LinkedList<Integer>() {
 
         @Override
         public boolean equals(Object o) {
@@ -202,15 +202,15 @@ public class Stage {
                 return false;
             }
 
-            if (other.itemsToDeliver.equals(itemsToDeliver) == false){
+            if (other.itemsToDeliver.equals(itemsToDeliver) == false) {
                 return false;
             }
 
-            if (other.itemDeliveryTargets.equals(itemDeliveryTargets) == false){
+            if (other.itemDeliveryTargets.equals(itemDeliveryTargets) == false) {
                 return false;
             }
 
-            if (other.deliverMessages.equals(deliverMessages) == false){
+            if (other.deliverMessages.equals(deliverMessages) == false) {
                 return false;
             }
 
@@ -253,23 +253,23 @@ public class Stage {
             if (other.itemsToCraft.equals(itemsToCraft) == false) {
                 return false;
             }
-            
+
             if (other.customObjectives.equals(customObjectives) == false) {
                 return false;
             }
-            
+
             if (other.customObjectiveDisplays.equals(customObjectiveDisplays) == false) {
                 return false;
             }
-            
+
             if (other.customObjectiveData.equals(customObjectiveData) == false) {
                 return false;
             }
-            
+
             if (other.passwordDisplays.equals(passwordDisplays) == false) {
                 return false;
             }
-            
+
             if (other.passwordPhrases.equals(passwordPhrases) == false) {
                 return false;
             }
@@ -314,11 +314,13 @@ public class Stage {
                 return false;
             }
 
-            if(other.chatEvents.equals(chatEvents) == false)
+            if (other.chatEvents.equals(chatEvents) == false) {
                 return false;
+            }
 
-            if(other.delay != delay)
+            if (other.delay != delay) {
                 return false;
+            }
 
             if (other.delayMessage != null && delayMessage != null) {
                 if (other.delayMessage.equals(delayMessage) == false) {
@@ -349,7 +351,7 @@ public class Stage {
             } else if (other.completeMessage == null && completeMessage != null) {
                 return false;
             }
-            
+
             if (other.objectiveOverride != null && objectiveOverride != null) {
                 if (other.objectiveOverride.equals(objectiveOverride) == false) {
                     return false;
@@ -365,6 +367,5 @@ public class Stage {
         return true;
 
     }
-
 
 }

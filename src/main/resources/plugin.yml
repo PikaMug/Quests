@@ -34,6 +34,9 @@ permissions:
     quests.info:
         description: View plugin information
         default: true
+    quests.journal:
+        description: View Quest Journal
+        default: true
     quests.admin:
         description: Base Questsadmin command
         default: op

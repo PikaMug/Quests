@@ -135,7 +135,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         } else {
 
             text += GRAY + "8 - " + Lang.get("rewSetHeroes") + " (" + Lang.get("rewNoHeroes") + ")\n";
-            
+
         }
 
         if (Quests.phatLoots != null) {
@@ -158,16 +158,16 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             text += GRAY + "9 - " + Lang.get("rewSetPhat") + " (" + Lang.get("rewNoPhat") + ")\n";
 
         }
-        
+
         if (context.getSessionData(CK.REW_CUSTOM) == null) {
             text += BLUE + "" + BOLD + "10 - " + RESET + ITALIC + PURPLE + Lang.get("rewSetCustom") + " (" + Lang.get("noneSet") + ")\n";
         } else {
             text += BLUE + "" + BOLD + "10 - " + RESET + ITALIC + PURPLE + Lang.get("rewSetCustom") + "\n";
             LinkedList<String> customRews = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
-            for(String s : customRews){
-                
+            for (String s : customRews) {
+
                 text += RESET + "" + PURPLE + "  - " + PINK + s + "\n";
-                
+
             }
         }
 
@@ -210,9 +210,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             } else {
                 return new RewardsPrompt(quests, factory);
             }
-        }else if(input.equalsIgnoreCase("10")){
+        } else if (input.equalsIgnoreCase("10")) {
             return new CustomRewardsPrompt();
-        }else if (input.equalsIgnoreCase("11")) {
+        } else if (input.equalsIgnoreCase("11")) {
             return factory.returnToMenu();
         }
         return null;
@@ -550,16 +550,17 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            
+
             String skillList = DARKGREEN + Lang.get("skillListTitle") + "\n";
             SkillType[] skills = SkillType.values();
-            for(int i = 0; i < skills.length; i++) {
-                
-                if(i == (skills.length - 1))
+            for (int i = 0; i < skills.length; i++) {
+
+                if (i == (skills.length - 1)) {
                     skillList += GREEN + skills[i].getName() + "\n";
-                else
+                } else {
                     skillList += GREEN + skills[i].getName() + "\n\n";
-                
+                }
+
             }
 
             return skillList + Lang.get("rewMcMMOPrompt") + "\n" + GOLD + Lang.get("rewMcMMOPromptHint");
@@ -619,9 +620,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 for (String s : args) {
 
                     try {
-                        
+
                         amounts.add(Integer.parseInt(s));
-                        
+
                     } catch (NumberFormatException e) {
                         String text = Lang.get("reqNotANumber");
                         text = text.replaceAll("<input>", PINK + s + RED);
@@ -906,19 +907,20 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
-    
+
     private class CustomRewardsPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
             String text = PINK + Lang.get("customRewardsTitle") + "\n";
-            if(quests.customRewards.isEmpty()){
+            if (quests.customRewards.isEmpty()) {
                 text += BOLD + "" + PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
-            }else {
-                for(CustomReward cr : quests.customRewards)
+            } else {
+                for (CustomReward cr : quests.customRewards) {
                     text += PURPLE + " - " + cr.getName() + "\n";
+                }
             }
-            
+
             return text + YELLOW + Lang.get("rewCustomRewardPrompt");
         }
 
@@ -928,37 +930,37 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
                 CustomReward found = null;
-                for(CustomReward cr : quests.customRewards){
-                    if(cr.getName().equalsIgnoreCase(input)){
+                for (CustomReward cr : quests.customRewards) {
+                    if (cr.getName().equalsIgnoreCase(input)) {
                         found = cr;
                         break;
                     }
                 }
-                
-                if(found == null){
-                    for(CustomReward cr : quests.customRewards){
-                        if(cr.getName().toLowerCase().contains(input.toLowerCase())){
+
+                if (found == null) {
+                    for (CustomReward cr : quests.customRewards) {
+                        if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr;
                             break;
                         }
                     }
                 }
-                
-                if(found != null){
-                    
-                    if(context.getSessionData(CK.REW_CUSTOM) != null){
+
+                if (found != null) {
+
+                    if (context.getSessionData(CK.REW_CUSTOM) != null) {
                         LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
                         LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
-                        if(list.contains(found.getName()) == false){
+                        if (list.contains(found.getName()) == false) {
                             list.add(found.getName());
                             datamapList.add(found.datamap);
                             context.setSessionData(CK.REW_CUSTOM, list);
                             context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
-                        }else{
+                        } else {
                             context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewCustomAlreadyAdded"));
                             return new CustomRewardsPrompt();
                         }
-                    }else{
+                    } else {
                         LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
                         datamapList.add(found.datamap);
                         LinkedList<String> list = new LinkedList<String>();
@@ -966,17 +968,17 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                         context.setSessionData(CK.REW_CUSTOM, list);
                         context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
                     }
-                    
+
                     //Send user to the custom data prompt if there is any needed
-                    if(found.datamap.isEmpty() == false){
-                        
+                    if (found.datamap.isEmpty() == false) {
+
                         context.setSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS, found.descriptions);
                         return new RewardCustomDataListPrompt();
-                        
+
                     }
                     //
-                    
-                }else{
+
+                } else {
                     context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewCustomNotFound"));
                     return new CustomRewardsPrompt();
                 }
@@ -992,98 +994,103 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
-    
+
     private class RewardCustomDataListPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            
+
             String text = BOLD + "" + AQUA + "- ";
-            
+
             LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
-            
+
             String rewName = list.getLast();
             Map<String, Object> datamap = datamapList.getLast();
-            
+
             text += rewName + " -\n";
             int index = 1;
-            
+
             LinkedList<String> datamapKeys = new LinkedList<String>();
-            for(String key : datamap.keySet())
+            for (String key : datamap.keySet()) {
                 datamapKeys.add(key);
-            Collections.sort(datamapKeys);
-            
-            for(String dataKey : datamapKeys){
-                
-                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
-                if(datamap.get(dataKey) != null)
-                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
-                else
-                    text += RED + " (" + Lang.get("valRequired") + ")\n";
-                
-                index++;
-                
             }
-            
+            Collections.sort(datamapKeys);
+
+            for (String dataKey : datamapKeys) {
+
+                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
+                if (datamap.get(dataKey) != null) {
+                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+                } else {
+                    text += RED + " (" + Lang.get("valRequired") + ")\n";
+                }
+
+                index++;
+
+            }
+
             text += BOLD + "" + DARKBLUE + index + " - " + AQUA + Lang.get("finish");
-            
+
             return text;
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            
+
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
-            
+
             int numInput;
-            
-            try{
+
+            try {
                 numInput = Integer.parseInt(input);
-            }catch(NumberFormatException nfe){
+            } catch (NumberFormatException nfe) {
                 return new RewardCustomDataListPrompt();
             }
-            
-            if(numInput < 1 || numInput > datamap.size() + 1)
+
+            if (numInput < 1 || numInput > datamap.size() + 1) {
                 return new RewardCustomDataListPrompt();
-            
-            if(numInput < datamap.size() + 1){
-                
+            }
+
+            if (numInput < datamap.size() + 1) {
+
                 LinkedList<String> datamapKeys = new LinkedList<String>();
-                for(String key : datamap.keySet())
+                for (String key : datamap.keySet()) {
                     datamapKeys.add(key);
+                }
                 Collections.sort(datamapKeys);
 
                 String selectedKey = datamapKeys.get(numInput - 1);
                 context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, selectedKey);
                 return new RewardCustomDataPrompt();
-                
-            }else{
-                
-                if(datamap.containsValue(null)){
+
+            } else {
+
+                if (datamap.containsValue(null)) {
                     return new RewardCustomDataListPrompt();
-                }else{
+                } else {
                     context.setSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS, null);
                     return new RewardsPrompt(quests, factory);
                 }
-                
+
             }
 
         }
-        
+
     }
-    
+
     private class RewardCustomDataPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
             String text = "";
-            String temp = (String)context.getSessionData(CK.REW_CUSTOM_DATA_TEMP);
+            String temp = (String) context.getSessionData(CK.REW_CUSTOM_DATA_TEMP);
             Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS);
-            if(descriptions.get(temp) != null)
+            if (descriptions.get(temp) != null) {
                 text += GOLD + descriptions.get(temp) + "\n";
-                
+            }
+
             String lang = Lang.get("stageEditorCustomDataPrompt");
             lang = lang.replaceAll("<data>", temp);
             text += YELLOW + lang;
@@ -1094,11 +1101,11 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
-            datamap.put((String)context.getSessionData(CK.REW_CUSTOM_DATA_TEMP), input);
+            datamap.put((String) context.getSessionData(CK.REW_CUSTOM_DATA_TEMP), input);
             context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);
             return new RewardCustomDataListPrompt();
         }
-        
+
     }
 
 }

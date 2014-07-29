@@ -22,7 +22,6 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
     LinkedList<Quest> quests;
 
     public QuestAcceptPrompt(Quests plugin) {
-
         this.plugin = plugin;
     }
 
@@ -71,34 +70,36 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
             Quest q = null;
 
             for (Quest quest : quests) {
-            	
+
                 if (quest.getName().equalsIgnoreCase(input)) {
                     q = quest;
                     break;
                 }
 
             }
-            
-            if (q == null)
-	            for (Quest quest : quests) {
-	            	
-	                if (numInput == (quests.indexOf(quest) + 1)) {
-	                    q = quest;
-	                    break;
-	                }
-	
-	            }
-            
-            if (q == null)
-	            for (Quest quest : quests) {
-	            	
-	                if (StringUtils.containsIgnoreCase(quest.getName(), input)) {
-	                    q = quest;
-	                    break;
-	                }
-	
-	            }
-            
+
+            if (q == null) {
+                for (Quest quest : quests) {
+
+                    if (numInput == (quests.indexOf(quest) + 1)) {
+                        q = quest;
+                        break;
+                    }
+
+                }
+            }
+
+            if (q == null) {
+                for (Quest quest : quests) {
+
+                    if (StringUtils.containsIgnoreCase(quest.getName(), input)) {
+                        q = quest;
+                        break;
+                    }
+
+                }
+            }
+
             if (q == null) {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("invalidSelection"));
                 return new QuestAcceptPrompt(plugin);
@@ -108,25 +109,25 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
                 if (!quester.completedQuests.contains(q.name)) {
 
-                    if (quester.currentQuest == null) {
+                    if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
 
-                        if(q.testRequirements(quester)){
+                        if (q.testRequirements(quester)) {
 
                             quester.questToTake = q.name;
 
                             String s = extracted(quester);
-                            
+
                             for (String msg : s.split("<br>")) {
-                            	player.sendMessage(msg);
+                                player.sendMessage(msg);
                             }
-                            
+
                             plugin.conversationFactory.buildConversation((Conversable) player).begin();
 
-                        }else{
+                        } else {
                             player.sendMessage(q.failRequirements);
                         }
 
-                    } else if (quester.currentQuest.equals(q) == false) {
+                    } else if (quester.currentQuests.containsKey(q) == false) {
 
                         String msg = Lang.get("questMaxAllowed");
                         msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
@@ -136,7 +137,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
                 } else if (quester.completedQuests.contains(q.name)) {
 
-                    if (quester.currentQuest == null) {
+                    if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
 
                         if (quester.getDifference(q) > 0) {
                             String early = Lang.get("questTooEarly");
@@ -152,13 +153,13 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
                             String s = extracted(quester);
 
                             for (String msg : s.split("<br>")) {
-                            	player.sendMessage(msg);
+                                player.sendMessage(msg);
                             }
 
                             plugin.conversationFactory.buildConversation((Conversable) player).begin();
                         }
 
-                    } else if (quester.currentQuest.equals(q) == false) {
+                    } else if (quester.currentQuests.containsKey(q) == false) {
 
                         String msg = Lang.get("questMaxAllowed");
                         msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
@@ -171,7 +172,6 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
                 return Prompt.END_OF_CONVERSATION;
 
             }
-
 
         }
 

@@ -6,17 +6,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 public abstract class CustomObjective implements Listener {
-    
+
     private String name = null;
     private String author = null;
-    public final Map<String,Object> datamap = new HashMap<String, Object>();
+    public final Map<String, Object> datamap = new HashMap<String, Object>();
     public final Map<String, String> descriptions = new HashMap<String, String>();
     private String countPrompt = "null";
     private String display = "null";
     private boolean enableCount = true;
     private boolean showCount = true;
     private int count = 1;
-    
+
     public String getName() {
         return name;
     }
@@ -32,12 +32,12 @@ public abstract class CustomObjective implements Listener {
     public void setAuthor(String author) {
         this.author = author;
     }
-    
+
     public void addData(String name) {
         datamap.put(name, null);
     }
-    
-    public void addDescription(String data, String description){
+
+    public void addDescription(String data, String description) {
         descriptions.put(data, description);
     }
 
@@ -80,138 +80,148 @@ public abstract class CustomObjective implements Listener {
     public void setEnableCount(boolean enableCount) {
         this.enableCount = enableCount;
     }
-    
-    public Map<String, Object> getDatamap(Player player, CustomObjective obj){
-        
+
+    public static Map<String, Object> getDatamap(Player player, CustomObjective obj, Quest quest) {
+
         Quester quester = Quests.getInstance().getQuester(player.getUniqueId());
-        if(quester != null){
-            
+        if (quester != null) {
+
             int index = -1;
             int tempIndex = 0;
-            
-            for(me.blackvein.quests.CustomObjective co : quester.currentStage.customObjectives){
-                
-                if(co.getName().equals(obj.getName())){
+
+            for (me.blackvein.quests.CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
+
+                if (co.getName().equals(obj.getName())) {
                     index = tempIndex;
                     break;
                 }
-                
+
                 tempIndex++;
-                
+
             }
-            
-            if(index > -1){
-                
-                return quester.currentStage.customObjectiveData.get(index);
-                
+
+            if (index > -1) {
+
+                return quester.getCurrentStage(quest).customObjectiveData.get(index);
+
             }
-        
+
         }
-        
+
         return null;
-        
+
     }
-    
-    public static void incrementObjective(Player player, CustomObjective obj, int count){
-        
+
+    public static void incrementObjective(Player player, CustomObjective obj, int count, Quest quest) {
+
         Quester quester = Quests.getInstance().getQuester(player.getUniqueId());
-        if(quester != null){
-        
+        if (quester != null) {
+
             //Check if the player has Quest with objective
-            
             boolean hasQuest = false;
-            
-            for(CustomObjective co : quester.currentStage.customObjectives){
-                
-                if(co.getName().equals(obj.getName())){
+
+            for (CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
+
+                if (co.getName().equals(obj.getName())) {
                     hasQuest = true;
                     break;
                 }
-                
+
             }
-            
-            if(hasQuest && quester.hasCustomObjective(obj.getName())){
-                
-                if(quester.customObjectiveCounts.containsKey(obj.getName())){
-                    int old = quester.customObjectiveCounts.get(obj.getName());
-                    Quests.getInstance().getQuester(player.getUniqueId()).customObjectiveCounts.put(obj.getName(), old + count);
-                }else{
-                    Quests.getInstance().getQuester(player.getUniqueId()).customObjectiveCounts.put(obj.getName(), count);
+
+            if (hasQuest && quester.hasCustomObjective(quest, obj.getName())) {
+
+                if (quester.getQuestData(quest).customObjectiveCounts.containsKey(obj.getName())) {
+                    int old = quester.getQuestData(quest).customObjectiveCounts.get(obj.getName());
+                    Quests.getInstance().getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts.put(obj.getName(), old + count);
+                } else {
+                    Quests.getInstance().getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts.put(obj.getName(), count);
                 }
 
                 int index = -1;
-                for(int i = 0; i < quester.currentStage.customObjectives.size(); i++){
-                    if(quester.currentStage.customObjectives.get(i).getName().equals(obj.getName())){
+                for (int i = 0; i < quester.getCurrentStage(quest).customObjectives.size(); i++) {
+                    if (quester.getCurrentStage(quest).customObjectives.get(i).getName().equals(obj.getName())) {
                         index = i;
                         break;
                     }
                 }
 
-                if(index > -1){
+                if (index > -1) {
 
-                    if(quester.customObjectiveCounts.get(obj.getName()) >= quester.currentStage.customObjectiveCounts.get(index)){
-                       quester.finishObjective("customObj", null, null, null, null, null, null, null, null, null, obj);
+                    if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= quester.getCurrentStage(quest).customObjectiveCounts.get(index)) {
+                        quester.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
                     }
 
                 }
-            
+
             }
-        
+
         }
-        
+
     }
-    
+
     @Override
-    public boolean equals(Object o){
-        
-        if(o instanceof CustomObjective){
-            
+    public boolean equals(Object o) {
+
+        if (o instanceof CustomObjective) {
+
             CustomObjective other = (CustomObjective) o;
-            
-            if(other.name.equals(name) == false)
+
+            if (other.name.equals(name) == false) {
                 return false;
-            
-            if(other.author.equals(name) == false)
-                return false;
-            
-            for(String s : other.datamap.keySet()){
-                if(datamap.containsKey(s) == false)
-                    return false;
             }
-            
-            for(Object val : other.datamap.values()){
-                if(datamap.containsValue(val) == false)
-                    return false;
+
+            if (other.author.equals(name) == false) {
+                return false;
             }
-            
-            for(String s : other.descriptions.keySet()){
-                if(descriptions.containsKey(s) == false)
+
+            for (String s : other.datamap.keySet()) {
+                if (datamap.containsKey(s) == false) {
                     return false;
+                }
             }
-            
-            for(String s : other.descriptions.values()){
-                if(descriptions.containsValue(s) == false)
+
+            for (Object val : other.datamap.values()) {
+                if (datamap.containsValue(val) == false) {
                     return false;
+                }
             }
-            
-            if(other.countPrompt.equals(countPrompt) == false)
+
+            for (String s : other.descriptions.keySet()) {
+                if (descriptions.containsKey(s) == false) {
+                    return false;
+                }
+            }
+
+            for (String s : other.descriptions.values()) {
+                if (descriptions.containsValue(s) == false) {
+                    return false;
+                }
+            }
+
+            if (other.countPrompt.equals(countPrompt) == false) {
                 return false;
-            
-            if(other.display.equals(display) == false)
+            }
+
+            if (other.display.equals(display) == false) {
                 return false;
-            
-            if(other.enableCount != enableCount)
+            }
+
+            if (other.enableCount != enableCount) {
                 return false;
-            
-            if(other.showCount != showCount)
+            }
+
+            if (other.showCount != showCount) {
                 return false;
-            
-            if(other.count != count)
+            }
+
+            if (other.count != count) {
                 return false;
-            
+            }
+
         }
-        
+
         return true;
     }
-    
+
 }

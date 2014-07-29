@@ -40,7 +40,7 @@ public class Quest {
     Location blockStart;
     Quests plugin;
     Event initialEvent;
-    
+
     //Requirements
     int moneyReq = 0;
     int questPointsReq = 0;
@@ -55,10 +55,10 @@ public class Quest {
     String heroesSecondaryClassReq = null;
     Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
     Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
-    
+
     public String failRequirements = null;
     //
-    
+
     //Rewards
     int moneyReward = 0;
     int questPoints = 0;
@@ -74,15 +74,15 @@ public class Quest {
     List<Double> heroesAmounts = new LinkedList<Double>();
     List<String> phatLootRewards = new LinkedList<String>();
     //
-    
+
     public Stage getStage(int index) {
         try {
             return orderedStages.get(index);
-        }catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             return null;
         }
     }
-    
+
     public void nextStage(Quester q) {
 
         String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
@@ -99,7 +99,7 @@ public class Quest {
                     plugin.trigger.parseQuestTaskTrigger(q.getCurrentStage(this).script, player);
                 }
                 if (q.getCurrentStage(this).finishEvent != null) {
-                    q.getCurrentStage(this).finishEvent.fire(q);
+                    q.getCurrentStage(this).finishEvent.fire(q, this);
                 }
 
                 completeQuest(q);
@@ -126,10 +126,10 @@ public class Quest {
 
     public void setStage(Quester quester, int stage) throws InvalidStageException {
 
-    	quester.currentQuests.put(this, stage);
-    	
+        quester.currentQuests.put(this, stage);
+
         if (orderedStages.size() - 1 < stage) {
-        	throw new InvalidStageException(this, stage);
+            throw new InvalidStageException(this, stage);
         }
 
         quester.resetObjectives(this);
@@ -139,16 +139,17 @@ public class Quest {
         }
 
         /*if (quester.getCurrentStage(this).finishEvent != null) {
-            quester.getCurrentStage(this).finishEvent.fire(quester);
-        }*/
-
+         quester.getCurrentStage(this).finishEvent.fire(quester);
+         }*/
         if (quester.getCurrentStage(this).startEvent != null) {
-            quester.getCurrentStage(this).startEvent.fire(quester);
+            quester.getCurrentStage(this).startEvent.fire(quester, this);
         }
 
         quester.addEmpties(this);
 
-        quester.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questObjectivesTitle"));
+        String msg = Lang.get("questObjectivesTitle");
+        msg = msg.replaceAll("<quest>", name);
+        quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
         for (String s : quester.getObjectivesReal(this)) {
 
             quester.getPlayer().sendMessage(s);
@@ -234,24 +235,25 @@ public class Quest {
             }
 
         }
-        
-        for (String s : customRequirements.keySet()){
-            
+
+        for (String s : customRequirements.keySet()) {
+
             CustomRequirement found = null;
-            for(CustomRequirement cr : plugin.customRequirements){
-                if(cr.getName().equalsIgnoreCase(s)){
+            for (CustomRequirement cr : plugin.customRequirements) {
+                if (cr.getName().equalsIgnoreCase(s)) {
                     found = cr;
                     break;
                 }
             }
-            
-            if(found != null){
-                if(found.testRequirement(player, customRequirements.get(s)) == false)
+
+            if (found != null) {
+                if (found.testRequirement(player, customRequirements.get(s)) == false) {
                     return false;
-            }else{
+                }
+            } else {
                 Quests.printWarning("[Quests] Quester \"" + player.getName() + "\" attempted to take Quest \"" + name + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");
             }
-            
+
         }
 
         if (quester.questPoints < questPointsReq) {
@@ -263,7 +265,7 @@ public class Quest {
         }
 
         for (String q : blockQuests) {
-            if (quester.completedQuests.contains(q)) {
+            if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(q)) {
                 return false;
             }
         }
@@ -335,33 +337,36 @@ public class Quest {
 
         LinkedList<String> phatLootMessages = new LinkedList<String>();
 
-        for(String s : phatLootRewards) {
+        for (String s : phatLootRewards) {
 
             LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
 
-            if(lb.getExp() > 0){
+            if (lb.getExp() > 0) {
                 phatLootExp += lb.getExp();
                 player.giveExp(lb.getExp());
             }
 
-            if(lb.getMoney() > 0){
+            if (lb.getMoney() > 0) {
                 phatLootMoney += lb.getMoney();
                 Quests.economy.depositPlayer(player.getName(), lb.getMoney());
             }
 
-            if(lb.getItemList().isEmpty() == false){
+            if (lb.getItemList().isEmpty() == false) {
                 phatLootItems.addAll(lb.getItemList());
-                for(ItemStack is : lb.getItemList())
+                for (ItemStack is : lb.getItemList()) {
                     Quests.addItem(player, is);
+                }
             }
 
-            if(lb.getCommandList().isEmpty() == false){
-                for(CommandLoot cl : lb.getCommandList())
+            if (lb.getCommandList().isEmpty() == false) {
+                for (CommandLoot cl : lb.getCommandList()) {
                     cl.execute(player);
+                }
             }
 
-            if(lb.getMessageList().isEmpty() == false)
+            if (lb.getMessageList().isEmpty() == false) {
                 phatLootMessages.addAll(lb.getMessageList());
+            }
 
         }
 
@@ -384,26 +389,29 @@ public class Quest {
         for (ItemStack i : itemRewards) {
 
             if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
-                
-                if(i.getEnchantments().isEmpty())
+
+                if (i.getEnchantments().isEmpty()) {
                     player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
-                else
+                } else {
                     player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
-            
+                }
+
             } else if (i.getDurability() != 0) {
-                
-                if(i.getEnchantments().isEmpty())
+
+                if (i.getEnchantments().isEmpty()) {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
-                else
+                } else {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
-            
+                }
+
             } else {
-                
-                if(i.getEnchantments().isEmpty())
+
+                if (i.getEnchantments().isEmpty()) {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
-                else
+                } else {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
-                
+                }
+
             }
 
             none = null;
@@ -412,26 +420,29 @@ public class Quest {
         for (ItemStack i : phatLootItems) {
 
             if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
-                
-                if(i.getEnchantments().isEmpty())
+
+                if (i.getEnchantments().isEmpty()) {
                     player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
-                else
+                } else {
                     player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
-            
+                }
+
             } else if (i.getDurability() != 0) {
-                
-                if(i.getEnchantments().isEmpty())
+
+                if (i.getEnchantments().isEmpty()) {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
-                else
+                } else {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
-            
+                }
+
             } else {
-                
-                if(i.getEnchantments().isEmpty())
+
+                if (i.getEnchantments().isEmpty()) {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
-                else
+                } else {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
-                
+                }
+
             }
 
             none = null;
@@ -466,38 +477,38 @@ public class Quest {
             none = null;
         }
 
-        if(phatLootMessages.isEmpty() == false) {
-            for (String s : phatLootMessages){
+        if (phatLootMessages.isEmpty() == false) {
+            for (String s : phatLootMessages) {
                 player.sendMessage("- " + s);
             }
             none = null;
         }
-        
-        for (String s : customRewards.keySet()){
-            
+
+        for (String s : customRewards.keySet()) {
+
             CustomReward found = null;
-            for(CustomReward cr : plugin.customRewards){
-                if(cr.getName().equalsIgnoreCase(s)){
+            for (CustomReward cr : plugin.customRewards) {
+                if (cr.getName().equalsIgnoreCase(s)) {
                     found = cr;
                     break;
                 }
             }
-            
-            if(found != null){
+
+            if (found != null) {
                 Map<String, Object> datamap = customRewards.get(found.getName());
                 String message = found.getRewardName();
-                
-                for(String key : datamap.keySet()){
+
+                for (String key : datamap.keySet()) {
                     message = message.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
                 }
                 player.sendMessage("- " + ChatColor.GOLD + found.getRewardName());
                 found.giveReward(player, customRewards.get(s));
-            }else{
+            } else {
                 Quests.printWarning("[Quests] Quester \"" + player.getName() + "\" completed the Quest \"" + name + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
             }
-            
+
             none = null;
-            
+
         }
 
         if (none != null) {
@@ -623,7 +634,7 @@ public class Quest {
                 return false;
             }
 
-            if(other.phatLootRewards.equals(phatLootRewards) == false) {
+            if (other.phatLootRewards.equals(phatLootRewards) == false) {
                 return false;
             }
 
@@ -680,12 +691,12 @@ public class Quest {
             } else if (other.heroesSecondaryClassReq == null && heroesSecondaryClassReq != null) {
                 return false;
             }
-            
-            if (other.customRequirements.equals(customRequirements) == false){
+
+            if (other.customRequirements.equals(customRequirements) == false) {
                 return false;
             }
-            
-            if (other.customRewards.equals(customRewards) == false){
+
+            if (other.customRewards.equals(customRewards) == false) {
                 return false;
             }
 
@@ -723,18 +734,19 @@ public class Quest {
 
     }
 
-    public boolean isInRegion(Player player){
+    public boolean isInRegion(Player player) {
 
-        if(region == null){
+        if (region == null) {
             return true;
-        }else{
+        } else {
             ApplicableRegionSet ars = Quests.worldGuard.getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
             Iterator<ProtectedRegion> i = ars.iterator();
-            while(i.hasNext()){
+            while (i.hasNext()) {
 
                 ProtectedRegion pr = i.next();
-                if(pr.getId().equalsIgnoreCase(region))
+                if (pr.getId().equalsIgnoreCase(region)) {
                     return true;
+                }
 
             }
             return false;

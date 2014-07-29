@@ -273,20 +273,20 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
             if (quests.citizens != null) {
-                
-                if(context.getSessionData(CK.Q_GUIDISPLAY) == null) {
+
+                if (context.getSessionData(CK.Q_GUIDISPLAY) == null) {
                     text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    
+
                     ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
                     text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + ItemUtil.getDisplayString(stack) + RESET + YELLOW + ")\n";
-                    
+
                 }
-                
+
             } else {
                 text += GRAY + "8 - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("questCitNotInstalled") + ")\n";
             }
-            
+
             if (quests.citizens != null) {
                 text += BLUE + "" + BOLD + "10" + RESET + DARKAQUA + " - " + Lang.get("questEditorReqs") + "\n";
             } else {
@@ -789,84 +789,83 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
     }
-    
+
     private class GUIDisplayPrompt extends FixedSetPrompt {
-        
-        public GUIDisplayPrompt(){
-            
+
+        public GUIDisplayPrompt() {
+
             super("1", "2", "3");
-            
+
         }
-        
+
         @Override
         public String getPromptText(ConversationContext context) {
-            
-            if(context.getSessionData("tempStack") != null){
-                
+
+            if (context.getSessionData("tempStack") != null) {
+
                 ItemStack stack = (ItemStack) context.getSessionData("tempStack");
                 boolean failed = false;
-                
-                for(Quest quest : quests.quests) {
-                    
-                    if(quest.guiDisplay != null) {
-                        
-                        if(ItemUtil.compareItems(stack, quest.guiDisplay, false) != 0) {
-                            
+
+                for (Quest quest : quests.quests) {
+
+                    if (quest.guiDisplay != null) {
+
+                        if (ItemUtil.compareItems(stack, quest.guiDisplay, false) != 0) {
+
                             String error = Lang.get("questGUIError");
                             error = error.replaceAll("<quest>", PURPLE + quest.name + RED);
                             context.getForWhom().sendRawMessage(RED + error);
                             failed = true;
                             break;
-                            
+
                         }
-                        
+
                     }
-                    
+
                 }
-                
-                if(!failed)
+
+                if (!failed) {
                     context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
-                
+                }
+
                 context.setSessionData("tempStack", null);
-                
+
             }
-            
+
             String text = GREEN + Lang.get("questGUITitle") + "\n";
-            if(context.getSessionData(CK.Q_GUIDISPLAY) != null){
+            if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
                 ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
                 text += DARKGREEN + Lang.get("questCurrentItem") + " " + RESET + ItemUtil.getDisplayString(stack) + "\n\n";
-            }else {
+            } else {
                 text += DARKGREEN + Lang.get("questCurrentItem") + " " + GRAY + "(" + Lang.get("none") + ")\n\n";
             }
             text += GREEN + "" + BOLD + "1 -" + RESET + DARKGREEN + " " + Lang.get("questSetItem") + "\n";
             text += GREEN + "" + BOLD + "2 -" + RESET + DARKGREEN + " " + Lang.get("questClearItem") + "\n";
-            text += GREEN + "" + BOLD + "3 -" + RESET + GREEN + " " + Lang.get("done") + "\n"; 
-            
-            
+            text += GREEN + "" + BOLD + "3 -" + RESET + GREEN + " " + Lang.get("done") + "\n";
+
             return text;
-            
+
         }
-        
 
         @Override
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            
-            if(input.equalsIgnoreCase("1")) {
-                
+
+            if (input.equalsIgnoreCase("1")) {
+
                 return new ItemStackPrompt(GUIDisplayPrompt.this);
-                
-            }else if(input.equalsIgnoreCase("2")) {
-                
+
+            } else if (input.equalsIgnoreCase("2")) {
+
                 context.setSessionData(CK.Q_GUIDISPLAY, null);
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("questGUICleared"));
                 return new GUIDisplayPrompt();
-                
-            }else {
-                
+
+            } else {
+
                 return new CreateMenuPrompt();
-                
+
             }
-            
+
         }
 
     }
@@ -962,7 +961,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            
+
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 return new CreateMenuPrompt();
             }
@@ -1222,7 +1221,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         if (cc.getSessionData(CK.Q_GUIDISPLAY) != null) {
             guiDisplay = (ItemStack) cc.getSessionData(CK.Q_GUIDISPLAY);
         }
-        
+
         if (cc.getSessionData(CK.REW_MONEY) != null) {
             moneyRew = (Integer) cc.getSessionData(CK.REW_MONEY);
         }

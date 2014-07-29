@@ -9,11 +9,11 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
-public class StagesPrompt extends StringPrompt implements ColorUtil{
+public class StagesPrompt extends StringPrompt implements ColorUtil {
 
     private final QuestFactory questFactory;
 
-    public StagesPrompt(QuestFactory qf){
+    public StagesPrompt(QuestFactory qf) {
 
         questFactory = qf;
 
@@ -26,7 +26,7 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
 
         int stages = getStages(cc);
 
-        for(int i = 1; i <= stages; i++){
+        for (int i = 1; i <= stages; i++) {
 
             text += BOLD + "" + GREEN + i + ". " + RESET + GOLD + Lang.get("stageEditorEditStage") + " " + i + "\n";
 
@@ -45,39 +45,41 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
 
         int i;
 
-        try{
+        try {
 
             i = Integer.parseInt(string);
 
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             return new StagesPrompt(questFactory);
         }
 
         int stages = getStages(cc);
 
-        if(i < 0)
+        if (i < 0) {
             return new StagesPrompt(questFactory);
-        else if(i < (stages + 1) && i > 0)
+        } else if (i < (stages + 1) && i > 0) {
             return new CreateStagePrompt((i), questFactory, questFactory.quests.citizens);
-        else if(i == (stages + 1))
+        } else if (i == (stages + 1)) {
             return new CreateStagePrompt((stages + 1), questFactory, questFactory.quests.citizens);
-        else if(i == (stages + 2))
+        } else if (i == (stages + 2)) {
             return questFactory.returnToMenu();
-        else
+        } else {
             return new StagesPrompt(questFactory);
+        }
 
     }
 
-    public static int getStages(ConversationContext cc){
+    public static int getStages(ConversationContext cc) {
 
         int num = 1;
 
-        while(true){
+        while (true) {
 
-            if(cc.getSessionData("stage" + num) != null)
+            if (cc.getSessionData("stage" + num) != null) {
                 num++;
-            else
+            } else {
                 break;
+            }
 
         }
 
@@ -85,7 +87,7 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
 
     }
 
-    public static void deleteStage(ConversationContext cc, int stageNum){
+    public static void deleteStage(ConversationContext cc, int stageNum) {
 
         int stages = getStages(cc);
         int current = stageNum;
@@ -93,17 +95,19 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
         String newPref;
         boolean last = false;
 
-        if(stageNum == stages)
+        if (stageNum == stages) {
             last = true;
+        }
 
-        while(true){
+        while (true) {
 
-            if(!last){
+            if (!last) {
 
                 current++;
 
-                if(current > stages)
+                if (current > stages) {
                     break;
+                }
 
                 pref = "stage" + current;
                 newPref = "stage" + (current - 1);
@@ -168,12 +172,12 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
                 cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_COUNT, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT));
                 cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS));
                 cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP));
-                
+
                 cc.setSessionData(newPref + CK.S_PASSWORD_DISPLAYS, cc.getSessionData(pref + CK.S_PASSWORD_DISPLAYS));
                 cc.setSessionData(newPref + CK.S_PASSWORD_PHRASES, cc.getSessionData(pref + CK.S_PASSWORD_PHRASES));
-                
+
                 cc.setSessionData(newPref + CK.S_OVERRIDE_DISPLAY, cc.getSessionData(pref + CK.S_OVERRIDE_DISPLAY));
-                
+
                 cc.setSessionData(newPref + CK.S_DELAY, cc.getSessionData(pref + CK.S_DELAY));
                 cc.setSessionData(newPref + CK.S_DELAY_MESSAGE, cc.getSessionData(pref + CK.S_DELAY_MESSAGE));
 
@@ -183,7 +187,6 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
                 cc.setSessionData(newPref + CK.S_START_MESSAGE, cc.getSessionData(pref + CK.S_START_MESSAGE));
 
             }
-
 
             cc.setSessionData(pref + CK.S_BREAK_IDS, null);
             cc.setSessionData(pref + CK.S_BREAK_AMOUNTS, null);
@@ -245,12 +248,12 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
             cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, null);
             cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, null);
             cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
-            
+
             cc.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, null);
             cc.setSessionData(pref + CK.S_PASSWORD_PHRASES, null);
 
             cc.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, null);
-            
+
             cc.setSessionData(pref + CK.S_DELAY, null);
             cc.setSessionData(pref + CK.S_DELAY_MESSAGE, null);
 
@@ -259,17 +262,18 @@ public class StagesPrompt extends StringPrompt implements ColorUtil{
             cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, null);
             cc.setSessionData(pref + CK.S_START_MESSAGE, null);
 
-            if(last)
+            if (last) {
                 break;
+            }
 
         }
 
-        if(!last)
+        if (!last) {
             cc.setSessionData("stage" + (current - 1), null);
-        else
+        } else {
             cc.setSessionData("stage" + (current), null);
+        }
 
     }
-
 
 }

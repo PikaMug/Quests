@@ -5,13 +5,13 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 
 public abstract class CustomReward {
-    
+
     private String name = null;
     private String author = null;
     private String rewardName = null;
-    public final Map<String,Object> datamap = new HashMap<String, Object>();
+    public final Map<String, Object> datamap = new HashMap<String, Object>();
     public final Map<String, String> descriptions = new HashMap<String, String>();
-    
+
     public abstract void giveReward(Player p, Map<String, Object> m);
 
     public String getName() {
@@ -29,21 +29,21 @@ public abstract class CustomReward {
     public void setAuthor(String author) {
         this.author = author;
     }
-    
+
     public void addData(String name) {
         datamap.put(name, null);
     }
-    
-    public void addDescription(String data, String description){
+
+    public void addDescription(String data, String description) {
         descriptions.put(data, description);
     }
-    
-    public void setRewardName(String name){
+
+    public void setRewardName(String name) {
         rewardName = name;
     }
-    
-    public String getRewardName(){
+
+    public String getRewardName() {
         return rewardName;
     }
-    
+
 }

@@ -107,7 +107,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
                 text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("reqSetMcMMO") + " " + GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - "  + Lang.get("reqSetMcMMO") + "\n";
+                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("reqSetMcMMO") + "\n";
                 List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
                 List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
 
@@ -145,10 +145,10 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
         } else {
             text += BLUE + "" + BOLD + "9 - " + RESET + ITALIC + PURPLE + Lang.get("reqSetCustom") + "\n";
             LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-            for(String s : customReqs){
-                
+            for (String s : customReqs) {
+
                 text += RESET + "" + PURPLE + "  - " + PINK + s + "\n";
-                
+
             }
         }
 
@@ -552,19 +552,20 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
-    
+
     private class CustomRequirementsPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
             String text = PINK + Lang.get("customRequirementsTitle") + "\n";
-            if(quests.customRequirements.isEmpty()){
+            if (quests.customRequirements.isEmpty()) {
                 text += BOLD + "" + PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
-            }else {
-                for(CustomRequirement cr : quests.customRequirements)
+            } else {
+                for (CustomRequirement cr : quests.customRequirements) {
                     text += PURPLE + " - " + cr.getName() + "\n";
+                }
             }
-            
+
             return text + YELLOW + Lang.get("reqCustomPrompt");
         }
 
@@ -574,37 +575,37 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
                 CustomRequirement found = null;
-                for(CustomRequirement cr : quests.customRequirements){
-                    if(cr.getName().equalsIgnoreCase(input)){
+                for (CustomRequirement cr : quests.customRequirements) {
+                    if (cr.getName().equalsIgnoreCase(input)) {
                         found = cr;
                         break;
                     }
                 }
-                
-                if(found == null){
-                    for(CustomRequirement cr : quests.customRequirements){
-                        if(cr.getName().toLowerCase().contains(input.toLowerCase())){
+
+                if (found == null) {
+                    for (CustomRequirement cr : quests.customRequirements) {
+                        if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr;
                             break;
                         }
                     }
                 }
-                
-                if(found != null){
-                    
-                    if(context.getSessionData(CK.REQ_CUSTOM) != null){
+
+                if (found != null) {
+
+                    if (context.getSessionData(CK.REQ_CUSTOM) != null) {
                         LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
                         LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-                        if(list.contains(found.getName()) == false){
+                        if (list.contains(found.getName()) == false) {
                             list.add(found.getName());
                             datamapList.add(found.datamap);
                             context.setSessionData(CK.REQ_CUSTOM, list);
                             context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
-                        }else{
+                        } else {
                             context.getForWhom().sendRawMessage(YELLOW + Lang.get("reqCustomAlreadyAdded"));
                             return new CustomRequirementsPrompt();
                         }
-                    }else{
+                    } else {
                         LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
                         datamapList.add(found.datamap);
                         LinkedList<String> list = new LinkedList<String>();
@@ -612,17 +613,17 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
                         context.setSessionData(CK.REQ_CUSTOM, list);
                         context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
                     }
-                    
+
                     //Send user to the custom data prompt if there is any needed
-                    if(found.datamap.isEmpty() == false){
-                        
+                    if (found.datamap.isEmpty() == false) {
+
                         context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.descriptions);
                         return new RequirementCustomDataListPrompt();
-                        
+
                     }
                     //
-                    
-                }else{
+
+                } else {
                     context.getForWhom().sendRawMessage(YELLOW + Lang.get("reqCustomNotFound"));
                     return new CustomRequirementsPrompt();
                 }
@@ -638,98 +639,103 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
-    
+
     private class RequirementCustomDataListPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            
+
             String text = BOLD + "" + AQUA + "- ";
-            
+
             LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-            
+
             String reqName = list.getLast();
             Map<String, Object> datamap = datamapList.getLast();
-            
+
             text += reqName + " -\n";
             int index = 1;
-            
+
             LinkedList<String> datamapKeys = new LinkedList<String>();
-            for(String key : datamap.keySet())
+            for (String key : datamap.keySet()) {
                 datamapKeys.add(key);
-            Collections.sort(datamapKeys);
-            
-            for(String dataKey : datamapKeys){
-                
-                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
-                if(datamap.get(dataKey) != null)
-                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
-                else
-                    text += RED + " (" + Lang.get("valRequired") + ")\n";
-                
-                index++;
-                
             }
-            
+            Collections.sort(datamapKeys);
+
+            for (String dataKey : datamapKeys) {
+
+                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
+                if (datamap.get(dataKey) != null) {
+                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+                } else {
+                    text += RED + " (" + Lang.get("valRequired") + ")\n";
+                }
+
+                index++;
+
+            }
+
             text += BOLD + "" + DARKBLUE + index + " - " + AQUA + Lang.get("finish");
-            
+
             return text;
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            
+
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
-            
+
             int numInput;
-            
-            try{
+
+            try {
                 numInput = Integer.parseInt(input);
-            }catch(NumberFormatException nfe){
+            } catch (NumberFormatException nfe) {
                 return new RequirementCustomDataListPrompt();
             }
-            
-            if(numInput < 1 || numInput > datamap.size() + 1)
+
+            if (numInput < 1 || numInput > datamap.size() + 1) {
                 return new RequirementCustomDataListPrompt();
-            
-            if(numInput < datamap.size() + 1){
-                
+            }
+
+            if (numInput < datamap.size() + 1) {
+
                 LinkedList<String> datamapKeys = new LinkedList<String>();
-                for(String key : datamap.keySet())
+                for (String key : datamap.keySet()) {
                     datamapKeys.add(key);
+                }
                 Collections.sort(datamapKeys);
 
                 String selectedKey = datamapKeys.get(numInput - 1);
                 context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, selectedKey);
                 return new RequirementCustomDataPrompt();
-                
-            }else{
-                
-                if(datamap.containsValue(null)){
+
+            } else {
+
+                if (datamap.containsValue(null)) {
                     return new RequirementCustomDataListPrompt();
-                }else{
+                } else {
                     context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, null);
                     return new RequirementsPrompt(quests, factory);
                 }
-                
+
             }
 
         }
-        
+
     }
-    
+
     private class RequirementCustomDataPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
             String text = "";
-            String temp = (String)context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
+            String temp = (String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
             Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS);
-            if(descriptions.get(temp) != null)
+            if (descriptions.get(temp) != null) {
                 text += GOLD + descriptions.get(temp) + "\n";
-                
+            }
+
             String lang = Lang.get("stageEditorCustomDataPrompt");
             lang = lang.replaceAll("<data>", temp);
             text += YELLOW + lang;
@@ -740,13 +746,13 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
-            datamap.put((String)context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP), input);
+            datamap.put((String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP), input);
             context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
             return new RequirementCustomDataListPrompt();
         }
-        
+
     }
-    
+
     private class mcMMOPrompt extends FixedSetPrompt {
 
         public mcMMOPrompt() {
@@ -802,16 +808,17 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            
+
             String skillList = DARKGREEN + Lang.get("skillListTitle") + "\n";
             SkillType[] skills = SkillType.values();
-            for(int i = 0; i < skills.length; i++) {
-                
-                if(i == (skills.length - 1))
+            for (int i = 0; i < skills.length; i++) {
+
+                if (i == (skills.length - 1)) {
                     skillList += GREEN + skills[i].getName() + "\n";
-                else
+                } else {
                     skillList += GREEN + skills[i].getName() + "\n\n";
-                
+                }
+
             }
 
             return skillList + YELLOW + Lang.get("reqMcMMOPrompt");
@@ -1064,7 +1071,7 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
                         return new HeroesPrompt();
 
                     } else {
-                        
+
                         String text = Lang.get("reqHeroesNotSecondary");
                         text = text.replaceAll("<class>", PINK + hc.getName() + RED);
                         cc.getForWhom().sendRawMessage(RED + text);

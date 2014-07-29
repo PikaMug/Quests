@@ -55,320 +55,320 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
     public String getPromptText(ConversationContext context) {
 
         try {
-        
-        context.setSessionData(pref, Boolean.TRUE);
 
-        String text = PINK + "- " + AQUA + (String) context.getSessionData(CK.Q_NAME) + PINK + " | " + Lang.get("stageEditorStage") + " " + PURPLE + stageNum + PINK + " -\n";
+            context.setSessionData(pref, Boolean.TRUE);
 
-        if (context.getSessionData(pref + CK.S_BREAK_IDS) == null) {
-            text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + Lang.get("stageEditorBreakBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + Lang.get("stageEditorBreakBlocks") + "\n";
+            String text = PINK + "- " + AQUA + (String) context.getSessionData(CK.Q_NAME) + PINK + " | " + Lang.get("stageEditorStage") + " " + PURPLE + stageNum + PINK + " -\n";
 
-            LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_IDS);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
-
-            for (int i = 0; i < ids.size(); i++) {
-                text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
-            }
-
-        }
-
-        if (context.getSessionData(pref + CK.S_DAMAGE_IDS) == null) {
-            text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- " + Lang.get("stageEditorDamageBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- " + Lang.get("stageEditorDamageBlocks") + "\n";
-
-            LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_IDS);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
-
-            for (int i = 0; i < ids.size(); i++) {
-                text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
-            }
-
-        }
-
-        if (context.getSessionData(pref + CK.S_PLACE_IDS) == null) {
-            text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- " + Lang.get("stageEditorPlaceBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- " + Lang.get("stageEditorPlaceBlocks") + "\n";
-
-            LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_IDS);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
-
-            for (int i = 0; i < ids.size(); i++) {
-                text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
-            }
-
-        }
-
-        if (context.getSessionData(pref + CK.S_USE_IDS) == null) {
-            text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorUseBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorUseBlocks") + "\n";
-            
-            LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_IDS);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
-
-            for (int i = 0; i < ids.size(); i++) {
-                text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
-            }
-        }
-
-        if (context.getSessionData(pref + CK.S_CUT_IDS) == null) {
-            text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- " + Lang.get("stageEditorCutBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- " + Lang.get("stageEditorCutBlocks") + "\n";
-
-            LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_IDS);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS);
-
-            for (int i = 0; i < ids.size(); i++) {
-                text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
-            }
-
-        }
-
-        if (context.getSessionData(pref + CK.S_FISH) == null) {
-            text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- " + Lang.get("stageEditorCatchFish") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            Integer fish = (Integer) context.getSessionData(pref + CK.S_FISH);
-            text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- " + Lang.get("stageEditorCatchFish") + " " + GRAY + "(" + AQUA + fish + " " + Lang.get("stageEditorFish") + GRAY + ")\n";
-        }
-
-        if (context.getSessionData(pref + CK.S_PLAYER_KILL) == null) {
-            text += PINK + "" + BOLD + "7 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillPlayers") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            Integer players = (Integer) context.getSessionData(pref + CK.S_PLAYER_KILL);
-            text += PINK + "" + BOLD + "7 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillPlayers") + GRAY + " (" + AQUA + players + " " + Lang.get("stageEditorPlayers") + GRAY + ")\n";
-        }
-
-        if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
-            text += PINK + "" + BOLD + "8 " + RESET + PURPLE + "- " + Lang.get("stageEditorEnchantItems") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "8 " + RESET + PURPLE + "- " + Lang.get("stageEditorEnchantItems") + "\n";
-
-            LinkedList<String> enchants = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES);
-            LinkedList<Integer> items = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_IDS);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
-
-            for (int i = 0; i < enchants.size(); i++) {
-                text += GRAY + "    - " + BLUE + Quester.prettyItemString(items.get(i)) + GRAY + " " + Lang.get("with") + " " + AQUA + Quester.prettyString(enchants.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
-            }
-
-        }
-
-        if (questFactory.quests.citizens != null) {
-
-            if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
-                text += PINK + "" + BOLD + "9 " + RESET + PURPLE + "- " + Lang.get("stageEditorDeliverItems") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            if (context.getSessionData(pref + CK.S_BREAK_IDS) == null) {
+                text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + Lang.get("stageEditorBreakBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += PINK + "" + BOLD + "9 " + RESET + PURPLE + "- " + Lang.get("stageEditorDeliverItems") + "\n";
+                text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + Lang.get("stageEditorBreakBlocks") + "\n";
 
-                LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS);
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
+                LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_IDS);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
 
-                for (int i = 0; i < npcs.size(); i++) {
-                    text += GRAY + "    - " + BLUE + ItemUtil.getName(items.get(i)) + GRAY + " x " + AQUA + items.get(i).getAmount() + GRAY + " " + Lang.get("to") + " " + DARKAQUA + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + "\n";
+                for (int i = 0; i < ids.size(); i++) {
+                    text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
                 }
 
             }
 
-        } else {
-            text += GRAY + "" + BOLD + "9 " + RESET + GRAY + "- " + Lang.get("stageEditorDeliverItems") + GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
-        }
-
-        if (questFactory.quests.citizens != null) {
-
-            if (context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null) {
-                text += PINK + "" + BOLD + "10 " + RESET + PURPLE + "- " + Lang.get("stageEditorTalkToNPCs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            if (context.getSessionData(pref + CK.S_DAMAGE_IDS) == null) {
+                text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- " + Lang.get("stageEditorDamageBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += PINK + "" + BOLD + "10 " + RESET + PURPLE + "- " + Lang.get("stageEditorTalkToNPCs") + "\n";
+                text += PINK + "" + BOLD + "2 " + RESET + PURPLE + "- " + Lang.get("stageEditorDamageBlocks") + "\n";
 
-                LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO);
+                LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_IDS);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
 
-                for (int i = 0; i < npcs.size(); i++) {
-                    text += GRAY + "    - " + BLUE + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + "\n";
+                for (int i = 0; i < ids.size(); i++) {
+                    text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
                 }
 
             }
 
-        } else {
-            text += GRAY + "" + BOLD + "10 " + RESET + GRAY + "- " + Lang.get("stageEditorTalkToNPCs") + GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
-        }
-
-        if (questFactory.quests.citizens != null) {
-
-            if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
-                text += PINK + "" + BOLD + "11 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillNPCs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            if (context.getSessionData(pref + CK.S_PLACE_IDS) == null) {
+                text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- " + Lang.get("stageEditorPlaceBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += PINK + "" + BOLD + "11 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillNPCs") + "\n";
+                text += PINK + "" + BOLD + "3 " + RESET + PURPLE + "- " + Lang.get("stageEditorPlaceBlocks") + "\n";
 
-                LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL);
-                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
+                LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_IDS);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
 
-                for (int i = 0; i < npcs.size(); i++) {
-                    text += GRAY + "    - " + BLUE + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + GRAY + " x " + AQUA + amounts.get(i) + "\n";
+                for (int i = 0; i < ids.size(); i++) {
+                    text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
                 }
 
             }
 
-        } else {
-            text += GRAY + "" + BOLD + "11 " + RESET + GRAY + "- " + Lang.get("stageEditorKillNPCs") + GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
-        }
+            if (context.getSessionData(pref + CK.S_USE_IDS) == null) {
+                text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorUseBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "4 " + RESET + PURPLE + "- " + Lang.get("stageEditorUseBlocks") + "\n";
 
-        if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
-            text += PINK + "" + BOLD + "12 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillMobs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "12 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillMobs") + "\n";
+                LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_IDS);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
 
-            LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_TYPES);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
+                for (int i = 0; i < ids.size(); i++) {
+                    text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
+                }
+            }
 
-            if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
+            if (context.getSessionData(pref + CK.S_CUT_IDS) == null) {
+                text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- " + Lang.get("stageEditorCutBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "5 " + RESET + PURPLE + "- " + Lang.get("stageEditorCutBlocks") + "\n";
+
+                LinkedList<Integer> ids = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_IDS);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS);
+
+                for (int i = 0; i < ids.size(); i++) {
+                    text += GRAY + "    - " + BLUE + Quester.prettyItemString(ids.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
+                }
+
+            }
+
+            if (context.getSessionData(pref + CK.S_FISH) == null) {
+                text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- " + Lang.get("stageEditorCatchFish") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+                Integer fish = (Integer) context.getSessionData(pref + CK.S_FISH);
+                text += PINK + "" + BOLD + "6 " + RESET + PURPLE + "- " + Lang.get("stageEditorCatchFish") + " " + GRAY + "(" + AQUA + fish + " " + Lang.get("stageEditorFish") + GRAY + ")\n";
+            }
+
+            if (context.getSessionData(pref + CK.S_PLAYER_KILL) == null) {
+                text += PINK + "" + BOLD + "7 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillPlayers") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+                Integer players = (Integer) context.getSessionData(pref + CK.S_PLAYER_KILL);
+                text += PINK + "" + BOLD + "7 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillPlayers") + GRAY + " (" + AQUA + players + " " + Lang.get("stageEditorPlayers") + GRAY + ")\n";
+            }
+
+            if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
+                text += PINK + "" + BOLD + "8 " + RESET + PURPLE + "- " + Lang.get("stageEditorEnchantItems") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "8 " + RESET + PURPLE + "- " + Lang.get("stageEditorEnchantItems") + "\n";
+
+                LinkedList<String> enchants = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES);
+                LinkedList<Integer> items = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_IDS);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
+
+                for (int i = 0; i < enchants.size(); i++) {
+                    text += GRAY + "    - " + BLUE + Quester.prettyItemString(items.get(i)) + GRAY + " " + Lang.get("with") + " " + AQUA + Quester.prettyString(enchants.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
+                }
+
+            }
+
+            if (questFactory.quests.citizens != null) {
+
+                if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
+                    text += PINK + "" + BOLD + "9 " + RESET + PURPLE + "- " + Lang.get("stageEditorDeliverItems") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+                } else {
+                    text += PINK + "" + BOLD + "9 " + RESET + PURPLE + "- " + Lang.get("stageEditorDeliverItems") + "\n";
+
+                    LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS);
+                    LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
+
+                    for (int i = 0; i < npcs.size(); i++) {
+                        text += GRAY + "    - " + BLUE + ItemUtil.getName(items.get(i)) + GRAY + " x " + AQUA + items.get(i).getAmount() + GRAY + " " + Lang.get("to") + " " + DARKAQUA + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + "\n";
+                    }
+
+                }
+
+            } else {
+                text += GRAY + "" + BOLD + "9 " + RESET + GRAY + "- " + Lang.get("stageEditorDeliverItems") + GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
+            }
+
+            if (questFactory.quests.citizens != null) {
+
+                if (context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null) {
+                    text += PINK + "" + BOLD + "10 " + RESET + PURPLE + "- " + Lang.get("stageEditorTalkToNPCs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+                } else {
+                    text += PINK + "" + BOLD + "10 " + RESET + PURPLE + "- " + Lang.get("stageEditorTalkToNPCs") + "\n";
+
+                    LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO);
+
+                    for (int i = 0; i < npcs.size(); i++) {
+                        text += GRAY + "    - " + BLUE + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + "\n";
+                    }
+
+                }
+
+            } else {
+                text += GRAY + "" + BOLD + "10 " + RESET + GRAY + "- " + Lang.get("stageEditorTalkToNPCs") + GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
+            }
+
+            if (questFactory.quests.citizens != null) {
+
+                if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
+                    text += PINK + "" + BOLD + "11 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillNPCs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+                } else {
+                    text += PINK + "" + BOLD + "11 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillNPCs") + "\n";
+
+                    LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL);
+                    LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
+
+                    for (int i = 0; i < npcs.size(); i++) {
+                        text += GRAY + "    - " + BLUE + citizens.getNPCRegistry().getById(npcs.get(i)).getName() + GRAY + " x " + AQUA + amounts.get(i) + "\n";
+                    }
+
+                }
+
+            } else {
+                text += GRAY + "" + BOLD + "11 " + RESET + GRAY + "- " + Lang.get("stageEditorKillNPCs") + GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
+            }
+
+            if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
+                text += PINK + "" + BOLD + "12 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillMobs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "12 " + RESET + PURPLE + "- " + Lang.get("stageEditorKillMobs") + "\n";
+
+                LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_TYPES);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
+
+                if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
+
+                    for (int i = 0; i < mobs.size(); i++) {
+                        text += GRAY + "    - " + AQUA + Quester.prettyString(mobs.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
+                    }
+
+                } else {
+
+                    LinkedList<String> locs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS);
+                    LinkedList<Integer> radii = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS);
+                    LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES);
+
+                    for (int i = 0; i < mobs.size(); i++) {
+                        String msg = Lang.get("blocksWithin");
+                        msg = msg.replaceAll("<amount>", PURPLE + "" + radii.get(i) + GRAY);
+                        text += GRAY + "    - " + BLUE + Quester.prettyString(mobs.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + GRAY + msg + YELLOW + names.get(i) + " (" + locs.get(i) + ")\n";
+                    }
+
+                }
+
+            }
+
+            if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) == null) {
+                text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- " + Lang.get("stageEditorReachLocs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- " + Lang.get("stageEditorReachLocs") + "\n";
+
+                LinkedList<String> locations = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS);
+                LinkedList<Integer> radii = (LinkedList<Integer>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
+                LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
+
+                for (int i = 0; i < locations.size(); i++) {
+                    text += GRAY + "    - " + Lang.get("stageEditorReachRadii1") + " " + BLUE + radii.get(i) + GRAY + " " + Lang.get("stageEditorReachRadii2") + " " + AQUA + names.get(i) + GRAY + " (" + DARKAQUA + locations.get(i) + GRAY + ")\n";
+                }
+
+            }
+
+            if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
+                text += PINK + "" + BOLD + "14 " + RESET + PURPLE + "- " + Lang.get("stageEditorTameMobs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+
+                text += PINK + "" + BOLD + "14 " + RESET + PURPLE + "- " + Lang.get("stageEditorTameMobs") + "\n";
+
+                LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES);
+                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
 
                 for (int i = 0; i < mobs.size(); i++) {
-                    text += GRAY + "    - " + AQUA + Quester.prettyString(mobs.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + "\n";
-                }
-
-            } else {
-
-                LinkedList<String> locs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS);
-                LinkedList<Integer> radii = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS);
-                LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES);
-
-                for (int i = 0; i < mobs.size(); i++) {
-                    String msg = Lang.get("blocksWithin");
-                    msg = msg.replaceAll("<amount>", PURPLE + "" + radii.get(i) + GRAY);
-                    text += GRAY + "    - " + BLUE + Quester.prettyString(mobs.get(i)) + GRAY + " x " + DARKAQUA + amnts.get(i) + GRAY + msg + YELLOW + names.get(i) + " (" + locs.get(i) + ")\n";
+                    text += GRAY + "    - " + BLUE + mobs.get(i) + GRAY + " x " + AQUA + amounts.get(i) + "\n";
                 }
 
             }
 
-        }
-
-        if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) == null) {
-            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- " + Lang.get("stageEditorReachLocs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "13 " + RESET + PURPLE + "- " + Lang.get("stageEditorReachLocs") + "\n";
-
-            LinkedList<String> locations = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS);
-            LinkedList<Integer> radii = (LinkedList<Integer>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
-            LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
-
-            for (int i = 0; i < locations.size(); i++) {
-                text += GRAY + "    - " + Lang.get("stageEditorReachRadii1") + " " + BLUE + radii.get(i) + GRAY + " " + Lang.get("stageEditorReachRadii2") + " " + AQUA + names.get(i) + GRAY + " (" + DARKAQUA + locations.get(i) + GRAY + ")\n";
-            }
-
-        }
-
-        if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
-            text += PINK + "" + BOLD + "14 " + RESET + PURPLE + "- " + Lang.get("stageEditorTameMobs") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-
-            text += PINK + "" + BOLD + "14 " + RESET + PURPLE + "- " + Lang.get("stageEditorTameMobs") + "\n";
-
-            LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES);
-            LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
-
-            for (int i = 0; i < mobs.size(); i++) {
-                text += GRAY + "    - " + BLUE + mobs.get(i) + GRAY + " x " + AQUA + amounts.get(i) + "\n";
-            }
-
-        }
-
-        if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
-            text += PINK + "" + BOLD + "15 " + RESET + PURPLE + "- " + Lang.get("stageEditorShearSheep") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "15 " + RESET + PURPLE + "- " + Lang.get("stageEditorShearSheep") + "\n";
-
-            LinkedList<String> colors = (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS);
-            LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
-
-            for (int i = 0; i < colors.size(); i++) {
-                text += GRAY + "    - " + BLUE + colors.get(i) + GRAY + " x " + AQUA + amounts.get(i) + "\n";
-            }
-
-        }
-
-        text += PINK + "" + BOLD + "16 " + RESET + PURPLE + "- " + Lang.get("stageEditorEvents") + "\n";
-
-        if (context.getSessionData(pref + CK.S_DELAY) == null) {
-            text += PINK + "" + BOLD + "17 " + RESET + PURPLE + "- " + Lang.get("delay") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
-        } else {
-            long time = (Long) context.getSessionData(pref + CK.S_DELAY);
-            text += PINK + "" + BOLD + "17 " + RESET + PURPLE + "- " + Lang.get("delay") + GRAY + "(" + AQUA + Quests.getTime(time) + GRAY + ")\n";
-        }
-
-        if (context.getSessionData(pref + CK.S_DELAY) == null) {
-            text += GRAY + "" + BOLD + "18 " + RESET + GRAY + "- " + Lang.get("stageEditorDelayMessage") + GRAY + " (" + Lang.get("noDelaySet") + ")\n";
-        } else if (context.getSessionData(pref + CK.S_DELAY_MESSAGE) == null) {
-            text += PINK + "" + BOLD + "18 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelayMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "18 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelayMessage") + GRAY + " (" + AQUA + "\"" + context.getSessionData(pref + CK.S_DELAY_MESSAGE) + "\"" + GRAY + ")\n";
-        }
-
-        if (questFactory.quests.denizen == null) {
-            text += GRAY + "" + BOLD + "19 " + RESET + GRAY + "- " + Lang.get("stageEditorDenizenScript") + GRAY + " (" + Lang.get("questDenNotInstalled") + ")\n";
-        } else {
-
-            if (context.getSessionData(pref + CK.S_DENIZEN) == null) {
-                text += PINK + "" + BOLD + "19 " + RESET + PURPLE + "- " + Lang.get("stageEditorDenizenScript") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
+                text += PINK + "" + BOLD + "15 " + RESET + PURPLE + "- " + Lang.get("stageEditorShearSheep") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += PINK + "" + BOLD + "19 " + RESET + PURPLE + "- " + Lang.get("stageEditorDenizenScript") + GRAY + " (" + AQUA + context.getSessionData(pref + CK.S_DENIZEN) + GRAY + "\n";
+                text += PINK + "" + BOLD + "15 " + RESET + PURPLE + "- " + Lang.get("stageEditorShearSheep") + "\n";
+
+                LinkedList<String> colors = (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS);
+                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
+
+                for (int i = 0; i < colors.size(); i++) {
+                    text += GRAY + "    - " + BLUE + colors.get(i) + GRAY + " x " + AQUA + amounts.get(i) + "\n";
+                }
+
             }
 
-        }
-        
-        if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
-            text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- " + Lang.get("stageEditorPassword") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            LinkedList<LinkedList<String>> passPhrases = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
-            LinkedList<String> passDisplays = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
-            text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- " + Lang.get("stageEditorPassword") + "\n";
-            for(int i = 0; i < passPhrases.size(); i++){
-                text += AQUA + "    - \"" + passDisplays.get(i) + "\"\n";
-                LinkedList<String> phrases = passPhrases.get(i);
-                for(String phrase : phrases)
-                    text += DARKAQUA + "      - " + phrase + "\n";
+            text += PINK + "" + BOLD + "16 " + RESET + PURPLE + "- " + Lang.get("stageEditorEvents") + "\n";
+
+            if (context.getSessionData(pref + CK.S_DELAY) == null) {
+                text += PINK + "" + BOLD + "17 " + RESET + PURPLE + "- " + Lang.get("delay") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+            } else {
+                long time = (Long) context.getSessionData(pref + CK.S_DELAY);
+                text += PINK + "" + BOLD + "17 " + RESET + PURPLE + "- " + Lang.get("delay") + GRAY + "(" + AQUA + Quests.getTime(time) + GRAY + ")\n";
             }
-        }
-        
-        if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) == null) {
-            text += PINK + "" + BOLD + "21 " + RESET + PINK + "- " + Lang.get("stageEditorCustom") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            LinkedList<String> customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-            text += PINK + "" + BOLD + "21 " + RESET + PINK + "- " + Lang.get("stageEditorCustom") + "\n";
-            for(String s : customObjs){
-                text += PINK + "    - " + GOLD + s + "\n";
+
+            if (context.getSessionData(pref + CK.S_DELAY) == null) {
+                text += GRAY + "" + BOLD + "18 " + RESET + GRAY + "- " + Lang.get("stageEditorDelayMessage") + GRAY + " (" + Lang.get("noDelaySet") + ")\n";
+            } else if (context.getSessionData(pref + CK.S_DELAY_MESSAGE) == null) {
+                text += PINK + "" + BOLD + "18 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelayMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "18 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelayMessage") + GRAY + " (" + AQUA + "\"" + context.getSessionData(pref + CK.S_DELAY_MESSAGE) + "\"" + GRAY + ")\n";
             }
-        }
 
-        if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
-            text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + GRAY + ")\n";
-        }
+            if (questFactory.quests.denizen == null) {
+                text += GRAY + "" + BOLD + "19 " + RESET + GRAY + "- " + Lang.get("stageEditorDenizenScript") + GRAY + " (" + Lang.get("questDenNotInstalled") + ")\n";
+            } else {
 
-        if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
-            text += PINK + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + GRAY + ")\n";
-        }
+                if (context.getSessionData(pref + CK.S_DENIZEN) == null) {
+                    text += PINK + "" + BOLD + "19 " + RESET + PURPLE + "- " + Lang.get("stageEditorDenizenScript") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+                } else {
+                    text += PINK + "" + BOLD + "19 " + RESET + PURPLE + "- " + Lang.get("stageEditorDenizenScript") + GRAY + " (" + AQUA + context.getSessionData(pref + CK.S_DENIZEN) + GRAY + "\n";
+                }
 
-        if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
-            text += PINK + "" + BOLD + "24 " + RESET + PURPLE + "- " + Lang.get("stageObjectiveOverride") + GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += PINK + "" + BOLD + "24 " + RESET + PURPLE + "- " + Lang.get("stageObjectiveOverride") + GRAY + "(" + DARKAQUA + "\"" + context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) + "\"" + GRAY + ")\n";
-        }
-        
-        text += RED + "" + BOLD + "25 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
-        text += GREEN + "" + BOLD + "26 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
+            }
 
-        
-        return text;
-        
-        }catch (Exception e) {
+            if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
+                text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- " + Lang.get("stageEditorPassword") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                LinkedList<LinkedList<String>> passPhrases = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+                LinkedList<String> passDisplays = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
+                text += PINK + "" + BOLD + "20 " + RESET + PURPLE + "- " + Lang.get("stageEditorPassword") + "\n";
+                for (int i = 0; i < passPhrases.size(); i++) {
+                    text += AQUA + "    - \"" + passDisplays.get(i) + "\"\n";
+                    LinkedList<String> phrases = passPhrases.get(i);
+                    for (String phrase : phrases) {
+                        text += DARKAQUA + "      - " + phrase + "\n";
+                    }
+                }
+            }
+
+            if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) == null) {
+                text += PINK + "" + BOLD + "21 " + RESET + PINK + "- " + Lang.get("stageEditorCustom") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                LinkedList<String> customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+                text += PINK + "" + BOLD + "21 " + RESET + PINK + "- " + Lang.get("stageEditorCustom") + "\n";
+                for (String s : customObjs) {
+                    text += PINK + "    - " + GOLD + s + "\n";
+                }
+            }
+
+            if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
+                text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "22 " + RESET + PURPLE + "- " + Lang.get("stageEditorStartMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + GRAY + ")\n";
+            }
+
+            if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
+                text += PINK + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "23 " + RESET + PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + GRAY + "(" + AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + GRAY + ")\n";
+            }
+
+            if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
+                text += PINK + "" + BOLD + "24 " + RESET + PURPLE + "- " + Lang.get("stageObjectiveOverride") + GRAY + " (" + Lang.get("noneSet") + ")\n";
+            } else {
+                text += PINK + "" + BOLD + "24 " + RESET + PURPLE + "- " + Lang.get("stageObjectiveOverride") + GRAY + "(" + DARKAQUA + "\"" + context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) + "\"" + GRAY + ")\n";
+            }
+
+            text += RED + "" + BOLD + "25 " + RESET + PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
+            text += GREEN + "" + BOLD + "26 " + RESET + PURPLE + "- " + Lang.get("done") + "\n";
+
+            return text;
+
+        } catch (Exception e) {
             e.printStackTrace();
             return "a";
         }
@@ -460,9 +460,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
 
     }
-    
+
     private class PasswordListPrompt extends FixedSetPrompt {
-        
+
         public PasswordListPrompt() {
 
             super("1", "2", "3", "4");
@@ -493,13 +493,14 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     text += YELLOW + "2 - " + Lang.get("stageEditorAddPasswordPhrases") + "\n";
                     for (LinkedList<String> phraseList : getPasswordPhrases(context)) {
-                        
+
                         text += GRAY + "    - ";
-                        for(String s : phraseList){
-                            if(phraseList.getLast().equals(s) == false)
+                        for (String s : phraseList) {
+                            if (phraseList.getLast().equals(s) == false) {
                                 text += DARKAQUA + s + GRAY + "|";
-                            else
+                            } else {
                                 text += DARKAQUA + s + "\n";
+                            }
                         }
 
                     }
@@ -559,7 +560,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             return null;
 
         }
-        
+
         private List<String> getPasswordDisplays(ConversationContext context) {
             return (List<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
         }
@@ -567,9 +568,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         private LinkedList<LinkedList<String>> getPasswordPhrases(ConversationContext context) {
             return (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
         }
-        
+
     }
-    
+
     private class PasswordDisplayPrompt extends StringPrompt {
 
         @Override
@@ -586,29 +587,29 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                
-                if(context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null) {
-                    
+
+                if (context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null) {
+
                     List<String> displays = (List<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
                     displays.add(input);
                     context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, displays);
-                    
+
                 } else {
-                    
+
                     List<String> displays = new LinkedList<String>();
                     displays.add(input);
                     context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, displays);
-                    
+
                 }
-                
+
             }
-            
+
             return new PasswordListPrompt();
 
         }
-        
+
     }
-    
+
     private class PasswordPhrasePrompt extends StringPrompt {
 
         @Override
@@ -626,33 +627,33 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                
-                if(context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
-                    
+
+                if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
+
                     LinkedList<LinkedList<String>> phrases = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
                     LinkedList<String> newPhrases = new LinkedList<String>();
                     newPhrases.addAll(Arrays.asList(input.split("\\|")));
                     phrases.add(newPhrases);
                     context.setSessionData(pref + CK.S_PASSWORD_PHRASES, phrases);
-                    
+
                 } else {
-                    
+
                     LinkedList<LinkedList<String>> phrases = new LinkedList<LinkedList<String>>();
                     LinkedList<String> newPhrases = new LinkedList<String>();
                     newPhrases.addAll(Arrays.asList(input.split("\\|")));
                     phrases.add(newPhrases);
                     context.setSessionData(pref + CK.S_PASSWORD_PHRASES, phrases);
-                    
+
                 }
-                
+
             }
-            
+
             return new PasswordListPrompt();
 
         }
-        
+
     }
-    
+
     private class OverrideDisplayPrompt extends StringPrompt {
 
         @Override
@@ -669,20 +670,20 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                
+
                 context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, input);
-                
-            }else if(input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                
+
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+
                 context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, null);
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorObjectiveOverrideCleared"));
-                
+
             }
-            
+
             return new CreateStagePrompt(stageNum, questFactory, citizens);
 
         }
-        
+
     }
 
     private class BreakBlockListPrompt extends FixedSetPrompt {
@@ -2688,16 +2689,17 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             String mobs = PINK + Lang.get("eventEditorMobsTitle") + "\n";
             final EntityType[] mobArr = EntityType.values();
-            for(int i = 0; i < mobArr.length; i++) {
+            for (int i = 0; i < mobArr.length; i++) {
 
                 final EntityType type = mobArr[i];
-                if(type.isAlive() == false)
+                if (type.isAlive() == false) {
                     continue;
+                }
 
-                if(i < (mobArr.length - 1)) {
-                   mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
+                if (i < (mobArr.length - 1)) {
+                    mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
                 } else {
-                   mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
+                    mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
                 }
             }
 
@@ -3276,16 +3278,17 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String mobs = PINK + Lang.get("eventEditorMobsTitle") + "\n";
 
             final EntityType[] mobArr = EntityType.values();
-            for(int i = 0; i < mobArr.length; i++) {
+            for (int i = 0; i < mobArr.length; i++) {
 
                 final EntityType type = mobArr[i];
-                if(type.isAlive() == false)
+                if (type.isAlive() == false) {
                     continue;
+                }
 
-                if(i < (mobArr.length - 1)) {
-                   mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
+                if (i < (mobArr.length - 1)) {
+                    mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
                 } else {
-                   mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
+                    mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
                 }
             }
 
@@ -3479,14 +3482,14 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             String cols = PINK + "- " + Lang.get("stageEditorColors") + " - \n";
             final DyeColor[] colArr = DyeColor.values();
-            for(int i = 0; i < colArr.length; i++) {
+            for (int i = 0; i < colArr.length; i++) {
 
                 final DyeColor col = colArr[i];
 
-                if(i < (colArr.length - 1)) {
-                   cols += Quests.getDyeString(colArr[i]) + ", ";
+                if (i < (colArr.length - 1)) {
+                    cols += Quests.getDyeString(colArr[i]) + ", ";
                 } else {
-                   cols += Quests.getDyeString(colArr[i]) + "\n";
+                    cols += Quests.getDyeString(colArr[i]) + "\n";
                 }
             }
 
@@ -4213,19 +4216,20 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
 
     }
-    
+
     private class CustomObjectivesPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
             String text = PINK + "- " + Lang.get("stageEditorCustom") + " -\n";
-            if(questFactory.quests.customObjectives.isEmpty()){
+            if (questFactory.quests.customObjectives.isEmpty()) {
                 text += BOLD + "" + PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
-            }else {
-                for(CustomObjective co : questFactory.quests.customObjectives)
+            } else {
+                for (CustomObjective co : questFactory.quests.customObjectives) {
                     text += PURPLE + " - " + co.getName() + "\n";
+                }
             }
-            
+
             return text + YELLOW + Lang.get("stageEditorCustomPrompt");
         }
 
@@ -4235,39 +4239,39 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
                 CustomObjective found = null;
-                for(CustomObjective co : questFactory.quests.customObjectives){
-                    if(co.getName().equalsIgnoreCase(input)){
+                for (CustomObjective co : questFactory.quests.customObjectives) {
+                    if (co.getName().equalsIgnoreCase(input)) {
                         found = co;
                         break;
                     }
                 }
-                
-                if(found == null){
-                    for(CustomObjective co : questFactory.quests.customObjectives){
-                        if(co.getName().toLowerCase().contains(input.toLowerCase())){
+
+                if (found == null) {
+                    for (CustomObjective co : questFactory.quests.customObjectives) {
+                        if (co.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = co;
                             break;
                         }
                     }
                 }
-                
-                if(found != null){
-                    
-                    if(context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null){
+
+                if (found != null) {
+
+                    if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
                         LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
                         LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
                         LinkedList<Integer> countList = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
-                        if(list.contains(found.getName()) == false){
+                        if (list.contains(found.getName()) == false) {
                             list.add(found.getName());
                             datamapList.add(found.datamap);
                             countList.add(-999);
                             context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
                             context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
-                        }else{
+                        } else {
                             context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorCustomAlreadyAdded"));
                             return new CustomObjectivesPrompt();
                         }
-                    }else{
+                    } else {
                         LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
                         LinkedList<Integer> countList = new LinkedList<Integer>();
                         datamapList.add(found.datamap);
@@ -4278,21 +4282,21 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                         context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
                         context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
                     }
-                    
+
                     //Send user to the count prompt / custom data prompt if there is any needed
-                    
-                    if(found.isEnableCount())
+                    if (found.isEnableCount()) {
                         return new CustomObjectiveCountPrompt();
-                    
-                    if(found.datamap.isEmpty() == false){
-                        
+                    }
+
+                    if (found.datamap.isEmpty() == false) {
+
                         context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.descriptions);
                         return new ObjectiveCustomDataListPrompt();
-                        
+
                     }
                     //
-                    
-                }else{
+
+                } else {
                     context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorModuleNotFound"));
                     return new CustomObjectivesPrompt();
                 }
@@ -4307,170 +4311,172 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             return new CreateStagePrompt(stageNum, questFactory, citizens);
 
         }
-        
+
     }
-    
+
     private class CustomObjectiveCountPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            
+
             String text = BOLD + "" + AQUA + "- ";
-            
+
             LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-            
+
             String objName = list.getLast();
-            
+
             text += objName + " -\n";
-            
+
             CustomObjective found = null;
-            for(CustomObjective co : questFactory.quests.customObjectives){
-                
-                if(co.getName().equals(objName)){
+            for (CustomObjective co : questFactory.quests.customObjectives) {
+
+                if (co.getName().equals(objName)) {
                     found = co;
                     break;
                 }
-                
+
             }
-            
+
             text += BLUE + found.getCountPrompt() + "\n\n";
-            
+
             return text;
-            
+
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            
-            try{
-                
+
+            try {
+
                 int num = Integer.parseInt(input);
                 LinkedList<Integer> counts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
                 counts.set(counts.size() - 1, num);
-                
+
                 LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
                 String objName = list.getLast();
-                
-                CustomObjective found = null;
-                for(CustomObjective co : questFactory.quests.customObjectives){
 
-                    if(co.getName().equals(objName)){
+                CustomObjective found = null;
+                for (CustomObjective co : questFactory.quests.customObjectives) {
+
+                    if (co.getName().equals(objName)) {
                         found = co;
                         break;
                     }
 
                 }
-                
-                if(found.datamap.isEmpty() == false){
+
+                if (found.datamap.isEmpty() == false) {
                     context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.descriptions);
                     return new ObjectiveCustomDataListPrompt();
-                }else{
+                } else {
                     return new CreateStagePrompt(stageNum, questFactory, citizens);
                 }
-                
-                
-            }catch (NumberFormatException e){
+
+            } catch (NumberFormatException e) {
                 context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoNumber"));
                 return new CustomObjectiveCountPrompt();
             }
-            
+
         }
-        
-        
-        
+
     }
-    
+
     private class ObjectiveCustomDataListPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            
+
             String text = BOLD + "" + AQUA + "- ";
-            
+
             LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
-            
+
             String objName = list.getLast();
             Map<String, Object> datamap = datamapList.getLast();
-            
+
             text += objName + " -\n";
             int index = 1;
-            
+
             LinkedList<String> datamapKeys = new LinkedList<String>();
-            for(String key : datamap.keySet())
+            for (String key : datamap.keySet()) {
                 datamapKeys.add(key);
-            Collections.sort(datamapKeys);
-            
-            for(String dataKey : datamapKeys){
-                
-                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
-                if(datamap.get(dataKey) != null)
-                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
-                else
-                    text += RED + " (" + Lang.get("valRequired") + ")\n";
-                
-                index++;
-                
             }
-            
+            Collections.sort(datamapKeys);
+
+            for (String dataKey : datamapKeys) {
+
+                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
+                if (datamap.get(dataKey) != null) {
+                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+                } else {
+                    text += RED + " (" + Lang.get("valRequired") + ")\n";
+                }
+
+                index++;
+
+            }
+
             text += BOLD + "" + DARKBLUE + index + " - " + AQUA + Lang.get("finish");
-            
+
             return text;
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            
+
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
             Map<String, Object> datamap = datamapList.getLast();
-            
+
             int numInput;
-            
-            try{
+
+            try {
                 numInput = Integer.parseInt(input);
-            }catch(NumberFormatException nfe){
+            } catch (NumberFormatException nfe) {
                 return new ObjectiveCustomDataListPrompt();
             }
-            
-            if(numInput < 1 || numInput > datamap.size() + 1)
+
+            if (numInput < 1 || numInput > datamap.size() + 1) {
                 return new ObjectiveCustomDataListPrompt();
-            
-            if(numInput < datamap.size() + 1){
-                
+            }
+
+            if (numInput < datamap.size() + 1) {
+
                 LinkedList<String> datamapKeys = new LinkedList<String>();
-                for(String key : datamap.keySet())
+                for (String key : datamap.keySet()) {
                     datamapKeys.add(key);
+                }
                 Collections.sort(datamapKeys);
 
                 String selectedKey = datamapKeys.get(numInput - 1);
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, selectedKey);
                 return new ObjectiveCustomDataPrompt();
-                
-            }else{
-                
-                if(datamap.containsValue(null)){
+
+            } else {
+
+                if (datamap.containsValue(null)) {
                     return new ObjectiveCustomDataListPrompt();
-                }else{
+                } else {
                     context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, null);
                     return new CreateStagePrompt(stageNum, questFactory, citizens);
                 }
-                
+
             }
 
         }
-        
+
     }
-    
+
     private class ObjectiveCustomDataPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
             String text = "";
-            String temp = (String)context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP);
+            String temp = (String) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP);
             Map<String, String> descriptions = (Map<String, String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS);
-            if(descriptions.get(temp) != null)
+            if (descriptions.get(temp) != null) {
                 text += GOLD + descriptions.get(temp) + "\n";
-                
+            }
+
             String msg = Lang.get("stageEditorCustomDataPrompt");
             msg = msg.replaceAll("<data>", BOLD + temp + RESET + YELLOW);
             text += YELLOW + msg;
@@ -4481,11 +4487,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         public Prompt acceptInput(ConversationContext context, String input) {
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
             Map<String, Object> datamap = datamapList.getLast();
-            datamap.put((String)context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP), input);
+            datamap.put((String) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP), input);
             context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
             return new ObjectiveCustomDataListPrompt();
         }
-        
+
     }
-    
+
 }

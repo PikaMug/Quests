@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
+public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
     //Stores itemstack in "tempStack" context data.
     //Stores id in "tempId"
@@ -33,9 +33,9 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
     //Stores enchantments in "tempEnchantments"
     //Stores name in "tempName"
     //Stores lore in "tempLore"
-
     final Prompt oldPrompt;
-    public ItemStackPrompt(Prompt old){
+
+    public ItemStackPrompt(Prompt old) {
 
         super("0", "1", "2", "3", "4", "5", "6", "7", "8");
         oldPrompt = old;
@@ -45,12 +45,14 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
     @Override
     public String getPromptText(ConversationContext cc) {
         String menu = YELLOW + Lang.get("createItemTitle") + "\n";
-        if(cc.getSessionData("tempId") != null){
+        if (cc.getSessionData("tempId") != null) {
             String stackData = getItemData(cc);
-            if(stackData != null)
+            if (stackData != null) {
                 menu += stackData;
-        }else
+            }
+        } else {
             menu += "\n";
+        }
         menu += GOLD + "" + BOLD + "0. " + RESET + "" + YELLOW + Lang.get("itemCreateLoadHand") + "\n";
         menu += YELLOW + "" + BOLD + "1. " + RESET + "" + GOLD + Lang.get("itemCreateSetID") + "\n";
         menu += YELLOW + "" + BOLD + "2. " + RESET + "" + GOLD + Lang.get("itemCreateSetAmount") + "\n";
@@ -66,16 +68,16 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
     @Override
     protected Prompt acceptValidatedInput(ConversationContext cc, String input) {
 
-        if(input.equalsIgnoreCase("0")){
+        if (input.equalsIgnoreCase("0")) {
 
             Player player = (Player) cc.getForWhom();
             ItemStack is = player.getItemInHand();
-            if(is == null || is.getType().equals(Material.AIR)){
+            if (is == null || is.getType().equals(Material.AIR)) {
 
                 player.sendMessage(RED + Lang.get("itemCreateNoItem"));
                 return new ItemStackPrompt(oldPrompt);
 
-            }else{
+            } else {
 
                 cc.setSessionData("tempData", null);
                 cc.setSessionData("tempEnchantments", null);
@@ -84,21 +86,23 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
                 cc.setSessionData("tempId", is.getTypeId());
                 cc.setSessionData("tempAmount", is.getAmount());
-                if(is.getDurability() != 0)
+                if (is.getDurability() != 0) {
                     cc.setSessionData("tempData", is.getDurability());
-                if(is.getEnchantments() != null && is.getEnchantments().isEmpty() == false)
-                    cc.setSessionData("tempEnchantments", new HashMap<Enchantment,Integer>(is.getEnchantments()));
-                if(is.hasItemMeta()){
+                }
+                if (is.getEnchantments() != null && is.getEnchantments().isEmpty() == false) {
+                    cc.setSessionData("tempEnchantments", new HashMap<Enchantment, Integer>(is.getEnchantments()));
+                }
+                if (is.hasItemMeta()) {
 
                     ItemMeta meta = is.getItemMeta();
-                    if(meta.hasDisplayName())
+                    if (meta.hasDisplayName()) {
                         cc.setSessionData("tempName", ChatColor.stripColor(meta.getDisplayName()));
-                    if(meta.hasLore()){
+                    }
+                    if (meta.hasLore()) {
                         LinkedList<String> lore = new LinkedList<String>();
                         lore.addAll(meta.getLore());
                         cc.setSessionData("tempLore", lore);
                     }
-
 
                 }
 
@@ -107,55 +111,55 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
             }
 
-        }else if(input.equalsIgnoreCase("1")){
+        } else if (input.equalsIgnoreCase("1")) {
             return new IDPrompt();
-        }else if(input.equalsIgnoreCase("2")){
+        } else if (input.equalsIgnoreCase("2")) {
 
-            if(cc.getSessionData("tempId") != null){
+            if (cc.getSessionData("tempId") != null) {
                 return new AmountPrompt();
-            }else{
+            } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoID"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
-        }else if(input.equalsIgnoreCase("3")){
+        } else if (input.equalsIgnoreCase("3")) {
 
-            if(cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null){
+            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
                 return new DataPrompt();
-            }else{
+            } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
-        }else if(input.equalsIgnoreCase("4")){
+        } else if (input.equalsIgnoreCase("4")) {
 
-            if(cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null){
+            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
                 return new EnchantmentPrompt();
-            }else{
+            } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
-        }else if(input.equalsIgnoreCase("5")){
+        } else if (input.equalsIgnoreCase("5")) {
 
-            if(cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null){
+            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
                 return new NamePrompt();
-            }else{
+            } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
-        }else if(input.equalsIgnoreCase("6")){
+        } else if (input.equalsIgnoreCase("6")) {
 
-            if(cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null){
+            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
                 return new LorePrompt();
-            }else{
+            } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
-        }else if(input.equalsIgnoreCase("7")) {
-            
+        } else if (input.equalsIgnoreCase("7")) {
+
             cc.setSessionData("tempStack", null);
             cc.setSessionData("tempId", null);
             cc.setSessionData("tempAmount", null);
@@ -164,9 +168,9 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
             cc.setSessionData("tempName", null);
             cc.setSessionData("tempLore", null);
 
-        }else if(input.equalsIgnoreCase("8")){
+        } else if (input.equalsIgnoreCase("8")) {
 
-            if(cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null){
+            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
 
                 int id = (Integer) cc.getSessionData("tempId");
                 int amount = (Integer) cc.getSessionData("tempAmount");
@@ -175,50 +179,56 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
                 String name = null;
                 LinkedList<String> lore = null;
 
-                if(cc.getSessionData("tempData") != null)
+                if (cc.getSessionData("tempData") != null) {
                     data = (Short) cc.getSessionData("tempData");
-                if(cc.getSessionData("tempEnchantments") != null)
+                }
+                if (cc.getSessionData("tempEnchantments") != null) {
                     enchs = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
-                if(cc.getSessionData("tempName") != null)
+                }
+                if (cc.getSessionData("tempName") != null) {
                     name = (String) cc.getSessionData("tempName");
-                if(cc.getSessionData("tempLore") != null)
+                }
+                if (cc.getSessionData("tempLore") != null) {
                     lore = (LinkedList<String>) cc.getSessionData("tempLore");
+                }
 
                 ItemStack stack = new ItemStack(id, amount);
                 ItemMeta meta = stack.getItemMeta();
 
-                if(data != -1)
-                    stack.setDurability((short)data);
-                if(enchs != null){
-                    for(Entry<Enchantment, Integer> e : enchs.entrySet())
-                        meta.addEnchant(e.getKey(), e.getValue(), true);
+                if (data != -1) {
+                    stack.setDurability((short) data);
                 }
-                if(name != null)
+                if (enchs != null) {
+                    for (Entry<Enchantment, Integer> e : enchs.entrySet()) {
+                        meta.addEnchant(e.getKey(), e.getValue(), true);
+                    }
+                }
+                if (name != null) {
                     meta.setDisplayName(name);
-                if(lore != null)
+                }
+                if (lore != null) {
                     meta.setLore(lore);
+                }
 
                 stack.setItemMeta(meta);
 
                 cc.setSessionData("tempStack", stack);
                 cc.setSessionData("newItem", Boolean.TRUE);
 
-
-            }else{
+            } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
         }
 
-        try{
+        try {
             return oldPrompt;
-        }catch (Exception e){
+        } catch (Exception e) {
             cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;
         }
     }
-
 
     private class IDPrompt extends StringPrompt {
 
@@ -229,46 +239,44 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
-        	if(input.equalsIgnoreCase(Lang.get("cmdCancel")) == false){
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
-        		String dataString = null;
-        		if (input.contains(":")) {
-        			String[] splitInput = input.split(":");
-        			input = splitInput[0];
-        			if (splitInput.length > 1) {
-        				dataString = splitInput[1];
-        			}
-        		}
+                String dataString = null;
+                if (input.contains(":")) {
+                    String[] splitInput = input.split(":");
+                    input = splitInput[0];
+                    if (splitInput.length > 1) {
+                        dataString = splitInput[1];
+                    }
+                }
 
-        		Material mat = ItemData.getMaterial(input);
-        		if(mat == null){
-        			cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidID"));
-        			return new IDPrompt();
-        		} else {
+                Material mat = ItemData.getMaterial(input);
+                if (mat == null) {
+                    cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidID"));
+                    return new IDPrompt();
+                } else {
 
-        			cc.setSessionData("tempId", mat.getId());
-                                cc.setSessionData("tempAmount", 1);
+                    cc.setSessionData("tempId", mat.getId());
+                    cc.setSessionData("tempAmount", 1);
 
-        			if (dataString != null) {
-                                    try {
-                                            short data = Short.parseShort(dataString);
-                                            cc.setSessionData("tempData", data);
-                                    } catch (NumberFormatException e) {
-                                            cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidData"));
-                                            return new IDPrompt();
-                                    }
-        			}
-        			return new ItemStackPrompt(oldPrompt);
-        		}
+                    if (dataString != null) {
+                        try {
+                            short data = Short.parseShort(dataString);
+                            cc.setSessionData("tempData", data);
+                        } catch (NumberFormatException e) {
+                            cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidData"));
+                            return new IDPrompt();
+                        }
+                    }
+                    return new ItemStackPrompt(oldPrompt);
+                }
 
-        	}else{
+            } else {
 
                 return new ItemStackPrompt(oldPrompt);
 
             }
         }
-
-
 
     }
 
@@ -281,25 +289,25 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
-            if(input.equalsIgnoreCase(Lang.get("cmdCancel")) == false){
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
-                try{
+                try {
 
                     int amt = Integer.parseInt(input);
-                    if(amt < 1 || amt > 64){
+                    if (amt < 1 || amt > 64) {
                         cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidAmount"));
                         return new AmountPrompt();
-                    }else{
+                    } else {
                         cc.setSessionData("tempAmount", Integer.parseInt(input));
                         return new ItemStackPrompt(oldPrompt);
                     }
 
-                }catch(NumberFormatException e){
+                } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidInput"));
                     return new AmountPrompt();
                 }
 
-            }else{
+            } else {
 
                 return new ItemStackPrompt(oldPrompt);
 
@@ -317,25 +325,25 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
-            if(input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false){
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
-                try{
+                try {
 
                     int amt = Integer.parseInt(input);
-                    if(amt < 1){
+                    if (amt < 1) {
                         cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidData"));
                         return new DataPrompt();
-                    }else{
+                    } else {
                         cc.setSessionData("tempData", Short.parseShort(input));
                         return new ItemStackPrompt(oldPrompt);
                     }
 
-                }catch(NumberFormatException e){
+                } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidInput"));
                     return new DataPrompt();
                 }
 
-            }else if(input.equalsIgnoreCase(Lang.get("cmdClear"))){
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
                 cc.setSessionData("tempData", null);
 
@@ -360,7 +368,6 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
             }
             text = text.substring(0, text.length() - 1);
 
-
             return text + "\n" + YELLOW + Lang.get("itemCreateEnterEnch");
 
         }
@@ -368,23 +375,24 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
 
-            if(input.equalsIgnoreCase(Lang.get("cmdClear")) == false && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false){
+            if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
                 Enchantment e = Quests.getEnchantment(input);
-                if(e != null){
+                if (e != null) {
 
                     cc.setSessionData("tempEnchant", e);
                     return new LevelPrompt(Quester.prettyEnchantmentString(e));
 
-                }else{
+                } else {
 
                     cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidEnch"));
                     return new EnchantmentPrompt();
 
                 }
 
-            }else if(input.equalsIgnoreCase(Lang.get("cmdClear")))
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 cc.setSessionData("tempEnchantments", null);
+            }
 
             return new ItemStackPrompt(oldPrompt);
         }
@@ -393,7 +401,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
             final String enchantment;
 
-            protected LevelPrompt(String ench){
+            protected LevelPrompt(String ench) {
                 enchantment = ench;
             }
 
@@ -407,39 +415,37 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
             @Override
             public Prompt acceptInput(ConversationContext cc, String input) {
 
-                try{
+                try {
 
                     int num = Integer.parseInt(input);
-                    if(num < 1){
+                    if (num < 1) {
                         cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidLevel"));
                         return new LevelPrompt(enchantment);
-                    }else{
+                    } else {
 
-                        if(cc.getSessionData("tempEnchantments") != null){
+                        if (cc.getSessionData("tempEnchantments") != null) {
 
                             Map<Enchantment, Integer> enchs = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
-                            enchs.put((Enchantment)cc.getSessionData("tempEnchant"), num);
+                            enchs.put((Enchantment) cc.getSessionData("tempEnchant"), num);
                             cc.setSessionData("tempEnchantments", enchs);
 
-                        }else{
+                        } else {
 
                             Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
-                            enchs.put((Enchantment)cc.getSessionData("tempEnchant"), num);
+                            enchs.put((Enchantment) cc.getSessionData("tempEnchant"), num);
                             cc.setSessionData("tempEnchantments", enchs);
 
                         }
                         return new ItemStackPrompt(oldPrompt);
                     }
 
-                }catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNotNumber"));
                     e.printStackTrace();
                     return new LevelPrompt(enchantment);
                 }
 
             }
-
-
 
         }
 
@@ -454,13 +460,13 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
-            if(input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false){
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
-            	input = Quests.parseString(input);
-            	
+                input = Quests.parseString(input);
+
                 cc.setSessionData("tempName", input);
 
-            }else if(input.equalsIgnoreCase(Lang.get("cmdClear"))){
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
                 cc.setSessionData("tempName", null);
 
@@ -481,15 +487,15 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
-            if(input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false){
-            	
-            	input = Quests.parseString(input);
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+
+                input = Quests.parseString(input);
 
                 LinkedList<String> lore = new LinkedList<String>();
                 lore.addAll(Arrays.asList(input.split(";")));
                 cc.setSessionData("tempLore", lore);
 
-            }else if(input.equalsIgnoreCase("clear")){
+            } else if (input.equalsIgnoreCase("clear")) {
 
                 cc.setSessionData("tempLore", null);
 
@@ -501,45 +507,45 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
     }
 
+    private String getItemData(ConversationContext cc) {
 
-
-
-    private String getItemData(ConversationContext cc){
-
-        if(cc.getSessionData("tempId") != null){
+        if (cc.getSessionData("tempId") != null) {
 
             String item;
 
-            if(cc.getSessionData("tempName") == null){
+            if (cc.getSessionData("tempName") == null) {
 
                 Integer id = (Integer) cc.getSessionData("tempId");
                 item = AQUA + Quester.prettyItemString(id);
 
-                if(cc.getSessionData("tempData") != null)
+                if (cc.getSessionData("tempData") != null) {
                     item += ":" + BLUE + (Short) cc.getSessionData("tempData");
+                }
 
-            }else {
+            } else {
 
                 item = PINK + "" + ITALIC + (String) cc.getSessionData("tempName") + RESET + "" + GRAY + " (";
                 Integer id = (Integer) cc.getSessionData("tempId");
                 item += AQUA + Quester.prettyItemString(id);
-                if(cc.getSessionData("tempData") != null)
+                if (cc.getSessionData("tempData") != null) {
                     item += ":" + BLUE + (Short) cc.getSessionData("tempData");
+                }
                 item += GRAY + ")";
 
             }
 
-            if(cc.getSessionData("tempAmount") != null)
+            if (cc.getSessionData("tempAmount") != null) {
                 item += GRAY + " x " + DARKAQUA + (Integer) cc.getSessionData("tempAmount");
-            else
+            } else {
                 item += GRAY + " x " + DARKAQUA + "1";
+            }
 
             item += "\n";
 
-            if(cc.getSessionData("tempEnchantments") != null){
+            if (cc.getSessionData("tempEnchantments") != null) {
 
                 Map<Enchantment, Integer> enchantments = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
-                for(Entry<Enchantment, Integer> e : enchantments.entrySet()){
+                for (Entry<Enchantment, Integer> e : enchantments.entrySet()) {
 
                     item += GRAY + "  - " + RED + Quester.prettyEnchantmentString(e.getKey()) + " " + Quests.getNumeral(e.getValue()) + "\n";
 
@@ -547,27 +553,27 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil{
 
             }
 
-            if(cc.getSessionData("tempLore") != null){
+            if (cc.getSessionData("tempLore") != null) {
 
                 List<String> lore = (List<String>) cc.getSessionData("tempLore");
 
                 item += DARKGREEN + "(Lore)\n\"";
-                for(String s : lore){
+                for (String s : lore) {
 
-                    if(lore.indexOf(s) != (lore.size() - 1))
+                    if (lore.indexOf(s) != (lore.size() - 1)) {
                         item += DARKGREEN + "" + ITALIC + s + "\n";
-                    else
+                    } else {
                         item += DARKGREEN + "" + ITALIC + s + "\"\n";
+                    }
 
                 }
 
             }
 
-
             item += "\n";
             return item;
 
-        }else{
+        } else {
             return null;
         }
 

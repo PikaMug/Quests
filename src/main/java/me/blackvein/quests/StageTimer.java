@@ -4,66 +4,73 @@ import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class StageTimer implements Runnable{
+public class StageTimer implements Runnable {
 
     Quester quester;
     Quests plugin;
+    Quest quest;
 
-    public StageTimer(Quests quests, Quester q){
+    public StageTimer(Quests quests, Quester q, Quest qu) {
 
         quester = q;
+        quest = qu;
         plugin = quests;
 
     }
 
     @Override
-    public void run(){
+    public void run() {
 
-        if(quester.delayOver){
+        if (quester.getQuestData(quest).delayOver) {
 
             Player player = quester.getPlayer();
 
-            if(quester.currentQuest != null){
+            if (quest.orderedStages.indexOf(quester.getCurrentStage(quest)) == (quest.orderedStages.size() - 1)) {
 
-                if(quester.currentQuest.orderedStages.indexOf(quester.currentStage) == (quester.currentQuest.orderedStages.size() - 1)){
+                if (quester.getCurrentStage(quest).script != null) {
+                    plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(quest).script, player);
+                }
+                if (quester.getCurrentStage(quest).finishEvent != null) {
+                    quester.getCurrentStage(quest).finishEvent.fire(quester, quest);
+                }
 
-                    if(quester.currentStage.script != null)
-                        plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, player);
-                    if(quester.currentStage.finishEvent != null)
-                        quester.currentStage.finishEvent.fire(quester);
+                quest.completeQuest(quester);
 
-                    quester.currentQuest.completeQuest(quester);
+            } else {
 
-                }else {
+                quester.resetObjectives(quest);
 
-                    quester.resetObjectives();
-                    if(quester.currentStage.script != null)
-                        plugin.trigger.parseQuestTaskTrigger(quester.currentStage.script, player);
-                    if(quester.currentStage.finishEvent != null)
-                        quester.currentStage.finishEvent.fire(quester);
-                    quester.currentStage = quester.currentQuest.orderedStages.get(quester.currentStageIndex +  1);
-                    quester.currentStageIndex++;
-                    quester.addEmpties();
-                    quester.delayStartTime = 0;
-                    quester.delayTimeLeft = -1;
+                if (quester.getCurrentStage(quest).script != null) {
+                    plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(quest).script, player);
+                }
 
-                    player.sendMessage(ChatColor.GOLD + Lang.get("questObjectivesTitle"));
-                    for(String s : quester.getObjectivesReal()){
+                if (quester.getCurrentStage(quest).finishEvent != null) {
+                    quester.getCurrentStage(quest).finishEvent.fire(quester, quest);
+                }
 
-                        player.sendMessage(s);
+                quester.setCurrentStage(quest, quester.currentQuests.get(quest) + 1);
+                quester.addEmpties(quest);
+                quester.getQuestData(quest).delayStartTime = 0;
+                quester.getQuestData(quest).delayTimeLeft = -1;
 
-                    }
+                String msg = Lang.get("questObjectivesTitle");
+                msg = msg.replaceAll("<quest>", quest.name);
+                player.sendMessage(ChatColor.GOLD + msg);
+                player.sendMessage(ChatColor.GOLD + Lang.get("questObjectivesTitle"));
+                for (String s : quester.getObjectivesReal(quest)) {
 
-                    String stageStartMessage = quester.currentStage.startMessage;
-                    if (stageStartMessage != null) {
-                            quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quester.currentQuest));
-                    }
+                    player.sendMessage(s);
 
+                }
+
+                String stageStartMessage = quester.getCurrentStage(quest).startMessage;
+                if (stageStartMessage != null) {
+                    quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quest));
                 }
 
             }
 
-            quester.delayOver = true;
+            quester.getQuestData(quest).delayOver = true;
 
         }
 

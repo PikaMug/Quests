@@ -11,6 +11,7 @@ currentQuest
 noCurrentQuest
 noActiveQuest
 
+questObjectivesTitle
 
 -REMOVED-
 
@@ -18,4 +19,12 @@ questOneActive
 
 -ADDED-
 
+COMMAND_JOURNAL
+COMMAND_JOURNAL_HELP
+
 questMaxAllowed
+journalTitle
+journalTaken
+journalPutAway
+journalAlreadyHave
+journalNoRoom
