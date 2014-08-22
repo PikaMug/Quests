@@ -28,6 +28,7 @@ import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerFishEvent.State;
@@ -48,29 +49,31 @@ public class PlayerListener implements Listener, ColorUtil {
         
         InventoryAction ac = evt.getAction();
         
-        if(evt.getCurrentItem() != null && ItemUtil.isJournal(evt.getCurrentItem())) {
+        if(ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCurrentItem())) {
             
             if(ac.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)
                     || ac.equals(InventoryAction.DROP_ALL_SLOT)
                     || ac.equals(InventoryAction.DROP_ONE_SLOT)) {
                 
                 evt.setCancelled(true);
+                return;
                 
             }
             
-        } else if(evt.getCurrentItem() != null && ItemUtil.isJournal(evt.getCursor())) {
+        } else if(ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCursor())) {
             
             if(ac.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)
                     || ac.equals(InventoryAction.DROP_ALL_CURSOR)
                     || ac.equals(InventoryAction.DROP_ONE_CURSOR)) {
                 
                 evt.setCancelled(true);
+                return;
                 
             }
             
         }
         
-        if(evt.getCurrentItem() != null && ItemUtil.isJournal(evt.getCursor()) || evt.getCurrentItem() != null && ItemUtil.isJournal(evt.getCurrentItem())) {
+        if(ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCurrentItem()) || ItemUtil.isItem(evt.getCursor()) && ItemUtil.isJournal(evt.getCursor())) {
         
             int upper = evt.getView().getTopInventory().getSize();
             if(evt.getView().getTopInventory().getType().equals(InventoryType.CRAFTING))
@@ -80,6 +83,117 @@ public class PlayerListener implements Listener, ColorUtil {
 
             if(relative < 0 || relative >= (lower)) {
                 evt.setCancelled(true);
+                return;
+            }
+        
+        }
+        
+        Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+        Player player = (Player) evt.getWhoClicked();
+
+        if (evt.getInventory().getTitle().contains(Lang.get("quests"))) {
+
+            ItemStack clicked = evt.getCurrentItem();
+            if (clicked != null) {
+
+                for (Quest quest : plugin.quests) {
+
+                    if (quest.guiDisplay != null) {
+
+                        if (ItemUtil.compareItems(clicked, quest.guiDisplay, false) == 0) {
+
+                            if (quester.currentQuests.size() >= Quests.maxQuests && Quests.maxQuests > 0) {
+
+                                String msg = Lang.get("questMaxAllowed");
+                                msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+                                player.sendMessage(YELLOW + msg);
+
+                            } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
+                                String completed = Lang.get("questAlreadyCompleted");
+                                completed = completed.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
+                                player.sendMessage(ChatColor.YELLOW + completed);
+                            } else {
+
+                                boolean takeable = true;
+
+                                if (quester.completedQuests.contains(quest.name)) {
+
+                                    if (quester.getDifference(quest) > 0) {
+                                        String early = Lang.get("questTooEarly");
+                                        early = early.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
+                                        early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
+                                        player.sendMessage(ChatColor.YELLOW + early);
+                                        takeable = false;
+                                    }
+
+                                }
+
+                                if (quest.region != null) {
+
+                                    boolean inRegion = false;
+                                    Player p = quester.getPlayer();
+                                    RegionManager rm = Quests.worldGuard.getRegionManager(p.getWorld());
+                                    Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
+                                    while (it.hasNext()) {
+                                        ProtectedRegion pr = it.next();
+                                        if (pr.getId().equalsIgnoreCase(quest.region)) {
+                                            inRegion = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (inRegion == false) {
+                                        String invalidLoc = Lang.get("questInvalidLocation");
+                                        invalidLoc = invalidLoc.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
+                                        player.sendMessage(ChatColor.YELLOW + invalidLoc);
+                                        takeable = false;
+                                    }
+
+                                }
+
+                                if (takeable == true) {
+
+                                    quester.takeQuest(quest, false);
+
+                                }
+
+                                evt.getWhoClicked().closeInventory();
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                evt.setCancelled(true);
+
+            }
+
+        }
+        
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryDragEvent(InventoryDragEvent evt) {
+        
+        if(ItemUtil.isItem(evt.getOldCursor()) && ItemUtil.isJournal(evt.getOldCursor()) || ItemUtil.isItem(evt.getCursor()) && ItemUtil.isJournal(evt.getCursor())) {
+        
+            int upper = evt.getView().getTopInventory().getSize();
+            if(evt.getView().getTopInventory().getType().equals(InventoryType.CRAFTING))
+                upper += 4;
+            int lower = evt.getView().getBottomInventory().getSize();
+            
+            for(int relative : evt.getRawSlots()) {
+            
+                relative -= upper;
+
+                if(relative < 0 || relative >= (lower)) {
+                    evt.setCancelled(true);
+                    break;
+                }
+            
             }
         
         }
@@ -234,96 +348,6 @@ public class PlayerListener implements Listener, ColorUtil {
                     }
 
                 }
-
-            }
-
-        }
-
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent evt) {
-
-        Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
-        Player player = (Player) evt.getWhoClicked();
-
-        if (evt.getInventory().getTitle().equals("Quests")) {
-
-            ItemStack clicked = evt.getCurrentItem();
-            if (clicked != null) {
-
-                for (Quest quest : plugin.quests) {
-
-                    if (quest.guiDisplay != null) {
-
-                        if (ItemUtil.compareItems(clicked, quest.guiDisplay, false) == 0) {
-
-                            if (quester.currentQuests.size() >= Quests.maxQuests && Quests.maxQuests > 0) {
-
-                                String msg = Lang.get("questMaxAllowed");
-                                msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
-                                player.sendMessage(YELLOW + msg);
-
-                            } else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
-                                String completed = Lang.get("questAlreadyCompleted");
-                                completed = completed.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
-                                player.sendMessage(ChatColor.YELLOW + completed);
-                            } else {
-
-                                boolean takeable = true;
-
-                                if (quester.completedQuests.contains(quest.name)) {
-
-                                    if (quester.getDifference(quest) > 0) {
-                                        String early = Lang.get("questTooEarly");
-                                        early = early.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
-                                        early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
-                                        player.sendMessage(ChatColor.YELLOW + early);
-                                        takeable = false;
-                                    }
-
-                                }
-
-                                if (quest.region != null) {
-
-                                    boolean inRegion = false;
-                                    Player p = quester.getPlayer();
-                                    RegionManager rm = Quests.worldGuard.getRegionManager(p.getWorld());
-                                    Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
-                                    while (it.hasNext()) {
-                                        ProtectedRegion pr = it.next();
-                                        if (pr.getId().equalsIgnoreCase(quest.region)) {
-                                            inRegion = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (inRegion == false) {
-                                        String invalidLoc = Lang.get("questInvalidLocation");
-                                        invalidLoc = invalidLoc.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
-                                        player.sendMessage(ChatColor.YELLOW + invalidLoc);
-                                        takeable = false;
-                                    }
-
-                                }
-
-                                if (takeable == true) {
-
-                                    quester.takeQuest(quest, false);
-
-                                }
-
-                                evt.getWhoClicked().closeInventory();
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                evt.setCancelled(true);
 
             }
 
@@ -647,7 +671,7 @@ public class PlayerListener implements Listener, ColorUtil {
                                 for (Quest quest : quester.currentQuests.keySet()) {
 
                                     if (quester.hasObjective(quest, "killPlayer")) {
-                                        quester.killPlayer(quest, evt.getEntity().getName());
+                                        quester.killPlayer(quest, (Player) evt.getEntity());
                                     }
 
                                 }
@@ -681,7 +705,7 @@ public class PlayerListener implements Listener, ColorUtil {
                             for (Quest quest : quester.currentQuests.keySet()) {
 
                                 if (quester.hasObjective(quest, "killPlayer")) {
-                                    quester.killPlayer(quest, evt.getEntity().getName());
+                                    quester.killPlayer(quest, (Player) evt.getEntity());
                                 }
 
                             }
@@ -791,6 +815,9 @@ public class PlayerListener implements Listener, ColorUtil {
                 }
 
             }
+            
+            if(quester.hasJournal)
+                quester.updateJournal();
 
         }
 

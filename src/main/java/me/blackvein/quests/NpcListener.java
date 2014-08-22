@@ -92,10 +92,11 @@ public class NpcListener implements Listener {
 
                         if (quester.hasObjective(quest, "talkToNPC")) {
 
-                            quester.interactWithNPC(quest, evt.getNPC());
-                            if (quester.getQuestData(quest).citizensInteracted.containsKey(evt.getNPC().getId()) && quester.getQuestData(quest).citizensInteracted.get(evt.getNPC().getId()) == false) {
+                            if (quester.getQuestData(quest) != null && quester.getQuestData(quest).citizensInteracted.containsKey(evt.getNPC().getId()) && quester.getQuestData(quest).citizensInteracted.get(evt.getNPC().getId()) == false) {
                                 hasObjective = true;
                             }
+                            
+                            quester.interactWithNPC(quest, evt.getNPC());
 
                         }
 
@@ -111,7 +112,7 @@ public class NpcListener implements Listener {
                                 continue;
                             
                             if (q.npcStart != null && q.npcStart.getId() == evt.getNPC().getId()) {
-                                if (Quests.ignoreLockedQuests) {
+                                if (Quests.ignoreLockedQuests && (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1)) {
                                     if (q.testRequirements(quester)) {
                                         npcQuests.add(q);
                                     }
@@ -125,8 +126,7 @@ public class NpcListener implements Listener {
                         if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
 
                             if (plugin.questNPCGUIs.contains(evt.getNPC().getId())) {
-
-                                quester.showGUIDisplay(npcQuests);
+                                quester.showGUIDisplay(evt.getNPC(), npcQuests);
                                 return;
 
                             }

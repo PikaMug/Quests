@@ -38,17 +38,19 @@ public class StageTimer implements Runnable {
 
             } else {
 
-                quester.resetObjectives(quest);
+                Stage currentStage = quester.getCurrentStage(quest);
+                int stageNum =  quester.currentQuests.get(quest) + 1;
+                quester.hardQuit(quest);
 
-                if (quester.getCurrentStage(quest).script != null) {
-                    plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(quest).script, player);
+                if (currentStage.script != null) {
+                    plugin.trigger.parseQuestTaskTrigger(currentStage.script, player);
                 }
 
-                if (quester.getCurrentStage(quest).finishEvent != null) {
-                    quester.getCurrentStage(quest).finishEvent.fire(quester, quest);
+                if (currentStage.finishEvent != null) {
+                    currentStage.finishEvent.fire(quester, quest);
                 }
 
-                quester.setCurrentStage(quest, quester.currentQuests.get(quest) + 1);
+                quester.hardStagePut(quest, stageNum);
                 quester.addEmpties(quest);
                 quester.getQuestData(quest).delayStartTime = 0;
                 quester.getQuestData(quest).delayTimeLeft = -1;
@@ -71,6 +73,7 @@ public class StageTimer implements Runnable {
             }
 
             quester.getQuestData(quest).delayOver = true;
+            quester.updateJournal();
 
         }
 

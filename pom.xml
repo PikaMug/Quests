@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>1.9.0</version>
+    <version>2.0.0</version>
     <name>quests</name>
     <url>http://dev.bukkit.org/server-mods/quests/</url>
     <packaging>jar</packaging>

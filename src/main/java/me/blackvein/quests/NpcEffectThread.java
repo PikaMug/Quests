@@ -52,11 +52,11 @@ public class NpcEffectThread implements Runnable {
 
     private static void showEffect(Player player, NPC npc) {
 
-        if (Bukkit.getVersion().contains("1.7.2")) {
+        if (Bukkit.getBukkitVersion().contains("1.7.2")) {
             showEffect_R1(player, npc);
-        } else if (Bukkit.getVersion().contains("1.7.9")) {
+        } else if (Bukkit.getBukkitVersion().contains("1.7.9")) {
             showEffect_R3(player, npc);
-        } else if (Bukkit.getVersion().contains("1.7.10")) {
+        } else if (Bukkit.getBukkitVersion().contains("1.7.10")) {
             showEffect_R4(player, npc);
         }
 

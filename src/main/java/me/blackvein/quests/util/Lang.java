@@ -42,8 +42,22 @@ public class Lang {
 
         }
 
-        return null;
+        return "NULL";
 
+    }
+    
+    public static String getCommandKey(String val) {
+        
+        for (Entry<String, String> entry : langMap.entrySet()) {
+
+            if (entry.getValue().equalsIgnoreCase(val) && entry.getKey().toUpperCase().startsWith("COMMAND_")) {
+                return entry.getKey();
+            }
+
+        }
+
+        return "NULL";
+        
     }
 
     public static void clearPhrases() {
@@ -72,6 +86,7 @@ public class Lang {
 		//Quests
         langMap.put("questFailed", "*QUEST FAILED*");
         langMap.put("questMaxAllowed", "You may only have up to <number> Quests.");
+        langMap.put("questAlreadyOn", "You are already on that Quest!");
         langMap.put("questTooEarly", "You may not take <quest> again for another <time>.");
         langMap.put("questAlreadyCompleted", "You have already completed <quest>.");
         langMap.put("questInvalidLocation", "You may not take <quest> at this location.");
@@ -921,7 +936,8 @@ public class Lang {
         langMap.put("errorReading", "Error reading <file>, skipping..");
         langMap.put("errorReadingSuppress", "Error reading <file>, suppressing further errors.");
         langMap.put("errorDataFolder", "Error: Unable to read Quests data folder!");
-        langMap.put("questsUnknownAdminCommand", "Unknown Quests command. Type /quests for help.");
+        langMap.put("questsPlayerHasQuestAlready", "<player> is already on the Quest <quest>!");
+        langMap.put("questsUnknownAdminCommand", "Unknown Questsadmin command. Type /questsadmin for help.");
         langMap.put("unknownError", "An unknown error occurred. See console output.");
         
         langMap.put("journalTaken", "You take out your Quest Journal.");
@@ -1024,6 +1040,7 @@ public class Lang {
         langMap.put("questPoints", "Quest Points");
         langMap.put("complete", "Complete");
         langMap.put("redoable", "Redoable");
+        langMap.put("usage", "Usage");
         langMap.put("redoableEvery", "Redoable every <time>.");
         langMap.put("requirements", "Requirements");
         langMap.put("money", "Money");

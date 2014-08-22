@@ -139,8 +139,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public int killDelay = 0;
     public int totalQuestPoints = 0;
     public Lang lang;
+    public HashMap<String, Integer> commands = new HashMap<String, Integer>();
+    public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
     private static Quests instance = null;
-    public static final String validVersion = "1.7.9-R0.2";
 
     @SuppressWarnings("serial")
     class StageFailedException extends Exception {
@@ -195,6 +196,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         defaultQuestsFile();
         defaultEventsFile();
         defaultDataFile();
+        
+        loadCommands();
 
         getServer().getPluginManager().registerEvents(pListener, this);
         if (npcEffects) {
@@ -299,7 +302,87 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
+    public void loadCommands() {
+        
+        // [] - required
+        // {} - optional
+        
+        commands.put(Lang.get("COMMAND_LIST"), 1); // list {page}
+        commands.put(Lang.get("COMMAND_TAKE"), 2); // take [quest]
+        commands.put(Lang.get("COMMAND_QUIT"), 2); // quit [quest]
+        commands.put(Lang.get("COMMAND_EDITOR"), 1); // editor
+        commands.put(Lang.get("COMMAND_EVENTS_EDITOR"), 1); // events 
+        commands.put(Lang.get("COMMAND_STATS"), 1); // stats
+        commands.put(Lang.get("COMMAND_TOP"), 2); // top [number] 
+        commands.put(Lang.get("COMMAND_INFO"), 1); // info 
+        commands.put(Lang.get("COMMAND_JOURNAL"), 1); // journal 
+        
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVE"), 3); // give [player] [quest]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_QUIT"), 3); // quit [player] [quest]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_POINTS"), 3); // points [player] [amount]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"), 3); // takepoints [player] [amount]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"), 3); // givepoints [player] [amount]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_POINTSALL"), 2); // pointsall [amount]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_FINISH"), 3); // finish [player] [quest]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
+        
+    }
+    
+    public String checkCommand(String cmd, String[] args) {
+        
+        if(cmd.equalsIgnoreCase("quest") || args.length == 0) {
+            return null;
+        }
+        
+        if(cmd.equalsIgnoreCase("quests")) {
+        
+            if(commands.containsKey(args[0].toLowerCase())) {
+
+                int min = commands.get(args[0].toLowerCase());
+                if(args.length < min)
+                    return getQuestsCommandUsage(args[0]);
+                else
+                    return null;
+
+            }
+            
+            return YELLOW + Lang.get("questsUnknownCommand");
+            
+        } else if(cmd.equalsIgnoreCase("questsadmin") || cmd.equalsIgnoreCase("questadmin")) {
+            
+            if(adminCommands.containsKey(args[0].toLowerCase())) {
+
+                int min = adminCommands.get(args[0].toLowerCase());
+                if(args.length < min)
+                    return getQuestadminCommandUsage(args[0]);
+                else
+                    return null;
+
+            }
+            
+            return YELLOW + Lang.get("questsUnknownAdminCommand");
+        }
+            
+        return "NULL";
+    }
+    
+    public String getQuestsCommandUsage(String cmd) {
+        
+        return RED + Lang.get("usage") + ":" + YELLOW + "/quests " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
+        
+    }
+    
+    public String getQuestadminCommandUsage(String cmd) {
+        
+        return RED + Lang.get("usage") + ": " + YELLOW + "/questadmin " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
+        
+    }
+    
     private void linkOtherPlugins() {
+        
         try {
             if (getServer().getPluginManager().getPlugin("Citizens") != null) {
                 citizens = (CitizensPlugin) getServer().getPluginManager().getPlugin("Citizens");
@@ -398,7 +481,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
 
-                getQuester(player.getUniqueId()).takeQuest(getQuest(getQuester(player.getUniqueId()).questToTake), false);
+                try{
+                    getQuester(player.getUniqueId()).takeQuest(getQuest(getQuester(player.getUniqueId()).questToTake), false);
+                }catch(Exception e) {
+                    e.printStackTrace();
+                }
                 return Prompt.END_OF_CONVERSATION;
 
             } else if (s.equalsIgnoreCase(Lang.get("noWord"))) {
@@ -641,6 +728,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @Override
     public boolean onCommand(final CommandSender cs, Command cmd, String label, String[] args) {
 
+        String error = checkCommand(cmd.getName(), args);
+            
+        if(error != null) {    
+            cs.sendMessage(error);
+            return true;
+        }
+        
         if (cmd.getName().equalsIgnoreCase("quest")) {
 
             return questCommandHandler(cs, args);
@@ -664,74 +758,57 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (args.length == 0) {
 
             adminHelp(cs);
+            return true;
 
-        } else if (args.length == 1) {
+        }
 
-            if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
+        if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
 
-                adminReload(cs);
+            adminReload(cs);
 
-            } else {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
 
-                cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
+            adminPointsAll(cs, args);
 
-            }
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
 
-        } else if (args.length == 2) {
+            adminGive(cs, args);
 
-            if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
 
-                adminPointsAll(cs, args);
+            adminPoints(cs, args);
 
-            } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
 
-                adminGive(cs, args);
+            adminTakePoints(cs, args);
 
-            } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
 
-                adminPoints(cs, args);
+            adminGivePoints(cs, args);
 
-            } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"))) {
 
-                adminTakePoints(cs, args);
+            adminToggieGUI(cs, args);
 
-            } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
 
-                adminGivePoints(cs, args);
+            adminQuit(cs, args);
 
-            } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"))) {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
 
-                adminToggieGUI(cs, args);
+            adminNextStage(cs, args);
 
-            } else {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
 
-                cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
+            adminSetStage(cs, args);
 
-            }
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
 
-        } else if (args.length >= 3) {
+            adminFinish(cs, args);
 
-            if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
+        } else {
 
-                adminQuit(cs, args);
-
-            } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
-
-                adminNextStage(cs, args);
-
-            } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
-
-                adminSetStage(cs, args);
-
-            } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
-
-                adminFinish(cs, args);
-
-            } else {
-
-                cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
-
-            }
+            cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
 
         }
 
@@ -771,13 +848,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 } else if (questNPCGUIs.contains(i)) {
                     questNPCGUIs.remove(questNPCGUIs.indexOf(i));
                     updateData();
-                    String msg = Lang.get("enableNPCGUI");
+                    String msg = Lang.get("disableNPCGUI");
                     msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
                     cs.sendMessage(YELLOW + msg);
                 } else {
                     questNPCGUIs.add(i);
                     updateData();
-                    String msg = Lang.get("disableNPCGUI");
+                    String msg = Lang.get("enableNPCGUI");
                     msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
                     cs.sendMessage(YELLOW + msg);
                 }
@@ -852,6 +929,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void adminTakePoints(final CommandSender cs, String[] args) {
+        
         if (cs.hasPermission("quests.admin.takepoints")) {
 
             Player target = null;
@@ -964,6 +1042,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void adminGive(final CommandSender cs, String[] args) {
+        
         if (cs.hasPermission("quests.admin.give")) {
 
             Player target = null;
@@ -1029,9 +1108,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     cs.sendMessage(YELLOW + Lang.get("questNotFound"));
 
                 } else {
-
+                    
                     Quester quester = getQuester(target.getUniqueId());
-                    quester.resetObjectives(questToGive);
+                    
+                    for (Quest q : quester.currentQuests.keySet()) {
+                        
+                        if(q.getName().equalsIgnoreCase(questToGive.getName())) {
+                            
+                            String msg = Lang.get("questsPlayerHasQuestAlready");
+                            msg = msg.replaceAll("<player>", ITALIC + "" + GREEN + target.getName() + RESET + YELLOW);
+                            msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + questToGive.getName() + RESET + YELLOW);
+                            cs.sendMessage(YELLOW + msg);
+                            
+                            return;
+                        }
+                        
+                    }
+                    
+                    quester.hardQuit(questToGive);
 
                     String msg1 = Lang.get("questForceTake");
                     msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
@@ -1389,9 +1483,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         return;
                     }
 
-                    quester.resetObjectives(found);
-                    quester.currentQuests.remove(found);
-                    quester.questData.remove(found);
+                    quester.hardQuit(found);
+                    
                     String msg1 = Lang.get("questForceQuit");
                     msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
                     msg1 = msg1.replaceAll("<quest>", PURPLE + found.name + GOLD);
@@ -1402,6 +1495,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     target.sendMessage(GREEN + msg2);
 
                     quester.saveData();
+                    quester.updateJournal();
 
                 }
 
@@ -1421,6 +1515,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (args.length == 0) {
 
                 questsHelp(cs);
+                return true;
 
             } else {
 
@@ -1455,6 +1550,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EVENTS_EDITOR"))) {
 
                     questsEvents(cs);
+                    
                 } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
 
                     questsInfo(cs);
@@ -1721,14 +1817,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         return true;
                     }
 
-                    quester.resetObjectives(found);
-                    quester.currentQuests.remove(found);
-                    quester.questData.remove(found);
+                    quester.hardQuit(found);
+                    
                     String msg = Lang.get("questQuit");
                     msg = msg.replaceAll("<quest>", PURPLE + found.name + YELLOW);
                     player.sendMessage(YELLOW + msg);
                     quester.saveData();
                     quester.loadData();
+                    quester.updateJournal();
                     return true;
 
                 } else {
@@ -1810,6 +1906,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if (quester.currentQuests.size() >= maxQuests && maxQuests > 0) {
                             String msg = Lang.get("questMaxAllowed");
                             msg = msg.replaceAll("<number>", String.valueOf(maxQuests));
+                            player.sendMessage(YELLOW + msg);
+                        } else if (quester.currentQuests.containsKey(q)) {
+                            String msg = Lang.get("questAlreadyOn");
                             player.sendMessage(YELLOW + msg);
                         } else if (quester.completedQuests.contains(q.name) && q.redoDelay < 0) {
                             String msg = Lang.get("questAlreadyCompleted");
@@ -1962,6 +2061,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private boolean questCommandHandler(final CommandSender cs, String[] args) {
+        
         if (cs instanceof Player) {
 
             if (((Player) cs).hasPermission("quests.quest")) {
@@ -4140,6 +4240,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
         parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
         parsed = parsed.replaceAll("<reset>", RESET.toString());
+        
+        parsed = parsed.replaceAll("<br>", "\n");
+        
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
@@ -4178,6 +4281,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
         parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
         parsed = parsed.replaceAll("<reset>", RESET.toString());
+        
+        parsed = parsed.replaceAll("<br>", "\n");
+        
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
@@ -5022,12 +5128,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     public boolean hasQuest(NPC npc, Quester quester) {
 
-        for (Quest quest : quests) {
+        for (Quest q : quests) {
 
-            if (quest.npcStart != null && quester.completedQuests.contains(quest.name) == false) {
+            if (q.npcStart != null && quester.completedQuests.contains(q.name) == false) {
 
-                if (quest.npcStart.getId() == npc.getId()) {
-                    return true;
+                if (q.npcStart.getId() == npc.getId()) {
+                    
+                    if(ignoreLockedQuests == false || ignoreLockedQuests == true && q.testRequirements(quester) == true) {
+                        return true;
+                    }
                 }
 
             }
@@ -5179,6 +5288,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 final FileConfiguration config = new YamlConfiguration();
 
                                 config.load(found);
+                                
+                                if(config.contains("currentQuest")) {
+                                    
+                                    LinkedList<String> currentQuests = new LinkedList<String>();
+                                    currentQuests.add(config.getString("currentQuest"));
+                                    LinkedList<Integer> currentStages = new LinkedList<Integer>();
+                                    currentStages.add(config.getInt("currentStage"));
+                                    
+                                    config.set("currentQuests", currentQuests);
+                                    config.set("currentStages", currentStages);
+                                    
+                                }
+                                
                                 config.save(copy);
 
                                 found.delete();

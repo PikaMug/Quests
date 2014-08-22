@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 
@@ -39,6 +41,18 @@ public class Quester {
     
     public String questToTake;
     public LinkedHashMap<Quest, Integer> currentQuests = new LinkedHashMap<Quest, Integer>() {
+        
+        public Integer hardRemove(Object key) {
+            return super.remove((Quest) key);
+        }
+        
+        public void hardClear() {
+            super.clear();
+        }
+        
+        public Integer hardPut(Quest key, Integer val) {
+            return super.put(key, val);
+        }
         
         @Override
         public Integer put(Quest key, Integer val) {
@@ -126,9 +140,14 @@ public class Quester {
         }
         
     };
+    
     Map<String, Long> completedTimes = new HashMap<String, Long>();
     
     Map<String, Integer> amountsCompleted = new HashMap<String, Integer>() {
+        
+        public void hardClear() {
+            super.clear();
+        }
         
         @Override
         public Integer put(String key, Integer val) {
@@ -168,6 +187,18 @@ public class Quester {
             return data;
         }
 
+        public QuestData hardRemove(Object key) {
+            return super.remove((Quest) key);
+        }
+        
+        public void hardClear() {
+            super.clear();
+        }
+        
+        public QuestData hardPut(Quest key, QuestData val) {
+            return super.put(key, val);
+        }
+        
         @Override
         public QuestData remove(Object key) {
             QuestData data = super.remove(key);
@@ -214,7 +245,6 @@ public class Quester {
         if(!hasJournal)
             return;
         
-        System.out.println("Updating journal.");
         Inventory inv = getPlayer().getInventory();
         ItemStack[] arr = inv.getContents();
         int index = -1;
@@ -223,9 +253,7 @@ public class Quester {
             
             if(arr[i] != null) {
                 
-                System.out.println("Checking: " + arr[i]);
                 if(ItemUtil.isJournal(arr[i])) {
-                    System.out.println("Is journal");
                     index = i;
                     break;
                 }
@@ -247,34 +275,58 @@ public class Quester {
             
             if(currentQuests.isEmpty() == false) {
                 
+                int currentLength = 0;
+                int currentLines = 0;
+                String page = "";
+                
                 for(Quest quest : currentQuests.keySet()) {
+
+                    System.out.println("ADDING QUEST: " + quest.getName());
                     
-                    String page = ChatColor.DARK_PURPLE + quest.name + "\n";
-                    int currentLength = 19;
-                    int currentLines = 1;
-                    
+                    if((currentLength + quest.name.length() > 240) || (currentLines + ((quest.name.length() % 19) == 0 ? (quest.name.length() / 19) : ((quest.name.length() / 19) + 1))) > 13) {
+                        
+                        book.addPage(page);
+                        page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.name + "\n";
+                        currentLength = quest.name.length();
+                        currentLines = (quest.name.length() % 19) == 0 ? (quest.name.length() / 19) : (quest.name.length() + 1);
+                        
+                    } else {
+                        
+                        page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.name + "\n";
+                        currentLength += quest.name.length();
+                        currentLines += (quest.name.length() / 19);
+                        
+                    }
+
                     for(String obj : getObjectivesReal(quest)) {
                         
                         //Length/Line check
                         if((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
                             book.addPage(page);
-                            page = "";
-                            currentLines = 0;
-                            currentLength = 0;
+                            page = obj + "\n";
+                            currentLength = obj.length();
+                            currentLines = (obj.length() % 19) == 0 ? (obj.length() / 19) : (obj.length() + 1);
                         } else {
                             page += obj + "\n";
-                            a
+                            currentLength += obj.length();
+                            currentLines += (obj.length() / 19);
                         }
                         
                     }
                     
+                    if(currentLines < 13)
+                        page += "\n";
                     
+                    book.addPage(page);
+                    page = "";
+                    currentLines = 0;
+                    currentLength = 0;
                 
                 }
                 
                 
             }
-            
+
             stack.setItemMeta(book);
             inv.setItem(index, stack);
             
@@ -286,10 +338,6 @@ public class Quester {
         return quest.getStage(currentQuests.get(quest));
     }
 
-    public void setCurrentStage(Quest quest, int stage) {
-        currentQuests.put(quest, stage);
-    }
-
     public QuestData getQuestData(Quest quest) {
         return questData.get(quest);
     }
@@ -298,11 +346,17 @@ public class Quester {
 
         Player player = getPlayer();
 
+        System.out.println("Hereeeeeee");
         if (q.testRequirements(player) == true || override) {
 
-            currentQuests.put(q, 0);
-            Stage stage = q.getStage(0);
+            System.out.println("What?");
             addEmpties(q);
+            System.out.println("Okay");
+            currentQuests.put(q, 0);
+            System.out.println("Done");
+            Stage stage = q.getStage(0);
+            System.out.println("Going to add empties for: " + q.name);
+            
 
             if (!override) {
 
@@ -358,6 +412,9 @@ public class Quester {
 
         } else {
 
+            System.out.println("Problem");
+            System.out.println(q.testRequirements(player));
+            System.out.println(override);
             player.sendMessage(q.failRequirements);
 
         }
@@ -378,6 +435,9 @@ public class Quester {
 
     public LinkedList<String> getObjectives(Quest quest) {
 
+        if(getQuestData(quest) == null)
+            return new LinkedList<String>();
+        
         LinkedList<String> unfinishedObjectives = new LinkedList<String>();
         LinkedList<String> finishedObjectives = new LinkedList<String>();
         LinkedList<String> objectives = new LinkedList<String>();
@@ -494,13 +554,13 @@ public class Quester {
 
         if (getCurrentStage(quest).fishToCatch != null) {
 
-            if (getQuestData(quest).fishCaught < getCurrentStage(quest).fishToCatch) {
+            if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + Lang.get("catchFish") + ": " + getQuestData(quest).fishCaught + "/" + getCurrentStage(quest).fishToCatch);
+                unfinishedObjectives.add(ChatColor.GREEN + Lang.get("catchFish") + ": " + getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
 
             } else {
 
-                finishedObjectives.add(ChatColor.GRAY + Lang.get("catchFish") + ": " + getQuestData(quest).fishCaught + "/" + getCurrentStage(quest).fishToCatch);
+                finishedObjectives.add(ChatColor.GRAY + Lang.get("catchFish") + ": " + getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
 
             }
 
@@ -607,13 +667,13 @@ public class Quester {
 
         if (getCurrentStage(quest).playersToKill != null) {
 
-            if (getQuestData(quest).playersKilled < getCurrentStage(quest).playersToKill) {
+            if (getQuestData(quest).getPlayersKilled() < getCurrentStage(quest).playersToKill) {
 
-                unfinishedObjectives.add(ChatColor.GREEN + Lang.get("killPlayer") + ": " + getQuestData(quest).playersKilled + "/" + getCurrentStage(quest).playersToKill);
+                unfinishedObjectives.add(ChatColor.GREEN + Lang.get("killPlayer") + ": " + getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
 
             } else {
 
-                finishedObjectives.add(ChatColor.GRAY + Lang.get("killPlayer") + ": " + getQuestData(quest).playersKilled + "/" + getCurrentStage(quest).playersToKill);
+                finishedObjectives.add(ChatColor.GRAY + Lang.get("killPlayer") + ": " + getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
 
             }
 
@@ -621,6 +681,18 @@ public class Quester {
 
         for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
 
+            System.out.print("Quest data:  ");
+            System.out.print(getQuestData(quest));
+            System.out.println();
+            
+            System.out.print("Items delivered: ");
+            System.out.print(getQuestData(quest).itemsDelivered);
+            System.out.println();
+            
+            System.out.print("IS: ");
+            System.out.print(is);
+            System.out.println();
+            
             int delivered = getQuestData(quest).itemsDelivered.get(is);
             int amt = is.getAmount();
             Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(is));
@@ -995,10 +1067,10 @@ public class Quester {
 
     public void catchFish(Quest quest) {
 
-        if (getQuestData(quest).fishCaught < getCurrentStage(quest).fishToCatch) {
-            getQuestData(quest).fishCaught++;
+        if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
+            getQuestData(quest).setFishCaught(getQuestData(quest).getFishCaught() + 1);
 
-            if (((Integer) getQuestData(quest).fishCaught).equals(getCurrentStage(quest).fishToCatch)) {
+            if (((Integer) getQuestData(quest).getFishCaught()).equals(getCurrentStage(quest).fishToCatch)) {
                 finishObjective(quest, "catchFish", null, null, null, null, null, null, null, null, null, null);
             }
 
@@ -1092,11 +1164,11 @@ public class Quester {
 
     }
 
-    public void killPlayer(Quest quest, String player) {
+    public void killPlayer(Quest quest, Player player) {
 
-        if (getQuestData(quest).playerKillTimes.containsKey(player)) {
+        if (getQuestData(quest).playerKillTimes.containsKey(player.getUniqueId())) {
 
-            long killTime = getQuestData(quest).playerKillTimes.get(player);
+            long killTime = getQuestData(quest).playerKillTimes.get(player.getUniqueId());
             long comparator = plugin.killDelay * 1000;
             long currentTime = System.currentTimeMillis();
 
@@ -1104,7 +1176,7 @@ public class Quester {
 
                 String error = Lang.get("killNotValid");
                 error = error.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(comparator - (currentTime - killTime)) + ChatColor.RED);
-                error = error.replaceAll("<player>", ChatColor.DARK_PURPLE + player + ChatColor.RED);
+                error = error.replaceAll("<player>", ChatColor.DARK_PURPLE + player.getName() + ChatColor.RED);
                 getPlayer().sendMessage(ChatColor.RED + error);
                 return;
 
@@ -1112,12 +1184,12 @@ public class Quester {
 
         }
 
-        getQuestData(quest).playerKillTimes.put(player, System.currentTimeMillis());
+        getQuestData(quest).playerKillTimes.put(player.getUniqueId(), System.currentTimeMillis());
 
-        if (getQuestData(quest).playersKilled < getCurrentStage(quest).playersToKill) {
-            getQuestData(quest).playersKilled++;
+        if (getQuestData(quest).getPlayersKilled() < getCurrentStage(quest).playersToKill) {
+            getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled() + 1);
 
-            if (((Integer) getQuestData(quest).playersKilled).equals(getCurrentStage(quest).playersToKill)) {
+            if (((Integer) getQuestData(quest).getPlayersKilled()).equals(getCurrentStage(quest).playersToKill)) {
                 finishObjective(quest, "killPlayer", null, null, null, null, null, null, null, null, null, null);
             }
 
@@ -1515,179 +1587,309 @@ public class Quester {
 
     public void addEmpties(Quest quest) {
 
-        QuestData data = new QuestData();
-        questData.put(quest, data);
+        QuestData data = new QuestData(this);
+        data.setDoJournalUpdate(false);
+        
+        System.out.println("Put quest data for: " + quest.name);
 
-        if (getCurrentStage(quest).blocksToDamage.isEmpty() == false) {
-            for (Material m : getCurrentStage(quest).blocksToDamage.keySet()) {
+        if (quest.getStage(0).blocksToDamage.isEmpty() == false) {
+            for (Material m : quest.getStage(0).blocksToDamage.keySet()) {
 
-                getQuestData(quest).blocksDamaged.put(m, 0);
-
-            }
-        }
-
-        if (getCurrentStage(quest).blocksToBreak.isEmpty() == false) {
-            for (Material m : getCurrentStage(quest).blocksToBreak.keySet()) {
-
-                getQuestData(quest).blocksBroken.put(m, 0);
+                data.blocksDamaged.put(m, 0);
 
             }
         }
 
-        if (getCurrentStage(quest).blocksToPlace.isEmpty() == false) {
-            for (Material m : getCurrentStage(quest).blocksToPlace.keySet()) {
+        if (quest.getStage(0).blocksToBreak.isEmpty() == false) {
+            for (Material m : quest.getStage(0).blocksToBreak.keySet()) {
 
-                getQuestData(quest).blocksPlaced.put(m, 0);
-
-            }
-        }
-
-        if (getCurrentStage(quest).blocksToUse.isEmpty() == false) {
-            for (Material m : getCurrentStage(quest).blocksToUse.keySet()) {
-
-                getQuestData(quest).blocksUsed.put(m, 0);
+                data.blocksBroken.put(m, 0);
 
             }
         }
 
-        if (getCurrentStage(quest).blocksToCut.isEmpty() == false) {
-            for (Material m : getCurrentStage(quest).blocksToCut.keySet()) {
+        if (quest.getStage(0).blocksToPlace.isEmpty() == false) {
+            for (Material m : quest.getStage(0).blocksToPlace.keySet()) {
 
-                getQuestData(quest).blocksCut.put(m, 0);
+                data.blocksPlaced.put(m, 0);
 
             }
         }
 
-        getQuestData(quest).fishCaught = 0;
+        if (quest.getStage(0).blocksToUse.isEmpty() == false) {
+            for (Material m : quest.getStage(0).blocksToUse.keySet()) {
 
-        if (getCurrentStage(quest).itemsToEnchant.isEmpty() == false) {
-            for (Entry<Map<Enchantment, Material>, Integer> e : getCurrentStage(quest).itemsToEnchant.entrySet()) {
+                data.blocksUsed.put(m, 0);
+
+            }
+        }
+
+        if (quest.getStage(0).blocksToCut.isEmpty() == false) {
+            for (Material m : quest.getStage(0).blocksToCut.keySet()) {
+
+                data.blocksCut.put(m, 0);
+
+            }
+        }
+
+        data.setFishCaught(0);
+
+        if (quest.getStage(0).itemsToEnchant.isEmpty() == false) {
+            for (Entry<Map<Enchantment, Material>, Integer> e : quest.getStage(0).itemsToEnchant.entrySet()) {
 
                 Map<Enchantment, Material> map = (Map<Enchantment, Material>) e.getKey();
-                getQuestData(quest).itemsEnchanted.put(map, 0);
+                data.itemsEnchanted.put(map, 0);
 
             }
         }
 
-        if (getCurrentStage(quest).mobsToKill.isEmpty() == false) {
-            for (EntityType e : getCurrentStage(quest).mobsToKill) {
+        if (quest.getStage(0).mobsToKill.isEmpty() == false) {
+            for (EntityType e : quest.getStage(0).mobsToKill) {
 
-                getQuestData(quest).mobsKilled.add(e);
-                getQuestData(quest).mobNumKilled.add(0);
-                if (getCurrentStage(quest).locationsToKillWithin.isEmpty() == false) {
-                    getQuestData(quest).locationsToKillWithin.add(getCurrentStage(quest).locationsToKillWithin.get(getQuestData(quest).mobsKilled.indexOf(e)));
+                data.mobsKilled.add(e);
+                data.mobNumKilled.add(0);
+                if (quest.getStage(0).locationsToKillWithin.isEmpty() == false) {
+                    data.locationsToKillWithin.add(quest.getStage(0).locationsToKillWithin.get(data.mobsKilled.indexOf(e)));
                 }
-                if (getCurrentStage(quest).radiiToKillWithin.isEmpty() == false) {
-                    getQuestData(quest).radiiToKillWithin.add(getCurrentStage(quest).radiiToKillWithin.get(getQuestData(quest).mobsKilled.indexOf(e)));
+                if (quest.getStage(0).radiiToKillWithin.isEmpty() == false) {
+                    data.radiiToKillWithin.add(quest.getStage(0).radiiToKillWithin.get(data.mobsKilled.indexOf(e)));
                 }
 
             }
         }
 
-        getQuestData(quest).playersKilled = 0;
+        data.setPlayersKilled(0);
 
-        if (getCurrentStage(quest).itemsToDeliver.isEmpty() == false) {
-            for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
+        if (quest.getStage(0).itemsToDeliver.isEmpty() == false) {
+            for (ItemStack is : quest.getStage(0).itemsToDeliver) {
 
-                getQuestData(quest).itemsDelivered.put(is, 0);
-
-            }
-        }
-
-        if (getCurrentStage(quest).citizensToInteract.isEmpty() == false) {
-            for (Integer n : getCurrentStage(quest).citizensToInteract) {
-
-                getQuestData(quest).citizensInteracted.put(n, false);
+                data.itemsDelivered.put(is, 0);
 
             }
         }
 
-        if (getCurrentStage(quest).citizensToKill.isEmpty() == false) {
-            for (Integer n : getCurrentStage(quest).citizensToKill) {
+        if (quest.getStage(0).citizensToInteract.isEmpty() == false) {
+            for (Integer n : quest.getStage(0).citizensToInteract) {
 
-                getQuestData(quest).citizensKilled.add(n);
-                getQuestData(quest).citizenNumKilled.add(0);
-
-            }
-        }
-
-        if (getCurrentStage(quest).blocksToCut.isEmpty() == false) {
-            for (Material m : getCurrentStage(quest).blocksToCut.keySet()) {
-
-                getQuestData(quest).blocksCut.put(m, 0);
+                data.citizensInteracted.put(n, false);
 
             }
         }
 
-        if (getCurrentStage(quest).locationsToReach.isEmpty() == false) {
-            for (Location l : getCurrentStage(quest).locationsToReach) {
+        if (quest.getStage(0).citizensToKill.isEmpty() == false) {
+            for (Integer n : quest.getStage(0).citizensToKill) {
 
-                getQuestData(quest).locationsReached.add(l);
-                getQuestData(quest).hasReached.add(false);
-                getQuestData(quest).radiiToReachWithin.add(getCurrentStage(quest).radiiToReachWithin.get(getQuestData(quest).locationsReached.indexOf(l)));
-
-            }
-        }
-
-        if (getCurrentStage(quest).mobsToTame.isEmpty() == false) {
-            for (EntityType e : getCurrentStage(quest).mobsToTame.keySet()) {
-
-                getQuestData(quest).mobsTamed.put(e, 0);
+                data.citizensKilled.add(n);
+                data.citizenNumKilled.add(0);
 
             }
         }
 
-        if (getCurrentStage(quest).sheepToShear.isEmpty() == false) {
-            for (DyeColor d : getCurrentStage(quest).sheepToShear.keySet()) {
+        if (quest.getStage(0).blocksToCut.isEmpty() == false) {
+            for (Material m : quest.getStage(0).blocksToCut.keySet()) {
 
-                getQuestData(quest).sheepSheared.put(d, 0);
+                data.blocksCut.put(m, 0);
 
             }
         }
 
-        if (getCurrentStage(quest).passwordDisplays.isEmpty() == false) {
-            for (String display : getCurrentStage(quest).passwordDisplays) {
-                getQuestData(quest).passwordsSaid.put(display, false);
+        if (quest.getStage(0).locationsToReach.isEmpty() == false) {
+            for (Location l : quest.getStage(0).locationsToReach) {
+
+                data.locationsReached.add(l);
+                data.hasReached.add(false);
+                data.radiiToReachWithin.add(quest.getStage(0).radiiToReachWithin.get(data.locationsReached.indexOf(l)));
+
             }
         }
 
-        if (getCurrentStage(quest).customObjectives.isEmpty() == false) {
-            for (CustomObjective co : getCurrentStage(quest).customObjectives) {
-                getQuestData(quest).customObjectiveCounts.put(co.getName(), 0);
+        if (quest.getStage(0).mobsToTame.isEmpty() == false) {
+            for (EntityType e : quest.getStage(0).mobsToTame.keySet()) {
+
+                data.mobsTamed.put(e, 0);
+
             }
         }
+
+        if (quest.getStage(0).sheepToShear.isEmpty() == false) {
+            for (DyeColor d : quest.getStage(0).sheepToShear.keySet()) {
+
+                data.sheepSheared.put(d, 0);
+
+            }
+        }
+
+        System.out.println("huehuehue");
+        if (quest.getStage(0).passwordDisplays.isEmpty() == false) {
+            System.out.println("jajaja");
+            for (String display : quest.getStage(0).passwordDisplays) {
+                System.out.println("display: " + display);
+                data.passwordsSaid.put(display, false);
+            }
+        }
+
+        if (quest.getStage(0).customObjectives.isEmpty() == false) {
+            for (CustomObjective co : quest.getStage(0).customObjectives) {
+                data.customObjectiveCounts.put(co.getName(), 0);
+            }
+        }
+        
+        data.setDoJournalUpdate(true);
+        hardDataPut(quest, data);
 
     }
+    
+    public void addEmptiesFor(Quest quest, int stage) {
 
-    public void resetObjectives(Quest quest) {
+        QuestData data = new QuestData(this);
+        data.setDoJournalUpdate(false);
+        
+        System.out.println("Put quest data for: " + quest.name);
 
-        if (getQuestData(quest) == null) {
-            questData.put(quest, new QuestData());
+        if (quest.getStage(stage).blocksToDamage.isEmpty() == false) {
+            for (Material m : quest.getStage(stage).blocksToDamage.keySet()) {
+
+                data.blocksDamaged.put(m, 0);
+
+            }
         }
 
-        getQuestData(quest).blocksDamaged.clear();
-        getQuestData(quest).blocksBroken.clear();
-        getQuestData(quest).blocksPlaced.clear();
-        getQuestData(quest).blocksUsed.clear();
-        getQuestData(quest).blocksCut.clear();
-        getQuestData(quest).fishCaught = 0;
-        getQuestData(quest).itemsEnchanted.clear();
-        getQuestData(quest).mobsKilled.clear();
-        getQuestData(quest).mobNumKilled.clear();
-        getQuestData(quest).locationsToKillWithin.clear();
-        getQuestData(quest).radiiToKillWithin.clear();
-        getQuestData(quest).playersKilled = 0;
-        getQuestData(quest).itemsDelivered.clear();
-        getQuestData(quest).citizensInteracted.clear();
-        getQuestData(quest).citizensKilled.clear();
-        getQuestData(quest).citizenNumKilled.clear();
-        getQuestData(quest).locationsReached.clear();
-        getQuestData(quest).hasReached.clear();
-        getQuestData(quest).radiiToReachWithin.clear();
-        getQuestData(quest).mobsTamed.clear();
-        getQuestData(quest).sheepSheared.clear();
-        getQuestData(quest).customObjectiveCounts.clear();
-        getQuestData(quest).passwordsSaid.clear();
+        if (quest.getStage(stage).blocksToBreak.isEmpty() == false) {
+            for (Material m : quest.getStage(stage).blocksToBreak.keySet()) {
+
+                data.blocksBroken.put(m, 0);
+
+            }
+        }
+
+        if (quest.getStage(stage).blocksToPlace.isEmpty() == false) {
+            for (Material m : quest.getStage(stage).blocksToPlace.keySet()) {
+
+                data.blocksPlaced.put(m, 0);
+
+            }
+        }
+
+        if (quest.getStage(stage).blocksToUse.isEmpty() == false) {
+            for (Material m : quest.getStage(stage).blocksToUse.keySet()) {
+
+                data.blocksUsed.put(m, 0);
+
+            }
+        }
+
+        if (quest.getStage(stage).blocksToCut.isEmpty() == false) {
+            for (Material m : quest.getStage(stage).blocksToCut.keySet()) {
+
+                data.blocksCut.put(m, 0);
+
+            }
+        }
+
+        data.setFishCaught(0);
+
+        if (quest.getStage(stage).itemsToEnchant.isEmpty() == false) {
+            for (Entry<Map<Enchantment, Material>, Integer> e : quest.getStage(stage).itemsToEnchant.entrySet()) {
+
+                Map<Enchantment, Material> map = (Map<Enchantment, Material>) e.getKey();
+                data.itemsEnchanted.put(map, 0);
+
+            }
+        }
+
+        if (quest.getStage(stage).mobsToKill.isEmpty() == false) {
+            for (EntityType e : quest.getStage(stage).mobsToKill) {
+
+                data.mobsKilled.add(e);
+                data.mobNumKilled.add(0);
+                if (quest.getStage(stage).locationsToKillWithin.isEmpty() == false) {
+                    data.locationsToKillWithin.add(quest.getStage(stage).locationsToKillWithin.get(data.mobsKilled.indexOf(e)));
+                }
+                if (quest.getStage(stage).radiiToKillWithin.isEmpty() == false) {
+                    data.radiiToKillWithin.add(quest.getStage(stage).radiiToKillWithin.get(data.mobsKilled.indexOf(e)));
+                }
+
+            }
+        }
+
+        data.setPlayersKilled(0);
+
+        if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
+            for (ItemStack is : quest.getStage(stage).itemsToDeliver) {
+
+                data.itemsDelivered.put(is, 0);
+
+            }
+        }
+
+        if (quest.getStage(stage).citizensToInteract.isEmpty() == false) {
+            for (Integer n : quest.getStage(stage).citizensToInteract) {
+
+                data.citizensInteracted.put(n, false);
+
+            }
+        }
+
+        if (quest.getStage(stage).citizensToKill.isEmpty() == false) {
+            for (Integer n : quest.getStage(stage).citizensToKill) {
+
+                data.citizensKilled.add(n);
+                data.citizenNumKilled.add(0);
+
+            }
+        }
+
+        if (quest.getStage(stage).blocksToCut.isEmpty() == false) {
+            for (Material m : quest.getStage(stage).blocksToCut.keySet()) {
+
+                data.blocksCut.put(m, 0);
+
+            }
+        }
+
+        if (quest.getStage(stage).locationsToReach.isEmpty() == false) {
+            for (Location l : quest.getStage(stage).locationsToReach) {
+
+                data.locationsReached.add(l);
+                data.hasReached.add(false);
+                data.radiiToReachWithin.add(quest.getStage(stage).radiiToReachWithin.get(data.locationsReached.indexOf(l)));
+
+            }
+        }
+
+        if (quest.getStage(stage).mobsToTame.isEmpty() == false) {
+            for (EntityType e : quest.getStage(stage).mobsToTame.keySet()) {
+
+                data.mobsTamed.put(e, 0);
+
+            }
+        }
+
+        if (quest.getStage(stage).sheepToShear.isEmpty() == false) {
+            for (DyeColor d : quest.getStage(stage).sheepToShear.keySet()) {
+
+                data.sheepSheared.put(d, 0);
+
+            }
+        }
+
+        System.out.println("huehuehue");
+        if (quest.getStage(stage).passwordDisplays.isEmpty() == false) {
+            System.out.println("jajaja");
+            for (String display : quest.getStage(stage).passwordDisplays) {
+                System.out.println("display: " + display);
+                data.passwordsSaid.put(display, false);
+            }
+        }
+
+        if (quest.getStage(stage).customObjectives.isEmpty() == false) {
+            for (CustomObjective co : quest.getStage(stage).customObjectives) {
+                data.customObjectiveCounts.put(co.getName(), 0);
+            }
+        }
+        
+        data.setDoJournalUpdate(true);
+        hardDataPut(quest, data);
 
     }
 
@@ -1810,12 +2012,16 @@ public class Quester {
 
     public static String capitalsToSpaces(String s) {
 
-        for (int i = 1; i < s.length(); i++) {
+        int max = s.length();
+        
+        for (int i = 1; i < max; i++) {
 
             if (Character.isUpperCase(s.charAt(i))) {
 
                 s = s.substring(0, i) + " " + s.substring(i);
-
+                i++;
+                max++;
+                
             }
 
         }
@@ -1913,6 +2119,11 @@ public class Quester {
 
                 ConfigurationSection questSec = dataSec.createSection(quest.name);
 
+                if(getQuestData(quest) == null)
+                    System.out.println("Quest data is null for " + quest.name);
+                
+                System.out.println(getQuestData(quest));
+                System.out.println(getQuestData(quest).blocksDamaged);
                 if (getQuestData(quest).blocksDamaged.isEmpty() == false) {
 
                     LinkedList<Integer> blockIds = new LinkedList<Integer>();
@@ -1989,11 +2200,11 @@ public class Quester {
                 }
 
                 if (getCurrentStage(quest).fishToCatch != null) {
-                    questSec.set("fish-caught", getQuestData(quest).fishCaught);
+                    questSec.set("fish-caught", getQuestData(quest).getFishCaught());
                 }
 
                 if (getCurrentStage(quest).playersToKill != null) {
-                    questSec.set("players-killed", getQuestData(quest).playersKilled);
+                    questSec.set("players-killed", getQuestData(quest).getPlayersKilled());
                 }
 
                 if (getQuestData(quest).itemsEnchanted.isEmpty() == false) {
@@ -2302,6 +2513,7 @@ public class Quester {
 
         }
 
+        data.set("hasJournal", hasJournal);
         data.set("lastKnownName", getPlayer().getName());
 
         return data;
@@ -2329,6 +2541,8 @@ public class Quester {
         } catch (InvalidConfigurationException e) {
             return false;
         }
+        
+        hardClear();
 
         if (data.contains("completedRedoableQuests")) {
 
@@ -2351,8 +2565,6 @@ public class Quester {
 
         }
 
-        amountsCompleted.clear();
-
         if (data.contains("amountsCompletedQuests")) {
 
             List<String> list1 = data.getStringList("amountsCompletedQuests");
@@ -2367,6 +2579,8 @@ public class Quester {
         }
 
         questPoints = data.getInt("quest-points");
+        
+        hasJournal = data.getBoolean("hasJournal");
 
         if (data.isList("completed-Quests")) {
 
@@ -2485,19 +2699,19 @@ public class Quester {
                 }
 
                 if (questSec.contains("fish-caught")) {
-                    getQuestData(quest).fishCaught = questSec.getInt("fish-caught");
+                    getQuestData(quest).setFishCaught(questSec.getInt("fish-caught"));
                 }
 
                 if (questSec.contains("players-killed")) {
 
-                    getQuestData(quest).playersKilled = questSec.getInt("players-killed");
+                    getQuestData(quest).setPlayersKilled(questSec.getInt("players-killed"));
 
                     List<String> playerNames = questSec.getStringList("player-killed-names");
                     List<Long> killTimes = questSec.getLongList("kill-times");
 
                     for (String s : playerNames) {
 
-                        getQuestData(quest).playerKillTimes.put(s, killTimes.get(playerNames.indexOf(s)));
+                        getQuestData(quest).playerKillTimes.put(UUID.fromString(s), killTimes.get(playerNames.indexOf(s)));
 
                     }
 
@@ -2753,7 +2967,7 @@ public class Quester {
             }
 
         }
-
+        
         return true;
 
     }
@@ -2822,13 +3036,13 @@ public class Quester {
                     exists = true;
                     if (q.equals(quest) == false) {
 
-                        questData.remove(quest);
-                        currentQuests.remove(quest);
+                        hardQuit(quest);
 
                         if (plugin.getServer().getPlayer(id) != null) {
                             String error = Lang.get("questModified");
                             error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.name + ChatColor.RED);
                             plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
+                            updateJournal();
                         }
 
                     }
@@ -2962,18 +3176,32 @@ public class Quester {
         return changed;
     }
 
-    public void showGUIDisplay(LinkedList<Quest> quests) {
+    public void showGUIDisplay(NPC npc, LinkedList<Quest> quests) {
 
         Player player = getPlayer();
         int size = ((quests.size() / 9) + 1) * 9;
 
-        Inventory inv = Bukkit.getServer().createInventory(player, size, "Quests");
+        Inventory inv = Bukkit.getServer().createInventory(player, size, Lang.get("quests") + " | " + npc.getName());
 
         int inc = 0;
         for (int i = 0; i < quests.size(); i++) {
 
             if (quests.get(i).guiDisplay != null) {
-                inv.setItem(inc, quests.get(i).guiDisplay);
+                
+                ItemStack display = quests.get(i).guiDisplay;
+                ItemMeta meta = display.getItemMeta();
+                meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
+                
+                String lore = ChatColor.DARK_GREEN + quests.get(i).description;
+                LinkedList<String> lines = new LinkedList<String>();
+                
+                lines = MiscUtil.makeLines(lore, " ", 100);
+                
+                meta.setLore(lines);
+                
+                display.setItemMeta(meta);
+                
+                inv.setItem(inc, display);
                 inc++;
             }
 
@@ -2981,6 +3209,49 @@ public class Quester {
 
         player.openInventory(inv);
 
+    }
+    
+    public void hardQuit(Quest quest) {
+        
+        try {
+            currentQuests.getClass().getMethod("hardRemove", Object.class).invoke(currentQuests, quest);
+            questData.getClass().getMethod("hardRemove", Object.class).invoke(questData, quest);
+        } catch (Exception ex) {
+            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void hardClear() {
+        
+        try {
+            currentQuests.getClass().getMethod("hardClear", Object.class).invoke(currentQuests);
+            questData.getClass().getMethod("hardClear", Object.class).invoke(questData);
+            amountsCompleted.getClass().getMethod("hardClear", Object.class).invoke(amountsCompleted);
+        } catch (Exception ex) {
+            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void hardStagePut(Quest key, Integer val) {
+        
+        try {
+            currentQuests.getClass().getMethod("hardPut", Quest.class, Integer.class).invoke(currentQuests, key, val);
+        } catch (Exception ex) {
+            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void hardDataPut(Quest key, QuestData val) {
+        
+        try {
+            questData.getClass().getMethod("hardPut", Quest.class, QuestData.class).invoke(questData, key, val);
+        } catch (Exception ex) {
+            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
 }

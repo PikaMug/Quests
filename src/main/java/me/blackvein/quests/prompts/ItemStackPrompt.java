@@ -377,7 +377,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 
-                Enchantment e = Quests.getEnchantment(input);
+                Enchantment e = Quests.getEnchantmentPretty(input);
                 if (e != null) {
 
                     cc.setSessionData("tempEnchant", e);
@@ -441,7 +441,6 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
                 } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNotNumber"));
-                    e.printStackTrace();
                     return new LevelPrompt(enchantment);
                 }
 

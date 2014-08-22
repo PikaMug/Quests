@@ -1,9 +1,7 @@
 package me.blackvein.quests.util;
 
-import me.blackvein.quests.Quester;
-import org.bukkit.Bukkit;
+import java.util.LinkedList;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 public class MiscUtil {
 
@@ -136,6 +134,33 @@ public class MiscUtil {
         s = s.substring(0, s.length());
 
         return s.trim().equals("") ? null : s.trim();
+    }
+    
+    public static LinkedList<String> makeLines(String s, String wordDelimiter, int lineLength) {
+        
+        LinkedList<String> toReturn = new LinkedList<String>();
+        String[] split = s.split(wordDelimiter);
+        String line = "";
+        int currentLength = 0;
+        
+        for (String piece : split) {
+            
+            if ((currentLength + piece.length()) > (lineLength + 1)) {
+                toReturn.add(line.replaceAll("^" + wordDelimiter, ""));
+                line = piece + wordDelimiter;
+                currentLength = piece.length() + 1;
+            } else {
+                line += piece + wordDelimiter;
+                currentLength += piece.length() + 1;
+            }
+            
+        }
+        
+        if(line.equals("") == false)
+            toReturn.add(line);
+        
+        return toReturn;
+        
     }
 
 }

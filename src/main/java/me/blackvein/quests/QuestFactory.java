@@ -810,7 +810,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                     if (quest.guiDisplay != null) {
 
-                        if (ItemUtil.compareItems(stack, quest.guiDisplay, false) != 0) {
+                        if (ItemUtil.compareItems(stack, quest.guiDisplay, false) == 0) {
 
                             String error = Lang.get("questGUIError");
                             error = error.replaceAll("<quest>", PURPLE + quest.name + RED);
@@ -1752,6 +1752,10 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (q.region != null) {
             cc.setSessionData(CK.Q_REGION, q.region);
+        }
+        
+        if (q.guiDisplay != null) {
+            cc.setSessionData(CK.Q_GUIDISPLAY, q.guiDisplay);
         }
 
         //Requirements

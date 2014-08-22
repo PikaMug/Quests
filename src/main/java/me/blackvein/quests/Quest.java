@@ -106,46 +106,55 @@ public class Quest {
 
             } else {
 
-                q.currentQuests.put(this, q.currentQuests.get(this) + 1);
                 try {
-                    setStage(q, q.currentQuests.get(this));
+                    setStage(q, q.currentQuests.get(this) + 1);
                 } catch (InvalidStageException e) {
                     e.printStackTrace();
                 }
 
             }
 
-            q.getQuestData(this).delayStartTime = 0;
-            q.getQuestData(this).delayTimeLeft = -1;
+            if(q.getQuestData(this) != null) {
+                q.getQuestData(this).delayStartTime = 0;
+                q.getQuestData(this).delayTimeLeft = -1;
+            }
 
         } else {
             q.startStageTimer(this);
         }
+        
+        q.updateJournal();
 
     }
 
     public void setStage(Quester quester, int stage) throws InvalidStageException {
 
-        quester.currentQuests.put(this, stage);
-
         if (orderedStages.size() - 1 < stage) {
             throw new InvalidStageException(this, stage);
         }
 
-        quester.resetObjectives(this);
+        Stage currentStage = quester.getCurrentStage(this);
+        quester.hardQuit(this);
+        
+        System.out.println("Going to hard put Quest " + getName() + " to Stage " + stage);
+        System.out.println("Stages: " + this.orderedStages.size());
+        quester.hardStagePut(this, stage);
+        
+        quester.addEmptiesFor(this, stage);
 
-        if (quester.getCurrentStage(this).script != null) {
-            plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(this).script, quester.getPlayer());
+        if (currentStage.script != null) {
+            plugin.trigger.parseQuestTaskTrigger(currentStage.script, quester.getPlayer());
         }
 
         /*if (quester.getCurrentStage(this).finishEvent != null) {
          quester.getCurrentStage(this).finishEvent.fire(quester);
          }*/
+        System.out.println("vvv  Current Stage");
+        System.out.print(quester.getCurrentStage(this));
+        System.out.print("\n");
         if (quester.getCurrentStage(this).startEvent != null) {
             quester.getCurrentStage(this).startEvent.fire(quester, this);
         }
-
-        quester.addEmpties(this);
 
         String msg = Lang.get("questObjectivesTitle");
         msg = msg.replaceAll("<quest>", name);
@@ -160,6 +169,8 @@ public class Quest {
         if (stageStartMessage != null) {
             quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this));
         }
+        
+        quester.updateJournal();
 
     }
 
@@ -174,7 +185,7 @@ public class Quest {
     public boolean testRequirements(Player player) {
 
         Quester quester = plugin.getQuester(player.getUniqueId());
-
+        
         if (moneyReq != 0 && Quests.economy.getBalance(player.getName()) < moneyReq) {
             return false;
         }
@@ -277,7 +288,7 @@ public class Quest {
     public void completeQuest(Quester q) {
 
         Player player = plugin.getServer().getPlayer(q.id);
-        q.resetObjectives(this);
+        q.hardQuit(this);
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
 
@@ -515,30 +526,27 @@ public class Quest {
             player.sendMessage(none);
         }
 
-        q.currentQuests.remove(this);
-        q.questData.remove(this);
-
         q.saveData();
         player.updateInventory();
+        q.updateJournal();
 
     }
 
     public void failQuest(Quester q) {
 
         Player player = plugin.getServer().getPlayer(q.id);
-        q.resetObjectives(this);
 
         String title = Lang.get("questTitle");
         title = title.replaceAll("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
         player.sendMessage(ChatColor.AQUA + title);
         player.sendMessage(ChatColor.RED + Lang.get("questFailed"));
 
-        q.currentQuests.remove(this);
-        q.questData.remove(this);
+        q.hardQuit(this);
 
         q.saveData();
         player.updateInventory();
 
+        q.updateJournal();
     }
 
     @Override
@@ -547,7 +555,10 @@ public class Quest {
         if (o instanceof Quest) {
 
             Quest other = (Quest) o;
+            
+            System.out.println("COMPARING OTHER=" + other.name + " AGAINST SELF=" + name);
 
+            System.out.println("Here 1");
             if (other.blockStart != null && blockStart != null) {
                 if (other.blockStart.equals(blockStart) == false) {
                     return false;
@@ -558,6 +569,7 @@ public class Quest {
                 return false;
             }
 
+            System.out.println("Here 2");
             if (commands.size() == other.commands.size()) {
 
                 for (int i = 0; i < commands.size(); i++) {
@@ -569,7 +581,7 @@ public class Quest {
             } else {
                 return false;
             }
-
+System.out.println("Here 3");
             if (other.description.equals(description) == false) {
                 return false;
             }
@@ -587,7 +599,7 @@ public class Quest {
             if (other.exp != exp) {
                 return false;
             }
-
+System.out.println("Here 4");
             if (other.failRequirements != null && failRequirements != null) {
                 if (other.failRequirements.equals(failRequirements) == false) {
                     return false;
@@ -609,7 +621,7 @@ public class Quest {
             if (other.itemRewards.equals(itemRewards) == false) {
                 return false;
             }
-
+System.out.println("Here 5");
             if (other.rpgItemRewardIDs.equals(rpgItemRewardIDs) == false) {
                 return false;
             }
@@ -629,7 +641,7 @@ public class Quest {
             if (other.heroesClasses.equals(heroesClasses) == false) {
                 return false;
             }
-
+System.out.println("Here 6");
             if (other.heroesAmounts.equals(heroesAmounts) == false) {
                 return false;
             }
@@ -649,7 +661,7 @@ public class Quest {
             if (other.name.equals(name) == false) {
                 return false;
             }
-
+System.out.println("Here 7");
             if (other.neededQuests.equals(neededQuests) == false) {
                 return false;
             }
@@ -671,7 +683,7 @@ public class Quest {
             if (other.permissionReqs.equals(permissionReqs) == false) {
                 return false;
             }
-
+System.out.println("Here 8");
             if (other.heroesPrimaryClassReq != null && heroesPrimaryClassReq != null) {
                 if (other.heroesPrimaryClassReq.equals(heroesPrimaryClassReq) == false) {
                     return false;
@@ -728,10 +740,54 @@ public class Quest {
                 return false;
             }
 
+        } else {
+            return false;
         }
 
         return true;
 
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 53 * hash + (this.finished != null ? this.finished.hashCode() : 0);
+        hash = 53 * hash + (int) (this.redoDelay ^ (this.redoDelay >>> 32));
+        hash = 53 * hash + (this.region != null ? this.region.hashCode() : 0);
+        hash = 53 * hash + (this.guiDisplay != null ? this.guiDisplay.hashCode() : 0);
+        hash = 53 * hash + (this.orderedStages != null ? this.orderedStages.hashCode() : 0);
+        hash = 53 * hash + (this.npcStart != null ? this.npcStart.hashCode() : 0);
+        hash = 53 * hash + (this.blockStart != null ? this.blockStart.hashCode() : 0);
+        hash = 53 * hash + (this.initialEvent != null ? this.initialEvent.hashCode() : 0);
+        hash = 53 * hash + this.moneyReq;
+        hash = 53 * hash + this.questPointsReq;
+        hash = 53 * hash + (this.items != null ? this.items.hashCode() : 0);
+        hash = 53 * hash + (this.neededQuests != null ? this.neededQuests.hashCode() : 0);
+        hash = 53 * hash + (this.blockQuests != null ? this.blockQuests.hashCode() : 0);
+        hash = 53 * hash + (this.permissionReqs != null ? this.permissionReqs.hashCode() : 0);
+        hash = 53 * hash + (this.mcMMOSkillReqs != null ? this.mcMMOSkillReqs.hashCode() : 0);
+        hash = 53 * hash + (this.mcMMOAmountReqs != null ? this.mcMMOAmountReqs.hashCode() : 0);
+        hash = 53 * hash + (this.heroesPrimaryClassReq != null ? this.heroesPrimaryClassReq.hashCode() : 0);
+        hash = 53 * hash + (this.heroesSecondaryClassReq != null ? this.heroesSecondaryClassReq.hashCode() : 0);
+        hash = 53 * hash + (this.customRequirements != null ? this.customRequirements.hashCode() : 0);
+        hash = 53 * hash + (this.customRewards != null ? this.customRewards.hashCode() : 0);
+        hash = 53 * hash + (this.failRequirements != null ? this.failRequirements.hashCode() : 0);
+        hash = 53 * hash + this.moneyReward;
+        hash = 53 * hash + this.questPoints;
+        hash = 53 * hash + this.exp;
+        hash = 53 * hash + (this.commands != null ? this.commands.hashCode() : 0);
+        hash = 53 * hash + (this.permissions != null ? this.permissions.hashCode() : 0);
+        hash = 53 * hash + (this.itemRewards != null ? this.itemRewards.hashCode() : 0);
+        hash = 53 * hash + (this.rpgItemRewardIDs != null ? this.rpgItemRewardIDs.hashCode() : 0);
+        hash = 53 * hash + (this.rpgItemRewardAmounts != null ? this.rpgItemRewardAmounts.hashCode() : 0);
+        hash = 53 * hash + (this.mcmmoSkills != null ? this.mcmmoSkills.hashCode() : 0);
+        hash = 53 * hash + (this.mcmmoAmounts != null ? this.mcmmoAmounts.hashCode() : 0);
+        hash = 53 * hash + (this.heroesClasses != null ? this.heroesClasses.hashCode() : 0);
+        hash = 53 * hash + (this.heroesAmounts != null ? this.heroesAmounts.hashCode() : 0);
+        hash = 53 * hash + (this.phatLootRewards != null ? this.phatLootRewards.hashCode() : 0);
+        return hash;
     }
 
     public boolean isInRegion(Player player) {

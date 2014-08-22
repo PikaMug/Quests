@@ -7,6 +7,8 @@ COMMAND_QUESTADMIN_SETSTAGE_HELP
 COMMAND_QUESTADMIN_SETSTAGE_USAGE
 COMMAND_QUESTADMIN_QUIT_HELP
 
+questsUnknownAdminCommand
+
 currentQuest
 noCurrentQuest
 noActiveQuest
@@ -23,8 +25,11 @@ COMMAND_JOURNAL
 COMMAND_JOURNAL_HELP
 
 questMaxAllowed
+questAlreadyOn
+questsPlayerHasQuestAlready
 journalTitle
 journalTaken
 journalPutAway
 journalAlreadyHave
 journalNoRoom
+usage
