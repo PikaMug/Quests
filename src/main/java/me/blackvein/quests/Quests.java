@@ -135,6 +135,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public boolean showQuestReqs = true;
     public boolean allowQuitting = true;
     public boolean debug = false;
+    public boolean convertData = false;
     public boolean load = false;
     public int killDelay = 0;
     public int totalQuestPoints = 0;
@@ -229,6 +230,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 log.log(Level.INFO, "[Quests] " + events.size() + " Event(s) loaded.");
                 log.log(Level.INFO, "[Quests] " + Lang.getPhrases() + " Phrase(s) loaded.");
                 questers.putAll(getOnlineQuesters());
+                
+                if(convertData) {
+                    
+                    convertQuesters();
+                    
+                    FileConfiguration config = getConfig();
+                    config.set("convert-data-on-startup", false);
+                    
+                    try {
+                        config.save(new File(Quests.this.getDataFolder(), "config.yml"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                
                 if (snoop) {
                     snoop();
                 }
@@ -529,6 +545,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         debug = config.getBoolean("debug-mode", false);
         killDelay = config.getInt("kill-delay", 600);
         acceptTimeout = config.getInt("accept-timeout", 20);
+        convertData = config.getBoolean("convert-data-on-startup", false);
 
         if (config.contains("language")) {
             Lang.lang = config.getString("language");
@@ -5286,7 +5303,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 final File copy = new File(dataFolder, entry.getValue() + ".yml");
 
                                 final FileConfiguration config = new YamlConfiguration();
-
+                                final FileConfiguration newConfig = new YamlConfiguration();
+                                
                                 config.load(found);
                                 
                                 if(config.contains("currentQuest")) {
@@ -5296,12 +5314,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     LinkedList<Integer> currentStages = new LinkedList<Integer>();
                                     currentStages.add(config.getInt("currentStage"));
                                     
-                                    config.set("currentQuests", currentQuests);
-                                    config.set("currentStages", currentStages);
+                                    newConfig.set("currentQuests", currentQuests);
+                                    newConfig.set("currentStages", currentStages);
+                                    newConfig.set("hasJournal", false);
+                                    newConfig.set("lastKnownName", entry.getKey());
+                                    
+                                    ConfigurationSection dataSec = Quester.getLegacyQuestData(config, config.getString("currentQuest"));
+                                    newConfig.set("questData", dataSec);
                                     
                                 }
                                 
-                                config.save(copy);
+                                newConfig.save(copy);
 
                                 found.delete();
 

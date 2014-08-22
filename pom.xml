@@ -112,7 +112,6 @@
                     <include>plugin.yml</include>
                     <include>events.yml</include>
                     <include>quests.yml</include>
-                    <include>items.txt</include>
                 </includes>
             </resource>
             <resource>

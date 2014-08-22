@@ -4,7 +4,6 @@ quests:
     ask-message: '<yellow>Could you mine <purple>10<yellow> blocks of <purple>Stone<yellow>, and deliver the <purple>10<yellow> pieces of <purple>Cobblestone<yellow> to me?.'
     finish-message: '<yellow>Well done. Here is your reward.'
     redo-delay: 1800000
-    parties: 0
     requirements:
       items:
         - id-270:amount-1
@@ -18,17 +17,13 @@ quests:
             - 1
           break-block-amounts:
             - 10
-
     rewards:
       money: 1000
       quest-points: 1
-
-
   Hunter:
     name: 'Mob Hunter'
     ask-message: '<yellow>Kill an assortment of Mobs.'
     finish-message: '<yellow>Excellent. Here is a <purple>Diamond Sword<yellow>.'
-    parties: 2
     requirements:
       quests:
         - Stone Miner
@@ -55,7 +50,6 @@ quests:
             - Skeleton
           mob-amounts:
             - 1
-
     rewards:
       items:
         - id-276:amount-1
@@ -67,7 +61,6 @@ quests:
     name: 'Catch Fish'
     ask-message: '<yellow>Catch some fish!'
     finish-message: '<yellow>Excellent. Here is some <green>experience<yellow>.'
-    parties: 2
     requirements:
       quests:
         - Stone Miner
@@ -82,6 +75,5 @@ quests:
           chat-event-triggers:
             - "rod"
           fish-to-catch: 5
-
     rewards:
       exp: 250

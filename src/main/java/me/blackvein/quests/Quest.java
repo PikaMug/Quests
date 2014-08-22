@@ -136,8 +136,6 @@ public class Quest {
         Stage currentStage = quester.getCurrentStage(this);
         quester.hardQuit(this);
         
-        System.out.println("Going to hard put Quest " + getName() + " to Stage " + stage);
-        System.out.println("Stages: " + this.orderedStages.size());
         quester.hardStagePut(this, stage);
         
         quester.addEmptiesFor(this, stage);
@@ -149,9 +147,6 @@ public class Quest {
         /*if (quester.getCurrentStage(this).finishEvent != null) {
          quester.getCurrentStage(this).finishEvent.fire(quester);
          }*/
-        System.out.println("vvv  Current Stage");
-        System.out.print(quester.getCurrentStage(this));
-        System.out.print("\n");
         if (quester.getCurrentStage(this).startEvent != null) {
             quester.getCurrentStage(this).startEvent.fire(quester, this);
         }
@@ -556,9 +551,6 @@ public class Quest {
 
             Quest other = (Quest) o;
             
-            System.out.println("COMPARING OTHER=" + other.name + " AGAINST SELF=" + name);
-
-            System.out.println("Here 1");
             if (other.blockStart != null && blockStart != null) {
                 if (other.blockStart.equals(blockStart) == false) {
                     return false;
@@ -569,7 +561,6 @@ public class Quest {
                 return false;
             }
 
-            System.out.println("Here 2");
             if (commands.size() == other.commands.size()) {
 
                 for (int i = 0; i < commands.size(); i++) {
@@ -581,7 +572,7 @@ public class Quest {
             } else {
                 return false;
             }
-System.out.println("Here 3");
+
             if (other.description.equals(description) == false) {
                 return false;
             }
@@ -599,7 +590,7 @@ System.out.println("Here 3");
             if (other.exp != exp) {
                 return false;
             }
-System.out.println("Here 4");
+
             if (other.failRequirements != null && failRequirements != null) {
                 if (other.failRequirements.equals(failRequirements) == false) {
                     return false;
@@ -621,7 +612,7 @@ System.out.println("Here 4");
             if (other.itemRewards.equals(itemRewards) == false) {
                 return false;
             }
-System.out.println("Here 5");
+
             if (other.rpgItemRewardIDs.equals(rpgItemRewardIDs) == false) {
                 return false;
             }
@@ -641,7 +632,7 @@ System.out.println("Here 5");
             if (other.heroesClasses.equals(heroesClasses) == false) {
                 return false;
             }
-System.out.println("Here 6");
+
             if (other.heroesAmounts.equals(heroesAmounts) == false) {
                 return false;
             }
@@ -661,7 +652,7 @@ System.out.println("Here 6");
             if (other.name.equals(name) == false) {
                 return false;
             }
-System.out.println("Here 7");
+
             if (other.neededQuests.equals(neededQuests) == false) {
                 return false;
             }
@@ -683,7 +674,7 @@ System.out.println("Here 7");
             if (other.permissionReqs.equals(permissionReqs) == false) {
                 return false;
             }
-System.out.println("Here 8");
+
             if (other.heroesPrimaryClassReq != null && heroesPrimaryClassReq != null) {
                 if (other.heroesPrimaryClassReq.equals(heroesPrimaryClassReq) == false) {
                     return false;

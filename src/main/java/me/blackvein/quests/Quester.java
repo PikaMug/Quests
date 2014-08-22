@@ -280,8 +280,6 @@ public class Quester {
                 String page = "";
                 
                 for(Quest quest : currentQuests.keySet()) {
-
-                    System.out.println("ADDING QUEST: " + quest.getName());
                     
                     if((currentLength + quest.name.length() > 240) || (currentLines + ((quest.name.length() % 19) == 0 ? (quest.name.length() / 19) : ((quest.name.length() / 19) + 1))) > 13) {
                         
@@ -346,17 +344,11 @@ public class Quester {
 
         Player player = getPlayer();
 
-        System.out.println("Hereeeeeee");
         if (q.testRequirements(player) == true || override) {
 
-            System.out.println("What?");
             addEmpties(q);
-            System.out.println("Okay");
             currentQuests.put(q, 0);
-            System.out.println("Done");
             Stage stage = q.getStage(0);
-            System.out.println("Going to add empties for: " + q.name);
-            
 
             if (!override) {
 
@@ -412,9 +404,6 @@ public class Quester {
 
         } else {
 
-            System.out.println("Problem");
-            System.out.println(q.testRequirements(player));
-            System.out.println(override);
             player.sendMessage(q.failRequirements);
 
         }
@@ -680,18 +669,6 @@ public class Quester {
         }
 
         for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
-
-            System.out.print("Quest data:  ");
-            System.out.print(getQuestData(quest));
-            System.out.println();
-            
-            System.out.print("Items delivered: ");
-            System.out.print(getQuestData(quest).itemsDelivered);
-            System.out.println();
-            
-            System.out.print("IS: ");
-            System.out.print(is);
-            System.out.println();
             
             int delivered = getQuestData(quest).itemsDelivered.get(is);
             int amt = is.getAmount();
@@ -1589,8 +1566,6 @@ public class Quester {
 
         QuestData data = new QuestData(this);
         data.setDoJournalUpdate(false);
-        
-        System.out.println("Put quest data for: " + quest.name);
 
         if (quest.getStage(0).blocksToDamage.isEmpty() == false) {
             for (Material m : quest.getStage(0).blocksToDamage.keySet()) {
@@ -1719,11 +1694,8 @@ public class Quester {
             }
         }
 
-        System.out.println("huehuehue");
         if (quest.getStage(0).passwordDisplays.isEmpty() == false) {
-            System.out.println("jajaja");
             for (String display : quest.getStage(0).passwordDisplays) {
-                System.out.println("display: " + display);
                 data.passwordsSaid.put(display, false);
             }
         }
@@ -1743,8 +1715,6 @@ public class Quester {
 
         QuestData data = new QuestData(this);
         data.setDoJournalUpdate(false);
-        
-        System.out.println("Put quest data for: " + quest.name);
 
         if (quest.getStage(stage).blocksToDamage.isEmpty() == false) {
             for (Material m : quest.getStage(stage).blocksToDamage.keySet()) {
@@ -1873,11 +1843,8 @@ public class Quester {
             }
         }
 
-        System.out.println("huehuehue");
         if (quest.getStage(stage).passwordDisplays.isEmpty() == false) {
-            System.out.println("jajaja");
             for (String display : quest.getStage(stage).passwordDisplays) {
-                System.out.println("display: " + display);
                 data.passwordsSaid.put(display, false);
             }
         }
@@ -2118,12 +2085,7 @@ public class Quester {
             for (Quest quest : currentQuests.keySet()) {
 
                 ConfigurationSection questSec = dataSec.createSection(quest.name);
-
-                if(getQuestData(quest) == null)
-                    System.out.println("Quest data is null for " + quest.name);
                 
-                System.out.println(getQuestData(quest));
-                System.out.println(getQuestData(quest).blocksDamaged);
                 if (getQuestData(quest).blocksDamaged.isEmpty() == false) {
 
                     LinkedList<Integer> blockIds = new LinkedList<Integer>();
@@ -2617,7 +2579,7 @@ public class Quester {
                 ConfigurationSection questSec = dataSec.getConfigurationSection(key);
 
                 Quest quest = plugin.getQuest(key);
-                Stage stage = null;
+                Stage stage;
 
                 if (quest == null || currentQuests.containsKey(quest) == false) {
                     continue;
@@ -2725,13 +2687,14 @@ public class Quester {
 
                     List<String> enchantNames = questSec.getStringList("enchantments");
                     List<Integer> ids = questSec.getIntegerList("enchantment-item-ids");
+                    List<Integer> times = questSec.getIntegerList("times-enchanted");
 
                     for (String s : enchantNames) {
 
                         enchantments.add(Quests.getEnchantment(s));
 
                         materials.add(Material.getMaterial(ids.get(enchantNames.indexOf(s))));
-                        amounts.add(enchantNames.indexOf(s));
+                        amounts.add(times.get(enchantNames.indexOf(s)));
 
                     }
 
@@ -2972,98 +2935,305 @@ public class Quester {
 
     }
 
-    public void startStageTimer(Quest quest) {
+public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec, String questName) {
+        
+    ConfigurationSection newData = questSec.createSection("questData");
 
-        if (getQuestData(quest).delayTimeLeft > -1) {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getQuestData(quest).delayTimeLeft * 0.02));
-        } else {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getCurrentStage(quest).delay * 0.02));
-            if (getCurrentStage(quest).delayMessage != null) {
-                plugin.getServer().getPlayer(id).sendMessage(Quests.parseString((getCurrentStage(quest).delayMessage), quest));
-            }
-        }
+    if (questSec.contains("blocks-damaged-ids")) {
 
-        getQuestData(quest).delayStartTime = System.currentTimeMillis();
+        List<Integer> ids = questSec.getIntegerList("blocks-damaged-ids");
+        List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
+
+        newData.set(questName + ".blocks-damaged-ids", ids);
+        newData.set(questName + ".blocks-damaged-amounts", amounts);
+    }
+
+    if (questSec.contains("blocks-broken-ids")) {
+
+        List<Integer> ids = questSec.getIntegerList("blocks-broken-ids");
+        List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
+
+        newData.set(questName + ".blocks-broken-ids", ids);
+        newData.set(questName + ".blocks-broken-amounts", amounts);
 
     }
 
-    public void stopStageTimer(Quest quest) {
+    if (questSec.contains("blocks-placed-ids")) {
 
-        if (getQuestData(quest).delayTimeLeft > -1) {
-            getQuestData(quest).delayTimeLeft = getQuestData(quest).delayTimeLeft - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
-        } else {
-            getQuestData(quest).delayTimeLeft = getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
-        }
+        List<Integer> ids = questSec.getIntegerList("blocks-placed-ids");
+        List<Integer> amounts = questSec.getIntegerList("blocks-placed-amounts");
 
-        getQuestData(quest).delayOver = false;
+        newData.set(questName + ".blocks-placed-ids", ids);
+        newData.set(questName + ".blocks-placed-amounts", amounts);
 
     }
 
-    public long getStageTime(Quest quest) {
+    if (questSec.contains("blocks-used-ids")) {
 
-        if (getQuestData(quest).delayTimeLeft > -1) {
-            return getQuestData(quest).delayTimeLeft - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
-        } else {
-            return getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
+        List<Integer> ids = questSec.getIntegerList("blocks-used-ids");
+        List<Integer> amounts = questSec.getIntegerList("blocks-used-amounts");
+
+        newData.set(questName + ".blocks-used-ids", ids);
+        newData.set(questName + ".blocks-used-amounts", amounts);
+
+    }
+
+    if (questSec.contains("blocks-cut-ids")) {
+
+        List<Integer> ids = questSec.getIntegerList("blocks-cut-ids");
+        List<Integer> amounts = questSec.getIntegerList("blocks-cut-amounts");
+
+        newData.set(questName + ".blocks-cut-ids", ids);
+        newData.set(questName + ".blocks-cut-amounts", amounts);
+
+    }
+
+    if (questSec.contains("fish-caught")) {
+        newData.set(questName + ".fish-caught", questSec.getInt("fish-caught"));
+    }
+
+    if (questSec.contains("players-killed")) {
+
+        List<String> playerNames = questSec.getStringList("player-killed-names");
+        List<Long> killTimes = questSec.getLongList("kill-times");
+
+        newData.set(questName + ".players-killed", questSec.getInt("players-killed"));
+        newData.set(questName + ".player-killed-names", playerNames);
+        newData.set(questName + ".kill-times", killTimes);
+
+    }
+
+    if (questSec.contains("enchantments")) {
+
+        List<String> enchantNames = questSec.getStringList("enchantments");
+        List<Integer> ids = questSec.getIntegerList("enchantment-item-ids");
+        List<Integer> times = questSec.getIntegerList("times-enchanted");
+
+        newData.set(questName + ".enchantments", enchantNames);
+        newData.set(questName + ".enchantment-item-ids", ids);
+        newData.set(questName + ".times-enchanted", times);
+
+    }
+
+    if (questSec.contains("mobs-killed")) {
+
+        List<String> mobs = questSec.getStringList("mobs-killed");
+        List<Integer> amounts = questSec.getIntegerList("mobs-killed-amounts");
+
+        newData.set(questName + ".mobs-killed", mobs);
+        newData.set(questName + ".mobs-killed-amounts", amounts);
+        
+        if (questSec.contains("mob-kill-locations")) {
+
+            List<String> locations = questSec.getStringList("mob-kill-locations");
+            List<Integer> radii = questSec.getIntegerList("mob-kill-location-radii");
+
+            newData.set(questName + ".mob-kill-locations", locations);
+            newData.set(questName + ".mob-kill-location-radii", radii);
+            
         }
 
     }
 
-    public boolean hasData() {
+    if (questSec.contains("item-delivery-amounts")) {
 
-        if (currentQuests.isEmpty() == false || questData.isEmpty() == false) {
-            return true;
-        }
+        List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
 
-        if (questPoints > 1) {
-            return true;
-        }
-
-        return completedQuests.isEmpty() == false;
+        newData.set(questName + ".item-delivery-amounts", deliveryAmounts);
 
     }
 
-    public void checkQuest(Quest quest) {
+    if (questSec.contains("citizen-ids-to-talk-to")) {
 
-        if (quest != null) {
+        List<Integer> ids = questSec.getIntegerList("citizen-ids-to-talk-to");
+        List<Boolean> has = questSec.getBooleanList("has-talked-to");
 
-            boolean exists = false;
+        newData.set(questName + ".citizen-ids-to-talk-to", ids);
+        newData.set(questName + ".has-talked-to", has);
 
-            for (Quest q : plugin.quests) {
+    }
 
-                if (q.name.equalsIgnoreCase(quest.name)) {
+    if (questSec.contains("citizen-ids-killed")) {
 
-                    exists = true;
-                    if (q.equals(quest) == false) {
+        List<Integer> ids = questSec.getIntegerList("citizen-ids-killed");
+        List<Integer> num = questSec.getIntegerList("citizen-amounts-killed");
 
-                        hardQuit(quest);
+        newData.set(questName + ".citizen-ids-killed", ids);
+        newData.set(questName + ".citizen-amounts-killed", num);
 
-                        if (plugin.getServer().getPlayer(id) != null) {
-                            String error = Lang.get("questModified");
-                            error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.name + ChatColor.RED);
-                            plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
-                            updateJournal();
-                        }
+    }
 
-                    }
+    if (questSec.contains("locations-to-reach")) {
 
-                    break;
+        List<String> locations = questSec.getStringList("locations-to-reach");
+        List<Boolean> has = questSec.getBooleanList("has-reached-location");
+        List<Integer> radii = questSec.getIntegerList("radii-to-reach-within");
 
-                }
+        newData.set(questName + ".locations-to-reach", locations);
+        newData.set(questName + ".has-reached-location", has);
+        newData.set(questName + ".radii-to-reach-within", radii);
 
-            }
+    }
 
-            if (exists == false) {
+    if (questSec.contains("potions-brewed-ids")) {
+
+        List<Integer> ids = questSec.getIntegerList("potions-brewed-ids");
+        List<Integer> amounts = questSec.getIntegerList("potions-brewed-amounts");
+
+        newData.set(questName + ".potions-brewed-ids", ids);
+        newData.set(questName + ".potions-brewed-amounts", amounts);
+
+    }
+
+    if (questSec.contains("mobs-to-tame")) {
+
+        List<String> mobs = questSec.getStringList("mobs-to-tame");
+        List<Integer> amounts = questSec.getIntegerList("mob-tame-amounts");
+
+        newData.set(questName + ".mobs-to-tame", mobs);
+        newData.set(questName + ".mob-tame-amounts", amounts);
+
+    }
+
+    if (questSec.contains("sheep-to-shear")) {
+
+        List<String> colors = questSec.getStringList("sheep-to-shear");
+        List<Integer> amounts = questSec.getIntegerList("sheep-sheared");
+
+        newData.set(questName + ".sheep-to-shear", colors);
+        newData.set(questName + ".sheep-sheared", amounts);
+
+    }
+
+    if (questSec.contains("passwords")) {
+
+        List<String> passwords = questSec.getStringList("passwords");
+        List<Boolean> said = questSec.getBooleanList("passwords-said");
+        
+        newData.set(questName + ".passwords", passwords);
+        newData.set(questName + ".passwords-said", said);
+
+    }
+
+    if (questSec.contains("custom-objectives")) {
+
+        List<String> customObj = questSec.getStringList("custom-objectives");
+        List<Integer> customObjCount = questSec.getIntegerList("custom-objective-counts");
+
+        newData.set(questName + ".custom-objectives", customObj);
+        newData.set(questName + ".custom-objective-counts", customObjCount);
+
+    }
+
+    if (questSec.contains("stage-delay")) {
+
+        newData.set(questName + ".stage-delay", questSec.getLong("stage-delay"));
+
+    }
+
+    if (questSec.contains("chat-triggers")) {
+
+        List<String> triggers = questSec.getStringList("chat-triggers");
+        newData.set(questName + ".chat-triggers", triggers);
+
+    }
+    
+    return newData;
+
+}
+
+public void startStageTimer(Quest quest) {
+
+if (getQuestData(quest).delayTimeLeft > -1) {
+    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getQuestData(quest).delayTimeLeft * 0.02));
+} else {
+    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getCurrentStage(quest).delay * 0.02));
+    if (getCurrentStage(quest).delayMessage != null) {
+        plugin.getServer().getPlayer(id).sendMessage(Quests.parseString((getCurrentStage(quest).delayMessage), quest));
+    }
+}
+
+getQuestData(quest).delayStartTime = System.currentTimeMillis();
+
+}
+
+public void stopStageTimer(Quest quest) {
+
+if (getQuestData(quest).delayTimeLeft > -1) {
+    getQuestData(quest).delayTimeLeft = getQuestData(quest).delayTimeLeft - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
+} else {
+    getQuestData(quest).delayTimeLeft = getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
+}
+
+getQuestData(quest).delayOver = false;
+
+}
+
+public long getStageTime(Quest quest) {
+
+if (getQuestData(quest).delayTimeLeft > -1) {
+    return getQuestData(quest).delayTimeLeft - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
+} else {
+    return getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
+}
+
+}
+
+public boolean hasData() {
+
+if (currentQuests.isEmpty() == false || questData.isEmpty() == false) {
+    return true;
+}
+
+if (questPoints > 1) {
+    return true;
+}
+
+return completedQuests.isEmpty() == false;
+
+}
+
+public void checkQuest(Quest quest) {
+
+if (quest != null) {
+
+    boolean exists = false;
+
+    for (Quest q : plugin.quests) {
+
+        if (q.name.equalsIgnoreCase(quest.name)) {
+
+            exists = true;
+            if (q.equals(quest) == false) {
+
+                hardQuit(quest);
 
                 if (plugin.getServer().getPlayer(id) != null) {
-                    String error = Lang.get("questNotExist");
+                    String error = Lang.get("questModified");
                     error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.name + ChatColor.RED);
                     plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
+                    updateJournal();
                 }
 
             }
 
+            break;
+
         }
+
+    }
+
+    if (exists == false) {
+
+        if (plugin.getServer().getPlayer(id) != null) {
+            String error = Lang.get("questNotExist");
+            error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.name + ChatColor.RED);
+            plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
+        }
+
+    }
+
+}
 
     }
 
