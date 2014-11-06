@@ -723,17 +723,18 @@ public class Quester {
             for (Integer n2 : getQuestData(quest).citizensKilled) {
 
                 if (n.equals(n2)) {
+                    if (getQuestData(quest).citizenNumKilled.contains(getQuestData(quest).citizensKilled.indexOf(n2)) & getCurrentStage(quest).citizenNumToKill.contains(getCurrentStage(quest).citizensToKill.indexOf(n))) {
 
-                    if (getQuestData(quest).citizenNumKilled.get(getQuestData(quest).citizensKilled.indexOf(n2)) < getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n))) {
+                    	if (getQuestData(quest).citizenNumKilled.get(getQuestData(quest).citizensKilled.indexOf(n2)) < getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n))) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("kill") + " " + plugin.getNPCName(n) + ChatColor.GREEN + " " + getQuestData(quest).citizenNumKilled.get(getCurrentStage(quest).citizensToKill.indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
+                    		unfinishedObjectives.add(ChatColor.GREEN + Lang.get("kill") + " " + plugin.getNPCName(n) + ChatColor.GREEN + " " + getQuestData(quest).citizenNumKilled.get(getCurrentStage(quest).citizensToKill.indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
 
-                    } else {
+                    	} else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + plugin.getNPCName(n) + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
+                    		finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + plugin.getNPCName(n) + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
 
+                    	}
                     }
-
                 }
 
             }
@@ -793,6 +794,7 @@ public class Quester {
             for (Location l2 : getQuestData(quest).locationsReached) {
 
                 if (l.equals(l2)) {
+
                     if (getQuestData(quest).hasReached.contains(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
 
                         String obj = Lang.get("goTo");
