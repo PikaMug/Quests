@@ -794,7 +794,7 @@ public class Quester {
 
                 if (l.equals(l2)) {
 
-                    if (getQuestData(quest).hasReached.get(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
+                    if (getQuestData(quest).hasReached.contains(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
 
                         String obj = Lang.get("goTo");
                         obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
