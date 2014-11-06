@@ -42,18 +42,6 @@ public class Quester {
     public String questToTake;
     public LinkedHashMap<Quest, Integer> currentQuests = new LinkedHashMap<Quest, Integer>() {
         
-        public Integer hardRemove(Object key) {
-            return super.remove((Quest) key);
-        }
-        
-        public void hardClear() {
-            super.clear();
-        }
-        
-        public Integer hardPut(Quest key, Integer val) {
-            return super.put(key, val);
-        }
-        
         @Override
         public Integer put(Quest key, Integer val) {
             Integer data = super.put(key, val);
@@ -3385,8 +3373,8 @@ if (quest != null) {
     public void hardQuit(Quest quest) {
         
         try {
-            currentQuests.getClass().getMethod("hardRemove", Object.class).invoke(currentQuests, quest);
-            questData.getClass().getMethod("hardRemove", Object.class).invoke(questData, quest);
+            currentQuests.remove(quest);
+            questData.remove(quest);
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -3396,9 +3384,9 @@ if (quest != null) {
     public void hardClear() {
         
         try {
-            currentQuests.getClass().getMethod("hardClear", Object.class).invoke(currentQuests);
-            questData.getClass().getMethod("hardClear", Object.class).invoke(questData);
-            amountsCompleted.getClass().getMethod("hardClear", Object.class).invoke(amountsCompleted);
+            currentQuests.clear();
+            questData.clear();
+            amountsCompleted.clear();
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -3408,7 +3396,7 @@ if (quest != null) {
     public void hardStagePut(Quest key, Integer val) {
         
         try {
-            currentQuests.getClass().getMethod("hardPut", Quest.class, Integer.class).invoke(currentQuests, key, val);
+            currentQuests.put(key, val);
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -3418,7 +3406,7 @@ if (quest != null) {
     public void hardDataPut(Quest key, QuestData val) {
         
         try {
-            questData.getClass().getMethod("hardPut", Quest.class, QuestData.class).invoke(questData, key, val);
+            questData.put(key, val);
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
