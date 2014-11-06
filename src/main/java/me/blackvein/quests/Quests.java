@@ -1683,6 +1683,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 }
 
                 String name = f.getName().substring(0, (f.getName().indexOf(".")));
+                UUID id = UUID.fromString(name);
+                name = Bukkit.getOfflinePlayer(id).getName();
                 questPoints.put(name, data.getInt("quest-points"));
 
             }

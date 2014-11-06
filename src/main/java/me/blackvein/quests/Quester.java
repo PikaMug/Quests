@@ -793,7 +793,8 @@ public class Quester {
             for (Location l2 : getQuestData(quest).locationsReached) {
 
                 if (l.equals(l2)) {
-
+                	if(getQuestData(quest).locationsReached.size() > 0)
+                	{
                     if (getQuestData(quest).hasReached.contains(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
 
                         String obj = Lang.get("goTo");
@@ -807,6 +808,7 @@ public class Quester {
                         finishedObjectives.add(ChatColor.GRAY + obj);
 
                     }
+                	}
 
                 }
 
