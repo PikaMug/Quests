@@ -42,18 +42,6 @@ public class Quester {
     public String questToTake;
     public LinkedHashMap<Quest, Integer> currentQuests = new LinkedHashMap<Quest, Integer>() {
         
-    	public Integer hardRemove(Object key) {
-    		return super.remove((Quest) key);
-    		}
-    	
-    		public void hardClear() {
-    		super.clear();
-    		}
-    		
-    		public Integer hardPut(Quest key, Integer val) {
-    		return super.put(key, val);
-    		}
-    	
         @Override
         public Integer put(Quest key, Integer val) {
             Integer data = super.put(key, val);
@@ -185,18 +173,6 @@ public class Quester {
             QuestData data = super.put(key, val);
             updateJournal();
             return data;
-        }
-
-        public QuestData hardRemove(Object key) {
-            return super.remove((Quest) key);
-        }
-        
-        public void hardClear() {
-            super.clear();
-        }
-        
-        public QuestData hardPut(Quest key, QuestData val) {
-            return super.put(key, val);
         }
         
         @Override
@@ -624,29 +600,42 @@ public class Quester {
             for (EntityType e2 : getQuestData(quest).mobsKilled) {
 
                 if (e == e2) {
+                	if (getQuestData(quest).mobNumKilled.contains(getQuestData(quest).mobsKilled.indexOf(e2)) & getCurrentStage(quest).mobNumToKill.contains(getCurrentStage(quest).mobsToKill.indexOf(e))) {
 
-                    if (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2)) < getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))) {
+                		if (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2)) < getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))) {
 
-                        if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
-                            unfinishedObjectives.add(ChatColor.GREEN + Lang.get("kill") + " " + Quester.prettyMobString(e) + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
-                        } else {
-                            String obj = Lang.get("killAtLocation");
-                            obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
-                            obj = obj.replaceAll("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
-                            unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
-                        }
-                    } else {
+                			if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
+                				unfinishedObjectives.add(ChatColor.GREEN + Lang.get("kill") + " " + Quester.prettyMobString(e) + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+                			} else {
+                				String obj = Lang.get("killAtLocation");
+                				obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
+                				obj = obj.replaceAll("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
+                				unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+                			}
+                		} else {
 
-                        if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
-                            finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + Quester.prettyMobString(e) + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
-                        } else {
-                            String obj = Lang.get("killAtLocation");
-                            obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
-                            obj = obj.replaceAll("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
-                            finishedObjectives.add(ChatColor.GRAY + obj + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
-                        }
+                			if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
+                				finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + Quester.prettyMobString(e) + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+                			} else {
+                				String obj = Lang.get("killAtLocation");
+                				obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
+                				obj = obj.replaceAll("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
+                				finishedObjectives.add(ChatColor.GRAY + obj + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+                			}
 
-                    }
+                		}
+                	} else {
+
+            			if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
+            				finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + Quester.prettyMobString(e) + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+            			} else {
+            				String obj = Lang.get("killAtLocation");
+            				obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
+            				obj = obj.replaceAll("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
+            				finishedObjectives.add(ChatColor.GRAY + obj + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+            			}
+
+            		}
 
                 }
 
@@ -734,7 +723,11 @@ public class Quester {
                     		finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + plugin.getNPCName(n) + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
 
                     	}
-                    }
+                    } else {
+
+                		finishedObjectives.add(ChatColor.GRAY + Lang.get("kill") + " " + plugin.getNPCName(n) + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
+
+                	}
                 }
 
             }
@@ -3385,10 +3378,9 @@ if (quest != null) {
     public void hardQuit(Quest quest) {
         
         try {
-        	 currentQuests.getClass().getMethod("hardRemove", Object.class).invoke(currentQuests, quest);
-        	 questData.getClass().getMethod("hardRemove", Object.class).invoke(questData, quest);
+            currentQuests.remove(quest);
+            questData.remove(quest);
         } catch (Exception ex) {
-        	Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, "ERROR FROM HARDQUIT ", ex);
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -3397,11 +3389,10 @@ if (quest != null) {
     public void hardClear() {
         
         try {
-        	 currentQuests.getClass().getMethod("hardClear", Object.class).invoke(currentQuests);
-        	 questData.getClass().getMethod("hardClear", Object.class).invoke(questData);
-        	 amountsCompleted.getClass().getMethod("hardClear", Object.class).invoke(amountsCompleted);
+            currentQuests.clear();
+            questData.clear();
+            amountsCompleted.clear();
         } catch (Exception ex) {
-        	Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, "ERROR FROM HARDCLEAR ", ex);
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -3410,9 +3401,8 @@ if (quest != null) {
     public void hardStagePut(Quest key, Integer val) {
         
         try {
-        	currentQuests.getClass().getMethod("hardPut", Quest.class, Integer.class).invoke(currentQuests, key, val);
+            currentQuests.put(key, val);
         } catch (Exception ex) {
-        	Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, "ERROR FROM HARDSTAGEPUT ", ex);
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -3421,10 +3411,9 @@ if (quest != null) {
     public void hardDataPut(Quest key, QuestData val) {
         
         try {
-        	questData.getClass().getMethod("hardPut", Quest.class, QuestData.class).invoke(questData, key, val);
+            questData.put(key, val);
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
-            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, "ERROR FROM HARDDATAPUT ", ex);
         }
         
     }
