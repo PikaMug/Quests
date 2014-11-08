@@ -772,7 +772,7 @@ public class Quester {
             for (Location l2 : getQuestData(quest).locationsReached) {
 
                 if (l.equals(l2)) {
-                	if (getQuestData(quest).hasReached.size() > getQuestData(quest).locationsReached.indexOf(12)) {
+                	if (!getQuestData(quest).hasReached.isEmpty()) {
                 		
                 		if (getQuestData(quest).hasReached.get(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
 
