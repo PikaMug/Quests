@@ -600,7 +600,7 @@ public class Quester {
             for (EntityType e2 : getQuestData(quest).mobsKilled) {
 
                 if (e == e2) {
-                	if (getQuestData(quest).mobNumKilled.contains(getQuestData(quest).mobsKilled.indexOf(e2)) & getCurrentStage(quest).mobNumToKill.contains(getCurrentStage(quest).mobsToKill.indexOf(e))) {
+                	if (getQuestData(quest).mobNumKilled.size() > getQuestData(quest).mobsKilled.indexOf(e2) & getCurrentStage(quest).mobNumToKill.size() > getCurrentStage(quest).mobsToKill.indexOf(e)) {
 
                 		if (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2)) < getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))) {
 
@@ -701,7 +701,7 @@ public class Quester {
             for (Integer n2 : getQuestData(quest).citizensKilled) {
 
                 if (n.equals(n2)) {
-                    if (getQuestData(quest).citizenNumKilled.contains(getQuestData(quest).citizensKilled.indexOf(n2)) & getCurrentStage(quest).citizenNumToKill.contains(getCurrentStage(quest).citizensToKill.indexOf(n))) {
+                    if (getQuestData(quest).citizenNumKilled.size() > getQuestData(quest).citizensKilled.indexOf(n2) & getCurrentStage(quest).citizenNumToKill.size() > getCurrentStage(quest).citizensToKill.indexOf(n)) {
 
                     	if (getQuestData(quest).citizenNumKilled.get(getQuestData(quest).citizensKilled.indexOf(n2)) < getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n))) {
 
