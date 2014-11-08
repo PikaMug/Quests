@@ -772,20 +772,23 @@ public class Quester {
             for (Location l2 : getQuestData(quest).locationsReached) {
 
                 if (l.equals(l2)) {
-                	
-                    if (getQuestData(quest).hasReached.get(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
+                	if (getQuestData(quest).hasReached.size() > getQuestData(quest).locationsReached.indexOf(12)) {
+                		
+                		if (getQuestData(quest).hasReached.get(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
 
-                        String obj = Lang.get("goTo");
-                        obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
-                        unfinishedObjectives.add(ChatColor.GREEN + obj);
+                			String obj = Lang.get("goTo");
+                			obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
+                			unfinishedObjectives.add(ChatColor.GREEN + obj);
 
-                    } else {
+                		} else {
 
-                        String obj = Lang.get("goTo");
-                        obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
-                        finishedObjectives.add(ChatColor.GRAY + obj);
+                			String obj = Lang.get("goTo");
+                			obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
+                        	finishedObjectives.add(ChatColor.GRAY + obj);
 
-                    }
+                		}
+                    
+                	}
 
                 }
 
