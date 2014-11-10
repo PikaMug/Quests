@@ -2747,7 +2747,12 @@ public class Quester {
 
                     for (int i = 0; i < deliveryAmounts.size(); i++) {
 
-                        getQuestData(quest).itemsDelivered.put(getCurrentStage(quest).itemsToDeliver.get(i), deliveryAmounts.get(i));
+                    	if (i < getCurrentStage(quest).itemsToDeliver.size()) {
+                    		
+                            getQuestData(quest).itemsDelivered.put(getCurrentStage(quest).itemsToDeliver.get(i), deliveryAmounts.get(i));
+
+                    		
+                    	}
 
                     }
 
