@@ -1,6 +1,7 @@
 package me.blackvein.quests;
 
 import me.blackvein.quests.util.ColorUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -12,7 +13,6 @@ import java.util.Map.Entry;
 
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.util.CK;
-import static me.blackvein.quests.util.ColorUtil.PURPLE;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -504,7 +504,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public String getPromptText(ConversationContext context) {
 
             String text
@@ -596,7 +597,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
                 for (String s : types) {
                     QuestMob qm = QuestMob.fromString(s);
-                    text += GRAY + "    - " + AQUA + qm.getType().getName() + ((qm.getName() != null) ? ": " + qm.getName() : "") + GRAY + " x " + DARKAQUA + qm.getSpawnAmounts() + GRAY + " -> " + GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
+                    text += GRAY + "    - " + AQUA + qm.getType().name() + ((qm.getName() != null) ? ": " + qm.getName() : "") + GRAY + " x " + DARKAQUA + qm.getSpawnAmounts() + GRAY + " -> " + GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
             }
 
@@ -906,11 +907,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
         return (LinkedList<Integer>) context.getSessionData(path);
     }
 
-    private static Boolean getCBoolean(ConversationContext context, String path) {
+    @SuppressWarnings("unused")
+	private static Boolean getCBoolean(ConversationContext context, String path) {
         return (Boolean) context.getSessionData(path);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "unused" })
     private static LinkedList<Boolean> getCBooleanList(ConversationContext context, String path) {
         return (LinkedList<Boolean>) context.getSessionData(path);
     }
@@ -1014,7 +1016,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (context.getSessionData(CK.E_ITEMS) != null) {
 
-            LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
+            @SuppressWarnings("unchecked")
+			LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
             LinkedList<String> lines = new LinkedList<String>();
 
             for (ItemStack is : items) {
@@ -1079,7 +1082,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
                     ss.set("name", questMob.getName());
                     ss.set("spawn-location", Quests.getLocationInfo(questMob.getSpawnLocation()));
-                    ss.set("mob-type", questMob.getType().getName());
+                    ss.set("mob-type", questMob.getType().name());
                     ss.set("spawn-amounts", questMob.getSpawnAmounts());
                     ss.set("held-item", ItemUtil.serialize(questMob.inventory[0]));
                     ss.set("held-item-drop-chance", questMob.dropChances[0]);
@@ -1232,7 +1235,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
         }
     }
 
-    private class SetNpcStartPrompt extends NumericPrompt {
+    @SuppressWarnings("unused")
+	private class SetNpcStartPrompt extends NumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -1269,7 +1273,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
             Player player = (Player) context.getForWhom();
@@ -1454,7 +1459,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        private List<ItemStack> getItems(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<ItemStack> getItems(ConversationContext context) {
             return (List<ItemStack>) context.getSessionData(CK.E_ITEMS);
         }
 
@@ -1554,11 +1560,13 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        private List<String> getEffects(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<String> getEffects(ConversationContext context) {
             return (List<String>) context.getSessionData(CK.E_EFFECTS);
         }
 
-        private List<String> getEffectLocations(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<String> getEffectLocations(ConversationContext context) {
             return (List<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
         }
     }
@@ -1572,7 +1580,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
             Player player = (Player) context.getForWhom();
@@ -1635,7 +1644,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
             Player player = (Player) context.getForWhom();
@@ -1951,11 +1961,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
                 text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
-                LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+                @SuppressWarnings("unchecked")
+				LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
 
                 for (int i = 0; i < types.size(); i++) {
                     QuestMob qm = QuestMob.fromString(types.get(i));
-                    text += GOLD + "  " + (i + 1) + " - " + Lang.get("edit") + ": " + AQUA + qm.getType().getName() + ((qm.getName() != null) ? ": " + qm.getName() : "") + GRAY + " x " + DARKAQUA + qm.getSpawnAmounts() + GRAY + " -> " + GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
+                    text += GOLD + "  " + (i + 1) + " - " + Lang.get("edit") + ": " + AQUA + qm.getType().name() + ((qm.getName() != null) ? ": " + qm.getName() : "") + GRAY + " x " + DARKAQUA + qm.getSpawnAmounts() + GRAY + " -> " + GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
 
                 text += BLUE + "" + BOLD + (types.size() + 1) + RESET + YELLOW + " - " + Lang.get("eventEditorAddMobTypes") + "\n";
@@ -1982,7 +1993,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
                     return new CreateMenuPrompt();
                 }
             } else {
-                LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+                @SuppressWarnings("unchecked")
+				LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
                 int inp;
                 try {
                     inp = Integer.parseInt(input);
@@ -2043,7 +2055,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
             text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobName") + GRAY + " (" + ((questMob.getName() == null) ? Lang.get("noneSet") : AQUA + questMob.getName()) + ")\n";
-            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobType") + GRAY + " (" + ((questMob.getType() == null) ? Lang.get("eventEditorNoTypesSet") : AQUA + questMob.getType().getName()) + GRAY + ")\n";
+            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobType") + GRAY + " (" + ((questMob.getType() == null) ? Lang.get("eventEditorNoTypesSet") : AQUA + questMob.getType().name()) + GRAY + ")\n";
             text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("eventEditorAddSpawnLocation") + GRAY + " (" + ((questMob.getSpawnLocation() == null) ? GRAY + Lang.get("noneSet") : AQUA + Quests.getLocationInfo(questMob.getSpawnLocation())) + GRAY + ")\n";
             text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobSpawnAmount") + GRAY + " (" + ((questMob.getSpawnAmounts() == null) ? GRAY + Lang.get("eventEditorNoAmountsSet") : AQUA + "" + questMob.getSpawnAmounts()) + GRAY + ")\n";
             text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("eventEditorSetMobItemInHand") + GRAY + " (" + ((questMob.inventory[0] == null) ? GRAY + Lang.get("noneSet") : AQUA + ItemUtil.getDisplayString(questMob.inventory[0])) + GRAY + ")\n";
@@ -2374,7 +2386,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
             Player player = (Player) context.getForWhom();
@@ -2430,7 +2443,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public String getPromptText(ConversationContext context) {
 
             String text = GOLD + Lang.get("eventEditorPotionEffectsTitle") + "\n";
@@ -2479,7 +2493,8 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase("1")) {
@@ -2832,8 +2847,6 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-
-            Player player = (Player) context.getForWhom();
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 
