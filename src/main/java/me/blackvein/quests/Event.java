@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.QuestMob;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -36,11 +38,14 @@ public class Event {
     int thunderDuration = 0;
     public LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>() {
 
-        @Override
+		private static final long serialVersionUID = -761974607799449780L;
+
+		@Override
         public boolean equals(Object o) {
             if (o instanceof LinkedList) {
 
-                LinkedList<QuestMob> other = (LinkedList<QuestMob>) o;
+                @SuppressWarnings("unchecked")
+				LinkedList<QuestMob> other = (LinkedList<QuestMob>) o;
 
                 if (size() != other.size()) {
                     return false;
@@ -60,7 +65,7 @@ public class Event {
     LinkedList<PotionEffect> potionEffects = new LinkedList<PotionEffect>();
     int hunger = -1;
     int saturation = -1;
-    int health = -1;
+    float health = -1;
     Location teleport;
 
     @Override

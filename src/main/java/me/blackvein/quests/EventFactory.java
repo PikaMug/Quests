@@ -336,7 +336,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (event.health > -1) {
 
-            context.setSessionData(CK.E_HEALTH, (Integer) event.health);
+            context.setSessionData(CK.E_HEALTH, (Float) event.health);
 
         }
 
