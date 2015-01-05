@@ -27,7 +27,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
     //Stores itemstack in "tempStack" context data.
-    //Stores id in "tempId"
     //Stores amount in "tempAmount"
     //Stores data in "tempData"
     //Stores enchantments in "tempEnchantments"
@@ -45,7 +44,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
     @Override
     public String getPromptText(ConversationContext cc) {
         String menu = YELLOW + Lang.get("createItemTitle") + "\n";
-        if (cc.getSessionData("tempId") != null) {
+        if (cc.getSessionData("tempName") != null) {
             String stackData = getItemData(cc);
             if (stackData != null) {
                 menu += stackData;
@@ -65,7 +64,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
         return menu;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected Prompt acceptValidatedInput(ConversationContext cc, String input) {
 
         if (input.equalsIgnoreCase("0")) {
@@ -83,8 +83,6 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                 cc.setSessionData("tempEnchantments", null);
                 cc.setSessionData("tempName", null);
                 cc.setSessionData("tempLore", null);
-
-                cc.setSessionData("tempId", is.getTypeId());
                 cc.setSessionData("tempAmount", is.getAmount());
                 if (is.getDurability() != 0) {
                     cc.setSessionData("tempData", is.getDurability());
@@ -115,7 +113,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
             return new IDPrompt();
         } else if (input.equalsIgnoreCase("2")) {
 
-            if (cc.getSessionData("tempId") != null) {
+            if (cc.getSessionData("tempName") != null) {
                 return new AmountPrompt();
             } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoID"));
@@ -124,7 +122,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
         } else if (input.equalsIgnoreCase("3")) {
 
-            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
+            if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
                 return new DataPrompt();
             } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
@@ -133,7 +131,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
         } else if (input.equalsIgnoreCase("4")) {
 
-            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
+            if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
                 return new EnchantmentPrompt();
             } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
@@ -142,7 +140,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
         } else if (input.equalsIgnoreCase("5")) {
 
-            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
+            if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
                 return new NamePrompt();
             } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
@@ -151,7 +149,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
         } else if (input.equalsIgnoreCase("6")) {
 
-            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
+            if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
                 return new LorePrompt();
             } else {
                 cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
@@ -161,7 +159,6 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
         } else if (input.equalsIgnoreCase("7")) {
 
             cc.setSessionData("tempStack", null);
-            cc.setSessionData("tempId", null);
             cc.setSessionData("tempAmount", null);
             cc.setSessionData("tempData", null);
             cc.setSessionData("tempEnchantments", null);
@@ -170,9 +167,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
         } else if (input.equalsIgnoreCase("8")) {
 
-            if (cc.getSessionData("tempId") != null && cc.getSessionData("tempAmount") != null) {
+            if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
 
-                int id = (Integer) cc.getSessionData("tempId");
                 int amount = (Integer) cc.getSessionData("tempAmount");
                 short data = -1;
                 Map<Enchantment, Integer> enchs = null;
@@ -192,7 +188,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                     lore = (LinkedList<String>) cc.getSessionData("tempLore");
                 }
 
-                ItemStack stack = new ItemStack(id, amount);
+                ItemStack stack = new ItemStack(Material.matchMaterial(name), amount);
                 ItemMeta meta = stack.getItemMeta();
 
                 if (data != -1) {
@@ -256,7 +252,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                     return new IDPrompt();
                 } else {
 
-                    cc.setSessionData("tempId", mat.getId());
+                    cc.setSessionData("tempName", mat.name());
                     cc.setSessionData("tempAmount", 1);
 
                     if (dataString != null) {
@@ -425,7 +421,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
                         if (cc.getSessionData("tempEnchantments") != null) {
 
-                            Map<Enchantment, Integer> enchs = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
+                            @SuppressWarnings("unchecked")
+							Map<Enchantment, Integer> enchs = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
                             enchs.put((Enchantment) cc.getSessionData("tempEnchant"), num);
                             cc.setSessionData("tempEnchantments", enchs);
 
@@ -508,14 +505,14 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
     private String getItemData(ConversationContext cc) {
 
-        if (cc.getSessionData("tempId") != null) {
+        if (cc.getSessionData("tempName") != null) {
 
             String item;
 
             if (cc.getSessionData("tempName") == null) {
 
-                Integer id = (Integer) cc.getSessionData("tempId");
-                item = AQUA + Quester.prettyItemString(id);
+                String name = (String) cc.getSessionData("tempName");
+                item = AQUA + Quester.prettyItemString(name);
 
                 if (cc.getSessionData("tempData") != null) {
                     item += ":" + BLUE + (Short) cc.getSessionData("tempData");
@@ -524,8 +521,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
             } else {
 
                 item = PINK + "" + ITALIC + (String) cc.getSessionData("tempName") + RESET + "" + GRAY + " (";
-                Integer id = (Integer) cc.getSessionData("tempId");
-                item += AQUA + Quester.prettyItemString(id);
+                String name = (String) cc.getSessionData("tempName");
+                item += AQUA + Quester.prettyItemString(name);
                 if (cc.getSessionData("tempData") != null) {
                     item += ":" + BLUE + (Short) cc.getSessionData("tempData");
                 }
@@ -543,7 +540,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
             if (cc.getSessionData("tempEnchantments") != null) {
 
-                Map<Enchantment, Integer> enchantments = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
+                @SuppressWarnings("unchecked")
+				Map<Enchantment, Integer> enchantments = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
                 for (Entry<Enchantment, Integer> e : enchantments.entrySet()) {
 
                     item += GRAY + "  - " + RED + Quester.prettyEnchantmentString(e.getKey()) + " " + Quests.getNumeral(e.getValue()) + "\n";
@@ -554,7 +552,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
             if (cc.getSessionData("tempLore") != null) {
 
-                List<String> lore = (List<String>) cc.getSessionData("tempLore");
+                @SuppressWarnings("unchecked")
+				List<String> lore = (List<String>) cc.getSessionData("tempLore");
 
                 item += DARKGREEN + "(Lore)\n\"";
                 for (String s : lore) {

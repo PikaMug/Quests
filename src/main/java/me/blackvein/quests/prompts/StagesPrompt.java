@@ -112,19 +112,19 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
                 pref = "stage" + current;
                 newPref = "stage" + (current - 1);
 
-                cc.setSessionData(newPref + CK.S_BREAK_IDS, cc.getSessionData(pref + CK.S_BREAK_IDS));
+                cc.setSessionData(newPref + CK.S_BREAK_NAMES, cc.getSessionData(pref + CK.S_BREAK_NAMES));
                 cc.setSessionData(newPref + CK.S_BREAK_AMOUNTS, cc.getSessionData(pref + CK.S_BREAK_AMOUNTS));
 
-                cc.setSessionData(newPref + CK.S_DAMAGE_IDS, cc.getSessionData(pref + CK.S_DAMAGE_IDS));
+                cc.setSessionData(newPref + CK.S_DAMAGE_NAMES, cc.getSessionData(pref + CK.S_DAMAGE_NAMES));
                 cc.setSessionData(newPref + CK.S_DAMAGE_AMOUNTS, cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS));
 
-                cc.setSessionData(newPref + CK.S_PLACE_IDS, cc.getSessionData(pref + CK.S_PLACE_IDS));
-                cc.setSessionData(newPref + CK.S_PLACE_IDS, cc.getSessionData(pref + CK.S_PLACE_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_PLACE_NAMES, cc.getSessionData(pref + CK.S_PLACE_NAMES));
+                cc.setSessionData(newPref + CK.S_PLACE_NAMES, cc.getSessionData(pref + CK.S_PLACE_AMOUNTS));
 
-                cc.setSessionData(newPref + CK.S_USE_IDS, cc.getSessionData(pref + CK.S_USE_IDS));
+                cc.setSessionData(newPref + CK.S_USE_NAMES, cc.getSessionData(pref + CK.S_USE_NAMES));
                 cc.setSessionData(newPref + CK.S_USE_AMOUNTS, cc.getSessionData(pref + CK.S_USE_AMOUNTS));
 
-                cc.setSessionData(newPref + CK.S_CUT_IDS, cc.getSessionData(pref + CK.S_CUT_IDS));
+                cc.setSessionData(newPref + CK.S_CUT_NAMES, cc.getSessionData(pref + CK.S_CUT_NAMES));
                 cc.setSessionData(newPref + CK.S_CUT_AMOUNTS, cc.getSessionData(pref + CK.S_CUT_AMOUNTS));
 
                 cc.setSessionData(newPref + CK.S_FISH, cc.getSessionData(pref + CK.S_FISH));
@@ -132,7 +132,7 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
                 cc.setSessionData(newPref + CK.S_PLAYER_KILL, cc.getSessionData(pref + CK.S_PLAYER_KILL));
 
                 cc.setSessionData(newPref + CK.S_ENCHANT_TYPES, cc.getSessionData(pref + CK.S_ENCHANT_TYPES));
-                cc.setSessionData(newPref + CK.S_ENCHANT_IDS, cc.getSessionData(pref + CK.S_ENCHANT_IDS));
+                cc.setSessionData(newPref + CK.S_ENCHANT_NAMES, cc.getSessionData(pref + CK.S_ENCHANT_NAMES));
                 cc.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS));
 
                 cc.setSessionData(newPref + CK.S_DELIVERY_ITEMS, cc.getSessionData(pref + CK.S_DELIVERY_ITEMS));
@@ -188,19 +188,19 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
 
             }
 
-            cc.setSessionData(pref + CK.S_BREAK_IDS, null);
+            cc.setSessionData(pref + CK.S_BREAK_NAMES, null);
             cc.setSessionData(pref + CK.S_BREAK_AMOUNTS, null);
 
-            cc.setSessionData(pref + CK.S_DAMAGE_IDS, null);
+            cc.setSessionData(pref + CK.S_DAMAGE_NAMES, null);
             cc.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, null);
 
-            cc.setSessionData(pref + CK.S_PLACE_IDS, null);
+            cc.setSessionData(pref + CK.S_PLACE_NAMES, null);
             cc.setSessionData(pref + CK.S_PLACE_AMOUNTS, null);
 
-            cc.setSessionData(pref + CK.S_USE_IDS, null);
+            cc.setSessionData(pref + CK.S_USE_NAMES, null);
             cc.setSessionData(pref + CK.S_USE_AMOUNTS, null);
 
-            cc.setSessionData(pref + CK.S_CUT_IDS, null);
+            cc.setSessionData(pref + CK.S_CUT_NAMES, null);
             cc.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
 
             cc.setSessionData(pref + CK.S_FISH, null);
@@ -208,7 +208,7 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
             cc.setSessionData(pref + CK.S_PLAYER_KILL, null);
 
             cc.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
-            cc.setSessionData(pref + CK.S_ENCHANT_IDS, null);
+            cc.setSessionData(pref + CK.S_ENCHANT_NAMES, null);
             cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, null);
 
             cc.setSessionData(pref + CK.S_DELIVERY_ITEMS, null);

@@ -52,20 +52,20 @@ public class CK {
     public static final String REW_CUSTOM_DATA_DESCRIPTIONS = "customRewDataDesc";
     public static final String REW_CUSTOM_DATA_TEMP = "customRewDataTemp";
     //Stages
-    public static final String S_BREAK_IDS = "breakIds";
+    public static final String S_BREAK_NAMES = "breakNames";
     public static final String S_BREAK_AMOUNTS = "breakAmounts";
-    public static final String S_DAMAGE_IDS = "damageIds";
+    public static final String S_DAMAGE_NAMES = "damageNames";
     public static final String S_DAMAGE_AMOUNTS = "damageAmounts";
-    public static final String S_PLACE_IDS = "placeIds";
+    public static final String S_PLACE_NAMES = "placeNames";
     public static final String S_PLACE_AMOUNTS = "placeAmounts";
-    public static final String S_USE_IDS = "useIds";
+    public static final String S_USE_NAMES = "useNames";
     public static final String S_USE_AMOUNTS = "useAmounts";
-    public static final String S_CUT_IDS = "cutIds";
+    public static final String S_CUT_NAMES = "cutNames";
     public static final String S_CUT_AMOUNTS = "cutAmounts";
     public static final String S_FISH = "fish";
     public static final String S_PLAYER_KILL = "playerKill";
     public static final String S_ENCHANT_TYPES = "enchantTypes";
-    public static final String S_ENCHANT_IDS = "enchantIds";
+    public static final String S_ENCHANT_NAMES = "enchantNames";
     public static final String S_ENCHANT_AMOUNTS = "enchantAmounts";
     public static final String S_DELIVERY_ITEMS = "deliveryItems";
     public static final String S_DELIVERY_NPCS = "deliveryNPCs";

@@ -283,7 +283,7 @@ public class Lang {
         langMap.put("stageEditorCompleteMessage", "Complete Message");
         langMap.put("stageEditorDelete", "Delete Stage");
 
-        langMap.put("stageEditorSetBlockIds", "Set block IDs");
+        langMap.put("stageEditorSetBlockNames", "Set block names");
         langMap.put("stageEditorSetBlockAmounts", "Set block amounts");
         langMap.put("stageEditorSetDamageAmounts", "Set damage amounts");
         langMap.put("stageEditorSetPlaceAmounts", "Set place amounts");
@@ -293,7 +293,7 @@ public class Lang {
         langMap.put("stageEditorSetEnchantAmounts", "Set enchant amounts");
         langMap.put("stageEditorSetMobAmounts", "Set mob amounts");
         langMap.put("stageEditorSetEnchantments", "Set enchantments");
-        langMap.put("stageEditorSetItemIds", "Set item ids");
+        langMap.put("stageEditorSetItemNames", "Set item ids");
         langMap.put("stageEditorSetKillIds", "Set NPC IDs");
         langMap.put("stageEditorSetMobTypes", "Set mob types");
         langMap.put("stageEditorSetKillLocations", "Set kill locations");
@@ -318,7 +318,7 @@ public class Lang {
         langMap.put("stageEditorCustomCleared", "Custom objectives cleared.");
         langMap.put("stageEditorCustomDataPrompt", "Enter value for <data>:");
 
-        langMap.put("stageEditorEnterBlockIds", "Enter block IDs, separating each one by a space, or enter \'cancel\' to return.");
+        langMap.put("stageEditorEnterBlockNames", "Enter block names, separating each one by a space, or enter \'cancel\' to return.");
         langMap.put("stageEditorBreakBlocksPrompt", "Enter block amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
         langMap.put("stageEditorDamageBlocksPrompt", "Enter damage amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
         langMap.put("stageEditorPlaceBlocksPrompt", "Enter place amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
@@ -328,7 +328,7 @@ public class Lang {
         langMap.put("stageEditorKillPlayerPrompt", "Enter number of players to kill, or 0 to clear the player kill objective, or -1 to cancel");
         langMap.put("stageEditorEnchantTypePrompt", "Enter enchantment names, separating each one by a comma, or enter \'cancel\' to return.");
         langMap.put("stageEditorEnchantAmountsPrompt", "Enter enchant amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
-        langMap.put("stageEditorItemIDsPrompt", "Enter item IDs, separating each one by a space, or enter \'cancel\' to return.");
+        langMap.put("stageEditorItemNamesPrompt", "Enter item names, separating each one by a space, or enter \'cancel\' to return.");
         langMap.put("stageEditorNPCPrompt", "Enter NPC ids, separating each one by a space, or enter \'cancel\' to return.");
         langMap.put("stageEditorNPCToTalkToPrompt", "Enter NPC IDs, separating each one by a space, or enter \'clear\' to clear the NPC ID list, or \'cancel\' to return.");
         langMap.put("stageEditorDeliveryMessagesPrompt", "Enter delivery messages, separating each one by a semi-colon or enter \'cancel\' to return.");
@@ -368,11 +368,11 @@ public class Lang {
         langMap.put("stageEditorDeliveryMessages", "Set delivery messages");
 
         langMap.put("stageEditorContainsDuplicates", "List contains duplicates!");
-        langMap.put("stageEditorInvalidBlockID", "is not a valid block ID!");
+        langMap.put("stageEditorInvalidBlockName", "is not a valid block name!");
         langMap.put("stageEditorInvalidEnchantment", "is not a valid enchantment name!");
         langMap.put("stageEditorInvalidNPC", "is not a valid NPC ID!");
         langMap.put("stageEditorInvalidMob", "is not a valid mob name!");
-        langMap.put("stageEditorInvalidItemID", "is not a valid item ID!");
+        langMap.put("stageEditorInvalidItemName", "is not a valid item name!");
         langMap.put("stageEditorInvalidNumber", "is not a number!");
         langMap.put("stageEditorInvalidDye", "is not a valid dye color!");
         langMap.put("stageEditorInvalidEvent", "is not a valid event name!");
@@ -388,7 +388,7 @@ public class Lang {
         langMap.put("stageEditorNotGreaterThanZero", "is not greater than 0!");
         langMap.put("stageEditorNotListofNumbers", "Invalid entry, input was not a list of numbers!");
         langMap.put("stageEditorNoDelaySet", "You must set a delay first!");
-        langMap.put("stageEditorNoBlockIds", "You must set Block IDs first!");
+        langMap.put("stageEditorNoBlockNames", "You must set block names first!");
         langMap.put("stageEditorNoEnchantments", "You must set enchantments first!");
         langMap.put("stageEditorNoItems", "You must add items first!");
         langMap.put("stageEditorNoDeliveryMessage", "You must set at least one delivery message!");
@@ -405,7 +405,7 @@ public class Lang {
         langMap.put("stageEditorNoLocationsSet", "No locations set");
         langMap.put("stageEditorNoColorsSet", "No colors set");
 
-        langMap.put("stageEditorListNotSameSize", "The block IDs list and the amounts list are not the same size!");
+        langMap.put("stageEditorListNotSameSize", "The block names list and the amounts list are not the same size!");
         langMap.put("stageEditorEnchantmentNotSameSize", "The enchantments list, the item id list and the enchant amount list are not the same size!");
         langMap.put("stageEditorDeliveriesNotSameSize", "The item list and the NPC list are not equal in size!");
         langMap.put("stageEditorNPCKillsNotSameSize", "The NPC IDs list and the kill amounts list are not the same size!");
@@ -506,11 +506,11 @@ public class Lang {
         langMap.put("eventEditorSetItems", "Give items");
         langMap.put("eventEditorItemsCleared", "Event items cleared.");
         langMap.put("eventEditorAddItem", "Add item");
-        langMap.put("eventEditorSetItemIDs", "Set item IDs");
+        langMap.put("eventEditorSetItemNames", "Set item names");
         langMap.put("eventEditorSetItemAmounts", "Set item amounts");
-        langMap.put("eventEditorNoIDs", "No IDs set");
-        langMap.put("eventEditorMustSetIDs", "You must set item IDs first!");
-        langMap.put("eventEditorInvalidID", "is not a valid item ID!");
+        langMap.put("eventEditorNoNames", "No names set");
+        langMap.put("eventEditorMustSetNames", "You must set item names first!");
+        langMap.put("eventEditorInvalidName", "is not a valid item name!");
         langMap.put("eventEditorNotGreaterThanZero", "is not greater than 0!");
         langMap.put("eventEditorNotANumber", "is not a number!");
 
@@ -587,7 +587,7 @@ public class Lang {
         langMap.put("eventEditorExplosionPrompt", "Right-click on a block to spawn an explosion at, then enter 'add' to add it to the list, or enter 'clear' to clear the explosions list, or 'cancel' to return");
         langMap.put("eventEditorSelectBlockFirst", "You must select a block first.");
         langMap.put("eventEditorSetMessagePrompt", "Enter message, or enter \'none\' to delete, (or \'cancel\' to return)");
-        langMap.put("eventEditorSetItemIDsPrompt", "Enter item IDs separating each one by a space, or enter 'cancel' to return.");
+        langMap.put("eventEditorSetItemNamesPrompt", "Enter item names separating each one by a space, or enter 'cancel' to return.");
         langMap.put("eventEditorSetItemAmountsPrompt", "Enter item amounts (numbers) separating each one by a space, or enter 'cancel' to return.");
         langMap.put("eventEditorSetMobTypesPrompt", "Enter mob name, or enter 'cancel' to return");
         langMap.put("eventEditorSetMobAmountsPrompt", "Enter mob amount, or enter 'cancel' to return");
@@ -716,14 +716,14 @@ public class Lang {
 
         //Item Prompt
         langMap.put("itemCreateLoadHand", "Load item in hand");
-        langMap.put("itemCreateSetID", "Set ID");
+        langMap.put("itemCreateSetName", "Set name");
         langMap.put("itemCreateSetAmount", "Set Amount");
         langMap.put("itemCreateSetData", "Set data");
         langMap.put("itemCreateSetEnchs", "Add/clear enchantments");
         langMap.put("itemCreateSetName", "Set name");
         langMap.put("itemCreateSetLore", "Set lore");
 
-        langMap.put("itemCreateEnterID", "Enter an item ID, or 'cancel' to return.");
+        langMap.put("itemCreateEnterName", "Enter an item name, or 'cancel' to return.");
         langMap.put("itemCreateEnterAmount", "Enter item amount (max. 64), or 'cancel' to return.");
         langMap.put("itemCreateEnterData", "Enter item data, or 'clear' to clear the data, or 'cancel' to return.");
         langMap.put("itemCreateEnterEnch", "Enter an enchantment name, or 'clear' to clear the enchantments, or 'cancel' to return.");
@@ -733,8 +733,8 @@ public class Lang {
 
         langMap.put("itemCreateLoaded", "Item loaded.");
         langMap.put("itemCreateNoItem", "No item in hand!");
-        langMap.put("itemCreateNoID", "You must set an ID first!");
-        langMap.put("itemCreateInvalidID", "Invalid item ID!");
+        langMap.put("itemCreateNoName", "You must set a name first!");
+        langMap.put("itemCreateInvalidName", "Invalid item name!");
         langMap.put("itemCreateInvalidAmount", "Amount must be between 1-64!");
         langMap.put("itemCreateInvalidData", "Invalid item data!");
         langMap.put("itemCreateInvalidEnch", "Invalid enchantment name!");
@@ -742,7 +742,7 @@ public class Lang {
         langMap.put("itemCreateInvalidInput", "Invalid input!");
         langMap.put("itemCreateNotNumber", "Input was not a number!");
 
-        langMap.put("itemCreateNoIDAmount", "You must set an ID and amount first!");
+        langMap.put("itemCreateNoNameAmount", "You must set a name and amount first!");
         langMap.put("itemCreateCriticalError", "A critical error has occurred.");
                 //
 
@@ -1027,6 +1027,7 @@ public class Lang {
         langMap.put("noneSet", "None set");
         langMap.put("noDelaySet", "No delay set");
         langMap.put("noIdsSet", "No IDs set");
+        langMap.put("noNamesSet", "No names set");
         langMap.put("worlds", "Worlds");
         langMap.put("mobs", "Mobs");
         langMap.put("points", "points");

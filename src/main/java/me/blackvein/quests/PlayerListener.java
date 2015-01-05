@@ -235,56 +235,56 @@ public class PlayerListener implements Listener, ColorUtil {
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
                         plugin.questFactory.selectedBlockStarts.put(evt.getPlayer(), block);
-                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (plugin.eventFactory.selectedExplosionLocations.containsKey(evt.getPlayer())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
                         plugin.eventFactory.selectedExplosionLocations.put(evt.getPlayer(), block);
-                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (plugin.eventFactory.selectedEffectLocations.containsKey(evt.getPlayer())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
                         plugin.eventFactory.selectedEffectLocations.put(evt.getPlayer(), block);
-                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (plugin.eventFactory.selectedMobLocations.containsKey(evt.getPlayer())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
                         plugin.eventFactory.selectedMobLocations.put(evt.getPlayer(), block);
-                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (plugin.eventFactory.selectedLightningLocations.containsKey(evt.getPlayer())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
                         plugin.eventFactory.selectedLightningLocations.put(evt.getPlayer(), block);
-                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (plugin.eventFactory.selectedTeleportLocations.containsKey(evt.getPlayer())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
                         plugin.eventFactory.selectedTeleportLocations.put(evt.getPlayer(), block);
-                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (plugin.questFactory.selectedKillLocations.containsKey(evt.getPlayer())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
                         plugin.questFactory.selectedKillLocations.put(evt.getPlayer(), block);
-                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (plugin.questFactory.selectedReachLocations.containsKey(evt.getPlayer())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
                         plugin.questFactory.selectedReachLocations.put(evt.getPlayer(), block);
-                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().getId()) + ChatColor.GOLD + ")");
+                        evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (player.isConversing() == false) {
 

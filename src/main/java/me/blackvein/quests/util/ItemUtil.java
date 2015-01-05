@@ -13,17 +13,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ItemUtil implements ColorUtil {
 
     /**
-     * Will compare stacks by id, amount, data, name/lore and enchantments
+     * Will compare stacks by name, amount, data, display name/lore and enchantments
      *
      *
      * @param one ItemStack to compare
      * @param two ItemStack to compare to
      * @return 0 if stacks are equal, or the first inequality from the following
      * values:<br>
-     * @return -1&nbsp;-> stack ids are unequal<br>
+     * @return -1&nbsp;-> stack names are unequal<br>
      * @return -2&nbsp;-> stack amounts are unequal<br>
      * @return -3&nbsp;-> stack data is unequal<br>
-     * @return -4&nbsp;-> stack name/lore is unequal<br>
+     * @return -4&nbsp;-> stack display name/lore is unequal<br>
      * @return -5&nbsp;-> stack enchantments are unequal<br>
      */
     public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
@@ -36,7 +36,7 @@ public class ItemUtil implements ColorUtil {
             return 0;
         }
 
-        if (one.getTypeId() != two.getTypeId()) {
+        if (one.getType().name() != two.getType().name()) {
             return -1;
         } else if ((one.getAmount() != two.getAmount()) && ignoreAmount == false) {
             return -2;
@@ -87,8 +87,8 @@ public class ItemUtil implements ColorUtil {
         LinkedList<String> lore = new LinkedList<String>();
         for (String arg : args) {
 
-            if (arg.startsWith("id-")) {
-                stack = new ItemStack(Integer.parseInt(arg.substring(3)));
+            if (arg.startsWith("name-")) {
+                stack = new ItemStack(Material.matchMaterial(arg.substring(3)));
                 meta = stack.getItemMeta();
             } else if (arg.startsWith("amount-")) {
                 stack.setAmount(Integer.parseInt(arg.substring(7)));
@@ -124,7 +124,7 @@ public class ItemUtil implements ColorUtil {
             return null;
         }
 
-        serial = "id-" + is.getTypeId();
+        serial = "name-" + is.getType().name();
         serial += ":amount-" + is.getAmount();
         if (is.getDurability() != 0) {
             serial += ":data-" + is.getDurability();
@@ -161,7 +161,7 @@ public class ItemUtil implements ColorUtil {
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
             text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName() + RESET + AQUA + " x " + is.getAmount();
         } else {
-            text = AQUA + Quester.prettyItemString(is.getTypeId());
+            text = AQUA + Quester.prettyItemString(is.getType().name());
             if (is.getDurability() != 0) {
                 text += AQUA + ":" + is.getDurability();
             }
@@ -185,7 +185,7 @@ public class ItemUtil implements ColorUtil {
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
             text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName() + RESET + AQUA + " x " + is.getAmount();
         } else {
-            text = AQUA + Quester.prettyItemString(is.getTypeId());
+            text = AQUA + Quester.prettyItemString(is.getType().name());
             if (is.getDurability() != 0) {
                 text += AQUA + ":" + is.getDurability();
             }
@@ -205,7 +205,7 @@ public class ItemUtil implements ColorUtil {
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
             text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName();
         } else {
-            text = AQUA + Quester.prettyItemString(is.getTypeId());
+            text = AQUA + Quester.prettyItemString(is.getType().name());
         }
 
         return text;

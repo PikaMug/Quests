@@ -42,7 +42,9 @@ public class Quester {
     public String questToTake;
     public LinkedHashMap<Quest, Integer> currentQuests = new LinkedHashMap<Quest, Integer>() {
         
-        @Override
+		private static final long serialVersionUID = 6361484975823846780L;
+
+		@Override
         public Integer put(Quest key, Integer val) {
             Integer data = super.put(key, val);
             updateJournal();
@@ -73,7 +75,9 @@ public class Quester {
     Quests plugin;
     public LinkedList<String> completedQuests = new LinkedList<String>() {
 
-        @Override
+		private static final long serialVersionUID = -269110128568487000L;
+
+		@Override
         public boolean add(String e) {
             boolean b = super.add(e);
             updateJournal();
@@ -133,7 +137,9 @@ public class Quester {
     
     Map<String, Integer> amountsCompleted = new HashMap<String, Integer>() {
         
-        public void hardClear() {
+		private static final long serialVersionUID = 5475202358792520975L;
+
+		public void hardClear() {
             super.clear();
         }
         
@@ -168,7 +174,9 @@ public class Quester {
     
     Map<Quest, QuestData> questData = new HashMap<Quest, QuestData>() {
         
-        @Override
+		private static final long serialVersionUID = -4607112433003926066L;
+
+		@Override
         public QuestData put(Quest key, QuestData val) {
             QuestData data = super.put(key, val);
             updateJournal();
@@ -415,11 +423,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("damage") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("damage") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("damage") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("damage") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -437,11 +445,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("break") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("break") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("break") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("break") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -459,11 +467,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("place") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("place") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("place") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("place") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -481,11 +489,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("use") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("use") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("use") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("use") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -503,11 +511,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("cut") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("cut") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("cut") + " " + Quester.prettyItemString(e2.getKey().getId()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("cut") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -576,14 +584,14 @@ public class Quester {
                     if (num1 < num2) {
 
                         String obj = Lang.get("enchantItem");
-                        obj = obj.replaceAll("<item>", Quester.prettyItemString(mat.getId()));
+                        obj = obj.replaceAll("<item>", Quester.prettyItemString(mat.name()));
                         obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
                         unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + num1 + "/" + num2);
 
                     } else {
 
                         String obj = Lang.get("enchantItem");
-                        obj = obj.replaceAll("<item>", Quester.prettyItemString(mat.getId()));
+                        obj = obj.replaceAll("<item>", Quester.prettyItemString(mat.name()));
                         obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
                         finishedObjectives.add(ChatColor.GRAY + obj + ": " + num1 + "/" + num2);
 
@@ -1350,7 +1358,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("damageBlock")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("damage") + " " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("damage") + " " + prettyItemString(material.name());
             message = message + " " + getCurrentStage(quest).blocksToDamage.get(material) + "/" + getCurrentStage(quest).blocksToDamage.get(material);
             p.sendMessage(message);
             if (testComplete(quest)) {
@@ -1359,7 +1367,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("breakBlock")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("break") + " " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("break") + " " + prettyItemString(material.name());
             message = message + " " + getCurrentStage(quest).blocksToBreak.get(material) + "/" + getCurrentStage(quest).blocksToBreak.get(material);
             p.sendMessage(message);
             if (testComplete(quest)) {
@@ -1368,7 +1376,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("placeBlock")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("place") + " " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("place") + " " + prettyItemString(material.name());
             message = message + " " + getCurrentStage(quest).blocksToPlace.get(material) + "/" + getCurrentStage(quest).blocksToPlace.get(material);
             p.sendMessage(message);
             if (testComplete(quest)) {
@@ -1377,7 +1385,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("useBlock")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("use") + " " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("use") + " " + prettyItemString(material.name());
             message = message + " " + getCurrentStage(quest).blocksToUse.get(material) + "/" + getCurrentStage(quest).blocksToUse.get(material);
             p.sendMessage(message);
             if (testComplete(quest)) {
@@ -1386,7 +1394,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("cutBlock")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("cut") + " " + prettyItemString(material.getId());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("cut") + " " + prettyItemString(material.name());
             message = message + " " + getCurrentStage(quest).blocksToCut.get(material) + "/" + getCurrentStage(quest).blocksToCut.get(material);
             p.sendMessage(message);
             if (testComplete(quest)) {
@@ -1405,7 +1413,7 @@ public class Quester {
         } else if (objective.equalsIgnoreCase("enchantItem")) {
 
             String obj = Lang.get("enchantItem");
-            obj = obj.replaceAll("<item>", prettyItemString(material.getId()));
+            obj = obj.replaceAll("<item>", prettyItemString(material.name()));
             obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
             String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
             for (Map<Enchantment, Material> map : getCurrentStage(quest).itemsToEnchant.keySet()) {
@@ -1850,8 +1858,8 @@ public class Quester {
         return capitalized;
     }
 
-    public static String prettyItemString(int itemID) {
-        String baseString = Material.getMaterial(itemID).toString();
+    public static String prettyItemString(String itemName) {
+        String baseString = Material.getMaterial(itemName).toString();
         String[] substrings = baseString.split("_");
         String prettyString = "";
         int size = 1;
@@ -2070,75 +2078,75 @@ public class Quester {
                 
                 if (getQuestData(quest).blocksDamaged.isEmpty() == false) {
 
-                    LinkedList<Integer> blockIds = new LinkedList<Integer>();
+                    LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
 
                     for (Material m : getQuestData(quest).blocksDamaged.keySet()) {
-                        blockIds.add(m.getId());
+                        blockNames.add(m.name());
                         blockAmounts.add(getQuestData(quest).blocksDamaged.get(m));
                     }
 
-                    questSec.set("blocks-damaged-ids", blockIds);
+                    questSec.set("blocks-damaged-names", blockNames);
                     questSec.set("blocks-damaged-amounts", blockAmounts);
 
                 }
 
                 if (getQuestData(quest).blocksBroken.isEmpty() == false) {
 
-                    LinkedList<Integer> blockIds = new LinkedList<Integer>();
+                    LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
 
                     for (Material m : getQuestData(quest).blocksBroken.keySet()) {
-                        blockIds.add(m.getId());
+                        blockNames.add(m.name());
                         blockAmounts.add(getQuestData(quest).blocksBroken.get(m));
                     }
 
-                    questSec.set("blocks-broken-ids", blockIds);
+                    questSec.set("blocks-broken-names", blockNames);
                     questSec.set("blocks-broken-amounts", blockAmounts);
 
                 }
 
                 if (getQuestData(quest).blocksPlaced.isEmpty() == false) {
 
-                    LinkedList<Integer> blockIds = new LinkedList<Integer>();
+                    LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
 
                     for (Material m : getQuestData(quest).blocksPlaced.keySet()) {
-                        blockIds.add(m.getId());
+                        blockNames.add(m.name());
                         blockAmounts.add(getQuestData(quest).blocksPlaced.get(m));
                     }
 
-                    questSec.set("blocks-placed-ids", blockIds);
+                    questSec.set("blocks-placed-names", blockNames);
                     questSec.set("blocks-placed-amounts", blockAmounts);
 
                 }
 
                 if (getQuestData(quest).blocksUsed.isEmpty() == false) {
 
-                    LinkedList<Integer> blockIds = new LinkedList<Integer>();
+                    LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
 
                     for (Material m : getQuestData(quest).blocksUsed.keySet()) {
-                        blockIds.add(m.getId());
+                        blockNames.add(m.name());
                         blockAmounts.add(getQuestData(quest).blocksUsed.get(m));
                     }
 
-                    questSec.set("blocks-used-ids", blockIds);
+                    questSec.set("blocks-used-names", blockNames);
                     questSec.set("blocks-used-amounts", blockAmounts);
 
                 }
 
                 if (getQuestData(quest).blocksCut.isEmpty() == false) {
 
-                    LinkedList<Integer> blockIds = new LinkedList<Integer>();
+                    LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
 
                     for (Material m : getQuestData(quest).blocksCut.keySet()) {
-                        blockIds.add(m.getId());
+                        blockNames.add(m.name());
                         blockAmounts.add(getQuestData(quest).blocksCut.get(m));
                     }
 
-                    questSec.set("blocks-cut-ids", blockIds);
+                    questSec.set("blocks-cut-names", blockNames);
                     questSec.set("blocks-cut-amounts", blockAmounts);
 
                 }
@@ -2154,7 +2162,7 @@ public class Quester {
                 if (getQuestData(quest).itemsEnchanted.isEmpty() == false) {
 
                     LinkedList<String> enchantments = new LinkedList<String>();
-                    LinkedList<Integer> itemIds = new LinkedList<Integer>();
+                    LinkedList<String> itemNames = new LinkedList<String>();
                     LinkedList<Integer> enchAmounts = new LinkedList<Integer>();
 
                     for (Entry<Map<Enchantment, Material>, Integer> e : getQuestData(quest).itemsEnchanted.entrySet()) {
@@ -2164,14 +2172,14 @@ public class Quester {
                         for (Entry<Enchantment, Material> e2 : enchMap.entrySet()) {
 
                             enchantments.add(Quester.prettyEnchantmentString((Enchantment) e2.getKey()));
-                            itemIds.add(((Material) e2.getValue()).getId());
+                            itemNames.add(((Material) e2.getValue()).name());
 
                         }
 
                     }
 
                     questSec.set("enchantments", enchantments);
-                    questSec.set("enchantment-item-ids", itemIds);
+                    questSec.set("enchantment-item-names", itemNames);
                     questSec.set("times-enchanted", enchAmounts);
 
                 }
@@ -2293,17 +2301,17 @@ public class Quester {
 
                 if (getQuestData(quest).potionsBrewed.isEmpty() == false) {
 
-                    LinkedList<Integer> potionIds = new LinkedList<Integer>();
+                    LinkedList<String> potionNames = new LinkedList<String>();
                     LinkedList<Integer> potionAmounts = new LinkedList<Integer>();
 
-                    for (Entry<Integer, Integer> entry : getQuestData(quest).potionsBrewed.entrySet()) {
+                    for (Entry<String, Integer> entry : getQuestData(quest).potionsBrewed.entrySet()) {
 
-                        potionIds.add(entry.getKey());
+                        potionNames.add(entry.getKey());
                         potionAmounts.add(entry.getValue());
 
                     }
 
-                    questSec.set("potions-brewed-ids", potionIds);
+                    questSec.set("potions-brewed-names", potionNames);
                     questSec.set("potions-brewed-amounts", potionAmounts);
 
                 }
@@ -2577,66 +2585,66 @@ public class Quester {
 
                 addEmpties(quest);
 
-                if (questSec.contains("blocks-damaged-ids")) {
+                if (questSec.contains("blocks-damaged-names")) {
 
-                    List<Integer> ids = questSec.getIntegerList("blocks-damaged-ids");
+                    List<String> names = questSec.getStringList("blocks-damaged-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
 
-                    for (int i : ids) {
+                    for (String s : names) {
 
-                        getQuestData(quest).blocksDamaged.put(Material.getMaterial(i), amounts.get(ids.indexOf(i)));
+                        getQuestData(quest).blocksDamaged.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
 
                     }
 
                 }
 
-                if (questSec.contains("blocks-broken-ids")) {
+                if (questSec.contains("blocks-broken-names")) {
 
-                    List<Integer> ids = questSec.getIntegerList("blocks-broken-ids");
+                    List<String> names = questSec.getStringList("blocks-broken-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
 
-                    for (int i : ids) {
+                    for (String s : names) {
 
-                        getQuestData(quest).blocksBroken.put(Material.getMaterial(i), amounts.get(ids.indexOf(i)));
+                        getQuestData(quest).blocksBroken.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
 
                     }
 
                 }
 
-                if (questSec.contains("blocks-placed-ids")) {
+                if (questSec.contains("blocks-placed-names")) {
 
-                    List<Integer> ids = questSec.getIntegerList("blocks-placed-ids");
+                    List<String> names = questSec.getStringList("blocks-placed-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-placed-amounts");
 
-                    for (int i : ids) {
+                    for (String s : names) {
 
-                        getQuestData(quest).blocksPlaced.put(Material.getMaterial(i), amounts.get(ids.indexOf(i)));
+                        getQuestData(quest).blocksPlaced.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
 
                     }
 
                 }
 
-                if (questSec.contains("blocks-used-ids")) {
+                if (questSec.contains("blocks-used-names")) {
 
-                    List<Integer> ids = questSec.getIntegerList("blocks-used-ids");
+                    List<String> names = questSec.getStringList("blocks-used-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-used-amounts");
 
-                    for (int i : ids) {
+                    for (String s : names) {
 
-                        getQuestData(quest).blocksUsed.put(Material.getMaterial(i), amounts.get(ids.indexOf(i)));
+                        getQuestData(quest).blocksUsed.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
 
                     }
 
                 }
 
-                if (questSec.contains("blocks-cut-ids")) {
+                if (questSec.contains("blocks-cut-names")) {
 
-                    List<Integer> ids = questSec.getIntegerList("blocks-cut-ids");
+                    List<String> names = questSec.getStringList("blocks-cut-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-cut-amounts");
 
-                    for (int i : ids) {
+                    for (String s : names) {
 
-                        getQuestData(quest).blocksCut.put(Material.getMaterial(i), amounts.get(ids.indexOf(i)));
+                        getQuestData(quest).blocksCut.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
 
                     }
 
@@ -2668,14 +2676,14 @@ public class Quester {
                     LinkedList<Integer> amounts = new LinkedList<Integer>();
 
                     List<String> enchantNames = questSec.getStringList("enchantments");
-                    List<Integer> ids = questSec.getIntegerList("enchantment-item-ids");
+                    List<String> names = questSec.getStringList("enchantment-item-names");
                     List<Integer> times = questSec.getIntegerList("times-enchanted");
 
                     for (String s : enchantNames) {
 
                         enchantments.add(Quests.getEnchantment(s));
 
-                        materials.add(Material.getMaterial(ids.get(enchantNames.indexOf(s))));
+                        materials.add(Material.matchMaterial(names.get(enchantNames.indexOf(s))));
                         amounts.add(times.get(enchantNames.indexOf(s)));
 
                     }
@@ -2819,14 +2827,14 @@ public class Quester {
 
                 }
 
-                if (questSec.contains("potions-brewed-ids")) {
+                if (questSec.contains("potions-brewed-names")) {
 
-                    List<Integer> ids = questSec.getIntegerList("potions-brewed-ids");
+                    List<String> names = questSec.getStringList("potions-brewed-names");
                     List<Integer> amounts = questSec.getIntegerList("potions-brewed-amounts");
 
-                    for (int i : ids) {
+                    for (String s : names) {
 
-                        getQuestData(quest).potionsBrewed.put(i, amounts.get(ids.indexOf(i)));
+                        getQuestData(quest).potionsBrewed.put(s, amounts.get(names.indexOf(s)));
 
                     }
 
@@ -2926,51 +2934,51 @@ public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec
         
     ConfigurationSection newData = questSec.createSection("questData");
 
-    if (questSec.contains("blocks-damaged-ids")) {
+    if (questSec.contains("blocks-damaged-names")) {
 
-        List<Integer> ids = questSec.getIntegerList("blocks-damaged-ids");
+        List<String> names = questSec.getStringList("blocks-damaged-names");
         List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
 
-        newData.set(questName + ".blocks-damaged-ids", ids);
+        newData.set(questName + ".blocks-damaged-names", names);
         newData.set(questName + ".blocks-damaged-amounts", amounts);
     }
 
-    if (questSec.contains("blocks-broken-ids")) {
+    if (questSec.contains("blocks-broken-names")) {
 
-        List<Integer> ids = questSec.getIntegerList("blocks-broken-ids");
+        List<String> names = questSec.getStringList("blocks-broken-names");
         List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
 
-        newData.set(questName + ".blocks-broken-ids", ids);
+        newData.set(questName + ".blocks-broken-names", names);
         newData.set(questName + ".blocks-broken-amounts", amounts);
 
     }
 
-    if (questSec.contains("blocks-placed-ids")) {
+    if (questSec.contains("blocks-placed-names")) {
 
-        List<Integer> ids = questSec.getIntegerList("blocks-placed-ids");
+        List<String> names = questSec.getStringList("blocks-placed-names");
         List<Integer> amounts = questSec.getIntegerList("blocks-placed-amounts");
 
-        newData.set(questName + ".blocks-placed-ids", ids);
+        newData.set(questName + ".blocks-placed-names", names);
         newData.set(questName + ".blocks-placed-amounts", amounts);
 
     }
 
-    if (questSec.contains("blocks-used-ids")) {
+    if (questSec.contains("blocks-used-names")) {
 
-        List<Integer> ids = questSec.getIntegerList("blocks-used-ids");
+        List<String> names = questSec.getStringList("blocks-used-names");
         List<Integer> amounts = questSec.getIntegerList("blocks-used-amounts");
 
-        newData.set(questName + ".blocks-used-ids", ids);
+        newData.set(questName + ".blocks-used-names", names);
         newData.set(questName + ".blocks-used-amounts", amounts);
 
     }
 
-    if (questSec.contains("blocks-cut-ids")) {
+    if (questSec.contains("blocks-cut-names")) {
 
-        List<Integer> ids = questSec.getIntegerList("blocks-cut-ids");
+        List<String> names = questSec.getStringList("blocks-cut-names");
         List<Integer> amounts = questSec.getIntegerList("blocks-cut-amounts");
 
-        newData.set(questName + ".blocks-cut-ids", ids);
+        newData.set(questName + ".blocks-cut-names", names);
         newData.set(questName + ".blocks-cut-amounts", amounts);
 
     }
@@ -2993,11 +3001,11 @@ public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec
     if (questSec.contains("enchantments")) {
 
         List<String> enchantNames = questSec.getStringList("enchantments");
-        List<Integer> ids = questSec.getIntegerList("enchantment-item-ids");
+        List<String> names = questSec.getStringList("enchantment-item-names");
         List<Integer> times = questSec.getIntegerList("times-enchanted");
 
         newData.set(questName + ".enchantments", enchantNames);
-        newData.set(questName + ".enchantment-item-ids", ids);
+        newData.set(questName + ".enchantment-item-names", names);
         newData.set(questName + ".times-enchanted", times);
 
     }
@@ -3062,12 +3070,12 @@ public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec
 
     }
 
-    if (questSec.contains("potions-brewed-ids")) {
+    if (questSec.contains("potions-brewed-names")) {
 
-        List<Integer> ids = questSec.getIntegerList("potions-brewed-ids");
+        List<String> names = questSec.getStringList("potions-brewed-names");
         List<Integer> amounts = questSec.getIntegerList("potions-brewed-amounts");
 
-        newData.set(questName + ".potions-brewed-ids", ids);
+        newData.set(questName + ".potions-brewed-names", names);
         newData.set(questName + ".potions-brewed-amounts", amounts);
 
     }

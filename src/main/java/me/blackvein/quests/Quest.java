@@ -405,17 +405,17 @@ public class Quest {
             } else if (i.getDurability() != 0) {
 
                 if (i.getEnchantments().isEmpty()) {
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getType().name()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
                 } else {
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getType().name()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
                 }
 
             } else {
 
                 if (i.getEnchantments().isEmpty()) {
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getType().name()) + ChatColor.GRAY + " x " + i.getAmount());
                 } else {
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getType().name()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
                 }
 
             }
@@ -436,17 +436,17 @@ public class Quest {
             } else if (i.getDurability() != 0) {
 
                 if (i.getEnchantments().isEmpty()) {
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getType().name()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
                 } else {
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getType().name()) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
                 }
 
             } else {
 
                 if (i.getEnchantments().isEmpty()) {
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount());
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getType().name()) + ChatColor.GRAY + " x " + i.getAmount());
                 } else {
-                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getTypeId()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
+                    player.sendMessage("- " + ChatColor.DARK_GREEN + Quester.prettyItemString(i.getType().name()) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
                 }
 
             }

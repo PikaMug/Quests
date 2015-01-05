@@ -182,10 +182,10 @@ public class QuestData {
     };
     
     
-    public Map<Integer, Integer> potionsBrewed = new HashMap<Integer, Integer>() {
+    public Map<String, Integer> potionsBrewed = new HashMap<String, Integer>() {
         
         @Override
-        public Integer put(Integer key, Integer val) {
+        public Integer put(String key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
             return data;
@@ -205,7 +205,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends Integer, ? extends Integer> m) {
+        public void putAll(Map<? extends String, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate) quester.updateJournal();
         }
