@@ -1,10 +1,13 @@
 package me.blackvein.quests;
 
 import me.blackvein.particles.Eff_1_7_R3;
+
 import java.util.List;
+
 import me.blackvein.particles.Eff_1_7_R1;
 import me.blackvein.particles.Eff_1_7_R4;
 import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -20,7 +23,8 @@ public class NpcEffectThread implements Runnable {
 
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void run() {
 
         for (Player player : plugin.getServer().getOnlinePlayers()) {

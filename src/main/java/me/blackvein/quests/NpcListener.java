@@ -2,6 +2,7 @@ package me.blackvein.quests;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
+
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
@@ -9,6 +10,7 @@ import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
@@ -215,19 +217,18 @@ public class NpcListener implements Listener {
     @EventHandler
     public void onNPCDeath(NPCDeathEvent evt) {
 
-        if (evt.getNPC().getBukkitEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+        if (evt.getNPC().getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 
-            EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getNPC().getBukkitEntity().getLastDamageCause();
+            EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getNPC().getEntity().getLastDamageCause();
             Entity damager = damageEvent.getDamager();
-
+            
             if (damager != null) {
 
                 if (damager instanceof Projectile) {
 
-                    Projectile p = (Projectile) damager;
-                    if (p.getShooter() instanceof Player) {
+                    if (evt.getNPC().getEntity().getLastDamageCause().getEntity() instanceof Player) {
 
-                        Player player = (Player) p.getShooter();
+                        Player player = (Player) evt.getNPC().getEntity().getLastDamageCause().getEntity();
                         boolean okay = true;
 
                         if (plugin.citizens != null) {
