@@ -6,15 +6,15 @@ quests:
     redo-delay: 1800000
     requirements:
       items:
-        - id-270:amount-1
+        - name-wooden_pickaxe:amount-1
       remove-items:
         - false
       fail-requirement-message: '<red>You must have a <purple>Wooden Pickaxe<red> first.'
     stages:
       ordered:
         1:
-          break-block-ids:
-            - 1
+          break-block-names:
+            - dirt
           break-block-amounts:
             - 10
     rewards:
@@ -52,7 +52,7 @@ quests:
             - 1
     rewards:
       items:
-        - id-276:amount-1
+        - name-diamond_sword:amount-1
       exp: 100
       quest-points: 1
 
