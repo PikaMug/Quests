@@ -2,11 +2,13 @@ package me.blackvein.quests.prompts;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
+
 import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.Lang;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
@@ -25,7 +27,8 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
         this.plugin = plugin;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public String getPromptText(ConversationContext cc) {
 
         quests = (LinkedList<Quest>) cc.getSessionData("quests");

@@ -14,34 +14,18 @@
     </properties>
 
     <repositories>
-         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
 
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit1</artifactId>
-            <version>1.7.10-R0.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/craftbukkit-1.7.10-R0.1.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit3</artifactId>
-            <version>1.7.9-R0.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/craftbukkit-1.7.9-R0.3.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit2</artifactId>
-            <version>1.7.2-R0.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/craftbukkit-1.7.2-R0.4.jar</systemPath>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.8-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.citizensnpcs</groupId>
