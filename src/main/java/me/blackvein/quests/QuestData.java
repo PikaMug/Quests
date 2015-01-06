@@ -28,7 +28,9 @@ public class QuestData {
     
     public Map<Material, Integer> blocksDamaged = new EnumMap<Material, Integer>(Material.class) {
         
-        @Override
+		private static final long serialVersionUID = -4211891633163257743L;
+
+		@Override
         public Integer put(Material key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -59,7 +61,9 @@ public class QuestData {
     
     public Map<Material, Integer> blocksBroken = new EnumMap<Material, Integer>(Material.class) {
         
-        @Override
+		private static final long serialVersionUID = -6071822509475270168L;
+
+		@Override
         public Integer put(Material key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -90,7 +94,9 @@ public class QuestData {
     
     public Map<Material, Integer> blocksPlaced = new EnumMap<Material, Integer>(Material.class) {
         
-        @Override
+		private static final long serialVersionUID = 4226366446050903433L;
+
+		@Override
         public Integer put(Material key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -119,10 +125,11 @@ public class QuestData {
     };
     
     
-    public Map<Material, Integer> blocksUsed = new EnumMap<Material, Integer>(Material.class)
-             {
+    public Map<Material, Integer> blocksUsed = new EnumMap<Material, Integer>(Material.class) {
         
-        @Override
+		private static final long serialVersionUID = -9057864863810306890L;
+
+		@Override
         public Integer put(Material key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -153,7 +160,9 @@ public class QuestData {
     
     public Map<Material, Integer> blocksCut = new EnumMap<Material, Integer>(Material.class) {
         
-        @Override
+		private static final long serialVersionUID = -8204359763290995080L;
+
+		@Override
         public Integer put(Material key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -184,7 +193,9 @@ public class QuestData {
     
     public Map<String, Integer> potionsBrewed = new HashMap<String, Integer>() {
         
-        @Override
+		private static final long serialVersionUID = 5079308756224324031L;
+
+		@Override
         public Integer put(String key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -215,7 +226,9 @@ public class QuestData {
     
     public Map<ItemStack, Integer> itemsDelivered = new HashMap<ItemStack, Integer>() {
         
-        @Override
+		private static final long serialVersionUID = 2712497347022734646L;
+
+		@Override
         public Integer put(ItemStack key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -246,7 +259,9 @@ public class QuestData {
     
     public Map<UUID, Long> playerKillTimes = new HashMap<UUID, Long>() {
         
-        @Override
+		private static final long serialVersionUID = 9069594419068019465L;
+
+		@Override
         public Long put(UUID key, Long val) {
             Long data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -277,7 +292,9 @@ public class QuestData {
     
     public Map<Map<Enchantment, Material>, Integer> itemsEnchanted = new HashMap<Map<Enchantment, Material>, Integer>() {
         
-        @Override
+		private static final long serialVersionUID = 416869352279205852L;
+
+		@Override
         public Integer put(Map<Enchantment, Material> key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -308,7 +325,9 @@ public class QuestData {
     
     public LinkedList<EntityType> mobsKilled = new LinkedList<EntityType>() {
 
-        @Override
+		private static final long serialVersionUID = 8178007458817522183L;
+
+		@Override
         public boolean add(EntityType e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -366,7 +385,9 @@ public class QuestData {
     
     public LinkedList<Integer> mobNumKilled = new LinkedList<Integer>() {
 
-        @Override
+		private static final long serialVersionUID = 2228385647091499176L;
+
+		@Override
         public boolean add(Integer e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -425,7 +446,9 @@ public class QuestData {
     
     public LinkedList<Location> locationsToKillWithin = new LinkedList<Location>() {
 
-        @Override
+		private static final long serialVersionUID = 557285564460615021L;
+
+		@Override
         public boolean add(Location e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -484,7 +507,9 @@ public class QuestData {
     
     public LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>() {
 
-        @Override
+		private static final long serialVersionUID = 1973115869697752181L;
+
+		@Override
         public boolean add(Integer e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -543,7 +568,9 @@ public class QuestData {
     
     public Map<Integer, Boolean> citizensInteracted = new HashMap<Integer, Boolean>() {
         
-        @Override
+		private static final long serialVersionUID = 2447610341508300847L;
+
+		@Override
         public Boolean put(Integer key, Boolean val) {
             Boolean data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -574,7 +601,9 @@ public class QuestData {
             
     public LinkedList<Integer> citizensKilled = new LinkedList<Integer>() {
 
-        @Override
+		private static final long serialVersionUID = -6054581494356961482L;
+
+		@Override
         public boolean add(Integer e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -633,7 +662,9 @@ public class QuestData {
     
     public LinkedList<Integer> citizenNumKilled = new LinkedList<Integer>() {
 
-        @Override
+		private static final long serialVersionUID = 1849192351499071688L;
+
+		@Override
         public boolean add(Integer e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -692,7 +723,9 @@ public class QuestData {
     
     public LinkedList<Location> locationsReached = new LinkedList<Location>() {
 
-        @Override
+		private static final long serialVersionUID = 2875034788869133862L;
+
+		@Override
         public boolean add(Location e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -751,7 +784,9 @@ public class QuestData {
     
     public LinkedList<Boolean> hasReached = new LinkedList<Boolean>() {
 
-        @Override
+		private static final long serialVersionUID = -8802305642082466541L;
+
+		@Override
         public boolean add(Boolean e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -810,7 +845,9 @@ public class QuestData {
     
     public LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>() {
 
-        @Override
+		private static final long serialVersionUID = 6027656509740406846L;
+
+		@Override
         public boolean add(Integer e) {
             boolean b = super.add(e);
             if (doJournalUpdate) quester.updateJournal();
@@ -869,7 +906,9 @@ public class QuestData {
     
     public Map<EntityType, Integer> mobsTamed = new EnumMap<EntityType, Integer>(EntityType.class) {
         
-        @Override
+		private static final long serialVersionUID = 3851959471748032699L;
+
+		@Override
         public Integer put(EntityType key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -900,7 +939,9 @@ public class QuestData {
     
     public Map<DyeColor, Integer> sheepSheared = new EnumMap<DyeColor, Integer>(DyeColor.class) {
         
-        @Override
+		private static final long serialVersionUID = -6016463677133534885L;
+
+		@Override
         public Integer put(DyeColor key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -931,8 +972,9 @@ public class QuestData {
     
     public Map<String, Boolean> passwordsSaid = new HashMap<String, Boolean>() {
         
-        
-        @Override
+		private static final long serialVersionUID = -4297290041298491402L;
+
+		@Override
         public Boolean put(String key, Boolean val) {
             Boolean data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -962,8 +1004,9 @@ public class QuestData {
     
     public Map<String, Integer> customObjectiveCounts = new HashMap<String, Integer>() {
         
-        
-        @Override
+		private static final long serialVersionUID = -2148775183072606256L;
+
+		@Override
         public Integer put(String key, Integer val) {
             Integer data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
@@ -994,8 +1037,9 @@ public class QuestData {
     
     public Map<String, Boolean> eventFired = new HashMap<String, Boolean>() {
         
-        
-        @Override
+		private static final long serialVersionUID = 7106048037834965123L;
+
+		@Override
         public Boolean put(String key, Boolean val) {
             Boolean data = super.put(key, val);
             if (doJournalUpdate) quester.updateJournal();
