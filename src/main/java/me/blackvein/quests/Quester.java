@@ -11,8 +11,8 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -139,6 +139,7 @@ public class Quester {
         
 		private static final long serialVersionUID = 5475202358792520975L;
 
+		@SuppressWarnings("unused")
 		public void hardClear() {
             super.clear();
         }
@@ -735,11 +736,11 @@ public class Quester {
 
                     if (e2.getValue() < e.getValue()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("tame") + " " + getCapitalized(e.getKey().getName()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("tame") + " " + getCapitalized(e.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("tame") + " " + getCapitalized(e.getKey().getName()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("tame") + " " + getCapitalized(e.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
 
                     }
 
@@ -1445,7 +1446,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("killMob")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + mob.getName();
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + mob.name();
             message = message + " " + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob)) + "/" + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob));
             p.sendMessage(message);
             if (testComplete(quest)) {
@@ -1482,7 +1483,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("tameMob")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("tame") + getCapitalized(mob.getName());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("tame") + getCapitalized(mob.name());
             message = message + " " + getCurrentStage(quest).mobsToTame.get(mob) + "/" + getCurrentStage(quest).mobsToTame.get(mob);
             p.sendMessage(message);
             if (testComplete(quest)) {

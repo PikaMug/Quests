@@ -131,7 +131,7 @@ public class QuestMob {
 
     public String serialize() {
         String string = "";
-        string += "type-" + entityType.getName();
+        string += "type-" + entityType.name();
         if (name != null) {
             string += "::name-" + name;
         }
