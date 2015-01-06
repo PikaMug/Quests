@@ -6,6 +6,7 @@ import java.util.List;
 
 import me.blackvein.particles.Eff_1_7_R1;
 import me.blackvein.particles.Eff_1_7_R4;
+import me.blackvein.particles.Eff_1_8_R1;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Bukkit;
@@ -62,6 +63,121 @@ public class NpcEffectThread implements Runnable {
             showEffect_R3(player, npc);
         } else if (Bukkit.getBukkitVersion().contains("1.7.10")) {
             showEffect_R4(player, npc);
+        } else if (Bukkit.getBukkitVersion().contains("1.8.1")) {
+            showEffect_1_8_R1(player, npc);
+        }
+
+    }
+    
+    private static void showEffect_1_8_R1(Player player, NPC npc) {
+    	
+    	//Get and set eye location, because npc.getBukkitEntity() is deprecated.
+    	Location eyeLoc = npc.getEntity().getLocation();
+    	eyeLoc.setY(eyeLoc.getY() + 1.5);
+    	
+        if (Quests.effect.equalsIgnoreCase("enchant")) {
+
+            try {
+                Eff_1_8_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("crit")) {
+
+            try {
+                Eff_1_8_R1.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("spell")) {
+
+            try {
+                Eff_1_8_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+
+            try {
+                Eff_1_8_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+
+            try {
+                Eff_1_8_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("note")) {
+
+            try {
+                Location old = eyeLoc;
+                Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
+                Eff_1_8_R1.NOTE.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("portal")) {
+
+            try {
+                Eff_1_8_R1.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("dust")) {
+
+            try {
+                Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
+                Eff_1_8_R1.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("witch")) {
+
+            try {
+                Eff_1_8_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("snowball")) {
+
+            try {
+                Location old = eyeLoc;
+                Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
+                Eff_1_8_R1.SNOWBALL_POOF.sendToPlayer(player, newLoc, 0, 0, 0, 1, 3, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("splash")) {
+
+            try {
+                Location old = eyeLoc;
+                Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
+                Eff_1_8_R1.SPLASH.sendToPlayer(player, newLoc, 0, 0, 0, 1, 4, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (Quests.effect.equalsIgnoreCase("smoke")) {
+
+            try {
+                Eff_1_8_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
     }

@@ -1,10 +1,10 @@
 package me.blackvein.quests;
 
 import me.blackvein.quests.util.ReflectionUtil;
-import net.minecraft.server.v1_7_R3.PacketPlayOutWorldParticles;
+import net.minecraft.server.v1_8_R1.PacketPlayOutWorldParticles;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public enum ParticleEffect {
@@ -51,7 +51,7 @@ public enum ParticleEffect {
         this.particleName = particleName;
     }
 
-    public void sendToPlayer(Player player, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count) throws Exception {
+    public void sendToPlayer(Player player, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count, int[] unknown) throws Exception {
         PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles();
         ReflectionUtil.setValue(packet, "a", particleName);
         ReflectionUtil.setValue(packet, "b", (float) location.getX());
@@ -62,6 +62,7 @@ public enum ParticleEffect {
         ReflectionUtil.setValue(packet, "g", offsetZ);
         ReflectionUtil.setValue(packet, "h", speed);
         ReflectionUtil.setValue(packet, "i", count);
+        ReflectionUtil.setValue(packet, "k", unknown);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 
