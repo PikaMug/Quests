@@ -229,7 +229,7 @@ public class Quest {
 
         if (heroesPrimaryClassReq != null) {
 
-            if (plugin.testPrimaryHeroesClass(heroesPrimaryClassReq, player.getName()) == false) {
+            if (plugin.testPrimaryHeroesClass(heroesPrimaryClassReq, player.getUniqueId()) == false) {
                 return false;
             }
 
@@ -237,7 +237,7 @@ public class Quest {
 
         if (heroesSecondaryClassReq != null) {
 
-            if (plugin.testSecondaryHeroesClass(heroesSecondaryClassReq, player.getName()) == false) {
+            if (plugin.testSecondaryHeroesClass(heroesSecondaryClassReq, player.getUniqueId()) == false) {
                 return false;
             }
 
@@ -333,7 +333,7 @@ public class Quest {
 
         for (String s : heroesClasses) {
 
-            Hero hero = plugin.getHero(player.getName());
+            Hero hero = plugin.getHero(player.getUniqueId());
             hero.addExp(heroesAmounts.get(heroesClasses.indexOf(s)), Quests.heroes.getClassManager().getClass(s), player.getLocation());
             none = null;
 
@@ -527,7 +527,8 @@ public class Quest {
 
     }
 
-    public void failQuest(Quester q) {
+    @SuppressWarnings("deprecation")
+	public void failQuest(Quester q) {
 
         Player player = plugin.getServer().getPlayer(q.id);
 

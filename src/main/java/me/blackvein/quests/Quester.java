@@ -1252,7 +1252,8 @@ public class Quester {
 
     }
 
-    public void deliverItem(Quest quest, ItemStack i) {
+    @SuppressWarnings("deprecation")
+	public void deliverItem(Quest quest, ItemStack i) {
 
         Player player = getPlayer();
 
@@ -1878,9 +1879,9 @@ public class Quester {
         return prettyString;
     }
 
-    public static String fullPotionString(short dv) {
+    public static String fullPotionString(ItemStack is) {
 
-        Potion potion = Potion.fromDamage(dv);
+        Potion potion = Potion.fromItemStack(is);
         String potionName = "";
         boolean isPrimary = false;
 
@@ -1892,15 +1893,15 @@ public class Quester {
 
             isPrimary = true;
 
-            if (dv == 0) {
+            if (is.getDurability() == 0) {
                 potionName = "Water Bottle";
-            } else if (dv == 16) {
+            } else if (is.getDurability() == 16) {
                 potionName = "Awkward Potion";
-            } else if (dv == 32) {
+            } else if (is.getDurability() == 32) {
                 potionName = "Thick Potion";
-            } else if (dv == 64) {
+            } else if (is.getDurability() == 64) {
                 potionName = "Mundane Potion (Extended)";
-            } else if (dv == 8192) {
+            } else if (is.getDurability() == 8192) {
                 potionName = "Mundane Potion";
             }
 
