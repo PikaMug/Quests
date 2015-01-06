@@ -839,7 +839,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void adminHelp(final CommandSender cs) {
-        if (cs.hasPermission("quests.admin")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin")) {
             printAdminHelp(cs);
         } else {
             cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
@@ -847,7 +847,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void adminReload(final CommandSender cs) {
-        if (cs.hasPermission("quests.admin.reload")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
             reloadQuests();
             cs.sendMessage(GOLD + Lang.get("questsReloaded"));
             String msg = Lang.get("numQuestsLoaded");
@@ -859,7 +859,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void adminToggieGUI(final CommandSender cs, String[] args) {
-        if (cs.hasPermission("quests.admin.togglegui")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.togglegui")) {
 
             try {
 
@@ -898,7 +898,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     @SuppressWarnings("deprecation")
 	private void adminGivePoints(final CommandSender cs, String[] args) {
-        if (cs.hasPermission("quests.admin.givepoints")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.givepoints")) {
 
             Player target = null;
 
@@ -955,7 +955,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @SuppressWarnings("deprecation")
 	private void adminTakePoints(final CommandSender cs, String[] args) {
         
-        if (cs.hasPermission("quests.admin.takepoints")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.takepoints")) {
 
             Player target = null;
 
@@ -1012,7 +1012,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     @SuppressWarnings("deprecation")
 	private void adminPoints(final CommandSender cs, String[] args) {
-        if (cs.hasPermission("quests.admin.points")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.points")) {
 
             Player target = null;
 
@@ -1070,7 +1070,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @SuppressWarnings("deprecation")
 	private void adminGive(final CommandSender cs, String[] args) {
         
-        if (cs.hasPermission("quests.admin.give")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.give")) {
 
             Player target = null;
 
@@ -1176,7 +1176,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void adminPointsAll(final CommandSender cs, String[] args) {
-        if (cs.hasPermission("quests.admin.points.all")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.points.all")) {
 
             final int amount;
 
@@ -1276,7 +1276,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @SuppressWarnings("deprecation")
 	private void adminFinish(final CommandSender cs, String[] args) {
 
-        if (cs.hasPermission("quests.admin.finish")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {
 
             Player target = null;
 
@@ -1336,7 +1336,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     @SuppressWarnings("deprecation")
 	private void adminSetStage(final CommandSender cs, String[] args) {
-        if (cs.hasPermission("quests.admin.setstage")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.setstage")) {
 
             Player target = null;
 
@@ -1418,7 +1418,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @SuppressWarnings("deprecation")
 	private void adminNextStage(final CommandSender cs, String[] args) {
 
-        if (cs.hasPermission("quests.admin.nextstage")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.nextstage")) {
 
             Player target = null;
 
@@ -1479,7 +1479,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @SuppressWarnings("deprecation")
 	private void adminQuit(final CommandSender cs, String[] args) {
 
-        if (cs.hasPermission("quests.admin.quit")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.quit")) {
 
             Player target = null;
 
@@ -1632,7 +1632,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private boolean questsEvents(final CommandSender cs) {
-        if (cs.hasPermission("quests.editor.events.editor")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.editor.events.editor")) {
             eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
         } else {
             cs.sendMessage(RED + Lang.get("eventEditorNoPerms"));
@@ -1641,7 +1641,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private boolean questsEditor(final CommandSender cs) {
-        if (cs.hasPermission("quests.editor.editor")) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.editor.editor")) {
             questFactory.convoCreator.buildConversation((Conversable) cs).begin();
         } else {
             cs.sendMessage(RED + Lang.get("questEditorNoPerms"));
@@ -2361,6 +2361,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         cs.sendMessage(RED + Lang.get("questAdminHelpTitle"));
         cs.sendMessage("");
         cs.sendMessage(DARKRED + "/questadmin" + RED + " " + Lang.get("COMMAND_QUESTADMIN_HELP"));
+        if(cs.hasPermission("quests.admin.*")){
+        	cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
+        }
+        else{
+        
         if (cs.hasPermission("quests.admin.give")) {
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
         }
@@ -2393,6 +2408,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
         if (cs.hasPermission("quests.admin.reload")) {
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
+        }
         }
 
     }
