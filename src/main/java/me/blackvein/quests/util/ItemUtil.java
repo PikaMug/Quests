@@ -91,7 +91,8 @@ public class ItemUtil implements ColorUtil {
                 stack = new ItemStack(Material.matchMaterial(arg.substring(3)));
                 meta = stack.getItemMeta();
             } else if (arg.startsWith("amount-")) {
-                stack.setAmount(Integer.parseInt(arg.substring(7)));
+            	if(arg.length() >= 8 && stack != null)
+            		stack.setAmount(Integer.parseInt(arg.substring(7)));
             } else if (arg.startsWith("data-")) {
                 stack.setDurability(Short.parseShort(arg.substring(5)));
             } else if (arg.startsWith("enchantment-")) {
