@@ -4,11 +4,13 @@ import com.codisimus.plugins.phatloots.PhatLoot;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.QuestFactory;
@@ -17,6 +19,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.NumericPrompt;
@@ -38,7 +41,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public String getPromptText(ConversationContext context) {
 
         String text;
@@ -369,7 +373,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
 
-        private List<ItemStack> getItems(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<ItemStack> getItems(ConversationContext context) {
             return (List<ItemStack>) context.getSessionData(CK.REW_ITEMS);
         }
 
@@ -491,7 +496,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase("1")) {
@@ -536,11 +542,13 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
 
-        private List<String> getSkills(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<String> getSkills(ConversationContext context) {
             return (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
         }
 
-        private List<Integer> getSkillAmounts(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<Integer> getSkillAmounts(ConversationContext context) {
             return (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
         }
 
@@ -690,7 +698,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase("1")) {
@@ -735,11 +744,13 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
 
-        private List<String> getClasses(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<String> getClasses(ConversationContext context) {
             return (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
         }
 
-        private List<Double> getClassAmounts(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<Double> getClassAmounts(ConversationContext context) {
             return (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
         }
 
@@ -924,7 +935,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             return text + YELLOW + Lang.get("rewCustomRewardPrompt");
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
@@ -997,7 +1009,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
     private class RewardCustomDataListPrompt extends StringPrompt {
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public String getPromptText(ConversationContext context) {
 
             String text = BOLD + "" + AQUA + "- ";
@@ -1038,7 +1051,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
+            @SuppressWarnings("unchecked")
+			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
 
             int numInput;
@@ -1086,7 +1100,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         public String getPromptText(ConversationContext context) {
             String text = "";
             String temp = (String) context.getSessionData(CK.REW_CUSTOM_DATA_TEMP);
-            Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS);
+            @SuppressWarnings("unchecked")
+			Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS);
             if (descriptions.get(temp) != null) {
                 text += GOLD + descriptions.get(temp) + "\n";
             }
@@ -1099,7 +1114,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
+            @SuppressWarnings("unchecked")
+			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
             datamap.put((String) context.getSessionData(CK.REW_CUSTOM_DATA_TEMP), input);
             context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);

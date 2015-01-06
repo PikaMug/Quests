@@ -8,8 +8,8 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.util.HashMap;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -280,7 +280,8 @@ public class Quest {
 
     }
 
-    public void completeQuest(Quester q) {
+    @SuppressWarnings("deprecation")
+	public void completeQuest(Quester q) {
 
         Player player = plugin.getServer().getPlayer(q.id);
         q.hardQuit(this);
@@ -339,7 +340,6 @@ public class Quest {
 
         LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
         int phatLootExp = 0;
-        int phatLootMoney = 0;
 
         LinkedList<String> phatLootMessages = new LinkedList<String>();
 
@@ -353,7 +353,6 @@ public class Quest {
             }
 
             if (lb.getMoney() > 0) {
-                phatLootMoney += lb.getMoney();
                 Quests.economy.depositPlayer(player.getName(), lb.getMoney());
             }
 

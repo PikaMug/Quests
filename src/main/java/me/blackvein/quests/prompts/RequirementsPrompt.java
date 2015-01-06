@@ -2,14 +2,15 @@ package me.blackvein.quests.prompts;
 
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import me.blackvein.quests.CustomRequirement;
 
+import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
@@ -39,7 +40,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public String getPromptText(ConversationContext context) {
 
         String text;
@@ -433,7 +435,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase("1")) {
@@ -478,11 +481,13 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         }
 
-        private List<ItemStack> getItems(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<ItemStack> getItems(ConversationContext context) {
             return (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
         }
 
-        private List<Boolean> getRemoveItems(ConversationContext context) {
+        @SuppressWarnings("unchecked")
+		private List<Boolean> getRemoveItems(ConversationContext context) {
             return (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
         }
     }
@@ -569,7 +574,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
             return text + YELLOW + Lang.get("reqCustomPrompt");
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
@@ -642,7 +648,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
     private class RequirementCustomDataListPrompt extends StringPrompt {
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public String getPromptText(ConversationContext context) {
 
             String text = BOLD + "" + AQUA + "- ";
@@ -683,7 +690,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
 
-            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+            @SuppressWarnings("unchecked")
+			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
 
             int numInput;
@@ -731,7 +739,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
         public String getPromptText(ConversationContext context) {
             String text = "";
             String temp = (String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
-            Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS);
+            @SuppressWarnings("unchecked")
+			Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS);
             if (descriptions.get(temp) != null) {
                 text += GOLD + descriptions.get(temp) + "\n";
             }
@@ -744,7 +753,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+            @SuppressWarnings("unchecked")
+			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
             datamap.put((String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP), input);
             context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
@@ -767,7 +777,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
                 text += BOLD + "" + GREEN + "1" + RESET + GREEN + " - " + Lang.get("reqSetSkills") + "(" + Lang.get("noneSet") + ")\n";
             } else {
                 text += BOLD + "" + GREEN + "1" + RESET + GREEN + " - " + Lang.get("reqSetSkills") + "\n";
-                LinkedList<String> skills = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
+                @SuppressWarnings("unchecked")
+				LinkedList<String> skills = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
                 for (String skill : skills) {
                     text += GRAY + "    - " + AQUA + skill + "\n";
                 }
@@ -777,7 +788,8 @@ public class RequirementsPrompt extends FixedSetPrompt implements ColorUtil {
                 text += BOLD + "" + GREEN + "2" + RESET + GREEN + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
             } else {
                 text += BOLD + "" + GREEN + "2" + RESET + GREEN + " - " + Lang.get("reqSetSkillAmounts") + "\n";
-                LinkedList<Integer> amounts = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
+                @SuppressWarnings("unchecked")
+				LinkedList<Integer> amounts = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
                 for (int i : amounts) {
                     text += GRAY + "    - " + AQUA + i + "\n";
                 }
