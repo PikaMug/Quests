@@ -74,7 +74,7 @@ public class ItemUtil implements ColorUtil {
 
     }
 
-    //Formats ->  id-id:amount-amount:data-data:enchantment-enchantment level:name-name:lore-lore:
+    //Formats ->  name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
     //
     public static ItemStack readItemStack(String data) {
 
@@ -99,7 +99,7 @@ public class ItemUtil implements ColorUtil {
                 String[] enchs = arg.substring(12).split(" ");
                 Enchantment e = Quests.getEnchantment(enchs[0]);
                 meta.addEnchant(e, Integer.parseInt(enchs[1]), true);
-            } else if (arg.startsWith("name-")) {
+            } else if (arg.startsWith("displayname-")) {
                 meta.setDisplayName(arg.substring(5));
             } else if (arg.startsWith("lore-")) {
                 lore.add(arg.substring(5));
@@ -141,7 +141,7 @@ public class ItemUtil implements ColorUtil {
 
             ItemMeta meta = is.getItemMeta();
             if (meta.hasDisplayName()) {
-                serial += ":name-" + meta.getDisplayName();
+                serial += ":displayname-" + meta.getDisplayName();
             }
             if (meta.hasLore()) {
                 for (String s : meta.getLore()) {
