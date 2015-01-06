@@ -576,10 +576,9 @@ public class PlayerListener implements Listener, ColorUtil {
 
                     if (damager instanceof Projectile) {
 
-                        Projectile p = (Projectile) damager;
-                        if (p.getShooter() instanceof Player) {
+                        if(evt.getEntity().getLastDamageCause().getEntity() instanceof Player) {
 
-                            Player player = (Player) p.getShooter();
+                        	Player player = (Player) evt.getEntity().getLastDamageCause().getEntity();
                             boolean okay = true;
 
                             if (plugin.citizens != null) {
@@ -648,11 +647,10 @@ public class PlayerListener implements Listener, ColorUtil {
             if (damager != null) {
 
                 if (damager instanceof Projectile) {
+                	
+                    	if(evt.getEntity().getLastDamageCause().getEntity() instanceof Player) {
 
-                    Projectile p = (Projectile) damager;
-                    if (p.getShooter() instanceof Player) {
-
-                        Player player = (Player) p.getShooter();
+                    	Player player = (Player) evt.getEntity().getLastDamageCause().getEntity();
 
                         if (plugin.checkQuester(player.getName()) == false) {
 

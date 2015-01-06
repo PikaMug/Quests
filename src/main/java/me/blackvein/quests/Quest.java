@@ -177,7 +177,8 @@ public class Quest {
         return testRequirements(quester.getPlayer());
     }
 
-    public boolean testRequirements(Player player) {
+    @SuppressWarnings("deprecation")
+	public boolean testRequirements(Player player) {
 
         Quester quester = plugin.getQuester(player.getUniqueId());
         

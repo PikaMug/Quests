@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,12 +33,15 @@ public class Stage {
     LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
     LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
 
-        @Override
+		private static final long serialVersionUID = -2774443496142382127L;
+
+		@Override
         public boolean equals(Object o) {
 
             if (o instanceof LinkedList) {
 
-                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
+                @SuppressWarnings("unchecked")
+				LinkedList<Integer> otherList = (LinkedList<Integer>) o;
 
                 for (Integer i : this) {
 
@@ -58,12 +62,15 @@ public class Stage {
 
     public LinkedList<Integer> citizensToInteract = new LinkedList<Integer>() {
 
-        @Override
+		private static final long serialVersionUID = -4086855121042524435L;
+
+		@Override
         public boolean equals(Object o) {
 
             if (o instanceof LinkedList) {
 
-                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
+                @SuppressWarnings("unchecked")
+				LinkedList<Integer> otherList = (LinkedList<Integer>) o;
 
                 for (Integer i : this) {
 
@@ -82,12 +89,15 @@ public class Stage {
     };
     public LinkedList<Integer> citizensToKill = new LinkedList<Integer>() {
 
-        @Override
+		private static final long serialVersionUID = 7705964814014176415L;
+
+		@Override
         public boolean equals(Object o) {
 
             if (o instanceof LinkedList) {
 
-                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
+                @SuppressWarnings("unchecked")
+				LinkedList<Integer> otherList = (LinkedList<Integer>) o;
 
                 for (Integer i : this) {
 
