@@ -27,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class Quest {
-
+	
     public String name;
     public String description;
     public String finished;
@@ -258,7 +258,7 @@ public class Quest {
                     return false;
                 }
             } else {
-                Quests.printWarning("[Quests] Quester \"" + player.getName() + "\" attempted to take Quest \"" + name + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");
+                plugin.getLogger().warning("[Quests] Quester \"" + player.getName() + "\" attempted to take Quest \"" + name + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");
             }
 
         }
@@ -510,7 +510,7 @@ public class Quest {
                 player.sendMessage("- " + ChatColor.GOLD + found.getRewardName());
                 found.giveReward(player, customRewards.get(s));
             } else {
-                Quests.printWarning("[Quests] Quester \"" + player.getName() + "\" completed the Quest \"" + name + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
+                plugin.getLogger().warning("[Quests] Quester \"" + player.getName() + "\" completed the Quest \"" + name + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
             }
 
             none = null;

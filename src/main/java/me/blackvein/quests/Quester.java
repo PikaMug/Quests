@@ -2581,7 +2581,7 @@ public class Quester {
 
                 if (stage == null) {
                     quest.completeQuest(this);
-                    Quests.log.log(Level.SEVERE, "[Quests] Invalid stage number for player: \"" + id + "\" on Quest \"" + quest.name + "\". Quest ended.");
+                    plugin.getLogger().log(Level.SEVERE, "[Quests] Invalid stage number for player: \"" + id + "\" on Quest \"" + quest.name + "\". Quest ended.");
                     return true;
                 }
 

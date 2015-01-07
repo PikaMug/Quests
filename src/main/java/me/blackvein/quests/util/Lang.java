@@ -1158,24 +1158,24 @@ public class Lang {
                         config2.save(file);
 
                     } catch (Exception e) {
-                        Quests.log.severe("An error occurred while trying to dump new language phrases. Operation aborted. Error log:");
+                        plugin.getLogger().severe("An error occurred while trying to dump new language phrases. Operation aborted. Error log:");
                         e.printStackTrace();
                         return;
                     }
 
-                    Quests.log.info("There are new language phrases with the current version. They have been stored in /lang/en_new.yml");
+                    plugin.getLogger().info("There are new language phrases with the current version. They have been stored in /lang/en_new.yml");
 
                 }
 
             } catch (Exception e) {
-                Quests.log.severe("There was an error reading the language file: /lang/" + lang + ".yml");
-                Quests.log.severe("Language loading aborted. Error log:");
+                plugin.getLogger().severe("There was an error reading the language file: /lang/" + lang + ".yml");
+                plugin.getLogger().severe("Language loading aborted. Error log:");
                 e.printStackTrace();
             }
 
         } else {
 
-            Quests.log.severe("Attempted to load language file: /lang/" + lang + ".yml but the file was not found. Using default language EN");
+            plugin.getLogger().severe("Attempted to load language file: /lang/" + lang + ".yml but the file was not found. Using default language EN");
 
         }
     }

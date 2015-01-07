@@ -97,8 +97,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
-
-    public final static Logger log = Logger.getLogger("Minecraft");
+	
     public static Economy economy = null;
     public static Permission permission = null;
     public static WorldGuardPlugin worldGuard = null;
@@ -159,8 +158,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         /*if(getServer().getBukkitVersion().equalsIgnoreCase(validVersion) == false) {
 
-         log.severe("[Quests] Your current version of CraftBukkit is " + getServer().getBukkitVersion() + ", this version of Quests is built for version " + validVersion);
-         log.severe("[Quests] Disabling...");
+         getLogger().severe("Your current version of CraftBukkit is " + getServer().getBukkitVersion() + ", this version of Quests is built for version " + validVersion);
+         getLogger().severe("Disabling...");
          getServer().getPluginManager().disablePlugin(this);
          return;
 
@@ -206,7 +205,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (npcEffects) {
             getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
         }
-        printInfo("[Quests] Enabled.");
+        getLogger().info("Enabled.");
 
         delayLoadQuestInfo();
     }
@@ -215,7 +214,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         lang = new Lang(this);
         lang.initPhrases();
         if (new File(this.getDataFolder(), "/lang/en.yml").exists() == false) {
-            printInfo("[Quests] Translation data not found, writing defaults to file.");
+        	getLogger().info("Translation data not found, writing defaults to file.");
             lang.saveNewLang();
         } else {
             lang.loadLang();
@@ -228,9 +227,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             public void run() {
                 loadQuests();
                 loadEvents();
-                log.log(Level.INFO, "[Quests] " + quests.size() + " Quest(s) loaded.");
-                log.log(Level.INFO, "[Quests] " + events.size() + " Event(s) loaded.");
-                log.log(Level.INFO, "[Quests] " + Lang.getPhrases() + " Phrase(s) loaded.");
+                getLogger().log(Level.INFO, "" + quests.size() + " Quest(s) loaded.");
+                getLogger().log(Level.INFO, "" + events.size() + " Event(s) loaded.");
+                getLogger().log(Level.INFO, "" + Lang.getPhrases() + " Phrase(s) loaded.");
                 questers.putAll(getOnlineQuesters());
                 
                 if(convertData) {
@@ -256,7 +255,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     private void defaultDataFile() {
         if (new File(this.getDataFolder(), "data.yml").exists() == false) {
-            printInfo("[Quests] Data file not found, writing default to file.");
+        	getLogger().info("Data file not found, writing default to file.");
             FileConfiguration data = new YamlConfiguration();
             data.options().copyHeader(true);
             data.options().copyDefaults(true);
@@ -273,7 +272,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @SuppressWarnings("deprecation")
 	private void defaultEventsFile() {
         if (new File(this.getDataFolder(), "events.yml").exists() == false) {
-            printInfo("[Quests] Events data not found, writing defaults to file.");
+        	getLogger().info("Events data not found, writing defaults to file.");
             FileConfiguration data = new YamlConfiguration();
             data.options().copyHeader(true);
             data.options().copyDefaults(true);
@@ -292,7 +291,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	private void defaultQuestsFile() {
         if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
 
-            printInfo("[Quests] Quest data not found, writing defaults to file.");
+        	getLogger().info("Quest data not found, writing defaults to file.");
             FileConfiguration data = new YamlConfiguration();
             try {
                 data.load(this.getResource("quests.yml"));
@@ -310,7 +309,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @SuppressWarnings("deprecation")
 	private void defaultConfigFile() {
         if (new File(this.getDataFolder(), "config.yml").exists() == false) {
-            printInfo("[Quests] Config not found, writing default to file.");
+        	getLogger().info("Config not found, writing default to file.");
             FileConfiguration config = new YamlConfiguration();
             try {
                 config.load(this.getResource("config.yml"));
@@ -412,7 +411,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 getServer().getPluginManager().registerEvents(npcListener, this);
             }
         } catch (Exception e) {
-            printWarning("[Quests] Legacy version of Citizens found. Citizens in Quests not enabled.");
+        	getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
         }
 
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
@@ -436,11 +435,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         if (!setupEconomy()) {
-            printWarning("[Quests] Economy not found.");
+        	getLogger().warning("Economy not found.");
         }
 
         if (!setupPermissions()) {
-            printWarning("[Quests] Permissions not found.");
+        	getLogger().warning("Permissions not found.");
         }
 
         vault = (Vault) getServer().getPluginManager().getPlugin("Vault");
@@ -450,14 +449,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 	@Override
     public void onDisable() {
 
-        printInfo("[Quests] Saving Quester data.");
+    	getLogger().info("Saving Quester data.");
         for (Player p : getServer().getOnlinePlayers()) {
 
             Quester quester = getQuester(p.getUniqueId());
             quester.saveData();
 
         }
-        printInfo("[Quests] Disabled.");
+        getLogger().info("Disabled.");
 
     }
 
@@ -656,7 +655,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     customRequirements.add(requirement);
                     String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
                     String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
-                    printInfo("[Quests] Loaded Module: " + name + " by " + author);
+                    getLogger().info("Loaded Module: " + name + " by " + author);
 
                 } else if (CustomReward.class.isAssignableFrom(c)) {
 
@@ -666,7 +665,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     customRewards.add(reward);
                     String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
                     String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
-                    printInfo("[Quests] Loaded Module: " + name + " by " + author);
+                    getLogger().info("Loaded Module: " + name + " by " + author);
 
                 } else if (CustomObjective.class.isAssignableFrom(c)) {
 
@@ -676,17 +675,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     customObjectives.add(objective);
                     String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
                     String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
-                    printInfo("[Quests] Loaded Module: " + name + " by " + author);
+                    getLogger().info("Loaded Module: " + name + " by " + author);
 
                 } else {
-                    printSevere("[Quests] Error: Unable to load module from file: " + jar.getName() + ", jar file is not a valid module!");
+                    getLogger().severe("Error: Unable to load module from file: " + jar.getName() + ", jar file is not a valid module!");
                 }
             }
 
         } catch (Exception e) {
-            printSevere("[Quests] Error: Unable to load module from file: " + jar.getName());
+        	getLogger().severe("Error: Unable to load module from file: " + jar.getName());
             if (debug) {
-                printSevere("[Quests] Error log:");
+            	getLogger().severe("Error log:");
                 e.printStackTrace();
             }
         }
@@ -1249,7 +1248,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         String msg = Lang.get("allQuestPointsSet");
                         msg = msg.replaceAll("<number>", AQUA + "" + amount + GOLD);
-                        getServer().broadcastMessage(YELLOW + "[Quests] " + GOLD + msg);
+                        getServer().broadcastMessage(YELLOW + "" + GOLD + msg);
 
                     } else {
                         cs.sendMessage(RED + Lang.get("errorDataFolder"));
@@ -1632,7 +1631,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private boolean questsEvents(final CommandSender cs) {
-        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.editor.events.editor")) {
+        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.events.editor")) {
             eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
         } else {
             cs.sendMessage(RED + Lang.get("eventEditorNoPerms"));
@@ -1641,7 +1640,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private boolean questsEditor(final CommandSender cs) {
-        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.editor.editor")) {
+        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
             questFactory.convoCreator.buildConversation((Conversable) cs).begin();
         } else {
             cs.sendMessage(RED + Lang.get("questEditorNoPerms"));
@@ -2373,42 +2372,41 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
-        }
-        else{
+        } else{
+        	if (cs.hasPermission("quests.admin.give")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.quit")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.points")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.takepoints")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.givepoints")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.pointsall")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.finish")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.nextstage")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.setstage")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
+        	}
+        	if (citizens != null && cs.hasPermission("quests.admin.togglegui")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.reload")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
+        	}
         
-        if (cs.hasPermission("quests.admin.give")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.quit")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.points")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.takepoints")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.givepoints")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.pointsall")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.finish")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.nextstage")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.setstage")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
-        }
-        if (citizens != null && cs.hasPermission("quests.admin.togglegui")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
-        }
-        if (cs.hasPermission("quests.admin.reload")) {
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
-        }
         }
 
     }
@@ -2496,16 +2494,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (quester == null) {
 
             if (debug == true) {
-                log.log(Level.WARNING, "[Quests] Quester data for player \"" + id.toString() + "\" not stored. Attempting manual data retrieval..");
+                getLogger().log(Level.WARNING, "Quester data for player \"" + id.toString() + "\" not stored. Attempting manual data retrieval..");
             }
 
             quester = new Quester(this);
             quester.id = id;
             if (quester.loadData() == false) {
-                log.severe("[Quests] Quester not found for player \"" + id.toString() + "\". Consider adding them to the Quester blacklist.");
+                getLogger().severe("Quester not found for player \"" + id.toString() + "\". Consider adding them to the Quester blacklist.");
             } else {
                 if (debug == true) {
-                    log.log(Level.INFO, "[Quests] Manual data retrieval succeeded for player \"" + id.toString() + "\"");
+                    getLogger().log(Level.INFO, "Manual data retrieval succeeded for player \"" + id.toString() + "\"");
                 }
                 questers.put(id, quester);
             }
@@ -2579,7 +2577,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     // TODO why have a name attr then path key can be guest name?
                     quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
                 } else {
-                    skipQuestProcess("[Quests] Quest block \'" + questName + "\' is missing " + RED + "name:");
+                    skipQuestProcess("Quest block \'" + questName + "\' is missing " + RED + "name:");
                 }
 
                 if (config.contains("quests." + questName + ".npc-giver-id")) {
@@ -2589,7 +2587,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")));
 
                     } else {
-                        skipQuestProcess("[Quests] npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
+                        skipQuestProcess("npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
                     }
                 }
 
@@ -2600,8 +2598,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         quest.blockStart = location;
                     } else {
                         skipQuestProcess(new String[]{
-                            "[Quests] block-start: for Quest " + quest.name + " is not in proper location format!",
-                            "[Quests] Proper location format is: \"WorldName x y z\""});
+                            "block-start: for Quest " + quest.name + " is not in proper location format!",
+                            "Proper location format is: \"WorldName x y z\""});
                     }
 
                 }
@@ -2612,7 +2610,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     boolean exists = regionFound(quest, region);
 
                     if (!exists) {
-                        skipQuestProcess("[Quests] region: for Quest " + quest.name + " is not a valid WorldGuard region!");
+                        skipQuestProcess("region: for Quest " + quest.name + " is not a valid WorldGuard region!");
                     }
 
                 }
@@ -2629,7 +2627,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
                         quest.redoDelay = config.getInt("quests." + questName + ".redo-delay");
                     } else {
-                        skipQuestProcess("[Quests] redo-delay: for Quest " + quest.name + " is not a number!");
+                        skipQuestProcess("redo-delay: for Quest " + quest.name + " is not a number!");
                     }
 
                 }
@@ -2637,13 +2635,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.contains("quests." + questName + ".finish-message")) {
                     quest.finished = parseString(config.getString("quests." + questName + ".finish-message"), quest);
                 } else {
-                    skipQuestProcess("[Quests] Quest " + quest.name + " is missing finish-message:");
+                    skipQuestProcess("Quest " + quest.name + " is missing finish-message:");
                 }
 
                 if (config.contains("quests." + questName + ".ask-message")) {
                     quest.description = parseString(config.getString("quests." + questName + ".ask-message"), quest);
                 } else {
-                    skipQuestProcess("[Quests] Quest " + quest.name + " is missing ask-message:");
+                    skipQuestProcess("Quest " + quest.name + " is missing ask-message:");
                 }
 
                 if (config.contains("quests." + questName + ".event")) {
@@ -2653,7 +2651,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (evt != null) {
                         quest.initialEvent = evt;
                     } else {
-                        skipQuestProcess("[Quests] Initial Event in Quest " + quest.name + " failed to load.");
+                        skipQuestProcess("Initial Event in Quest " + quest.name + " failed to load.");
                     }
 
                 }
@@ -2679,9 +2677,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     } catch (IOException e) {
 
                         if (debug == false) {
-                            log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
+                            getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questName + "\". Skipping.");
                         } else {
-                            log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Error log:");
+                            getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questName + "\". Error log:");
                             e.printStackTrace();
                         }
 
@@ -2689,7 +2687,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 }
 
                 if (failedToLoad == true) {
-                    log.log(Level.SEVERE, "[Quests] Failed to load Quest \"" + questName + "\". Skipping.");
+                    getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questName + "\". Skipping.");
                 }
             } catch (SkipQuest ex) {
                 continue;
@@ -2712,13 +2710,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             quest.itemRewards.add(stack);
                         }
                     } catch (Exception e) {
-                        skipQuestProcess("[Quests] " + item + " in items: Reward in Quest " + quest.name + " is not properly formatted!");
+                        skipQuestProcess("" + item + " in items: Reward in Quest " + quest.name + " is not properly formatted!");
                     }
 
                 }
 
             } else {
-                skipQuestProcess("[Quests] items: Reward in Quest " + quest.name + " is not a list of strings!");
+                skipQuestProcess("items: Reward in Quest " + quest.name + " is not a list of strings!");
             }
 
         }
@@ -2728,7 +2726,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (config.getInt("quests." + questName + ".rewards.money", -999) != -999) {
                 quest.moneyReward = config.getInt("quests." + questName + ".rewards.money");
             } else {
-                skipQuestProcess("[Quests] money: Reward in Quest " + quest.name + " is not a number!");
+                skipQuestProcess("money: Reward in Quest " + quest.name + " is not a number!");
             }
 
         }
@@ -2738,7 +2736,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (config.getInt("quests." + questName + ".rewards.exp", -999) != -999) {
                 quest.exp = config.getInt("quests." + questName + ".rewards.exp");
             } else {
-                skipQuestProcess("[Quests] exp: Reward in Quest " + quest.name + " is not a number!");
+                skipQuestProcess("exp: Reward in Quest " + quest.name + " is not a number!");
             }
 
         }
@@ -2749,7 +2747,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 quest.commands.clear();
                 quest.commands.addAll(config.getStringList("quests." + questName + ".rewards.commands"));
             } else {
-                skipQuestProcess("[Quests] commands: Reward in Quest " + quest.name + " is not a list of commands!");
+                skipQuestProcess("commands: Reward in Quest " + quest.name + " is not a list of commands!");
             }
 
         }
@@ -2760,7 +2758,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 quest.permissions.clear();
                 quest.permissions.addAll(config.getStringList("quests." + questName + ".rewards.permissions"));
             } else {
-                skipQuestProcess("[Quests] permissions: Reward in Quest " + quest.name + " is not a list of permissions!");
+                skipQuestProcess("permissions: Reward in Quest " + quest.name + " is not a list of permissions!");
             }
 
         }
@@ -2771,7 +2769,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 quest.questPoints = config.getInt("quests." + questName + ".rewards.quest-points");
                 totalQuestPoints += quest.questPoints;
             } else {
-                skipQuestProcess("[Quests] quest-points: Reward in Quest " + quest.name + " is not a number!");
+                skipQuestProcess("quest-points: Reward in Quest " + quest.name + " is not a number!");
             }
 
         }
@@ -2787,7 +2785,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         for (String skill : config.getStringList("quests." + questName + ".rewards.mcmmo-skills")) {
 
                             if (Quests.getMcMMOSkill(skill) == null) {
-                                skipQuestProcess("[Quests] " + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
+                                skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
                             }
 
                         }
@@ -2799,15 +2797,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
 
                     } else {
-                        skipQuestProcess("[Quests] mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
+                        skipQuestProcess("mcmmo-levels: Reward in Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    skipQuestProcess("[Quests] Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
+                    skipQuestProcess("Rewards for Quest " + quest.name + " is missing mcmmo-levels:");
                 }
 
             } else {
-                skipQuestProcess("[Quests] mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
+                skipQuestProcess("mcmmo-skills: Reward in Quest " + quest.name + " is not a list of mcMMO skill names!");
             }
         }
 
@@ -2822,7 +2820,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
 
                             if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
-                                skipQuestProcess("[Quests] " + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
+                                skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
                             }
 
                         }
@@ -2834,15 +2832,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         quest.heroesAmounts.addAll(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
 
                     } else {
-                        skipQuestProcess("[Quests] heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
+                        skipQuestProcess("heroes-exp-amounts: Reward in Quest " + quest.name + " is not a list of experience amounts (decimal numbers)!");
                     }
 
                 } else {
-                    skipQuestProcess("[Quests] Rewards for Quest " + quest.name + " is missing heroes-exp-amounts:");
+                    skipQuestProcess("Rewards for Quest " + quest.name + " is missing heroes-exp-amounts:");
                 }
 
             } else {
-                skipQuestProcess("[Quests] heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
+                skipQuestProcess("heroes-exp-classes: Reward in Quest " + quest.name + " is not a list of Heroes classes!");
             }
         }
 
@@ -2853,7 +2851,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 for (String loot : config.getStringList("quests." + questName + ".rewards.phat-loots")) {
 
                     if (PhatLootsAPI.getPhatLoot(loot) == null) {
-                        skipQuestProcess("[Quests] " + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
+                        skipQuestProcess("" + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
                     }
 
                 }
@@ -2862,7 +2860,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 quest.phatLootRewards.addAll(config.getStringList("quests." + questName + ".rewards.phat-loots"));
 
             } else {
-                skipQuestProcess("[Quests] phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
+                skipQuestProcess("phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
             }
         }
 
@@ -2875,7 +2873,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (config.contains("quests." + questName + ".requirements.fail-requirement-message")) {
             quest.failRequirements = parseString(config.getString("quests." + questName + ".requirements.fail-requirement-message"), quest);
         } else {
-            skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
+            skipQuestProcess("Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
         }
 
         if (config.contains("quests." + questName + ".requirements.items")) {
@@ -2896,11 +2894,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 }
 
                 if (failed == true) {
-                    skipQuestProcess("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
+                    skipQuestProcess("items: Requirement for Quest " + quest.name + " is not formatted correctly!");
                 }
 
             } else {
-                skipQuestProcess("[Quests] items: Requirement for Quest " + quest.name + " is not formatted correctly!");
+                skipQuestProcess("items: Requirement for Quest " + quest.name + " is not formatted correctly!");
             }
 
             if (config.contains("quests." + questName + ".requirements.remove-items")) {
@@ -2909,11 +2907,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     quest.removeItems.clear();
                     quest.removeItems.addAll(config.getBooleanList("quests." + questName + ".requirements.remove-items"));
                 } else {
-                    skipQuestProcess("[Quests] remove-items: Requirement for Quest " + quest.name + " is not a list of true/false values!");
+                    skipQuestProcess("remove-items: Requirement for Quest " + quest.name + " is not a list of true/false values!");
                 }
 
             } else {
-                skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing remove-items:");
+                skipQuestProcess("Requirements for Quest " + quest.name + " is missing remove-items:");
             }
         }
 
@@ -2922,7 +2920,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (config.getInt("quests." + questName + ".requirements.money", -999) != -999) {
                 quest.moneyReq = config.getInt("quests." + questName + ".requirements.money");
             } else {
-                skipQuestProcess("[Quests] money: Requirement for Quest " + quest.name + " is not a number!");
+                skipQuestProcess("money: Requirement for Quest " + quest.name + " is not a number!");
             }
 
         }
@@ -2932,7 +2930,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (config.getInt("quests." + questName + ".requirements.quest-points", -999) != -999) {
                 quest.questPointsReq = config.getInt("quests." + questName + ".requirements.quest-points");
             } else {
-                skipQuestProcess("[Quests] quest-points: Requirement for Quest " + quest.name + " is not a number!");
+                skipQuestProcess("quest-points: Requirement for Quest " + quest.name + " is not a number!");
             }
 
         }
@@ -2969,12 +2967,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (failed) {
                     skipQuestProcess(new String[]{
-                        "[Quests] " + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
+                        "" + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
                         "Make sure you are using the Quest name: value, and not the block name."});
                 }
 
             } else {
-                skipQuestProcess("[Quests] quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
+                skipQuestProcess("quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
             }
 
         }
@@ -3011,12 +3009,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (failed) {
                     skipQuestProcess(new String[]{
-                        "[Quests] " + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
+                        "" + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
                         "Make sure you are using the Quest name: value, and not the block name."});
                 }
 
             } else {
-                skipQuestProcess("[Quests] quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
+                skipQuestProcess("quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
             }
 
         }
@@ -3027,7 +3025,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 quest.permissionReqs.clear();
                 quest.permissionReqs.addAll(config.getStringList("quests." + questName + ".requirements.permissions"));
             } else {
-                skipQuestProcess("[Quests] permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
+                skipQuestProcess("permissions: Requirement for Quest " + quest.name + " is not a list of permissions!");
             }
 
         }
@@ -3044,22 +3042,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         List<Integer> amounts = config.getIntegerList("quests." + questName + ".requirements.mcmmo-amounts");
 
                         if (skills.size() != amounts.size()) {
-                            skipQuestProcess("[Quests] mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " + quest.name + " are not the same size!");
+                            skipQuestProcess("mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " + quest.name + " are not the same size!");
                         }
 
                         quest.mcMMOSkillReqs.addAll(skills);
                         quest.mcMMOAmountReqs.addAll(amounts);
 
                     } else {
-                        skipQuestProcess("[Quests] mcmmo-amounts: Requirement for Quest " + quest.name + " is not a list of numbers!");
+                        skipQuestProcess("mcmmo-amounts: Requirement for Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    skipQuestProcess("[Quests] Requirements for Quest " + quest.name + " is missing mcmmo-amounts:");
+                    skipQuestProcess("Requirements for Quest " + quest.name + " is missing mcmmo-amounts:");
                 }
 
             } else {
-                skipQuestProcess("[Quests] mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
+                skipQuestProcess("mcmmo-skills: Requirement for Quest " + quest.name + " is not a list of skills!");
             }
 
         }
@@ -3071,9 +3069,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (hc != null && hc.isPrimary()) {
                 quest.heroesPrimaryClassReq = hc.getName();
             } else if (hc != null) {
-                skipQuestProcess("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a primary Heroes class!");
+                skipQuestProcess("heroes-primary-class: Requirement for Quest " + quest.name + " is not a primary Heroes class!");
             } else {
-                skipQuestProcess("[Quests] heroes-primary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
+                skipQuestProcess("heroes-primary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
             }
 
         }
@@ -3085,9 +3083,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (hc != null && hc.isSecondary()) {
                 quest.heroesSecondaryClassReq = hc.getName();
             } else if (hc != null) {
-                skipQuestProcess("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a secondary Heroes class!");
+                skipQuestProcess("heroes-secondary-class: Requirement for Quest " + quest.name + " is not a secondary Heroes class!");
             } else {
-                skipQuestProcess("[Quests] heroes-secondary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
+                skipQuestProcess("heroes-secondary-class: Requirement for Quest " + quest.name + " is not a valid Heroes class!");
             }
 
         }
@@ -3108,7 +3106,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 }
 
                 if (!found) {
-                    printWarning("[Quests] Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
+                	getLogger().warning("Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
                     skipQuestProcess((String) null); // null bc we warn, not severe for this one
                 }
 
@@ -3130,7 +3128,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     private void skipQuestProcess(String[] msgs) throws SkipQuest {
         for (String msg : msgs) {
             if (msg != null) {
-                printSevere(msg);
+            	getLogger().severe(msg);
             }
         }
         throw new SkipQuest();
@@ -3155,7 +3153,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
 
             if (!found) {
-                printWarning("[Quests] Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
+            	getLogger().warning("Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
                 continue;
             }
 
@@ -3231,7 +3229,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     trigger = new QuestTaskTrigger();
                     oStage.script = config.getString("quests." + questName + ".stages.ordered." + s2 + ".script-to-run");
                 } else {
-                    stageFailed("[Quests] script-to-run: in Stage " + s2 + " of Quest " + quest.name + " is not a Denizen script!");
+                    stageFailed("script-to-run: in Stage " + s2 + " of Quest " + quest.name + " is not a Denizen script!");
                 }
 
             }
@@ -3241,7 +3239,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".break-block-names"), Integer.class)) {
                     breaknames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".break-block-names");
                 } else {
-                    stageFailed("[Quests] break-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("break-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".break-block-amounts")) {
@@ -3249,11 +3247,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
                         breakamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".break-block-amounts");
                     } else {
-                        stageFailed("[Quests] break-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("break-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing break-block-amounts:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing break-block-amounts:");
                 }
 
             }
@@ -3263,7 +3261,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-names"), Integer.class)) {
                     damagenames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-names");
                 } else {
-                    stageFailed("[Quests] damage-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("damage-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".damage-block-amounts")) {
@@ -3271,11 +3269,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
                         damageamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-amounts");
                     } else {
-                        stageFailed("[Quests] damage-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("damage-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-amounts:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-amounts:");
                 }
 
             }
@@ -3285,7 +3283,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (Material.matchMaterial(s) != null) {
                     oStage.blocksToDamage.put(Material.matchMaterial(s), damageamounts.get(damagenames.indexOf(s)));
                 } else {
-                    stageFailed("[Quests] " + s + " inside damage-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+                    stageFailed("" + s + " inside damage-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
                 }
 
             }
@@ -3295,7 +3293,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".place-block-names"), Integer.class)) {
                     placenames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".place-block-names");
                 } else {
-                    stageFailed("[Quests] place-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("place-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".place-block-amounts")) {
@@ -3303,11 +3301,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
                         placeamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".place-block-amounts");
                     } else {
-                        stageFailed("[Quests] place-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("place-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing place-block-amounts:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing place-block-amounts:");
                 }
 
             }
@@ -3317,7 +3315,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (Material.matchMaterial(s) != null) {
                     oStage.blocksToPlace.put(Material.matchMaterial(s), placeamounts.get(placenames.indexOf(s)));
                 } else {
-                    stageFailed("[Quests] " + s + " inside place-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+                    stageFailed("" + s + " inside place-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
                 }
 
             }
@@ -3327,7 +3325,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".use-block-names"), Integer.class)) {
                     usenames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".use-block-names");
                 } else {
-                    stageFailed("[Quests] use-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("use-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".use-block-amounts")) {
@@ -3335,11 +3333,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
                         useamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".use-block-amounts");
                     } else {
-                        stageFailed("[Quests] use-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("use-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing use-block-amounts:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing use-block-amounts:");
                 }
 
             }
@@ -3349,7 +3347,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (Material.matchMaterial(s) != null) {
                     oStage.blocksToUse.put(Material.matchMaterial(s), useamounts.get(usenames.indexOf(s)));
                 } else {
-                    stageFailed("[Quests] " + RED + s + " inside use-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+                    stageFailed("" + RED + s + " inside use-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
                 }
 
             }
@@ -3359,7 +3357,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-names"), Integer.class)) {
                     cutnames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-names");
                 } else {
-                    stageFailed("[Quests] cut-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("cut-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".cut-block-amounts")) {
@@ -3367,11 +3365,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
                         cutamounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-amounts");
                     } else {
-                        stageFailed("[Quests] cut-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("cut-block-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-amounts:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-amounts:");
                 }
 
             }
@@ -3381,7 +3379,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (Material.matchMaterial(s) != null) {
                     oStage.blocksToCut.put(Material.matchMaterial(s), cutamounts.get(cutnames.indexOf(s)));
                 } else {
-                    stageFailed("[Quests] " + s + " inside cut-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+                    stageFailed("" + s + " inside cut-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
                 }
 
             }
@@ -3391,7 +3389,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.getInt("quests." + questName + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
                     oStage.fishToCatch = config.getInt("quests." + questName + ".stages.ordered." + s2 + ".fish-to-catch");
                 } else {
-                    stageFailed("[Quests] fish-to-catch: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                    stageFailed("fish-to-catch: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                 }
 
             }
@@ -3401,7 +3399,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.getInt("quests." + questName + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
                     oStage.playersToKill = config.getInt("quests." + questName + ".stages.ordered." + s2 + ".players-to-kill");
                 } else {
-                    stageFailed("[Quests] players-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                    stageFailed("players-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                 }
 
             }
@@ -3420,14 +3418,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            stageFailed("[Quests] " + enchant + " inside enchantments: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid enchantment!");
+                            stageFailed("" + enchant + " inside enchantments: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid enchantment!");
 
                         }
 
                     }
 
                 } else {
-                    stageFailed("[Quests] enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
+                    stageFailed("enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
@@ -3439,19 +3437,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             if (Material.matchMaterial(item) != null) {
                                 itemsToEnchant.add(Material.matchMaterial(item));
                             } else {
-                                stageFailed("[Quests] " + item + " inside enchantment-item-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+                                stageFailed("" + item + " inside enchantment-item-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
                             }
 
                         }
 
                     } else {
 
-                        stageFailed("[Quests] enchantment-item-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("enchantment-item-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
 
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-ids:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-ids:");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantment-amounts")) {
@@ -3462,12 +3460,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else {
 
-                        stageFailed("[Quests] enchantment-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("enchantment-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
 
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-amounts:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-amounts:");
                 }
 
             }
@@ -3486,13 +3484,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
 
                         } else {
-                            stageFailed("[Quests] " + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
+                            stageFailed("" + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
                         }
 
                     }
 
                 } else {
-                    stageFailed("[Quests] npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
             }
@@ -3531,29 +3529,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                             oStage.deliverMessages = deliveryMessages;
 
                                         } else {
-                                            stageFailed("[Quests] " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
+                                            stageFailed("" + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
                                         }
 
                                     } else {
-                                        stageFailed("[Quests] " + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
+                                        stageFailed("" + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
                                     }
 
                                 }
 
                             } else {
-                                stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing delivery-messages:");
+                                stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing delivery-messages:");
                             }
 
                         } else {
-                            stageFailed("[Quests] npc-delivery-ids: in Stage " + s2 + " of Quest " + PURPLE + quest.name + " is not a list of NPC ids!");
+                            stageFailed("npc-delivery-ids: in Stage " + s2 + " of Quest " + PURPLE + quest.name + " is not a list of NPC ids!");
                         }
 
                     } else {
-                        stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-delivery-ids:");
+                        stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing npc-delivery-ids:");
                     }
 
                 } else {
-                    stageFailed("[Quests] items-to-deliver: in Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
+                    stageFailed("items-to-deliver: in Stage " + s2 + " of Quest " + quest.name + " is not formatted properly!");
                 }
 
             }
@@ -3580,25 +3578,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                         oStage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
                                         questNPCs.add(CitizensAPI.getNPCRegistry().getById(i));
                                     } else {
-                                        stageFailed("[Quests] " + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
+                                        stageFailed("" + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.name + " is not a positive number!");
                                     }
 
                                 } else {
-                                    stageFailed("[Quests] " + i + " inside npc-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
+                                    stageFailed("" + i + " inside npc-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid NPC id!");
                                 }
 
                             }
 
                         } else {
-                            stageFailed("[Quests] npc-kill-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                            stageFailed("npc-kill-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                         }
 
                     } else {
-                        stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing npc-kill-amounts:");
+                        stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing npc-kill-amounts:");
                     }
 
                 } else {
-                    stageFailed("[Quests] npc-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("npc-ids-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                 }
 
             }
@@ -3618,14 +3616,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         } else {
 
-                            stageFailed("[Quests] " + mob + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid mob name!");
+                            stageFailed("" + mob + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid mob name!");
 
                         }
 
                     }
 
                 } else {
-                    stageFailed("[Quests] mobs-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
+                    stageFailed("mobs-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".mob-amounts")) {
@@ -3640,12 +3638,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     } else {
 
-                        stageFailed("[Quests] mob-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("mob-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
 
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + PURPLE + quest.name + " is missing mob-amounts:");
+                    stageFailed("Stage " + s2 + " of Quest " + PURPLE + quest.name + " is missing mob-amounts:");
                 }
 
             }
@@ -3669,27 +3667,27 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 z = Double.parseDouble(info[3]);
                             } catch (NumberFormatException e) {
                                 stageFailed(new String[]{
-                                    "[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
-                                    "[Quests] Proper location format is: \"WorldName x y z\""});
+                                    "" + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                                    "Proper location format is: \"WorldName x y z\""});
                             }
 
                             if (getServer().getWorld(info[0]) != null) {
                                 Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
                                 locationsToKillWithin.add(finalLocation);
                             } else {
-                                stageFailed("[Quests] " + info[0] + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
+                                stageFailed("" + info[0] + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
                             }
 
                         } else {
                             stageFailed(new String[]{
-                                "[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
-                                "[Quests] Proper location format is: \"WorldName x y z\""});
+                                "" + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                                "Proper location format is: \"WorldName x y z\""});
                         }
 
                     }
 
                 } else {
-                    stageFailed("[Quests] locations-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
+                    stageFailed("locations-to-kill: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".kill-location-radii")) {
@@ -3704,11 +3702,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     } else {
-                        stageFailed("[Quests] kill-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("kill-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-radii:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-radii:");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".kill-location-names")) {
@@ -3723,11 +3721,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     } else {
-                        stageFailed("[Quests] kill-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
+                        stageFailed("kill-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-names:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing kill-location-names:");
                 }
 
             }
@@ -3783,27 +3781,27 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 z = Double.parseDouble(info[3]);
                             } catch (NumberFormatException e) {
                                 stageFailed(new String[]{
-                                    "[Quests] " + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
-                                    "[Quests] Proper location format is: \"WorldName x y z\""});
+                                    "" + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                                    "Proper location format is: \"WorldName x y z\""});
                             }
 
                             if (getServer().getWorld(info[0]) != null) {
                                 Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
                                 oStage.locationsToReach.add(finalLocation);
                             } else {
-                                stageFailed("[Quests] " + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
+                                stageFailed("" + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
                             }
 
                         } else {
                             stageFailed(new String[]{
-                                "[Quests] " + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
-                                "[Quests] Proper location format is: \"WorldName x y z\""});
+                                "" + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!",
+                                "Proper location format is: \"WorldName x y z\""});
                         }
 
                     }
 
                 } else {
-                    stageFailed("[Quests] locations-to-reach: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
+                    stageFailed("locations-to-reach: in Stage " + s2 + " of Quest " + quest.name + " is not a list of locations!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".reach-location-radii")) {
@@ -3818,11 +3816,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     } else {
-                        stageFailed("[Quests] reach-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("reach-location-radii: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-radii:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-radii:");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".reach-location-names")) {
@@ -3837,11 +3835,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     } else {
-                        stageFailed("[Quests] reach-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
+                        stageFailed("reach-location-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of names!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-names:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing reach-location-names:");
                 }
 
             }
@@ -3868,21 +3866,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     oStage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
 
                                 } else {
-                                    stageFailed("[Quests] " + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
+                                    stageFailed("" + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
                                 }
 
                             }
 
                         } else {
-                            stageFailed("[Quests] mob-tame-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                            stageFailed("mob-tame-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                         }
 
                     } else {
-                        stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing mob-tame-amounts:");
+                        stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing mob-tame-amounts:");
                     }
 
                 } else {
-                    stageFailed("[Quests] mobs-to-tame: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
+                    stageFailed("mobs-to-tame: in Stage " + s2 + " of Quest " + quest.name + " is not a list of mob names!");
                 }
 
             }
@@ -3966,21 +3964,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 } else {
 
-                                    stageFailed("[Quests] " + color + " inside sheep-to-shear: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid color!");
+                                    stageFailed("" + color + " inside sheep-to-shear: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid color!");
                                 }
 
                             }
 
                         } else {
-                            stageFailed("[Quests] sheep-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                            stageFailed("sheep-amounts: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
                         }
 
                     } else {
-                        stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing sheep-amounts:");
+                        stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing sheep-amounts:");
                     }
 
                 } else {
-                    stageFailed("[Quests] sheep-to-shear: in Stage " + s2 + " of Quest " + quest.name + " is not a list of colors!");
+                    stageFailed("sheep-to-shear: in Stage " + s2 + " of Quest " + quest.name + " is not a list of colors!");
                 }
 
             }
@@ -4004,11 +4002,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         }
 
                     } else {
-                        stageFailed("[Quests] password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
+                        stageFailed("password-displays and password-phrases in Stage " + s2 + " of Quest " + quest.name + " are not the same size!");
                     }
 
                 } else {
-                    stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing password-phrases!");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing password-phrases!");
                 }
 
             }
@@ -4030,7 +4028,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     }
 
                     if (found == null) {
-                        printWarning("[Quests] Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
+                    	getLogger().warning("Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
                         continue;
                     }
 
@@ -4051,9 +4049,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         getServer().getPluginManager().registerEvents(found, this);
 
                     } catch (Exception e) {
-                        printWarning("[Quests] Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
+                    	getLogger().warning("Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
                         if (debug) {
-                            printWarning("[Quests] Error log:");
+                        	getLogger().warning("Error log:");
                             e.printStackTrace();
                         }
                     }
@@ -4075,7 +4073,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (evt != null) {
                     oStage.startEvent = evt;
                 } else {
-                    stageFailed("[Quests] start-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed("start-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                 }
 
             }
@@ -4087,7 +4085,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (evt != null) {
                     oStage.finishEvent = evt;
                 } else {
-                    stageFailed("[Quests] finish-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed("finish-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                 }
 
             }
@@ -4099,13 +4097,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (evt != null) {
                     oStage.finishEvent = evt;
-                    printInfo("[Quests] Converting event: in Stage " + s2 + " of Quest " + quest.name + " to finish-event:");
+                    getLogger().info("Converting event: in Stage " + s2 + " of Quest " + quest.name + " to finish-event:");
                     String old = config.getString("quests." + questName + ".stages.ordered." + s2 + ".event");
                     config.set("quests." + questName + ".stages.ordered." + s2 + ".finish-event", old);
                     config.set("quests." + questName + ".stages.ordered." + s2 + ".event", null);
                     needsSaving = true;
                 } else {
-                    stageFailed("[Quests] event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed("event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                 }
 
             }
@@ -4118,7 +4116,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (evt != null) {
                     oStage.deathEvent = evt;
                 } else {
-                    stageFailed("[Quests] death-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed("death-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                 }
 
             }
@@ -4130,7 +4128,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (evt != null) {
                     oStage.disconnectEvent = evt;
                 } else {
-                    stageFailed("[Quests] disconnect-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                    stageFailed("disconnect-event: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                 }
 
             }
@@ -4155,7 +4153,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                     oStage.chatEvents.put(chatEventTriggers.get(i), evt);
                                 } else {
                                     loadEventFailed = true;
-                                    stageFailed("[Quests] " + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+                                    stageFailed("" + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
                                 }
 
                             }
@@ -4165,15 +4163,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             }
 
                         } else {
-                            stageFailed("[Quests] chat-event-triggers in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+                            stageFailed("chat-event-triggers in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
                         }
 
                     } else {
-                        stageFailed("[Quests] Stage " + s2 + " of Quest " + quest.name + " is missing chat-event-triggers!");
+                        stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing chat-event-triggers!");
                     }
 
                 } else {
-                    stageFailed("[Quests] chat-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+                    stageFailed("chat-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
                 }
 
             }
@@ -4183,7 +4181,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.getLong("quests." + questName + ".stages.ordered." + s2 + ".delay", -999) != -999) {
                     oStage.delay = config.getLong("quests." + questName + ".stages.ordered." + s2 + ".delay");
                 } else {
-                    stageFailed("[Quests] delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
+                    stageFailed("delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                 }
 
             }
@@ -4224,7 +4222,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     private void stageFailed(String[] msgs) throws StageFailedException {
         for (String msg : msgs) {
             if (msg != null) {
-                printSevere(msg);
+            	getLogger().severe(msg);
             }
         }
         throw new StageFailedException();
@@ -4250,7 +4248,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (event != null) {
                 events.add(event);
             } else {
-                log.log(Level.SEVERE, "[Quests] Failed to load Event \"" + s + "\". Skipping.");
+                getLogger().log(Level.SEVERE, "Failed to load Event \"" + s + "\". Skipping.");
             }
 
         }
@@ -4422,27 +4420,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             sortedMap.put(entry.getKey(), entry.getValue());
         }
         return sortedMap;
-    }
-
-    public static void printSevere(String s) {
-
-        //s = ChatColor.stripColor(s);
-        log.severe(s);
-
-    }
-
-    public static void printWarning(String s) {
-
-        //s = ChatColor.stripColor(s);
-        log.warning(s);
-
-    }
-
-    public static void printInfo(String s) {
-
-        //s = ChatColor.stripColor(s);
-        log.info(s);
-
     }
 
     public boolean hasItem(Player player, ItemStack is) {
@@ -5139,13 +5116,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             while ((inputLine = in.readLine()) != null) {
                 if (inputLine.equalsIgnoreCase("false")) {
-                    printWarning("[Quests] An error occurred inserting data into the snooper database!");
+                	getLogger().warning("An error occurred inserting data into the snooper database!");
                 }
             }
             in.close();
 
         } catch (Exception e) {
-            printWarning("[Quests] An error occurred inserting data into the snooper database!");
+        	getLogger().warning("An error occurred inserting data into the snooper database!");
         }
 
     }
@@ -5164,13 +5141,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             while ((inputLine = in.readLine()) != null) {
                 if (inputLine.equalsIgnoreCase("false")) {
-                    printWarning("[Quests] An error occurred removing old data from the snooper database!");
+                	getLogger().warning("An error occurred removing old data from the snooper database!");
                 }
             }
             in.close();
 
         } catch (Exception e) {
-            printWarning("[Quests] An error occurred removing old data from the snooper database!");
+        	getLogger().warning("An error occurred removing old data from the snooper database!");
         }
 
     }
@@ -5241,12 +5218,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             config.set("npc-gui", questNPCGUIs);
             config.save(dataFile);
         } catch (Exception e) {
-            log.severe("[Quests] Unable to update data file.");
+            getLogger().severe("Unable to update data file.");
             if (debug) {
-                log.severe("[Quests] Error log:");
+                getLogger().severe("Error log:");
                 e.printStackTrace();
             } else {
-                log.severe("[Quests] Enable debug to view the error log.");
+                getLogger().severe("Enable debug to view the error getLogger()");
             }
         }
 
@@ -5281,7 +5258,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 final ArrayList<String> names = new ArrayList<String>();
 
-                Quests.printInfo("Gathering Quester information...");
+                getLogger().info("Gathering Quester information...");
                 for (int i = 0; i < numQuesters; i++) {
 
                     final File file = files[i];
@@ -5303,14 +5280,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 }
 
-                Quests.printInfo("Completed: " + succeeded + " Success(es). " + failed + " Failure(s). " + numQuesters + " Total.");
-                Quests.printInfo("Preparing to convert data.");
+                getLogger().info("Completed: " + succeeded + " Success(es). " + failed + " Failure(s). " + numQuesters + " Total.");
+                getLogger().info("Preparing to convert data.");
 
                 Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
 
                     @Override
                     public void run() {
-                        Quests.printInfo("Done. Converting data...");
+                    	getLogger().info("Done. Converting data...");
                         int converted = 0;
                         int failed = 0;
 
@@ -5322,7 +5299,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             idMap = fetcher.call();
 
                         } catch (Exception ex) {
-                            Quests.printSevere("Error retrieving data from Mojang account database. Error log:");
+                        	getLogger().severe("Error retrieving data from Mojang account database. Error log:");
                             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
                             return;
                         }
@@ -5368,18 +5345,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         }
 
-                        Quests.printInfo("Conversion completed: " + converted + " Converted. " + failed + " Failed.");
-                        Quests.printInfo("Old data files stored in /Quests/data/old");
+                        getLogger().info("Conversion completed: " + converted + " Converted. " + failed + " Failed.");
+                        getLogger().info("Old data files stored in /Quests/data/old");
                     }
 
                 });
 
             } else {
-                Quests.printInfo("No Questers to convert!");
+            	getLogger().info("No Questers to convert!");
             }
 
         } else {
-            Quests.printInfo("Data folder does not exist!");
+        	getLogger().info("Data folder does not exist!");
         }
 
     }

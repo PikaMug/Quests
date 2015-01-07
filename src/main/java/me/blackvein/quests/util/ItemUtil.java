@@ -11,7 +11,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemUtil implements ColorUtil {
-
+	
+	static Quests plugin;
+	
     /**
      * Will compare stacks by name, amount, data, display name/lore and enchantments
      *
@@ -75,7 +77,7 @@ public class ItemUtil implements ColorUtil {
     }
 
     //Formats ->  name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
-    //
+    //Returns null if invalid format
     public static ItemStack readItemStack(String data) {
 
         if (data == null) {
@@ -92,7 +94,7 @@ public class ItemUtil implements ColorUtil {
                 meta = stack.getItemMeta();
             } else if (arg.startsWith("amount-")) {
             	if(arg.length() >= 8 && stack != null)
-            		stack.setAmount(Integer.parseInt(arg.substring(7)));
+            	stack.setAmount(Integer.parseInt(arg.substring(7)));
             } else if (arg.startsWith("data-")) {
                 stack.setDurability(Short.parseShort(arg.substring(5)));
             } else if (arg.startsWith("enchantment-")) {
@@ -103,6 +105,8 @@ public class ItemUtil implements ColorUtil {
                 meta.setDisplayName(arg.substring(5));
             } else if (arg.startsWith("lore-")) {
                 lore.add(arg.substring(5));
+            } else {
+            	plugin.getLogger().severe("Malformed itemstack data in quests.yml: " + arg);
             }
 
         }
