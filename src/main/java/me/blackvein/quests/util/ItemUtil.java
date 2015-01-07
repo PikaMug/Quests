@@ -107,6 +107,7 @@ public class ItemUtil implements ColorUtil {
                 lore.add(arg.substring(5));
             } else {
             	plugin.getLogger().severe("Malformed itemstack data in quests.yml: " + arg);
+            	return null;
             }
 
         }
