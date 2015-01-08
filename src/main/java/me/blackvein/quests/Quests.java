@@ -3514,7 +3514,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 deliveryMessages.addAll(config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".delivery-messages"));
 
                                 for (String item : itemsToDeliver) {
-
+                                	getLogger().severe("item: " + item);
                                     ItemStack is = ItemUtil.readItemStack(item);
 
                                     if (is != null) {

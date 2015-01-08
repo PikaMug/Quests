@@ -79,10 +79,11 @@ public class ItemUtil implements ColorUtil {
     //Formats ->  name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
     //Returns null if invalid format
     public static ItemStack readItemStack(String data) {
-
+    	plugin.getLogger().severe("data: " + data);
         if (data == null) {
             return null;
         }
+        
         ItemStack stack = null;
         String[] args = data.split(":");
         ItemMeta meta = null;
@@ -93,7 +94,6 @@ public class ItemUtil implements ColorUtil {
                 stack = new ItemStack(Material.matchMaterial(arg.substring(3)));
                 meta = stack.getItemMeta();
             } else if (arg.startsWith("amount-")) {
-            	if(arg.length() >= 8 && stack != null)
             	stack.setAmount(Integer.parseInt(arg.substring(7)));
             } else if (arg.startsWith("data-")) {
                 stack.setDurability(Short.parseShort(arg.substring(5)));
