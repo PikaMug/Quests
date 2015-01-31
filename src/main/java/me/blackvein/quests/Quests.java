@@ -2852,16 +2852,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
         }
 
+        if (getServer().getPluginManager().getPlugin("PhatLoots") != null) {
         if (config.contains("quests." + questName + ".rewards.phat-loots")) {
 
             if (Quests.checkList(config.getList("quests." + questName + ".rewards.phat-loots"), String.class)) {
 
                 for (String loot : config.getStringList("quests." + questName + ".rewards.phat-loots")) {
 
-                    if (PhatLootsAPI.getPhatLoot(loot) == null) {
-                        skipQuestProcess("" + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
-                    }
-
+                	if (PhatLootsAPI.getPhatLoot(loot) == null) {
+                			
+                		skipQuestProcess("" + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
+                		
+                	}
+                		
                 }
 
                 quest.phatLootRewards.clear();
@@ -2871,7 +2874,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 skipQuestProcess("phat-loots: Reward in Quest " + quest.name + " is not a list of PhatLoots!");
             }
         }
-
+        }
+        
         if (config.contains("quests." + questName + ".rewards.custom-rewards")) {
             populateCustomRewards(config);
         }
