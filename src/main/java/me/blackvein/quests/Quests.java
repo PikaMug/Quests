@@ -2618,7 +2618,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 if (config.contains("quests." + questName + ".guiDisplay")) {
 
                     String item = config.getString("quests." + questName + ".guiDisplay");
-                    quest.guiDisplay = ItemUtil.readItemStack(item);
+                    try {
+                    	ItemStack stack = ItemUtil.readItemStack(item);
+                    	
+                    	if (stack != null) {
+                    		quest.guiDisplay = stack;
+                    	}
+                    } catch (Exception e) {
+                    	instance.getLogger().warning(item + " in items: Gui Display in Quest " + quest.name + "is not properly formatted!");
+                    }
 
                 }
 
@@ -3514,8 +3522,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                                 deliveryMessages.addAll(config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".delivery-messages"));
 
                                 for (String item : itemsToDeliver) {
+                                	// TODO
+                                	getLogger().severe("hello");
+                                	getLogger().info("hello");
                                 	getLogger().severe("item: " + item);
-                                    ItemStack is = ItemUtil.readItemStack(item);
+                                    ItemStack is = ItemUtil.readItemStack("" + item);
 
                                     if (is != null) {
 

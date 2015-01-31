@@ -139,10 +139,10 @@ public class Quester {
         
 		private static final long serialVersionUID = 5475202358792520975L;
 
-		@SuppressWarnings("unused")
+		/*@SuppressWarnings("unused")
 		public void hardClear() {
             super.clear();
-        }
+        }*/
         
         @Override
         public Integer put(String key, Integer val) {
@@ -318,11 +318,17 @@ public class Quester {
     }
     
     public Stage getCurrentStage(Quest quest) {
-        return quest.getStage(currentQuests.get(quest));
+    	if (currentQuests.containsKey(quest)) {
+    		return quest.getStage(currentQuests.get(quest));
+    	}
+        return null;
     }
 
     public QuestData getQuestData(Quest quest) {
-        return questData.get(quest);
+    	if (questData.containsKey(quest)) {
+    		return questData.get(quest);
+    	}
+    	return null;
     }
 
     public void takeQuest(Quest q, boolean override) {
@@ -609,7 +615,7 @@ public class Quester {
             for (EntityType e2 : getQuestData(quest).mobsKilled) {
 
                 if (e == e2) {
-                	if (getQuestData(quest).mobNumKilled.size() > getQuestData(quest).mobsKilled.indexOf(e2) & getCurrentStage(quest).mobNumToKill.size() > getCurrentStage(quest).mobsToKill.indexOf(e)) {
+                	if (getQuestData(quest).mobNumKilled.size() > getQuestData(quest).mobsKilled.indexOf(e2) && getCurrentStage(quest).mobNumToKill.size() > getCurrentStage(quest).mobsToKill.indexOf(e)) {
 
                 		if (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2)) < getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))) {
 
@@ -710,7 +716,7 @@ public class Quester {
             for (Integer n2 : getQuestData(quest).citizensKilled) {
 
                 if (n.equals(n2)) {
-                    if (getQuestData(quest).citizenNumKilled.size() > getQuestData(quest).citizensKilled.indexOf(n2) & getCurrentStage(quest).citizenNumToKill.size() > getCurrentStage(quest).citizensToKill.indexOf(n)) {
+                    if (getQuestData(quest).citizenNumKilled.size() > getQuestData(quest).citizensKilled.indexOf(n2) && getCurrentStage(quest).citizenNumToKill.size() > getCurrentStage(quest).citizensToKill.indexOf(n)) {
 
                     	if (getQuestData(quest).citizenNumKilled.get(getQuestData(quest).citizensKilled.indexOf(n2)) < getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n))) {
 

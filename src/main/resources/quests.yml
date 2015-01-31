@@ -6,7 +6,7 @@ quests:
     redo-delay: 1800000
     requirements:
       items:
-        - name-wooden_pickaxe:amount-1
+        - name-wood_pickaxe:amount-1
       remove-items:
         - false
       fail-requirement-message: '<red>You must have a <purple>Wooden Pickaxe<red> first.'

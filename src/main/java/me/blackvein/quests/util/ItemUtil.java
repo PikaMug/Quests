@@ -73,13 +73,11 @@ public class ItemUtil implements ColorUtil {
         } else {
             return 0;
         }
-
     }
 
     //Formats ->  name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
     //Returns null if invalid format
     public static ItemStack readItemStack(String data) {
-    	plugin.getLogger().severe("data: " + data);
         if (data == null) {
             return null;
         }
@@ -89,9 +87,13 @@ public class ItemUtil implements ColorUtil {
         ItemMeta meta = null;
         LinkedList<String> lore = new LinkedList<String>();
         for (String arg : args) {
-
             if (arg.startsWith("name-")) {
-                stack = new ItemStack(Material.matchMaterial(arg.substring(3)));
+            	//Attempt to match item name. Returns null if invalid format
+            	try {
+            		stack = new ItemStack(Material.matchMaterial(arg.substring(5)));
+            	} catch (NullPointerException npe) {
+            		return null;
+            	}
                 meta = stack.getItemMeta();
             } else if (arg.startsWith("amount-")) {
             	stack.setAmount(Integer.parseInt(arg.substring(7)));
@@ -106,7 +108,6 @@ public class ItemUtil implements ColorUtil {
             } else if (arg.startsWith("lore-")) {
                 lore.add(arg.substring(5));
             } else {
-            	plugin.getLogger().severe("Malformed itemstack data in quests.yml: " + arg);
             	return null;
             }
 

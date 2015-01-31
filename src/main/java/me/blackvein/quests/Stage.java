@@ -46,7 +46,7 @@ public class Stage {
                 for (Integer i : this) {
 
                     Integer other = otherList.get(this.indexOf(i));
-                    if (other != i) {
+                    if (!other.equals(i)) {
                         return false;
                     }
                 }
@@ -75,7 +75,7 @@ public class Stage {
                 for (Integer i : this) {
 
                     Integer other = otherList.get(this.indexOf(i));
-                    if (other != i) {
+                    if (!other.equals(i)) {
                         return false;
                     }
                 }
@@ -102,7 +102,7 @@ public class Stage {
                 for (Integer i : this) {
 
                     Integer other = otherList.get(this.indexOf(i));
-                    if (other != i) {
+                    if (!other.equals(i)) {
                         return false;
                     }
                 }
@@ -141,6 +141,11 @@ public class Stage {
     public String startMessage = null;
     public String objectiveOverride = null;
 
+    public int hashCode() {
+    	  assert false : "hashCode not designed";
+    	  return 42; // any arbitrary constant will do
+    }
+    
     @Override
     public boolean equals(Object o) {
 

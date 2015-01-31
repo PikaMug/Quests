@@ -41,7 +41,7 @@ public class MiscUtil {
             }
 
             if (type.equals("d")) {
-                timeMilliSeconds += t * 86400000;
+                timeMilliSeconds += t * 86400000L;
             } else if (type.equals("h")) {
                 timeMilliSeconds += t * 3600000;
             } else if (type.equals("m")) {

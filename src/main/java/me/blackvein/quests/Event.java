@@ -69,6 +69,11 @@ public class Event {
     float health = -1;
     Location teleport;
 
+    public int hashCode() {
+    	assert false : "hashCode not designed";
+    	return 42; // any arbitrary constant will do
+    }
+    
     @Override
     public boolean equals(Object o) {
 

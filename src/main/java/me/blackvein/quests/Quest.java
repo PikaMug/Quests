@@ -272,7 +272,10 @@ public class Quest {
         }
 
         for (String q : blockQuests) {
-            if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(q)) {
+        	//TODO make sure this works
+        	Quest questObject = new Quest();
+        	questObject.name = q;
+            if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(questObject)) {
                 return false;
             }
         }
