@@ -78,7 +78,7 @@ public class Quest {
     public Stage getStage(int index) {
         try {
             return orderedStages.get(index);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
             return null;
         }
     }

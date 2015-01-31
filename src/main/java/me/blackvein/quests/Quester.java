@@ -307,7 +307,6 @@ public class Quester {
                 
                 }
                 
-                
             }
 
             stack.setItemMeta(book);
