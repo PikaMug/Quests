@@ -246,7 +246,7 @@ public class QuestMob {
             return false;
         }
 
-        if (!dropChances.equals(other.dropChances)) {
+        if (dropChances != other.dropChances) {
             return false;
         }
 

@@ -4390,7 +4390,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             }
 
-            text += BLUE + found.getCountPrompt() + "\n\n";
+            text += BLUE + found.getCountPrompt().toString() + "\n\n";
 
             return text;
 
