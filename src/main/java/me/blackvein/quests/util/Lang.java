@@ -293,7 +293,7 @@ public class Lang {
         langMap.put("stageEditorSetEnchantAmounts", "Set enchant amounts");
         langMap.put("stageEditorSetMobAmounts", "Set mob amounts");
         langMap.put("stageEditorSetEnchantments", "Set enchantments");
-        langMap.put("stageEditorSetItemNames", "Set item ids");
+        langMap.put("stageEditorSetItemNames", "Set item names");
         langMap.put("stageEditorSetKillIds", "Set NPC IDs");
         langMap.put("stageEditorSetMobTypes", "Set mob types");
         langMap.put("stageEditorSetKillLocations", "Set kill locations");

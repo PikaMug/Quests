@@ -19,4 +19,4 @@ events:
   RodEvent:
     message: "<green>Here you go!"
     items:
-      - id-346:amount-1
+      - name-fishing_rod:amount-1
