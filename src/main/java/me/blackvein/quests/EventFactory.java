@@ -253,13 +253,13 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (event.effects != null && event.effects.isEmpty() == false) {
 
-            LinkedList<String> effs = new LinkedList<String>();
             LinkedList<String> locs = new LinkedList<String>();
+            LinkedList<String> effs = new LinkedList<String>();
 
-            for (Entry<?, ?> e : event.effects.entrySet()) {
+            for (Entry<Location, Effect> e : event.effects.entrySet()) {
 
-                effs.add(((Effect) e.getKey()).toString());
-                locs.add(Quests.getLocationInfo((Location) e.getValue()));
+                locs.add(Quests.getLocationInfo((Location) e.getKey()));
+                effs.add(((Effect) e.getValue()).toString());
 
             }
 
