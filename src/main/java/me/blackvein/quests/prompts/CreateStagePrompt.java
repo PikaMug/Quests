@@ -2603,7 +2603,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoMobTypes"));
                     return new MobListPrompt();
                 } else {
-                    questFactory.selectedKillLocations.put((Player) context.getForWhom(), null);
+                    questFactory.selectedKillLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                     return new MobLocationPrompt();
                 }
             } else if (input.equalsIgnoreCase("4")) {
@@ -3010,7 +3010,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
             if (input.equalsIgnoreCase("1")) {
-                questFactory.selectedReachLocations.put((Player) context.getForWhom(), null);
+                questFactory.selectedReachLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 return new ReachLocationPrompt();
             } else if (input.equalsIgnoreCase("2")) {
                 if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) == null) {

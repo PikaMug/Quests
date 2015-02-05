@@ -86,7 +86,7 @@ public class NpcListener implements Listener {
 
             if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
 
-                if (plugin.checkQuester(player.getName()) == false) {
+                if (plugin.checkQuester(player.getUniqueId()) == false) {
 
                     boolean hasObjective = false;
 

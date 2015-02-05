@@ -211,7 +211,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 
@@ -230,60 +230,60 @@ public class PlayerListener implements Listener, ColorUtil {
 
                 if (!hasObjective) {
 
-                    if (plugin.questFactory.selectedBlockStarts.containsKey(evt.getPlayer())) {
+                    if (plugin.questFactory.selectedBlockStarts.containsKey(evt.getPlayer().getUniqueId())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
-                        plugin.questFactory.selectedBlockStarts.put(evt.getPlayer(), block);
+                        plugin.questFactory.selectedBlockStarts.put(evt.getPlayer().getUniqueId(), block);
                         evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
-                    } else if (plugin.eventFactory.selectedExplosionLocations.containsKey(evt.getPlayer())) {
+                    } else if (plugin.eventFactory.selectedExplosionLocations.containsKey(evt.getPlayer().getUniqueId())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
-                        plugin.eventFactory.selectedExplosionLocations.put(evt.getPlayer(), block);
+                        plugin.eventFactory.selectedExplosionLocations.put(evt.getPlayer().getUniqueId(), block);
                         evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
-                    } else if (plugin.eventFactory.selectedEffectLocations.containsKey(evt.getPlayer())) {
+                    } else if (plugin.eventFactory.selectedEffectLocations.containsKey(evt.getPlayer().getUniqueId())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
-                        plugin.eventFactory.selectedEffectLocations.put(evt.getPlayer(), block);
+                        plugin.eventFactory.selectedEffectLocations.put(evt.getPlayer().getUniqueId(), block);
                         evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
-                    } else if (plugin.eventFactory.selectedMobLocations.containsKey(evt.getPlayer())) {
+                    } else if (plugin.eventFactory.selectedMobLocations.containsKey(evt.getPlayer().getUniqueId())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
-                        plugin.eventFactory.selectedMobLocations.put(evt.getPlayer(), block);
+                        plugin.eventFactory.selectedMobLocations.put(evt.getPlayer().getUniqueId(), block);
                         evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
-                    } else if (plugin.eventFactory.selectedLightningLocations.containsKey(evt.getPlayer())) {
+                    } else if (plugin.eventFactory.selectedLightningLocations.containsKey(evt.getPlayer().getUniqueId())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
-                        plugin.eventFactory.selectedLightningLocations.put(evt.getPlayer(), block);
+                        plugin.eventFactory.selectedLightningLocations.put(evt.getPlayer().getUniqueId(), block);
                         evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
-                    } else if (plugin.eventFactory.selectedTeleportLocations.containsKey(evt.getPlayer())) {
+                    } else if (plugin.eventFactory.selectedTeleportLocations.containsKey(evt.getPlayer().getUniqueId())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
-                        plugin.eventFactory.selectedTeleportLocations.put(evt.getPlayer(), block);
+                        plugin.eventFactory.selectedTeleportLocations.put(evt.getPlayer().getUniqueId(), block);
                         evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
-                    } else if (plugin.questFactory.selectedKillLocations.containsKey(evt.getPlayer())) {
+                    } else if (plugin.questFactory.selectedKillLocations.containsKey(evt.getPlayer().getUniqueId())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
-                        plugin.questFactory.selectedKillLocations.put(evt.getPlayer(), block);
+                        plugin.questFactory.selectedKillLocations.put(evt.getPlayer().getUniqueId(), block);
                         evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
-                    } else if (plugin.questFactory.selectedReachLocations.containsKey(evt.getPlayer())) {
+                    } else if (plugin.questFactory.selectedReachLocations.containsKey(evt.getPlayer().getUniqueId())) {
 
                         Block block = evt.getClickedBlock();
                         Location loc = block.getLocation();
-                        plugin.questFactory.selectedReachLocations.put(evt.getPlayer(), block);
+                        plugin.questFactory.selectedReachLocations.put(evt.getPlayer().getUniqueId(), block);
                         evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get("questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + Quester.prettyItemString(block.getType().name()) + ChatColor.GOLD + ")");
 
                     } else if (player.isConversing() == false) {
@@ -358,7 +358,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
@@ -403,7 +403,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onBlockDamage(BlockDamageEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
@@ -424,7 +424,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
@@ -447,7 +447,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
@@ -492,7 +492,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onPlayerShearEntity(PlayerShearEntityEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
@@ -517,7 +517,7 @@ public class PlayerListener implements Listener, ColorUtil {
         if (evt.getOwner() instanceof Player) {
 
             Player p = (Player) evt.getOwner();
-            if (plugin.checkQuester(p.getName()) == false) {
+            if (plugin.checkQuester(p.getUniqueId()) == false) {
 
                 Quester quester = plugin.getQuester(p.getUniqueId());
 
@@ -540,7 +540,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onEnchantItem(EnchantItemEvent evt) {
 
-        if (plugin.checkQuester(evt.getEnchanter().getName()) == false) {
+        if (plugin.checkQuester(evt.getEnchanter().getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
 
@@ -652,7 +652,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
                     	Player player = (Player) evt.getEntity().getLastDamageCause().getEntity();
 
-                        if (plugin.checkQuester(player.getName()) == false) {
+                        if (plugin.checkQuester(player.getUniqueId()) == false) {
 
                             boolean okay = true;
 
@@ -684,7 +684,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
                     Player player = (Player) damager;
 
-                    if (plugin.checkQuester(player.getName()) == false) {
+                    if (plugin.checkQuester(player.getUniqueId()) == false) {
 
                         boolean okay = true;
 
@@ -718,7 +718,7 @@ public class PlayerListener implements Listener, ColorUtil {
         }
 
         Player player = evt.getEntity();
-        if (plugin.checkQuester(player.getName()) == false) {
+        if (plugin.checkQuester(player.getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(player.getUniqueId());
 
@@ -755,7 +755,7 @@ public class PlayerListener implements Listener, ColorUtil {
     public void onPlayerFish(PlayerFishEvent evt) {
 
         Player player = evt.getPlayer();
-        if (plugin.checkQuester(player.getName()) == false) {
+        if (plugin.checkQuester(player.getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(player.getUniqueId());
 
@@ -774,7 +774,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             Quester quester = new Quester(plugin);
             quester.id = evt.getPlayer().getUniqueId();
@@ -824,7 +824,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
@@ -856,7 +856,7 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent evt) {
 
-        if (plugin.checkQuester(evt.getPlayer().getName()) == false) {
+        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             boolean isPlayer = true;
             if (plugin.citizens != null) {

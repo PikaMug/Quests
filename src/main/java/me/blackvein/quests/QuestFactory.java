@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
@@ -41,10 +42,10 @@ import org.bukkit.inventory.ItemStack;
 public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
     public Quests quests;
-    Map<Player, Quest> editSessions = new HashMap<Player, Quest>();
-    Map<Player, Block> selectedBlockStarts = new HashMap<Player, Block>();
-    public Map<Player, Block> selectedKillLocations = new HashMap<Player, Block>();
-    public Map<Player, Block> selectedReachLocations = new HashMap<Player, Block>();
+    Map<UUID, Quest> editSessions = new HashMap<UUID, Quest>();
+    Map<UUID, Block> selectedBlockStarts = new HashMap<UUID, Block>();
+    public Map<UUID, Block> selectedKillLocations = new HashMap<UUID, Block>();
+    public Map<UUID, Block> selectedReachLocations = new HashMap<UUID, Block>();
     public HashSet<Player> selectingNPCs = new HashSet<Player>();
     public List<String> names = new LinkedList<String>();
     ConversationFactory convoCreator;
@@ -344,14 +345,14 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 if (quests.citizens != null) {
                     return new SetNpcStartPrompt();
                 } else {
-                    selectedBlockStarts.put((Player) context.getForWhom(), null);
+                    selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
                     return new BlockStartPrompt();
                 }
 
             } else if (input.equalsIgnoreCase("6")) {
 
                 if (quests.citizens != null) {
-                    selectedBlockStarts.put((Player) context.getForWhom(), null);
+                    selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
                     return new BlockStartPrompt();
                 } else if (Quests.worldGuard != null) {
                     return new RegionPrompt();

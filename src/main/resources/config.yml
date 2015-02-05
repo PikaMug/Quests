@@ -14,7 +14,7 @@ npc-effect: "note"
 max-quests: 0
 convert-data-on-startup: false
 quester-blacklist:
-  - "SomeGuy12345"
+  - "UUID"
   - "somePrefix*"
   - "*someSuffix"
   - "*someRegex*"

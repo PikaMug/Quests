@@ -2494,16 +2494,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (quester == null) {
 
             if (debug == true) {
-                getLogger().log(Level.WARNING, "Quester data for player \"" + id.toString() + "\" not stored. Attempting manual data retrieval..");
+                getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval..");
             }
 
             quester = new Quester(this);
             quester.id = id;
             if (quester.loadData() == false) {
-                getLogger().severe("Quester not found for player \"" + id.toString() + "\". Consider adding them to the Quester blacklist.");
+                getLogger().severe("Quester not found for UUID \"" + id.toString() + "\". Consider adding it to the Quester blacklist.");
             } else {
                 if (debug == true) {
-                    getLogger().log(Level.INFO, "Manual data retrieval succeeded for player \"" + id.toString() + "\"");
+                    getLogger().log(Level.INFO, "Manual data retrieval succeeded for UUID \"" + id.toString() + "\"");
                 }
                 questers.put(id, quester);
             }
@@ -4757,41 +4757,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         return false;
     }
 
-    public boolean checkQuester(String name) {
+    public boolean checkQuester(UUID uuid) {
 
         for (String s : questerBlacklist) {
 
-            if (Quests.checkQuester(name, s)) {
+            if (UUID.fromString(s) != null) {
                 return true;
             }
 
         }
 
         return false;
-
-    }
-
-    private static boolean checkQuester(String name, String check) {
-
-        if (check.endsWith("*") && check.startsWith("*") == false) {
-
-            check = check.substring(0, check.length());
-            return name.endsWith(check);
-
-        } else if (check.endsWith("*") == false && check.startsWith("*")) {
-
-            check = check.substring(1);
-            return name.startsWith(check);
-
-        } else if (check.endsWith("*") && check.startsWith("*")) {
-
-            check = check.substring(1, check.length());
-            return name.contains(check);
-
-        } else {
-            return name.equalsIgnoreCase(check);
-
-        }
 
     }
 

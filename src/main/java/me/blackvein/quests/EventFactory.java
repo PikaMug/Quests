@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.util.CK;
@@ -46,12 +47,12 @@ import org.bukkit.potion.PotionEffectType;
 public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
     Quests quests;
-    Map<Player, Quest> editSessions = new HashMap<Player, Quest>();
-    Map<Player, Block> selectedExplosionLocations = new HashMap<Player, Block>();
-    Map<Player, Block> selectedEffectLocations = new HashMap<Player, Block>();
-    Map<Player, Block> selectedMobLocations = new HashMap<Player, Block>();
-    Map<Player, Block> selectedLightningLocations = new HashMap<Player, Block>();
-    Map<Player, Block> selectedTeleportLocations = new HashMap<Player, Block>();
+    Map<UUID, Quest> editSessions = new HashMap<UUID, Quest>();
+    Map<UUID, Block> selectedExplosionLocations = new HashMap<UUID, Block>();
+    Map<UUID, Block> selectedEffectLocations = new HashMap<UUID, Block>();
+    Map<UUID, Block> selectedMobLocations = new HashMap<UUID, Block>();
+    Map<UUID, Block> selectedLightningLocations = new HashMap<UUID, Block>();
+    Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
     List<String> names = new LinkedList<String>();
     ConversationFactory convoCreator;
     File eventsFile;
@@ -724,7 +725,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             } else if (input.equalsIgnoreCase("6")) {
 
-                selectedExplosionLocations.put((Player) context.getForWhom(), null);
+                selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 return new ExplosionPrompt();
 
             } else if (input.equalsIgnoreCase("7")) {
@@ -745,7 +746,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             } else if (input.equalsIgnoreCase("11")) {
 
-                selectedLightningLocations.put((Player) context.getForWhom(), null);
+                selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 return new LightningPrompt();
 
             } else if (input.equalsIgnoreCase("12")) {
@@ -766,7 +767,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             } else if (input.equalsIgnoreCase("16")) {
 
-                selectedTeleportLocations.put((Player) context.getForWhom(), null);
+                selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 return new TeleportPrompt();
 
             } else if (input.equalsIgnoreCase("17")) {
@@ -1524,7 +1525,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
                     context.getForWhom().sendRawMessage(RED + Lang.get("eventEditorMustAddEffects"));
                     return new EffectListPrompt();
                 } else {
-                    selectedEffectLocations.put((Player) context.getForWhom(), null);
+                    selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                     return new EffectLocationPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
@@ -2085,7 +2086,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
             } else if (input.equalsIgnoreCase("2")) {
                 return new MobTypePrompt(mobIndex, questMob);
             } else if (input.equalsIgnoreCase("3")) {
-                selectedMobLocations.put((Player) context.getForWhom(), null);
+                selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 return new MobLocationPrompt(mobIndex, questMob);
             } else if (input.equalsIgnoreCase("4")) {
                 return new MobAmountPrompt(mobIndex, questMob);
