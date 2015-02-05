@@ -571,7 +571,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
         for (String s : config.getStringList("quester-blacklist")) {
-            questerBlacklist.add(s);
+        	if (!s.equals("UUID")) {
+        		questerBlacklist.add(s);
+        	}
         }
 
         try {
@@ -4760,11 +4762,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public boolean checkQuester(UUID uuid) {
 
         for (String s : questerBlacklist) {
-
-            if (UUID.fromString(s) != null) {
-                return true;
-            }
-
+        	
+        	try {
+        		UUID.fromString(s);
+        		return true;
+        	} catch (IllegalArgumentException e) {
+        		e.printStackTrace();
+        	}
+        	
         }
 
         return false;

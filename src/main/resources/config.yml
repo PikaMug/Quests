@@ -15,6 +15,6 @@ max-quests: 0
 convert-data-on-startup: false
 quester-blacklist:
   - "UUID"
-  - "somePrefix*"
-  - "*someSuffix"
-  - "*someRegex*"
+  - "UUID"
+  - "UUID"
+  - "UUID"
