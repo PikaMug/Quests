@@ -76,9 +76,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
 
         Player player = (Player) abandonedEvent.getContext().getForWhom();
-        selectedBlockStarts.remove(player);
-        selectedKillLocations.remove(player);
-        selectedReachLocations.remove(player);
+        selectedBlockStarts.remove(player.getUniqueId());
+        selectedKillLocations.remove(player.getUniqueId());
+        selectedReachLocations.remove(player.getUniqueId());
 
     }
 
@@ -599,25 +599,25 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
 
-                    Block block = selectedBlockStarts.get(player);
+                    Block block = selectedBlockStarts.get(player.getUniqueId());
                     if (block != null) {
                         Location loc = block.getLocation();
                         context.setSessionData(CK.Q_START_BLOCK, loc);
-                        selectedBlockStarts.remove(player);
+                        selectedBlockStarts.remove(player.getUniqueId());
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("questEditorNoStartBlockSelected"));
                         return new BlockStartPrompt();
                     }
 
                 } else {
-                    selectedBlockStarts.remove(player);
+                    selectedBlockStarts.remove(player.getUniqueId());
                 }
 
                 return new CreateMenuPrompt();
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
-                selectedBlockStarts.remove(player);
+                selectedBlockStarts.remove(player.getUniqueId());
                 context.setSessionData(CK.Q_START_BLOCK, null);
                 return new CreateMenuPrompt();
 

@@ -77,11 +77,11 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
     public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
 
         Player player = (Player) abandonedEvent.getContext().getForWhom();
-        selectedExplosionLocations.remove(player);
-        selectedEffectLocations.remove(player);
-        selectedMobLocations.remove(player);
-        selectedLightningLocations.remove(player);
-        selectedTeleportLocations.remove(player);
+        selectedExplosionLocations.remove(player.getUniqueId());
+        selectedEffectLocations.remove(player.getUniqueId());
+        selectedMobLocations.remove(player.getUniqueId());
+        selectedLightningLocations.remove(player.getUniqueId());
+        selectedTeleportLocations.remove(player.getUniqueId());
 
     }
 
@@ -1282,7 +1282,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
 
-                Block block = selectedExplosionLocations.get(player);
+                Block block = selectedExplosionLocations.get(player.getUniqueId());
                 if (block != null) {
 
                     Location loc = block.getLocation();
@@ -1296,7 +1296,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
                     locs.add(Quests.getLocationInfo(loc));
                     context.setSessionData(CK.E_EXPLOSIONS, locs);
-                    selectedExplosionLocations.remove(player);
+                    selectedExplosionLocations.remove(player.getUniqueId());
 
                 } else {
                     player.sendMessage(RED + Lang.get("eventEditorSelectBlockFirst"));
@@ -1308,12 +1308,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
                 context.setSessionData(CK.E_EXPLOSIONS, null);
-                selectedExplosionLocations.remove(player);
+                selectedExplosionLocations.remove(player.getUniqueId());
                 return new CreateMenuPrompt();
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 
-                selectedExplosionLocations.remove(player);
+                selectedExplosionLocations.remove(player.getUniqueId());
                 return new CreateMenuPrompt();
 
             } else {
@@ -1589,7 +1589,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
 
-                Block block = selectedEffectLocations.get(player);
+                Block block = selectedEffectLocations.get(player.getUniqueId());
                 if (block != null) {
 
                     Location loc = block.getLocation();
@@ -1603,7 +1603,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
                     locs.add(Quests.getLocationInfo(loc));
                     context.setSessionData(CK.E_EFFECTS_LOCATIONS, locs);
-                    selectedEffectLocations.remove(player);
+                    selectedEffectLocations.remove(player.getUniqueId());
 
                 } else {
                     player.sendMessage(RED + Lang.get("eventEditorSelectBlockFirst"));
@@ -1614,7 +1614,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 
-                selectedEffectLocations.remove(player);
+                selectedEffectLocations.remove(player.getUniqueId());
                 return new EffectListPrompt();
 
             } else {
@@ -1664,7 +1664,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
                     effects.add(input.toUpperCase());
                     context.setSessionData(CK.E_EFFECTS, effects);
-                    selectedEffectLocations.remove(player);
+                    selectedEffectLocations.remove(player.getUniqueId());
                     return new EffectListPrompt();
 
                 } else {
@@ -1674,7 +1674,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             } else {
 
-                selectedEffectLocations.remove(player);
+                selectedEffectLocations.remove(player.getUniqueId());
                 return new EffectListPrompt();
 
             }
@@ -2307,13 +2307,13 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
 
-                Block block = selectedMobLocations.get(player);
+                Block block = selectedMobLocations.get(player.getUniqueId());
                 if (block != null) {
 
                     Location loc = block.getLocation();
 
                     questMob.setSpawnLocation(loc);
-                    selectedMobLocations.remove(player);
+                    selectedMobLocations.remove(player.getUniqueId());
 
                 } else {
                     player.sendMessage(RED + Lang.get("eventEditorSelectBlockFirst"));
@@ -2324,7 +2324,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 
-                selectedMobLocations.remove(player);
+                selectedMobLocations.remove(player.getUniqueId());
                 return new QuestMobPrompt(mobIndex, questMob);
 
             } else {
@@ -2395,7 +2395,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
 
-                Block block = selectedLightningLocations.get(player);
+                Block block = selectedLightningLocations.get(player.getUniqueId());
                 if (block != null) {
 
                     Location loc = block.getLocation();
@@ -2409,7 +2409,7 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
                     locs.add(Quests.getLocationInfo(loc));
                     context.setSessionData(CK.E_LIGHTNING, locs);
-                    selectedLightningLocations.remove(player);
+                    selectedLightningLocations.remove(player.getUniqueId());
 
                 } else {
                     player.sendMessage(RED + Lang.get("eventEditorSelectBlockFirst"));
@@ -2421,12 +2421,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
                 context.setSessionData(CK.E_LIGHTNING, null);
-                selectedLightningLocations.remove(player);
+                selectedLightningLocations.remove(player.getUniqueId());
                 return new CreateMenuPrompt();
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 
-                selectedLightningLocations.remove(player);
+                selectedLightningLocations.remove(player.getUniqueId());
                 return new CreateMenuPrompt();
 
             } else {
@@ -2803,13 +2803,13 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
 
-                Block block = selectedTeleportLocations.get(player);
+                Block block = selectedTeleportLocations.get(player.getUniqueId());
                 if (block != null) {
 
                     Location loc = block.getLocation();
 
                     context.setSessionData(CK.E_TELEPORT, Quests.getLocationInfo(loc));
-                    selectedTeleportLocations.remove(player);
+                    selectedTeleportLocations.remove(player.getUniqueId());
 
                 } else {
                     player.sendMessage(RED + Lang.get("eventEditorSelectBlockFirst"));
@@ -2821,12 +2821,12 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
                 context.setSessionData(CK.E_TELEPORT, null);
-                selectedTeleportLocations.remove(player);
+                selectedTeleportLocations.remove(player.getUniqueId());
                 return new CreateMenuPrompt();
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 
-                selectedTeleportLocations.remove(player);
+                selectedTeleportLocations.remove(player.getUniqueId());
                 return new CreateMenuPrompt();
 
             } else {

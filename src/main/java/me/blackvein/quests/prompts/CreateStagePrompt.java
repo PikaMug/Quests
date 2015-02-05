@@ -2836,7 +2836,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
 
-                Block block = questFactory.selectedKillLocations.get(player);
+                Block block = questFactory.selectedKillLocations.get(player.getUniqueId());
                 if (block != null) {
 
                     Location loc = block.getLocation();
@@ -2850,7 +2850,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     locs.add(Quests.getLocationInfo(loc));
                     context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
-                    questFactory.selectedKillLocations.remove(player);
+                    questFactory.selectedKillLocations.remove(player.getUniqueId());
 
                 } else {
                     player.sendMessage(RED + Lang.get("stageEditorNoBlock"));
@@ -2861,7 +2861,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 
-                questFactory.selectedKillLocations.remove(player);
+                questFactory.selectedKillLocations.remove(player.getUniqueId());
                 return new MobListPrompt();
 
             } else {
@@ -3102,7 +3102,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
 
-                Block block = questFactory.selectedReachLocations.get(player);
+                Block block = questFactory.selectedReachLocations.get(player.getUniqueId());
                 if (block != null) {
 
                     Location loc = block.getLocation();
@@ -3116,7 +3116,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     locs.add(Quests.getLocationInfo(loc));
                     context.setSessionData(pref + CK.S_REACH_LOCATIONS, locs);
-                    questFactory.selectedReachLocations.remove(player);
+                    questFactory.selectedReachLocations.remove(player.getUniqueId());
 
                 } else {
                     player.sendMessage(RED + Lang.get("stageEditorNoBlockSelected"));
@@ -3127,7 +3127,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
 
-                questFactory.selectedReachLocations.remove(player);
+                questFactory.selectedReachLocations.remove(player.getUniqueId());
                 return new ReachListPrompt();
 
             } else {
