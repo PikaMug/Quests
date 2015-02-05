@@ -53,7 +53,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
             menu += "\n";
         }
         menu += GOLD + "" + BOLD + "0. " + RESET + "" + YELLOW + Lang.get("itemCreateLoadHand") + "\n";
-        menu += YELLOW + "" + BOLD + "1. " + RESET + "" + GOLD + Lang.get("itemCreateSetID") + "\n";
+        menu += YELLOW + "" + BOLD + "1. " + RESET + "" + GOLD + Lang.get("itemCreateSetName") + "\n";
         menu += YELLOW + "" + BOLD + "2. " + RESET + "" + GOLD + Lang.get("itemCreateSetAmount") + "\n";
         menu += YELLOW + "" + BOLD + "3. " + RESET + "" + GOLD + Lang.get("itemCreateSetData") + "\n";
         menu += YELLOW + "" + BOLD + "4. " + RESET + "" + GOLD + Lang.get("itemCreateSetEnchs") + "\n";
@@ -116,7 +116,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
             if (cc.getSessionData("tempName") != null) {
                 return new AmountPrompt();
             } else {
-                cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoID"));
+                cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoName"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
@@ -143,7 +143,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
             if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
                 return new NamePrompt();
             } else {
-                cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
+                cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
@@ -152,7 +152,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
             if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
                 return new LorePrompt();
             } else {
-                cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
+                cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
@@ -212,7 +212,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                 cc.setSessionData("newItem", Boolean.TRUE);
 
             } else {
-                cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoIDAmount"));
+                cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(oldPrompt);
             }
 
@@ -230,7 +230,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext cc) {
-            return YELLOW + Lang.get("itemCreateEnterID");
+            return YELLOW + Lang.get("itemCreateEnterName");
         }
 
         @Override
@@ -248,7 +248,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
                 Material mat = ItemData.getMaterial(input);
                 if (mat == null) {
-                    cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidID"));
+                    cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidName"));
                     return new IDPrompt();
                 } else {
 
