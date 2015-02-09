@@ -205,7 +205,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (npcEffects) {
             getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
         }
-        getLogger().info("Enabled.");
 
         delayLoadQuestInfo();
     }
