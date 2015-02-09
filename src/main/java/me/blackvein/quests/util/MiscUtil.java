@@ -75,7 +75,6 @@ public class MiscUtil {
 
     public static EntityType getProperMobType(String properName) {
 
-        properName = unfixUnderscores(properName);
         properName = properName.toUpperCase();
         for (EntityType et : EntityType.values()) {
 
@@ -98,25 +97,6 @@ public class MiscUtil {
 
         s = s.substring(0, (index + 1)) + Character.toUpperCase(s.charAt(index + 1)) + s.substring(index + 2);
         s = s.replaceFirst("_", "");
-
-        return s;
-    }
-
-    private static String unfixUnderscores(String s) {
-
-        int max = s.length();
-
-        for (int i = 1; i < max; i++) {
-
-            if (Character.isUpperCase(s.charAt(i))) {
-
-                s = s.substring(0, i) + "_" + s.substring(i);
-                i++;
-                max++;
-
-            }
-
-        }
 
         return s;
     }
