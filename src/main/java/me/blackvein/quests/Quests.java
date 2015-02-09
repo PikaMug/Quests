@@ -3250,10 +3250,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".break-block-names")) {
 
-                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".break-block-names"), Integer.class)) {
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".break-block-names"), String.class)) {
                     breaknames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".break-block-names");
                 } else {
-                    stageFailed("break-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("break-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of strings!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".break-block-amounts")) {
@@ -3272,10 +3272,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".damage-block-names")) {
 
-                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-names"), Integer.class)) {
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-names"), String.class)) {
                     damagenames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-names");
                 } else {
-                    stageFailed("damage-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("damage-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of strings!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".damage-block-amounts")) {
@@ -3304,10 +3304,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".place-block-names")) {
 
-                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".place-block-names"), Integer.class)) {
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".place-block-names"), String.class)) {
                     placenames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".place-block-names");
                 } else {
-                    stageFailed("place-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("place-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of strings!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".place-block-amounts")) {
@@ -3336,10 +3336,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".use-block-names")) {
 
-                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".use-block-names"), Integer.class)) {
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".use-block-names"), String.class)) {
                     usenames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".use-block-names");
                 } else {
-                    stageFailed("use-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("use-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of strings!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".use-block-amounts")) {
@@ -3368,10 +3368,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".cut-block-names")) {
 
-                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-names"), Integer.class)) {
+                if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-names"), String.class)) {
                     cutnames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-names");
                 } else {
-                    stageFailed("cut-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    stageFailed("cut-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of strings!");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".cut-block-amounts")) {
