@@ -104,7 +104,7 @@ public class ItemUtil implements ColorUtil {
                 Enchantment e = Quests.getEnchantment(enchs[0]);
                 meta.addEnchant(e, Integer.parseInt(enchs[1]), true);
             } else if (arg.startsWith("displayname-")) {
-                meta.setDisplayName(arg.substring(5));
+                meta.setDisplayName(arg.substring(12));
             } else if (arg.startsWith("lore-")) {
                 lore.add(arg.substring(5));
             } else {
