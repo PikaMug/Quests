@@ -1,6 +1,6 @@
 name: Quests
 main: me.blackvein.quests.Quests
-version: 2.1.3
+version: 2.1.4
 description: Player questing system
 website: http://dev.bukkit.org/server-mods/quests/
 dev-url: https://github.com/Blackvein/Quests/
