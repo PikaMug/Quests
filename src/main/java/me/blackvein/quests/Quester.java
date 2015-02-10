@@ -1866,7 +1866,7 @@ public class Quester {
     }
 
     public static String prettyItemString(String itemName) {
-        String baseString = Material.getMaterial(itemName).toString();
+        String baseString = Material.matchMaterial(itemName).toString();
         String[] substrings = baseString.split("_");
         String prettyString = "";
         int size = 1;
@@ -2570,7 +2570,11 @@ public class Quester {
             }
 
             ConfigurationSection dataSec = data.getConfigurationSection("questData");
-
+            
+            if (dataSec.getKeys(false).isEmpty()) {
+            	return false;
+            }
+            
             for (String key : dataSec.getKeys(false)) {
 
                 ConfigurationSection questSec = dataSec.getConfigurationSection(key);
