@@ -90,6 +90,7 @@ public class Lang {
         langMap.put("questTooEarly", "You may not take <quest> again for another <time>.");
         langMap.put("questAlreadyCompleted", "You have already completed <quest>.");
         langMap.put("questInvalidLocation", "You may not take <quest> at this location.");
+        langMap.put("questInvalidDeliveryItem", "<item> is not a required item for this quest!");
 
         langMap.put("questSelectedLocation", "Selected location");
 
@@ -717,10 +718,10 @@ public class Lang {
         //Item Prompt
         langMap.put("itemCreateLoadHand", "Load item in hand");
         langMap.put("itemCreateSetName", "Set name");
-        langMap.put("itemCreateSetAmount", "Set Amount");
+        langMap.put("itemCreateSetAmount", "Set amount");
         langMap.put("itemCreateSetData", "Set data");
         langMap.put("itemCreateSetEnchs", "Add/clear enchantments");
-        langMap.put("itemCreateSetName", "Set name");
+        langMap.put("itemCreateSetDisplay", "Set display name");
         langMap.put("itemCreateSetLore", "Set lore");
 
         langMap.put("itemCreateEnterName", "Enter an item name, or 'cancel' to return.");
@@ -728,7 +729,7 @@ public class Lang {
         langMap.put("itemCreateEnterData", "Enter item data, or 'clear' to clear the data, or 'cancel' to return.");
         langMap.put("itemCreateEnterEnch", "Enter an enchantment name, or 'clear' to clear the enchantments, or 'cancel' to return.");
         langMap.put("itemCreateEnterLevel", "Enter a level (number) for <enchantment>");
-        langMap.put("itemCreateEnterName", "Enter item name, or 'clear' to clear the custom name, or 'cancel' to return.");
+        langMap.put("itemCreateEnterDisplay", "Enter item display name, or 'clear' to clear the display name, or 'cancel' to return.");
         langMap.put("itemCreateEnterLore", "Enter item lore, separating each line by a semi-colon ; or 'clear' to clear the lore, or 'cancel' to return.");
 
         langMap.put("itemCreateLoaded", "Item loaded.");

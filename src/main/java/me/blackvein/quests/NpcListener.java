@@ -12,6 +12,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Entity;
@@ -64,9 +65,9 @@ public class NpcListener implements Listener {
 
                     }
 
+                    NPC clicked = evt.getNPC();
+                    
                     if (found != null) {
-
-                        NPC clicked = evt.getNPC();
 
                         for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
                             if (n == clicked.getId()) {
@@ -78,6 +79,31 @@ public class NpcListener implements Listener {
 
                         break;
 
+                    } else if (!hand.getType().equals(Material.AIR)){
+                    	
+                        for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
+                            if (n == clicked.getId()) {
+                            	String text = "";
+                            	
+                            	if (hand.hasItemMeta()) {
+                            		text += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
+                            	}
+                            	
+                            	text += ChatColor.AQUA + Quester.prettyItemString(hand.getType().name()) + (hand.getDurability() != 0 ? (":" + hand.getDurability()) : "") + ChatColor.GRAY;
+                            	
+                            	if (hand.hasItemMeta()) {
+                            		text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
+                            	}
+                            	
+                            	text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
+                            	
+                            	evt.getClicker().sendMessage(Lang.get("questInvalidDeliveryItem").replaceAll("<item>", text));
+                                break;
+                            }
+                        }
+                        
+                        break;
+                        
                     }
 
                 }
