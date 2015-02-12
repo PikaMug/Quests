@@ -89,7 +89,7 @@ public class NpcListener implements Listener {
                             		text += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
                             	}
                             	
-                            	text += ChatColor.AQUA + Quester.prettyItemString(hand.getType().name()) + (hand.getDurability() != 0 ? (":" + hand.getDurability()) : "") + ChatColor.GRAY;
+                            	text += ChatColor.AQUA + Quester.prettyItemString(hand.getType().name()) + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
                             	
                             	if (hand.hasItemMeta()) {
                             		text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
