@@ -63,7 +63,7 @@ public class NpcEffectThread implements Runnable {
             showEffect_R3(player, npc);
         } else if (Bukkit.getBukkitVersion().contains("1.7.10")) {
             showEffect_R4(player, npc);
-        } else if (Bukkit.getBukkitVersion().contains("1.8.1")) {
+        } else if (Bukkit.getBukkitVersion().contains("1.8")) {
             showEffect_1_8_R1(player, npc);
         }
 
