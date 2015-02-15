@@ -4766,7 +4766,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         		UUID.fromString(s);
         		return true;
         	} catch (IllegalArgumentException e) {
-        		e.printStackTrace();
+                // Maybe only enable this when debugging?
+                // When it fails, it can generate gigabyte-sized log files.
+        		// e.printStackTrace();
         	}
         	
         }
