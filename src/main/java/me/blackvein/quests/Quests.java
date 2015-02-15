@@ -4986,9 +4986,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     public static DyeColor getDyeColor(String s) {
 
-        String col = Lang.getKey(s);
+        String col = Lang.getKey(MiscUtil.getCapitalized(s));
         col = col.replace("COLOR_", "");
-        DyeColor color = DyeColor.valueOf(col);
+        DyeColor color = null;
+        try {
+        	color = DyeColor.valueOf(col);
+        } catch (IllegalArgumentException e) {
+        	//Do nothing
+        }
 
         return color != null ? color : getDyeColorLegacy(s);
 
