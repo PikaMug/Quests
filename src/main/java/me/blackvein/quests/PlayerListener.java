@@ -603,6 +603,36 @@ public class PlayerListener implements Listener, ColorUtil {
                             }
                         }
 
+                    } else if (damager instanceof TNTPrimed) {
+                        TNTPrimed tnt = (TNTPrimed)damager;
+                        Entity source = tnt.getSource();
+
+                        if(source instanceof Player) {
+
+                            Player player = (Player) source;
+                            boolean okay = true;
+
+                            if (plugin.citizens != null) {
+                                if (CitizensAPI.getNPCRegistry().isNPC(player)) {
+                                    okay = false;
+                                }
+                            }
+
+                            if (okay) {
+
+                                Quester quester = plugin.getQuester(player.getUniqueId());
+
+                                for (Quest quest : quester.currentQuests.keySet()) {
+
+                                    if (quester.hasObjective(quest, "killMob")) {
+                                        quester.killMob(quest, evt.getEntity().getLocation(), evt.getEntity().getType());
+                                    }
+
+                                }
+
+                            }
+                        }
+
                     } else if (damager instanceof Player) {
 
                         boolean okay = true;
