@@ -4766,9 +4766,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         		UUID.fromString(s);
         		return true;
         	} catch (IllegalArgumentException e) {
-                // Maybe only enable this when debugging?
-                // When it fails, it can generate gigabyte-sized log files.
-        		// e.printStackTrace();
+                getLogger().warning(s + " in config.yml is not a valid UUID for quester-blacklist");
         	}
         	
         }
