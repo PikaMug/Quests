@@ -179,6 +179,14 @@ public class NpcEffectThread implements Runnable {
                 e.printStackTrace();
             }
 
+        } else {
+        	
+        	try {  		
+        		Eff_1_8_R1.valueOf(Quests.effect);
+        	} catch (Exception e) {
+        		Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
+        		e.printStackTrace();
+        	}
         }
 
     }
