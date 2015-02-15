@@ -33,6 +33,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.projectiles.ProjectileSource;
 
 public class PlayerListener implements Listener, ColorUtil {
 
@@ -566,19 +567,19 @@ public class PlayerListener implements Listener, ColorUtil {
     public void onEntityDeath(EntityDeathEvent evt) {
 
         if (evt.getEntity() instanceof Player == false) {
-
             if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 
                 EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
                 Entity damager = damageEvent.getDamager();
-
                 if (damager != null) {
 
                     if (damager instanceof Projectile) {
+                        Projectile projectile = (Projectile)damager;
+                        ProjectileSource source = projectile.getShooter();
 
-                        if(evt.getEntity().getLastDamageCause().getEntity() instanceof Player) {
+                        if(source instanceof Player) {
 
-                        	Player player = (Player) evt.getEntity().getLastDamageCause().getEntity();
+                        	Player player = (Player) source;
                             boolean okay = true;
 
                             if (plugin.citizens != null) {
