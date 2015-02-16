@@ -74,12 +74,11 @@ public class NpcEffectThread implements Runnable {
     	//Get and set eye location, because npc.getBukkitEntity() is deprecated.
     	Location eyeLoc = npc.getEntity().getLocation();
     	eyeLoc.setY(eyeLoc.getY() + 1.5);
-    	boolean longDistance = false;
     	
         if (Quests.effect.equalsIgnoreCase("enchant")) {
 
             try {
-                Eff_1_8_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, longDistance, 0, 1, 0, 1, 10, null);
+                Eff_1_8_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -87,7 +86,7 @@ public class NpcEffectThread implements Runnable {
         } else if (Quests.effect.equalsIgnoreCase("crit")) {
 
             try {
-                Eff_1_8_R1.CRIT.sendToPlayer(player, eyeLoc, longDistance, 0, 0, 0, (float) 0.35, 3, null);
+                Eff_1_8_R1.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -95,7 +94,7 @@ public class NpcEffectThread implements Runnable {
         } else if (Quests.effect.equalsIgnoreCase("spell")) {
 
             try {
-                Eff_1_8_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, longDistance, 0, 0, 0, 1, 3, null);
+                Eff_1_8_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -103,7 +102,7 @@ public class NpcEffectThread implements Runnable {
         } else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
 
             try {
-                Eff_1_8_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, longDistance, 0, 0, 0, (float) 0.35, 3, null);
+                Eff_1_8_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -111,7 +110,7 @@ public class NpcEffectThread implements Runnable {
         } else if (Quests.effect.equalsIgnoreCase("mobspell")) {
 
             try {
-                Eff_1_8_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, longDistance, 0, 0, 0, 1, 3, null);
+                Eff_1_8_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -121,7 +120,7 @@ public class NpcEffectThread implements Runnable {
             try {
                 Location old = eyeLoc;
                 Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
-                Eff_1_8_R1.NOTE.sendToPlayer(player, newLoc, longDistance, 0, 0, 0, 1, 1, null);
+                Eff_1_8_R1.NOTE.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -129,7 +128,7 @@ public class NpcEffectThread implements Runnable {
         } else if (Quests.effect.equalsIgnoreCase("portal")) {
 
             try {
-                Eff_1_8_R1.PORTAL.sendToPlayer(player, eyeLoc, longDistance, 0, 0, 0, 1, 5, null);
+                Eff_1_8_R1.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -138,7 +137,7 @@ public class NpcEffectThread implements Runnable {
 
             try {
                 Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
-                Eff_1_8_R1.RED_DUST.sendToPlayer(player, newLoc, longDistance, 0, 0, 0, 1, 1, null);
+                Eff_1_8_R1.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -146,7 +145,7 @@ public class NpcEffectThread implements Runnable {
         } else if (Quests.effect.equalsIgnoreCase("witch")) {
 
             try {
-                Eff_1_8_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, longDistance, 0, 0, 0, 1, 3, null);
+                Eff_1_8_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -156,7 +155,7 @@ public class NpcEffectThread implements Runnable {
             try {
                 Location old = eyeLoc;
                 Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
-                Eff_1_8_R1.SNOWBALL_POOF.sendToPlayer(player, newLoc, longDistance, 0, 0, 0, 1, 3, null);
+                Eff_1_8_R1.SNOWBALL_POOF.sendToPlayer(player, newLoc, 0, 0, 0, 1, 3, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -166,7 +165,7 @@ public class NpcEffectThread implements Runnable {
             try {
                 Location old = eyeLoc;
                 Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
-                Eff_1_8_R1.SPLASH.sendToPlayer(player, newLoc, longDistance, 0, 0, 0, 1, 4, null);
+                Eff_1_8_R1.SPLASH.sendToPlayer(player, newLoc, 0, 0, 0, 1, 4, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -174,15 +173,15 @@ public class NpcEffectThread implements Runnable {
         } else if (Quests.effect.equalsIgnoreCase("smoke")) {
 
             try {
-                Eff_1_8_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, longDistance, 0, 1, 0, 1, 20, null);
+                Eff_1_8_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         } else {
         	
-        	try {  		
-        		Eff_1_8_R1.valueOf(Quests.effect);
+        	try {
+        		Eff_1_8_R1.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
         	} catch (Exception e) {
         		Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
         		e.printStackTrace();
