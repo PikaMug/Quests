@@ -257,8 +257,11 @@ public class Quester {
             book.setTitle(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
             book.setAuthor(getPlayer().getName());
 
-            
-            if(currentQuests.isEmpty() == false) {
+            if(currentQuests.isEmpty()) {
+            	
+            	book.addPage(ChatColor.DARK_RED + Lang.get("journalNoQuests"));
+            	
+            } else {
                 
                 int currentLength = 0;
                 int currentLines = 0;
