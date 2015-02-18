@@ -814,7 +814,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     try {
 
-                        if (Material.getMaterial(s) != null) {
+                        if (Material.matchMaterial(s) != null) {
 
                             if (names.contains(s) == false) {
                                 names.add(s);
@@ -1008,7 +1008,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     try {
 
-                        if (Material.getMaterial(s) != null) {
+                        if (Material.matchMaterial(s) != null) {
 
                             if (names.contains(s) == false) {
                                 names.add(s);
@@ -1202,7 +1202,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     try {
 
-                        if (Material.getMaterial(s) != null) {
+                        if (Material.matchMaterial(s) != null) {
 
                             if (names.contains(s) == false) {
                                 names.add(s);
@@ -1396,7 +1396,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     try {
 
-                        if (Material.getMaterial(s) != null) {
+                        if (Material.matchMaterial(s) != null) {
 
                             if (names.contains(s) == false) {
                                 names.add(s);
@@ -1590,7 +1590,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     try {
 
-                        if (Material.getMaterial(s) != null) {
+                        if (Material.matchMaterial(s) != null) {
 
                             if (names.contains(s) == false) {
                                 names.add(s);
@@ -1934,7 +1934,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                     try {
 
-                        if (Material.getMaterial(s) != null) {
+                        if (Material.matchMaterial(s) != null) {
 
                             if (names.contains(s) == false) {
                                 names.add(s);
