@@ -2,11 +2,14 @@ package me.blackvein.quests;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
 import java.io.File;
 import java.util.Iterator;
+
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -575,9 +578,10 @@ public class PlayerListener implements Listener, ColorUtil {
 
                     if (damager instanceof Projectile) {
                         Projectile projectile = (Projectile)damager;
-                        ProjectileSource source = projectile.getShooter();
+                        @SuppressWarnings("deprecation")
+						ProjectileSource source = projectile.getShooter();
 
-                        if(source instanceof Player) {
+                        if (source instanceof Player) {
 
                         	Player player = (Player) source;
                             boolean okay = true;
