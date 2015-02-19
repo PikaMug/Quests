@@ -1142,7 +1142,7 @@ public class Lang {
 
                 if (newLangs) {
 
-                    File file = new File(plugin.getDataFolder(), "/lang/en_new.yml");
+                    File file = new File(plugin.getDataFolder(), "/lang/" + lang + "_new.yml");
                     if (file.exists()) {
                         file.delete();
                     }
@@ -1165,7 +1165,7 @@ public class Lang {
                         return;
                     }
 
-                    plugin.getLogger().info("There are new language phrases with the current version. They have been stored in /lang/en_new.yml");
+                    plugin.getLogger().info("There are new language phrases with the current version. They have been stored in /lang/"+ lang + "_new.yml");
 
                 }
 
