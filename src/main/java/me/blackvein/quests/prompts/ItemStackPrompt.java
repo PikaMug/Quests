@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import me.blackvein.quests.ItemData;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ColorUtil;
@@ -249,12 +248,12 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                     }
                 }
 
-                Material mat = ItemData.getMaterial(input);
+                Material mat = Material.matchMaterial(input.toUpperCase().replace(" ", "_"));
                 if (mat == null) {
                     cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidName"));
                     return new NamePrompt();
                 } else {
-
+                	System.out.println("name - " + mat.name());
                     cc.setSessionData("tempName", mat.name());
                     cc.setSessionData("tempAmount", 1);
 
