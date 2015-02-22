@@ -891,6 +891,10 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent evt) {
 
+    	if (evt.getFrom().getBlock().equals(evt.getTo().getBlock())) {
+    		return;
+    	}
+    	
         if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             boolean isPlayer = true;
