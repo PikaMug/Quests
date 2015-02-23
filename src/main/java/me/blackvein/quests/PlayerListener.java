@@ -369,7 +369,7 @@ public class PlayerListener implements Listener, ColorUtil {
             if (quester.currentQuests.isEmpty() == false) {
 
                 for (Quest quest : quester.currentQuests.keySet()) {
-                	if (quester.getCurrentStage(quest) != null)
+                	
                     if (quester.getCurrentStage(quest).chatEvents.isEmpty() == false) {
 
                         String chat = evt.getMessage();
@@ -758,7 +758,7 @@ public class PlayerListener implements Listener, ColorUtil {
             Quester quester = plugin.getQuester(player.getUniqueId());
 
             for (Quest quest : quester.currentQuests.keySet()) {
-            	if (quester.getCurrentStage(quest) != null)
+            	
                 if (quester.getCurrentStage(quest).deathEvent != null) {
                     quester.getCurrentStage(quest).deathEvent.fire(quester, quest);
                 }
@@ -840,7 +840,7 @@ public class PlayerListener implements Listener, ColorUtil {
             }
 
             for (Quest quest : quester.currentQuests.keySet()) {
-            	if (quester.getCurrentStage(quest) != null)
+            	
                 if (quester.getCurrentStage(quest).delay > -1) {
 
                     quester.startStageTimer(quest);
@@ -864,7 +864,7 @@ public class PlayerListener implements Listener, ColorUtil {
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
             for (Quest quest : quester.currentQuests.keySet()) {
-            	if (quester.getCurrentStage(quest) != null)
+            	
                 if (quester.getCurrentStage(quest).delay > -1) {
                     quester.stopStageTimer(quest);
                 }

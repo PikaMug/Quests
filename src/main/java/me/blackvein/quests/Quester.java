@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +41,7 @@ public class Quester {
     boolean hasJournal = false;
     
     public String questToTake;
-    public LinkedHashMap<Quest, Integer> currentQuests = new LinkedHashMap<Quest, Integer>() {
+    public ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
         
 		private static final long serialVersionUID = 6361484975823846780L;
 
