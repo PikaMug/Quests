@@ -41,7 +41,7 @@ public class Quester {
     boolean hasJournal = false;
     
     public String questToTake;
-    public Map<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
+    public ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
         
 		private static final long serialVersionUID = 6361484975823846780L;
 
