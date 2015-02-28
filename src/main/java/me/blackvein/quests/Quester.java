@@ -72,6 +72,7 @@ public class Quester {
         }
         
     };
+    
     int questPoints = 0;
     Quests plugin;
     public LinkedList<String> completedQuests = new LinkedList<String>() {
@@ -2570,7 +2571,10 @@ public class Quester {
             List<Integer> questStages = data.getIntegerList("currentStages");
 
             for (int i = 0; i < questNames.size(); i++) {
-                currentQuests.put(plugin.getQuest(questNames.get(i)), questStages.get(i));
+            	if (plugin.getQuest(questNames.get(i)) != null) {
+            		currentQuests.put(plugin.getQuest(questNames.get(i)), questStages.get(i));
+            	}
+                
             }
 
             ConfigurationSection dataSec = data.getConfigurationSection("questData");
