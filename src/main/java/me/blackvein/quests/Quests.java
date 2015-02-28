@@ -3,7 +3,6 @@ package me.blackvein.quests;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -78,14 +77,9 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -243,10 +237,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
-                
-                if (snoop) {
-                    snoop();
                 }
             }
         }, 5L);
@@ -5076,76 +5066,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static String getDyeString(DyeColor dc) {
 
         return Lang.get("COLOR_" + dc.name());
-
-    }
-
-    public void snoop() {
-
-        String ip = getServer().getIp().trim();
-        if (ip.isEmpty() || ip.startsWith("192") || ip.startsWith("localhost") || ip.startsWith("127") || ip.startsWith("0.0")) {
-            return;
-        }
-
-        snoop_delete();
-        snoop_insert();
-
-    }
-
-    private void snoop_insert() {
-
-        try {
-
-            Date date = new Date(System.currentTimeMillis());
-            Timestamp stamp = new Timestamp(date.getTime());
-            String arguments = "arg1=" + getServer().getIp()
-                    + "&arg2=" + ((Integer) getServer().getPort()).toString()
-                    + "&arg3=" + URLEncoder.encode(getServer().getServerName().replaceAll("'", "''").replaceAll("\"", "''"), "UTF-8")
-                    + "&arg4=" + URLEncoder.encode(getServer().getMotd().replaceAll("'", "''").replaceAll("\"", "''"), "UTF-8")
-                    + "&arg5=" + quests.size()
-                    + "&arg6=" + (citizens != null ? "true" : "false")
-                    + "&arg7=" + URLEncoder.encode(stamp.toString(), "UTF-8");
-            URL url = new URL("http://www.blackvein.net/php/quests.php?" + arguments);
-            URLConnection yc = url.openConnection();
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            yc.getInputStream()));
-            String inputLine;
-
-            while ((inputLine = in.readLine()) != null) {
-                if (inputLine.equalsIgnoreCase("false")) {
-                	getLogger().warning("An error occurred inserting data into the snooper database!");
-                }
-            }
-            in.close();
-
-        } catch (Exception e) {
-        	getLogger().warning("An error occurred inserting data into the snooper database!");
-        }
-
-    }
-
-    private void snoop_delete() {
-
-        try {
-
-            String arguments = "arg1=" + getServer().getIp() + "&arg2=" + ((Integer) getServer().getPort()).toString();
-            URL url = new URL("http://www.blackvein.net/php/quests_del.php?" + arguments);
-            URLConnection yc = url.openConnection();
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            yc.getInputStream()));
-            String inputLine;
-
-            while ((inputLine = in.readLine()) != null) {
-                if (inputLine.equalsIgnoreCase("false")) {
-                	getLogger().warning("An error occurred removing old data from the snooper database!");
-                }
-            }
-            in.close();
-
-        } catch (Exception e) {
-        	getLogger().warning("An error occurred removing old data from the snooper database!");
-        }
 
     }
 

@@ -8,7 +8,6 @@ debug-mode: false
 generate-files-on-join: true
 kill-delay: 600
 accept-timeout: 20
-snoop: true
 show-npc-effects: true
 npc-effect: "note"
 max-quests: 0
