@@ -14,7 +14,7 @@ quests:
       ordered:
         1:
           break-block-names:
-            - dirt
+            - stone
           break-block-amounts:
             - 10
     rewards:
