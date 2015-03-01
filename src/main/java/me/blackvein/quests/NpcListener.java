@@ -36,18 +36,18 @@ public class NpcListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(NPCRightClickEvent evt) {
-
+    	
         if (plugin.questFactory.selectingNPCs.contains(evt.getClicker())) {
             evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + "ID " + evt.getNPC().getId());
             return;
         }
-
+        
         if (evt.getClicker().isConversing() == false) {
 
             final Player player = evt.getClicker();
             final Quester quester = plugin.getQuester(player.getUniqueId());
             boolean delivery = false;
-
+            
             for (Quest quest : quester.currentQuests.keySet()) {
 
                 if (quester.hasObjective(quest, "deliverItem") && player.getItemInHand() != null) {
@@ -111,7 +111,7 @@ public class NpcListener implements Listener {
             }
 
             if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
-
+            	
                 if (plugin.checkQuester(player.getUniqueId()) == false) {
 
                     boolean hasObjective = false;
@@ -131,14 +131,12 @@ public class NpcListener implements Listener {
                     }
 
                     if (!hasObjective) {
-
+                    	
                         LinkedList<Quest> npcQuests = new LinkedList<Quest>();
 
                         for (Quest q : plugin.getQuests()) {
-
                             if(quester.currentQuests.containsKey(q))
                                 continue;
-                            
                             if (q.npcStart != null && q.npcStart.getId() == evt.getNPC().getId()) {
                                 if (Quests.ignoreLockedQuests && (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1)) {
                                     if (q.testRequirements(quester)) {
@@ -150,13 +148,12 @@ public class NpcListener implements Listener {
                             }
 
                         }
-
-                        if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
+                        
+                        if (npcQuests.isEmpty() == false && npcQuests.size() >= 1) {
 
                             if (plugin.questNPCGUIs.contains(evt.getNPC().getId())) {
                                 quester.showGUIDisplay(evt.getNPC(), npcQuests);
                                 return;
-
                             }
 
                             Conversation c = plugin.NPCConversationFactory.buildConversation((Conversable) player);
@@ -165,7 +162,7 @@ public class NpcListener implements Listener {
                             c.begin();
 
                         } else if (npcQuests.size() == 1) {
-
+                        	
                             Quest q = npcQuests.get(0);
 
                             if (!quester.completedQuests.contains(q.name)) {

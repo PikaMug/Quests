@@ -445,7 +445,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             quester.saveData();
 
         }
-        getLogger().info("Disabled.");
+        updateData();
 
     }
 
@@ -2459,6 +2459,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         quests.clear();
         events.clear();
         loadQuests();
+        loadData();
         loadEvents();
         loadConfig();
 
@@ -2606,9 +2607,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 }
 
-                if (config.contains("quests." + questName + ".guiDisplay")) {
+                if (config.contains("quests." + questName + ".gui-display")) {
 
-                    String item = config.getString("quests." + questName + ".guiDisplay");
+                    String item = config.getString("quests." + questName + ".gui-display");
                     try {
                     	ItemStack stack = ItemUtil.readItemStack(item);
                     	
@@ -2616,7 +2617,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     		quest.guiDisplay = stack;
                     	}
                     } catch (Exception e) {
-                    	instance.getLogger().warning(item + " in items: Gui Display in Quest " + quest.name + "is not properly formatted!");
+                    	instance.getLogger().warning(item + " in items: GUI Display in Quest " + quest.name + "is not properly formatted!");
                     }
 
                 }

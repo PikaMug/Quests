@@ -175,7 +175,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             }
 
             if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
-                text += BLUE + "" + BOLD + "3" + RESET + RED + " - " + Lang.get("questEditorFinishMessage") + " " + DARKRED + Lang.get("questRequiredNoneSet") + "\n";
+                text += BLUE + "" + BOLD + "3" + RESET + RED + " - " + Lang.get("questEditorFinishMessage") + " " + DARKRED + "(" + Lang.get("questRequiredNoneSet") + ")\n";
             } else {
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("questEditorFinishMessage") + " (\"" + context.getSessionData(CK.Q_FINISH_MESSAGE) + "\")\n";
             }
@@ -861,7 +861,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 return new GUIDisplayPrompt();
 
             } else {
-
+            	
                 return new CreateMenuPrompt();
 
             }
@@ -1037,6 +1037,13 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                     ConfigurationSection newSection = questSection.createSection("custom" + customNum);
                     saveQuest(context, newSection);
                     data.save(new File(quests.getDataFolder(), "quests.yml"));
+                    if (context.getSessionData(CK.Q_START_NPC) != null && context.getSessionData(CK.Q_GUIDISPLAY) != null) {
+                    	int i = (Integer) context.getSessionData(CK.Q_START_NPC);
+                    	if (!quests.questNPCGUIs.contains(i)) {
+                    		quests.questNPCGUIs.add(i);
+                    	}
+                    	quests.updateData();
+                    }
                     context.getForWhom().sendRawMessage(BOLD + Lang.get("questEditorSaved"));
 
                 } catch (IOException e) {
@@ -1277,7 +1284,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("finish-message", finish);
         cs.set("initial-event", initialEvent);
         cs.set("region", region);
-        cs.set("guiDisplay", ItemUtil.serialize(guiDisplay));
+        cs.set("gui-display", ItemUtil.serialize(guiDisplay));
 
         if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) || heroesPrimaryReq != null || heroesSecondaryReq != null || customReqs != null) {
 

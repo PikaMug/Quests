@@ -1457,7 +1457,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("killMob")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + mob.name();
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + " " + mob.name();
             message = message + " " + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob)) + "/" + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob));
             p.sendMessage(message);
             if (testComplete(quest)) {
@@ -1485,7 +1485,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("killNPC")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + npc.getName();
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + " " + npc.getName();
             message = message + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(npc.getId())) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(npc.getId()));
             p.sendMessage(message);
             if (testComplete(quest)) {
@@ -1494,7 +1494,7 @@ public class Quester {
 
         } else if (objective.equalsIgnoreCase("tameMob")) {
 
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("tame") + getCapitalized(mob.name());
+            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("tame") + " " + getCapitalized(mob.name());
             message = message + " " + getCurrentStage(quest).mobsToTame.get(mob) + "/" + getCurrentStage(quest).mobsToTame.get(mob);
             p.sendMessage(message);
             if (testComplete(quest)) {
