@@ -956,6 +956,7 @@ public class Lang {
         langMap.put("ENCHANTMENT_ARROW_KNOCKBACK", "Punch");
         langMap.put("ENCHANTMENT_DAMAGE_ALL", "Sharpness");
         langMap.put("ENCHANTMENT_DAMAGE_ARTHROPODS", "BaneOfArthropods");
+        langMap.put("ENCHANTMENT_DEPTH_STRIDER", "Depth Strider");
         langMap.put("ENCHANTMENT_DAMAGE_UNDEAD", "Smite");
         langMap.put("ENCHANTMENT_DIG_SPEED", "Efficiency");
         langMap.put("ENCHANTMENT_DURABILITY", "Unbreaking");
