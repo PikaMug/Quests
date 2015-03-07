@@ -18,7 +18,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
-
+        <repository>
+            <id>citizens</id>
+            <url>http://repo.citizensnpcs.co</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -51,18 +54,16 @@
             <systemPath>${project.basedir}/lib/craftbukkit-1.7.2-R0.4.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.citizensnpcs</groupId>
+            <groupId>net.citizensnpcs</groupId>
             <artifactId>citizens</artifactId>
-            <version>2.0.13-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/citizensapi-2.0.13-SNAPSHOT.jar</systemPath>
+            <version>2.0.14-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.aufdemrand</groupId>
             <artifactId>denizen</artifactId>
             <version>0.9.6-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/denizen-0.9.6-SNAPSHOT.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>

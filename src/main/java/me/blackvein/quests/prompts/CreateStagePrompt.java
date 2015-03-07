@@ -16,7 +16,7 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
-import net.aufdemrand.denizen.scripts.ScriptRegistry;
+import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.citizensnpcs.api.CitizensPlugin;
 
 import org.bukkit.DyeColor;
