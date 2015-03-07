@@ -60,9 +60,9 @@
         <dependency>
             <groupId>net.aufdemrand</groupId>
             <artifactId>denizen</artifactId>
-            <version>0.9.4-SNAPSHOT</version>
+            <version>0.9.6-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/denizen-0.9.4-SNAPSHOT.jar</systemPath>
+            <systemPath>${project.basedir}/lib/denizen-0.9.6-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
