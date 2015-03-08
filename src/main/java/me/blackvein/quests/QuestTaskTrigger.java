@@ -1,8 +1,9 @@
 package me.blackvein.quests;
 
+import net.aufdemrand.denizen.BukkitScriptEntryData;
 import net.aufdemrand.denizen.objects.dPlayer;
-import net.aufdemrand.denizen.scripts.ScriptRegistry;
-import net.aufdemrand.denizen.scripts.containers.core.TaskScriptContainer;
+import net.aufdemrand.denizencore.scripts.ScriptRegistry;
+import net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer;
 import org.bukkit.entity.Player;
 
 public class QuestTaskTrigger {
@@ -12,7 +13,8 @@ public class QuestTaskTrigger {
             return false;
         }
         TaskScriptContainer task_script = ScriptRegistry.getScriptContainerAs(theScriptName, TaskScriptContainer.class);
-        task_script.runTaskScript(dPlayer.mirrorBukkitPlayer(player), null, null);
+        BukkitScriptEntryData entryData = new BukkitScriptEntryData(dPlayer.mirrorBukkitPlayer(player), null);
+        task_script.runTaskScript(entryData, null);
         return true;
     }
 }
