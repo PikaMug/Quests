@@ -3860,14 +3860,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                             List<Integer> mobAmounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".mob-tame-amounts");
 
                             for (String mob : mobs) {
+                            	
+                                if (mob.equalsIgnoreCase("Wolf") || mob.equalsIgnoreCase("Ocelot") || mob.equalsIgnoreCase("Horse")) {
 
-                                if (mob.equalsIgnoreCase("Wolf")) {
-
-                                    oStage.mobsToTame.put(EntityType.WOLF, mobAmounts.get(mobs.indexOf(mob)));
-
-                                } else if (mob.equalsIgnoreCase("Ocelot")) {
-
-                                    oStage.mobsToTame.put(EntityType.OCELOT, mobAmounts.get(mobs.indexOf(mob)));
+                                    oStage.mobsToTame.put(EntityType.valueOf(mob.toUpperCase()), mobAmounts.get(mobs.indexOf(mob)));
 
                                 } else {
                                     stageFailed("" + mob + " inside mobs-to-tame: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid tameable mob!");
