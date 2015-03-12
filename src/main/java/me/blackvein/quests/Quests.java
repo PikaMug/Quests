@@ -3432,28 +3432,28 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     stageFailed("enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
                 }
 
-                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-names")) {
 
-                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-ids"), Integer.class)) {
+                    if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-names"), Integer.class)) {
 
-                        for (String item : config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-ids")) {
+                        for (String item : config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-names")) {
 
                             if (Material.matchMaterial(item) != null) {
                                 itemsToEnchant.add(Material.matchMaterial(item));
                             } else {
-                                stageFailed("" + item + " inside enchantment-item-ids: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+                                stageFailed("" + item + " inside enchantment-item-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
                             }
 
                         }
 
                     } else {
 
-                        stageFailed("enchantment-item-ids: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                        stageFailed("enchantment-item-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
 
                     }
 
                 } else {
-                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-ids:");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-names:");
                 }
 
                 if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantment-amounts")) {
