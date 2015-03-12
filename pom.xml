@@ -22,6 +22,10 @@
             <id>citizens</id>
             <url>http://repo.citizensnpcs.co</url>
         </repository>
+        <repository>
+			<id>sk89q-repo</id>
+			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
     </repositories>
 
     <dependencies>
@@ -94,19 +98,17 @@
             <systemPath>${project.basedir}/lib/PhatLoots.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>WorldEdit</artifactId>
-            <version>6.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/worldedit-bukkit-6.0-dist.jar</systemPath>
+			<groupId>com.sk89q</groupId>
+			<artifactId>worldedit</artifactId>
+			<version>LATEST</version>
+			<scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldguard</groupId>
-            <artifactId>WorldGuard</artifactId>
-            <version>6.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/worldguard-6.0.0-SNAPSHOT.jar</systemPath>
-        </dependency>
+		<dependency>
+			<groupId>com.sk89q</groupId>
+			<artifactId>worldguard</artifactId>
+			<version>LATEST</version>
+			<scope>provided</scope>
+		</dependency>
     </dependencies>
 
     <build>
