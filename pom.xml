@@ -31,28 +31,33 @@
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.8-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/craftbukkit-1.8.jar</systemPath>
+            <artifactId>bukkit</artifactId>
+            <version>1.8.3-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit1</artifactId>
+            <artifactId>bukkit</artifactId>
+            <version>1.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit1710</artifactId>
             <version>1.7.10-R0.1</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/craftbukkit-1.7.10-R0.1.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit3</artifactId>
+            <artifactId>bukkit179</artifactId>
             <version>1.7.9-R0.3</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/craftbukkit-1.7.9-R0.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit2</artifactId>
+            <artifactId>bukkit172</artifactId>
             <version>1.7.2-R0.4</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/craftbukkit-1.7.2-R0.4.jar</systemPath>
