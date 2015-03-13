@@ -2572,7 +2572,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     skipQuestProcess("Quest block \'" + questName + "\' is missing " + RED + "name:");
                 }
 
-                if (config.contains("quests." + questName + ".npc-giver-id")) {
+                if (citizens != null && config.contains("quests." + questName + ".npc-giver-id")) {
                     if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")) != null) {
 
                         quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id"));
