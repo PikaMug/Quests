@@ -2624,8 +2624,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (config.contains("quests." + questName + ".redo-delay")) {
 
-                    if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
-                        quest.redoDelay = config.getInt("quests." + questName + ".redo-delay");
+                    if (config.getLong("quests." + questName + ".redo-delay", -999) != -999) {
+                        quest.redoDelay = config.getLong("quests." + questName + ".redo-delay");
                     } else {
                         skipQuestProcess("redo-delay: for Quest " + quest.name + " is not a number!");
                     }
