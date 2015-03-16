@@ -3377,10 +3377,9 @@ if (quest != null) {
                 meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
                 
                 if (!meta.hasLore()) {
-                	String lore = ChatColor.DARK_GREEN + quests.get(i).description;
                 	LinkedList<String> lines = new LinkedList<String>();
                 
-                	lines = MiscUtil.makeLines(lore, " ", 100);
+                	lines = MiscUtil.makeLines(quests.get(i).description, " ", 40, ChatColor.DARK_GREEN);
                 
                 	meta.setLore(lines);
                 }

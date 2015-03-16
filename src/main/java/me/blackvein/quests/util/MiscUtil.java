@@ -1,6 +1,8 @@
 package me.blackvein.quests.util;
 
 import java.util.LinkedList;
+
+import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
@@ -116,7 +118,7 @@ public class MiscUtil {
         return s.trim().equals("") ? null : s.trim();
     }
     
-    public static LinkedList<String> makeLines(String s, String wordDelimiter, int lineLength) {
+    public static LinkedList<String> makeLines(String s, String wordDelimiter, int lineLength, ChatColor lineColor) {
         
         LinkedList<String> toReturn = new LinkedList<String>();
         String[] split = s.split(wordDelimiter);
@@ -126,7 +128,7 @@ public class MiscUtil {
         for (String piece : split) {
             
             if ((currentLength + piece.length()) > (lineLength + 1)) {
-                toReturn.add(line.replaceAll("^" + wordDelimiter, ""));
+                toReturn.add(lineColor + line.replaceAll("^" + wordDelimiter, ""));
                 line = piece + wordDelimiter;
                 currentLength = piece.length() + 1;
             } else {
@@ -137,7 +139,7 @@ public class MiscUtil {
         }
         
         if(line.equals("") == false)
-            toReturn.add(line);
+            toReturn.add(lineColor + line);
         
         return toReturn;
         
