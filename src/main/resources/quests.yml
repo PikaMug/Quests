@@ -1,7 +1,7 @@
 quests:
   Miner:
     name: 'Stone Miner'
-    ask-message: '<yellow>Could you mine <purple>10<yellow> blocks of <purple>Stone<yellow>, and deliver the <purple>10<yellow> pieces of <purple>Cobblestone<yellow> to me?.'
+    ask-message: '<yellow>Could you mine <purple>10<yellow> blocks of <purple>Stone<yellow>, and deliver the <purple>10<yellow> pieces <yellow>of <purple>Cobblestone<yellow> to me?.'
     finish-message: '<yellow>Well done. Here is your reward.'
     redo-delay: 1800000
     requirements:
