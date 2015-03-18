@@ -186,7 +186,7 @@ public class Lang {
         langMap.put("questEditorEditEnterQuestName", "Enter Quest name to edit, or 'cancel' to return");
         langMap.put("questEditorEnterAskMessage", "Enter ask message (or 'cancel' to return)");
         langMap.put("questEditorEnterFinishMessage", "Enter finish message (or 'cancel' to return)");
-        langMap.put("questEditorEnterRedoDelay", "Enter amount of time (in milliseconds), 0 to clear the redo delay or -1 to cancel ");
+        langMap.put("questEditorEnterRedoDelay", "Enter amount of time (in seconds), 0 to clear the redo delay or -1 to cancel ");
         langMap.put("questEditorEnterNPCStart", "Enter NPC ID, -1 to clear the NPC start or -2 to cancel");
         langMap.put("questEditorEnterBlockStart", "Right-click on a block to use as a start point, then enter 'done' to save, or enter 'clear' to clear the block start, or 'cancel' to return");
         langMap.put("questEditorEnterInitialEvent", "Enter an Event name, or enter 'clear' to clear the initial Event, or 'cancel' to return");
@@ -349,7 +349,7 @@ public class Lang {
         langMap.put("stageEditorChatEventsPrompt", "Enter an event name to add, or enter 'clear' to clear all chat events, or 'cancel' to return");
         langMap.put("stageEditorChatEventsTriggerPromptA", "Enter a chat trigger for");
         langMap.put("stageEditorChatEventsTriggerPromptB", "or enter 'cancel' to return.");
-        langMap.put("stageEditorDelayPrompt", "Enter time (in milliseconds), or enter 'clear' to clear the delay, or 'cancel' to return");
+        langMap.put("stageEditorDelayPrompt", "Enter time (in seconds), or enter 'clear' to clear the delay, or 'cancel' to return");
         langMap.put("stageEditorDelayMessagePrompt", "Enter delay message, or enter 'clear' to clear the message, or 'cancel' to return");
         langMap.put("stageEditorScriptPrompt", "Enter script name, or enter 'clear' to clear the script, or 'cancel' to return");
         langMap.put("stageEditorStartMessagePrompt", "Enter start message, or enter 'clear' to clear the message, or 'cancel' to return");
@@ -524,9 +524,9 @@ public class Lang {
         langMap.put("eventEditorMustSetStormDuration", "You must set a storm duration!");
         langMap.put("eventEditorStormCleared", "Storm data cleared.");
         langMap.put("eventEditorEnterStormWorld", "Enter a world name for the storm to occur in, or enter 'cancel' to return");
-        langMap.put("eventEditorEnterDuration", "Enter duration (in milliseconds)");
-        langMap.put("eventEditorAtLeastOneSecond", "Amount must be at least 1 second! (1000 milliseconds)");
-        langMap.put("eventEditorNotGreaterThanOneSecond", "is not greater than 1 second! (1000 milliseconds)");
+        langMap.put("eventEditorEnterDuration", "Enter duration (in seconds)");
+        langMap.put("eventEditorAtLeastOneSecond", "Amount must be at least 1 second!");
+        langMap.put("eventEditorNotGreaterThanOneSecond", "is not greater than 1 second!");
 
         langMap.put("eventEditorThunder", "Event Thunder");
         langMap.put("eventEditorMustSetThunderDuration", "You must set a thunder duration!");

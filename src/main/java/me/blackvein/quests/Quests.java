@@ -434,8 +434,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         vault = (Vault) getServer().getPluginManager().getPlugin("Vault");
     }
 
-    @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public void onDisable() {
 
     	getLogger().info("Saving Quester data.");
@@ -886,8 +885,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    @SuppressWarnings("deprecation")
-	private void adminGivePoints(final CommandSender cs, String[] args) {
+    private void adminGivePoints(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.givepoints")) {
 
             Player target = null;
@@ -942,8 +940,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    @SuppressWarnings("deprecation")
-	private void adminTakePoints(final CommandSender cs, String[] args) {
+    private void adminTakePoints(final CommandSender cs, String[] args) {
         
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.takepoints")) {
 
@@ -1000,8 +997,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    @SuppressWarnings("deprecation")
-	private void adminPoints(final CommandSender cs, String[] args) {
+    private void adminPoints(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.points")) {
 
             Player target = null;
@@ -1057,8 +1053,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    @SuppressWarnings("deprecation")
-	private void adminGive(final CommandSender cs, String[] args) {
+    private void adminGive(final CommandSender cs, String[] args) {
         
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.give")) {
 
@@ -1263,8 +1258,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    @SuppressWarnings("deprecation")
-	private void adminFinish(final CommandSender cs, String[] args) {
+    private void adminFinish(final CommandSender cs, String[] args) {
 
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {
 
@@ -1324,8 +1318,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    @SuppressWarnings("deprecation")
-	private void adminSetStage(final CommandSender cs, String[] args) {
+    private void adminSetStage(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.setstage")) {
 
             Player target = null;
@@ -1405,8 +1398,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    @SuppressWarnings("deprecation")
-	private void adminNextStage(final CommandSender cs, String[] args) {
+    private void adminNextStage(final CommandSender cs, String[] args) {
 
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.nextstage")) {
 
@@ -1466,8 +1458,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
-    @SuppressWarnings("deprecation")
-	private void adminQuit(final CommandSender cs, String[] args) {
+    private void adminQuit(final CommandSender cs, String[] args) {
 
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.quit")) {
 
@@ -2505,8 +2496,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     }
 
-    @SuppressWarnings("deprecation")
-	public Map<UUID, Quester> getOnlineQuesters() {
+    public Map<UUID, Quester> getOnlineQuesters() {
 
         Map<UUID, Quester> qs = new HashMap<UUID, Quester>();
 
@@ -2624,8 +2614,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (config.contains("quests." + questName + ".redo-delay")) {
 
-                    if (config.getLong("quests." + questName + ".redo-delay", -999) != -999) {
-                        quest.redoDelay = config.getLong("quests." + questName + ".redo-delay");
+                    if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
+                        quest.redoDelay = config.getInt("quests." + questName + ".redo-delay") * 1000;
                     } else {
                         skipQuestProcess("redo-delay: for Quest " + quest.name + " is not a number!");
                     }
@@ -4179,7 +4169,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".delay")) {
 
                 if (config.getLong("quests." + questName + ".stages.ordered." + s2 + ".delay", -999) != -999) {
-                    oStage.delay = config.getLong("quests." + questName + ".stages.ordered." + s2 + ".delay");
+                    oStage.delay = config.getInt("quests." + questName + ".stages.ordered." + s2 + ".delay") * 1000;
                 } else {
                     stageFailed("delay: in Stage " + s2 + " of Quest " + quest.name + " is not a number!");
                 }
@@ -4522,7 +4512,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static String getTime(long milliseconds) {
 
         String message = "";
-
+        
         long days = milliseconds / 86400000;
         long hours = (milliseconds % 86400000) / 3600000;
         long minutes = ((milliseconds % 86400000) % 3600000) / 60000;

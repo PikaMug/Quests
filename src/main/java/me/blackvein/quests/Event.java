@@ -467,7 +467,7 @@ public class Event {
             if (data.contains(eventKey + "storm-duration")) {
 
                 if (data.getInt(eventKey + "storm-duration", -999) != -999) {
-                    event.stormDuration = data.getInt(eventKey + "storm-duration");
+                    event.stormDuration = data.getInt(eventKey + "storm-duration") * 1000;
                 } else {
                     plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "storm-duration: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
                     return null;

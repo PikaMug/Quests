@@ -2625,8 +2625,9 @@ public class EventFactory implements ConversationAbandonedListener, ColorUtil {
                 for (String s : input.split(" ")) {
 
                     try {
-
-                        long l = Long.parseLong(s);
+                    	
+                    	int i = Integer.parseInt(s);
+                        long l = i * 1000;
 
                         if (l < 1000) {
                             player.sendMessage(PINK + s + " " + RED + Lang.get("eventEditorNotGreaterThanOneSecond"));

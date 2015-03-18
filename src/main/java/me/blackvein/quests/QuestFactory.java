@@ -968,9 +968,11 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.Q_REDO_DELAY, null);
             }
+            
             long delay;
             try {
-                delay = Long.parseLong(input);
+            	int i = Integer.parseInt(input);
+                delay = i * 1000;
             } catch (NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ITALIC + "" + RED + input + RESET + RED + " " + Lang.get("stageEditorInvalidNumber"));
                 //delay = MiscUtil.getTimeFromString(input);
@@ -1279,7 +1281,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         cs.set("name", name);
         cs.set("npc-giver-id", npcStart);
         cs.set("block-start", blockStart);
-        cs.set("redo-delay", redo);
+        if (redo != null) {
+        	cs.set("redo-delay", redo.intValue() / 1000);
+        }
         cs.set("ask-message", desc);
         cs.set("finish-message", finish);
         cs.set("initial-event", initialEvent);
@@ -1700,7 +1704,9 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
                 stage.set("chat-events", chatEvents);
                 stage.set("chat-event-triggers", chatEventTriggers);
             }
-            stage.set("delay", delay);
+            if (delay != null) {
+            	stage.set("delay", delay.intValue() / 1000);
+            }
             stage.set("delay-message", delayMessage);
             stage.set("objective-override", overrideDisplay);
             stage.set("start-message", startMessage);
