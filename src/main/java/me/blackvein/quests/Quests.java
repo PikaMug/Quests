@@ -698,10 +698,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (player.hasPermission("quests.journal")) {
             player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_JOURNAL_HELP"));
         }
-        if (player.hasPermission("quests.editor.editor")) {
+        if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.editor")) {
             player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_EDITOR_HELP"));
         }
-        if (player.hasPermission("quests.editor.events.editor")) {
+        if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.events.editor")) {
             player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_EVENTS_EDITOR_HELP"));
         }
         if (player.hasPermission("quests.stats")) {
@@ -718,7 +718,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             player.sendMessage(YELLOW + "/quest " + Lang.get("COMMAND_QUESTINFO_HELP"));
         }
 
-        if (player.hasPermission("quests.admin")) {
+        if (player.hasPermission("quests.admin.*") || player.hasPermission("quests.admin")) {
             player.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_HELP"));
         }
 
