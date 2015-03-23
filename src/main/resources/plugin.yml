@@ -64,6 +64,9 @@ permissions:
     quests.admin.nextstage:
         description: Immediately force Stage completion for a player
         default: op
+    quests.admin.purge:
+        description: Clear all Quests data of a player
+        default: op
     quests.admin.togglegui:
         description: Toggle GUI Quest Display on NPC's
         default: op

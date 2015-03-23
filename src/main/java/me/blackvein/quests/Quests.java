@@ -335,6 +335,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_FINISH"), 3); // finish [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_PURGE"), 2); // purge [player]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
         
@@ -439,10 +440,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     	getLogger().info("Saving Quester data.");
         for (Player p : getServer().getOnlinePlayers()) {
-
-            Quester quester = getQuester(p.getUniqueId());
-            quester.saveData();
-
+        	if (!questerBlacklist.contains(p.getUniqueId().toString())) {
+        		Quester quester = getQuester(p.getUniqueId());
+        		quester.saveData();
+        	}
         }
         updateData();
 
@@ -740,6 +741,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     @Override
     public boolean onCommand(final CommandSender cs, Command cmd, String label, String[] args) {
 
+    	if (cs instanceof Player) {
+    		if (checkQuester(((Player)cs).getUniqueId()) == true) {
+    			cs.sendMessage(RED + Lang.get("questBlacklisted"));
+    			return true;
+    		}
+    	}
+    	
         String error = checkCommand(cmd.getName(), args);
             
         if(error != null) {    
@@ -818,6 +826,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             adminFinish(cs, args);
 
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_PURGE"))) {
+
+            adminPurge(cs, args);
+        
         } else {
 
             cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
@@ -1511,6 +1523,45 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 }
 
+            }
+
+        } else {
+
+            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+        }
+    }
+    
+    private void adminPurge(final CommandSender cs, String[] args) {
+
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.purge")) {
+        	
+            UUID id;
+            
+            try {
+				id = UUIDFetcher.getUUIDOf(args[1]);
+				Quester quester = getQuester(id);
+				if (quester.loadData() == false) {
+					cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+					return;
+				}
+			} catch (Exception e) {
+				cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+				return;
+			}
+            
+            try {
+                final File dataFolder = new File(this.getDataFolder(), "data/");
+                final File found = new File(dataFolder, id + ".yml");
+                found.delete();
+                addToBlacklist(id);
+                
+                String msg = Lang.get("questPurged");
+                msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(id).getName() + GOLD);
+                cs.sendMessage(GOLD + msg);
+                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + id);
+            } catch (Exception e) {
+            	getLogger().info("Data file does not exist for " + id.toString());
             }
 
         } else {
@@ -2352,6 +2403,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
         } else{
@@ -2381,6 +2433,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         	}
         	if (cs.hasPermission("quests.admin.setstage")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
+        	}
+        	if (cs.hasPermission("quests.admin.purge")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
         	}
         	if (citizens != null && cs.hasPermission("quests.admin.togglegui")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
@@ -2476,16 +2531,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         if (quester == null) {
 
-            if (debug == true) {
+            if (debug == true && !questerBlacklist.contains(id.toString())) {
                 getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval..");
             }
 
             quester = new Quester(this);
             quester.id = id;
-            if (quester.loadData() == false) {
-                getLogger().severe("Quester not found for UUID \"" + id.toString() + "\". Consider adding it to the Quester blacklist.");
+            if (quester.loadData() == false && !questerBlacklist.contains(id.toString())) {
+            	getLogger().info("Quester not found for UUID \"" + id.toString() + "\". Consider adding them to the Quester blacklist.");
             } else {
-                if (debug == true) {
+                if (debug == true && !questerBlacklist.contains(id.toString())) {
                     getLogger().log(Level.INFO, "Manual data retrieval succeeded for UUID \"" + id.toString() + "\"");
                 }
                 questers.put(id, quester);
@@ -5264,5 +5319,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
 
     }
-
+    
+    public void addToBlacklist(UUID id) {
+    	List<String> blacklist = getConfig().getStringList("quester-blacklist");
+    	if (!blacklist.contains(id.toString())) {
+    		blacklist.add(id.toString());
+    		getConfig().set("quester-blacklist", blacklist);
+    		saveConfig();
+    	}
+    	if (!questerBlacklist.contains(id.toString())) {
+    		questerBlacklist.add(id.toString());
+    	}
+    }
 }

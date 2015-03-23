@@ -25,8 +25,7 @@ public class NpcEffectThread implements Runnable {
 
     }
 
-    @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public void run() {
 
         for (Player player : plugin.getServer().getOnlinePlayers()) {

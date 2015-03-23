@@ -578,8 +578,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
                     if (damager instanceof Projectile) {
                         Projectile projectile = (Projectile)damager;
-                        @SuppressWarnings("deprecation")
-						ProjectileSource source = projectile.getShooter();
+                        ProjectileSource source = projectile.getShooter();
 
                         if (source instanceof Player) {
 

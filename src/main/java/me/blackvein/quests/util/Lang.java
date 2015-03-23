@@ -157,6 +157,9 @@ public class Lang {
         langMap.put("COMMAND_QUESTADMIN_SETSTAGE", "setstage");
         langMap.put("COMMAND_QUESTADMIN_SETSTAGE_HELP", "setstage [player] [quest] [stage] - Set the current Stage for a player");
         langMap.put("COMMAND_QUESTADMIN_SETSTAGE_USAGE", "Usage: /questadmin setstage [player] [quest] [stage]");
+        
+        langMap.put("COMMAND_QUESTADMIN_PURGE", "purge");
+        langMap.put("COMMAND_QUESTADMIN_PURGE_HELP", "purge [player] - Clear all Quests data of a player");
 
         langMap.put("COMMAND_QUESTADMIN_TOGGLEGUI", "togglegui");
         langMap.put("COMMAND_QUESTADMIN_TOGGLEGUI_HELP", "togglegui [npc id] - Toggle GUI Quest Display on an NPC");
@@ -916,6 +919,7 @@ public class Lang {
         langMap.put("questForcedFinish", "<player> has forced you to finish your Quest <quest>.");
         langMap.put("questForceNextStage", "<player> has advanced to the next Stage in the Quest <quest>.");
         langMap.put("questForcedNextStage", "<player> has advanced you to the next Stage in your Quest <quest>.");
+        langMap.put("questPurged", "<player> has been purged and blacklisted.");
         langMap.put("settingAllQuestPoints", "Setting all players' Quest Points...");
         langMap.put("allQuestPointsSet", "All players' Quest Points have been set to <number>!");
 
@@ -1060,6 +1064,7 @@ public class Lang {
         //Error Messages
         langMap.put("questErrorReadingFile", "Error reading Quests file.");
         langMap.put("questSaveError", "An error occurred while saving.");
+        langMap.put("questBlacklisted", "You are blacklisted. Contact an admin if this is in error.");
                 //
 
         File file = new File(plugin.getDataFolder(), "/lang/" + lang + ".yml");
