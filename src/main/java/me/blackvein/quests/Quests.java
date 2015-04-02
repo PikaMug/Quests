@@ -1088,43 +1088,26 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 Quest questToGive;
 
-                String name = null;
+                String name = "";
 
                 if (args.length == 3) {
                     name = args[2].toLowerCase();
                 } else {
-
-                    boolean first = true;
-                    int lastIndex = (args.length - 1);
-                    int index = 0;
-
-                    for (String s : args) {
-
-                        if (index != 0) {
-
-                            if (first) {
-
-                                first = false;
-                                if (args.length > 2) {
-                                    name = s.toLowerCase() + " ";
-                                } else {
-                                    name = s.toLowerCase();
-                                }
-
-                            } else if (index == lastIndex) {
-                                name = name + s.toLowerCase();
-                            } else {
-                                name = name + s.toLowerCase() + " ";
-                            }
-
+                	
+                    for (int i = 2; i < args.length; i++) {
+                    	
+                        int lastIndex = args.length - 1;
+                        
+                        if (i == lastIndex) {
+                        	name = name + args[i].toLowerCase();
+                        } else {
+                        	name = name + args[i].toLowerCase() + " ";
                         }
-
-                        index++;
-
+                        
                     }
-
+                    
                 }
-
+                
                 questToGive = findQuest(name);
 
                 if (questToGive == null) {
