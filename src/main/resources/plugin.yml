@@ -114,6 +114,3 @@ commands:
     quest:
         description: Quest command
         permission: quests.quest
-    events:
-        description: Events
-        permission: quests.editor
