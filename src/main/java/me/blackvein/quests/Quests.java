@@ -327,6 +327,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         commands.put(Lang.get("COMMAND_INFO"), 1); // info 
         commands.put(Lang.get("COMMAND_JOURNAL"), 1); // journal 
         
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_STATS"), 2); // stats [player]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVE"), 3); // give [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_QUIT"), 3); // quit [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_POINTS"), 3); // points [player] [amount]
@@ -830,6 +831,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_PURGE"))) {
 
             adminPurge(cs, args);
+
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_STATS"))) {
+
+            adminStats(cs, args);
         
         } else {
 
@@ -1555,6 +1560,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }
     }
 
+    private void adminStats(final CommandSender cs, String[] args) {
+        // Reject usage without permission
+        if (!cs.hasPermission("quests.admin.*") && !cs.hasPermission("quests.admin.stats")) {
+            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            return;
+        }
+
+        Player target_online_player = PlayerFinder.findOnlinePlayerByPartialCaseInsensitiveNameMatch(args[1]);
+
+        // Reject usage without matching online player
+        if (target_online_player == null) {
+            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+            return;
+        }
+
+        questsStats(target_online_player, cs);
+    }
+
     private boolean questActionsCommandHandler(final CommandSender cs, String[] args) {
 
         if (cs instanceof Player) {
@@ -1745,16 +1768,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void questsStats(final Player player) {
+        questsStats(player, null);
+    }
+
+    private void questsStats(final Player player, final CommandSender customMessageTarget) {
+
+        CommandSender messageTarget = player;
+        if (customMessageTarget != null) {
+            messageTarget = customMessageTarget;
+        }
 
         Quester quester = getQuester(player.getUniqueId());
-        player.sendMessage(GOLD + "- " + player.getName() + " -");
-        player.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
+        messageTarget.sendMessage(GOLD + "- " + player.getName() + " -");
+        messageTarget.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
         if (quester.currentQuests.isEmpty()) {
-            player.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
+            messageTarget.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
         } else {
-            player.sendMessage(YELLOW + Lang.get("currentQuest"));
+            messageTarget.sendMessage(YELLOW + Lang.get("currentQuest"));
             for (Quest q : quester.currentQuests.keySet()) {
-                player.sendMessage(PINK + " - " + PURPLE + q.name);
+                messageTarget.sendMessage(PINK + " - " + PURPLE + q.name);
             }
         }
 
@@ -1781,8 +1813,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         }
 
-        player.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
-        player.sendMessage(completed);
+        messageTarget.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
+        messageTarget.sendMessage(completed);
     }
     
     private void questsJournal(final Player player) {
@@ -2378,6 +2410,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         cs.sendMessage("");
         cs.sendMessage(DARKRED + "/questadmin" + RED + " " + Lang.get("COMMAND_QUESTADMIN_HELP"));
         if(cs.hasPermission("quests.admin.*")){
+        	cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP"));
         	cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
@@ -2391,6 +2424,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
         } else{
+        	if (cs.hasPermission("quests.admin.stats")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP"));
+        	}
         	if (cs.hasPermission("quests.admin.give")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
         	}

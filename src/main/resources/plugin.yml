@@ -40,6 +40,9 @@ permissions:
     quests.admin:
         description: Base Questsadmin command
         default: op
+    quests.admin.stats:
+        description: View Questing statistics of a player
+        default: op
     quests.admin.give:
         description: Force a player to take a Quest (Overrides requirements)
         default: op

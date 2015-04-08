@@ -130,6 +130,9 @@ public class Lang {
 
         langMap.put("COMMAND_QUESTADMIN_HELP", "- View Questadmin help");
 
+        langMap.put("COMMAND_QUESTADMIN_STATS", "stats");
+        langMap.put("COMMAND_QUESTADMIN_STATS_HELP", "stats [player] - View Questing statistics of a player");
+
         langMap.put("COMMAND_QUESTADMIN_GIVE", "give");
         langMap.put("COMMAND_QUESTADMIN_GIVE_HELP", "give [player] [quest] - Force a player to take a Quest");
 
