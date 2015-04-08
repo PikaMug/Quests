@@ -45,9 +45,9 @@ public class Lang {
         return "NULL";
 
     }
-    
+
     public static String getCommandKey(String val) {
-        
+
         for (Entry<String, String> entry : langMap.entrySet()) {
 
             if (entry.getValue().equalsIgnoreCase(val) && entry.getKey().toUpperCase().startsWith("COMMAND_")) {
@@ -57,7 +57,7 @@ public class Lang {
         }
 
         return "NULL";
-        
+
     }
 
     public static void clearPhrases() {
@@ -121,7 +121,7 @@ public class Lang {
 
         langMap.put("COMMAND_INFO", "info");
         langMap.put("COMMAND_INFO_HELP", "info - Display plugin information");
-        
+
         langMap.put("COMMAND_JOURNAL", "journal");
         langMap.put("COMMAND_JOURNAL_HELP", "journal - View/Put away your Quest Journal");
 
@@ -160,9 +160,12 @@ public class Lang {
         langMap.put("COMMAND_QUESTADMIN_SETSTAGE", "setstage");
         langMap.put("COMMAND_QUESTADMIN_SETSTAGE_HELP", "setstage [player] [quest] [stage] - Set the current Stage for a player");
         langMap.put("COMMAND_QUESTADMIN_SETSTAGE_USAGE", "Usage: /questadmin setstage [player] [quest] [stage]");
-        
+
         langMap.put("COMMAND_QUESTADMIN_PURGE", "purge");
         langMap.put("COMMAND_QUESTADMIN_PURGE_HELP", "purge [player] - Clear all Quests data of a player");
+
+        langMap.put("COMMAND_QUESTADMIN_REMOVECOMPLETEDQUEST", "removecompletedquest");
+        langMap.put("COMMAND_QUESTADMIN_REMOVECOMPLETEDQUEST_HELP", "removecompletedquest [player] [quest] - Remove a Quest to a player's completed Quests");
 
         langMap.put("COMMAND_QUESTADMIN_TOGGLEGUI", "togglegui");
         langMap.put("COMMAND_QUESTADMIN_TOGGLEGUI_HELP", "togglegui [npc id] - Toggle GUI Quest Display on an NPC");
@@ -758,7 +761,7 @@ public class Lang {
         langMap.put("questObjectivesTitle", "---(<quest>)---");
         langMap.put("questCompleteTitle", "**QUEST COMPLETE: <quest>**");
         langMap.put("questRewardsTitle", "Rewards:");
-        
+
         langMap.put("journalTitle", "Quest Journal");
 
         langMap.put("questsTitle", "- Quests -");
@@ -923,6 +926,7 @@ public class Lang {
         langMap.put("questForceNextStage", "<player> has advanced to the next Stage in the Quest <quest>.");
         langMap.put("questForcedNextStage", "<player> has advanced you to the next Stage in your Quest <quest>.");
         langMap.put("questPurged", "<player> has been purged and blacklisted.");
+        langMap.put("removedQuestFromQuesterCompletedQuests", "Quest <quest> has been removed from player <player>'s completed Quests.");
         langMap.put("settingAllQuestPoints", "Setting all players' Quest Points...");
         langMap.put("allQuestPointsSet", "All players' Quest Points have been set to <number>!");
 
@@ -947,7 +951,7 @@ public class Lang {
         langMap.put("questsPlayerHasQuestAlready", "<player> is already on the Quest <quest>!");
         langMap.put("questsUnknownAdminCommand", "Unknown Questsadmin command. Type /questsadmin for help.");
         langMap.put("unknownError", "An unknown error occurred. See console output.");
-        
+
         langMap.put("journalTaken", "You take out your Quest Journal.");
         langMap.put("journalPutAway", "You put away your Quest Journal.");
         langMap.put("journalAlreadyHave", "You already have your Quest Journal out.");
