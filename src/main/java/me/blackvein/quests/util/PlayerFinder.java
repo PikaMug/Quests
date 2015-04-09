@@ -1,7 +1,11 @@
 package me.blackvein.quests.util;
 
+import com.evilmidget38.UUIDFetcher;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
+
+import java.util.UUID;
 
 public class PlayerFinder {
 
@@ -29,6 +33,27 @@ public class PlayerFinder {
         }
 
         return target_online_player;
+    }
+
+    /**
+     *
+     * @param queryString player name
+     * @return according to Bukkit.getOfflinePlayer, always an object (never null)
+     */
+    public static OfflinePlayer findOfflinePlayerByExactCaseInsensitiveNameMatch(String queryString) {
+        UUID target_offline_player_uuid;
+
+        try {
+            target_offline_player_uuid = UUIDFetcher.getUUIDOf(queryString);
+        }
+        catch (Exception ex) {
+            return null;
+        }
+        if (target_offline_player_uuid == null) {
+            return null;
+        }
+
+        return Bukkit.getOfflinePlayer(target_offline_player_uuid);
     }
 
 }
