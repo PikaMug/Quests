@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.Validate;
 
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
@@ -38,6 +39,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -1572,15 +1574,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             return;
         }
 
-        Player target_online_player = PlayerFinder.findOnlinePlayerByPartialCaseInsensitiveNameMatch(args[1]);
+        OfflinePlayer target_offline_player = PlayerFinder.findOfflinePlayerWithNameByExactCaseInsensitiveNameMatch(args[1]);
 
-        // Reject usage without matching online player
-        if (target_online_player == null) {
+        // According to CraftBukkit implementation, OfflinePlayer#getName could be null,
+        // meaning the player has NOT been seen on current server
+        // To avoid displaying stats with name `null`, we consider this as player not found
+        if (target_offline_player == null) {
             cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
             return;
         }
 
-        questsStats(target_online_player, cs);
+        questsStats(target_offline_player, cs);
     }
 
     private void adminRemoveCompletedQuest(final CommandSender cs, String[] args) {
@@ -1808,18 +1812,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void questsStats(final Player player) {
-        questsStats(player, null);
+        Validate.notNull(player);
+        questsStats(player, player);
     }
 
-    private void questsStats(final Player player, final CommandSender customMessageTarget) {
+    private void questsStats(final OfflinePlayer offlinePlayer, final CommandSender messageTarget) {
+        Validate.notNull(offlinePlayer);
+        Validate.notNull(messageTarget);
 
-        CommandSender messageTarget = player;
-        if (customMessageTarget != null) {
-            messageTarget = customMessageTarget;
-        }
-
-        Quester quester = getQuester(player.getUniqueId());
-        messageTarget.sendMessage(GOLD + "- " + player.getName() + " -");
+        Quester quester = getQuester(offlinePlayer.getUniqueId());
+        messageTarget.sendMessage(GOLD + "- " + offlinePlayer.getName() + " -");
         messageTarget.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
         if (quester.currentQuests.isEmpty()) {
             messageTarget.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
