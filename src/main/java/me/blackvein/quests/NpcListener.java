@@ -218,14 +218,17 @@ public class NpcListener implements Listener {
                             }
 
                         }
-
+                        
                     }
 
+                    evt.getClicker().sendMessage(ChatColor.YELLOW + "No more quests available.");
+                    
                 }
 
             }
-
+            
         }
+        
     }
 
     @EventHandler
