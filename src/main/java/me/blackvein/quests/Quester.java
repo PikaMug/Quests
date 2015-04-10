@@ -1090,56 +1090,48 @@ public class Quester {
 
     }
 
-    public void killMob(Quest quest, Location l, EntityType e) {
+    public void killMob(Quest quest, Location killedLocation, EntityType e) {
+        QuestData questData = getQuestData(quest);
 
-        if (getQuestData(quest).mobsKilled.contains(e)) {
-
-            if (getQuestData(quest).locationsToKillWithin.isEmpty() == false) {
-
-                int index = getQuestData(quest).mobsKilled.indexOf(e);
-                Location locationToKillWithin = getQuestData(quest).locationsToKillWithin.get(index);
-                double radius = getQuestData(quest).radiiToKillWithin.get(index);
-                int numKilled = getQuestData(quest).mobNumKilled.get(index);
-                if (l.getX() < (locationToKillWithin.getX() + radius) && l.getX() > (locationToKillWithin.getX() - radius)) {
-
-                    if (l.getZ() < (locationToKillWithin.getZ() + radius) && l.getZ() > (locationToKillWithin.getZ() - radius)) {
-
-                        if (l.getY() < (locationToKillWithin.getY() + radius) && l.getY() > (locationToKillWithin.getY() - radius)) {
-
-                            if (numKilled < getCurrentStage(quest).mobNumToKill.get(index)) {
-
-                                Integer numKilledInteger = numKilled + 1;
-
-                                getQuestData(quest).mobNumKilled.set(index, numKilledInteger);
-
-                                if ((numKilledInteger).equals(getCurrentStage(quest).mobNumToKill.get(index))) {
-                                    finishObjective(quest, "killMob", null, null, null, e, null, null, null, null, null, null);
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            } else {
-
-                if (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e)) < getCurrentStage(quest).mobNumToKill.get(getQuestData(quest).mobsKilled.indexOf(e))) {
-
-                    getQuestData(quest).mobNumKilled.set(getQuestData(quest).mobsKilled.indexOf(e), getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e)) + 1);
-
-                    if ((getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e))).equals(getCurrentStage(quest).mobNumToKill.get(getQuestData(quest).mobsKilled.indexOf(e)))) {
-                        finishObjective(quest, "killMob", null, null, null, e, null, null, null, null, null, null);
-                    }
-
-                }
-
-            }
-
+        if (questData.mobsKilled.contains(e) == false) {
+            return;
         }
 
+        Stage currentStage = getCurrentStage(quest);
+
+        int indexOfMobKilled                                        = questData.mobsKilled.indexOf(e);
+        Integer numberOfSpecificMobKilled                           = questData.mobNumKilled.get(indexOfMobKilled);
+        Integer numberOfSpecificMobNeedsToBeKilledInCurrentStage    = currentStage.mobNumToKill.get(indexOfMobKilled);
+
+        if (questData.locationsToKillWithin.isEmpty() == false) {
+            Location locationToKillWithin = questData.locationsToKillWithin.get(indexOfMobKilled);
+            double radius = questData.radiiToKillWithin.get(indexOfMobKilled);
+
+            // Check world #name, not the object
+            if ((killedLocation.getWorld().getName() == locationToKillWithin.getWorld().getName()) == false) {
+                return;
+            }
+            // Radius check, it's a "circle", not cuboid
+            if ((killedLocation.getX() < (locationToKillWithin.getX() + radius) && killedLocation.getX() > (locationToKillWithin.getX() - radius)) == false) {
+                return;
+            }
+            if ((killedLocation.getZ() < (locationToKillWithin.getZ() + radius) && killedLocation.getZ() > (locationToKillWithin.getZ() - radius)) == false) {
+                return;
+            }
+            if ((killedLocation.getY() < (locationToKillWithin.getY() + radius) && killedLocation.getY() > (locationToKillWithin.getY() - radius)) == false) {
+                return;
+            }
+        }
+
+        if (numberOfSpecificMobKilled < numberOfSpecificMobNeedsToBeKilledInCurrentStage) {
+            Integer newNumberOfSpecificMobKilled = numberOfSpecificMobKilled + 1;
+
+            questData.mobNumKilled.set(indexOfMobKilled, newNumberOfSpecificMobKilled);
+
+            if ((newNumberOfSpecificMobKilled).equals(numberOfSpecificMobNeedsToBeKilledInCurrentStage)) {
+                finishObjective(quest, "killMob", null, null, null, e, null, null, null, null, null, null);
+            }
+        }
     }
 
     public void killPlayer(Quest quest, Player player) {
