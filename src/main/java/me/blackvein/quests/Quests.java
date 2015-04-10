@@ -1594,10 +1594,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             return;
         }
 
-        Player target_online_player = PlayerFinder.findOnlinePlayerByExactCaseInsensitiveNameMatch(args[1]);
+        OfflinePlayer target_offline_player = PlayerFinder.findOfflinePlayerWithNameByExactCaseInsensitiveNameMatch(args[1]);
 
-        // Reject usage without matching online player
-        if (target_online_player == null) {
+        // According to CraftBukkit implementation, OfflinePlayer#getName could be null,
+        // meaning the player has NOT been seen on current server
+        // To avoid saving data with name `null`, we consider this as player not found
+        if (target_offline_player == null) {
             cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
             return;
         }
@@ -1608,16 +1610,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             return;
         }
 
-        UUID target_online_player_uuid = target_online_player.getUniqueId();
-        Quester quester = getQuester(target_online_player_uuid);
+        UUID player_uuid = target_offline_player.getUniqueId();
+        Quester quester = getQuester(player_uuid);
 
         // We do NOT care whather the quester is taking the quest
 
         String msg = Lang.get("removedQuestFromQuesterCompletedQuests");
-        msg = msg.replaceAll("<player>", GREEN + target_online_player.getName() + GOLD);
+        msg = msg.replaceAll("<player>", GREEN + target_offline_player.getName() + GOLD);
         msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest_to_be_remove.name + ChatColor.AQUA);
         cs.sendMessage(GOLD + msg);
-        cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + target_online_player_uuid);
+        cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + player_uuid);
 
         quester.removeCompletedQuests(quest_to_be_remove);
     }
