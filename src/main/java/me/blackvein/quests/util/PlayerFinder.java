@@ -56,4 +56,21 @@ public class PlayerFinder {
         return Bukkit.getOfflinePlayer(target_offline_player_uuid);
     }
 
+    //
+    /**
+     * According to CraftBukkit implementation, OfflinePlayer#getName could be null,
+     * meaning the player has NOT been seen on current server
+     * To avoid usage of #getName being null at the end, this method return null instead
+     *
+     * @param queryString player name
+     * @return {@code null} if the value of #getName is null
+     */
+    public static OfflinePlayer findOfflinePlayerWithNameByExactCaseInsensitiveNameMatch(String queryString) {
+        OfflinePlayer player_found = findOfflinePlayerByExactCaseInsensitiveNameMatch(queryString);
+        if (player_found.getName() == null) {
+            return null;
+        }
+        return player_found;
+    }
+
 }
