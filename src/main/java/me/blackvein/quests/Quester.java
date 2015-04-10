@@ -39,10 +39,10 @@ public class Quester {
     UUID id;
     boolean editorMode = false;
     boolean hasJournal = false;
-    
+
     public String questToTake;
     public Map<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
-        
+
 		private static final long serialVersionUID = 6361484975823846780L;
 
 		@Override
@@ -58,7 +58,7 @@ public class Quester {
             updateJournal();
             return i;
         }
-        
+
         @Override
         public void clear() {
             super.clear();
@@ -70,9 +70,9 @@ public class Quester {
             super.putAll(m);
             updateJournal();
         }
-        
+
     };
-    
+
     int questPoints = 0;
     Quests plugin;
     public LinkedList<String> completedQuests = new LinkedList<String>() {
@@ -132,20 +132,20 @@ public class Quester {
             updateJournal();
             return s;
         }
-        
+
     };
-    
+
     Map<String, Long> completedTimes = new HashMap<String, Long>();
-    
+
     Map<String, Integer> amountsCompleted = new HashMap<String, Integer>() {
-        
+
 		private static final long serialVersionUID = 5475202358792520975L;
 
 		/*@SuppressWarnings("unused")
 		public void hardClear() {
             super.clear();
         }*/
-        
+
         @Override
         public Integer put(String key, Integer val) {
             Integer data = super.put(key, val);
@@ -159,7 +159,7 @@ public class Quester {
             updateJournal();
             return i;
         }
-        
+
         @Override
         public void clear() {
             super.clear();
@@ -171,12 +171,12 @@ public class Quester {
             super.putAll(m);
             updateJournal();
         }
-        
+
     };
 
-    
+
     Map<Quest, QuestData> questData = new HashMap<Quest, QuestData>() {
-        
+
 		private static final long serialVersionUID = -4607112433003926066L;
 
 		@Override
@@ -185,7 +185,7 @@ public class Quester {
             updateJournal();
             return data;
         }
-        
+
         @Override
         public QuestData remove(Object key) {
             QuestData data = super.remove(key);
@@ -204,7 +204,7 @@ public class Quester {
             super.putAll(m);
             updateJournal();
         }
-        
+
     };
 
     final Random random = new Random();
@@ -214,7 +214,7 @@ public class Quester {
         plugin = newPlugin;
 
     }
-    
+
     public Player getPlayer() {
 
         return Bukkit.getServer().getPlayer(id);
@@ -228,66 +228,66 @@ public class Quester {
     }
 
     public void updateJournal() {
-        
+
         if(!hasJournal)
             return;
-        
+
         Inventory inv = getPlayer().getInventory();
         ItemStack[] arr = inv.getContents();
         int index = -1;
-        
+
         for(int i = 0; i < arr.length; i++) {
-            
+
             if(arr[i] != null) {
-                
+
                 if(ItemUtil.isJournal(arr[i])) {
                     index = i;
                     break;
                 }
-                
+
             }
-            
+
         }
-        
+
         if(index != -1) {
-            
+
             ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
             ItemMeta meta = stack.getItemMeta();
             meta.setDisplayName(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
-            
+
             BookMeta book = (BookMeta) meta;
             book.setTitle(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
             book.setAuthor(getPlayer().getName());
 
             if(currentQuests.isEmpty()) {
-            	
+
             	book.addPage(ChatColor.DARK_RED + Lang.get("journalNoQuests"));
-            	
+
             } else {
-                
+
                 int currentLength = 0;
                 int currentLines = 0;
                 String page = "";
-                
+
                 for(Quest quest : currentQuests.keySet()) {
-                    
+
                     if((currentLength + quest.name.length() > 240) || (currentLines + ((quest.name.length() % 19) == 0 ? (quest.name.length() / 19) : ((quest.name.length() / 19) + 1))) > 13) {
-                        
+
                         book.addPage(page);
                         page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.name + "\n";
                         currentLength = quest.name.length();
                         currentLines = (quest.name.length() % 19) == 0 ? (quest.name.length() / 19) : (quest.name.length() + 1);
-                        
+
                     } else {
-                        
+
                         page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.name + "\n";
                         currentLength += quest.name.length();
                         currentLines += (quest.name.length() / 19);
-                        
+
                     }
 
                     for(String obj : getObjectivesReal(quest)) {
-                        
+
                         //Length/Line check
                         if((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
                             book.addPage(page);
@@ -299,28 +299,28 @@ public class Quester {
                             currentLength += obj.length();
                             currentLines += (obj.length() / 19);
                         }
-                        
+
                     }
-                    
+
                     if(currentLines < 13)
                         page += "\n";
-                    
+
                     book.addPage(page);
                     page = "";
                     currentLines = 0;
                     currentLength = 0;
-                
+
                 }
-                
+
             }
 
             stack.setItemMeta(book);
             inv.setItem(index, stack);
-            
+
         }
-        
+
     }
-    
+
     public Stage getCurrentStage(Quest quest) {
     	if (currentQuests.containsKey(quest)) {
     		return quest.getStage(currentQuests.get(quest));
@@ -421,7 +421,7 @@ public class Quester {
 
         if(getQuestData(quest) == null)
             return new LinkedList<String>();
-        
+
         LinkedList<String> unfinishedObjectives = new LinkedList<String>();
         LinkedList<String> finishedObjectives = new LinkedList<String>();
         LinkedList<String> objectives = new LinkedList<String>();
@@ -666,7 +666,7 @@ public class Quester {
         }
 
         for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
-            
+
             int delivered = getQuestData(quest).itemsDelivered.get(is);
             int amt = is.getAmount();
             Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(is));
@@ -792,7 +792,7 @@ public class Quester {
 
                 if (l.equals(l2)) {
                 	if (!getQuestData(quest).hasReached.isEmpty()) {
-                		
+
                 		if (getQuestData(quest).hasReached.get(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
 
                 			String obj = Lang.get("goTo");
@@ -806,7 +806,7 @@ public class Quester {
                         	finishedObjectives.add(ChatColor.GRAY + obj);
 
                 		}
-                    
+
                 	}
 
                 }
@@ -1707,12 +1707,12 @@ public class Quester {
                 data.customObjectiveCounts.put(co.getName(), 0);
             }
         }
-        
+
         data.setDoJournalUpdate(true);
         hardDataPut(quest, data);
 
     }
-    
+
     public void addEmptiesFor(Quest quest, int stage) {
 
         QuestData data = new QuestData(this);
@@ -1856,7 +1856,7 @@ public class Quester {
                 data.customObjectiveCounts.put(co.getName(), 0);
             }
         }
-        
+
         data.setDoJournalUpdate(true);
         hardDataPut(quest, data);
 
@@ -1982,7 +1982,7 @@ public class Quester {
     public static String capitalsToSpaces(String s) {
 
         int max = s.length();
-        
+
         for (int i = 1; i < max; i++) {
 
             if (Character.isUpperCase(s.charAt(i))) {
@@ -1990,7 +1990,7 @@ public class Quester {
                 s = s.substring(0, i) + " " + s.substring(i);
                 i++;
                 max++;
-                
+
             }
 
         }
@@ -2087,7 +2087,7 @@ public class Quester {
             for (Quest quest : currentQuests.keySet()) {
 
                 ConfigurationSection questSec = dataSec.createSection(quest.name);
-                
+
                 if (getQuestData(quest).blocksDamaged.isEmpty() == false) {
 
                     LinkedList<String> blockNames = new LinkedList<String>();
@@ -2505,7 +2505,7 @@ public class Quester {
         } catch (InvalidConfigurationException e) {
             return false;
         }
-        
+
         hardClear();
 
         if (data.contains("completedRedoableQuests")) {
@@ -2543,7 +2543,7 @@ public class Quester {
         }
 
         questPoints = data.getInt("quest-points");
-        
+
         hasJournal = data.getBoolean("hasJournal");
 
         if (data.isList("completed-Quests")) {
@@ -2574,15 +2574,15 @@ public class Quester {
             	if (plugin.getQuest(questNames.get(i)) != null) {
             		currentQuests.put(plugin.getQuest(questNames.get(i)), questStages.get(i));
             	}
-                
+
             }
 
             ConfigurationSection dataSec = data.getConfigurationSection("questData");
-            
+
             if (dataSec.getKeys(false).isEmpty()) {
             	return false;
             }
-            
+
             for (String key : dataSec.getKeys(false)) {
 
                 ConfigurationSection questSec = dataSec.getConfigurationSection(key);
@@ -2775,10 +2775,10 @@ public class Quester {
                     for (int i = 0; i < deliveryAmounts.size(); i++) {
 
                     	if (i < getCurrentStage(quest).itemsToDeliver.size()) {
-                    		
+
                             getQuestData(quest).itemsDelivered.put(getCurrentStage(quest).itemsToDeliver.get(i), deliveryAmounts.get(i));
 
-                    		
+
                     	}
 
                     }
@@ -2944,13 +2944,13 @@ public class Quester {
             }
 
         }
-        
+
         return true;
 
     }
 
 public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec, String questName) {
-        
+
     ConfigurationSection newData = questSec.createSection("questData");
 
     if (questSec.contains("blocks-damaged-names")) {
@@ -3036,7 +3036,7 @@ public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec
 
         newData.set(questName + ".mobs-killed", mobs);
         newData.set(questName + ".mobs-killed-amounts", amounts);
-        
+
         if (questSec.contains("mob-kill-locations")) {
 
             List<String> locations = questSec.getStringList("mob-kill-locations");
@@ -3044,7 +3044,7 @@ public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec
 
             newData.set(questName + ".mob-kill-locations", locations);
             newData.set(questName + ".mob-kill-location-radii", radii);
-            
+
         }
 
     }
@@ -3123,7 +3123,7 @@ public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec
 
         List<String> passwords = questSec.getStringList("passwords");
         List<Boolean> said = questSec.getBooleanList("passwords-said");
-        
+
         newData.set(questName + ".passwords", passwords);
         newData.set(questName + ".passwords-said", said);
 
@@ -3151,7 +3151,7 @@ public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec
         newData.set(questName + ".chat-triggers", triggers);
 
     }
-    
+
     return newData;
 
 }
@@ -3371,21 +3371,21 @@ if (quest != null) {
         for (int i = 0; i < quests.size(); i++) {
 
             if (quests.get(i).guiDisplay != null) {
-                
+
                 ItemStack display = quests.get(i).guiDisplay;
                 ItemMeta meta = display.getItemMeta();
                 meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
-                
+
                 if (!meta.hasLore()) {
                 	LinkedList<String> lines = new LinkedList<String>();
-                
+
                 	lines = MiscUtil.makeLines(quests.get(i).description, " ", 40, ChatColor.DARK_GREEN);
-                
+
                 	meta.setLore(lines);
                 }
-                
+
                 display.setItemMeta(meta);
-                
+
                 inv.setItem(inc, display);
                 inc++;
             }
@@ -3395,20 +3395,20 @@ if (quest != null) {
         player.openInventory(inv);
 
     }
-    
+
     public void hardQuit(Quest quest) {
-        
+
         try {
             currentQuests.remove(quest);
             questData.remove(quest);
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     public void hardClear() {
-        
+
         try {
             currentQuests.clear();
             questData.clear();
@@ -3416,27 +3416,38 @@ if (quest != null) {
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     public void hardStagePut(Quest key, Integer val) {
-        
+
         try {
             currentQuests.put(key, val);
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     public void hardDataPut(Quest key, QuestData val) {
-        
+
         try {
             questData.put(key, val);
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
+    }
+
+    /**
+     *
+     * @param quest quest to be removed
+     * @return {@code true} if completedQuests contained the specified quest
+     */
+    public boolean removeCompletedQuests(Quest quest) {
+        boolean containedQuest = this.completedQuests.remove(quest.name);
+        this.saveData();
+        return containedQuest;
     }
 
 }

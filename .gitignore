@@ -1,1 +1,5 @@
 /target
+
+# Ignore IDEA files
+/.idea
+*.iml
