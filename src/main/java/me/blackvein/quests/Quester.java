@@ -2477,8 +2477,14 @@ public class Quester {
 
         }
 
+        // #getPlayer is faster
+        OfflinePlayer represented_player = getPlayer();
+        if (represented_player == null) {
+            represented_player = getOfflinePlayer();
+        }
+
         data.set("hasJournal", hasJournal);
-        data.set("lastKnownName", getPlayer().getName());
+        data.set("lastKnownName", represented_player.getName());
 
         return data;
 
