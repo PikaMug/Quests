@@ -15,15 +15,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.Validate;
 
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
-import me.blackvein.quests.util.ColorUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
-import me.blackvein.quests.util.PlayerFinder;
 import net.aufdemrand.denizen.Denizen;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.citizensnpcs.api.CitizensAPI;
@@ -39,7 +36,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -101,7 +97,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static mcMMO mcmmo = null;
     public static Heroes heroes = null;
     public static PhatLoots phatLoots = null;
-    public static boolean snoop = true;
     public static boolean npcEffects = true;
     public static boolean ignoreLockedQuests = false;
     public static boolean genFilesOnJoin = true;
@@ -332,6 +327,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_STATS"), 2); // stats [player]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVE"), 3); // give [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_QUIT"), 3); // quit [player] [quest]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_REMOVE"), 3); // remove [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_POINTS"), 3); // points [player] [amount]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"), 3); // takepoints [player] [amount]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"), 3); // givepoints [player] [amount]
@@ -340,7 +336,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_PURGE"), 2); // purge [player]
-        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_REMOVECOMPLETEDQUEST"), 3); // removecompletedquest [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
 
@@ -538,7 +533,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         showQuestReqs = config.getBoolean("show-requirements", true);
         allowQuitting = config.getBoolean("allow-quitting", true);
         genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
-        snoop = config.getBoolean("snoop", true);
         npcEffects = config.getBoolean("show-npc-effects", true);
         effect = config.getString("npc-effect", "note");
         debug = config.getBoolean("debug-mode", false);
@@ -839,9 +833,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             adminStats(cs, args);
 
-        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_REMOVECOMPLETEDQUEST"))) {
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_REMOVE"))) {
 
-            adminRemoveCompletedQuest(cs, args);
+            adminRemove(cs, args);
 
         } else {
 
@@ -1527,37 +1521,37 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         }
     }
-
+    
     private void adminPurge(final CommandSender cs, String[] args) {
 
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.purge")) {
 
-            UUID id;
-
-            try {
-				id = UUIDFetcher.getUUIDOf(args[1]);
-				Quester quester = getQuester(id);
-				if (quester.loadData() == false) {
-					cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-					return;
-				}
-			} catch (Exception e) {
+            Quester quester = getQuester(args[1]);
+            
+            if (quester == null) {
 				cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
 				return;
 			}
 
             try {
+            	quester.hardClear();
+            	quester.saveData();
+            	quester.updateJournal();
                 final File dataFolder = new File(this.getDataFolder(), "data/");
-                final File found = new File(dataFolder, id + ".yml");
+                final File found = new File(dataFolder, quester.id + ".yml");
                 found.delete();
-                addToBlacklist(id);
+                addToBlacklist(quester.id);
 
                 String msg = Lang.get("questPurged");
-                msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(id).getName() + GOLD);
+                if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
+                	msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + GOLD);
+                } else {
+                	msg = msg.replaceAll("<player>", GREEN + args[1] + GOLD);
+                }
                 cs.sendMessage(GOLD + msg);
-                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + id);
+                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + quester.id);
             } catch (Exception e) {
-            	getLogger().info("Data file does not exist for " + id.toString());
+            	getLogger().info("Data file does not exist for " + quester.id.toString());
             }
 
         } else {
@@ -1566,62 +1560,57 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         }
     }
-
+    
     private void adminStats(final CommandSender cs, String[] args) {
-        // Reject usage without permission
-        if (!cs.hasPermission("quests.admin.*") && !cs.hasPermission("quests.admin.stats")) {
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-            return;
+    	
+        if (cs.hasPermission("quests.admin.*") && cs.hasPermission("quests.admin.stats")) {
+        	
+            questsStats(cs, args);
+        	
+        } else {
+        	
+        	cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+        	
         }
-
-        OfflinePlayer target_offline_player = PlayerFinder.findOfflinePlayerWithNameByExactCaseInsensitiveNameMatch(args[1]);
-
-        // According to CraftBukkit implementation, OfflinePlayer#getName could be null,
-        // meaning the player has NOT been seen on current server
-        // To avoid displaying stats with name `null`, we consider this as player not found
-        if (target_offline_player == null) {
-            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-            return;
-        }
-
-        questsStats(target_offline_player, cs);
     }
 
-    private void adminRemoveCompletedQuest(final CommandSender cs, String[] args) {
-        // Reject usage without permission
-        if (!cs.hasPermission("quests.admin.*") && !cs.hasPermission("quests.admin.removecompletedquest")) {
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
-            return;
+    private void adminRemove(final CommandSender cs, String[] args) {
+    	
+        if (cs.hasPermission("quests.admin.*") && cs.hasPermission("quests.admin.remove")) {
+        	
+            Quester quester = getQuester(args[1]);
+
+            if (quester == null) {
+				cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+				return;
+			}
+            
+            Quest toRemove = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
+            if (toRemove == null) {
+                cs.sendMessage(RED + Lang.get("questNotFound"));
+                return;
+            }
+
+            String msg = Lang.get("questRemoved");
+            if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
+            	msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + GOLD);
+            } else {
+            	msg = msg.replaceAll("<player>", GREEN + args[1] + GOLD);
+            }
+            msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + toRemove.name + ChatColor.AQUA);
+            cs.sendMessage(GOLD + msg);
+            cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + quester.id.toString());
+
+            quester.hardRemove(toRemove);
+            
+            quester.saveData();
+            quester.updateJournal();
+
+        } else {
+        	
+        	cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+        	
         }
-
-        OfflinePlayer target_offline_player = PlayerFinder.findOfflinePlayerWithNameByExactCaseInsensitiveNameMatch(args[1]);
-
-        // According to CraftBukkit implementation, OfflinePlayer#getName could be null,
-        // meaning the player has NOT been seen on current server
-        // To avoid saving data with name `null`, we consider this as player not found
-        if (target_offline_player == null) {
-            cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
-            return;
-        }
-
-        Quest quest_to_be_remove = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
-        if (quest_to_be_remove == null) {
-            cs.sendMessage(RED + Lang.get("questNotFound"));
-            return;
-        }
-
-        UUID player_uuid = target_offline_player.getUniqueId();
-        Quester quester = getQuester(player_uuid);
-
-        // We do NOT care whather the quester is taking the quest
-
-        String msg = Lang.get("removedQuestFromQuesterCompletedQuests");
-        msg = msg.replaceAll("<player>", GREEN + target_offline_player.getName() + GOLD);
-        msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest_to_be_remove.name + ChatColor.AQUA);
-        cs.sendMessage(GOLD + msg);
-        cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + player_uuid);
-
-        quester.removeCompletedQuests(quest_to_be_remove);
     }
 
     private boolean questActionsCommandHandler(final CommandSender cs, String[] args) {
@@ -1649,7 +1638,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
 
-                    questsStats((Player) cs);
+                    questsStats(cs, null);
 
                 } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_JOURNAL"))) {
 
@@ -1813,24 +1802,34 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         return true;
     }
 
-    private void questsStats(final Player player) {
-        Validate.notNull(player);
-        questsStats(player, player);
-    }
+    private void questsStats(final CommandSender cs, String[] args) {
 
-    private void questsStats(final OfflinePlayer offlinePlayer, final CommandSender messageTarget) {
-        Validate.notNull(offlinePlayer);
-        Validate.notNull(messageTarget);
-
-        Quester quester = getQuester(offlinePlayer.getUniqueId());
-        messageTarget.sendMessage(GOLD + "- " + offlinePlayer.getName() + " -");
-        messageTarget.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints + "/" + totalQuestPoints);
+    	Quester quester;
+    	
+    	if (args != null) {
+    		
+    		quester = getQuester(args[1]);
+    		
+			if (quester == null) {
+				cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+				return;
+			} else if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
+				cs.sendMessage(GOLD + "- " + Bukkit.getOfflinePlayer(quester.id).getName() + " -");
+			} else {
+				cs.sendMessage(GOLD + "- " + args[1] + " -");
+			}
+    	} else {
+    		quester = getQuester(((Player)cs).getUniqueId());
+    		cs.sendMessage(GOLD + "- " + ((Player)cs).getName() + " -");
+    	}
+    	
+        cs.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints);
         if (quester.currentQuests.isEmpty()) {
-            messageTarget.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
+            cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
         } else {
-            messageTarget.sendMessage(YELLOW + Lang.get("currentQuest"));
+           cs.sendMessage(YELLOW + Lang.get("currentQuest"));
             for (Quest q : quester.currentQuests.keySet()) {
-                messageTarget.sendMessage(PINK + " - " + PURPLE + q.name);
+                cs.sendMessage(PINK + " - " + PURPLE + q.name);
             }
         }
 
@@ -1857,8 +1856,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         }
 
-        messageTarget.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
-        messageTarget.sendMessage(completed);
+        cs.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
+        cs.sendMessage(completed);
     }
 
     private void questsJournal(final Player player) {
@@ -2465,7 +2464,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVECOMPLETEDQUEST_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
         } else{
@@ -2502,8 +2501,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         	if (cs.hasPermission("quests.admin.purge")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
         	}
-        	if (cs.hasPermission("quests.admin.removecompletedquest")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVECOMPLETEDQUEST_HELP"));
+        	if (cs.hasPermission("quests.admin.remove")) {
+        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
         	}
         	if (citizens != null && cs.hasPermission("quests.admin.togglegui")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
@@ -2617,6 +2616,32 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         return quester;
 
+    }
+
+    public Quester getQuester(String name) {
+    	UUID id = null;
+    	Quester quester = null;
+    	
+    	for (Player p : Bukkit.getOnlinePlayers()) {
+        	if (p.getName().equalsIgnoreCase(name)) {
+        		id = p.getUniqueId();
+        		break;
+        	}
+        }
+    	
+    	try {
+    		if (id == null) {
+    			id = UUIDFetcher.getUUIDOf(name);
+    		}
+		} catch (Exception e) {
+			//Do nothing
+		}
+    	
+    	if (id != null) {
+    		quester = getQuester(id);
+    	}
+    	
+    	return quester;
     }
 
     public Map<UUID, Quester> getOnlineQuesters() {

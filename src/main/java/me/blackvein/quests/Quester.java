@@ -3412,6 +3412,15 @@ if (quest != null) {
         }
 
     }
+    
+	public void hardRemove(Quest quest) {
+		
+		try {
+			completedQuests.remove(quest.name);
+		} catch (Exception ex) {
+			Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
     public void hardClear() {
 
@@ -3443,17 +3452,6 @@ if (quest != null) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
-
-    /**
-     *
-     * @param quest quest to be removed
-     * @return {@code true} if completedQuests contained the specified quest
-     */
-    public boolean removeCompletedQuests(Quest quest) {
-        boolean containedQuest = this.completedQuests.remove(quest.name);
-        this.saveData();
-        return containedQuest;
     }
 
 }

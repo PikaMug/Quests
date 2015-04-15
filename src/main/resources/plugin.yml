@@ -70,8 +70,8 @@ permissions:
     quests.admin.purge:
         description: Clear all Quests data of a player
         default: op
-    quests.admin.removecompletedquest:
-        description: Remove a Quest to a player's completed Quests
+    quests.admin.remove:
+        description: Remove a completed Quest from a player
         default: op
     quests.admin.togglegui:
         description: Toggle GUI Quest Display on NPC's
