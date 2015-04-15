@@ -360,6 +360,16 @@ public class PlayerListener implements Listener, ColorUtil {
     }
 
     @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent evt) {
+    	if (evt.getRightClicked().getType() == EntityType.ITEM_FRAME) {
+    		if(ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
+                evt.setCancelled(true);
+    			evt.getPlayer().sendMessage(RED + Lang.get("journalDenied"));
+    		}
+    	}
+    }
+
+    @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent evt) {
 
         if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
@@ -502,7 +512,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
             for (Quest quest : quester.currentQuests.keySet()) {
 
-                if (evt.getEntity().getType().equals(EntityType.SHEEP) && quester.hasObjective(quest, "shearSheep")) {
+                if (evt.getEntity().getType() == EntityType.SHEEP && quester.hasObjective(quest, "shearSheep")) {
 
                     Sheep sheep = (Sheep) evt.getEntity();
                     quester.shearSheep(quest, sheep.getColor());

@@ -957,6 +957,7 @@ public class Lang {
         langMap.put("journalAlreadyHave", "You already have your Quest Journal out.");
         langMap.put("journalNoRoom", "You have no room in your inventory for your Quest Journal!");
         langMap.put("journalNoQuests", "You have no accepted quests!");
+        langMap.put("journalDenied", "You cannot do that with your Quest Journal.");
                     //
 
                 //
