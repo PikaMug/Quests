@@ -253,7 +253,6 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                     cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidName"));
                     return new NamePrompt();
                 } else {
-                	System.out.println("name - " + mat.name());
                     cc.setSessionData("tempName", mat.name());
                     cc.setSessionData("tempAmount", 1);
 
