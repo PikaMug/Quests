@@ -47,38 +47,38 @@ public class PlayerListener implements Listener, ColorUtil {
         plugin = newPlugin;
 
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClickEvent(InventoryClickEvent evt) {
-        
+
         InventoryAction ac = evt.getAction();
-        
+
         if(ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCurrentItem())) {
-            
+
             if(ac.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)
                     || ac.equals(InventoryAction.DROP_ALL_SLOT)
                     || ac.equals(InventoryAction.DROP_ONE_SLOT)) {
-                
+
                 evt.setCancelled(true);
                 return;
-                
+
             }
-            
+
         } else if(ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCursor())) {
-            
+
             if(ac.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)
                     || ac.equals(InventoryAction.DROP_ALL_CURSOR)
                     || ac.equals(InventoryAction.DROP_ONE_CURSOR)) {
-                
+
                 evt.setCancelled(true);
                 return;
-                
+
             }
-            
+
         }
-        
+
         if(ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCurrentItem()) || ItemUtil.isItem(evt.getCursor()) && ItemUtil.isJournal(evt.getCursor())) {
-        
+
             int upper = evt.getView().getTopInventory().getSize();
             if(evt.getView().getTopInventory().getType().equals(InventoryType.CRAFTING))
                 upper += 4;
@@ -89,9 +89,9 @@ public class PlayerListener implements Listener, ColorUtil {
                 evt.setCancelled(true);
                 return;
             }
-        
+
         }
-        
+
         Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
         Player player = (Player) evt.getWhoClicked();
 
@@ -176,42 +176,42 @@ public class PlayerListener implements Listener, ColorUtil {
             }
 
         }
-        
+
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryDragEvent(InventoryDragEvent evt) {
-        
+
         if(ItemUtil.isItem(evt.getOldCursor()) && ItemUtil.isJournal(evt.getOldCursor()) || ItemUtil.isItem(evt.getCursor()) && ItemUtil.isJournal(evt.getCursor())) {
-        
+
             int upper = evt.getView().getTopInventory().getSize();
             if(evt.getView().getTopInventory().getType().equals(InventoryType.CRAFTING))
                 upper += 4;
             int lower = evt.getView().getBottomInventory().getSize();
-            
+
             for(int relative : evt.getRawSlots()) {
-            
+
                 relative -= upper;
 
                 if(relative < 0 || relative >= (lower)) {
                     evt.setCancelled(true);
                     break;
                 }
-            
+
             }
-        
+
         }
-        
+
     }
-    
+
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent evt) {
-        
+
         if(ItemUtil.isJournal(evt.getItemDrop().getItemStack()))
             evt.setCancelled(true);
-        
+
     }
-    
+
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent evt) {
 
@@ -379,17 +379,21 @@ public class PlayerListener implements Listener, ColorUtil {
             if (quester.currentQuests.isEmpty() == false) {
 
                 for (Quest quest : quester.currentQuests.keySet()) {
-                	
-                    if (quester.getCurrentStage(quest).chatEvents.isEmpty() == false) {
+                    Stage currentStage = quester.getCurrentStage(quest);
+                    if (currentStage == null) {
+                        continue;
+                    }
+
+                    if (currentStage.chatEvents.isEmpty() == false) {
 
                         String chat = evt.getMessage();
-                        for (String s : quester.getCurrentStage(quest).chatEvents.keySet()) {
+                        for (String s : currentStage.chatEvents.keySet()) {
 
                             if (s.equalsIgnoreCase(chat)) {
 
                                 if (quester.getQuestData(quest).eventFired.get(s) == null || quester.getQuestData(quest).eventFired.get(s) == false) {
 
-                                    quester.getCurrentStage(quest).chatEvents.get(s).fire(quester, quest);
+                                    currentStage.chatEvents.get(s).fire(quester, quest);
                                     quester.getQuestData(quest).eventFired.put(s, true);
 
                                 }
@@ -691,7 +695,7 @@ public class PlayerListener implements Listener, ColorUtil {
             if (damager != null) {
 
                 if (damager instanceof Projectile) {
-                	
+
                     	if(evt.getEntity().getLastDamageCause().getEntity() instanceof Player) {
 
                     	Player player = (Player) evt.getEntity().getLastDamageCause().getEntity();
@@ -767,7 +771,7 @@ public class PlayerListener implements Listener, ColorUtil {
             Quester quester = plugin.getQuester(player.getUniqueId());
 
             for (Quest quest : quester.currentQuests.keySet()) {
-            	
+
                 if (quester.getCurrentStage(quest).deathEvent != null) {
                     quester.getCurrentStage(quest).deathEvent.fire(quester, quest);
                 }
@@ -775,18 +779,18 @@ public class PlayerListener implements Listener, ColorUtil {
             }
 
         }
-        
+
         ItemStack found = null;
-        
+
         for(ItemStack stack : evt.getDrops()) {
-            
+
             if(ItemUtil.isJournal(stack)) {
                 found = stack;
                 break;
             }
-            
+
         }
-        
+
         if(found != null) {
             Quester quester = plugin.getQuester(player.getUniqueId());
             evt.getDrops().remove(found);
@@ -849,7 +853,7 @@ public class PlayerListener implements Listener, ColorUtil {
             }
 
             for (Quest quest : quester.currentQuests.keySet()) {
-            	
+
                 if (quester.getCurrentStage(quest).delay > -1) {
 
                     quester.startStageTimer(quest);
@@ -857,7 +861,7 @@ public class PlayerListener implements Listener, ColorUtil {
                 }
 
             }
-            
+
             if(quester.hasJournal)
                 quester.updateJournal();
 
@@ -873,13 +877,17 @@ public class PlayerListener implements Listener, ColorUtil {
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 
             for (Quest quest : quester.currentQuests.keySet()) {
-            	
-                if (quester.getCurrentStage(quest).delay > -1) {
+                Stage currentStage = quester.getCurrentStage(quest);
+                if (currentStage == null) {
+                    continue;
+                }
+
+                if (currentStage.delay > -1) {
                     quester.stopStageTimer(quest);
                 }
 
-                if (quester.getCurrentStage(quest).disconnectEvent != null) {
-                    quester.getCurrentStage(quest).disconnectEvent.fire(quester, quest);
+                if (currentStage.disconnectEvent != null) {
+                    currentStage.disconnectEvent.fire(quester, quest);
                 }
 
             }
@@ -903,7 +911,7 @@ public class PlayerListener implements Listener, ColorUtil {
     	if (evt.getFrom().getBlock().equals(evt.getTo().getBlock())) {
     		return;
     	}
-    	
+
         if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 
             boolean isPlayer = true;
