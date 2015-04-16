@@ -1,8 +1,5 @@
 package me.blackvein.quests;
 
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
 import java.io.File;
 import java.util.Iterator;
 
@@ -14,9 +11,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -33,10 +34,21 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
+
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class PlayerListener implements Listener, ColorUtil {
 
@@ -338,7 +350,7 @@ public class PlayerListener implements Listener, ColorUtil {
                                             player.sendMessage(msg);
                                         }
 
-                                        plugin.conversationFactory.buildConversation((Conversable) player).begin();
+                                        plugin.conversationFactory.buildConversation(player).begin();
 
                                     }
 
@@ -381,6 +393,9 @@ public class PlayerListener implements Listener, ColorUtil {
                 for (Quest quest : quester.currentQuests.keySet()) {
                     Stage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
+                    	if (plugin.debug == true) {
+                    		plugin.getLogger().severe("currentStage was null for " + quester.id.toString() + " on chat");
+                    	}
                         continue;
                     }
 
@@ -717,7 +732,7 @@ public class PlayerListener implements Listener, ColorUtil {
                                 for (Quest quest : quester.currentQuests.keySet()) {
 
                                     if (quester.hasObjective(quest, "killPlayer")) {
-                                        quester.killPlayer(quest, (Player) evt.getEntity());
+                                        quester.killPlayer(quest, evt.getEntity());
                                     }
 
                                 }
@@ -751,7 +766,7 @@ public class PlayerListener implements Listener, ColorUtil {
                             for (Quest quest : quester.currentQuests.keySet()) {
 
                                 if (quester.hasObjective(quest, "killPlayer")) {
-                                    quester.killPlayer(quest, (Player) evt.getEntity());
+                                    quester.killPlayer(quest, evt.getEntity());
                                 }
 
                             }
@@ -879,6 +894,9 @@ public class PlayerListener implements Listener, ColorUtil {
             for (Quest quest : quester.currentQuests.keySet()) {
                 Stage currentStage = quester.getCurrentStage(quest);
                 if (currentStage == null) {
+                	if (plugin.debug == true) {
+                		plugin.getLogger().severe("currentStage was null for " + quester.id.toString() + " on quit");
+                	}
                     continue;
                 }
 
