@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import me.blackvein.quests.Quests;
+
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Lang {
@@ -839,6 +839,7 @@ public class Lang {
         langMap.put("enterAnOption", "Enter an option");
         langMap.put("questAccepted", "Quest accepted: <quest>");
         langMap.put("currentQuest", "Current Quests:");
+        langMap.put("noMoreQuest", "No more quests available.");
 
         //Objectives
         langMap.put("damage", "Damage");

@@ -13,7 +13,6 @@ import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -36,18 +35,18 @@ public class NpcListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(NPCRightClickEvent evt) {
-    	
+
         if (plugin.questFactory.selectingNPCs.contains(evt.getClicker())) {
             evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + "ID " + evt.getNPC().getId());
             return;
         }
-        
+
         if (evt.getClicker().isConversing() == false) {
 
             final Player player = evt.getClicker();
             final Quester quester = plugin.getQuester(player.getUniqueId());
             boolean delivery = false;
-            
+
             for (Quest quest : quester.currentQuests.keySet()) {
 
                 if (quester.hasObjective(quest, "deliverItem") && player.getItemInHand() != null) {
@@ -66,7 +65,7 @@ public class NpcListener implements Listener {
                     }
 
                     NPC clicked = evt.getNPC();
-                    
+
                     if (found != null) {
 
                         for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
@@ -80,30 +79,30 @@ public class NpcListener implements Listener {
                         break;
 
                     } else if (!hand.getType().equals(Material.AIR)){
-                    	
+
                         for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
                             if (n == clicked.getId()) {
                             	String text = "";
-                            	
+
                             	if (hand.hasItemMeta()) {
                             		text += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
                             	}
-                            	
+
                             	text += ChatColor.AQUA + Quester.prettyItemString(hand.getType().name()) + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
-                            	
+
                             	if (hand.hasItemMeta()) {
                             		text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
                             	}
-                            	
+
                             	text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-                            	
+
                             	evt.getClicker().sendMessage(Lang.get("questInvalidDeliveryItem").replaceAll("<item>", text));
                                 break;
                             }
                         }
-                        
+
                         break;
-                        
+
                     }
 
                 }
@@ -111,7 +110,7 @@ public class NpcListener implements Listener {
             }
 
             if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
-            	
+
                 if (plugin.checkQuester(player.getUniqueId()) == false) {
 
                     boolean hasObjective = false;
@@ -123,7 +122,7 @@ public class NpcListener implements Listener {
                             if (quester.getQuestData(quest) != null && quester.getQuestData(quest).citizensInteracted.containsKey(evt.getNPC().getId()) && quester.getQuestData(quest).citizensInteracted.get(evt.getNPC().getId()) == false) {
                                 hasObjective = true;
                             }
-                            
+
                             quester.interactWithNPC(quest, evt.getNPC());
 
                         }
@@ -131,7 +130,7 @@ public class NpcListener implements Listener {
                     }
 
                     if (!hasObjective) {
-                    	
+
                         LinkedList<Quest> npcQuests = new LinkedList<Quest>();
 
                         for (Quest q : plugin.getQuests()) {
@@ -148,7 +147,7 @@ public class NpcListener implements Listener {
                             }
 
                         }
-                        
+
                         if (npcQuests.isEmpty() == false && npcQuests.size() >= 1) {
 
                             if (plugin.questNPCGUIs.contains(evt.getNPC().getId())) {
@@ -156,13 +155,13 @@ public class NpcListener implements Listener {
                                 return;
                             }
 
-                            Conversation c = plugin.NPCConversationFactory.buildConversation((Conversable) player);
+                            Conversation c = plugin.NPCConversationFactory.buildConversation(player);
                             c.getContext().setSessionData("quests", npcQuests);
                             c.getContext().setSessionData("npc", evt.getNPC().getName());
                             c.begin();
 
                         } else if (npcQuests.size() == 1) {
-                        	
+
                             Quest q = npcQuests.get(0);
 
                             if (!quester.completedQuests.contains(q.name)) {
@@ -177,7 +176,7 @@ public class NpcListener implements Listener {
                                         player.sendMessage(msg);
                                     }
 
-                                    plugin.conversationFactory.buildConversation((Conversable) player).begin();
+                                    plugin.conversationFactory.buildConversation(player).begin();
 
                                 } else if (quester.currentQuests.containsKey(q) == false) {
 
@@ -206,7 +205,7 @@ public class NpcListener implements Listener {
                                         player.sendMessage(msg);
                                     }
 
-                                    plugin.conversationFactory.buildConversation((Conversable) player).begin();
+                                    plugin.conversationFactory.buildConversation(player).begin();
                                 }
 
                             } else if (quester.currentQuests.containsKey(q) == false) {
@@ -217,18 +216,20 @@ public class NpcListener implements Listener {
 
                             }
 
+                        } else {
+
+                        	evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get("noMoreQuest"));
+
                         }
-                        
+
                     }
 
-                    evt.getClicker().sendMessage(ChatColor.YELLOW + "No more quests available.");
-                    
                 }
 
             }
-            
+
         }
-        
+
     }
 
     @EventHandler
@@ -247,7 +248,7 @@ public class NpcListener implements Listener {
 
             EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getNPC().getEntity().getLastDamageCause();
             Entity damager = damageEvent.getDamager();
-            
+
             if (damager != null) {
 
                 if (damager instanceof Projectile) {
