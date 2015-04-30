@@ -666,11 +666,20 @@ public class Quester {
         }
 
         for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
-
-            int delivered = getQuestData(quest).itemsDelivered.get(is);
-            int amt = is.getAmount();
-            Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(is));
-
+        	
+        	int delivered = 999;
+        	int amt = 999;
+        	Integer npc = null;
+        	try {
+            delivered = getQuestData(quest).itemsDelivered.get(is);
+            amt = is.getAmount();
+            npc = getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(is));
+        	} catch (Exception e) {
+        		plugin.getLogger().severe("Issue grabbing data. Please report these values in Github ticket #93:");
+        		plugin.getLogger().severe("quest = " + quest.name + ", delivered = " + delivered + ", amt = " + amt + ", npc = " + npc);
+        		e.printStackTrace();
+        	}
+        	
             if (delivered < amt) {
 
                 String obj = Lang.get("deliver");
