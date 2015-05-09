@@ -2605,6 +2605,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             quester = new Quester(this);
             quester.id = id;
             if (quester.loadData() == false && !questerBlacklist.contains(id.toString())) {
+            	if (citizens != null) {
+            		if (citizens.getNPCRegistry().getByUniqueId(id) != null) {
+            			return quester;
+            		}
+            	}
             	getLogger().info("Quester not found for UUID \"" + id.toString() + "\". Consider adding them to the Quester blacklist.");
             } else {
                 if (debug == true && !questerBlacklist.contains(id.toString())) {
