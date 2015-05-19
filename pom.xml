@@ -118,7 +118,8 @@
     </dependencies>
 
     <build>
-        <finalName>Quests-${project.version}-${env.BUILD_NUMBER}</finalName>
+        <finalName>Quests-${project.version}-b${env.BUILD_NUMBER}</finalName>
+        
         <resources>
             <resource>
                 <targetPath>.</targetPath>
