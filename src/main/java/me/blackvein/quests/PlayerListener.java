@@ -598,7 +598,17 @@ public class PlayerListener implements Listener, ColorUtil {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent evt) {
 
-        if (evt.getEntity() instanceof Player == false) {
+    	//NPCs count as a Player so we check for them through Citizens
+    	boolean isTargetNPC = false;
+
+    	if (plugin.citizens != null) {
+        	if (CitizensAPI.getNPCRegistry().isNPC(evt.getEntity())) {
+        		isTargetNPC = true;
+        	}
+    	}
+
+        if (evt.getEntity() instanceof Player == false || isTargetNPC) {
+
             if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 
                 EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
@@ -607,10 +617,10 @@ public class PlayerListener implements Listener, ColorUtil {
 
                     if (damager instanceof Projectile) {
                         Projectile projectile = (Projectile)damager;
-                        ProjectileSource source = projectile.getShooter();
+                        @SuppressWarnings("deprecation")
+						ProjectileSource source = projectile.getShooter();
 
                         if (source instanceof Player) {
-
                         	Player player = (Player) source;
                             boolean okay = true;
 
@@ -619,20 +629,35 @@ public class PlayerListener implements Listener, ColorUtil {
                                     okay = false;
                                 }
                             }
-
+                            
                             if (okay) {
 
-                                Quester quester = plugin.getQuester(player.getUniqueId());
+                                if (isTargetNPC) {
+                                    Quester quester = plugin.getQuester(player.getUniqueId());
 
-                                for (Quest quest : quester.currentQuests.keySet()) {
+                                    for (Quest quest : quester.currentQuests.keySet()) {
 
-                                    if (quester.hasObjective(quest, "killMob")) {
-                                        quester.killMob(quest, evt.getEntity().getLocation(), evt.getEntity().getType());
+                                        if (quester.hasObjective(quest, "killNPC")) {
+                                            quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(evt.getEntity()));
+                                        }
+
+                                    }
+
+                                } else {
+                                    Quester quester = plugin.getQuester(player.getUniqueId());
+
+                                    for (Quest quest : quester.currentQuests.keySet()) {
+
+                                        if (quester.hasObjective(quest, "killMob")) {
+                                            quester.killMob(quest, evt.getEntity().getLocation(), evt.getEntity().getType());
+                                        }
+
                                     }
 
                                 }
 
                             }
+
                         }
 
                     } else if (damager instanceof TNTPrimed) {
