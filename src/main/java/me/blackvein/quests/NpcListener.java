@@ -69,7 +69,8 @@ public class NpcListener implements Listener {
                     if (found != null) {
 
                         for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
-                            if (n == clicked.getId()) {
+
+                            if (n.equals(clicked.getId())) {
                                 quester.deliverItem(quest, hand);
                                 delivery = true;
                                 break;
@@ -81,7 +82,8 @@ public class NpcListener implements Listener {
                     } else if (!hand.getType().equals(Material.AIR)){
 
                         for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
-                            if (n == clicked.getId()) {
+
+                            if (n.equals(clicked.getId())) {
                             	String text = "";
 
                             	if (hand.hasItemMeta()) {
@@ -101,7 +103,7 @@ public class NpcListener implements Listener {
                             }
                         }
 
-                        break;
+                        //break;
 
                     }
 
@@ -216,7 +218,7 @@ public class NpcListener implements Listener {
 
                             }
 
-                        } else {
+                        } else if (npcQuests.isEmpty()) {
 
                         	evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get("noMoreQuest"));
 
