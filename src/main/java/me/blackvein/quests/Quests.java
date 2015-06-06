@@ -625,7 +625,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             URL[] urls = {new URL("jar:file:" + jar.getPath() + "!/")};
 
             ClassLoader cl = URLClassLoader.newInstance(urls, getClassLoader());
-
+            
+            int count = 0;
+            
             while (e.hasMoreElements()) {
 
                 JarEntry je = (JarEntry) e.nextElement();
@@ -645,6 +647,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     customRequirements.add(requirement);
                     String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
                     String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
+                    count++;
                     getLogger().info("Loaded Module: " + name + " by " + author);
 
                 } else if (CustomReward.class.isAssignableFrom(c)) {
@@ -655,6 +658,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     customRewards.add(reward);
                     String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
                     String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
+                    count++;
                     getLogger().info("Loaded Module: " + name + " by " + author);
 
                 } else if (CustomObjective.class.isAssignableFrom(c)) {
@@ -665,11 +669,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     customObjectives.add(objective);
                     String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
                     String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
+                    count++;
                     getLogger().info("Loaded Module: " + name + " by " + author);
 
-                } else {
-                    getLogger().severe("Error: Unable to load module from file: " + jar.getName() + ", jar file is not a valid module!");
                 }
+            }
+
+            if(count == 0) {
+                getLogger().severe("Error: Unable to load module from file: " + jar.getName() + ", jar file is not a valid module!");
             }
 
         } catch (Exception e) {
