@@ -3405,7 +3405,7 @@ if (quest != null) {
 
         try {
             currentQuests.remove(quest);
-            questData.remove(quest);
+            //questData.remove(quest);
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
