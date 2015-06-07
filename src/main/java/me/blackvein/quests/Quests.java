@@ -1468,7 +1468,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     private void adminQuit(final CommandSender cs, String[] args) {
-
+try{
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.quit")) {
 
             Player target = null;
@@ -1527,6 +1527,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
 
         }
+}catch(NullPointerException npe) {
+	System.out.println("Please report this full error in Github ticket #130");
+	npe.printStackTrace();
+}
     }
     
     private void adminPurge(final CommandSender cs, String[] args) {
