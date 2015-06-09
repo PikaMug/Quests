@@ -332,6 +332,8 @@ public class Quester {
     	if (questData.containsKey(quest)) {
     		return questData.get(quest);
     	}
+    	plugin.getLogger().warning("Data for quest " + quest + "returned null");
+    	plugin.getLogger().warning(questData.toString());
     	return null;
     }
 
@@ -3405,7 +3407,9 @@ if (quest != null) {
 
         try {
             currentQuests.remove(quest);
-            //questData.remove(quest);
+            if (questData.containsKey(quest)) {
+            	questData.remove(quest);
+            }
         } catch (Exception ex) {
             Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
         }
