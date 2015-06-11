@@ -2434,6 +2434,8 @@ try{
 
             for (Quest q : getQuester(player.getUniqueId()).currentQuests.keySet()) {
 
+            	if (getQuester(player.getUniqueId()).getQuestData(q) != null);
+            	
                 if (getQuester(player.getUniqueId()).getQuestData(q).delayStartTime == 0) {
 
                     String msg = Lang.get("questObjectivesTitle");
