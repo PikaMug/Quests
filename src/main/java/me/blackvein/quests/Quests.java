@@ -2434,7 +2434,7 @@ try{
 
             for (Quest q : getQuester(player.getUniqueId()).currentQuests.keySet()) {
 
-            	if (getQuester(player.getUniqueId()).getQuestData(q) != null);
+            	try {
             	
                 if (getQuester(player.getUniqueId()).getQuestData(q).delayStartTime == 0) {
 
@@ -2449,6 +2449,10 @@ try{
                     }
 
                 }
+                
+            	} catch (Exception e) {
+            		//TODO find source of NullPointerException from Github ticket #130
+            	}
 
             }
 
