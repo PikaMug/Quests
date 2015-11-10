@@ -1884,7 +1884,8 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
 
         if (q.customRewards.isEmpty() == false) {
-            cc.setSessionData(CK.REW_CUSTOM, q.customRewards);
+            cc.setSessionData(CK.REW_CUSTOM, new LinkedList<String>(q.customRewards.keySet()));
+            cc.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(q.customRewards.values()));
         }
         //
 
