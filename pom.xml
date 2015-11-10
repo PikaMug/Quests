@@ -127,7 +127,7 @@
     </dependencies>
 
     <build>
-        <finalName>Quests-${project.version}-b${env.BUILD_NUMBER}</finalName>
+        <finalName>Quests-${project.version}</finalName>
         
         <resources>
             <resource>
