@@ -4207,6 +4207,7 @@ try{
                     try {
 
                         getServer().getPluginManager().registerEvents(found, this);
+                        getLogger().info("Registered events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\".");
 
                     } catch (Exception e) {
                     	getLogger().warning("Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
