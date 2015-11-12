@@ -164,7 +164,9 @@ public class ItemUtil implements ColorUtil {
     public static String getDisplayString(ItemStack is) {
 
         String text;
-
+        if (is == null) {
+            return null;
+        }
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
             text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName() + RESET + AQUA + " x " + is.getAmount();
         } else {
