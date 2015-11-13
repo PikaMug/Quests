@@ -57,7 +57,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -666,29 +665,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
                     Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
-                    final CustomObjective objective = cstrctr.newInstance();
+                    CustomObjective objective = cstrctr.newInstance();
                     customObjectives.add(objective);
-                    final String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
+                    String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
                     String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
                     count++;
                     getLogger().info("Loaded Module: " + name + " by " + author);
-                    final Plugin plugin = this;
 
-                    getServer().getScheduler().runTaskLater(this, new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                getServer().getPluginManager().registerEvents(objective, plugin);
-                                getLogger().info("Registered events for custom objective \"" + name + "\"");
-                            } catch (Exception ex) {
-                                getLogger().warning("Failed to register events for custom objective \"" + name + "\". Does the objective class listen for events?");
-                                if (debug) {
-                                    getLogger().warning("Error log:");
-                                    ex.printStackTrace();
-                                }
-                            }
+                    try {
+                        getServer().getPluginManager().registerEvents(objective, this);
+                        getLogger().info("Registered events for custom objective \"" + name + "\"");
+                    } catch (Exception ex) {
+                        getLogger().warning("Failed to register events for custom objective \"" + name + "\". Does the objective class listen for events?");
+                        if (debug) {
+                            getLogger().warning("Error log:");
+                            ex.printStackTrace();
                         }
-                    }, 20);
+                    }
+
                 }
             }
 
