@@ -510,7 +510,7 @@ public class Quest {
                 for (String key : datamap.keySet()) {
                     message = message.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
                 }
-                player.sendMessage("- " + ChatColor.GOLD + found.getRewardName());
+                player.sendMessage("- " + ChatColor.GOLD + message);
                 found.giveReward(player, customRewards.get(s));
             } else {
                 plugin.getLogger().warning("[Quests] Quester \"" + player.getName() + "\" completed the Quest \"" + name + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
