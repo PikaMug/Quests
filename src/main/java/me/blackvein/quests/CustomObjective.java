@@ -219,10 +219,9 @@ public abstract class CustomObjective implements Listener {
                 return false;
             }
 
-            return true;
         }
 
-        return false;
+        return true;
     }
 
 }

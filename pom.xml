@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>2.5.3</version>
+    <version>2.5.2</version>
     <name>quests</name>
     <url>https://github.com/FlyingPikachu/Quests/</url>
     <packaging>jar</packaging>
@@ -74,15 +74,14 @@
         <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizens</artifactId>
-            <version>2.0.16-SNAPSHOT</version>
+            <version>2.0.14-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.aufdemrand</groupId>
             <artifactId>denizen</artifactId>
-            <version>0.9.7-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/denizen-0.9.7-SNAPSHOT.jar</systemPath>
+            <version>0.9.6-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
@@ -127,7 +126,7 @@
     </dependencies>
 
     <build>
-        <finalName>Quests-${project.version}</finalName>
+        <finalName>Quests-${project.version}-b${env.BUILD_NUMBER}</finalName>
         
         <resources>
             <resource>

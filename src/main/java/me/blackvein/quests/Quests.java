@@ -672,17 +672,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     count++;
                     getLogger().info("Loaded Module: " + name + " by " + author);
 
-                    try {
-                        getServer().getPluginManager().registerEvents(objective, this);
-                        getLogger().info("Registered events for custom objective \"" + name + "\"");
-                    } catch (Exception ex) {
-                        getLogger().warning("Failed to register events for custom objective \"" + name + "\". Does the objective class listen for events?");
-                        if (debug) {
-                            getLogger().warning("Error log:");
-                            ex.printStackTrace();
-                        }
-                    }
-
                 }
             }
 
@@ -4214,6 +4203,19 @@ try{
                     oStage.customObjectives.add(found);
                     oStage.customObjectiveCounts.add(count);
                     oStage.customObjectiveData.add(data);
+
+                    try {
+
+                        getServer().getPluginManager().registerEvents(found, this);
+
+                    } catch (Exception e) {
+                    	getLogger().warning("Failed to register events for custom objective \"" + name + "\" in Stage " + s2 + " of Quest \"" + quest.name + "\". Does the objective class listen for events?");
+                        if (debug) {
+                        	getLogger().warning("Error log:");
+                            e.printStackTrace();
+                        }
+                    }
+
                 }
 
             }
