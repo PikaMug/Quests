@@ -2560,7 +2560,7 @@ try{
 
             if (numOrder > 1) {
                 if (quests.size() >= (numOrder + 7)) {
-                    subQuests = quests.subList((numOrder), (numOrder + 8));
+                    subQuests = quests.subList((numOrder), (numOrder + 7));
                 } else {
                     subQuests = quests.subList((numOrder), quests.size());
                 }
