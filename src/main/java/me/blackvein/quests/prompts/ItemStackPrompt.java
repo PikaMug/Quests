@@ -95,7 +95,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
                     ItemMeta meta = is.getItemMeta();
                     if (meta.hasDisplayName()) {
-                        cc.setSessionData("tempDisplay", ChatColor.stripColor(meta.getDisplayName()));
+                        String display = meta.getDisplayName().replace(ChatColor.COLOR_CHAR, '&');
+                        cc.setSessionData("tempDisplay", display);
                     }
                     if (meta.hasLore()) {
                         LinkedList<String> lore = new LinkedList<String>();
@@ -185,7 +186,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                     enchs = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
                 }
                 if (cc.getSessionData("tempDisplay") != null) {
-                    display = (String) cc.getSessionData("tempDisplay");
+                    display = ChatColor.translateAlternateColorCodes('&', (String) cc.getSessionData("tempDisplay"));
                 }
                 if (cc.getSessionData("tempLore") != null) {
                     lore = (LinkedList<String>) cc.getSessionData("tempLore");
