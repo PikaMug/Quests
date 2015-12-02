@@ -90,7 +90,11 @@ public class Quest {
             q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
         }
 
-        q.getPlayer().setCompassTarget(q.getPlayer().getWorld().getSpawnLocation());
+        Location defaultLocation = q.getPlayer().getBedSpawnLocation();
+        if (defaultLocation == null) {
+            defaultLocation = q.getPlayer().getWorld().getSpawnLocation();
+        }
+        q.getPlayer().setCompassTarget(defaultLocation);
 
         if (q.getCurrentStage(this).delay < 0) {
 
