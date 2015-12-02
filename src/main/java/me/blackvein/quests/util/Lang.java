@@ -162,7 +162,10 @@ public class Lang {
         langMap.put("COMMAND_QUESTADMIN_SETSTAGE_USAGE", "Usage: /questadmin setstage [player] [quest] [stage]");
 
         langMap.put("COMMAND_QUESTADMIN_PURGE", "purge");
-        langMap.put("COMMAND_QUESTADMIN_PURGE_HELP", "purge [player] - Clear all Quests data of a player");
+        langMap.put("COMMAND_QUESTADMIN_PURGE_HELP", "purge [player] - Clear all Quests data of a player AND BLACKLISTS THEM");
+
+        langMap.put("COMMAND_QUESTADMIN_RESET", "reset");
+        langMap.put("COMMAND_QUESTADMIN_RESET_HELP", "reset [player] - Clear all Quests data of a player");
 
         langMap.put("COMMAND_QUESTADMIN_REMOVE", "remove");
         langMap.put("COMMAND_QUESTADMIN_REMOVE_HELP", "remove [player] [quest] - Remove a completed Quest from a player");
@@ -927,6 +930,7 @@ public class Lang {
         langMap.put("questForceNextStage", "<player> has advanced to the next Stage in the Quest <quest>.");
         langMap.put("questForcedNextStage", "<player> has advanced you to the next Stage in your Quest <quest>.");
         langMap.put("questPurged", "<player> has been purged and blacklisted.");
+        langMap.put("questReset", "<player> has been reset.");
         langMap.put("questRemoved", "Quest <quest> has been removed from player <player>'s completed Quests.");
         langMap.put("settingAllQuestPoints", "Setting all players' Quest Points...");
         langMap.put("allQuestPointsSet", "All players' Quest Points have been set to <number>!");

@@ -336,6 +336,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_PURGE"), 2); // purge [player]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RESET"), 2); // purge [player]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
 
@@ -846,6 +847,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_PURGE"))) {
 
             adminPurge(cs, args);
+
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RESET"))) {
+
+            adminReset(cs, args);
 
         } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_STATS"))) {
 
@@ -1574,6 +1579,44 @@ try{
                 cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + quester.id);
             } catch (Exception e) {
             	getLogger().info("Data file does not exist for " + quester.id.toString());
+            }
+
+        } else {
+
+            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+        }
+    }
+
+    private void adminReset(final CommandSender cs, String[] args) {
+
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reset")) {
+
+            Quester quester = getQuester(args[1]);
+
+            if (quester == null) {
+                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                return;
+            }
+
+            try {
+                quester.hardClear();
+                quester.saveData();
+                quester.updateJournal();
+                final File dataFolder = new File(this.getDataFolder(), "data/");
+                final File found = new File(dataFolder, quester.id + ".yml");
+                found.delete();
+
+                String msg = Lang.get("questReset");
+                if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
+                    msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + GOLD);
+                } else {
+                    msg = msg.replaceAll("<player>", GREEN + args[1] + GOLD);
+                }
+                cs.sendMessage(GOLD + msg);
+                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + quester.id);
+            } catch (Exception e) {
+                getLogger().info("Data file does not exist for " + quester.id.toString());
             }
 
         } else {
@@ -2492,6 +2535,7 @@ try{
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
@@ -2529,6 +2573,9 @@ try{
         	if (cs.hasPermission("quests.admin.purge")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
         	}
+            if (cs.hasPermission("quests.admin.reset")) {
+                cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
+            }
         	if (cs.hasPermission("quests.admin.remove")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
         	}

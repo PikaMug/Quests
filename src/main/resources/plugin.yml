@@ -68,6 +68,9 @@ permissions:
         description: Immediately force Stage completion for a player
         default: op
     quests.admin.purge:
+        description: Clear all Quests data of a player AND BLACKLISTS THEM
+        default: op
+    quests.admin.reset:
         description: Clear all Quests data of a player
         default: op
     quests.admin.remove:
