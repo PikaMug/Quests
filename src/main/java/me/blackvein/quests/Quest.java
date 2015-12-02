@@ -287,16 +287,21 @@ public class Quest {
     @SuppressWarnings("deprecation")
 	public void completeQuest(Quester q) {
 
-        Player player = plugin.getServer().getPlayer(q.id);
+        final Player player = plugin.getServer().getPlayer(q.id);
         q.hardQuit(this);
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
 
-        String ps = Quests.parseString(finished, this);
+        final String ps = Quests.parseString(finished, this);
 
-        for (String msg : ps.split("<br>")) {
-            player.sendMessage(msg);
-        }
+        org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+           @Override
+           public void run() {
+               for (String msg : ps.split("<br>")) {
+                   player.sendMessage(msg);
+               }
+           }
+        }, 40);
 
         if (moneyReward > 0 && Quests.economy != null) {
             Quests.economy.depositPlayer(q.getOfflinePlayer(), moneyReward);
