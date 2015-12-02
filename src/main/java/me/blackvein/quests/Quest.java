@@ -134,7 +134,6 @@ public class Quest {
     }
 
     public void setStage(Quester quester, int stage) throws InvalidStageException {
-        org.bukkit.Bukkit.getLogger().info("SEt stage: " + stage);
         if (orderedStages.size() - 1 < stage) {
             throw new InvalidStageException(this, stage);
         }
