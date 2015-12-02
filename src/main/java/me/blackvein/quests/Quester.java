@@ -3224,6 +3224,9 @@ if (quest != null) {
             Stage stage = getCurrentStage(quest);
             quest.updateCompass(this, stage);
             exists = true;
+
+            // Meh, let's not.
+            /*
             if (q.equals(quest) == false) {
 
                 hardQuit(quest);
@@ -3236,6 +3239,7 @@ if (quest != null) {
                 }
 
             }
+            */
 
             break;
 
