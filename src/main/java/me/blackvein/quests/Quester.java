@@ -394,6 +394,7 @@ public class Quester {
             if (stage.startEvent != null) {
                 stage.startEvent.fire(this, q);
             }
+            q.updateCompass(this, stage);
 
             saveData();
 
@@ -3219,9 +3220,9 @@ if (quest != null) {
     boolean exists = false;
 
     for (Quest q : plugin.quests) {
-
         if (q.name.equalsIgnoreCase(quest.name)) {
-
+            Stage stage = getCurrentStage(quest);
+            quest.updateCompass(this, stage);
             exists = true;
             if (q.equals(quest) == false) {
 

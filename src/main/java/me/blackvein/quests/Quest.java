@@ -90,6 +90,8 @@ public class Quest {
             q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
         }
 
+        q.getPlayer().setCompassTarget(q.getPlayer().getWorld().getSpawnLocation());
+
         if (q.getCurrentStage(this).delay < 0) {
 
             Player player = q.getPlayer();
@@ -128,7 +130,7 @@ public class Quest {
     }
 
     public void setStage(Quester quester, int stage) throws InvalidStageException {
-
+        org.bukkit.Bukkit.getLogger().info("SEt stage: " + stage);
         if (orderedStages.size() - 1 < stage) {
             throw new InvalidStageException(this, stage);
         }
@@ -147,9 +149,11 @@ public class Quest {
         /*if (quester.getCurrentStage(this).finishEvent != null) {
          quester.getCurrentStage(this).finishEvent.fire(quester);
          }*/
-        if (quester.getCurrentStage(this).startEvent != null) {
-            quester.getCurrentStage(this).startEvent.fire(quester, this);
+        Stage nextStage = quester.getCurrentStage(this);
+        if (nextStage.startEvent != null) {
+            nextStage.startEvent.fire(quester, this);
         }
+        updateCompass(quester, nextStage);
 
         String msg = Lang.get("questObjectivesTitle");
         msg = msg.replaceAll("<quest>", name);
@@ -167,6 +171,22 @@ public class Quest {
         
         quester.updateJournal();
 
+    }
+
+    public void updateCompass(Quester quester, Stage nextStage)
+    {
+        if (nextStage.citizensToInteract != null && nextStage.citizensToInteract.size() > 0)
+        {
+            quester.getPlayer().setCompassTarget(plugin.getNPCLocation(nextStage.citizensToInteract.getFirst()));
+        }
+        else if (nextStage.citizensToKill != null && nextStage.citizensToKill.size() > 0)
+        {
+            quester.getPlayer().setCompassTarget(plugin.getNPCLocation(nextStage.citizensToKill.getFirst()));
+        }
+        else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0)
+        {
+            quester.getPlayer().setCompassTarget(nextStage.locationsToReach.getFirst());
+        }
     }
 
     public String getName() {

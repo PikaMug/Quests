@@ -4979,6 +4979,12 @@ try{
 
     }
 
+    public Location getNPCLocation(int id) {
+
+        return citizens.getNPCRegistry().getById(id).getStoredLocation();
+
+    }
+
     public String getNPCName(int id) {
 
         return citizens.getNPCRegistry().getById(id).getName();
