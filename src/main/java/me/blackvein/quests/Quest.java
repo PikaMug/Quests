@@ -321,7 +321,7 @@ public class Quest {
            @Override
            public void run() {
                for (String msg : ps.split("<br>")) {
-                   player.sendMessage(msg);
+                   player.sendMessage(ChatColor.AQUA + msg);
                }
            }
         }, 40);
