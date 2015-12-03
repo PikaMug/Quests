@@ -89,12 +89,7 @@ public class Quest {
         if (stageCompleteMessage != null) {
             q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
         }
-
-        Location defaultLocation = q.getPlayer().getBedSpawnLocation();
-        if (defaultLocation == null) {
-            defaultLocation = q.getPlayer().getWorld().getSpawnLocation();
-        }
-        q.getPlayer().setCompassTarget(defaultLocation);
+        resetCompass(q);
 
         if (q.getCurrentStage(this).delay < 0) {
 
@@ -178,18 +173,39 @@ public class Quest {
 
     public void updateCompass(Quester quester, Stage nextStage)
     {
+        Location targetLocation = null;
+        if (nextStage == null) {
+            resetCompass(quester);
+            return;
+        }
         if (nextStage.citizensToInteract != null && nextStage.citizensToInteract.size() > 0)
         {
-            quester.getPlayer().setCompassTarget(plugin.getNPCLocation(nextStage.citizensToInteract.getFirst()));
+            targetLocation = plugin.getNPCLocation(nextStage.citizensToInteract.getFirst());
         }
         else if (nextStage.citizensToKill != null && nextStage.citizensToKill.size() > 0)
         {
-            quester.getPlayer().setCompassTarget(plugin.getNPCLocation(nextStage.citizensToKill.getFirst()));
+            targetLocation = plugin.getNPCLocation(nextStage.citizensToKill.getFirst());
         }
         else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0)
         {
-            quester.getPlayer().setCompassTarget(nextStage.locationsToReach.getFirst());
+            targetLocation = nextStage.locationsToReach.getFirst();
         }
+        if (targetLocation != null) {
+            quester.getPlayer().setCompassTarget(targetLocation);
+        } else {
+            resetCompass(quester);
+        }
+    }
+
+    protected void resetCompass(Quester q) {
+        Player player = q.getPlayer();
+        if (player == null) return;
+
+        Location defaultLocation = player.getBedSpawnLocation();
+        if (defaultLocation == null) {
+            defaultLocation = player.getWorld().getSpawnLocation();
+        }
+        player.setCompassTarget(defaultLocation);
     }
 
     public String getName() {
