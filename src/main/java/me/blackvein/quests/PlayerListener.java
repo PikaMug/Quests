@@ -812,7 +812,8 @@ public class PlayerListener implements Listener, ColorUtil {
 
             for (Quest quest : quester.currentQuests.keySet()) {
 
-                if (quester.getCurrentStage(quest).deathEvent != null) {
+                Stage stage = quester.getCurrentStage(quest);
+                if (stage != null && stage.deathEvent != null) {
                     quester.getCurrentStage(quest).deathEvent.fire(quester, quest);
                 }
 
