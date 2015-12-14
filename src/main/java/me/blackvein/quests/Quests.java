@@ -1600,26 +1600,35 @@ try{
                 cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
                 return;
             }
+            UUID id = quester.id;
+            questers.remove(id);
 
             try {
                 quester.hardClear();
                 quester.saveData();
                 quester.updateJournal();
                 final File dataFolder = new File(this.getDataFolder(), "data/");
-                final File found = new File(dataFolder, quester.id + ".yml");
+                final File found = new File(dataFolder, id + ".yml");
                 found.delete();
 
                 String msg = Lang.get("questReset");
-                if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
-                    msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + GOLD);
+                if (Bukkit.getOfflinePlayer(id).getName() != null) {
+                    msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(id).getName() + GOLD);
                 } else {
                     msg = msg.replaceAll("<player>", GREEN + args[1] + GOLD);
                 }
                 cs.sendMessage(GOLD + msg);
-                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + quester.id);
+                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + id);
+
+
             } catch (Exception e) {
-                getLogger().info("Data file does not exist for " + quester.id.toString());
+                getLogger().info("Data file does not exist for " + id.toString());
             }
+
+            quester = new Quester(this);
+            quester.id = id;
+            quester.saveData();
+            questers.put(id, quester);
 
         } else {
 
