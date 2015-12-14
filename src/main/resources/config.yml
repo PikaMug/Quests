@@ -3,6 +3,7 @@ allow-command-questing: true
 allow-command-quests-with-npcs: false
 show-requirements: true
 allow-quitting: true
+use-compass: true
 ignore-locked-quests: false
 debug-mode: false
 generate-files-on-join: true

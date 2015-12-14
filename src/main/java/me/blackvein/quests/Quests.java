@@ -98,6 +98,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static Heroes heroes = null;
     public static PhatLoots phatLoots = null;
     public static boolean npcEffects = true;
+    public static boolean useCompass = true;
     public static boolean ignoreLockedQuests = false;
     public static boolean genFilesOnJoin = true;
     public static int acceptTimeout = 20;
@@ -533,6 +534,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
         showQuestReqs = config.getBoolean("show-requirements", true);
         allowQuitting = config.getBoolean("allow-quitting", true);
+        useCompass = config.getBoolean("use-compass", true);
         genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
         npcEffects = config.getBoolean("show-npc-effects", true);
         effect = config.getString("npc-effect", "note");

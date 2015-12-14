@@ -173,6 +173,8 @@ public class Quest {
 
     public void updateCompass(Quester quester, Stage nextStage)
     {
+        if (!Quests.getInstance().useCompass) return;
+
         Location targetLocation = null;
         if (nextStage == null) {
             resetCompass(quester);
@@ -198,6 +200,7 @@ public class Quest {
     }
 
     protected void resetCompass(Quester q) {
+        if (!Quests.getInstance().useCompass) return;
         Player player = q.getPlayer();
         if (player == null) return;
 
