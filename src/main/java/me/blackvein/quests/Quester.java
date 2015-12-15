@@ -2578,7 +2578,10 @@ public class Quester {
             List<String> questNames = data.getStringList("currentQuests");
             List<Integer> questStages = data.getIntegerList("currentStages");
 
-            for (int i = 0; i < questNames.size(); i++) {
+            // These appear to differ sometimes? That seems bad.
+            int maxSize = Math.min(questNames.size(), questStages.size());
+
+            for (int i = 0; i < maxSize; i++) {
             	if (plugin.getQuest(questNames.get(i)) != null) {
             		currentQuests.put(plugin.getQuest(questNames.get(i)), questStages.get(i));
             	}
