@@ -188,7 +188,6 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                 }
                 if (cc.getSessionData("tempDisplay") != null) {
                     display = ChatColor.translateAlternateColorCodes('&', (String) cc.getSessionData("tempDisplay"));
-                    org.bukkit.Bukkit.getLogger().info("LOADED: " + display);
                 }
                 if (cc.getSessionData("tempLore") != null) {
                     lore = new ArrayList<String>();
