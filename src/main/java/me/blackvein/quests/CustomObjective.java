@@ -85,11 +85,14 @@ public abstract class CustomObjective implements Listener {
 
         Quester quester = Quests.getInstance().getQuester(player.getUniqueId());
         if (quester != null) {
+            Stage currentStage = quester.getCurrentStage(quest);
+            if (currentStage == null) return null;
 
             int index = -1;
             int tempIndex = 0;
 
-            for (me.blackvein.quests.CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
+
+            for (me.blackvein.quests.CustomObjective co : currentStage.customObjectives) {
 
                 if (co.getName().equals(obj.getName())) {
                     index = tempIndex;
@@ -102,7 +105,7 @@ public abstract class CustomObjective implements Listener {
 
             if (index > -1) {
 
-                return quester.getCurrentStage(quest).customObjectiveData.get(index);
+                return currentStage.customObjectiveData.get(index);
 
             }
 

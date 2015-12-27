@@ -89,6 +89,7 @@ public class Quest {
         if (stageCompleteMessage != null) {
             q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
         }
+        resetCompass(q);
 
         if (q.getCurrentStage(this).delay < 0) {
 
@@ -128,7 +129,6 @@ public class Quest {
     }
 
     public void setStage(Quester quester, int stage) throws InvalidStageException {
-
         if (orderedStages.size() - 1 < stage) {
             throw new InvalidStageException(this, stage);
         }
@@ -147,9 +147,11 @@ public class Quest {
         /*if (quester.getCurrentStage(this).finishEvent != null) {
          quester.getCurrentStage(this).finishEvent.fire(quester);
          }*/
-        if (quester.getCurrentStage(this).startEvent != null) {
-            quester.getCurrentStage(this).startEvent.fire(quester, this);
+        Stage nextStage = quester.getCurrentStage(this);
+        if (nextStage.startEvent != null) {
+            nextStage.startEvent.fire(quester, this);
         }
+        updateCompass(quester, nextStage);
 
         String msg = Lang.get("questObjectivesTitle");
         msg = msg.replaceAll("<quest>", name);
@@ -167,6 +169,46 @@ public class Quest {
         
         quester.updateJournal();
 
+    }
+
+    public void updateCompass(Quester quester, Stage nextStage)
+    {
+        if (!Quests.getInstance().useCompass) return;
+
+        Location targetLocation = null;
+        if (nextStage == null) {
+            resetCompass(quester);
+            return;
+        }
+        if (nextStage.citizensToInteract != null && nextStage.citizensToInteract.size() > 0)
+        {
+            targetLocation = plugin.getNPCLocation(nextStage.citizensToInteract.getFirst());
+        }
+        else if (nextStage.citizensToKill != null && nextStage.citizensToKill.size() > 0)
+        {
+            targetLocation = plugin.getNPCLocation(nextStage.citizensToKill.getFirst());
+        }
+        else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0)
+        {
+            targetLocation = nextStage.locationsToReach.getFirst();
+        }
+        if (targetLocation != null) {
+            quester.getPlayer().setCompassTarget(targetLocation);
+        } else {
+            resetCompass(quester);
+        }
+    }
+
+    protected void resetCompass(Quester q) {
+        if (!Quests.getInstance().useCompass) return;
+        Player player = q.getPlayer();
+        if (player == null) return;
+
+        Location defaultLocation = player.getBedSpawnLocation();
+        if (defaultLocation == null) {
+            defaultLocation = player.getWorld().getSpawnLocation();
+        }
+        player.setCompassTarget(defaultLocation);
     }
 
     public String getName() {
@@ -287,16 +329,21 @@ public class Quest {
     @SuppressWarnings("deprecation")
 	public void completeQuest(Quester q) {
 
-        Player player = plugin.getServer().getPlayer(q.id);
+        final Player player = plugin.getServer().getPlayer(q.id);
         q.hardQuit(this);
         q.completedQuests.add(name);
         String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
 
-        String ps = Quests.parseString(finished, this);
+        final String ps = Quests.parseString(finished, this);
 
-        for (String msg : ps.split("<br>")) {
-            player.sendMessage(msg);
-        }
+        org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+           @Override
+           public void run() {
+               for (String msg : ps.split("<br>")) {
+                   player.sendMessage(ChatColor.AQUA + msg);
+               }
+           }
+        }, 40);
 
         if (moneyReward > 0 && Quests.economy != null) {
             Quests.economy.depositPlayer(q.getOfflinePlayer(), moneyReward);

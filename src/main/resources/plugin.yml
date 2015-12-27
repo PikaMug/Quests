@@ -1,6 +1,6 @@
 name: Quests
 main: me.blackvein.quests.Quests
-version: ${project.version}-b${env.BUILD_NUMBER}
+version: ${project.version}
 description: Player questing system
 website: http://dev.bukkit.org/server-mods/quests/
 dev-url: https://github.com/Blackvein/Quests/
@@ -68,6 +68,9 @@ permissions:
         description: Immediately force Stage completion for a player
         default: op
     quests.admin.purge:
+        description: Clear all Quests data of a player AND BLACKLISTS THEM
+        default: op
+    quests.admin.reset:
         description: Clear all Quests data of a player
         default: op
     quests.admin.remove:

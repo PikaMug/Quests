@@ -1230,6 +1230,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         if (cc.getSessionData(CK.Q_GUIDISPLAY) != null) {
             guiDisplay = (ItemStack) cc.getSessionData(CK.Q_GUIDISPLAY);
+            guiDisplay = new ItemStack(guiDisplay.getType());
         }
 
         if (cc.getSessionData(CK.REW_MONEY) != null) {

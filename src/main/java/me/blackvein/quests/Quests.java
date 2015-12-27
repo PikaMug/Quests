@@ -98,6 +98,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     public static Heroes heroes = null;
     public static PhatLoots phatLoots = null;
     public static boolean npcEffects = true;
+    public static boolean useCompass = true;
     public static boolean ignoreLockedQuests = false;
     public static boolean genFilesOnJoin = true;
     public static int acceptTimeout = 20;
@@ -336,6 +337,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_PURGE"), 2); // purge [player]
+        adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RESET"), 2); // purge [player]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
         adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
 
@@ -532,6 +534,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
         showQuestReqs = config.getBoolean("show-requirements", true);
         allowQuitting = config.getBoolean("allow-quitting", true);
+        useCompass = config.getBoolean("use-compass", true);
         genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
         npcEffects = config.getBoolean("show-npc-effects", true);
         effect = config.getString("npc-effect", "note");
@@ -846,6 +849,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_PURGE"))) {
 
             adminPurge(cs, args);
+
+        } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RESET"))) {
+
+            adminReset(cs, args);
 
         } else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_STATS"))) {
 
@@ -1575,6 +1582,53 @@ try{
             } catch (Exception e) {
             	getLogger().info("Data file does not exist for " + quester.id.toString());
             }
+
+        } else {
+
+            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+
+        }
+    }
+
+    private void adminReset(final CommandSender cs, String[] args) {
+
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reset")) {
+
+            Quester quester = getQuester(args[1]);
+
+            if (quester == null) {
+                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                return;
+            }
+            UUID id = quester.id;
+            questers.remove(id);
+
+            try {
+                quester.hardClear();
+                quester.saveData();
+                quester.updateJournal();
+                final File dataFolder = new File(this.getDataFolder(), "data/");
+                final File found = new File(dataFolder, id + ".yml");
+                found.delete();
+
+                String msg = Lang.get("questReset");
+                if (Bukkit.getOfflinePlayer(id).getName() != null) {
+                    msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(id).getName() + GOLD);
+                } else {
+                    msg = msg.replaceAll("<player>", GREEN + args[1] + GOLD);
+                }
+                cs.sendMessage(GOLD + msg);
+                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + id);
+
+
+            } catch (Exception e) {
+                getLogger().info("Data file does not exist for " + id.toString());
+            }
+
+            quester = new Quester(this);
+            quester.id = id;
+            quester.saveData();
+            questers.put(id, quester);
 
         } else {
 
@@ -2492,6 +2546,7 @@ try{
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
+            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
             cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
@@ -2529,6 +2584,9 @@ try{
         	if (cs.hasPermission("quests.admin.purge")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
         	}
+            if (cs.hasPermission("quests.admin.reset")) {
+                cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
+            }
         	if (cs.hasPermission("quests.admin.remove")) {
         		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
         	}
@@ -2560,7 +2618,7 @@ try{
 
             if (numOrder > 1) {
                 if (quests.size() >= (numOrder + 7)) {
-                    subQuests = quests.subList((numOrder), (numOrder + 8));
+                    subQuests = quests.subList((numOrder), (numOrder + 7));
                 } else {
                     subQuests = quests.subList((numOrder), quests.size());
                 }
@@ -4976,6 +5034,12 @@ try{
         }
 
         return null;
+
+    }
+
+    public Location getNPCLocation(int id) {
+
+        return citizens.getNPCRegistry().getById(id).getStoredLocation();
 
     }
 

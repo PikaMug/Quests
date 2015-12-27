@@ -1,5 +1,6 @@
 package me.blackvein.quests.prompts;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -95,7 +96,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
                     ItemMeta meta = is.getItemMeta();
                     if (meta.hasDisplayName()) {
-                        cc.setSessionData("tempDisplay", ChatColor.stripColor(meta.getDisplayName()));
+                        String display = meta.getDisplayName().replace(ChatColor.COLOR_CHAR, '&');
+                        cc.setSessionData("tempDisplay", display);
                     }
                     if (meta.hasLore()) {
                         LinkedList<String> lore = new LinkedList<String>();
@@ -176,7 +178,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                 short data = -1;
                 Map<Enchantment, Integer> enchs = null;
                 String display = null;
-                LinkedList<String> lore = null;
+                List<String> lore = null;
 
                 if (cc.getSessionData("tempData") != null) {
                     data = (Short) cc.getSessionData("tempData");
@@ -185,10 +187,15 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
                     enchs = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
                 }
                 if (cc.getSessionData("tempDisplay") != null) {
-                    display = (String) cc.getSessionData("tempDisplay");
+                    display = ChatColor.translateAlternateColorCodes('&', (String) cc.getSessionData("tempDisplay"));
                 }
                 if (cc.getSessionData("tempLore") != null) {
-                    lore = (LinkedList<String>) cc.getSessionData("tempLore");
+                    lore = new ArrayList<String>();
+                    LinkedList<String> loadedLore = (LinkedList<String>) cc.getSessionData("tempLore");
+                    for (String line : loadedLore)
+                    {
+                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                    }
                 }
 
                 ItemStack stack = new ItemStack(Material.matchMaterial(name), amount);
