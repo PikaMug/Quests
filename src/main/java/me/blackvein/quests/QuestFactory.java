@@ -1287,7 +1287,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
         cs.set("ask-message", desc);
         cs.set("finish-message", finish);
-        cs.set("initial-event", initialEvent);
+        cs.set("event", initialEvent);
         cs.set("region", region);
         cs.set("gui-display", ItemUtil.serialize(guiDisplay));
 
