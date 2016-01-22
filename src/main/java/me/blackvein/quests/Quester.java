@@ -2590,7 +2590,7 @@ public class Quester {
 
             ConfigurationSection dataSec = data.getConfigurationSection("questData");
 
-            if (dataSec.getKeys(false).isEmpty()) {
+            if (dataSec == null || dataSec.getKeys(false).isEmpty()) {
             	return false;
             }
 
@@ -2610,10 +2610,12 @@ public class Quester {
                 if (stage == null) {
                     quest.completeQuest(this);
                     plugin.getLogger().log(Level.SEVERE, "[Quests] Invalid stage number for player: \"" + id + "\" on Quest \"" + quest.name + "\". Quest ended.");
-                    return true;
+                    continue;
                 }
 
                 addEmpties(quest);
+
+                if (questSec == null) continue;
 
                 if (questSec.contains("blocks-damaged-names")) {
 
