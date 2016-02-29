@@ -89,7 +89,10 @@ public class Quest {
         if (stageCompleteMessage != null) {
             q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
         }
-        resetCompass(q);
+        if (Quests.getInstance().useCompass) {
+            q.resetCompass();
+            q.findCompassTarget();
+        }
 
         if (q.getCurrentStage(this).delay < 0) {
 
@@ -171,14 +174,13 @@ public class Quest {
 
     }
 
-    public void updateCompass(Quester quester, Stage nextStage)
+    public boolean updateCompass(Quester quester, Stage nextStage)
     {
-        if (!Quests.getInstance().useCompass) return;
+        if (!Quests.getInstance().useCompass) return false;
 
         Location targetLocation = null;
         if (nextStage == null) {
-            resetCompass(quester);
-            return;
+            return false;
         }
         if (nextStage.citizensToInteract != null && nextStage.citizensToInteract.size() > 0)
         {
@@ -194,21 +196,9 @@ public class Quest {
         }
         if (targetLocation != null) {
             quester.getPlayer().setCompassTarget(targetLocation);
-        } else {
-            resetCompass(quester);
         }
-    }
-
-    protected void resetCompass(Quester q) {
-        if (!Quests.getInstance().useCompass) return;
-        Player player = q.getPlayer();
-        if (player == null) return;
-
-        Location defaultLocation = player.getBedSpawnLocation();
-        if (defaultLocation == null) {
-            defaultLocation = player.getWorld().getSpawnLocation();
-        }
-        player.setCompassTarget(defaultLocation);
+        
+        return targetLocation != null;
     }
 
     public String getName() {

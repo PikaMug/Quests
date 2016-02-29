@@ -3466,5 +3466,27 @@ if (quest != null) {
         }
 
     }
+    
+    public void resetCompass() {
+        if (!Quests.getInstance().useCompass) return;
+        Player player = getPlayer();
+        if (player == null) return;
 
+        Location defaultLocation = player.getBedSpawnLocation();
+        if (defaultLocation == null) {
+            defaultLocation = player.getWorld().getSpawnLocation();
+        }
+        player.setCompassTarget(defaultLocation);
+    }
+    
+    public void findCompassTarget() {
+        if (!Quests.getInstance().useCompass) return;
+        Player player = getPlayer();
+        if (player == null) return;
+        
+        for (Quest quest : currentQuests.keySet()) {
+            Stage stage = getCurrentStage(quest);
+            if (stage != null && quest.updateCompass(this, stage)) break;
+        }
+    }
 }
