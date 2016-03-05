@@ -564,7 +564,7 @@ public class Quest {
         q.saveData();
         player.updateInventory();
         q.updateJournal();
-
+        q.findCompassTarget();
     }
 
     @SuppressWarnings("deprecation")
