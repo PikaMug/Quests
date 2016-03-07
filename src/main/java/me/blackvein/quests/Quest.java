@@ -195,6 +195,7 @@ public class Quest {
             targetLocation = nextStage.locationsToReach.getFirst();
         }
         if (targetLocation != null) {
+//            org.bukkit.Bukkit.getLogger().info(" setting compass target for " + quester.getPlayer().getName() + " to " + targetLocation);
             quester.getPlayer().setCompassTarget(targetLocation);
         }
         

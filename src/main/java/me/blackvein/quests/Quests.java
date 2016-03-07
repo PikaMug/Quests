@@ -2747,6 +2747,8 @@ try{
                 quester.saveData();
             }
             qs.put(p.getUniqueId(), quester);
+            // Kind of hacky to put this here, works around issues with the compass on fast join
+            quester.findCompassTarget();
 
         }
 
