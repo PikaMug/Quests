@@ -2495,12 +2495,13 @@ try{
 
     private void showObjectives(final Player player) {
 
-        if (getQuester(player.getUniqueId()).currentQuests.isEmpty() == false) {
-
-            for (Quest q : getQuester(player.getUniqueId()).currentQuests.keySet()) {
+        Quester quester = getQuester(player.getUniqueId());
+        if (quester.currentQuests.isEmpty() == false) {
+            for (Quest q : quester.currentQuests.keySet()) {
+                Stage stage = quester.getCurrentStage(q);
+                q.updateCompass(quester, stage);
 
             	try {
-            	
                 if (getQuester(player.getUniqueId()).getQuestData(q).delayStartTime == 0) {
 
                     String msg = Lang.get("questObjectivesTitle");
