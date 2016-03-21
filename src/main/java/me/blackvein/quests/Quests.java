@@ -2495,12 +2495,13 @@ try{
 
     private void showObjectives(final Player player) {
 
-        if (getQuester(player.getUniqueId()).currentQuests.isEmpty() == false) {
-
-            for (Quest q : getQuester(player.getUniqueId()).currentQuests.keySet()) {
+        Quester quester = getQuester(player.getUniqueId());
+        if (quester.currentQuests.isEmpty() == false) {
+            for (Quest q : quester.currentQuests.keySet()) {
+                Stage stage = quester.getCurrentStage(q);
+                q.updateCompass(quester, stage);
 
             	try {
-            	
                 if (getQuester(player.getUniqueId()).getQuestData(q).delayStartTime == 0) {
 
                     String msg = Lang.get("questObjectivesTitle");
@@ -2747,6 +2748,8 @@ try{
                 quester.saveData();
             }
             qs.put(p.getUniqueId(), quester);
+            // Kind of hacky to put this here, works around issues with the compass on fast join
+            quester.findCompassTarget();
 
         }
 
