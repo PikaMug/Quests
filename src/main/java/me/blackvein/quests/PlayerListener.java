@@ -901,7 +901,7 @@ public class PlayerListener implements Listener, ColorUtil {
 
             plugin.questers.put(evt.getPlayer().getUniqueId(), quester);
 
-            if (Quests.getInstance().useCompass) {
+            if (Quests.useCompass) {
                 quester.resetCompass();
             }
 

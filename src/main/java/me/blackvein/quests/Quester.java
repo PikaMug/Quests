@@ -3468,7 +3468,7 @@ if (quest != null) {
     }
     
     public void resetCompass() {
-        if (!Quests.getInstance().useCompass) return;
+        if (!Quests.useCompass) return;
         Player player = getPlayer();
         if (player == null) return;
 
@@ -3480,7 +3480,7 @@ if (quest != null) {
     }
     
     public void findCompassTarget() {
-        if (!Quests.getInstance().useCompass) return;
+        if (!Quests.useCompass) return;
         Player player = getPlayer();
         if (player == null) return;
         
