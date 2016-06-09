@@ -51,7 +51,11 @@ public enum Eff_1_9_R2 {
     BLOCKDUST_(EnumParticle.BLOCK_DUST),
 	DROPLET(EnumParticle.WATER_DROP),
 	TAKE(EnumParticle.ITEM_TAKE),
-	MOB_APPEARANCE(EnumParticle.MOB_APPEARANCE);
+	MOB_APPEARANCE(EnumParticle.MOB_APPEARANCE),
+	SWEEPING_DUST(EnumParticle.SWEEP_ATTACK),
+	DRAGON_BREATH(EnumParticle.DRAGON_BREATH),
+	ENDROD(EnumParticle.END_ROD),
+	DAMAGE_INDICATOR(EnumParticle.DAMAGE_INDICATOR),;
 
     private final EnumParticle particleEnum;
 

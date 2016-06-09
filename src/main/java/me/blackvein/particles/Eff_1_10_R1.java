@@ -1,14 +1,15 @@
 package me.blackvein.particles;
 
 import me.blackvein.quests.util.ReflectionUtil;
-import net.minecraft.server.v1_9_R1.EnumParticle;
-import net.minecraft.server.v1_9_R1.PacketPlayOutWorldParticles;
+import net.minecraft.server.v1_10_R1.EnumParticle;
+import net.minecraft.server.v1_10_R1.PacketPlayOutWorldParticles;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public enum Eff_1_9_R1 {
+public enum Eff_1_10_R1 {
+
 	
 	EXPLOSION(EnumParticle.EXPLOSION_NORMAL),
 	EXPLOSION_LARGE(EnumParticle.EXPLOSION_LARGE),
@@ -55,11 +56,13 @@ public enum Eff_1_9_R1 {
 	SWEEPING_DUST(EnumParticle.SWEEP_ATTACK),
 	DRAGON_BREATH(EnumParticle.DRAGON_BREATH),
 	ENDROD(EnumParticle.END_ROD),
-	DAMAGE_INDICATOR(EnumParticle.DAMAGE_INDICATOR),;
+	DAMAGE_INDICATOR(EnumParticle.DAMAGE_INDICATOR),
+	FALLING_DUST(EnumParticle.FALLING_DUST);
+	
 
     private final EnumParticle particleEnum;
 
-    Eff_1_9_R1(EnumParticle particleEnum) {
+    Eff_1_10_R1(EnumParticle particleEnum) {
         this.particleEnum = particleEnum;
     }
 
