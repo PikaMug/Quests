@@ -523,7 +523,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 }
 
-                if (input.contains(",")) {
+                if (input.contains(".") || input.contains(",")) {
 
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new QuestNamePrompt();

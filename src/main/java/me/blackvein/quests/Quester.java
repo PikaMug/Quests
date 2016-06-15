@@ -2085,11 +2085,11 @@ public class Quester {
             ConfigurationSection dataSec = data.createSection("questData");
 
             for (Quest quest : currentQuests.keySet()) {
-
+            	
                 ConfigurationSection questSec = dataSec.createSection(quest.name);
                 QuestData questData = getQuestData(quest);
                 if (questData == null) continue;
-
+                
                 if (questData.blocksDamaged.isEmpty() == false) {
 
                     LinkedList<String> blockNames = new LinkedList<String>();

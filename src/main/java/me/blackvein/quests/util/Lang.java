@@ -225,7 +225,7 @@ public class Lang {
         //Quest create menu errors
         langMap.put("questEditorNameExists", "A Quest with that name already exists!");
         langMap.put("questEditorBeingEdited", "Someone is creating/editing a Quest with that name!");
-        langMap.put("questEditorInvalidQuestName", "Name may not contain commas!");
+        langMap.put("questEditorInvalidQuestName", "Name may not contain periods or commas!");
         langMap.put("questEditorInvalidEventName", "is not a valid event name!");
         langMap.put("questEditorInvalidNPC", "No NPC exists with that id!");
         langMap.put("questEditorNoStartBlockSelected", "You must select a block first.");
