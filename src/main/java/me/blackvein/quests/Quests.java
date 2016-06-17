@@ -4988,6 +4988,10 @@ try{
         }
 
         for (Object o : list) {
+        	if (o == null) {
+        		Bukkit.getLogger().severe("A null " + c.getSimpleName() + " value was detected in quests.yml, please correct the file");
+        		return false;
+        	}
 
             if (c.isAssignableFrom(o.getClass()) == false) {
                 return false;
