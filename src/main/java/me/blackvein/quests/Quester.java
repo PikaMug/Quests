@@ -2023,7 +2023,13 @@ public class Quester {
     }
 
     public static String enchantmentString(Enchantment e) {
-
+    	
+    	if (Lang.get("ENCHANTMENT_" + e.getName()).equals("NULL")) {
+    		Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to "
+    				+ "update the file or simply add an entry for the enchantment");
+    		return "ENCHANTMENT_" + e.getName();
+    	}
+    	
         return (Lang.get("ENCHANTMENT_" + e.getName()));
 
     }
