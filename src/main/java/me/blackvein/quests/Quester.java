@@ -1207,7 +1207,8 @@ public class Quester {
     public void reachLocation(Quest quest, Location l) {
 
         for (Location location : getQuestData(quest).locationsReached) {
-
+        	//debug try/catch for #352  	
+        	try {
             int index = getQuestData(quest).locationsReached.indexOf(location);
             Location locationToReach = getCurrentStage(quest).locationsToReach.get(index);
             double radius = getQuestData(quest).radiiToReachWithin.get(index);
@@ -1228,6 +1229,12 @@ public class Quester {
 
                 }
 
+            }
+            } catch (IndexOutOfBoundsException e) {
+            	System.out.println("An error has occurred with Quests. Please report on Github. Include the info below");
+            	System.out.println("index = "  + getQuestData(quest).locationsReached.indexOf(location));
+            	System.out.println("locationsReached = " + getQuestData(quest).locationsReached.toString());
+            	e.printStackTrace();
             }
 
         }
