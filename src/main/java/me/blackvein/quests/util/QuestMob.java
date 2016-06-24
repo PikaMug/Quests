@@ -1,12 +1,12 @@
 package me.blackvein.quests.util;
-
 import me.blackvein.quests.Quests;
+import net.minecraft.server.v1_10_R1.EnumItemSlot;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -102,13 +102,30 @@ public class QuestMob {
                 ((LivingEntity) entity).setCustomNameVisible(true);
             }
 
-            for (int j = 0; j < 5; j++) {
-                if (inventory[j] != null) {
-                    ((CraftEntity) entity).getHandle().setEquipment(j, CraftItemStack.asNMSCopy(inventory[j]));
-                }
+            try{
+                ((CraftEntity) entity).getHandle().setEquipment(EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(inventory[0]));
+                ((CraftEntity) entity).getHandle().setEquipment(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(inventory[1]));
+                ((CraftEntity) entity).getHandle().setEquipment(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(inventory[2]));
+                ((CraftEntity) entity).getHandle().setEquipment(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(inventory[3]));
+                ((CraftEntity) entity).getHandle().setEquipment(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(inventory[4]));
+            } catch (Exception e) {
+                Bukkit.getLogger().severe("Entity NMS is invalid for this version of CraftBukkit. Please notify the developer");
+                e.printStackTrace();
             }
+            
+            /*for (int j = 0; j < 5; j++) {
+                if (inventory[j] != null) {
+                	try{
+                		((CraftEntity) entity).getHandle().setEquipment(j, CraftItemStack.asNMSCopy(inventory[j]));
+                	} catch (Exception e) {
+                		Bukkit.getLogger().severe("Entity NMS is invalid for this version of CraftBukkit. Please notify the developer");
+                		e.printStackTrace();
+                	}
+                }
+            }*/
 
-            EntityEquipment eq = ((CraftLivingEntity) entity).getEquipment();
+            //EntityEquipment eq = ((CraftLivingEntity) entity).getEquipment();
+            EntityEquipment eq = ((LivingEntity)entity).getEquipment();
 
             if (dropChances[0] != null) {
                 eq.setItemInHandDropChance(dropChances[0]);
