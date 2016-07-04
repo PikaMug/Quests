@@ -526,7 +526,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
     }
 
     public void loadConfig() {
-
+    	
         FileConfiguration config = getConfig();
 
         Lang.lang = config.getString("language", "en");
@@ -2658,9 +2658,14 @@ try{
 
         quests.clear();
         events.clear();
+        questerBlacklist.clear();
         loadQuests();
         loadData();
         loadEvents();
+        
+    	//Reload config from disc in-case a setting was changed
+        reloadConfig();
+        
         loadConfig();
 
         Lang.clearPhrases();
