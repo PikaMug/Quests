@@ -1103,21 +1103,20 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
         }
 
         if (edit != null) {
-
             ConfigurationSection questList = cs.getParent();
 
             for (String key : questList.getKeys(false)) {
-
                 String name = questList.getString(key + ".name");
-                if (name.equalsIgnoreCase(edit)) {
+                
+            	if (name != null) {
+            		if (name.equalsIgnoreCase(edit)) {
 
-                    questList.set(key, null);
-                    break;
+            			questList.set(key, null);
+            			break;
 
-                }
-
+            		}
+            	}
             }
-
         }
 
         String name = (String) cc.getSessionData(CK.Q_NAME);
