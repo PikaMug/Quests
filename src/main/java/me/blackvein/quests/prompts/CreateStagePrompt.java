@@ -705,7 +705,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String text = GOLD + "- " + Lang.get("stageEditorBreakBlocks") + " -\n";
             if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noNameSet") + ")\n";
+                text += GRAY + "2 - " + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -899,7 +899,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String text = GOLD + "- " + Lang.get("stageEditorDamageBlocks") + " -\n";
             if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + Lang.get("stageEditorSetDamageAmounts") + " (" + Lang.get("noNameSet") + ")\n";
+                text += GRAY + "2 - " + Lang.get("stageEditorSetDamageAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -1093,7 +1093,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String text = GOLD + "- " + Lang.get("stageEditorPlaceBlocks") + " -\n";
             if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + Lang.get("stageEditorSetPlaceAmounts") + " (" + Lang.get("noNameSet") + ")\n";
+                text += GRAY + "2 - " + Lang.get("stageEditorSetPlaceAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -1287,7 +1287,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String text = GOLD + "- " + Lang.get("stageEditorUseBlocks") + " -\n";
             if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + Lang.get("stageEditorSetUseAmounts") + " (" + Lang.get("noNameSet") + ")\n";
+                text += GRAY + "2 - " + Lang.get("stageEditorSetUseAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -1481,7 +1481,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String text = GOLD + "- " + Lang.get("stageEditorCutBlocks") + " -\n";
             if (context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + Lang.get("stageEditorSetCutAmounts") + " (" + Lang.get("noNameSet") + ")\n";
+                text += GRAY + "2 - " + Lang.get("stageEditorSetCutAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
