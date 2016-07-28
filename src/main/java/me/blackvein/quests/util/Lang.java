@@ -298,6 +298,7 @@ public class Lang {
 
         langMap.put("stageEditorSetBlockNames", "Set block names");
         langMap.put("stageEditorSetBlockAmounts", "Set block amounts");
+        langMap.put("stageEditorSetBlockData", "Set block data");
         langMap.put("stageEditorSetDamageAmounts", "Set damage amounts");
         langMap.put("stageEditorSetPlaceAmounts", "Set place amounts");
         langMap.put("stageEditorSetUseAmounts", "Set use amounts");

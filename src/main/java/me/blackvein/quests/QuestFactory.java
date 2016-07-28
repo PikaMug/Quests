@@ -1334,6 +1334,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         LinkedList<Integer> breakIds;
         LinkedList<Integer> breakAmounts;
+        LinkedList<Integer> breakDurability;
 
         LinkedList<Integer> damageIds;
         LinkedList<Integer> damageAmounts;
@@ -1406,6 +1407,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             breakIds = null;
             breakAmounts = null;
+            breakDurability = null;
 
             damageIds = null;
             damageAmounts = null;
@@ -1474,6 +1476,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (cc.getSessionData(pref + CK.S_BREAK_NAMES) != null) {
                 breakIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_NAMES);
                 breakAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_AMOUNTS);
+                breakDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_DURABILITY);
             }
 
             if (cc.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
@@ -1607,6 +1610,7 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (breakIds != null && breakIds.isEmpty() == false) {
                 stage.set("break-block-names", breakIds);
                 stage.set("break-block-amounts", breakAmounts);
+                stage.set("break-block-durability", breakDurability);
             }
 
             if (damageIds != null && damageIds.isEmpty() == false) {
@@ -1898,16 +1902,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
 
-                for (Entry<Material, Integer> e : stage.blocksToBreak.entrySet()) {
+                for (ItemStack e : stage.blocksToBreak) {
 
-                    names.add(((Material) e.getKey()).name());
-                    amnts.add((Integer) e.getValue());
+                    names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
 
                 }
-
+                
                 cc.setSessionData(pref + CK.S_BREAK_NAMES, names);
                 cc.setSessionData(pref + CK.S_BREAK_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_BREAK_DURABILITY, durab);
 
             }
 

@@ -492,8 +492,8 @@ public class PlayerListener implements Listener, ColorUtil {
                 if (quester.hasObjective(quest, "breakBlock")) {
 
                     if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false && evt.isCancelled() == false) {
-                        
-                    	quester.breakBlock(quest, evt.getBlock().getType());
+                    	ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
+                    	quester.breakBlock(quest, i);
                     }
 
                 }

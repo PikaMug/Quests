@@ -59,20 +59,27 @@ public class QuestData {
     };
     
     
-    public Map<Material, Integer> blocksBroken = new EnumMap<Material, Integer>(Material.class) {
-        
+    public LinkedList<ItemStack> blocksBroken = new LinkedList<ItemStack>() {
+    	
 		private static final long serialVersionUID = -6071822509475270168L;
 
 		@Override
-        public Integer put(Material key, Integer val) {
-            Integer data = super.put(key, val);
+        public ItemStack set(int index, ItemStack key) {
+            ItemStack data = super.set(index, key);
+            if (doJournalUpdate) quester.updateJournal();
+            return data;
+        }
+		
+		@Override
+        public boolean add(ItemStack key) {
+            boolean data = super.add(key);
             if (doJournalUpdate) quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public boolean remove(Object key) {
+            boolean i = super.remove(key);
             if (doJournalUpdate) quester.updateJournal();
             return i;
         }
@@ -84,9 +91,10 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends Material, ? extends Integer> m) {
-            super.putAll(m);
+        public boolean addAll(Collection<? extends ItemStack> m) {
+            boolean i = super.addAll(m);
             if (doJournalUpdate) quester.updateJournal();
+			return i;
         }
         
     };

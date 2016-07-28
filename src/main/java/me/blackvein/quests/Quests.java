@@ -3448,8 +3448,10 @@ try{
             LinkedList<Material> itemsToEnchant = new LinkedList<Material>();
             List<Integer> amountsToEnchant = new LinkedList<Integer>();
 
+            //List<ItemStack> breakBlocks = new LinkedList<ItemStack>();
             List<String> breaknames = new LinkedList<String>();
             List<Integer> breakamounts = new LinkedList<Integer>();
+            List<Short> breakdurability = new LinkedList<Short>();
 
             List<String> damagenames = new LinkedList<String>();
             List<Integer> damageamounts = new LinkedList<Integer>();
@@ -3478,7 +3480,8 @@ try{
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".break-block-names")) {
 
                 if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".break-block-names"), String.class)) {
-                    breaknames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".break-block-names");
+					breaknames = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".break-block-names");
+					
                 } else {
                     stageFailed("break-block-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of strings!");
                 }
@@ -3493,6 +3496,18 @@ try{
 
                 } else {
                     stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing break-block-amounts:");
+                }
+                
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".break-block-durability")) {
+
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".break-block-durability"), Integer.class)) {
+                        breakdurability = config.getShortList("quests." + questName + ".stages.ordered." + s2 + ".break-block-durability");
+                    } else {
+                        stageFailed("break-block-durability: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
+
+                } else {
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing break-block-durability:");
                 }
 
             }
@@ -3989,15 +4004,17 @@ try{
 
             oStage.itemsToEnchant = enchants;
 
-            Map<Material, Integer> breakMap = new EnumMap<Material, Integer>(Material.class);
-
             for (String s : breaknames) {
-
-                breakMap.put(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)));
-
+            	ItemStack is;
+            	if (breakdurability.get(breaknames.indexOf(s)) != -1) {
+            		is = new ItemStack(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)), breakdurability.get(breaknames.indexOf(s)));
+            	} else {
+            		//Legacy
+            		is = new ItemStack(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)), (short) 0);
+            		
+            	}
+            	oStage.blocksToBreak.add(is);
             }
-
-            oStage.blocksToBreak = breakMap;
 
             if (index < questStages.getKeys(false).size()) {
                 index++;
@@ -5187,7 +5204,7 @@ try{
             return Enchantment.WATER_WORKER;
 
         } else {
-        	System.out.println("");
+        	
             return null;
 
         }

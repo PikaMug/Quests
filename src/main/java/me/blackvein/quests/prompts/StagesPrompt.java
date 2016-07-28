@@ -114,6 +114,7 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
 
                 cc.setSessionData(newPref + CK.S_BREAK_NAMES, cc.getSessionData(pref + CK.S_BREAK_NAMES));
                 cc.setSessionData(newPref + CK.S_BREAK_AMOUNTS, cc.getSessionData(pref + CK.S_BREAK_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_BREAK_DURABILITY, cc.getSessionData(pref + CK.S_BREAK_DURABILITY));
 
                 cc.setSessionData(newPref + CK.S_DAMAGE_NAMES, cc.getSessionData(pref + CK.S_DAMAGE_NAMES));
                 cc.setSessionData(newPref + CK.S_DAMAGE_AMOUNTS, cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS));
@@ -190,6 +191,7 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
 
             cc.setSessionData(pref + CK.S_BREAK_NAMES, null);
             cc.setSessionData(pref + CK.S_BREAK_AMOUNTS, null);
+            cc.setSessionData(pref + CK.S_BREAK_DURABILITY, null);
 
             cc.setSessionData(pref + CK.S_DAMAGE_NAMES, null);
             cc.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, null);

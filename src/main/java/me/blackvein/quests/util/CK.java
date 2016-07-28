@@ -54,6 +54,7 @@ public class CK {
     //Stages
     public static final String S_BREAK_NAMES = "breakNames";
     public static final String S_BREAK_AMOUNTS = "breakAmounts";
+    public static final String S_BREAK_DURABILITY = "breakDurability";
     public static final String S_DAMAGE_NAMES = "damageNames";
     public static final String S_DAMAGE_AMOUNTS = "damageAmounts";
     public static final String S_PLACE_NAMES = "placeNames";

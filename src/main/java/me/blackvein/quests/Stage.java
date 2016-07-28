@@ -16,7 +16,8 @@ import org.bukkit.inventory.ItemStack;
 public class Stage {
 
     Map<Material, Integer> blocksToDamage = new EnumMap<Material, Integer>(Material.class);
-    Map<Material, Integer> blocksToBreak = new EnumMap<Material, Integer>(Material.class);
+    LinkedList<ItemStack> blocksToBreak = new LinkedList<ItemStack>();
+    //Map<Material, Integer> blocksToBreak = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksToPlace = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksToUse = new EnumMap<Material, Integer>(Material.class);
     Map<Material, Integer> blocksToCut = new EnumMap<Material, Integer>(Material.class);

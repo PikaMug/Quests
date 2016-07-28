@@ -1,7 +1,7 @@
 quests:
   Miner:
     name: 'Stone Miner'
-    ask-message: '<yellow>Could you mine <purple>10<yellow> blocks of <purple>Stone<yellow>, and deliver the <purple>10<yellow> pieces <yellow>of <purple>Cobblestone<yellow> to me?'
+    ask-message: '<yellow>Mine <purple>10<yellow> blocks of <purple>Stone<yellow> and gather the <purple>10 pieces of <purple>Cobblestone<yellow>.'
     finish-message: '<yellow>Well done. Here is your reward.'
     redo-delay: 1800
     requirements:
@@ -17,6 +17,8 @@ quests:
             - stone
           break-block-amounts:
             - 10
+          break-block-durability:
+            - 0
     rewards:
       money: 1000
       quest-points: 1
@@ -60,7 +62,7 @@ quests:
   CatchFish:
     name: 'Catch Fish'
     ask-message: '<yellow>Catch some fish!'
-    finish-message: '<yellow>Excellent. Here is some <green>experience<yellow>.'
+    finish-message: '<yellow>Good job. Here is some <green>experience<yellow>.'
     requirements:
       quests:
         - Stone Miner
