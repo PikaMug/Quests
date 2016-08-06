@@ -56,7 +56,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
         menu += GOLD + "" + BOLD + "0. " + RESET + "" + YELLOW + Lang.get("itemCreateLoadHand") + "\n";
         menu += YELLOW + "" + BOLD + "1. " + RESET + "" + GOLD + Lang.get("itemCreateSetName") + "\n";
         menu += YELLOW + "" + BOLD + "2. " + RESET + "" + GOLD + Lang.get("itemCreateSetAmount") + "\n";
-        menu += YELLOW + "" + BOLD + "3. " + RESET + "" + GOLD + Lang.get("itemCreateSetData") + "\n";
+        menu += YELLOW + "" + BOLD + "3. " + RESET + "" + GOLD + Lang.get("itemCreateSetDurab") + "\n";
         menu += YELLOW + "" + BOLD + "4. " + RESET + "" + GOLD + Lang.get("itemCreateSetEnchs") + "\n";
         menu += YELLOW + "" + BOLD + "5. " + RESET + "" + ITALIC + GOLD + Lang.get("itemCreateSetDisplay") + "\n";
         menu += YELLOW + "" + BOLD + "6. " + RESET + "" + ITALIC + GOLD + Lang.get("itemCreateSetLore") + "\n";
@@ -324,7 +324,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext cc) {
-            return YELLOW + Lang.get("itemCreateEnterData");
+            return YELLOW + Lang.get("itemCreateEnterDurab");
         }
 
         @Override
@@ -335,7 +335,7 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
 
                     int amt = Integer.parseInt(input);
                     if (amt < 1) {
-                        cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidData"));
+                        cc.getForWhom().sendRawMessage(RED + Lang.get("itemCreateInvalidDurab"));
                         return new DataPrompt();
                     } else {
                         cc.setSessionData("tempData", Short.parseShort(input));

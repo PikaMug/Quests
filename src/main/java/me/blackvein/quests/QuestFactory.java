@@ -1338,15 +1338,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
         LinkedList<Integer> damageIds;
         LinkedList<Integer> damageAmounts;
+        LinkedList<Integer> damageDurability;
 
         LinkedList<Integer> placeIds;
         LinkedList<Integer> placeAmounts;
+        LinkedList<Integer> placeDurability;
 
         LinkedList<Integer> useIds;
         LinkedList<Integer> useAmounts;
+        LinkedList<Integer> useDurability;
 
         LinkedList<Integer> cutIds;
         LinkedList<Integer> cutAmounts;
+        LinkedList<Integer> cutDurability;
 
         Integer fish;
         Integer players;
@@ -1411,15 +1415,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
             damageIds = null;
             damageAmounts = null;
+            damageDurability = null;
 
             placeIds = null;
             placeAmounts = null;
+            placeDurability = null;
 
             useIds = null;
             useAmounts = null;
+            useDurability = null;
 
             cutIds = null;
             cutAmounts = null;
+            cutDurability = null;
 
             fish = null;
             players = null;
@@ -1482,21 +1490,25 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (cc.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
                 damageIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_NAMES);
                 damageAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
+                damageDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
             }
 
             if (cc.getSessionData(pref + CK.S_PLACE_NAMES) != null) {
                 placeIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_NAMES);
                 placeAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_AMOUNTS);
+                placeDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_DURABILITY);
             }
 
             if (cc.getSessionData(pref + CK.S_USE_NAMES) != null) {
                 useIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_NAMES);
                 useAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_AMOUNTS);
+                useDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_DURABILITY);
             }
 
             if (cc.getSessionData(pref + CK.S_CUT_NAMES) != null) {
                 cutIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_NAMES);
                 cutAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_AMOUNTS);
+                cutDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_DURABILITY);
             }
 
             if (cc.getSessionData(pref + CK.S_FISH) != null) {
@@ -1616,21 +1628,25 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
             if (damageIds != null && damageIds.isEmpty() == false) {
                 stage.set("damage-block-names", damageIds);
                 stage.set("damage-block-amounts", damageAmounts);
+                stage.set("damage-block-durability", damageDurability);
             }
 
             if (placeIds != null && placeIds.isEmpty() == false) {
                 stage.set("place-block-names", placeIds);
                 stage.set("place-block-amounts", placeAmounts);
+                stage.set("place-block-durability", placeDurability);
             }
 
             if (useIds != null && useIds.isEmpty() == false) {
                 stage.set("use-block-names", useIds);
                 stage.set("use-block-amounts", useAmounts);
+                stage.set("use-block-durability", useDurability);
             }
 
             if (cutIds != null && cutIds.isEmpty() == false) {
                 stage.set("cut-block-names", cutIds);
                 stage.set("cut-block-amounts", cutAmounts);
+                stage.set("cut-block-durability", cutDurability);
             }
 
             stage.set("fish-to-catch", fish);
@@ -1922,16 +1938,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
 
-                for (Entry<Material, Integer> e : stage.blocksToDamage.entrySet()) {
+                for (ItemStack e : stage.blocksToDamage) {
 
-                    names.add(((Material) e.getKey()).name());
-                    amnts.add((Integer) e.getValue());
+                	names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
 
                 }
 
                 cc.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
                 cc.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durab);
 
             }
 
@@ -1939,16 +1958,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
 
-                for (Entry<Material, Integer> e : stage.blocksToPlace.entrySet()) {
+                for (ItemStack e : stage.blocksToPlace) {
 
-                    names.add(((Material) e.getKey()).name());
-                    amnts.add((Integer) e.getValue());
+                	names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
 
                 }
 
                 cc.setSessionData(pref + CK.S_PLACE_NAMES, names);
                 cc.setSessionData(pref + CK.S_PLACE_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_PLACE_DURABILITY, durab);
 
             }
 
@@ -1956,16 +1978,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
 
-                for (Entry<Material, Integer> e : stage.blocksToUse.entrySet()) {
+                for (ItemStack e : stage.blocksToUse) {
 
-                    names.add(((Material) e.getKey()).name());
-                    amnts.add((Integer) e.getValue());
+                	names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
 
                 }
 
                 cc.setSessionData(pref + CK.S_USE_NAMES, names);
                 cc.setSessionData(pref + CK.S_USE_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_USE_DURABILITY, durab);
 
             }
 
@@ -1973,16 +1998,19 @@ public class QuestFactory implements ConversationAbandonedListener, ColorUtil {
 
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
 
-                for (Entry<Material, Integer> e : stage.blocksToCut.entrySet()) {
+                for (ItemStack e : stage.blocksToCut) {
 
-                    names.add(((Material) e.getKey()).name());
-                    amnts.add((Integer) e.getValue());
+                	names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
 
                 }
 
                 cc.setSessionData(pref + CK.S_CUT_NAMES, names);
                 cc.setSessionData(pref + CK.S_CUT_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_CUT_DURABILITY, durab);
 
             }
 

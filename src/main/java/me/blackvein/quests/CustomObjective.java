@@ -3,7 +3,6 @@ package me.blackvein.quests;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -151,11 +150,12 @@ public abstract class CustomObjective implements Listener {
                         break;
                     }
                 }
-
+                
                 if (index > -1) {
-Material m = null; //TODO remove
+                	
                     if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= quester.getCurrentStage(quest).customObjectiveCounts.get(index)) {
-                        quester.finishObjective(quest, "customObj", m, null, null, null, null, null, null, null, null, obj);
+
+                        quester.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
                     }
 
                 }

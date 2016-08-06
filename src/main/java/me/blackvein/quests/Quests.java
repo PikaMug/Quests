@@ -3448,22 +3448,25 @@ try{
             LinkedList<Material> itemsToEnchant = new LinkedList<Material>();
             List<Integer> amountsToEnchant = new LinkedList<Integer>();
 
-            //List<ItemStack> breakBlocks = new LinkedList<ItemStack>();
             List<String> breaknames = new LinkedList<String>();
             List<Integer> breakamounts = new LinkedList<Integer>();
             List<Short> breakdurability = new LinkedList<Short>();
 
             List<String> damagenames = new LinkedList<String>();
             List<Integer> damageamounts = new LinkedList<Integer>();
+            List<Short> damagedurability = new LinkedList<Short>();
 
             List<String> placenames = new LinkedList<String>();
             List<Integer> placeamounts = new LinkedList<Integer>();
+            List<Short> placedurability = new LinkedList<Short>();
 
             List<String> usenames = new LinkedList<String>();
             List<Integer> useamounts = new LinkedList<Integer>();
+            List<Short> usedurability = new LinkedList<Short>();
 
             List<String> cutnames = new LinkedList<String>();
             List<Integer> cutamounts = new LinkedList<Integer>();
+            List<Short> cutdurability = new LinkedList<Short>();
 
             //Denizen script load
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".script-to-run")) {
@@ -3511,6 +3514,22 @@ try{
                 }
 
             }
+            
+            for (String s : breaknames) {
+            	ItemStack is;
+            	if (breakdurability.get(breaknames.indexOf(s)) != -1) {
+            		is = new ItemStack(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)), breakdurability.get(breaknames.indexOf(s)));
+            	} else {
+            		//Legacy
+            		is = new ItemStack(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)), (short) 0);
+            		
+            	}
+            	if (Material.matchMaterial(s) != null) {
+            		oStage.blocksToBreak.add(is);
+            	} else {
+            		stageFailed("" + s + " inside break-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+            	}
+            }
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".damage-block-names")) {
 
@@ -3531,17 +3550,35 @@ try{
                 } else {
                     stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-amounts:");
                 }
+                
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".damage-block-durability")) {
 
-            }
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-durability"), Integer.class)) {
+                        damagedurability = config.getShortList("quests." + questName + ".stages.ordered." + s2 + ".damage-block-durability");
+                    } else {
+                        stageFailed("damage-block-durability: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
 
-            for (String s : damagenames) {
-
-                if (Material.matchMaterial(s) != null) {
-                    oStage.blocksToDamage.put(Material.matchMaterial(s), damageamounts.get(damagenames.indexOf(s)));
                 } else {
-                    stageFailed("" + s + " inside damage-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing damage-block-durability:");
                 }
 
+            }
+            
+            for (String s : damagenames) {
+            	ItemStack is;
+            	if (damagedurability.get(damagenames.indexOf(s)) != -1) {
+            		is = new ItemStack(Material.matchMaterial(s), damageamounts.get(damagenames.indexOf(s)), damagedurability.get(damagenames.indexOf(s)));
+            	} else {
+            		//Legacy
+            		is = new ItemStack(Material.matchMaterial(s), damageamounts.get(damagenames.indexOf(s)), (short) 0);
+            		
+            	}
+            	if (Material.matchMaterial(s) != null) {
+            		oStage.blocksToDamage.add(is);
+            	} else {
+            		stageFailed("" + s + " inside damage-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+            	}
             }
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".place-block-names")) {
@@ -3563,17 +3600,35 @@ try{
                 } else {
                     stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing place-block-amounts:");
                 }
+                
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".place-block-durability")) {
+
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".place-block-durability"), Integer.class)) {
+                        placedurability = config.getShortList("quests." + questName + ".stages.ordered." + s2 + ".place-block-durability");
+                    } else {
+                        stageFailed("place-block-durability: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
+
+                } else {
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing place-block-durability:");
+                }
 
             }
 
             for (String s : placenames) {
-
-                if (Material.matchMaterial(s) != null) {
-                    oStage.blocksToPlace.put(Material.matchMaterial(s), placeamounts.get(placenames.indexOf(s)));
-                } else {
-                    stageFailed("" + s + " inside place-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
-                }
-
+            	ItemStack is;
+            	if (placedurability.get(placenames.indexOf(s)) != -1) {
+            		is = new ItemStack(Material.matchMaterial(s), placeamounts.get(placenames.indexOf(s)), placedurability.get(placenames.indexOf(s)));
+            	} else {
+            		//Legacy
+            		is = new ItemStack(Material.matchMaterial(s), placeamounts.get(placenames.indexOf(s)), (short) 0);
+            		
+            	}
+            	if (Material.matchMaterial(s) != null) {
+            		oStage.blocksToPlace.add(is);
+            	} else {
+            		stageFailed("" + s + " inside place-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+            	}
             }
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".use-block-names")) {
@@ -3595,17 +3650,35 @@ try{
                 } else {
                     stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing use-block-amounts:");
                 }
+                
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".use-block-durability")) {
+
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".use-block-durability"), Integer.class)) {
+                        usedurability = config.getShortList("quests." + questName + ".stages.ordered." + s2 + ".use-block-durability");
+                    } else {
+                        stageFailed("use-block-durability: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
+
+                } else {
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing use-block-durability:");
+                }
 
             }
 
             for (String s : usenames) {
-
-                if (Material.matchMaterial(s) != null) {
-                    oStage.blocksToUse.put(Material.matchMaterial(s), useamounts.get(usenames.indexOf(s)));
-                } else {
-                    stageFailed("" + RED + s + " inside use-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
-                }
-
+            	ItemStack is;
+            	if (usedurability.get(usenames.indexOf(s)) != -1) {
+            		is = new ItemStack(Material.matchMaterial(s), useamounts.get(usenames.indexOf(s)), usedurability.get(usenames.indexOf(s)));
+            	} else {
+            		//Legacy
+            		is = new ItemStack(Material.matchMaterial(s), useamounts.get(usenames.indexOf(s)), (short) 0);
+            		
+            	}
+            	if (Material.matchMaterial(s) != null) {
+            		oStage.blocksToUse.add(is);
+            	} else {
+            		stageFailed("" + s + " inside use-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+            	}
             }
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".cut-block-names")) {
@@ -3627,17 +3700,35 @@ try{
                 } else {
                     stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-amounts:");
                 }
+                
+                if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".cut-block-durability")) {
+
+                    if (checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-durability"), Integer.class)) {
+                        cutdurability = config.getShortList("quests." + questName + ".stages.ordered." + s2 + ".cut-block-durability");
+                    } else {
+                        stageFailed("cut-block-durability: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+                    }
+
+                } else {
+                    stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing cut-block-durability:");
+                }
 
             }
 
             for (String s : cutnames) {
-
-                if (Material.matchMaterial(s) != null) {
-                    oStage.blocksToCut.put(Material.matchMaterial(s), cutamounts.get(cutnames.indexOf(s)));
-                } else {
-                    stageFailed("" + s + " inside cut-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
-                }
-
+            	ItemStack is;
+            	if (cutdurability.get(cutnames.indexOf(s)) != -1) {
+            		is = new ItemStack(Material.matchMaterial(s), cutamounts.get(cutnames.indexOf(s)), cutdurability.get(cutnames.indexOf(s)));
+            	} else {
+            		//Legacy
+            		is = new ItemStack(Material.matchMaterial(s), cutamounts.get(cutnames.indexOf(s)), (short) 0);
+            		
+            	}
+            	if (Material.matchMaterial(s) != null) {
+            		oStage.blocksToCut.add(is);
+            	} else {
+            		stageFailed("" + s + " inside cut-block-names: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
+            	}
             }
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".fish-to-catch")) {
@@ -4003,22 +4094,6 @@ try{
             }
 
             oStage.itemsToEnchant = enchants;
-
-            for (String s : breaknames) {
-            	ItemStack is;
-            	if (breakdurability.get(breaknames.indexOf(s)) != -1) {
-            		is = new ItemStack(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)), breakdurability.get(breaknames.indexOf(s)));
-            	} else {
-            		//Legacy
-            		is = new ItemStack(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)), (short) 0);
-            		
-            	}
-            	oStage.blocksToBreak.add(is);
-            }
-
-            if (index < questStages.getKeys(false).size()) {
-                index++;
-            }
 
             if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".locations-to-reach")) {
 

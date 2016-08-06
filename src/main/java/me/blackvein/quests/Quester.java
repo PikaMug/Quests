@@ -12,8 +12,6 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import net.citizensnpcs.api.npc.NPC;
-import net.milkbowl.vault.Vault;
-import net.milkbowl.vault.item.ItemInfo;
 import net.milkbowl.vault.item.Items;
 
 import org.bukkit.Bukkit;
@@ -36,8 +34,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
-
-import com.codisimus.plugins.phatloots.loot.Item;
 
 public class Quester {
 
@@ -432,19 +428,19 @@ public class Quester {
         LinkedList<String> finishedObjectives = new LinkedList<String>();
         LinkedList<String> objectives = new LinkedList<String>();
 
-        for (Entry<Material, Integer> e : getCurrentStage(quest).blocksToDamage.entrySet()) {
+        for (ItemStack e : getCurrentStage(quest).blocksToDamage) {
 
-            for (Entry<Material, Integer> e2 : getQuestData(quest).blocksDamaged.entrySet()) {
+        	for (ItemStack e2 : getQuestData(quest).blocksDamaged) {
 
-                if (e2.getKey().equals(e.getKey())) {
+                if (e2.getType().equals(e.getType())) {
 
-                    if (e2.getValue() < e.getValue()) {
+                    if (e2.getAmount() < e.getAmount()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("damage") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("damage") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("damage") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("damage") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     }
 
@@ -476,19 +472,19 @@ public class Quester {
 
         }
 
-        for (Entry<Material, Integer> e : getCurrentStage(quest).blocksToPlace.entrySet()) {
+        for (ItemStack e : getCurrentStage(quest).blocksToPlace) {
 
-            for (Entry<Material, Integer> e2 : getQuestData(quest).blocksPlaced.entrySet()) {
+        	for (ItemStack e2 : getQuestData(quest).blocksPlaced) {
 
-                if (e2.getKey().equals(e.getKey())) {
+                if (e2.getType().equals(e.getType())) {
 
-                    if (e2.getValue() < e.getValue()) {
+                    if (e2.getAmount() < e.getAmount()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("place") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("place") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("place") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("place") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     }
 
@@ -498,19 +494,19 @@ public class Quester {
 
         }
 
-        for (Entry<Material, Integer> e : getCurrentStage(quest).blocksToUse.entrySet()) {
+        for (ItemStack e : getCurrentStage(quest).blocksToUse) {
 
-            for (Entry<Material, Integer> e2 : getQuestData(quest).blocksUsed.entrySet()) {
+        	for (ItemStack e2 : getQuestData(quest).blocksUsed) {
 
-                if (e2.getKey().equals(e.getKey())) {
+                if (e2.getType().equals(e.getType())) {
 
-                    if (e2.getValue() < e.getValue()) {
+                    if (e2.getAmount() < e.getAmount()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("use") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("use") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("use") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("use") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     }
 
@@ -520,19 +516,19 @@ public class Quester {
 
         }
 
-        for (Entry<Material, Integer> e : getCurrentStage(quest).blocksToCut.entrySet()) {
+        for (ItemStack e : getCurrentStage(quest).blocksToCut) {
 
-            for (Entry<Material, Integer> e2 : getQuestData(quest).blocksCut.entrySet()) {
+        	for (ItemStack e2 : getQuestData(quest).blocksCut) {
 
-                if (e2.getKey().equals(e.getKey())) {
+                if (e2.getType().equals(e.getType())) {
 
-                    if (e2.getValue() < e.getValue()) {
+                    if (e2.getAmount() < e.getAmount()) {
 
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("cut") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
+                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get("cut") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     } else {
 
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get("cut") + " " + Quester.prettyItemString(e2.getKey().name()) + ": " + e2.getValue() + "/" + e.getValue());
+                        finishedObjectives.add(ChatColor.GRAY + Lang.get("cut") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     }
 
@@ -968,21 +964,41 @@ public class Quester {
 
     }
 
-    public void damageBlock(Quest quest, Material m) {
+    public void damageBlock(Quest quest, ItemStack m) {
+    	ItemStack temp = m;
+    	temp.setAmount(0);
+    	ItemStack damaged = temp;
+    	ItemStack toDamage = temp;
+    	
+    	for (ItemStack is : getQuestData(quest).blocksDamaged) {
 
-        if (getQuestData(quest).blocksDamaged.containsKey(m)) {
+    		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
+    			damaged = is;
+    		}
+    	}
 
-            if (getQuestData(quest).blocksDamaged.get(m) < getCurrentStage(quest).blocksToDamage.get(m)) {
-                int i = getQuestData(quest).blocksDamaged.get(m);
-                getQuestData(quest).blocksDamaged.put(m, (i + 1));
+    	for (ItemStack is : getCurrentStage(quest).blocksToDamage) {
+    		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
+    			toDamage = is;
+    		}
+    	}
 
-                if (getQuestData(quest).blocksDamaged.get(m).equals(getCurrentStage(quest).blocksToDamage.get(m))) {
+    	if (damaged != null && toDamage != null) {
+    		if (damaged.getAmount() < toDamage.getAmount()) {
+        		ItemStack newDamaged = damaged;
+    			newDamaged.setAmount(damaged.getAmount() + 1);
+        		
+        		//TODO is this correct?
+        		getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
+
+        		if (damaged.getAmount() == toDamage.getAmount()) {
                     finishObjective(quest, "damageBlock", m, null, null, null, null, null, null, null, null, null);
                 }
-
-            }
-
-        }
+        	}
+    	} else {
+    		//Do nothing
+    		System.out.println(quest + " somehow threw a null value. Please report on Github!");
+    	}
 
     }
 
@@ -1025,56 +1041,117 @@ public class Quester {
 
     }
 
-    public void placeBlock(Quest quest, Material m) {
+    public void placeBlock(Quest quest, ItemStack m) {
+    	ItemStack temp = m;
+    	temp.setAmount(0);
+    	ItemStack placed = temp;
+    	ItemStack toPlace = temp;
+    	
+    	for (ItemStack is : getQuestData(quest).blocksPlaced) {
 
-        if (getQuestData(quest).blocksPlaced.containsKey(m)) {
+    		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
+    			placed = is;
+    		}
+    	}
 
-            if (getQuestData(quest).blocksPlaced.get(m) < getCurrentStage(quest).blocksToPlace.get(m)) {
-                int i = getQuestData(quest).blocksPlaced.get(m);
-                getQuestData(quest).blocksPlaced.put(m, (i + 1));
+    	for (ItemStack is : getCurrentStage(quest).blocksToPlace) {
+    		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
+    			toPlace = is;
+    		}
+    	}
 
-                if (getQuestData(quest).blocksPlaced.get(m).equals(getCurrentStage(quest).blocksToPlace.get(m))) {
+    	if (placed != null && toPlace != null) {
+    		if (placed.getAmount() < toPlace.getAmount()) {
+        		ItemStack newplaced = placed;
+    			newplaced.setAmount(placed.getAmount() + 1);
+        		
+        		//TODO is this correct?
+        		getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newplaced);
+
+        		if (placed.getAmount() == toPlace.getAmount()) {
                     finishObjective(quest, "placeBlock", m, null, null, null, null, null, null, null, null, null);
                 }
-            }
-
-        }
+        	}
+    	} else {
+    		//Do nothing
+    		System.out.println(quest + " somehow threw a null value. Please report on Github!");
+    	}
 
     }
 
-    public void useBlock(Quest quest, Material m) {
+    public void useBlock(Quest quest, ItemStack m) {
+    	ItemStack temp = m;
+    	temp.setAmount(0);
+    	ItemStack used = temp;
+    	ItemStack toUse = temp;
+    	
+    	for (ItemStack is : getQuestData(quest).blocksUsed) {
 
-        if (getQuestData(quest).blocksUsed.containsKey(m)) {
+    		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
+    			used = is;
+    		}
+    	}
 
-            if (getQuestData(quest).blocksUsed.get(m) < getCurrentStage(quest).blocksToUse.get(m)) {
-                int i = getQuestData(quest).blocksUsed.get(m);
-                getQuestData(quest).blocksUsed.put(m, (i + 1));
+    	for (ItemStack is : getCurrentStage(quest).blocksToUse) {
+    		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
+    			toUse = is;
+    		}
+    	}
 
-                if (getQuestData(quest).blocksUsed.get(m).equals(getCurrentStage(quest).blocksToUse.get(m))) {
+    	if (used != null && toUse != null) {
+    		if (used.getAmount() < toUse.getAmount()) {
+        		ItemStack newUsed = used;
+    			newUsed.setAmount(used.getAmount() + 1);
+        		
+        		//TODO is this correct?
+        		getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
+
+        		if (used.getAmount() == toUse.getAmount()) {
                     finishObjective(quest, "useBlock", m, null, null, null, null, null, null, null, null, null);
                 }
-
-            }
-
-        }
+        	}
+    	} else {
+    		//Do nothing
+    		System.out.println(quest + " somehow threw a null value. Please report on Github!");
+    	}
 
     }
 
-    public void cutBlock(Quest quest, Material m) {
+    public void cutBlock(Quest quest, ItemStack m) {
+    	ItemStack temp = m;
+    	temp.setAmount(0);
+    	ItemStack broken = temp;
+    	ItemStack toCut = temp;
+    	
+    	for (ItemStack is : getQuestData(quest).blocksCut) {
 
-        if (getQuestData(quest).blocksCut.containsKey(m)) {
+    		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
+    			broken = is;
+    		}
+    	}
 
-            if (getQuestData(quest).blocksCut.get(m) < getCurrentStage(quest).blocksToCut.get(m)) {
-                int i = getQuestData(quest).blocksCut.get(m);
-                getQuestData(quest).blocksCut.put(m, (i + 1));
+    	for (ItemStack is : getCurrentStage(quest).blocksToCut) {
+    		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
+    			toCut = is;
+    		}
+    	}
 
-                if (getQuestData(quest).blocksCut.get(m).equals(getCurrentStage(quest).blocksToCut.get(m))) {
+    	if (broken != null && toCut != null) {
+    		if (broken.getAmount() < toCut.getAmount()) {
+        		ItemStack newCut = broken;
+    			newCut.setAmount(broken.getAmount() + 1);
+        		
+        		//TODO is this correct?
+        		getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(broken), newCut);
+
+        		if (broken.getAmount() == toCut.getAmount()) {
                     finishObjective(quest, "cutBlock", m, null, null, null, null, null, null, null, null, null);
                 }
-
-            }
-
-        }
+        	}
+    	} else {
+    		//Do nothing
+    		System.out.println(quest + " somehow threw a null value. Please report on Github!");
+    	}
 
     }
 
@@ -1082,9 +1159,9 @@ public class Quester {
 
         if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
             getQuestData(quest).setFishCaught(getQuestData(quest).getFishCaught() + 1);
-Material m = null;
+
             if (((Integer) getQuestData(quest).getFishCaught()).equals(getCurrentStage(quest).fishToCatch)) {
-                finishObjective(quest, "catchFish", m, null, null, null, null, null, null, null, null, null);
+                finishObjective(quest, "catchFish", null, null, null, null, null, null, null, null, null, null);
             }
 
         }
@@ -1107,7 +1184,7 @@ Material m = null;
                             getQuestData(quest).itemsEnchanted.put(entry.getKey(), num);
 
                             if (num.equals(entry2.getValue())) {
-                                finishObjective(quest, "enchantItem", m, null, e, null, null, null, null, null, null, null);
+                                finishObjective(quest, "enchantItem", new ItemStack(m, 1), null, e, null, null, null, null, null, null, null);
                             }
 
                         }
@@ -1162,9 +1239,9 @@ Material m = null;
             Integer newNumberOfSpecificMobKilled = numberOfSpecificMobKilled + 1;
 
             questData.mobNumKilled.set(indexOfMobKilled, newNumberOfSpecificMobKilled);
-Material m = null;
+
             if ((newNumberOfSpecificMobKilled).equals(numberOfSpecificMobNeedsToBeKilledInCurrentStage)) {
-                finishObjective(quest, "killMob", m, null, null, e, null, null, null, null, null, null);
+                finishObjective(quest, "killMob", null, null, null, e, null, null, null, null, null, null);
             }
         }
     }
@@ -1193,9 +1270,9 @@ Material m = null;
 
         if (getQuestData(quest).getPlayersKilled() < getCurrentStage(quest).playersToKill) {
             getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled() + 1);
-Material m = null;
+
             if (((Integer) getQuestData(quest).getPlayersKilled()).equals(getCurrentStage(quest).playersToKill)) {
-                finishObjective(quest, "killPlayer", m, null, null, null, null, null, null, null, null, null);
+                finishObjective(quest, "killPlayer", null, null, null, null, null, null, null, null, null, null);
             }
 
         }
@@ -1205,10 +1282,10 @@ Material m = null;
     public void interactWithNPC(Quest quest, NPC n) {
 
         if (getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
-Material m = null;
+
             if (getQuestData(quest).citizensInteracted.get(n.getId()) == false) {
                 getQuestData(quest).citizensInteracted.put(n.getId(), true);
-                finishObjective(quest, "talkToNPC", m, null, null, null, null, n, null, null, null, null);
+                finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
             }
 
         }
@@ -1218,12 +1295,12 @@ Material m = null;
     public void killNPC(Quest quest, NPC n) {
 
         if (getQuestData(quest).citizensKilled.contains(n.getId())) {
-Material m = null;
+
             int index = getQuestData(quest).citizensKilled.indexOf(n.getId());
             if (getQuestData(quest).citizenNumKilled.get(index) < getCurrentStage(quest).citizenNumToKill.get(index)) {
                 getQuestData(quest).citizenNumKilled.set(index, getQuestData(quest).citizenNumKilled.get(index) + 1);
                 if (getQuestData(quest).citizenNumKilled.get(index) == getCurrentStage(quest).citizenNumToKill.get(index)) {
-                    finishObjective(quest, "killNPC", m, null, null, null, null, n, null, null, null, null);
+                    finishObjective(quest, "killNPC", null, null, null, null, null, n, null, null, null, null);
                 }
             }
 
@@ -1246,9 +1323,9 @@ Material m = null;
                     if (l.getY() < (locationToReach.getY() + radius) && l.getY() > (locationToReach.getY() - radius)) {
 
                         if (getQuestData(quest).hasReached.get(index) == false) {
-Material m = null;
+
                             getQuestData(quest).hasReached.set(index, true);
-                            finishObjective(quest, "reachLocation", m, null, null, null, null, null, location, null, null, null);
+                            finishObjective(quest, "reachLocation", null, null, null, null, null, null, location, null, null, null);
 
                         }
 
@@ -1273,9 +1350,9 @@ Material m = null;
         if (getQuestData(quest).mobsTamed.containsKey(entity)) {
 
             getQuestData(quest).mobsTamed.put(entity, (getQuestData(quest).mobsTamed.get(entity) + 1));
-Material m = null;
+
             if (getQuestData(quest).mobsTamed.get(entity).equals(getCurrentStage(quest).mobsToTame.get(entity))) {
-                finishObjective(quest, "tameMob", m, null, null, entity, null, null, null, null, null, null);
+                finishObjective(quest, "tameMob", null, null, null, entity, null, null, null, null, null, null);
             }
 
         }
@@ -1287,9 +1364,9 @@ Material m = null;
         if (getQuestData(quest).sheepSheared.containsKey(color)) {
 
             getQuestData(quest).sheepSheared.put(color, (getQuestData(quest).sheepSheared.get(color) + 1));
-Material m = null;
+
             if (getQuestData(quest).sheepSheared.get(color).equals(getCurrentStage(quest).sheepToShear.get(color))) {
-                finishObjective(quest, "shearSheep", m, null, null, null, null, null, null, color, null, null);
+                finishObjective(quest, "shearSheep", null, null, null, null, null, null, null, color, null, null);
             }
 
         }
@@ -1325,14 +1402,14 @@ Material m = null;
                     i.setAmount(i.getAmount() - (req - amount)); //Take away the remaining amount needed to be delivered from the item stack
                     player.getInventory().setItem(index, i);
                     player.updateInventory();
-                    finishObjective(quest, "deliverItem", m, found, null, null, null, null, null, null, null, null);
+                    finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
 
                 } else if ((i.getAmount() + amount) == req) {
 
                     getQuestData(quest).itemsDelivered.put(found, req);
                     player.getInventory().setItem(player.getInventory().first(i), null);
                     player.updateInventory();
-                    finishObjective(quest, "deliverItem", m, found, null, null, null, null, null, null, null, null);
+                    finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
 
                 } else {
 
@@ -1360,12 +1437,12 @@ Material m = null;
             for (String pass : passes) {
 
                 if (pass.equalsIgnoreCase(evt.getMessage())) {
-Material m = null;
+
                     evt.setCancelled(true);
                     String display = getCurrentStage(quest).passwordDisplays.get(getCurrentStage(quest).passwordPhrases.indexOf(passes));
                     getQuestData(quest).passwordsSaid.put(display, true);
                     done = true;
-                    finishObjective(quest, "password", m, null, null, null, null, null, null, null, display, null);
+                    finishObjective(quest, "password", null, null, null, null, null, null, null, null, display, null);
                     break;
 
                 }
@@ -1421,8 +1498,7 @@ Material m = null;
         } else if (objective.equalsIgnoreCase("damageBlock")) {
 
             String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("damage") + " " + prettyItemString(material.getType().name());
-            message = message + " " + getCurrentStage(quest).blocksToDamage.get(material) + "/" + getCurrentStage(quest).blocksToDamage.get(material);
-            p.sendMessage(message);
+            message = message + " " + material.getAmount() + "/" + material.getAmount();
             if (testComplete(quest)) {
                 quest.nextStage(this);
             }
@@ -1439,7 +1515,7 @@ Material m = null;
         } else if (objective.equalsIgnoreCase("placeBlock")) {
 
             String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("place") + " " + prettyItemString(material.getType().name());
-            message = message + " " + getCurrentStage(quest).blocksToPlace.get(material) + "/" + getCurrentStage(quest).blocksToPlace.get(material);
+            message = message + " " + material.getAmount() + "/" + material.getAmount();
             p.sendMessage(message);
             if (testComplete(quest)) {
                 quest.nextStage(this);
@@ -1448,7 +1524,7 @@ Material m = null;
         } else if (objective.equalsIgnoreCase("useBlock")) {
 
             String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("use") + " " + prettyItemString(material.getType().name());
-            message = message + " " + getCurrentStage(quest).blocksToUse.get(material) + "/" + getCurrentStage(quest).blocksToUse.get(material);
+            message = message + " " + material.getAmount() + "/" + material.getAmount();
             p.sendMessage(message);
             if (testComplete(quest)) {
                 quest.nextStage(this);
@@ -1457,7 +1533,7 @@ Material m = null;
         } else if (objective.equalsIgnoreCase("cutBlock")) {
 
             String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("cut") + " " + prettyItemString(material.getType().name());
-            message = message + " " + getCurrentStage(quest).blocksToCut.get(material) + "/" + getCurrentStage(quest).blocksToCut.get(material);
+            message = message + " " + material.getAmount() + "/" + material.getAmount();
             p.sendMessage(message);
             if (testComplete(quest)) {
                 quest.nextStage(this);
@@ -1600,213 +1676,6 @@ Material m = null;
         }
 
     }
-    
-    //TODO remove
-    public void finishObjective(Quest quest, String objective, Material material, ItemStack itemstack, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
-
-        Player p = getPlayer();
-
-        if (getCurrentStage(quest).objectiveOverride != null) {
-
-            if (testComplete(quest)) {
-                String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + getCurrentStage(quest).objectiveOverride;
-                p.sendMessage(message);
-                quest.nextStage(this);
-            }
-            return;
-
-        }
-
-        if (objective.equalsIgnoreCase("password")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + pass;
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("damageBlock")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("damage") + " " + prettyItemString(material.name());
-            message = message + " " + getCurrentStage(quest).blocksToDamage.get(material) + "/" + getCurrentStage(quest).blocksToDamage.get(material);
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("breakBlock")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("break") + " " + prettyItemString(material.name());
-            message = message + " " + 1 + "/" + 1;
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("placeBlock")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("place") + " " + prettyItemString(material.name());
-            message = message + " " + getCurrentStage(quest).blocksToPlace.get(material) + "/" + getCurrentStage(quest).blocksToPlace.get(material);
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("useBlock")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("use") + " " + prettyItemString(material.name());
-            message = message + " " + getCurrentStage(quest).blocksToUse.get(material) + "/" + getCurrentStage(quest).blocksToUse.get(material);
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("cutBlock")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("cut") + " " + prettyItemString(material.name());
-            message = message + " " + getCurrentStage(quest).blocksToCut.get(material) + "/" + getCurrentStage(quest).blocksToCut.get(material);
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("catchFish")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("catchFish") + " ";
-            message = message + " " + getCurrentStage(quest).fishToCatch + "/" + getCurrentStage(quest).fishToCatch;
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("enchantItem")) {
-
-            String obj = Lang.get("enchantItem");
-            obj = obj.replaceAll("<item>", prettyItemString(material.name()));
-            obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
-            for (Map<Enchantment, Material> map : getCurrentStage(quest).itemsToEnchant.keySet()) {
-
-                if (map.containsKey(enchantment)) {
-
-                    message = message + " " + getCurrentStage(quest).itemsToEnchant.get(map) + "/" + getCurrentStage(quest).itemsToEnchant.get(map);
-                    break;
-
-                }
-
-            }
-
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("deliverItem")) {
-
-            String obj = Lang.get("deliver");
-            obj = obj.replaceAll("<item>", ItemUtil.getString(getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(itemstack))));
-            obj = obj.replaceAll("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(itemstack))));
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("killMob")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + " " + mob.name();
-            message = message + " " + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob)) + "/" + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob));
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("killPlayer")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("killPlayer");
-            message = message + " " + getCurrentStage(quest).playersToKill + "/" + getCurrentStage(quest).playersToKill;
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("talkToNPC")) {
-
-            String obj = Lang.get("talkTo");
-            obj = obj.replaceAll("<npc>", plugin.getNPCName(npc.getId()));
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("killNPC")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + " " + npc.getName();
-            message = message + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(npc.getId())) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(npc.getId()));
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("tameMob")) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("tame") + " " + getCapitalized(mob.name());
-            message = message + " " + getCurrentStage(quest).mobsToTame.get(mob) + "/" + getCurrentStage(quest).mobsToTame.get(mob);
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("shearSheep")) {
-
-            String obj = Lang.get("shearSheep");
-            obj = obj.replaceAll("<color>", color.name().toLowerCase());
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
-            message = message + " " + getCurrentStage(quest).sheepToShear.get(color) + "/" + getCurrentStage(quest).sheepToShear.get(color);
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (objective.equalsIgnoreCase("reachLocation")) {
-
-            String obj = Lang.get("goTo");
-            obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(location)));
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        } else if (co != null) {
-
-            String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + co.getDisplay();
-
-            int index = -1;
-            for (int i = 0; i < getCurrentStage(quest).customObjectives.size(); i++) {
-                if (getCurrentStage(quest).customObjectives.get(i).getName().equals(co.getName())) {
-                    index = i;
-                    break;
-                }
-            }
-
-            Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
-            for (String key : co.datamap.keySet()) {
-                message = message.replaceAll("%" + ((String) key) + "%", (String) datamap.get(key));
-            }
-
-            if (co.isCountShown() && co.isEnableCount()) {
-                message = message.replaceAll("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
-            }
-            p.sendMessage(message);
-            if (testComplete(quest)) {
-                quest.nextStage(this);
-            }
-
-        }
-
-    }
 
     public boolean testComplete(Quest quest) {
 
@@ -1826,10 +1695,15 @@ Material m = null;
         data.setDoJournalUpdate(false);
 
         if (quest.getStage(0).blocksToDamage.isEmpty() == false) {
-            for (Material m : quest.getStage(0).blocksToDamage.keySet()) {
-
-                data.blocksDamaged.put(m, 0);
-
+            for (ItemStack i : quest.getStage(0).blocksToDamage) {
+            	if (data.blocksDamaged.indexOf(i) != -1) {
+            		//TODO Will this ever happen?
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksDamaged.set(data.blocksDamaged.indexOf(temp), temp);
+            	} else {
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksDamaged.add(temp);
+            	}
             }
         }
 
@@ -1847,26 +1721,41 @@ Material m = null;
         }
 
         if (quest.getStage(0).blocksToPlace.isEmpty() == false) {
-            for (Material m : quest.getStage(0).blocksToPlace.keySet()) {
-
-                data.blocksPlaced.put(m, 0);
-
+            for (ItemStack i : quest.getStage(0).blocksToPlace) {
+            	if (data.blocksPlaced.indexOf(i) != -1) {
+            		//TODO Will this ever happen?
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksPlaced.set(data.blocksPlaced.indexOf(temp), temp);
+            	} else {
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksPlaced.add(temp);
+            	}
             }
         }
 
         if (quest.getStage(0).blocksToUse.isEmpty() == false) {
-            for (Material m : quest.getStage(0).blocksToUse.keySet()) {
-
-                data.blocksUsed.put(m, 0);
-
+            for (ItemStack i : quest.getStage(0).blocksToUse) {
+            	if (data.blocksUsed.indexOf(i) != -1) {
+            		//TODO Will this ever happen?
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksUsed.set(data.blocksUsed.indexOf(temp), temp);
+            	} else {
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksUsed.add(temp);
+            	}
             }
         }
 
         if (quest.getStage(0).blocksToCut.isEmpty() == false) {
-            for (Material m : quest.getStage(0).blocksToCut.keySet()) {
-
-                data.blocksCut.put(m, 0);
-
+            for (ItemStack i : quest.getStage(0).blocksToCut) {
+            	if (data.blocksCut.indexOf(i) != -1) {
+            		//TODO Will this ever happen?
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksCut.set(data.blocksCut.indexOf(temp), temp);
+            	} else {
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksCut.add(temp);
+            	}
             }
         }
 
@@ -1924,11 +1813,12 @@ Material m = null;
         }
 
         if (quest.getStage(0).blocksToCut.isEmpty() == false) {
-            for (Material m : quest.getStage(0).blocksToCut.keySet()) {
-
-                data.blocksCut.put(m, 0);
-
-            }
+        	for (ItemStack is : quest.getStage(0).blocksToCut) {
+        		
+        		//TODO should be .set() ?
+        		is.setAmount(0);
+        		data.blocksCut.add(is);
+        	}
         }
 
         if (quest.getStage(0).locationsToReach.isEmpty() == false) {
@@ -1979,10 +1869,15 @@ Material m = null;
         data.setDoJournalUpdate(false);
 
         if (quest.getStage(stage).blocksToDamage.isEmpty() == false) {
-            for (Material m : quest.getStage(stage).blocksToDamage.keySet()) {
-
-                data.blocksDamaged.put(m, 0);
-
+            for (ItemStack i : quest.getStage(stage).blocksToDamage) {
+            	if (data.blocksDamaged.indexOf(i) != -1) {
+            		//TODO Will this ever happen?
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksDamaged.set(data.blocksDamaged.indexOf(temp), temp);
+            	} else {
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksDamaged.add(temp);
+            	}
             }
         }
 
@@ -2000,26 +1895,41 @@ Material m = null;
         }
 
         if (quest.getStage(stage).blocksToPlace.isEmpty() == false) {
-            for (Material m : quest.getStage(stage).blocksToPlace.keySet()) {
-
-                data.blocksPlaced.put(m, 0);
-
+            for (ItemStack i : quest.getStage(stage).blocksToPlace) {
+            	if (data.blocksPlaced.indexOf(i) != -1) {
+            		//TODO Will this ever happen?
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksPlaced.set(data.blocksPlaced.indexOf(temp), temp);
+            	} else {
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksPlaced.add(temp);
+            	}
             }
         }
 
         if (quest.getStage(stage).blocksToUse.isEmpty() == false) {
-            for (Material m : quest.getStage(stage).blocksToUse.keySet()) {
-
-                data.blocksUsed.put(m, 0);
-
+            for (ItemStack i : quest.getStage(stage).blocksToUse) {
+            	if (data.blocksUsed.indexOf(i) != -1) {
+            		//TODO Will this ever happen?
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksUsed.set(data.blocksUsed.indexOf(temp), temp);
+            	} else {
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksUsed.add(temp);
+            	}
             }
         }
 
         if (quest.getStage(stage).blocksToCut.isEmpty() == false) {
-            for (Material m : quest.getStage(stage).blocksToCut.keySet()) {
-
-                data.blocksCut.put(m, 0);
-
+            for (ItemStack i : quest.getStage(stage).blocksToCut) {
+            	if (data.blocksCut.indexOf(i) != -1) {
+            		//TODO Will this ever happen?
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksCut.set(data.blocksCut.indexOf(temp), temp);
+            	} else {
+            		ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+            		data.blocksCut.add(temp);
+            	}
             }
         }
 
@@ -2077,11 +1987,12 @@ Material m = null;
         }
 
         if (quest.getStage(stage).blocksToCut.isEmpty() == false) {
-            for (Material m : quest.getStage(stage).blocksToCut.keySet()) {
-
-                data.blocksCut.put(m, 0);
-
-            }
+        	for (ItemStack is : quest.getStage(stage).blocksToCut) {
+        		
+        		//TODO should be .set() ?
+        		is.setAmount(0);
+        		data.blocksCut.add(is);
+        	}
         }
 
         if (quest.getStage(stage).locationsToReach.isEmpty() == false) {
@@ -2365,14 +2276,17 @@ Material m = null;
 
                     LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    LinkedList<Short> blockDurability = new LinkedList<Short>();
 
-                    for (Material m : questData.blocksDamaged.keySet()) {
-                        blockNames.add(m.name());
-                        blockAmounts.add(questData.blocksDamaged.get(m));
+                    for (ItemStack m : questData.blocksDamaged) {
+                    	blockNames.add(m.getType().name());
+                        blockAmounts.add(m.getAmount());
+                        blockDurability.add(m.getDurability());
                     }
 
                     questSec.set("blocks-damaged-names", blockNames);
                     questSec.set("blocks-damaged-amounts", blockAmounts);
+                    questSec.set("blocks-broken-durability", blockDurability);
 
                 }
 
@@ -2380,17 +2294,17 @@ Material m = null;
                 	
                 	LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
-                    LinkedList<Short> blockData = new LinkedList<Short>();
+                    LinkedList<Short> blockDurability = new LinkedList<Short>();
                 	
                 	for (ItemStack m : questData.blocksBroken) {
                         blockNames.add(m.getType().name());
                         blockAmounts.add(m.getAmount());
-                        blockData.add(m.getDurability());
+                        blockDurability.add(m.getDurability());
                     }
 
                     questSec.set("blocks-broken-names", blockNames);
                     questSec.set("blocks-broken-amounts", blockAmounts);
-                    questSec.set("blocks-broken-data", blockData);
+                    questSec.set("blocks-broken-durability", blockDurability);
 
                 }
 
@@ -2398,14 +2312,17 @@ Material m = null;
 
                     LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    LinkedList<Short> blockDurability = new LinkedList<Short>();
 
-                    for (Material m : questData.blocksPlaced.keySet()) {
-                        blockNames.add(m.name());
-                        blockAmounts.add(questData.blocksPlaced.get(m));
+                    for (ItemStack m : questData.blocksPlaced) {
+                    	blockNames.add(m.getType().name());
+                        blockAmounts.add(m.getAmount());
+                        blockDurability.add(m.getDurability());
                     }
 
                     questSec.set("blocks-placed-names", blockNames);
                     questSec.set("blocks-placed-amounts", blockAmounts);
+                    questSec.set("blocks-broken-durability", blockDurability);
 
                 }
 
@@ -2413,14 +2330,17 @@ Material m = null;
 
                     LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    LinkedList<Short> blockDurability = new LinkedList<Short>();
 
-                    for (Material m : questData.blocksUsed.keySet()) {
-                        blockNames.add(m.name());
-                        blockAmounts.add(questData.blocksUsed.get(m));
+                    for (ItemStack m : questData.blocksUsed) {
+                    	blockNames.add(m.getType().name());
+                        blockAmounts.add(m.getAmount());
+                        blockDurability.add(m.getDurability());
                     }
 
                     questSec.set("blocks-used-names", blockNames);
                     questSec.set("blocks-used-amounts", blockAmounts);
+                    questSec.set("blocks-broken-durability", blockDurability);
 
                 }
 
@@ -2428,14 +2348,17 @@ Material m = null;
 
                     LinkedList<String> blockNames = new LinkedList<String>();
                     LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    LinkedList<Short> blockDurability = new LinkedList<Short>();
 
-                    for (Material m : questData.blocksCut.keySet()) {
-                        blockNames.add(m.name());
-                        blockAmounts.add(questData.blocksCut.get(m));
+                    for (ItemStack m : questData.blocksCut) {
+                    	blockNames.add(m.getType().name());
+                        blockAmounts.add(m.getAmount());
+                        blockDurability.add(m.getDurability());
                     }
 
                     questSec.set("blocks-cut-names", blockNames);
                     questSec.set("blocks-cut-amounts", blockAmounts);
+                    questSec.set("blocks-broken-durability", blockDurability);
 
                 }
 
@@ -2895,11 +2818,19 @@ Material m = null;
 
                     List<String> names = questSec.getStringList("blocks-damaged-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
+                    List<Short> durability = questSec.getShortList("blocks-damaged-durability");
 
                     for (String s : names) {
-
-                        getQuestData(quest).blocksDamaged.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
-
+                    	ItemStack is;
+                    	//if (durability.get(names.indexOf(s)) != -1) {
+                    	if (durability.indexOf(names.indexOf(s)) != -1) {
+                    		is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
+                    	} else {
+                    		//Legacy
+                    		is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
+                    	}
+                    	
+                    	getQuestData(quest).blocksDamaged.add(is); //TODO should be .set() ?
                     }
 
                 }
@@ -2908,7 +2839,7 @@ Material m = null;
 
 					List<String> names = questSec.getStringList("blocks-broken-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
-                    List<Short> durability = questSec.getShortList("blocks-broken-data");
+                    List<Short> durability = questSec.getShortList("blocks-broken-durability");
 
                     for (String s : names) {
                     	ItemStack is;
@@ -2929,11 +2860,19 @@ Material m = null;
 
                     List<String> names = questSec.getStringList("blocks-placed-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-placed-amounts");
+                    List<Short> durability = questSec.getShortList("blocks-placed-durability");
 
                     for (String s : names) {
-
-                        getQuestData(quest).blocksPlaced.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
-
+                    	ItemStack is;
+                    	//if (durability.get(names.indexOf(s)) != -1) {
+                    	if (durability.indexOf(names.indexOf(s)) != -1) {
+                    		is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
+                    	} else {
+                    		//Legacy
+                    		is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
+                    	}
+                    	
+                    	getQuestData(quest).blocksPlaced.add(is); //TODO should be .set() ?
                     }
 
                 }
@@ -2942,11 +2881,19 @@ Material m = null;
 
                     List<String> names = questSec.getStringList("blocks-used-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-used-amounts");
+                    List<Short> durability = questSec.getShortList("blocks-used-durability");
 
                     for (String s : names) {
-
-                        getQuestData(quest).blocksUsed.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
-
+                    	ItemStack is;
+                    	//if (durability.get(names.indexOf(s)) != -1) {
+                    	if (durability.indexOf(names.indexOf(s)) != -1) {
+                    		is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
+                    	} else {
+                    		//Legacy
+                    		is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
+                    	}
+                    	
+                    	getQuestData(quest).blocksUsed.add(is); //TODO should be .set() ?
                     }
 
                 }
@@ -2955,11 +2902,19 @@ Material m = null;
 
                     List<String> names = questSec.getStringList("blocks-cut-names");
                     List<Integer> amounts = questSec.getIntegerList("blocks-cut-amounts");
+                    List<Short> durability = questSec.getShortList("blocks-cut-durability");
 
                     for (String s : names) {
-
-                        getQuestData(quest).blocksCut.put(Material.matchMaterial(s), amounts.get(names.indexOf(s)));
-
+                    	ItemStack is;
+                    	//if (durability.get(names.indexOf(s)) != -1) {
+                    	if (durability.indexOf(names.indexOf(s)) != -1) {
+                    		is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
+                    	} else {
+                    		//Legacy
+                    		is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
+                    	}
+                    	
+                    	getQuestData(quest).blocksCut.add(is); //TODO should be .set() ?
                     }
 
                 }

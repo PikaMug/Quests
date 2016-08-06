@@ -241,7 +241,8 @@ public class PlayerListener implements Listener, ColorUtil {
                 for (Quest quest : quester.currentQuests.keySet()) {
 
                     if (quester.hasObjective(quest, "useBlock")) {
-                        quester.useBlock(quest, evt.getClickedBlock().getType());
+                    	ItemStack i = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
+                    	quester.useBlock(quest, i);
                         hasObjective = true;
                     }
 
@@ -446,8 +447,8 @@ public class PlayerListener implements Listener, ColorUtil {
             for (Quest quest : quester.currentQuests.keySet()) {
 
                 if (quester.hasObjective(quest, "damageBlock")) {
-
-                    quester.damageBlock(quest, evt.getBlock().getType());
+                	ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
+                	quester.damageBlock(quest, i);
 
                 }
 
@@ -469,7 +470,8 @@ public class PlayerListener implements Listener, ColorUtil {
                 if (quester.hasObjective(quest, "placeBlock")) {
 
                     if (evt.isCancelled() == false) {
-                        quester.placeBlock(quest, evt.getBlock().getType());
+                    	ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
+                        quester.placeBlock(quest, i);
                     }
 
                 }
@@ -499,25 +501,22 @@ public class PlayerListener implements Listener, ColorUtil {
                 }
 
                 if (quester.hasObjective(quest, "placeBlock")) {
-
-                    if (quester.getQuestData(quest).blocksPlaced.containsKey(evt.getBlock().getType())) {
-
-                        if (quester.getQuestData(quest).blocksPlaced.get(evt.getBlock().getType()) > 0) {
-
+                	
+                	for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
+                		if (is.getAmount() > 0) {
                             if (evt.isCancelled() == false) {
-                                quester.getQuestData(quest).blocksPlaced.put(evt.getBlock().getType(), quester.getQuestData(quest).blocksPlaced.get(evt.getBlock().getType()) - 1);
+                            	int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
+                            	is.setAmount(is.getAmount() - 1);
+                            	quester.getQuestData(quest).blocksPlaced.set(index, is);
                             }
-
-                        }
-
-                    }
-
+                		}
+                	}
+                	
                 }
 
                 if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS) && quester.hasObjective(quest, "cutBlock")) {
-
-                    quester.cutBlock(quest, evt.getBlock().getType());
-
+                	ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
+                	quester.cutBlock(quest, i);
                 }
 
             }

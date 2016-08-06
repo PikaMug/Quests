@@ -298,7 +298,7 @@ public class Lang {
 
         langMap.put("stageEditorSetBlockNames", "Set block names");
         langMap.put("stageEditorSetBlockAmounts", "Set block amounts");
-        langMap.put("stageEditorSetBlockData", "Set block data");
+        langMap.put("stageEditorSetBlockDurability", "Set block durability");
         langMap.put("stageEditorSetDamageAmounts", "Set damage amounts");
         langMap.put("stageEditorSetPlaceAmounts", "Set place amounts");
         langMap.put("stageEditorSetUseAmounts", "Set use amounts");
@@ -732,14 +732,14 @@ public class Lang {
         langMap.put("itemCreateLoadHand", "Load item in hand");
         langMap.put("itemCreateSetName", "Set name");
         langMap.put("itemCreateSetAmount", "Set amount");
-        langMap.put("itemCreateSetData", "Set data");
+        langMap.put("itemCreateSetDurab", "Set durability");
         langMap.put("itemCreateSetEnchs", "Add/clear enchantments");
         langMap.put("itemCreateSetDisplay", "Set display name");
         langMap.put("itemCreateSetLore", "Set lore");
 
         langMap.put("itemCreateEnterName", "Enter an item name, or 'cancel' to return.");
         langMap.put("itemCreateEnterAmount", "Enter item amount (max. 64), or 'cancel' to return.");
-        langMap.put("itemCreateEnterData", "Enter item data, or 'clear' to clear the data, or 'cancel' to return.");
+        langMap.put("itemCreateEnterDurab", "Enter item durability, or 'clear' to clear the data, or 'cancel' to return.");
         langMap.put("itemCreateEnterEnch", "Enter an enchantment name, or 'clear' to clear the enchantments, or 'cancel' to return.");
         langMap.put("itemCreateEnterLevel", "Enter a level (number) for <enchantment>");
         langMap.put("itemCreateEnterDisplay", "Enter item display name, or 'clear' to clear the display name, or 'cancel' to return.");
@@ -750,7 +750,7 @@ public class Lang {
         langMap.put("itemCreateNoName", "You must set a name first!");
         langMap.put("itemCreateInvalidName", "Invalid item name!");
         langMap.put("itemCreateInvalidAmount", "Amount must be between 1-64!");
-        langMap.put("itemCreateInvalidData", "Invalid item data!");
+        langMap.put("itemCreateInvalidDurab", "Invalid item durability!");
         langMap.put("itemCreateInvalidEnch", "Invalid enchantment name!");
         langMap.put("itemCreateInvalidLevel", "Level must be greater than 0!");
         langMap.put("itemCreateInvalidInput", "Invalid input!");

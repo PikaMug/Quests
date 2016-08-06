@@ -57,12 +57,16 @@ public class CK {
     public static final String S_BREAK_DURABILITY = "breakDurability";
     public static final String S_DAMAGE_NAMES = "damageNames";
     public static final String S_DAMAGE_AMOUNTS = "damageAmounts";
+    public static final String S_DAMAGE_DURABILITY = "damageDurability";
     public static final String S_PLACE_NAMES = "placeNames";
     public static final String S_PLACE_AMOUNTS = "placeAmounts";
+    public static final String S_PLACE_DURABILITY = "placeDurability";
     public static final String S_USE_NAMES = "useNames";
     public static final String S_USE_AMOUNTS = "useAmounts";
+    public static final String S_USE_DURABILITY = "useDurability";
     public static final String S_CUT_NAMES = "cutNames";
     public static final String S_CUT_AMOUNTS = "cutAmounts";
+    public static final String S_CUT_DURABILITY = "cutDurability";
     public static final String S_FISH = "fish";
     public static final String S_PLAYER_KILL = "playerKill";
     public static final String S_ENCHANT_TYPES = "enchantTypes";

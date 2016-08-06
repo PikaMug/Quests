@@ -61,9 +61,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             String text = PINK + "- " + AQUA + (String) context.getSessionData(CK.Q_NAME) + PINK + " | " + Lang.get("stageEditorStage") + " " + PURPLE + stageNum + PINK + " -\n";
 
             if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
-                text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + Lang.get("stageEditorBreakBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
+                text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + Lang.get("stageEditorPlaceBlocks") + GRAY + "  (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + Lang.get("stageEditorBreakBlocks") + "\n";
+                text += PINK + "" + BOLD + "1 " + RESET + PURPLE + "- " + Lang.get("stageEditorPlaceBlocks") + "\n";
 
                 LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_BREAK_NAMES);
                 LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
@@ -379,7 +379,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
     protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
         if (input.equalsIgnoreCase("1")) {
-            return new BreakBlockListPrompt();
+            return new PlaceBlockListPrompt();
         } else if (input.equalsIgnoreCase("2")) {
             return new DamageBlockListPrompt();
         } else if (input.equalsIgnoreCase("3")) {
@@ -706,7 +706,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += GRAY + "3 - " + Lang.get("stageEditorSetBlockData") + " (" + Lang.get("noNamesSet") + ")\n";
+                text += GRAY + "3 - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
                 text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
@@ -732,11 +732,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 }
                 
                 if (context.getSessionData(pref + CK.S_BREAK_DURABILITY) == null) {
-                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockData") + " (" + Lang.get("noneSet") + ")\n";
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockData") + "\n";
-                    for (Integer i : getBlockData(context)) {
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
+                    for (Integer i : getBlockDurability(context)) {
 
                         text += GRAY + "    - " + AQUA + i + "\n";
 
@@ -771,7 +771,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoBlockNames"));
                     return new BreakBlockListPrompt();
                 } else {
-                    return new BreakBlockDataPrompt();
+                    return new BreakBlockDurabilityPrompt();
                 }
             } else if (input.equalsIgnoreCase("4")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorBreakBlocksCleared"));
@@ -818,7 +818,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
         
         @SuppressWarnings("unchecked")
-		private List<Integer> getBlockData(ConversationContext context) {
+		private List<Integer> getBlockDurability(ConversationContext context) {
             return (List<Integer>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
         }
     }
@@ -912,7 +912,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         }
     }
     
-    private class BreakBlockDataPrompt extends StringPrompt {
+    private class BreakBlockDurabilityPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -957,7 +957,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         public DamageBlockListPrompt() {
 
-            super("1", "2", "3", "4");
+            super("1", "2", "3", "4", "5");
 
         }
 
@@ -968,8 +968,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("stageEditorSetDamageAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                text += GRAY + "3 - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noNamesSet") + ")\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + "\n";
@@ -992,8 +993,21 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                 }
 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                if (context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) == null) {
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                } else {
+
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
+                    for (Integer i : getBlockDurability(context)) {
+
+                        text += GRAY + "    - " + AQUA + i + "\n";
+
+                    }
+
+                }
+
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -1015,11 +1029,19 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     return new DamageBlockAmountsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
+                if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
+                    context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoBlockNames"));
+                    return new DamageBlockListPrompt();
+                } else {
+                    return new DamageBlockDurabilityPrompt();
+                }
+            } else if (input.equalsIgnoreCase("4")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorDamageBlocksCleared"));
                 context.setSessionData(pref + CK.S_DAMAGE_NAMES, null);
                 context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, null);
+                context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, null);
                 return new DamageBlockListPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
+            } else if (input.equalsIgnoreCase("5")) {
 
                 int one;
                 int two;
@@ -1055,6 +1077,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         @SuppressWarnings("unchecked")
 		private List<Integer> getBlockAmounts(ConversationContext context) {
             return (List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
+        }
+        
+        @SuppressWarnings("unchecked")
+		private List<Integer> getBlockDurability(ConversationContext context) {
+            return (List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
         }
     }
 
@@ -1146,12 +1173,53 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
+    
+    private class DamageBlockDurabilityPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            return YELLOW + Lang.get("stageEditorDamageBlocksPrompt");
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+
+                String[] args = input.split(" ");
+                LinkedList<Integer> durability = new LinkedList<Integer>();
+                for (String s : args) {
+
+                    try {
+
+                        if (Integer.parseInt(s) > 0) {
+                        	durability.add(Integer.parseInt(s));
+                        } else {
+                            context.getForWhom().sendRawMessage(PINK + s + RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+                            return new DamageBlockAmountsPrompt();
+                        }
+
+                    } catch (NumberFormatException e) {
+                        context.getForWhom().sendRawMessage(PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
+                        return new DamageBlockAmountsPrompt();
+                    }
+
+                }
+
+                context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durability);
+
+            }
+
+            return new DamageBlockListPrompt();
+
+        }
+    }
 
     private class PlaceBlockListPrompt extends FixedSetPrompt {
 
         public PlaceBlockListPrompt() {
 
-            super("1", "2", "3", "4");
+            super("1", "2", "3", "4", "5");
 
         }
 
@@ -1162,8 +1230,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("stageEditorSetPlaceAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                text += GRAY + "3 - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noNamesSet") + ")\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + "\n";
@@ -1185,9 +1254,22 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     }
 
                 }
+                
+                if (context.getSessionData(pref + CK.S_PLACE_DURABILITY) == null) {
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                } else {
 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
+                    for (Integer i : getBlockDurability(context)) {
+
+                        text += GRAY + "    - " + AQUA + i + "\n";
+
+                    }
+
+                }
+
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -1209,11 +1291,19 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     return new PlaceBlockAmountsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
+                if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
+                    context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoBlockNames"));
+                    return new PlaceBlockListPrompt();
+                } else {
+                    return new PlaceBlockDurabilityPrompt();
+                }
+            } else if (input.equalsIgnoreCase("4")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorPlaceBlocksCleared"));
                 context.setSessionData(pref + CK.S_PLACE_NAMES, null);
                 context.setSessionData(pref + CK.S_PLACE_AMOUNTS, null);
+                context.setSessionData(pref + CK.S_PLACE_DURABILITY, null);
                 return new PlaceBlockListPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
+            } else if (input.equalsIgnoreCase("5")) {
 
                 int one;
                 int two;
@@ -1249,6 +1339,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         @SuppressWarnings("unchecked")
 		private List<Integer> getBlockAmounts(ConversationContext context) {
             return (List<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
+        }
+        
+        @SuppressWarnings("unchecked")
+		private List<Integer> getBlockDurability(ConversationContext context) {
+            return (List<Integer>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
         }
     }
 
@@ -1340,12 +1435,53 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
+    
+    private class PlaceBlockDurabilityPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            return YELLOW + Lang.get("stageEditorPlaceBlocksPrompt");
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+
+                String[] args = input.split(" ");
+                LinkedList<Integer> durability = new LinkedList<Integer>();
+                for (String s : args) {
+
+                    try {
+
+                        if (Integer.parseInt(s) > 0) {
+                        	durability.add(Integer.parseInt(s));
+                        } else {
+                            context.getForWhom().sendRawMessage(PINK + s + RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+                            return new PlaceBlockAmountsPrompt();
+                        }
+
+                    } catch (NumberFormatException e) {
+                        context.getForWhom().sendRawMessage(PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
+                        return new PlaceBlockAmountsPrompt();
+                    }
+
+                }
+
+                context.setSessionData(pref + CK.S_PLACE_DURABILITY, durability);
+
+            }
+
+            return new PlaceBlockListPrompt();
+
+        }
+    }
 
     private class UseBlockListPrompt extends FixedSetPrompt {
 
         public UseBlockListPrompt() {
 
-            super("1", "2", "3", "4");
+            super("1", "2", "3", "4", "5");
 
         }
 
@@ -1356,8 +1492,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("stageEditorSetUseAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                text += GRAY + "3 - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noNamesSet") + ")\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + "\n";
@@ -1379,9 +1516,22 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     }
 
                 }
+                
+                if (context.getSessionData(pref + CK.S_USE_DURABILITY) == null) {
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                } else {
 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
+                    for (Integer i : getBlockDurability(context)) {
+
+                        text += GRAY + "    - " + AQUA + i + "\n";
+
+                    }
+
+                }
+
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -1403,11 +1553,19 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     return new UseBlockAmountsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
+                if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
+                    context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoBlockNames"));
+                    return new UseBlockListPrompt();
+                } else {
+                    return new UseBlockDurabilityPrompt();
+                }
+            } else if (input.equalsIgnoreCase("4")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorUseBlocksCleared"));
                 context.setSessionData(pref + CK.S_USE_NAMES, null);
                 context.setSessionData(pref + CK.S_USE_AMOUNTS, null);
+                context.setSessionData(pref + CK.S_USE_DURABILITY, null);
                 return new UseBlockListPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
+            } else if (input.equalsIgnoreCase("5")) {
 
                 int one;
                 int two;
@@ -1443,6 +1601,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         @SuppressWarnings("unchecked")
 		private List<Integer> getBlockAmounts(ConversationContext context) {
             return (List<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
+        }
+        
+        @SuppressWarnings("unchecked")
+		private List<Integer> getBlockDurability(ConversationContext context) {
+            return (List<Integer>) context.getSessionData(pref + CK.S_USE_DURABILITY);
         }
     }
 
@@ -1534,12 +1697,53 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
         }
     }
+    
+    private class UseBlockDurabilityPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            return YELLOW + Lang.get("stageEditorUseBlocksPrompt");
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+
+                String[] args = input.split(" ");
+                LinkedList<Integer> durability = new LinkedList<Integer>();
+                for (String s : args) {
+
+                    try {
+
+                        if (Integer.parseInt(s) > 0) {
+                        	durability.add(Integer.parseInt(s));
+                        } else {
+                            context.getForWhom().sendRawMessage(PINK + s + RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+                            return new UseBlockAmountsPrompt();
+                        }
+
+                    } catch (NumberFormatException e) {
+                        context.getForWhom().sendRawMessage(PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
+                        return new UseBlockAmountsPrompt();
+                    }
+
+                }
+
+                context.setSessionData(pref + CK.S_USE_DURABILITY, durability);
+
+            }
+
+            return new UseBlockListPrompt();
+
+        }
+    }
 
     private class CutBlockListPrompt extends FixedSetPrompt {
 
         public CutBlockListPrompt() {
 
-            super("1", "2", "3", "4");
+            super("1", "2", "3", "4", "5");
 
         }
 
@@ -1550,8 +1754,9 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
             if (context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noneSet") + ")\n";
                 text += GRAY + "2 - " + Lang.get("stageEditorSetCutAmounts") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                text += GRAY + "3 - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noNamesSet") + ")\n";
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
             } else {
 
                 text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockNames") + "\n";
@@ -1574,8 +1779,21 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
 
                 }
 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                if (context.getSessionData(pref + CK.S_CUT_DURABILITY) == null) {
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                } else {
+
+                    text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
+                    for (Integer i : getBlockDurability(context)) {
+
+                        text += GRAY + "    - " + AQUA + i + "\n";
+
+                    }
+
+                }
+
+                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
+                text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -1597,11 +1815,19 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                     return new CutBlockAmountsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
+                if (context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
+                    context.getForWhom().sendRawMessage(RED + Lang.get("stageEditorNoBlockNames"));
+                    return new CutBlockListPrompt();
+                } else {
+                    return new CutBlockDurabilityPrompt();
+                }
+            } else if (input.equalsIgnoreCase("4")) {
                 context.getForWhom().sendRawMessage(YELLOW + Lang.get("stageEditorCutBlocksCleared"));
                 context.setSessionData(pref + CK.S_CUT_NAMES, null);
                 context.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
+                context.setSessionData(pref + CK.S_CUT_DURABILITY, null);
                 return new CutBlockListPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
+            } else if (input.equalsIgnoreCase("5")) {
 
                 int one;
                 int two;
@@ -1637,6 +1863,11 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
         @SuppressWarnings("unchecked")
 		private List<Integer> getBlockAmounts(ConversationContext context) {
             return (List<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS);
+        }
+        
+        @SuppressWarnings("unchecked")
+		private List<Integer> getBlockDurability(ConversationContext context) {
+            return (List<Integer>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
         }
     }
 
@@ -1721,6 +1952,47 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
                 }
 
                 context.setSessionData(pref + CK.S_CUT_AMOUNTS, amounts);
+
+            }
+
+            return new CutBlockListPrompt();
+
+        }
+    }
+    
+    private class CutBlockDurabilityPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            return YELLOW + Lang.get("stageEditorCutBlocksPrompt");
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+
+                String[] args = input.split(" ");
+                LinkedList<Integer> durability = new LinkedList<Integer>();
+                for (String s : args) {
+
+                    try {
+
+                        if (Integer.parseInt(s) > 0) {
+                        	durability.add(Integer.parseInt(s));
+                        } else {
+                            context.getForWhom().sendRawMessage(PINK + s + RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+                            return new CutBlockAmountsPrompt();
+                        }
+
+                    } catch (NumberFormatException e) {
+                        context.getForWhom().sendRawMessage(PINK + s + RED + Lang.get("stageEditorNotListofNumbers"));
+                        return new CutBlockAmountsPrompt();
+                    }
+
+                }
+
+                context.setSessionData(pref + CK.S_CUT_DURABILITY, durability);
 
             }
 

@@ -118,15 +118,19 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
 
                 cc.setSessionData(newPref + CK.S_DAMAGE_NAMES, cc.getSessionData(pref + CK.S_DAMAGE_NAMES));
                 cc.setSessionData(newPref + CK.S_DAMAGE_AMOUNTS, cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_DAMAGE_DURABILITY, cc.getSessionData(pref + CK.S_DAMAGE_DURABILITY));
 
                 cc.setSessionData(newPref + CK.S_PLACE_NAMES, cc.getSessionData(pref + CK.S_PLACE_NAMES));
                 cc.setSessionData(newPref + CK.S_PLACE_NAMES, cc.getSessionData(pref + CK.S_PLACE_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_PLACE_DURABILITY, cc.getSessionData(pref + CK.S_PLACE_DURABILITY));
 
                 cc.setSessionData(newPref + CK.S_USE_NAMES, cc.getSessionData(pref + CK.S_USE_NAMES));
                 cc.setSessionData(newPref + CK.S_USE_AMOUNTS, cc.getSessionData(pref + CK.S_USE_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_USE_DURABILITY, cc.getSessionData(pref + CK.S_USE_DURABILITY));
 
                 cc.setSessionData(newPref + CK.S_CUT_NAMES, cc.getSessionData(pref + CK.S_CUT_NAMES));
                 cc.setSessionData(newPref + CK.S_CUT_AMOUNTS, cc.getSessionData(pref + CK.S_CUT_AMOUNTS));
+                cc.setSessionData(newPref + CK.S_CUT_DURABILITY, cc.getSessionData(pref + CK.S_CUT_DURABILITY));
 
                 cc.setSessionData(newPref + CK.S_FISH, cc.getSessionData(pref + CK.S_FISH));
 
@@ -195,15 +199,19 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
 
             cc.setSessionData(pref + CK.S_DAMAGE_NAMES, null);
             cc.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, null);
+            cc.setSessionData(pref + CK.S_DAMAGE_DURABILITY, null);
 
             cc.setSessionData(pref + CK.S_PLACE_NAMES, null);
             cc.setSessionData(pref + CK.S_PLACE_AMOUNTS, null);
+            cc.setSessionData(pref + CK.S_PLACE_DURABILITY, null);
 
             cc.setSessionData(pref + CK.S_USE_NAMES, null);
             cc.setSessionData(pref + CK.S_USE_AMOUNTS, null);
+            cc.setSessionData(pref + CK.S_USE_DURABILITY, null);
 
             cc.setSessionData(pref + CK.S_CUT_NAMES, null);
             cc.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
+            cc.setSessionData(pref + CK.S_CUT_DURABILITY, null);
 
             cc.setSessionData(pref + CK.S_FISH, null);
 

@@ -15,12 +15,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class Stage {
 
-    Map<Material, Integer> blocksToDamage = new EnumMap<Material, Integer>(Material.class);
+	LinkedList<ItemStack> blocksToDamage = new LinkedList<ItemStack>();
     LinkedList<ItemStack> blocksToBreak = new LinkedList<ItemStack>();
-    //Map<Material, Integer> blocksToBreak = new EnumMap<Material, Integer>(Material.class);
-    Map<Material, Integer> blocksToPlace = new EnumMap<Material, Integer>(Material.class);
-    Map<Material, Integer> blocksToUse = new EnumMap<Material, Integer>(Material.class);
-    Map<Material, Integer> blocksToCut = new EnumMap<Material, Integer>(Material.class);
+    LinkedList<ItemStack> blocksToPlace = new LinkedList<ItemStack>();
+    LinkedList<ItemStack> blocksToUse = new LinkedList<ItemStack>();
+    LinkedList<ItemStack> blocksToCut = new LinkedList<ItemStack>();
     Integer fishToCatch;
     Integer playersToKill;
     Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
