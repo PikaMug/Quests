@@ -432,7 +432,7 @@ public class Quester {
 
         	for (ItemStack e2 : getQuestData(quest).blocksDamaged) {
 
-                if (e2.getType().equals(e.getType())) {
+                if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 
                     if (e2.getAmount() < e.getAmount()) {
 
@@ -453,15 +453,14 @@ public class Quester {
         for (ItemStack e : getCurrentStage(quest).blocksToBreak) {
 
         	for (ItemStack e2 : getQuestData(quest).blocksBroken) {
-
-                if (e2.getType().equals(e.getType())) {
+        		
+                if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 
                     if (e2.getAmount() < e.getAmount()) {
 
                         unfinishedObjectives.add(ChatColor.GREEN + Lang.get("break") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     } else {
-
                         finishedObjectives.add(ChatColor.GRAY + Lang.get("break") + " " + Items.itemByStack(e2).getName() + ": " + e2.getAmount() + "/" + e.getAmount());
 
                     }
@@ -476,7 +475,7 @@ public class Quester {
 
         	for (ItemStack e2 : getQuestData(quest).blocksPlaced) {
 
-                if (e2.getType().equals(e.getType())) {
+                if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 
                     if (e2.getAmount() < e.getAmount()) {
 
@@ -498,7 +497,7 @@ public class Quester {
 
         	for (ItemStack e2 : getQuestData(quest).blocksUsed) {
 
-                if (e2.getType().equals(e.getType())) {
+                if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 
                     if (e2.getAmount() < e.getAmount()) {
 
@@ -520,7 +519,7 @@ public class Quester {
 
         	for (ItemStack e2 : getQuestData(quest).blocksCut) {
 
-                if (e2.getType().equals(e.getType())) {
+                if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 
                     if (e2.getAmount() < e.getAmount()) {
 
@@ -2046,6 +2045,8 @@ Material m = null;
         return capitalized;
     }
 
+    
+    //TODO eliminate and replace all with Items.itemByStack(is).getName()
     public static String prettyItemString(String itemName) {
         String baseString = Material.matchMaterial(itemName).toString();
         String[] substrings = baseString.split("_");

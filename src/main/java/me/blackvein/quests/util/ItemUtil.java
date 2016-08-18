@@ -2,8 +2,11 @@ package me.blackvein.quests.util;
 
 import java.util.LinkedList;
 import java.util.Map.Entry;
+
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import net.milkbowl.vault.item.Items;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -214,7 +217,7 @@ public class ItemUtil implements ColorUtil {
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
             text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName();
         } else {
-            text = AQUA + Quester.prettyItemString(is.getType().name());
+            text = AQUA + Items.itemByStack(is).getName();
         }
 
         return text;
