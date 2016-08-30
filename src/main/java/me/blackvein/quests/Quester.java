@@ -1119,13 +1119,13 @@ public class Quester {
     public void cutBlock(Quest quest, ItemStack m) {
     	ItemStack temp = m;
     	temp.setAmount(0);
-    	ItemStack broken = temp;
+    	ItemStack cut = temp;
     	ItemStack toCut = temp;
     	
     	for (ItemStack is : getQuestData(quest).blocksCut) {
 
     		if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-    			broken = is;
+    			cut = is;
     		}
     	}
 
@@ -1135,15 +1135,15 @@ public class Quester {
     		}
     	}
 
-    	if (broken != null && toCut != null) {
-    		if (broken.getAmount() < toCut.getAmount()) {
-        		ItemStack newCut = broken;
-    			newCut.setAmount(broken.getAmount() + 1);
+    	if (cut != null && toCut != null) {
+    		if (cut.getAmount() < toCut.getAmount()) {
+        		ItemStack newCut = cut;
+    			newCut.setAmount(cut.getAmount() + 1);
         		
         		//TODO is this correct?
-        		getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(broken), newCut);
+        		getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
 
-        		if (broken.getAmount() == toCut.getAmount()) {
+        		if (cut.getAmount() == toCut.getAmount()) {
                     finishObjective(quest, "cutBlock", m, null, null, null, null, null, null, null, null, null);
                 }
         	}
@@ -1809,15 +1809,6 @@ Material m = null;
                 data.citizenNumKilled.add(0);
 
             }
-        }
-
-        if (quest.getStage(0).blocksToCut.isEmpty() == false) {
-        	for (ItemStack is : quest.getStage(0).blocksToCut) {
-        		
-        		//TODO should be .set() ?
-        		is.setAmount(0);
-        		data.blocksCut.add(is);
-        	}
         }
 
         if (quest.getStage(0).locationsToReach.isEmpty() == false) {
