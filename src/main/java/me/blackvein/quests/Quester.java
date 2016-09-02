@@ -1391,7 +1391,8 @@ public class Quester {
 
             int amount = getQuestData(quest).itemsDelivered.get(found);
             int req = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(found)).getAmount();
-Material m = null;
+            Material m = i.getType();
+
             if (amount < req) {
 
                 if ((i.getAmount() + amount) > req) {
