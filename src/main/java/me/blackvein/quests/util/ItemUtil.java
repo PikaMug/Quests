@@ -7,6 +7,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import net.milkbowl.vault.item.Items;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -212,12 +213,17 @@ public class ItemUtil implements ColorUtil {
 
     public static String getName(ItemStack is) {
 
-        String text;
+        String text = "";
 
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
             text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName();
         } else {
-            text = AQUA + Items.itemByStack(is).getName();
+        	try {
+        		text = AQUA + Items.itemByStack(is).getName();
+        	} catch (NullPointerException ne) {
+        		Bukkit.getLogger().severe("This error is caused by an incompatible version of Vault. Please update!");
+        		ne.printStackTrace();
+        	}
         }
 
         return text;
