@@ -379,7 +379,7 @@ public class CreateStagePrompt extends FixedSetPrompt implements ColorUtil {
     protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 
         if (input.equalsIgnoreCase("1")) {
-            return new PlaceBlockListPrompt();
+            return new BreakBlockListPrompt();
         } else if (input.equalsIgnoreCase("2")) {
             return new DamageBlockListPrompt();
         } else if (input.equalsIgnoreCase("3")) {
