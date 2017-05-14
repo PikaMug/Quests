@@ -15,5 +15,4 @@ public class ReflectionUtil {
         field.setAccessible(true);
         return field.get(instance);
     }
-
 }
