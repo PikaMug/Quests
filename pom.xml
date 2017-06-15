@@ -17,70 +17,70 @@
       <artifactId>bukkit112</artifactId>
       <version>1.12-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.12.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.12.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit111</artifactId>
       <version>1.11-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.11.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.11.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit110</artifactId>
       <version>1.10-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.10.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.10.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit194</artifactId>
       <version>1.9.4-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.9.4.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.9.4.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit192</artifactId>
       <version>1.9.2-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.9.2.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.9.2.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit186</artifactId>
       <version>1.8.6-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.8.6.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.8.6.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit183</artifactId>
       <version>1.8.3-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.8.3.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.8.3.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit18</artifactId>
       <version>1.8-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.8.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.8.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit1710</artifactId>
       <version>1.7.10-R0.1</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.7.10-R0.1.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.7.10-R0.1.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit179</artifactId>
       <version>1.7.9-R0.3</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/craftbukkit-1.7.9-R0.3.jar</systemPath>
+      <systemPath>${project.basedir}/lib/craftbukkit-1.7.9-R0.3.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>net.citizensnpcs</groupId>
@@ -93,35 +93,35 @@
       <artifactId>denizen</artifactId>
       <version>0.9.7-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/denizen-0.9.7-SNAPSHOT.jar</systemPath>
+      <systemPath>${project.basedir}/lib/denizen-0.9.7-SNAPSHOT.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>Vault</artifactId>
       <version>1.4.1</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/Vault.jar</systemPath>
+      <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>com.gmail.nossr50.mcMMO</groupId>
       <artifactId>mcMMO</artifactId>
       <version>1.5.00</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/mcMMO.jar</systemPath>
+      <systemPath>${project.basedir}/lib/mcMMO.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>com.herocraftonline</groupId>
       <artifactId>Heroes</artifactId>
       <version>1.5.5.4</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/Heroes.jar</systemPath>
+      <systemPath>${project.basedir}/lib/Heroes.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>com.codisimus</groupId>
       <artifactId>PhatLoots</artifactId>
       <version>3.8.1</version>
       <scope>system</scope>
-      <systemPath>C:\Users\Dylan\git\Quests/lib/PhatLoots.jar</systemPath>
+      <systemPath>${project.basedir}/lib/PhatLoots.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>com.sk89q</groupId>
@@ -172,16 +172,16 @@
     </pluginRepository>
   </pluginRepositories>
   <build>
-    <sourceDirectory>C:\Users\Dylan\git\Quests\src\main\java</sourceDirectory>
-    <scriptSourceDirectory>C:\Users\Dylan\git\Quests\src\main\scripts</scriptSourceDirectory>
-    <testSourceDirectory>C:\Users\Dylan\git\Quests\src\test\java</testSourceDirectory>
-    <outputDirectory>C:\Users\Dylan\git\Quests\target\classes</outputDirectory>
-    <testOutputDirectory>C:\Users\Dylan\git\Quests\target\test-classes</testOutputDirectory>
+    <sourceDirectory>${project.basedir}\src\main\java</sourceDirectory>
+    <scriptSourceDirectory>${project.basedir}\src\main\scripts</scriptSourceDirectory>
+    <testSourceDirectory>${project.basedir}\src\test\java</testSourceDirectory>
+    <outputDirectory>${project.basedir}\target\classes</outputDirectory>
+    <testOutputDirectory>${project.basedir}\target\test-classes</testOutputDirectory>
     <resources>
       <resource>
         <targetPath>.</targetPath>
         <filtering>true</filtering>
-        <directory>C:\Users\Dylan\git\Quests\src\main\resources</directory>
+        <directory>${project.basedir}\src\main\resources</directory>
         <includes>
           <include>config.yml</include>
           <include>plugin.yml</include>
@@ -192,7 +192,7 @@
       <resource>
         <targetPath>.</targetPath>
         <filtering>false</filtering>
-        <directory>C:\Users\Dylan\git\Quests</directory>
+        <directory>${project.basedir}</directory>
         <includes>
           <include>README.md</include>
         </includes>
@@ -200,10 +200,10 @@
     </resources>
     <testResources>
       <testResource>
-        <directory>C:\Users\Dylan\git\Quests\src\test\resources</directory>
+        <directory>${project.basedir}\src\test\resources</directory>
       </testResource>
     </testResources>
-    <directory>C:\Users\Dylan\git\Quests\target</directory>
+    <directory>${project.basedir}\target</directory>
     <finalName>Quests-2.8.0</finalName>
     <pluginManagement>
       <plugins>
@@ -357,7 +357,7 @@
               <goal>site</goal>
             </goals>
             <configuration>
-              <outputDirectory>C:\Users\Dylan\git\Quests\target\site</outputDirectory>
+              <outputDirectory>${project.basedir}\target\site</outputDirectory>
               <reportPlugins>
                 <reportPlugin>
                   <groupId>org.apache.maven.plugins</groupId>
@@ -373,7 +373,7 @@
               <goal>deploy</goal>
             </goals>
             <configuration>
-              <outputDirectory>C:\Users\Dylan\git\Quests\target\site</outputDirectory>
+              <outputDirectory>${project.basedir}\target\site</outputDirectory>
               <reportPlugins>
                 <reportPlugin>
                   <groupId>org.apache.maven.plugins</groupId>
@@ -384,7 +384,7 @@
           </execution>
         </executions>
         <configuration>
-          <outputDirectory>C:\Users\Dylan\git\Quests\target\site</outputDirectory>
+          <outputDirectory>${project.basedir}\target\site</outputDirectory>
           <reportPlugins>
             <reportPlugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -396,6 +396,6 @@
     </plugins>
   </build>
   <reporting>
-    <outputDirectory>C:\Users\Dylan\git\Quests\target\site</outputDirectory>
+    <outputDirectory>${project.basedir}\target\site</outputDirectory>
   </reporting>
 </project>
