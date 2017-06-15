@@ -5,7 +5,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -148,15 +147,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     @Override
     public void onEnable() {
-
-        /*if(getServer().getBukkitVersion().equalsIgnoreCase(validVersion) == false) {
-
-         getLogger().severe("Your current version of CraftBukkit is " + getServer().getBukkitVersion() + ", this version of Quests is built for version " + validVersion);
-         getLogger().severe("Disabling...");
-         getServer().getPluginManager().disablePlugin(this);
-         return;
-
-         }  */
         pListener = new PlayerListener(this);
         effListener = new NpcEffectThread(this);
         npcListener = new NpcListener(this);
@@ -182,16 +172,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         linkOtherPlugins();
 
-        defaultConfigFile();
+        saveDefaultConfig();
+        //defaultConfigFile();
+        
+        saveResource("quests.yml", false);
+        saveResource("events.yml", false);
+        saveResource("data.yml", false);
+        
+        defaultLangFile();
+        //defaultQuestsFile();
+        //defaultEventsFile();
+        //defaultDataFile();
 
         loadConfig();
         loadModules();
-
-        defaultLangFile();
-        defaultQuestsFile();
-        defaultEventsFile();
-        defaultDataFile();
-
+        loadData();
         loadCommands();
 
         getServer().getPluginManager().registerEvents(pListener, this);
@@ -241,7 +236,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         }, 5L);
     }
 
-    private void defaultDataFile() {
+    /*private void defaultDataFile() {
         if (new File(this.getDataFolder(), "data.yml").exists() == false) {
         	getLogger().info("Data file not found, writing default to file.");
             FileConfiguration data = new YamlConfiguration();
@@ -255,17 +250,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         } else {
             loadData();
         }
-    }
+    }*/
 
-    @SuppressWarnings("deprecation")
-	private void defaultEventsFile() {
+	/*private void defaultEventsFile() {
         if (new File(this.getDataFolder(), "events.yml").exists() == false) {
         	getLogger().info("Events data not found, writing defaults to file.");
             FileConfiguration data = new YamlConfiguration();
             data.options().copyHeader(true);
             data.options().copyDefaults(true);
             try {
-                data.load(this.getResource("events.yml"));
+                data.load(this.getTextResource("events.yml"));
                 data.save(new File(this.getDataFolder(), "events.yml"));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -273,16 +267,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
-    @SuppressWarnings("deprecation")
-	private void defaultQuestsFile() {
+	/*private void defaultQuestsFile() {
         if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
 
         	getLogger().info("Quest data not found, writing defaults to file.");
             FileConfiguration data = new YamlConfiguration();
             try {
-                data.load(this.getResource("quests.yml"));
+                data.load(this.getTextResource("quests.yml"));
                 data.set("events", null);
                 data.save(new File(this.getDataFolder(), "quests.yml"));
             } catch (IOException e) {
@@ -292,15 +285,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             }
 
         }
-    }
+    }*/
 
-    @SuppressWarnings("deprecation")
-	private void defaultConfigFile() {
+	/*private void defaultConfigFile() {
         if (new File(this.getDataFolder(), "config.yml").exists() == false) {
         	getLogger().info("Config not found, writing default to file.");
             FileConfiguration config = new YamlConfiguration();
             try {
-                config.load(this.getResource("config.yml"));
+                config.load(this.getTextResource("config.yml"));
                 config.save(new File(this.getDataFolder(), "config.yml"));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -308,7 +300,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     public void loadCommands() {
 
@@ -624,6 +616,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             JarFile jarFile = new JarFile(jar);
             Enumeration<JarEntry> e = jarFile.entries();
+            jarFile.close();
 
             URL[] urls = {new URL("jar:file:" + jar.getPath() + "!/")};
 
@@ -1936,7 +1929,8 @@ try{
         cs.sendMessage(completed);
     }
 
-    private void questsJournal(final Player player) {
+    @SuppressWarnings("deprecation")
+	private void questsJournal(final Player player) {
 
         Quester quester = getQuester(player.getUniqueId());
 
@@ -2803,7 +2797,6 @@ try{
                 failedToLoad = false;
 
                 if (config.contains("quests." + questName + ".name")) {
-                    // TODO why have a name attr then path key can be guest name?
                     quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
                 } else {
                     skipQuestProcess("Quest block \'" + questName + "\' is missing " + RED + "name:");
@@ -3430,8 +3423,6 @@ try{
     }
 
     private void processStages(Quest quest, FileConfiguration config, String questName) throws StageFailedException {
-        int index = 1;
-
         ConfigurationSection questStages = config.getConfigurationSection("quests." + questName + ".stages.ordered");
 
         for (String s2 : questStages.getKeys(false)) {

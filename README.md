@@ -1,6 +1,6 @@
 # Quests
 
-Quests mod for Spigot. This plugin depends highly on code contributions!
+Quests plugin for Spigot. This work depends highly on code contributions!
 
 ## Usage
 

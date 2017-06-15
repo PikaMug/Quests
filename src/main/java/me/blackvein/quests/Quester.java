@@ -33,6 +33,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
 
 public class Quester {
@@ -2056,52 +2057,6 @@ public class Quester {
         }
 
         return prettyString;
-    }
-
-    public static String fullPotionString(ItemStack is) {
-
-        Potion potion = Potion.fromItemStack(is);
-        String potionName = "";
-        boolean isPrimary = false;
-
-        try {
-
-            potionName = "Potion of " + potion.getType().getEffectType().getName();
-
-        } catch (NullPointerException e) { // Potion is primary
-
-            isPrimary = true;
-
-            if (is.getDurability() == 0) {
-                potionName = "Water Bottle";
-            } else if (is.getDurability() == 16) {
-                potionName = "Awkward Potion";
-            } else if (is.getDurability() == 32) {
-                potionName = "Thick Potion";
-            } else if (is.getDurability() == 64) {
-                potionName = "Mundane Potion (Extended)";
-            } else if (is.getDurability() == 8192) {
-                potionName = "Mundane Potion";
-            }
-
-        }
-
-        if (isPrimary == false) {
-
-            if (potion.hasExtendedDuration()) {
-                potionName = potionName + " (Extended)";
-            } else if (potion.getLevel() == 2) {
-                potionName = potionName + " II";
-            }
-
-            if (potion.isSplash()) {
-                potionName = "Splash " + potionName;
-            }
-
-        }
-
-        return potionName;
-
     }
 
     public static String prettyMobString(EntityType type) {
