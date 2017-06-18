@@ -1,11 +1,10 @@
 package me.blackvein.particles;
 
-import me.blackvein.quests.util.ReflectionUtil;
-import net.minecraft.server.v1_7_R3.PacketPlayOutWorldParticles;
-
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
+import net.minecraft.server.v1_7_R3.PacketPlayOutWorldParticles;
 
 public enum Eff_1_7_R3 {
 
@@ -52,16 +51,15 @@ public enum Eff_1_7_R3 {
     }
 
     public void sendToPlayer(Player player, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count) throws Exception {
-        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles();
-        ReflectionUtil.setValue(packet, "a", particleName);
-        ReflectionUtil.setValue(packet, "b", (float) location.getX());
-        ReflectionUtil.setValue(packet, "c", (float) location.getY());
-        ReflectionUtil.setValue(packet, "d", (float) location.getZ());
-        ReflectionUtil.setValue(packet, "e", offsetX);
-        ReflectionUtil.setValue(packet, "f", offsetY);
-        ReflectionUtil.setValue(packet, "g", offsetZ);
-        ReflectionUtil.setValue(packet, "h", speed);
-        ReflectionUtil.setValue(packet, "i", count);
+        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(particleName, 
+															        		(float) location.getX(), 
+															        		(float) location.getY(), 
+															        		(float) location.getZ(), 
+															        		offsetX, 
+															        		offsetY, 
+															        		offsetZ,
+															        		speed, 
+															        		count);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 
