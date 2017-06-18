@@ -14,7 +14,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ItemUtil implements ColorUtil {
+public class ItemUtil {
 	
 	static Quests plugin;
 	
@@ -172,17 +172,17 @@ public class ItemUtil implements ColorUtil {
             return null;
         }
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
-            text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName() + RESET + AQUA + " x " + is.getAmount();
+            text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
         } else {
-            text = AQUA + Quester.prettyItemString(is.getType().name());
+            text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
             if (is.getDurability() != 0) {
-                text += AQUA + ":" + is.getDurability();
+                text += ChatColor.AQUA + ":" + is.getDurability();
             }
 
-            text += AQUA + " x " + is.getAmount();
+            text += ChatColor.AQUA + " x " + is.getAmount();
 
             if (is.getEnchantments().isEmpty() == false) {
-                text += " " + PURPLE + Lang.get("enchantedItem");
+                text += " " + ChatColor.DARK_PURPLE + Lang.get("enchantedItem");
             }
 
         }
@@ -196,14 +196,14 @@ public class ItemUtil implements ColorUtil {
         String text;
 
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
-            text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName() + RESET + AQUA + " x " + is.getAmount();
+            text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
         } else {
-            text = AQUA + Quester.prettyItemString(is.getType().name());
+            text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
             if (is.getDurability() != 0) {
-                text += AQUA + ":" + is.getDurability();
+                text += ChatColor.AQUA + ":" + is.getDurability();
             }
 
-            text += AQUA + " x " + is.getAmount();
+            text += ChatColor.AQUA + " x " + is.getAmount();
 
         }
 
@@ -216,10 +216,10 @@ public class ItemUtil implements ColorUtil {
         String text = "";
 
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
-            text = "" + DARKAQUA + ITALIC + is.getItemMeta().getDisplayName();
+            text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName();
         } else {
         	try {
-        		text = AQUA + Items.itemByStack(is).getName();
+        		text = ChatColor.AQUA + Items.itemByStack(is).getName();
         	} catch (NullPointerException ne) {
         		Bukkit.getLogger().severe("This error is caused by an incompatible version of Vault. Please update!");
         		ne.printStackTrace();
@@ -253,7 +253,7 @@ public class ItemUtil implements ColorUtil {
         if(is.getItemMeta().hasDisplayName() == false)
             return false;
         
-        return is.getItemMeta().getDisplayName().equals(PINK + Lang.get("journalTitle"));
+        return is.getItemMeta().getDisplayName().equals(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
         
     }
 

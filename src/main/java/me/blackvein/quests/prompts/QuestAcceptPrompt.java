@@ -3,12 +3,6 @@ package me.blackvein.quests.prompts;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 
-import me.blackvein.quests.util.ColorUtil;
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.util.Lang;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
@@ -17,7 +11,12 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
-public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.Lang;
+
+public class QuestAcceptPrompt extends StringPrompt {
 
     final Quests plugin;
     Quester quester;
@@ -42,15 +41,15 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
             Quest quest = quests.get(i - 1);
             if (quester.completedQuests.contains(quest.getName())) {
-                menu += DARKGREEN + "" + BOLD + "" + i + ". " + RESET + "" + GREEN + "" + ITALIC + quest.getName() + RESET + "" + GREEN + " (" + Lang.get("completed") + ")\n";
+                menu += ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" + ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName() + ChatColor.RESET + "" + ChatColor.GREEN + " (" + Lang.get("completed") + ")\n";
             } else {
-                menu += GOLD + "" + BOLD + "" + i + ". " + RESET + "" + YELLOW + "" + ITALIC + quest.getName() + "\n";
+                menu += ChatColor.GOLD + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" + ChatColor.YELLOW + "" + ChatColor.ITALIC + quest.getName() + "\n";
             }
 
         }
 
-        menu += GOLD + "" + BOLD + "" + (quests.size() + 1) + ". " + RESET + "" + ColorUtil.GRAY + Lang.get("cancel") + "\n";
-        menu += WHITE + Lang.get("enterAnOption");
+        menu += ChatColor.GOLD + "" + ChatColor.BOLD + "" + (quests.size() + 1) + ". " + ChatColor.RESET + "" + ChatColor.GRAY + Lang.get("cancel") + "\n";
+        menu += ChatColor.WHITE + Lang.get("enterAnOption");
 
         return menu;
     }
@@ -66,7 +65,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
         }
 
         if (input.equalsIgnoreCase(Lang.get("cancel")) || numInput == (quests.size() + 1)) {
-            cc.getForWhom().sendRawMessage(YELLOW + Lang.get("cancelled"));
+            cc.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("cancelled"));
             return Prompt.END_OF_CONVERSATION;
         } else {
 
@@ -104,7 +103,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
             }
 
             if (q == null) {
-                cc.getForWhom().sendRawMessage(RED + Lang.get("invalidSelection"));
+                cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidSelection"));
                 return new QuestAcceptPrompt(plugin);
             } else {
 
@@ -134,7 +133,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
                         String msg = Lang.get("questMaxAllowed");
                         msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
-                        player.sendMessage(YELLOW + msg);
+                        player.sendMessage(ChatColor.YELLOW + msg);
 
                     }
 
@@ -166,7 +165,7 @@ public class QuestAcceptPrompt extends StringPrompt implements ColorUtil {
 
                         String msg = Lang.get("questMaxAllowed");
                         msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
-                        player.sendMessage(YELLOW + msg);
+                        player.sendMessage(ChatColor.YELLOW + msg);
 
                     }
 
