@@ -1,6 +1,27 @@
-/target
-
 # Ignore IDEA files
 /.idea
 *.iml
 /bin/
+
+# Eclipse files
+/.settings/
+*.project
+*.classpath
+*.recommenders
+
+# NetBeans files
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Maven files
+/target
+
+# Java files
+*.class
+*.log
+*.ctxt
+hs_err_pid*

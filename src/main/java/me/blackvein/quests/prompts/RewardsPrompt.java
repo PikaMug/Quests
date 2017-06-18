@@ -1,25 +1,12 @@
 package me.blackvein.quests.prompts;
 
-import com.codisimus.plugins.phatloots.PhatLoot;
-import com.codisimus.plugins.phatloots.PhatLootsAPI;
-import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.herocraftonline.heroes.characters.classes.HeroClass;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import me.blackvein.quests.CustomReward;
-import me.blackvein.quests.util.ColorUtil;
-import me.blackvein.quests.QuestFactory;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.util.CK;
-import me.blackvein.quests.util.ItemUtil;
-import me.blackvein.quests.util.Lang;
-
+import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.NumericPrompt;
@@ -27,7 +14,20 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
 
-public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
+import com.codisimus.plugins.phatloots.PhatLoot;
+import com.codisimus.plugins.phatloots.PhatLootsAPI;
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.herocraftonline.heroes.characters.classes.HeroClass;
+
+import me.blackvein.quests.CustomReward;
+import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
+
+public class RewardsPrompt extends FixedSetPrompt {
 
     final Quests quests;
 
@@ -48,52 +48,52 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         String text;
 
         String lang = Lang.get("rewardsTitle");
-        lang = lang.replaceAll("<quest>", AQUA + (String) context.getSessionData(CK.Q_NAME) + DARKAQUA);
-        text = DARKAQUA + lang + "\n";
+        lang = lang.replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
+        text = ChatColor.DARK_AQUA + lang + "\n";
 
         if (context.getSessionData(CK.REW_MONEY) == null) {
-            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("rewSetMoney") + " (" + Lang.get("noneSet") + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + Lang.get("noneSet") + ")\n";
         } else {
             int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
-            text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("rewSetMoney") + " (" + moneyRew + " " + (moneyRew > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + moneyRew + " " + (moneyRew > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
         }
 
         if (context.getSessionData(CK.REW_QUEST_POINTS) == null) {
-            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + Lang.get("noneSet") + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ")\n";
         }
 
-        text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("rewSetItems") + "\n";
+        text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetItems") + "\n";
 
         if (context.getSessionData(CK.REW_EXP) == null) {
-            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("rewSetExperience") + " (" + Lang.get("noneSet") + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("rewSetExperience") + " (" + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ")\n";
         }
 
         if (context.getSessionData(CK.REW_COMMAND) == null) {
-            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "5" + RESET + YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
             List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
 
             for (String cmd : commands) {
 
-                text += GRAY + "    - " + AQUA + cmd + "\n";
+                text += ChatColor.GRAY + "    - " + ChatColor.AQUA + cmd + "\n";
 
             }
         }
 
         if (context.getSessionData(CK.REW_PERMISSION) == null) {
-            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("rewSetPermission") + " (" + Lang.get("noneSet") + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPermission") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "6" + RESET + YELLOW + " - " + Lang.get("rewSetPermission") + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPermission") + "\n";
             List<String> permissions = (List<String>) context.getSessionData(CK.REW_PERMISSION);
 
             for (String perm : permissions) {
 
-                text += GRAY + "    - " + AQUA + perm + "\n";
+                text += ChatColor.GRAY + "    - " + ChatColor.AQUA + perm + "\n";
 
             }
         }
@@ -101,81 +101,81 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         if (Quests.mcmmo != null) {
 
             if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "7" + RESET + YELLOW + " - " + Lang.get("rewSetMcMMO") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMcMMO") + "\n";
                 List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
                 List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
 
                 for (String skill : skills) {
 
-                    text += GRAY + "    - " + AQUA + skill + GRAY + " x " + DARKAQUA + amounts.get(skills.indexOf(skill)) + "\n";
+                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + skill + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amounts.get(skills.indexOf(skill)) + "\n";
 
                 }
             }
 
         } else {
 
-            text += GRAY + "7 - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
+            text += ChatColor.GRAY + "7 - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
 
         }
 
         if (Quests.heroes != null) {
 
             if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("rewSetHeroes") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroes") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "8" + RESET + YELLOW + " - " + Lang.get("rewSetHeroes") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroes") + "\n";
                 List<String> heroClasses = (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
                 List<Double> amounts = (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
 
                 for (String heroClass : heroClasses) {
 
-                    text += GRAY + "    - " + AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + DARKAQUA + heroClass + " " + Lang.get("experience") + "\n";
+                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + ChatColor.DARK_AQUA + heroClass + " " + Lang.get("experience") + "\n";
 
                 }
             }
 
         } else {
 
-            text += GRAY + "8 - " + Lang.get("rewSetHeroes") + " (" + Lang.get("rewNoHeroes") + ")\n";
+            text += ChatColor.GRAY + "8 - " + Lang.get("rewSetHeroes") + " (" + Lang.get("rewNoHeroes") + ")\n";
 
         }
 
         if (Quests.phatLoots != null) {
 
             if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
-                text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("rewSetPhat") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPhat") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += BLUE + "" + BOLD + "9" + RESET + YELLOW + " - " + Lang.get("rewSetPhat") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPhat") + "\n";
                 List<String> phatLoots = (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS);
 
                 for (String phatLoot : phatLoots) {
 
-                    text += GRAY + "    - " + AQUA + phatLoot + "\n";
+                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + phatLoot + "\n";
 
                 }
             }
 
         } else {
 
-            text += GRAY + "9 - " + Lang.get("rewSetPhat") + " (" + Lang.get("rewNoPhat") + ")\n";
+            text += ChatColor.GRAY + "9 - " + Lang.get("rewSetPhat") + " (" + Lang.get("rewNoPhat") + ")\n";
 
         }
 
         if (context.getSessionData(CK.REW_CUSTOM) == null) {
-            text += BLUE + "" + BOLD + "10 - " + RESET + ITALIC + PURPLE + Lang.get("rewSetCustom") + " (" + Lang.get("noneSet") + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.DARK_PURPLE + Lang.get("rewSetCustom") + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += BLUE + "" + BOLD + "10 - " + RESET + ITALIC + PURPLE + Lang.get("rewSetCustom") + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.DARK_PURPLE + Lang.get("rewSetCustom") + "\n";
             LinkedList<String> customRews = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
             for (String s : customRews) {
 
-                text += RESET + "" + PURPLE + "  - " + PINK + s + "\n";
+                text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s + "\n";
 
             }
         }
 
-        text += GREEN + "" + BOLD + "11" + RESET + YELLOW + " - " + Lang.get("done");
+        text += ChatColor.GREEN + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 
         return text;
 
@@ -229,8 +229,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         public String getPromptText(ConversationContext context) {
 
             String text = Lang.get("rewMoneyPrompt");
-            text = text.replaceAll("<money>", AQUA + (Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural()) + YELLOW);
-            return YELLOW + text;
+            text = text.replaceAll("<money>", ChatColor.AQUA + (Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural()) + ChatColor.YELLOW);
+            return ChatColor.YELLOW + text;
 
         }
 
@@ -238,7 +238,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 
             if (input.intValue() < -1) {
-                context.getForWhom().sendRawMessage(RED + Lang.get("inputPosNum"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
                 return new MoneyPrompt();
             } else if (input.intValue() == 0) {
                 context.setSessionData(CK.REW_MONEY, null);
@@ -257,7 +257,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + Lang.get("rewExperiencePrompt");
+            return ChatColor.YELLOW + Lang.get("rewExperiencePrompt");
 
         }
 
@@ -265,7 +265,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 
             if (input.intValue() < -1) {
-                context.getForWhom().sendRawMessage(RED + Lang.get("inputPosNum"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
                 return new ExperiencePrompt();
             } else if (input.intValue() == -1) {
                 context.setSessionData(CK.REW_EXP, null);
@@ -284,7 +284,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + Lang.get("rewQuestPointsPrompt");
+            return ChatColor.YELLOW + Lang.get("rewQuestPointsPrompt");
 
         }
 
@@ -292,7 +292,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 
             if (input.intValue() < -1) {
-                context.getForWhom().sendRawMessage(RED + Lang.get("inputPosNum"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
                 return new QuestPointsPrompt();
             } else if (input.intValue() == -1) {
                 context.setSessionData(CK.REW_QUEST_POINTS, null);
@@ -334,22 +334,22 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
             }
 
-            String text = GOLD + Lang.get("itemRewardsTitle") + "\n";
+            String text = ChatColor.GOLD + Lang.get("itemRewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_ITEMS) == null) {
-                text += GRAY + " (" + Lang.get("noneSet") + ")\n";
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqAddItem") + "\n";
-                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
+                text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqAddItem") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
             } else {
 
                 for (ItemStack is : getItems(context)) {
 
-                    text += GRAY + "- " + ItemUtil.getDisplayString(is) + "\n";
+                    text += ChatColor.GRAY + "- " + ItemUtil.getDisplayString(is) + "\n";
 
                 }
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqAddItem") + "\n";
-                text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqAddItem") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -363,7 +363,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             if (input.equalsIgnoreCase("1")) {
                 return new ItemStackPrompt(ItemListPrompt.this);
             } else if (input.equalsIgnoreCase("2")) {
-                context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewItemsCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewItemsCleared"));
                 context.setSessionData(CK.REW_ITEMS, null);
                 return new ItemListPrompt();
             } else if (input.equalsIgnoreCase("3")) {
@@ -385,9 +385,9 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
             String lang1 = Lang.get("rewCommandPrompt");
-            lang1 = lang1.replaceAll("<comma>", BOLD + "" + RED + "comma" + RESET + YELLOW);
+            lang1 = lang1.replaceAll("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET + ChatColor.YELLOW);
             String lang2 = Lang.get("rewCommandPromptHint");
-            return YELLOW + lang1 + "\n" + lang2;
+            return ChatColor.YELLOW + lang1 + "\n" + lang2;
         }
 
         @Override
@@ -423,7 +423,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + Lang.get("rewPermissionsPrompt");
+            return ChatColor.YELLOW + Lang.get("rewPermissionsPrompt");
         }
 
         @Override
@@ -459,36 +459,36 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + Lang.get("mcMMORewardsTitle") + "\n";
+            String text = ChatColor.GOLD + Lang.get("mcMMORewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqSetSkills") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkills") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "2 - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
             } else {
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("reqSetSkills") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkills") + "\n";
                 for (String s : getSkills(context)) {
 
-                    text += GRAY + "    - " + AQUA + s + "\n";
+                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 
                 }
 
                 if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("reqSetSkillAmounts") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkillAmounts") + "\n";
                     for (Integer i : getSkillAmounts(context)) {
 
-                        text += GRAY + "    - " + AQUA + i + "\n";
+                        text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
 
                     }
 
                 }
 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -504,13 +504,13 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 return new mcMMOSkillsPrompt();
             } else if (input.equalsIgnoreCase("2")) {
                 if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("rewSetMcMMOSkillsFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewSetMcMMOSkillsFirst"));
                     return new mcMMOListPrompt();
                 } else {
                     return new mcMMOAmountsPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
-                context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewMcMMOCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewMcMMOCleared"));
                 context.setSessionData(CK.REW_MCMMO_SKILLS, null);
                 context.setSessionData(CK.REW_MCMMO_AMOUNTS, null);
                 return new mcMMOListPrompt();
@@ -534,7 +534,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 if (one == two) {
                     return new RewardsPrompt(quests, factory);
                 } else {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("rewMcMMOListsNotSameSize"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewMcMMOListsNotSameSize"));
                     return new mcMMOListPrompt();
                 }
             }
@@ -559,19 +559,19 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String skillList = DARKGREEN + Lang.get("skillListTitle") + "\n";
+            String skillList = ChatColor.DARK_GREEN + Lang.get("skillListTitle") + "\n";
             SkillType[] skills = SkillType.values();
             for (int i = 0; i < skills.length; i++) {
 
                 if (i == (skills.length - 1)) {
-                    skillList += GREEN + skills[i].getName() + "\n";
+                    skillList += ChatColor.GREEN + skills[i].getName() + "\n";
                 } else {
-                    skillList += GREEN + skills[i].getName() + "\n\n";
+                    skillList += ChatColor.GREEN + skills[i].getName() + "\n\n";
                 }
 
             }
 
-            return skillList + Lang.get("rewMcMMOPrompt") + "\n" + GOLD + Lang.get("rewMcMMOPromptHint");
+            return skillList + Lang.get("rewMcMMOPrompt") + "\n" + ChatColor.GOLD + Lang.get("rewMcMMOPromptHint");
         }
 
         @Override
@@ -588,14 +588,14 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                         if (skills.contains(s) == false) {
                             skills.add(Quester.getCapitalized(s));
                         } else {
-                            context.getForWhom().sendRawMessage(RED + Lang.get("listDuplicate"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
                             return new mcMMOSkillsPrompt();
                         }
 
                     } else {
                         String text = Lang.get("reqMcMMOError");
-                        text = text.replaceAll("<input>", PINK + s + RED);
-                        context.getForWhom().sendRawMessage(RED + text);
+                        text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new mcMMOSkillsPrompt();
                     }
 
@@ -615,7 +615,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return YELLOW + Lang.get("reqMcMMOAmountsPrompt");
+            return ChatColor.YELLOW + Lang.get("reqMcMMOAmountsPrompt");
         }
 
         @Override
@@ -633,8 +633,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
                     } catch (NumberFormatException e) {
                         String text = Lang.get("reqNotANumber");
-                        text = text.replaceAll("<input>", PINK + s + RED);
-                        context.getForWhom().sendRawMessage(RED + text);
+                        text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new mcMMOAmountsPrompt();
                     }
 
@@ -661,36 +661,36 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext context) {
 
-            String text = GOLD + Lang.get("heroesRewardsTitle") + "\n";
+            String text = ChatColor.GOLD + Lang.get("heroesRewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("rewSetHeroesClasses") + " (" + Lang.get("noneSet") + ")\n";
-                text += GRAY + "2 - " + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesClasses") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "2 - " + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
             } else {
 
-                text += BLUE + "" + BOLD + "1" + RESET + YELLOW + " - " + Lang.get("rewSetHeroesClasses") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesClasses") + "\n";
                 for (String s : getClasses(context)) {
 
-                    text += GRAY + "    - " + AQUA + s + "\n";
+                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 
                 }
 
                 if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
 
-                    text += BLUE + "" + BOLD + "2" + RESET + YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + "\n";
                     for (Double d : getClassAmounts(context)) {
 
-                        text += GRAY + "    - " + AQUA + d + "\n";
+                        text += ChatColor.GRAY + "    - " + ChatColor.AQUA + d + "\n";
 
                     }
 
                 }
 
-                text += BLUE + "" + BOLD + "3" + RESET + YELLOW + " - " + Lang.get("clear") + "\n";
-                text += BLUE + "" + BOLD + "4" + RESET + YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 
             }
 
@@ -706,13 +706,13 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 return new HeroesClassesPrompt();
             } else if (input.equalsIgnoreCase("2")) {
                 if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("rewSetHeroesClassesFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewSetHeroesClassesFirst"));
                     return new HeroesListPrompt();
                 } else {
                     return new HeroesExperiencePrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
-                context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewHeroesCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewHeroesCleared"));
                 context.setSessionData(CK.REW_HEROES_CLASSES, null);
                 context.setSessionData(CK.REW_HEROES_AMOUNTS, null);
                 return new HeroesListPrompt();
@@ -736,7 +736,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 if (one == two) {
                     return new RewardsPrompt(quests, factory);
                 } else {
-                    context.getForWhom().sendRawMessage(RED + Lang.get("rewHeroesListsNotSameSize"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewHeroesListsNotSameSize"));
                     return new HeroesListPrompt();
                 }
             }
@@ -761,27 +761,27 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext cc) {
 
-            String text = PURPLE + Lang.get("heroesClassesTitle") + "\n";
+            String text = ChatColor.DARK_PURPLE + Lang.get("heroesClassesTitle") + "\n";
             LinkedList<String> list = new LinkedList<String>();
             for (HeroClass hc : Quests.heroes.getClassManager().getClasses()) {
                 list.add(hc.getName());
             }
 
             if (list.isEmpty()) {
-                text += GRAY + "(" + Lang.get("none") + ")\n";
+                text += ChatColor.GRAY + "(" + Lang.get("none") + ")\n";
             } else {
 
                 Collections.sort(list);
 
                 for (String s : list) {
-                    text += PINK + s + ", ";
+                    text += ChatColor.LIGHT_PURPLE + s + ", ";
                 }
 
                 text = text.substring(0, text.length() - 2) + "\n";
 
             }
 
-            text += YELLOW + Lang.get("rewHeroesClassesPrompt");
+            text += ChatColor.YELLOW + Lang.get("rewHeroesClassesPrompt");
 
             return text;
         }
@@ -799,8 +799,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                     HeroClass hc = Quests.heroes.getClassManager().getClass(s);
                     if (hc == null) {
                         String text = Lang.get("rewHeroesInvalidClass");
-                        text = text.replaceAll("<input>", PINK + s + RED);
-                        cc.getForWhom().sendRawMessage(RED + text);
+                        text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        cc.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new HeroesClassesPrompt();
                     } else {
                         classes.add(hc.getName());
@@ -826,7 +826,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
             String text = Lang.get("heroesExperienceTitle") + "\n";
 
-            text += YELLOW + Lang.get("rewHeroesExperiencePrompt");
+            text += ChatColor.YELLOW + Lang.get("rewHeroesExperiencePrompt");
 
             return text;
         }
@@ -848,8 +848,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
                     } catch (NumberFormatException nfe) {
                         String text = Lang.get("reqNotANumber");
-                        text = text.replaceAll("<input>", PINK + s + RED);
-                        cc.getForWhom().sendRawMessage(RED + text);
+                        text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        cc.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new HeroesExperiencePrompt();
                     }
 
@@ -870,15 +870,15 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
         @Override
         public String getPromptText(ConversationContext cc) {
 
-            String text = DARKAQUA + Lang.get("phatLootsRewardsTitle") + "\n";
+            String text = ChatColor.DARK_AQUA + Lang.get("phatLootsRewardsTitle") + "\n";
 
             for (PhatLoot pl : PhatLootsAPI.getAllPhatLoots()) {
 
-                text += GRAY + "- " + BLUE + pl.name + "\n";
+                text += ChatColor.GRAY + "- " + ChatColor.BLUE + pl.name + "\n";
 
             }
 
-            text += YELLOW + Lang.get("rewPhatLootsPrompt");
+            text += ChatColor.YELLOW + Lang.get("rewPhatLootsPrompt");
 
             return text;
         }
@@ -895,8 +895,8 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
                     if (PhatLootsAPI.getPhatLoot(s) == null) {
                         String text = Lang.get("rewPhatLootsInvalid");
-                        text = text.replaceAll("<input>", DARKRED + s + RED);
-                        cc.getForWhom().sendRawMessage(RED + text);
+                        text = text.replaceAll("<input>", ChatColor.DARK_RED + s + ChatColor.RED);
+                        cc.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new PhatLootsPrompt();
                     }
 
@@ -909,7 +909,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 
                 cc.setSessionData(CK.REW_PHAT_LOOTS, null);
-                cc.getForWhom().sendRawMessage(YELLOW + Lang.get("rewPhatLootsCleared"));
+                cc.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewPhatLootsCleared"));
                 return new RewardsPrompt(quests, factory);
 
             } else {
@@ -923,16 +923,16 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = PINK + Lang.get("customRewardsTitle") + "\n";
+            String text = ChatColor.LIGHT_PURPLE + Lang.get("customRewardsTitle") + "\n";
             if (quests.customRewards.isEmpty()) {
-                text += BOLD + "" + PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
+                text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
             } else {
                 for (CustomReward cr : quests.customRewards) {
-                    text += PURPLE + " - " + cr.getName() + "\n";
+                    text += ChatColor.DARK_PURPLE + " - " + cr.getName() + "\n";
                 }
             }
 
-            return text + YELLOW + Lang.get("rewCustomRewardPrompt");
+            return text + ChatColor.YELLOW + Lang.get("rewCustomRewardPrompt");
         }
 
         @SuppressWarnings("unchecked")
@@ -969,7 +969,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                             context.setSessionData(CK.REW_CUSTOM, list);
                             context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
                         } else {
-                            context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewCustomAlreadyAdded"));
+                            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomAlreadyAdded"));
                             return new CustomRewardsPrompt();
                         }
                     } else {
@@ -991,7 +991,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                     //
 
                 } else {
-                    context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewCustomNotFound"));
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomNotFound"));
                     return new CustomRewardsPrompt();
                 }
 
@@ -999,7 +999,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
                 context.setSessionData(CK.REW_CUSTOM, null);
                 context.setSessionData(CK.REW_CUSTOM_DATA, null);
                 context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);
-                context.getForWhom().sendRawMessage(YELLOW + Lang.get("rewCustomCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomCleared"));
             }
 
             return new RewardsPrompt(quests, factory);
@@ -1013,7 +1013,7 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 		@Override
         public String getPromptText(ConversationContext context) {
 
-            String text = BOLD + "" + AQUA + "- ";
+            String text = ChatColor.BOLD + "" + ChatColor.AQUA + "- ";
 
             LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
             LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
@@ -1032,18 +1032,18 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
 
             for (String dataKey : datamapKeys) {
 
-                text += BOLD + "" + DARKBLUE + index + " - " + RESET + BLUE + dataKey;
+                text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + dataKey;
                 if (datamap.get(dataKey) != null) {
-                    text += GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+                    text += ChatColor.GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
                 } else {
-                    text += RED + " (" + Lang.get("valRequired") + ")\n";
+                    text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
                 }
 
                 index++;
 
             }
 
-            text += BOLD + "" + DARKBLUE + index + " - " + AQUA + Lang.get("finish");
+            text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("finish");
 
             return text;
         }
@@ -1103,12 +1103,12 @@ public class RewardsPrompt extends FixedSetPrompt implements ColorUtil {
             @SuppressWarnings("unchecked")
 			Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS);
             if (descriptions.get(temp) != null) {
-                text += GOLD + descriptions.get(temp) + "\n";
+                text += ChatColor.GOLD + descriptions.get(temp) + "\n";
             }
 
             String lang = Lang.get("stageEditorCustomDataPrompt");
             lang = lang.replaceAll("<data>", temp);
-            text += YELLOW + lang;
+            text += ChatColor.YELLOW + lang;
             return text;
         }
 

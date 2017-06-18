@@ -1,15 +1,15 @@
 package me.blackvein.quests.prompts;
 
-import me.blackvein.quests.util.ColorUtil;
-import me.blackvein.quests.QuestFactory;
-import me.blackvein.quests.util.CK;
-import me.blackvein.quests.util.Lang;
-
+import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
-public class StagesPrompt extends StringPrompt implements ColorUtil {
+import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.Lang;
+
+public class StagesPrompt extends StringPrompt {
 
     private final QuestFactory questFactory;
 
@@ -22,20 +22,20 @@ public class StagesPrompt extends StringPrompt implements ColorUtil {
     @Override
     public String getPromptText(ConversationContext cc) {
 
-        String text = PINK + "- " + PURPLE + Lang.get("stageEditorStages") + PINK + " -\n";
+        String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + Lang.get("stageEditorStages") + ChatColor.LIGHT_PURPLE + " -\n";
 
         int stages = getStages(cc);
 
         for (int i = 1; i <= stages; i++) {
 
-            text += BOLD + "" + GREEN + i + ". " + RESET + GOLD + Lang.get("stageEditorEditStage") + " " + i + "\n";
+            text += ChatColor.BOLD + "" + ChatColor.GREEN + i + ". " + ChatColor.RESET + ChatColor.GOLD + Lang.get("stageEditorEditStage") + " " + i + "\n";
 
         }
 
         stages++;
-        text += "\n" + BOLD + "" + GREEN + stages + ". " + RESET + YELLOW + Lang.get("stageEditorNewStage");
+        text += "\n" + ChatColor.BOLD + "" + ChatColor.GREEN + stages + ". " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("stageEditorNewStage");
         stages++;
-        text += "\n" + BOLD + "" + BLUE + stages + ". " + RESET + YELLOW + Lang.get("done");
+        text += "\n" + ChatColor.BOLD + "" + ChatColor.BLUE + stages + ". " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("done");
 
         return text;
     }
