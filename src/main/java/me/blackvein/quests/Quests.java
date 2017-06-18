@@ -88,7 +88,7 @@ import java.util.jar.JarFile;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class Quests extends JavaPlugin implements ConversationAbandonedListener, ColorUtil {
+public class Quests extends JavaPlugin implements ConversationAbandonedListener {
 
     public static Economy economy = null;
     public static Permission permission = null;
@@ -353,7 +353,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             }
 
-            return YELLOW + Lang.get("questsUnknownCommand");
+            return ChatColor.YELLOW + Lang.get("questsUnknownCommand");
 
         } else if(cmd.equalsIgnoreCase("questsadmin") || cmd.equalsIgnoreCase("questadmin")) {
 
@@ -367,7 +367,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             }
 
-            return YELLOW + Lang.get("questsUnknownAdminCommand");
+            return ChatColor.YELLOW + Lang.get("questsUnknownAdminCommand");
         }
 
         return "NULL";
@@ -375,13 +375,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     public String getQuestsCommandUsage(String cmd) {
 
-        return RED + Lang.get("usage") + ":" + YELLOW + "/quests " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
+        return ChatColor.RED + Lang.get("usage") + ":" + ChatColor.YELLOW + "/quests " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
 
     }
 
     public String getQuestadminCommandUsage(String cmd) {
 
-        return RED + Lang.get("usage") + ": " + YELLOW + "/questadmin " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
+        return ChatColor.RED + Lang.get("usage") + ": " + ChatColor.YELLOW + "/questadmin " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
 
     }
 
@@ -455,7 +455,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
             if (abandonedEvent.getContext().getForWhom() != null) {
 
                 try {
-                    abandonedEvent.getContext().getForWhom().sendRawMessage(YELLOW + Lang.get("questTimeout"));
+                    abandonedEvent.getContext().getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questTimeout"));
                 } catch (Exception e) {
                 }
 
@@ -474,7 +474,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         @Override
         public String getPromptText(ConversationContext context) {
 
-            return YELLOW + Lang.get("acceptQuest") + "  " + GREEN + Lang.get("yesWord") + " / " + Lang.get("noWord");
+            return ChatColor.YELLOW + Lang.get("acceptQuest") + "  " + ChatColor.GREEN + Lang.get("yesWord") + " / " + Lang.get("noWord");
 
         }
 
@@ -494,12 +494,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             } else if (s.equalsIgnoreCase(Lang.get("noWord"))) {
 
-                player.sendMessage(YELLOW + Lang.get("cancelled"));
+                player.sendMessage(ChatColor.YELLOW + Lang.get("cancelled"));
                 return Prompt.END_OF_CONVERSATION;
 
             } else {
 
-                player.sendMessage(RED + Lang.get("questInvalidChoice"));
+                player.sendMessage(ChatColor.RED + Lang.get("questInvalidChoice"));
                 return new QuestPrompt();
 
             }
@@ -512,7 +512,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         @Override
         public String getPrefix(ConversationContext context) {
 
-            return "" + GRAY;
+            return ChatColor.GRAY.toString();
 
         }
     }
@@ -698,56 +698,56 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     public void printHelp(Player player) {
 
-        player.sendMessage(GOLD + Lang.get("questHelpTitle"));
-        player.sendMessage(YELLOW + "/quests " + Lang.get("questDisplayHelp"));
+        player.sendMessage(ChatColor.GOLD + Lang.get("questHelpTitle"));
+        player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("questDisplayHelp"));
         if (player.hasPermission("quests.list")) {
-            player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_LIST_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_LIST_HELP"));
         }
         if (player.hasPermission("quests.take")) {
-            player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_TAKE_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_TAKE_HELP"));
         }
         if (player.hasPermission("quests.quit")) {
-            player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_QUIT_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_QUIT_HELP"));
         }
         if (player.hasPermission("quests.journal")) {
-            player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_JOURNAL_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_JOURNAL_HELP"));
         }
         if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.editor")) {
-            player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_EDITOR_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EDITOR_HELP"));
         }
         if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.events.editor")) {
-            player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_EVENTS_EDITOR_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EVENTS_EDITOR_HELP"));
         }
         if (player.hasPermission("quests.stats")) {
-            player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_STATS_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_STATS_HELP"));
         }
         if (player.hasPermission("quests.top")) {
-            player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_TOP_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_TOP_HELP"));
         }
         //player.sendMessage(GOLD + "/quests party - Quest Party commands");
-        player.sendMessage(YELLOW + "/quests " + Lang.get("COMMAND_INFO_HELP"));
+        player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_INFO_HELP"));
         player.sendMessage(" ");
-        player.sendMessage(YELLOW + "/quest " + Lang.get("COMMAND_QUEST_HELP"));
+        player.sendMessage(ChatColor.YELLOW + "/quest " + Lang.get("COMMAND_QUEST_HELP"));
         if (player.hasPermission("quests.questinfo")) {
-            player.sendMessage(YELLOW + "/quest " + Lang.get("COMMAND_QUESTINFO_HELP"));
+            player.sendMessage(ChatColor.YELLOW + "/quest " + Lang.get("COMMAND_QUESTINFO_HELP"));
         }
 
         if (player.hasPermission("quests.admin.*") || player.hasPermission("quests.admin")) {
-            player.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_HELP"));
+            player.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_HELP"));
         }
 
     }
 
     public void printPartyHelp(Player player) {
 
-        player.sendMessage(PURPLE + "- Quest Parties -");
-        player.sendMessage(PINK + "/quests party create - Create new party");
-        player.sendMessage(PINK + "/quests party leave - Leave your party");
-        player.sendMessage(PINK + "/quests party info - Info about your party");
-        player.sendMessage(PURPLE + "- (Leader only) -");
-        player.sendMessage(PINK + "/quests party invite <player> - Invite a player to your party");
-        player.sendMessage(PINK + "/quests party kick <player> - Kick a member from the party");
-        player.sendMessage(PINK + "/quests party setleader <player> - Set a party member as the new leader");
+        player.sendMessage(ChatColor.DARK_PURPLE + "- Quest Parties -");
+        player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party create - Create new party");
+        player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party leave - Leave your party");
+        player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party info - Info about your party");
+        player.sendMessage(ChatColor.DARK_PURPLE + "- (Leader only) -");
+        player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party invite <player> - Invite a player to your party");
+        player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party kick <player> - Kick a member from the party");
+        player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party setleader <player> - Set a party member as the new leader");
 
     }
 
@@ -756,7 +756,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
     	if (cs instanceof Player) {
     		if (checkQuester(((Player)cs).getUniqueId()) == true) {
-    			cs.sendMessage(RED + Lang.get("questBlacklisted"));
+    			cs.sendMessage(ChatColor.RED + Lang.get("questBlacklisted"));
     			return true;
     		}
     	}
@@ -857,7 +857,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(YELLOW + Lang.get("questsUnknownAdminCommand"));
+            cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownAdminCommand"));
 
         }
 
@@ -868,19 +868,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin")) {
             printAdminHelp(cs);
         } else {
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
         }
     }
 
     private void adminReload(final CommandSender cs) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
             reloadQuests();
-            cs.sendMessage(GOLD + Lang.get("questsReloaded"));
+            cs.sendMessage(ChatColor.GOLD + Lang.get("questsReloaded"));
             String msg = Lang.get("numQuestsLoaded");
-            msg = msg.replaceAll("<number>", PURPLE + String.valueOf(quests.size()) + GOLD);
-            cs.sendMessage(GOLD + msg);
+            msg = msg.replaceAll("<number>", ChatColor.DARK_PURPLE + String.valueOf(quests.size()) + ChatColor.GOLD);
+            cs.sendMessage(ChatColor.GOLD + msg);
         } else {
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
         }
     }
 
@@ -892,32 +892,32 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 int i = Integer.parseInt(args[1]);
                 if (citizens.getNPCRegistry().getById(i) == null) {
                     String msg = Lang.get("errorNPCID");
-                    msg = msg.replaceAll("errorNPCID", PURPLE + "" + i + RED);
-                    cs.sendMessage(RED + msg);
+                    msg = msg.replaceAll("errorNPCID", ChatColor.DARK_PURPLE + "" + i + ChatColor.RED);
+                    cs.sendMessage(ChatColor.RED + msg);
                 } else if (questNPCGUIs.contains(i)) {
                     questNPCGUIs.remove(questNPCGUIs.indexOf(i));
                     updateData();
                     String msg = Lang.get("disableNPCGUI");
-                    msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
-                    cs.sendMessage(YELLOW + msg);
+                    msg = msg.replaceAll("<npc>", ChatColor.DARK_PURPLE + citizens.getNPCRegistry().getById(i).getName() + ChatColor.YELLOW);
+                    cs.sendMessage(ChatColor.YELLOW + msg);
                 } else {
                     questNPCGUIs.add(i);
                     updateData();
                     String msg = Lang.get("enableNPCGUI");
-                    msg = msg.replaceAll("<npc>", PURPLE + citizens.getNPCRegistry().getById(i).getName() + YELLOW);
-                    cs.sendMessage(YELLOW + msg);
+                    msg = msg.replaceAll("<npc>", ChatColor.DARK_PURPLE + citizens.getNPCRegistry().getById(i).getName() + ChatColor.YELLOW);
+                    cs.sendMessage(ChatColor.YELLOW + msg);
                 }
 
             } catch (NumberFormatException nfe) {
-                cs.sendMessage(RED + Lang.get("inputNum"));
+                cs.sendMessage(ChatColor.RED + Lang.get("inputNum"));
             } catch (Exception ex) {
                 ex.printStackTrace();
-                cs.sendMessage(RED + Lang.get("unknownError"));
+                cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
             }
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -938,7 +938,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (target == null) {
 
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 
             } else {
 
@@ -952,19 +952,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     quester.questPoints += Math.abs(points);
 
                     String msg1 = Lang.get("giveQuestPoints");
-                    msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                    msg1 = msg1.replaceAll("<number>", PURPLE + "" + points + GOLD);
-                    cs.sendMessage(GOLD + msg1);
+                    msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                    msg1 = msg1.replaceAll("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg1);
                     String msg2 = Lang.get("questPointsGiven");
-                    msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                    msg2 = msg2.replaceAll("<number>", PURPLE + "" + points + GOLD);
-                    target.sendMessage(GREEN + msg2);
+                    msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                    msg2 = msg2.replaceAll("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                    target.sendMessage(ChatColor.GREEN + msg2);
 
                     quester.saveData();
 
                 } catch (NumberFormatException e) {
 
-                    cs.sendMessage(YELLOW + Lang.get("inputNum"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
 
                 }
 
@@ -972,7 +972,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -994,7 +994,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (target == null) {
 
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 
             } else {
 
@@ -1006,7 +1006,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 } catch (NumberFormatException e) {
 
-                    cs.sendMessage(YELLOW + Lang.get("inputNum"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
                     return;
 
                 }
@@ -1014,14 +1014,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 quester.questPoints -= Math.abs(points);
 
                 String msg1 = Lang.get("takeQuestPoints");
-                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                msg1 = msg1.replaceAll("<number>", PURPLE + "" + points + GOLD);
-                cs.sendMessage(GOLD + msg1);
+                msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                msg1 = msg1.replaceAll("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                cs.sendMessage(ChatColor.GOLD + msg1);
                 String msg2 = Lang.get("questPointsTaken");
-                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                msg2 = msg2.replaceAll("<number>", PURPLE + "" + points + GOLD);
+                msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                msg2 = msg2.replaceAll("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
 
-                target.sendMessage(GREEN + msg2);
+                target.sendMessage(ChatColor.GREEN + msg2);
 
                 quester.saveData();
 
@@ -1029,7 +1029,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1050,7 +1050,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (target == null) {
 
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 
             } else {
 
@@ -1062,7 +1062,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 } catch (NumberFormatException e) {
 
-                    cs.sendMessage(YELLOW + Lang.get("inputNum"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
                     return;
 
                 }
@@ -1071,13 +1071,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 quester.questPoints = points;
 
                 String msg1 = Lang.get("setQuestPoints");
-                msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                msg1 = msg1.replaceAll("<number>", PURPLE + "" + points + GOLD);
-                cs.sendMessage(GOLD + msg1);
+                msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                msg1 = msg1.replaceAll("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                cs.sendMessage(ChatColor.GOLD + msg1);
                 String msg2 = Lang.get("questPointsSet");
-                msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                msg2 = msg2.replaceAll("<number>", PURPLE + "" + points + GOLD);
-                target.sendMessage(GREEN + msg2);
+                msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                msg2 = msg2.replaceAll("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                target.sendMessage(ChatColor.GREEN + msg2);
 
                 quester.saveData();
 
@@ -1085,7 +1085,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1107,7 +1107,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (target == null) {
 
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 
             } else {
 
@@ -1137,7 +1137,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                 if (questToGive == null) {
 
-                    cs.sendMessage(YELLOW + Lang.get("questNotFound"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
 
                 } else {
 
@@ -1148,9 +1148,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         if(q.getName().equalsIgnoreCase(questToGive.getName())) {
 
                             String msg = Lang.get("questsPlayerHasQuestAlready");
-                            msg = msg.replaceAll("<player>", ITALIC + "" + GREEN + target.getName() + RESET + YELLOW);
-                            msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + questToGive.getName() + RESET + YELLOW);
-                            cs.sendMessage(YELLOW + msg);
+                            msg = msg.replaceAll("<player>", ChatColor.ITALIC + "" + ChatColor.GREEN + target.getName() + ChatColor.RESET + ChatColor.YELLOW);
+                            msg = msg.replaceAll("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE + questToGive.getName() + ChatColor.RESET + ChatColor.YELLOW);
+                            cs.sendMessage(ChatColor.YELLOW + msg);
 
                             return;
                         }
@@ -1160,13 +1160,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                     quester.hardQuit(questToGive);
 
                     String msg1 = Lang.get("questForceTake");
-                    msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                    msg1 = msg1.replaceAll("<quest>", PURPLE + questToGive.name + GOLD);
-                    cs.sendMessage(GOLD + msg1);
+                    msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                    msg1 = msg1.replaceAll("<quest>", ChatColor.DARK_PURPLE + questToGive.name + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg1);
                     String msg2 = Lang.get("questForcedTake");
-                    msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                    msg2 = msg2.replaceAll("<quest>", PURPLE + questToGive.name + GOLD);
-                    target.sendMessage(GREEN + msg2);
+                    msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                    msg2 = msg2.replaceAll("<quest>", ChatColor.DARK_PURPLE + questToGive.name + ChatColor.GOLD);
+                    target.sendMessage(ChatColor.GREEN + msg2);
                     quester.takeQuest(questToGive, true);
 
                 }
@@ -1175,7 +1175,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1190,12 +1190,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 amount = Integer.parseInt(args[1]);
 
                 if (amount < 0) {
-                    cs.sendMessage(RED + Lang.get("inputPosNum"));
+                    cs.sendMessage(ChatColor.RED + Lang.get("inputPosNum"));
                     return;
                 }
 
             } catch (NumberFormatException e) {
-                cs.sendMessage(RED + Lang.get("inputNum"));
+                cs.sendMessage(ChatColor.RED + Lang.get("inputNum"));
                 return;
             }
 
@@ -1222,13 +1222,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 if (failCount < 10) {
                                     String msg = Lang.get("errorReading");
-                                    msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                    cs.sendMessage(RED + msg);
+                                    msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+                                    cs.sendMessage(ChatColor.RED + msg);
                                     failCount++;
                                 } else if (suppressed == false) {
                                     String msg = Lang.get("errorReadingSuppress");
-                                    msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                    cs.sendMessage(RED + msg);
+                                    msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+                                    cs.sendMessage(ChatColor.RED + msg);
                                     suppressed = true;
                                 }
 
@@ -1236,13 +1236,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                                 if (failCount < 10) {
                                     String msg = Lang.get("errorReading");
-                                    msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                    cs.sendMessage(RED + msg);
+                                    msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+                                    cs.sendMessage(ChatColor.RED + msg);
                                     failCount++;
                                 } else if (suppressed == false) {
                                     String msg = Lang.get("errorReadingSuppress");
-                                    msg = msg.replaceAll("<file>", DARKAQUA + f.getName() + RED);
-                                    cs.sendMessage(RED + msg);
+                                    msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+                                    cs.sendMessage(ChatColor.RED + msg);
                                     suppressed = true;
                                 }
 
@@ -1250,20 +1250,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                         }
 
-                        cs.sendMessage(GREEN + Lang.get("done"));
+                        cs.sendMessage(ChatColor.GREEN + Lang.get("done"));
 
                         String msg = Lang.get("allQuestPointsSet");
-                        msg = msg.replaceAll("<number>", AQUA + "" + amount + GOLD);
-                        getServer().broadcastMessage(YELLOW + "" + GOLD + msg);
+                        msg = msg.replaceAll("<number>", ChatColor.AQUA + "" + amount + ChatColor.GOLD);
+                        getServer().broadcastMessage(ChatColor.YELLOW + "" + ChatColor.GOLD + msg);
 
                     } else {
-                        cs.sendMessage(RED + Lang.get("errorDataFolder"));
+                        cs.sendMessage(ChatColor.RED + Lang.get("errorDataFolder"));
                     }
 
                 }
             });
 
-            cs.sendMessage(YELLOW + Lang.get("settingAllQuestPoints"));
+            cs.sendMessage(ChatColor.YELLOW + Lang.get("settingAllQuestPoints"));
             for (Quester q : questers.values()) {
 
                 q.questPoints = amount;
@@ -1273,7 +1273,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1295,7 +1295,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (target == null) {
 
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 
             } else {
 
@@ -1304,25 +1304,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     String msg = Lang.get("noCurrentQuest");
                     msg = msg.replaceAll("<player>", target.getName());
-                    cs.sendMessage(YELLOW + msg);
+                    cs.sendMessage(ChatColor.YELLOW + msg);
 
                 } else {
 
                     Quest found = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
 
                     if (found == null) {
-                        cs.sendMessage(RED + Lang.get("questNotFound"));
+                        cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                         return;
                     }
 
                     String msg1 = Lang.get("questForceFinish");
-                    msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                    msg1 = msg1.replaceAll("<quest>", PURPLE + found.name + GOLD);
-                    cs.sendMessage(GOLD + msg1);
+                    msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                    msg1 = msg1.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg1);
                     String msg2 = Lang.get("questForcedFinish");
-                    msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                    msg2 = msg2.replaceAll("<quest>", PURPLE + found.name + GOLD);
-                    target.sendMessage(GREEN + msg2);
+                    msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                    msg2 = msg2.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
+                    target.sendMessage(ChatColor.GREEN + msg2);
                     found.completeQuest(quester);
 
                     quester.saveData();
@@ -1333,7 +1333,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1368,16 +1368,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                 try {
                     stage = Integer.parseInt(args[2]);
                 } catch (NumberFormatException e) {
-                    cs.sendMessage(YELLOW + Lang.get("inputNum"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
                 }
             } else {
-                cs.sendMessage(YELLOW + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_USAGE"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_USAGE"));
                 return;
             }
 
             if (target == null) {
 
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 
             } else {
 
@@ -1386,14 +1386,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     String msg = Lang.get("noCurrentQuest");
                     msg = msg.replaceAll("<player>", target.getName());
-                    cs.sendMessage(YELLOW + msg);
+                    cs.sendMessage(ChatColor.YELLOW + msg);
 
                 } else {
 
                     Quest found = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
 
                     if (found == null) {
-                        cs.sendMessage(RED + Lang.get("questNotFound"));
+                        cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                         return;
                     }
 
@@ -1401,7 +1401,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
                         found.setStage(quester, stage);
                     } catch (InvalidStageException e) {
                         String msg = Lang.get("invalidStageNum");
-                        msg = msg.replaceAll("<quest>", PURPLE + found.name + RED);
+                        msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.RED);
                         cs.sendMessage(ChatColor.RED + msg);
                     }
 
@@ -1413,7 +1413,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1435,7 +1435,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
             if (target == null) {
 
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 
             } else {
 
@@ -1444,25 +1444,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
                     String msg = Lang.get("noCurrentQuest");
                     msg = msg.replaceAll("<player>", target.getName());
-                    cs.sendMessage(YELLOW + msg);
+                    cs.sendMessage(ChatColor.YELLOW + msg);
 
                 } else {
 
                     Quest found = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
 
                     if (found == null) {
-                        cs.sendMessage(RED + Lang.get("questNotFound"));
+                        cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                         return;
                     }
 
                     String msg1 = Lang.get("questForceNextStage");
-                    msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                    msg1 = msg1.replaceAll("<quest>", PURPLE + found.name + GOLD);
-                    cs.sendMessage(GOLD + msg1);
+                    msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                    msg1 = msg1.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg1);
                     String msg2 = Lang.get("questForcedNextStage");
-                    msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                    msg2 = msg2.replaceAll("<quest>", PURPLE + found.name + GOLD);
-                    target.sendMessage(GREEN + msg2);
+                    msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                    msg2 = msg2.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
+                    target.sendMessage(ChatColor.GREEN + msg2);
                     found.nextStage(quester);
 
                     quester.saveData();
@@ -1473,7 +1473,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener,
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1495,7 +1495,7 @@ try{
 
             if (target == null) {
 
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 
             } else {
 
@@ -1504,27 +1504,27 @@ try{
 
                     String msg = Lang.get("noCurrentQuest");
                     msg = msg.replaceAll("<player>", target.getName());
-                    cs.sendMessage(YELLOW + msg);
+                    cs.sendMessage(ChatColor.YELLOW + msg);
 
                 } else {
 
                     Quest found = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
 
                     if (found == null) {
-                        cs.sendMessage(RED + Lang.get("questNotFound"));
+                        cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                         return;
                     }
 
                     quester.hardQuit(found);
 
                     String msg1 = Lang.get("questForceQuit");
-                    msg1 = msg1.replaceAll("<player>", GREEN + target.getName() + GOLD);
-                    msg1 = msg1.replaceAll("<quest>", PURPLE + found.name + GOLD);
-                    cs.sendMessage(GOLD + msg1);
+                    msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                    msg1 = msg1.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg1);
                     String msg2 = Lang.get("questForcedQuit");
-                    msg2 = msg2.replaceAll("<player>", GREEN + cs.getName() + GOLD);
-                    msg2 = msg2.replaceAll("<quest>", PURPLE + found.name + GOLD);
-                    target.sendMessage(GREEN + msg2);
+                    msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                    msg2 = msg2.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
+                    target.sendMessage(ChatColor.GREEN + msg2);
 
                     quester.saveData();
                     quester.updateJournal();
@@ -1535,7 +1535,7 @@ try{
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
 }catch(NullPointerException npe) {
@@ -1551,7 +1551,7 @@ try{
             Quester quester = getQuester(args[1]);
             
             if (quester == null) {
-				cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 				return;
 			}
 
@@ -1566,19 +1566,19 @@ try{
 
                 String msg = Lang.get("questPurged");
                 if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
-                	msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + GOLD);
+                	msg = msg.replaceAll("<player>", ChatColor.GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + ChatColor.GOLD);
                 } else {
-                	msg = msg.replaceAll("<player>", GREEN + args[1] + GOLD);
+                	msg = msg.replaceAll("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
                 }
-                cs.sendMessage(GOLD + msg);
-                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + quester.id);
+                cs.sendMessage(ChatColor.GOLD + msg);
+                cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + quester.id);
             } catch (Exception e) {
             	getLogger().info("Data file does not exist for " + quester.id.toString());
             }
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1590,7 +1590,7 @@ try{
             Quester quester = getQuester(args[1]);
 
             if (quester == null) {
-                cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
                 return;
             }
             UUID id = quester.id;
@@ -1606,12 +1606,12 @@ try{
 
                 String msg = Lang.get("questReset");
                 if (Bukkit.getOfflinePlayer(id).getName() != null) {
-                    msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(id).getName() + GOLD);
+                    msg = msg.replaceAll("<player>", ChatColor.GREEN + Bukkit.getOfflinePlayer(id).getName() + ChatColor.GOLD);
                 } else {
-                    msg = msg.replaceAll("<player>", GREEN + args[1] + GOLD);
+                    msg = msg.replaceAll("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
                 }
-                cs.sendMessage(GOLD + msg);
-                cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + id);
+                cs.sendMessage(ChatColor.GOLD + msg);
+                cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + id);
 
 
             } catch (Exception e) {
@@ -1625,7 +1625,7 @@ try{
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 
         }
     }
@@ -1638,7 +1638,7 @@ try{
         	
         } else {
         	
-        	cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+        	cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
         	
         }
     }
@@ -1650,25 +1650,25 @@ try{
             Quester quester = getQuester(args[1]);
 
             if (quester == null) {
-				cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 				return;
 			}
             
             Quest toRemove = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
             if (toRemove == null) {
-                cs.sendMessage(RED + Lang.get("questNotFound"));
+                cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                 return;
             }
 
             String msg = Lang.get("questRemoved");
             if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
-            	msg = msg.replaceAll("<player>", GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + GOLD);
+            	msg = msg.replaceAll("<player>", ChatColor.GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + ChatColor.GOLD);
             } else {
-            	msg = msg.replaceAll("<player>", GREEN + args[1] + GOLD);
+            	msg = msg.replaceAll("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
             }
             msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + toRemove.name + ChatColor.AQUA);
-            cs.sendMessage(GOLD + msg);
-            cs.sendMessage(PURPLE + " UUID: " + DARKAQUA + quester.id.toString());
+            cs.sendMessage(ChatColor.GOLD + msg);
+            cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + quester.id.toString());
 
             quester.hardRemove(toRemove);
             
@@ -1677,7 +1677,7 @@ try{
 
         } else {
         	
-        	cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+        	cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
         	
         }
     }
@@ -1731,7 +1731,7 @@ try{
 
                 } else {
 
-                    cs.sendMessage(YELLOW + Lang.get("questsUnknownCommand"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownCommand"));
                     return true;
 
                 }
@@ -1747,20 +1747,20 @@ try{
                     convertQuesters();
 
                 } else {
-                    cs.sendMessage(YELLOW + Lang.get("questsUnknownCommand"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownCommand"));
                     return true;
                 }
 
             } else {
 
-                cs.sendMessage(YELLOW + "This command may only be performed in-game.");
+                cs.sendMessage(ChatColor.YELLOW + "This command may only be performed in-game.");
                 return true;
 
             }
 
         } else {
 
-            cs.sendMessage(YELLOW + "This command may only be performed in-game.");
+            cs.sendMessage(ChatColor.YELLOW + "This command may only be performed in-game.");
             return true;
 
         }
@@ -1769,8 +1769,8 @@ try{
     }
 
     private boolean questsInfo(final CommandSender cs) {
-        cs.sendMessage(GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
-        cs.sendMessage(GOLD + Lang.get("createdBy") + " " + DARKRED + "Blackvein");
+        cs.sendMessage(ChatColor.GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
+        cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.DARK_RED + "Blackvein");
         return true;
     }
 
@@ -1778,7 +1778,7 @@ try{
         if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.events.editor")) {
             eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
         } else {
-            cs.sendMessage(RED + Lang.get("eventEditorNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("eventEditorNoPerms"));
         }
         return true;
     }
@@ -1787,7 +1787,7 @@ try{
         if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
             questFactory.convoCreator.buildConversation((Conversable) cs).begin();
         } else {
-            cs.sendMessage(RED + Lang.get("questEditorNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questEditorNoPerms"));
         }
         return true;
     }
@@ -1795,7 +1795,7 @@ try{
     private boolean questsTop(final CommandSender cs, String[] args) {
         if (args.length == 1 || args.length > 2) {
 
-            cs.sendMessage(YELLOW + Lang.get("COMMAND_TOP_USAGE"));
+            cs.sendMessage(ChatColor.YELLOW + Lang.get("COMMAND_TOP_USAGE"));
 
         } else {
 
@@ -1807,14 +1807,14 @@ try{
 
             } catch (NumberFormatException e) {
 
-                cs.sendMessage(YELLOW + Lang.get("inputNum"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
                 return true;
 
             }
 
             if (topNumber < 1) {
 
-                cs.sendMessage(YELLOW + Lang.get("inputPosNum"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("inputPosNum"));
                 return true;
 
             }
@@ -1849,8 +1849,8 @@ try{
             int numPrinted = 0;
 
             String msg = Lang.get("topQuestersTitle");
-            msg = msg.replaceAll("<number>", PURPLE + "" + topNumber + GOLD);
-            cs.sendMessage(GOLD + msg);
+            msg = msg.replaceAll("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
+            cs.sendMessage(ChatColor.GOLD + msg);
             for (String s : sortedMap.keySet()) {
 
                 int i = (Integer) sortedMap.get(s);
@@ -1858,7 +1858,7 @@ try{
                 UUID id = UUID.fromString(s);
                 s = Bukkit.getOfflinePlayer(id).getName();
                 numPrinted++;
-                cs.sendMessage(YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + PURPLE + i + YELLOW + " " + Lang.get("questPoints"));
+                cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + ChatColor.DARK_PURPLE + i + ChatColor.YELLOW + " " + Lang.get("questPoints"));
 
                 if (numPrinted == topNumber) {
                     break;
@@ -1880,41 +1880,41 @@ try{
     		quester = getQuester(args[1]);
     		
 			if (quester == null) {
-				cs.sendMessage(YELLOW + Lang.get("playerNotFound"));
+				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 				return;
 			} else if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
-				cs.sendMessage(GOLD + "- " + Bukkit.getOfflinePlayer(quester.id).getName() + " -");
+				cs.sendMessage(ChatColor.GOLD + "- " + Bukkit.getOfflinePlayer(quester.id).getName() + " -");
 			} else {
-				cs.sendMessage(GOLD + "- " + args[1] + " -");
+				cs.sendMessage(ChatColor.GOLD + "- " + args[1] + " -");
 			}
     	} else {
     		quester = getQuester(((Player)cs).getUniqueId());
-    		cs.sendMessage(GOLD + "- " + ((Player)cs).getName() + " -");
+    		cs.sendMessage(ChatColor.GOLD + "- " + ((Player)cs).getName() + " -");
     	}
     	
-        cs.sendMessage(YELLOW + Lang.get("questPointsDisplay") + " " + PURPLE + quester.questPoints);
+        cs.sendMessage(ChatColor.YELLOW + Lang.get("questPointsDisplay") + " " + ChatColor.DARK_PURPLE + quester.questPoints);
         if (quester.currentQuests.isEmpty()) {
-            cs.sendMessage(YELLOW + Lang.get("currentQuest") + " " + PURPLE + Lang.get("none"));
+            cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest") + " " + ChatColor.DARK_PURPLE + Lang.get("none"));
         } else {
-           cs.sendMessage(YELLOW + Lang.get("currentQuest"));
+           cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest"));
             for (Quest q : quester.currentQuests.keySet()) {
-                cs.sendMessage(PINK + " - " + PURPLE + q.name);
+                cs.sendMessage(ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.name);
             }
         }
 
         String completed;
 
         if (quester.completedQuests.isEmpty()) {
-            completed = PURPLE + Lang.get("none");
+            completed = ChatColor.DARK_PURPLE + Lang.get("none");
         } else {
 
-            completed = PURPLE + "";
+            completed = ChatColor.DARK_PURPLE + "";
             for (String s : quester.completedQuests) {
 
                 completed += s;
 
                 if (quester.amountsCompleted.containsKey(s) && quester.amountsCompleted.get(s) > 1) {
-                    completed += PINK + " (x" + quester.amountsCompleted.get(s) + ")";
+                    completed += ChatColor.LIGHT_PURPLE + " (x" + quester.amountsCompleted.get(s) + ")";
                 }
 
                 if (quester.completedQuests.indexOf(s) < (quester.completedQuests.size() - 1)) {
@@ -1925,7 +1925,7 @@ try{
 
         }
 
-        cs.sendMessage(YELLOW + Lang.get("completedQuestsTitle"));
+        cs.sendMessage(ChatColor.YELLOW + Lang.get("completedQuestsTitle"));
         cs.sendMessage(completed);
     }
 
@@ -1948,17 +1948,17 @@ try{
                 }
 
             }
-            player.sendMessage(YELLOW + Lang.get("journalPutAway"));
+            player.sendMessage(ChatColor.YELLOW + Lang.get("journalPutAway"));
             quester.hasJournal = false;
 
         } else if(player.getItemInHand() == null || player.getItemInHand().getType().equals(Material.AIR)) {
 
             ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(PINK + Lang.get("journalTitle"));
+            meta.setDisplayName(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
             stack.setItemMeta(meta);
             player.setItemInHand(stack);
-            player.sendMessage(YELLOW + Lang.get("journalTaken"));
+            player.sendMessage(ChatColor.YELLOW + Lang.get("journalTaken"));
             quester.hasJournal = true;
             quester.updateJournal();
 
@@ -1972,10 +1972,10 @@ try{
                 if(arr[i] == null) {
                     ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
                     ItemMeta meta = stack.getItemMeta();
-                    meta.setDisplayName(PINK + Lang.get("journalTitle"));
+                    meta.setDisplayName(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
                     stack.setItemMeta(meta);
                     inv.setItem(i, stack);
-                    player.sendMessage(YELLOW + Lang.get("journalTaken"));
+                    player.sendMessage(ChatColor.YELLOW + Lang.get("journalTaken"));
                     given = true;
                     break;
                 }
@@ -1986,7 +1986,7 @@ try{
                 quester.hasJournal = true;
                 quester.updateJournal();
             }else
-                player.sendMessage(YELLOW + Lang.get("journalNoRoom"));
+                player.sendMessage(ChatColor.YELLOW + Lang.get("journalNoRoom"));
 
         }
     }
@@ -1998,7 +1998,7 @@ try{
             if (((Player) player).hasPermission("quests.quit")) {
 
                 if (args.length == 1) {
-                    player.sendMessage(RED + Lang.get("COMMAND_QUIT_HELP"));
+                    player.sendMessage(ChatColor.RED + Lang.get("COMMAND_QUIT_HELP"));
                     return true;
                 }
 
@@ -2008,15 +2008,15 @@ try{
                     Quest found = findQuest(MiscUtil.concatArgArray(args, 1, args.length - 1, ' '));
 
                     if (found == null) {
-                        player.sendMessage(RED + Lang.get("questNotFound"));
+                        player.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                         return true;
                     }
 
                     quester.hardQuit(found);
 
                     String msg = Lang.get("questQuit");
-                    msg = msg.replaceAll("<quest>", PURPLE + found.name + YELLOW);
-                    player.sendMessage(YELLOW + msg);
+                    msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.YELLOW);
+                    player.sendMessage(ChatColor.YELLOW + msg);
                     quester.saveData();
                     quester.loadData();
                     quester.updateJournal();
@@ -2024,20 +2024,20 @@ try{
 
                 } else {
 
-                    player.sendMessage(YELLOW + Lang.get("noActiveQuest"));
+                    player.sendMessage(ChatColor.YELLOW + Lang.get("noActiveQuest"));
                     return true;
 
                 }
 
             } else {
 
-                player.sendMessage(RED + Lang.get("questQuitNoPerms"));
+                player.sendMessage(ChatColor.RED + Lang.get("questQuitNoPerms"));
                 return true;
             }
 
         } else {
 
-            player.sendMessage(YELLOW + Lang.get("questQuitDisabled"));
+            player.sendMessage(ChatColor.YELLOW + Lang.get("questQuitDisabled"));
             return true;
 
         }
@@ -2050,7 +2050,7 @@ try{
 
                 if (args.length == 1) {
 
-                    player.sendMessage(YELLOW + Lang.get("COMMAND_TAKE_USAGE"));
+                    player.sendMessage(ChatColor.YELLOW + Lang.get("COMMAND_TAKE_USAGE"));
 
                 } else {
 
@@ -2101,22 +2101,22 @@ try{
                         if (quester.currentQuests.size() >= maxQuests && maxQuests > 0) {
                             String msg = Lang.get("questMaxAllowed");
                             msg = msg.replaceAll("<number>", String.valueOf(maxQuests));
-                            player.sendMessage(YELLOW + msg);
+                            player.sendMessage(ChatColor.YELLOW + msg);
                         } else if (quester.currentQuests.containsKey(q)) {
                             String msg = Lang.get("questAlreadyOn");
-                            player.sendMessage(YELLOW + msg);
+                            player.sendMessage(ChatColor.YELLOW + msg);
                         } else if (quester.completedQuests.contains(q.name) && q.redoDelay < 0) {
                             String msg = Lang.get("questAlreadyCompleted");
-                            msg = msg.replaceAll("<quest>", PURPLE + q.name + YELLOW);
-                            player.sendMessage(YELLOW + msg);
+                            msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + q.name + ChatColor.YELLOW);
+                            player.sendMessage(ChatColor.YELLOW + msg);
                         } else if (q.npcStart != null && allowCommandsForNpcQuests == false) {
                             String msg = Lang.get("mustSpeakTo");
-                            msg = msg.replaceAll("<npc>", PURPLE + q.npcStart.getName() + YELLOW);
-                            player.sendMessage(YELLOW + msg);
+                            msg = msg.replaceAll("<npc>", ChatColor.DARK_PURPLE + q.npcStart.getName() + ChatColor.YELLOW);
+                            player.sendMessage(ChatColor.YELLOW + msg);
                         } else if (q.blockStart != null) {
                             String msg = Lang.get("noCommandStart");
-                            msg = msg.replaceAll("<quest>", PURPLE + q.name + YELLOW);
-                            player.sendMessage(YELLOW + msg);
+                            msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + q.name + ChatColor.YELLOW);
+                            player.sendMessage(ChatColor.YELLOW + msg);
                         } else {
 
                             boolean takeable = true;
@@ -2127,7 +2127,7 @@ try{
                                     String early = Lang.get("questTooEarly");
                                     early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
                                     early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
-                                    player.sendMessage(YELLOW + early);
+                                    player.sendMessage(ChatColor.YELLOW + early);
                                     takeable = false;
                                 }
 
@@ -2149,8 +2149,8 @@ try{
 
                                 if (inRegion == false) {
                                     String msg = Lang.get("questInvalidLocation");
-                                    msg = msg.replaceAll("<quest>", AQUA + q.name + YELLOW);
-                                    player.sendMessage(YELLOW + msg);
+                                    msg = msg.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+                                    player.sendMessage(ChatColor.YELLOW + msg);
                                     takeable = false;
                                 }
 
@@ -2165,9 +2165,9 @@ try{
                                         quester.questToTake = q.name;
 
                                         String s
-                                                = GOLD + "- " + PURPLE + quester.questToTake + GOLD + " -\n"
+                                                = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n"
                                                 + "\n"
-                                                + RESET + getQuest(quester.questToTake).description + "\n";
+                                                + ChatColor.RESET + getQuest(quester.questToTake).description + "\n";
 
                                         for (String msg : s.split("<br>")) {
                                             player.sendMessage(msg);
@@ -2177,7 +2177,7 @@ try{
 
                                     } else {
 
-                                        player.sendMessage(YELLOW + Lang.get("alreadyConversing"));
+                                        player.sendMessage(ChatColor.YELLOW + Lang.get("alreadyConversing"));
 
                                     }
                                 } else {
@@ -2188,20 +2188,20 @@ try{
                         }
 
                     } else {
-                        player.sendMessage(YELLOW + Lang.get("questNotFound"));
+                        player.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
                     }
 
                 }
 
             } else {
 
-                player.sendMessage(RED + Lang.get("questTakeNoPerms"));
+                player.sendMessage(ChatColor.RED + Lang.get("questTakeNoPerms"));
 
             }
 
         } else {
 
-            player.sendMessage(YELLOW + Lang.get("questTakeDisabled"));
+            player.sendMessage(ChatColor.YELLOW + Lang.get("questTakeDisabled"));
 
         }
     }
@@ -2220,14 +2220,14 @@ try{
                     page = Integer.parseInt(args[1]);
                     if (page < 1) {
 
-                        cs.sendMessage(YELLOW + Lang.get("pageSelectionPosNum"));
+                        cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionPosNum"));
                         return;
 
                     }
 
                 } catch (NumberFormatException e) {
 
-                    cs.sendMessage(YELLOW + Lang.get("pageSelectionNum"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionNum"));
                     return;
 
                 }
@@ -2238,7 +2238,7 @@ try{
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questListNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questListNoPerms"));
 
         }
     }
@@ -2251,7 +2251,7 @@ try{
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
         }
     }
 
@@ -2273,14 +2273,14 @@ try{
 
             } else {
 
-                cs.sendMessage(RED + Lang.get("questCmdNoPerms"));
+                cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
                 return true;
 
             }
 
         } else {
 
-            cs.sendMessage(YELLOW + "This command may only be performed in-game.");
+            cs.sendMessage(ChatColor.YELLOW + "This command may only be performed in-game.");
             return true;
 
         }
@@ -2319,41 +2319,41 @@ try{
                 Player player = (Player) cs;
                 Quester quester = getQuester(player.getUniqueId());
 
-                cs.sendMessage(GOLD + "- " + q.name + " -");
+                cs.sendMessage(ChatColor.GOLD + "- " + q.name + " -");
                 cs.sendMessage(" ");
                 if (q.redoDelay > -1) {
 
                     if (q.redoDelay == 0) {
-                        cs.sendMessage(DARKAQUA + Lang.get("readoable"));
+                        cs.sendMessage(ChatColor.DARK_AQUA + Lang.get("readoable"));
                     } else {
                         String msg = Lang.get("redoableEvery");
-                        msg = msg.replaceAll("<time>", AQUA + getTime(q.redoDelay) + DARKAQUA);
-                        cs.sendMessage(DARKAQUA + msg);
+                        msg = msg.replaceAll("<time>", ChatColor.AQUA + getTime(q.redoDelay) + ChatColor.DARK_AQUA);
+                        cs.sendMessage(ChatColor.DARK_AQUA + msg);
                     }
 
                 }
                 if (q.npcStart != null) {
                     String msg = Lang.get("speakTo");
                     msg = msg.replaceAll("<npc>", q.npcStart.getName());
-                    cs.sendMessage(YELLOW + msg);
+                    cs.sendMessage(ChatColor.YELLOW + msg);
                 } else {
-                    cs.sendMessage(YELLOW + q.description);
+                    cs.sendMessage(ChatColor.YELLOW + q.description);
                 }
 
                 cs.sendMessage(" ");
 
                 if (showQuestReqs == true) {
 
-                    cs.sendMessage(GOLD + Lang.get("requirements"));
+                    cs.sendMessage(ChatColor.GOLD + Lang.get("requirements"));
 
                     if (q.permissionReqs.isEmpty() == false) {
 
                         for (String perm : q.permissionReqs) {
 
                             if (permission.has(player, perm)) {
-                                cs.sendMessage(GREEN + Lang.get("permissionDisplay") + " " + perm);
+                                cs.sendMessage(ChatColor.GREEN + Lang.get("permissionDisplay") + " " + perm);
                             } else {
-                                cs.sendMessage(RED + Lang.get("permissionDisplay") + " " + perm);
+                                cs.sendMessage(ChatColor.RED + Lang.get("permissionDisplay") + " " + perm);
                             }
 
                         }
@@ -2363,9 +2363,9 @@ try{
                     if (q.heroesPrimaryClassReq != null) {
 
                         if (this.testPrimaryHeroesClass(q.heroesPrimaryClassReq, player.getUniqueId())) {
-                            cs.sendMessage(BOLD + "" + GREEN + q.heroesPrimaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
+                            cs.sendMessage(ChatColor.BOLD + "" + ChatColor.GREEN + q.heroesPrimaryClassReq + ChatColor.RESET + "" + ChatColor.DARK_GREEN + " " + Lang.get("heroesClass"));
                         } else {
-                            cs.sendMessage(BOLD + "" + DARKRED + q.heroesPrimaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
+                            cs.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + q.heroesPrimaryClassReq + ChatColor.RESET + "" + ChatColor.RED + " " + Lang.get("heroesClass"));
                         }
 
                     }
@@ -2373,9 +2373,9 @@ try{
                     if (q.heroesSecondaryClassReq != null) {
 
                         if (this.testSecondaryHeroesClass(q.heroesSecondaryClassReq, player.getUniqueId())) {
-                            cs.sendMessage(BOLD + "" + DARKRED + q.heroesSecondaryClassReq + RESET + "" + RED + " " + Lang.get("heroesClass"));
+                            cs.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + q.heroesSecondaryClassReq + ChatColor.RESET + "" + ChatColor.RED + " " + Lang.get("heroesClass"));
                         } else {
-                            cs.sendMessage(BOLD + "" + GREEN + q.heroesSecondaryClassReq + RESET + "" + DARKGREEN + " " + Lang.get("heroesClass"));
+                            cs.sendMessage(ChatColor.BOLD + "" + ChatColor.GREEN + q.heroesSecondaryClassReq + ChatColor.RESET + "" + ChatColor.DARK_GREEN + " " + Lang.get("heroesClass"));
                         }
 
                     }
@@ -2389,9 +2389,9 @@ try{
                             String skillName = MiscUtil.getCapitalized(skill);
 
                             if (level >= req) {
-                                cs.sendMessage(GREEN + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
+                                cs.sendMessage(ChatColor.GREEN + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
                             } else {
-                                cs.sendMessage(RED + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
+                                cs.sendMessage(ChatColor.RED + skillName + " " + Lang.get("mcMMOLevel") + " " + req);
                             }
 
                         }
@@ -2401,9 +2401,9 @@ try{
                     if (q.questPointsReq != 0) {
 
                         if (quester.questPoints >= q.questPointsReq) {
-                            cs.sendMessage(GRAY + "- " + GREEN + q.questPointsReq + " " + Lang.get("questPoints"));
+                            cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + q.questPointsReq + " " + Lang.get("questPoints"));
                         } else {
-                            cs.sendMessage(GRAY + "- " + RED + q.questPointsReq + " " + Lang.get("questPoints"));
+                            cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + q.questPointsReq + " " + Lang.get("questPoints"));
                         }
 
                     }
@@ -2412,15 +2412,15 @@ try{
 
                         if (economy.getBalance(quester.getOfflinePlayer()) >= q.moneyReq) {
                             if (q.moneyReq == 1) {
-                                cs.sendMessage(GRAY + "- " + GREEN + q.moneyReq + " " + Quests.getCurrency(false));
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + q.moneyReq + " " + Quests.getCurrency(false));
                             } else {
-                                cs.sendMessage(GRAY + "- " + GREEN + q.moneyReq + " " + Quests.getCurrency(true));
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + q.moneyReq + " " + Quests.getCurrency(true));
                             }
                         } else {
                             if (q.moneyReq == 1) {
-                                cs.sendMessage(GRAY + "- " + RED + q.moneyReq + " " + Quests.getCurrency(false));
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + q.moneyReq + " " + Quests.getCurrency(false));
                             } else {
-                                cs.sendMessage(GRAY + "- " + RED + q.moneyReq + " " + Quests.getCurrency(true));
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + q.moneyReq + " " + Quests.getCurrency(true));
                             }
                         }
 
@@ -2431,9 +2431,9 @@ try{
                         for (ItemStack is : q.items) {
 
                             if (hasItem(player, is) == true) {
-                                cs.sendMessage(GRAY + "- " + GREEN + ItemUtil.getString(is));
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + ItemUtil.getString(is));
                             } else {
-                                cs.sendMessage(GRAY + "- " + RED + ItemUtil.getString(is));
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + ItemUtil.getString(is));
                             }
 
                         }
@@ -2445,9 +2445,9 @@ try{
                         for (String s : q.neededQuests) {
 
                             if (quester.completedQuests.contains(s)) {
-                                cs.sendMessage(GRAY + "- " + GREEN + Lang.get("complete") + " " + ITALIC + s);
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + Lang.get("complete") + " " + ChatColor.ITALIC + s);
                             } else {
-                                cs.sendMessage(GRAY + "- " + RED + Lang.get("complete") + " " + ITALIC + s);
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + Lang.get("complete") + " " + ChatColor.ITALIC + s);
                             }
 
                         }
@@ -2460,12 +2460,12 @@ try{
 
                             if (quester.completedQuests.contains(s)) {
                                 String msg = Lang.get("haveCompleted");
-                                msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + RED);
-                                cs.sendMessage(GRAY + "- " + RED + msg);
+                                msg = msg.replaceAll("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE + s + ChatColor.RED);
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + msg);
                             } else {
                                 String msg = Lang.get("cannotComplete");
-                                msg = msg.replaceAll("<quest>", ITALIC + "" + PURPLE + s + GREEN);
-                                cs.sendMessage(GRAY + "- " + GREEN + msg);
+                                msg = msg.replaceAll("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE + s + ChatColor.GREEN);
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + msg);
                             }
 
                         }
@@ -2476,13 +2476,13 @@ try{
 
             } else {
 
-                cs.sendMessage(YELLOW + Lang.get("questNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
 
             }
 
         } else {
 
-            cs.sendMessage(RED + Lang.get("questInfoNoPerms"));
+            cs.sendMessage(ChatColor.RED + Lang.get("questInfoNoPerms"));
 
         }
     }
@@ -2518,7 +2518,7 @@ try{
 
         } else {
 
-            player.sendMessage(YELLOW + Lang.get("noActiveQuest"));
+            player.sendMessage(ChatColor.YELLOW + Lang.get("noActiveQuest"));
 
         }
 
@@ -2526,70 +2526,70 @@ try{
 
     public void printAdminHelp(CommandSender cs) {
 
-        cs.sendMessage(RED + Lang.get("questAdminHelpTitle"));
+        cs.sendMessage(ChatColor.RED + Lang.get("questAdminHelpTitle"));
         cs.sendMessage("");
-        cs.sendMessage(DARKRED + "/questadmin" + RED + " " + Lang.get("COMMAND_QUESTADMIN_HELP"));
+        cs.sendMessage(ChatColor.DARK_RED + "/questadmin" + ChatColor.RED + " " + Lang.get("COMMAND_QUESTADMIN_HELP"));
         if(cs.hasPermission("quests.admin.*")){
-        	cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP"));
-        	cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
-            cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
+        	cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP"));
+        	cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
+            cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
         } else{
         	if (cs.hasPermission("quests.admin.stats")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.give")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.quit")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.points")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.takepoints")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.givepoints")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.pointsall")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.finish")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.nextstage")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.setstage")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.purge")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
         	}
             if (cs.hasPermission("quests.admin.reset")) {
-                cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
+                cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
             }
         	if (cs.hasPermission("quests.admin.remove")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
         	}
         	if (citizens != null && cs.hasPermission("quests.admin.togglegui")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
         	}
         	if (cs.hasPermission("quests.admin.reload")) {
-        		cs.sendMessage(DARKRED + "/questadmin " + RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
+        		cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
         	}
 
         }
@@ -2599,9 +2599,9 @@ try{
     public void listQuests(Player player, int page) {
 
         if (quests.size() < ((page * 8) - 7)) {
-            player.sendMessage(YELLOW + Lang.get("pageNotExist"));
+            player.sendMessage(ChatColor.YELLOW + Lang.get("pageNotExist"));
         } else {
-            player.sendMessage(GOLD + Lang.get("questsTitle"));
+            player.sendMessage(ChatColor.GOLD + Lang.get("questsTitle"));
 
             int numOrder = (page - 1) * 8;
 
@@ -2629,7 +2629,7 @@ try{
 
             for (Quest q : subQuests) {
 
-                player.sendMessage(YELLOW + Integer.toString(numOrder) + ". " + q.name);
+                player.sendMessage(ChatColor.YELLOW + Integer.toString(numOrder) + ". " + q.name);
                 numOrder++;
 
             }
@@ -2642,7 +2642,7 @@ try{
             String msg = Lang.get("pageFooter");
             msg = msg.replaceAll("<current>", String.valueOf(page));
             msg = msg.replaceAll("<all>", String.valueOf(numPages));
-            player.sendMessage(GOLD + msg);
+            player.sendMessage(ChatColor.GOLD + msg);
 
         }
 
@@ -2799,7 +2799,7 @@ try{
                 if (config.contains("quests." + questName + ".name")) {
                     quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
                 } else {
-                    skipQuestProcess("Quest block \'" + questName + "\' is missing " + RED + "name:");
+                    skipQuestProcess("Quest block \'" + questName + "\' is missing " + ChatColor.RED + "name:");
                 }
 
                 if (citizens != null && config.contains("quests." + questName + ".npc-giver-id")) {
@@ -3201,7 +3201,7 @@ try{
 
                 if (failed) {
                     skipQuestProcess(new String[]{
-                        "" + PINK + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
+                        "" + ChatColor.LIGHT_PURPLE + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!",
                         "Make sure you are using the Quest name: value, and not the block name."});
                 }
 
@@ -3881,7 +3881,7 @@ try{
                             }
 
                         } else {
-                            stageFailed("npc-delivery-ids: in Stage " + s2 + " of Quest " + PURPLE + quest.name + " is not a list of NPC ids!");
+                            stageFailed("npc-delivery-ids: in Stage " + s2 + " of Quest " + ChatColor.DARK_PURPLE + quest.name + " is not a list of NPC ids!");
                         }
 
                     } else {
@@ -3981,7 +3981,7 @@ try{
                     }
 
                 } else {
-                    stageFailed("Stage " + s2 + " of Quest " + PURPLE + quest.name + " is missing mob-amounts:");
+                    stageFailed("Stage " + s2 + " of Quest " + ChatColor.DARK_PURPLE + quest.name + " is missing mob-amounts:");
                 }
 
             }
@@ -4570,31 +4570,31 @@ try{
             parsed = parsed.replaceAll("<npc>", quest.npcStart.getName());
         }
 
-        parsed = parsed.replaceAll("<black>", BLACK.toString());
-        parsed = parsed.replaceAll("<darkblue>", DARKBLUE.toString());
-        parsed = parsed.replaceAll("<darkgreen>", DARKGREEN.toString());
-        parsed = parsed.replaceAll("<darkaqua>", DARKAQUA.toString());
-        parsed = parsed.replaceAll("<darkred>", DARKRED.toString());
-        parsed = parsed.replaceAll("<purple>", PURPLE.toString());
-        parsed = parsed.replaceAll("<gold>", GOLD.toString());
-        parsed = parsed.replaceAll("<grey>", GRAY.toString());
-        parsed = parsed.replaceAll("<gray>", GRAY.toString());
-        parsed = parsed.replaceAll("<darkgrey>", DARKGRAY.toString());
-        parsed = parsed.replaceAll("<darkgray>", DARKGRAY.toString());
-        parsed = parsed.replaceAll("<blue>", BLUE.toString());
-        parsed = parsed.replaceAll("<green>", GREEN.toString());
-        parsed = parsed.replaceAll("<aqua>", AQUA.toString());
-        parsed = parsed.replaceAll("<red>", RED.toString());
-        parsed = parsed.replaceAll("<pink>", PINK.toString());
-        parsed = parsed.replaceAll("<yellow>", YELLOW.toString());
-        parsed = parsed.replaceAll("<white>", WHITE.toString());
+        parsed = parsed.replaceAll("<black>", ChatColor.BLACK.toString());
+        parsed = parsed.replaceAll("<darkblue>", ChatColor.DARK_BLUE.toString());
+        parsed = parsed.replaceAll("<darkgreen>", ChatColor.DARK_GREEN.toString());
+        parsed = parsed.replaceAll("<darkaqua>", ChatColor.DARK_AQUA.toString());
+        parsed = parsed.replaceAll("<darkred>", ChatColor.DARK_RED.toString());
+        parsed = parsed.replaceAll("<purple>", ChatColor.DARK_PURPLE.toString());
+        parsed = parsed.replaceAll("<gold>", ChatColor.GOLD.toString());
+        parsed = parsed.replaceAll("<grey>", ChatColor.GRAY.toString());
+        parsed = parsed.replaceAll("<gray>", ChatColor.GRAY.toString());
+        parsed = parsed.replaceAll("<darkgrey>", ChatColor.DARK_GRAY.toString());
+        parsed = parsed.replaceAll("<darkgray>", ChatColor.DARK_GRAY.toString());
+        parsed = parsed.replaceAll("<blue>", ChatColor.BLUE.toString());
+        parsed = parsed.replaceAll("<green>", ChatColor.GREEN.toString());
+        parsed = parsed.replaceAll("<aqua>", ChatColor.AQUA.toString());
+        parsed = parsed.replaceAll("<red>", ChatColor.RED.toString());
+        parsed = parsed.replaceAll("<pink>", ChatColor.LIGHT_PURPLE.toString());
+        parsed = parsed.replaceAll("<yellow>", ChatColor.YELLOW.toString());
+        parsed = parsed.replaceAll("<white>", ChatColor.WHITE.toString());
 
-        parsed = parsed.replaceAll("<random>", MAGIC.toString());
-        parsed = parsed.replaceAll("<italic>", ITALIC.toString());
-        parsed = parsed.replaceAll("<bold>", BOLD.toString());
-        parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
-        parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
-        parsed = parsed.replaceAll("<reset>", RESET.toString());
+        parsed = parsed.replaceAll("<random>", ChatColor.MAGIC.toString());
+        parsed = parsed.replaceAll("<italic>", ChatColor.ITALIC.toString());
+        parsed = parsed.replaceAll("<bold>", ChatColor.BOLD.toString());
+        parsed = parsed.replaceAll("<underline>", ChatColor.UNDERLINE.toString());
+        parsed = parsed.replaceAll("<strike>", ChatColor.STRIKETHROUGH.toString());
+        parsed = parsed.replaceAll("<reset>", ChatColor.RESET.toString());
 
         parsed = parsed.replaceAll("<br>", "\n");
 
@@ -4611,31 +4611,31 @@ try{
             parsed = parsed.replaceAll("<npc>", npc.getName());
         }
 
-        parsed = parsed.replaceAll("<black>", BLACK.toString());
-        parsed = parsed.replaceAll("<darkblue>", DARKBLUE.toString());
-        parsed = parsed.replaceAll("<darkgreen>", DARKGREEN.toString());
-        parsed = parsed.replaceAll("<darkaqua>", DARKAQUA.toString());
-        parsed = parsed.replaceAll("<darkred>", DARKRED.toString());
-        parsed = parsed.replaceAll("<purple>", PURPLE.toString());
-        parsed = parsed.replaceAll("<gold>", GOLD.toString());
-        parsed = parsed.replaceAll("<grey>", GRAY.toString());
-        parsed = parsed.replaceAll("<gray>", GRAY.toString());
-        parsed = parsed.replaceAll("<darkgrey>", DARKGRAY.toString());
-        parsed = parsed.replaceAll("<darkgray>", DARKGRAY.toString());
-        parsed = parsed.replaceAll("<blue>", BLUE.toString());
-        parsed = parsed.replaceAll("<green>", GREEN.toString());
-        parsed = parsed.replaceAll("<aqua>", AQUA.toString());
-        parsed = parsed.replaceAll("<red>", RED.toString());
-        parsed = parsed.replaceAll("<pink>", PINK.toString());
-        parsed = parsed.replaceAll("<yellow>", YELLOW.toString());
-        parsed = parsed.replaceAll("<white>", WHITE.toString());
+        parsed = parsed.replaceAll("<black>", ChatColor.BLACK.toString());
+        parsed = parsed.replaceAll("<darkblue>", ChatColor.DARK_BLUE.toString());
+        parsed = parsed.replaceAll("<darkgreen>", ChatColor.DARK_GREEN.toString());
+        parsed = parsed.replaceAll("<darkaqua>", ChatColor.DARK_AQUA.toString());
+        parsed = parsed.replaceAll("<darkred>", ChatColor.DARK_RED.toString());
+        parsed = parsed.replaceAll("<purple>", ChatColor.DARK_PURPLE.toString());
+        parsed = parsed.replaceAll("<gold>", ChatColor.GOLD.toString());
+        parsed = parsed.replaceAll("<grey>", ChatColor.GRAY.toString());
+        parsed = parsed.replaceAll("<gray>", ChatColor.GRAY.toString());
+        parsed = parsed.replaceAll("<darkgrey>", ChatColor.DARK_GRAY.toString());
+        parsed = parsed.replaceAll("<darkgray>", ChatColor.DARK_GRAY.toString());
+        parsed = parsed.replaceAll("<blue>", ChatColor.BLUE.toString());
+        parsed = parsed.replaceAll("<green>", ChatColor.GREEN.toString());
+        parsed = parsed.replaceAll("<aqua>", ChatColor.AQUA.toString());
+        parsed = parsed.replaceAll("<red>", ChatColor.RED.toString());
+        parsed = parsed.replaceAll("<pink>", ChatColor.LIGHT_PURPLE.toString());
+        parsed = parsed.replaceAll("<yellow>", ChatColor.YELLOW.toString());
+        parsed = parsed.replaceAll("<white>", ChatColor.WHITE.toString());
 
-        parsed = parsed.replaceAll("<random>", MAGIC.toString());
-        parsed = parsed.replaceAll("<italic>", ITALIC.toString());
-        parsed = parsed.replaceAll("<bold>", BOLD.toString());
-        parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
-        parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
-        parsed = parsed.replaceAll("<reset>", RESET.toString());
+        parsed = parsed.replaceAll("<random>", ChatColor.MAGIC.toString());
+        parsed = parsed.replaceAll("<italic>", ChatColor.ITALIC.toString());
+        parsed = parsed.replaceAll("<bold>", ChatColor.BOLD.toString());
+        parsed = parsed.replaceAll("<underline>", ChatColor.UNDERLINE.toString());
+        parsed = parsed.replaceAll("<strike>", ChatColor.STRIKETHROUGH.toString());
+        parsed = parsed.replaceAll("<reset>", ChatColor.RESET.toString());
 
         parsed = parsed.replaceAll("<br>", "\n");
 
@@ -4649,31 +4649,31 @@ try{
 
         String parsed = s;
 
-        parsed = parsed.replaceAll("<black>", BLACK.toString());
-        parsed = parsed.replaceAll("<darkblue>", DARKBLUE.toString());
-        parsed = parsed.replaceAll("<darkgreen>", DARKGREEN.toString());
-        parsed = parsed.replaceAll("<darkaqua>", DARKAQUA.toString());
-        parsed = parsed.replaceAll("<darkred>", DARKRED.toString());
-        parsed = parsed.replaceAll("<purple>", PURPLE.toString());
-        parsed = parsed.replaceAll("<gold>", GOLD.toString());
-        parsed = parsed.replaceAll("<grey>", GRAY.toString());
-        parsed = parsed.replaceAll("<gray>", GRAY.toString());
-        parsed = parsed.replaceAll("<darkgrey>", DARKGRAY.toString());
-        parsed = parsed.replaceAll("<darkgray>", DARKGRAY.toString());
-        parsed = parsed.replaceAll("<blue>", BLUE.toString());
-        parsed = parsed.replaceAll("<green>", GREEN.toString());
-        parsed = parsed.replaceAll("<aqua>", AQUA.toString());
-        parsed = parsed.replaceAll("<red>", RED.toString());
-        parsed = parsed.replaceAll("<pink>", PINK.toString());
-        parsed = parsed.replaceAll("<yellow>", YELLOW.toString());
-        parsed = parsed.replaceAll("<white>", WHITE.toString());
+        parsed = parsed.replaceAll("<black>", ChatColor.BLACK.toString());
+        parsed = parsed.replaceAll("<darkblue>", ChatColor.DARK_BLUE.toString());
+        parsed = parsed.replaceAll("<darkgreen>", ChatColor.DARK_GREEN.toString());
+        parsed = parsed.replaceAll("<darkaqua>", ChatColor.DARK_AQUA.toString());
+        parsed = parsed.replaceAll("<darkred>", ChatColor.DARK_RED.toString());
+        parsed = parsed.replaceAll("<purple>", ChatColor.DARK_PURPLE.toString());
+        parsed = parsed.replaceAll("<gold>", ChatColor.GOLD.toString());
+        parsed = parsed.replaceAll("<grey>", ChatColor.GRAY.toString());
+        parsed = parsed.replaceAll("<gray>", ChatColor.GRAY.toString());
+        parsed = parsed.replaceAll("<darkgrey>", ChatColor.DARK_GRAY.toString());
+        parsed = parsed.replaceAll("<darkgray>", ChatColor.DARK_GRAY.toString());
+        parsed = parsed.replaceAll("<blue>", ChatColor.BLUE.toString());
+        parsed = parsed.replaceAll("<green>", ChatColor.GREEN.toString());
+        parsed = parsed.replaceAll("<aqua>", ChatColor.AQUA.toString());
+        parsed = parsed.replaceAll("<red>", ChatColor.RED.toString());
+        parsed = parsed.replaceAll("<pink>", ChatColor.LIGHT_PURPLE.toString());
+        parsed = parsed.replaceAll("<yellow>", ChatColor.YELLOW.toString());
+        parsed = parsed.replaceAll("<white>", ChatColor.WHITE.toString());
 
-        parsed = parsed.replaceAll("<random>", MAGIC.toString());
-        parsed = parsed.replaceAll("<italic>", ITALIC.toString());
-        parsed = parsed.replaceAll("<bold>", BOLD.toString());
-        parsed = parsed.replaceAll("<underline>", UNDERLINE.toString());
-        parsed = parsed.replaceAll("<strike>", STRIKETHROUGH.toString());
-        parsed = parsed.replaceAll("<reset>", RESET.toString());
+        parsed = parsed.replaceAll("<random>", ChatColor.MAGIC.toString());
+        parsed = parsed.replaceAll("<italic>", ChatColor.ITALIC.toString());
+        parsed = parsed.replaceAll("<bold>", ChatColor.BOLD.toString());
+        parsed = parsed.replaceAll("<underline>", ChatColor.UNDERLINE.toString());
+        parsed = parsed.replaceAll("<strike>", ChatColor.STRIKETHROUGH.toString());
+        parsed = parsed.replaceAll("<reset>", ChatColor.RESET.toString());
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
 
         return parsed;
