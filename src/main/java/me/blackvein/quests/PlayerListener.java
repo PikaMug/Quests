@@ -375,7 +375,8 @@ public class PlayerListener implements Listener, ColorUtil {
 
     }
 
-    @EventHandler
+    @SuppressWarnings("deprecation")
+	@EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent evt) {
     	if (evt.getRightClicked().getType() == EntityType.ITEM_FRAME) {
     		if(ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
@@ -482,7 +483,8 @@ public class PlayerListener implements Listener, ColorUtil {
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent evt) {
 
         if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
@@ -620,7 +622,6 @@ public class PlayerListener implements Listener, ColorUtil {
 
                     if (damager instanceof Projectile) {
                         Projectile projectile = (Projectile)damager;
-                        @SuppressWarnings("deprecation")
 						ProjectileSource source = projectile.getShooter();
 
                         if (source instanceof Player) {

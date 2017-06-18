@@ -72,7 +72,8 @@ public class ItemStackPrompt extends FixedSetPrompt implements ColorUtil {
         if (input.equalsIgnoreCase("0")) {
 
             Player player = (Player) cc.getForWhom();
-            ItemStack is = player.getItemInHand();
+            @SuppressWarnings("deprecation")
+			ItemStack is = player.getItemInHand();
             if (is == null || is.getType().equals(Material.AIR)) {
 
                 player.sendMessage(RED + Lang.get("itemCreateNoItem"));

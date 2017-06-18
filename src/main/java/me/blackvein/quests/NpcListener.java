@@ -33,7 +33,8 @@ public class NpcListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(NPCRightClickEvent evt) {
 
         if (plugin.questFactory.selectingNPCs.contains(evt.getClicker())) {
