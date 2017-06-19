@@ -2579,10 +2579,11 @@ public class Quester {
         } else {
 
             String[] completed = new String[completedQuests.size()];
+	    int index = 0;
             for (String s : completedQuests) {
 
-                completed[completedQuests.indexOf(s)] = s;
-
+                completed[index] = s;
+                index++;
             }
             data.set("completed-Quests", completed);
 
