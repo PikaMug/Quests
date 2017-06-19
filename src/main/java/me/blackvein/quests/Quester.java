@@ -2578,9 +2578,14 @@ public class Quester {
 
         } else {
 
-            String[] completed = new String[completedQuests.size()];
+	    List<String> noDupe = new ArrayList<String>();
+	    for(String s : completedQuests)
+	        if(!noDupe.contains(s))
+		    noDupe.add(s);
+		
+            String[] completed = new String[noDupe.size()];
 	    int index = 0;
-            for (String s : completedQuests) {
+            for (String s : noDupe) {
 
                 completed[index] = s;
                 index++;
