@@ -2232,7 +2232,7 @@ public class Quester {
 
                     questSec.set("blocks-damaged-names", blockNames);
                     questSec.set("blocks-damaged-amounts", blockAmounts);
-                    questSec.set("blocks-broken-durability", blockDurability);
+                    questSec.set("blocks-damaged-durability", blockDurability);
 
                 }
 
@@ -2268,7 +2268,7 @@ public class Quester {
 
                     questSec.set("blocks-placed-names", blockNames);
                     questSec.set("blocks-placed-amounts", blockAmounts);
-                    questSec.set("blocks-broken-durability", blockDurability);
+                    questSec.set("blocks-placed-durability", blockDurability);
 
                 }
 
@@ -2286,7 +2286,7 @@ public class Quester {
 
                     questSec.set("blocks-used-names", blockNames);
                     questSec.set("blocks-used-amounts", blockAmounts);
-                    questSec.set("blocks-broken-durability", blockDurability);
+                    questSec.set("blocks-used-durability", blockDurability);
 
                 }
 
@@ -2304,7 +2304,7 @@ public class Quester {
 
                     questSec.set("blocks-cut-names", blockNames);
                     questSec.set("blocks-cut-amounts", blockAmounts);
-                    questSec.set("blocks-broken-durability", blockDurability);
+                    questSec.set("blocks-cut-durability", blockDurability);
 
                 }
 
