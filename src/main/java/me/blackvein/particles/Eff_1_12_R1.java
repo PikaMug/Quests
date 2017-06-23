@@ -7,6 +7,15 @@ import org.bukkit.entity.Player;
 import net.minecraft.server.v1_12_R1.EnumParticle;
 import net.minecraft.server.v1_12_R1.PacketPlayOutWorldParticles;
 
+/**
+ * This is the Eff_1_12_R1 Enum, it contains all valid effects that players can
+ * use with the 1.12 server version.
+ * 
+ * @author FlyingPikachu
+ * @author GregZ_
+ * @since 2.8.0
+ * @version 3
+ */
 public enum Eff_1_12_R1 {
 
 	EXPLOSION(EnumParticle.EXPLOSION_NORMAL),
@@ -59,12 +68,50 @@ public enum Eff_1_12_R1 {
 	SPIT(EnumParticle.SPIT),
 	TOTEM(EnumParticle.TOTEM);
 
+	/**
+	 * The NMS EnumParticle to be sent to the player.
+	 */
 	private final EnumParticle particleEnum;
 
+	/**
+	 * Create a new instance of the Eff_1_12_R1 enum with the given particle type
+	 * to be sent.
+	 * 
+	 * @param particleEnum
+	 *            The particle type to be sent to the player in the
+	 *            PacketPlayOutWorldParticles packet.
+	 */
 	Eff_1_12_R1(EnumParticle particleEnum) {
 		this.particleEnum = particleEnum;
 	}
 
+	/**
+	 * Send the given particle to the player via NMS. It should be noted that
+	 * all particles have the range limit set to 256 due to the second variable
+	 * in the packet constructor being false.
+	 * 
+	 * @param player
+	 *            The player to send the particle to.
+	 * @param location
+	 *            The location to play the particle at.
+	 * @param offsetX
+	 *            The offset of the particle in the X direction.
+	 * @param offsetY
+	 *            The offset of the particle in the Y direction.
+	 * @param offsetZ
+	 *            The offset of the particle in the Z direction.
+	 * @param speed
+	 *            The speed that the particle effect will be played at.
+	 * @param count
+	 *            The number of particles to send to the player.
+	 * @param data
+	 *            An integer array needed for some particles, this is used for
+	 *            packets such as block crack or particle colour on redstone /
+	 *            firework particles.
+	 * @throws Exception
+	 *             A ReportedException may be thrown if the network manager
+	 *             fails to handle the packet.
+	 */
 	public void sendToPlayer(Player player, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count, int[] data) throws Exception {
 		PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(particleEnum, false, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count, data);
 		((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
