@@ -2,28 +2,66 @@ package me.blackvein.quests.exceptions;
 
 import me.blackvein.quests.Quest;
 
+/**
+ * This is the InvalidStageException class, this exception is used to indicate
+ * that the new stage of a quest does not exist. This is currently used in the
+ * Quest class when advancing to the next stage or manually setting the stage.
+ * 
+ * @author Zino
+ * @author Blackvein
+ * @since 1.7.1-SNAPSHOT
+ * @version 3
+ * @see Quest#nextStage(me.blackvein.quests.Quester)
+ * @see Quest#setStage(me.blackvein.quests.Quester, int)
+ */
 public class InvalidStageException extends Exception {
 
-    private final Quest quest;
-    private final int stage;
+	/**
+	 * The version id to use when serialising and deserialising this class.
+	 */
+	private static final long serialVersionUID = 1778748295752972651L;
 
-    public InvalidStageException(Quest quest, int stage) {
-        this.quest = quest;
-        this.stage = stage;
-    }
 
-    public Quest getQuest() {
-        return quest;
-    }
+	/**
+	 * The Quest instance that an invalid stage was set within.
+	 */
+	private final Quest quest;
 
-    public int getStage() {
-        return stage;
-    }
+	/**
+	 * The invalid stage number that was attempted to be set.
+	 */
+	private final int stage;
 
-    private static final long serialVersionUID = 1778748295752972651L;
+	/**
+	 * Create a new instance of the InvalidStageException class with the given
+	 * holding Quest and invalid stage number.
+	 * 
+	 * @param quest
+	 *            The quest that an invalid stage id was set within.
+	 * @param stage
+	 *            The invalid stage id that was set.
+	 */
+	public InvalidStageException(Quest quest, int stage) {
+		this.quest = quest;
+		this.stage = stage;
+	}
 
-    @Override
-    public void printStackTrace() {
-        super.printStackTrace();
-    }
+	/**
+	 * Get the quest instance associated with this exception.
+	 * 
+	 * @return The quest that an invalid stage id was set within.
+	 */
+	public Quest getQuest() {
+		return quest;
+	}
+
+	/**
+	 * Get the invalid stage id that was attempted to be set within the quest
+	 * class.
+	 * 
+	 * @return The invalid stage id that was set.
+	 */
+	public int getStage() {
+		return stage;
+	}
 }
