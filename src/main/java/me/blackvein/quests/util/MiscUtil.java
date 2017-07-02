@@ -62,7 +62,7 @@ public class MiscUtil {
 	}
 
 	public static EntityType getProperMobType(String properName) {
-		properName = properName.replaceAll("_", "").toUpperCase();
+		properName = properName.replaceAll("_", "").replaceAll(" ", "").toUpperCase();
 		for (EntityType et : EntityType.values()) {
 			if (et.isAlive() && et.name().replaceAll("_", "").equalsIgnoreCase(properName)) {
 				return et;
