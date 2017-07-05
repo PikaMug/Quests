@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -308,7 +309,7 @@ public class Quest {
 				player.giveExp(lb.getExp());
 			}
 			if (lb.getMoney() > 0) {
-				Quests.economy.depositPlayer(player.getName(), lb.getMoney());
+				Quests.economy.depositPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), lb.getMoney());
 			}
 			if (lb.getItemList().isEmpty() == false) {
 				phatLootItems.addAll(lb.getItemList());
