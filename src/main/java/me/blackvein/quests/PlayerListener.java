@@ -282,9 +282,7 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.currentQuests.keySet()) {
 					Stage currentStage = quester.getCurrentStage(quest);
 					if (currentStage == null) {
-						if (plugin.debug == true) {
-							plugin.getLogger().severe("currentStage was null for " + quester.id.toString() + " on chat");
-						}
+						plugin.getLogger().severe("currentStage was null for " + quester.id.toString() + " on chat");
 						continue;
 					}
 					if (currentStage.chatEvents.isEmpty() == false) {
@@ -642,9 +640,7 @@ public class PlayerListener implements Listener {
 			for (Quest quest : quester.currentQuests.keySet()) {
 				Stage currentStage = quester.getCurrentStage(quest);
 				if (currentStage == null) {
-					if (plugin.debug == true) {
-						plugin.getLogger().severe("currentStage was null for " + quester.id.toString() + " on quit");
-					}
+					plugin.getLogger().severe("currentStage was null for " + quester.id.toString() + " on quit");
 					continue;
 				}
 				if (currentStage.delay > -1) {

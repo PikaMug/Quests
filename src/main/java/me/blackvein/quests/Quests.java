@@ -125,7 +125,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public boolean allowCommandsForNpcQuests = false;
 	public boolean showQuestReqs = true;
 	public boolean allowQuitting = true;
-	public boolean debug = false;
 	public boolean convertData = false;
 	public boolean load = false;
 	public int killDelay = 0;
@@ -414,7 +413,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
 		npcEffects = config.getBoolean("show-npc-effects", true);
 		effect = config.getString("npc-effect", "note");
-		debug = config.getBoolean("debug-mode", false);
 		killDelay = config.getInt("kill-delay", 600);
 		acceptTimeout = config.getInt("accept-timeout", 20);
 		convertData = config.getBoolean("convert-data-on-startup", false);
@@ -522,10 +520,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						getLogger().info("Registered events for custom objective \"" + name + "\"");
 					} catch (Exception ex) {
 						getLogger().warning("Failed to register events for custom objective \"" + name + "\". Does the objective class listen for events?");
-						if (debug) {
-							getLogger().warning("Error log:");
-							ex.printStackTrace();
-						}
+						ex.printStackTrace();
 					}
 				}
 			}
@@ -534,10 +529,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 		} catch (Exception e) {
 			getLogger().severe("Unable to load module from file: " + jar.getName());
-			if (debug) {
-				getLogger().severe("Error log:");
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 		}
 	}
 
@@ -1942,7 +1934,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			quester = questers.get(id);
 		}
 		if (quester == null) {
-			if (debug == true && !questerBlacklist.contains(id.toString())) {
+			if (!questerBlacklist.contains(id.toString())) {
 				getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval..");
 			}
 			quester = new Quester(this);
@@ -1955,7 +1947,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				getLogger().info("Quester not found for UUID \"" + id.toString() + "\". Consider adding them to the Quester blacklist.");
 			} else {
-				if (debug == true && !questerBlacklist.contains(id.toString())) {
+				if (!questerBlacklist.contains(id.toString())) {
 					getLogger().log(Level.INFO, "Manual data retrieval succeeded for UUID \"" + id.toString() + "\"");
 				}
 				questers.put(id, quester);
@@ -2105,12 +2097,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					try {
 						config.save(file);
 					} catch (IOException e) {
-						if (debug == false) {
-							getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questName + "\". Skipping.");
-						} else {
-							getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questName + "\". Error log:");
-							e.printStackTrace();
-						}
+						getLogger().log(Level.SEVERE, "Failed to save Quest \"" + questName + "\"");
+						e.printStackTrace();
 					}
 				}
 				if (failedToLoad == true) {
@@ -3907,13 +3895,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			config.set("npc-gui", questNPCGUIs);
 			config.save(dataFile);
 		} catch (Exception e) {
-			getLogger().severe("Unable to update data file.");
-			if (debug) {
-				getLogger().severe("Error log:");
-				e.printStackTrace();
-			} else {
-				getLogger().severe("Enable debug to view the error getLogger()");
-			}
+			getLogger().severe("Unable to update data.yml file");
+			e.printStackTrace();
 		}
 	}
 

@@ -949,7 +949,6 @@ public class Quester {
 
 	public void reachLocation(Quest quest, Location l) {
 		for (Location location : getQuestData(quest).locationsReached) {
-			// TODO debug try/catch for #352
 			try {
 				int index = getQuestData(quest).locationsReached.indexOf(location);
 				Location locationToReach = getCurrentStage(quest).locationsToReach.get(index);

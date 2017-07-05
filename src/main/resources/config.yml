@@ -5,7 +5,6 @@ show-requirements: true
 allow-quitting: true
 use-compass: true
 ignore-locked-quests: false
-debug-mode: false
 generate-files-on-join: true
 kill-delay: 600
 accept-timeout: 20
