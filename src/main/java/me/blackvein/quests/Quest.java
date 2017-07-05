@@ -178,10 +178,9 @@ public class Quest {
 		return testRequirements(quester.getPlayer());
 	}
 
-	@SuppressWarnings("deprecation")
 	public boolean testRequirements(Player player) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
-		if (moneyReq != 0 && Quests.economy.getBalance(player.getName()) < moneyReq) {
+		if (moneyReq != 0 && Quests.economy.getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) < moneyReq) {
 			return false;
 		}
 		PlayerInventory inventory = player.getInventory();
