@@ -310,7 +310,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 			for (Enchantment e : Enchantment.values()) {
 				text += ChatColor.GREEN + Quester.prettyEnchantmentString(e) + ", ";
 			}
-			text = text.substring(0, text.length() - 1);
+			text = text.substring(0, text.length() - 2);
 			return text + "\n" + ChatColor.YELLOW + Lang.get("itemCreateEnterEnch");
 		}
 

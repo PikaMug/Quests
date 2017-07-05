@@ -840,6 +840,7 @@ public class Lang {
 		langMap.put("ENCHANTMENT_ARROW_FIRE", "Flame");
 		langMap.put("ENCHANTMENT_ARROW_INFINITE", "Infinity");
 		langMap.put("ENCHANTMENT_ARROW_KNOCKBACK", "Punch");
+		langMap.put("ENCHANTMENT_BINDING_CURSE", "BindingCurse");
 		langMap.put("ENCHANTMENT_DAMAGE_ALL", "Sharpness");
 		langMap.put("ENCHANTMENT_DAMAGE_ARTHROPODS", "BaneOfArthropods");
 		langMap.put("ENCHANTMENT_DEPTH_STRIDER", "DepthStrider");
@@ -861,7 +862,9 @@ public class Lang {
 		langMap.put("ENCHANTMENT_PROTECTION_FIRE", "FireProtection");
 		langMap.put("ENCHANTMENT_PROTECTION_PROJECTILE", "ProjectileProtection");
 		langMap.put("ENCHANTMENT_SILK_TOUCH", "SilkTouch");
+		langMap.put("ENCHANTMENT_SWEEPING", "Sweeping");
 		langMap.put("ENCHANTMENT_THORNS", "Thorns");
+		langMap.put("ENCHANTMENT_VANISHING_CURSE", "VanishingCurse");
 		langMap.put("ENCHANTMENT_WATER_WORKER", "AquaAffinity");
 		// Colors
 		langMap.put("COLOR_BLACK", "Black");
