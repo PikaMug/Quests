@@ -34,13 +34,10 @@ public class ItemUtil {
 	 * @return -5&nbsp;-> stack enchantments are unequal<br>
 	 */
 	public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
-		if (one == null && two != null || one != null && two == null) {
+		if (one == null || two == null) {
 			return 0;
 		}
-		if (one == null && two == null) {
-			return 0;
-		}
-		if (one.getType().name() != two.getType().name()) {
+		if (one.getType().name().equals(two.getType().name()) == false) {
 			return -1;
 		} else if ((one.getAmount() != two.getAmount()) && ignoreAmount == false) {
 			return -2;

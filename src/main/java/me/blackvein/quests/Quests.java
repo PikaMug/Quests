@@ -1792,7 +1792,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						}
 					}
 				} catch (Exception e) {
-					// TODO find source of NullPointerException from Github ticket #130
+					e.printStackTrace();
 				}
 			}
 		} else {

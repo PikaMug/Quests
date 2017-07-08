@@ -3668,7 +3668,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					break;
 				}
 			}
-			text += ChatColor.BLUE + found.getCountPrompt().toString() + "\n\n";
+			if (found != null) {
+				text += ChatColor.BLUE + found.getCountPrompt().toString() + "\n\n";
+			}
 			return text;
 		}
 
@@ -3688,7 +3690,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						break;
 					}
 				}
-				if (found.datamap.isEmpty() == false) {
+				if (found != null && found.datamap.isEmpty() == false) {
 					context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.descriptions);
 					return new ObjectiveCustomDataListPrompt();
 				} else {

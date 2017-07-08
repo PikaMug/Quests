@@ -498,15 +498,9 @@ public class Quester {
 			}
 		}
 		for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
-			int delivered = 0;
+			int delivered = getQuestData(quest).itemsDelivered.get(is);
 			int amt = is.getAmount();
-			Integer npc = null;
-			if (getQuestData(quest).itemsDelivered.get(is) != null) {
-				delivered = getQuestData(quest).itemsDelivered.get(is);
-			}
-			if (getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(is)) != null) {
-				npc = getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(is));
-			}
+			Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(is));
 			if (delivered < amt) {
 				String obj = Lang.get("deliver");
 				obj = obj.replaceAll("<item>", ItemUtil.getName(is));
@@ -698,23 +692,17 @@ public class Quester {
 				toDamage = is;
 			}
 		}
-		if (damaged != null && toDamage != null) {
-			if (damaged.getAmount() < toDamage.getAmount()) {
-				ItemStack newDamaged = damaged;
-				newDamaged.setAmount(damaged.getAmount() + 1);
-				// TODO is this correct?
-				getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
-				if (damaged.getAmount() == toDamage.getAmount()) {
-					finishObjective(quest, "damageBlock", m, null, null, null, null, null, null, null, null, null);
-				}
+		if (damaged.getAmount() < toDamage.getAmount()) {
+			ItemStack newDamaged = damaged;
+			newDamaged.setAmount(damaged.getAmount() + 1);
+			// TODO is this correct?
+			getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
+			if (damaged.getAmount() == toDamage.getAmount()) {
+				finishObjective(quest, "damageBlock", m, null, null, null, null, null, null, null, null, null);
 			}
-		} else {
-			// Do nothing
-			System.out.println(quest + " somehow threw a null value. Please report on Github!");
 		}
 	}
 
-	// Called when a block is broken in PlayerListener, hence ItemStack m will always have amount of 1
 	public void breakBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
 		temp.setAmount(0);
@@ -730,19 +718,14 @@ public class Quester {
 				toBreak = is;
 			}
 		}
-		if (broken != null && toBreak != null) {
-			if (broken.getAmount() < toBreak.getAmount()) {
-				ItemStack newBroken = broken;
-				newBroken.setAmount(broken.getAmount() + 1);
-				// TODO is this correct?
-				getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
-				if (broken.getAmount() == toBreak.getAmount()) {
-					finishObjective(quest, "breakBlock", m, null, null, null, null, null, null, null, null, null);
-				}
+		if (broken.getAmount() < toBreak.getAmount()) {
+			ItemStack newBroken = broken;
+			newBroken.setAmount(broken.getAmount() + 1);
+			// TODO is this correct?
+			getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
+			if (broken.getAmount() == toBreak.getAmount()) {
+				finishObjective(quest, "breakBlock", m, null, null, null, null, null, null, null, null, null);
 			}
-		} else {
-			// Do nothing
-			System.out.println(quest + " somehow threw a null value. Please report on Github!");
 		}
 	}
 
@@ -761,19 +744,14 @@ public class Quester {
 				toPlace = is;
 			}
 		}
-		if (placed != null && toPlace != null) {
-			if (placed.getAmount() < toPlace.getAmount()) {
-				ItemStack newplaced = placed;
-				newplaced.setAmount(placed.getAmount() + 1);
-				// TODO is this correct?
-				getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newplaced);
-				if (placed.getAmount() == toPlace.getAmount()) {
-					finishObjective(quest, "placeBlock", m, null, null, null, null, null, null, null, null, null);
-				}
+		if (placed.getAmount() < toPlace.getAmount()) {
+			ItemStack newplaced = placed;
+			newplaced.setAmount(placed.getAmount() + 1);
+			// TODO is this correct?
+			getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newplaced);
+			if (placed.getAmount() == toPlace.getAmount()) {
+				finishObjective(quest, "placeBlock", m, null, null, null, null, null, null, null, null, null);
 			}
-		} else {
-			// Do nothing
-			System.out.println(quest + " somehow threw a null value. Please report on Github!");
 		}
 	}
 
@@ -792,19 +770,14 @@ public class Quester {
 				toUse = is;
 			}
 		}
-		if (used != null && toUse != null) {
-			if (used.getAmount() < toUse.getAmount()) {
-				ItemStack newUsed = used;
-				newUsed.setAmount(used.getAmount() + 1);
-				// TODO is this correct?
-				getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
-				if (used.getAmount() == toUse.getAmount()) {
-					finishObjective(quest, "useBlock", m, null, null, null, null, null, null, null, null, null);
-				}
+		if (used.getAmount() < toUse.getAmount()) {
+			ItemStack newUsed = used;
+			newUsed.setAmount(used.getAmount() + 1);
+			// TODO is this correct?
+			getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
+			if (used.getAmount() == toUse.getAmount()) {
+				finishObjective(quest, "useBlock", m, null, null, null, null, null, null, null, null, null);
 			}
-		} else {
-			// Do nothing
-			System.out.println(quest + " somehow threw a null value. Please report on Github!");
 		}
 	}
 
@@ -823,19 +796,14 @@ public class Quester {
 				toCut = is;
 			}
 		}
-		if (cut != null && toCut != null) {
-			if (cut.getAmount() < toCut.getAmount()) {
-				ItemStack newCut = cut;
-				newCut.setAmount(cut.getAmount() + 1);
-				// TODO is this correct?
-				getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
-				if (cut.getAmount() == toCut.getAmount()) {
-					finishObjective(quest, "cutBlock", m, null, null, null, null, null, null, null, null, null);
-				}
+		if (cut.getAmount() < toCut.getAmount()) {
+			ItemStack newCut = cut;
+			newCut.setAmount(cut.getAmount() + 1);
+			// TODO is this correct?
+			getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
+			if (cut.getAmount() == toCut.getAmount()) {
+				finishObjective(quest, "cutBlock", m, null, null, null, null, null, null, null, null, null);
 			}
-		} else {
-			// Do nothing
-			System.out.println(quest + " somehow threw a null value. Please report on Github!");
 		}
 	}
 
@@ -881,7 +849,7 @@ public class Quester {
 			Location locationToKillWithin = questData.locationsToKillWithin.get(indexOfMobKilled);
 			double radius = questData.radiiToKillWithin.get(indexOfMobKilled);
 			// Check world #name, not the object
-			if ((killedLocation.getWorld().getName() == locationToKillWithin.getWorld().getName()) == false) {
+			if ((killedLocation.getWorld().getName().equals(locationToKillWithin.getWorld().getName())) == false) {
 				return;
 			}
 			// Radius check, it's a "circle", not cuboid
@@ -2001,7 +1969,7 @@ public class Quester {
 					for (String s : names) {
 						ItemStack is;
 						// if (durability.get(names.indexOf(s)) != -1) {
-						if (durability.indexOf(names.indexOf(s)) != -1) {
+						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
@@ -2017,7 +1985,7 @@ public class Quester {
 					for (String s : names) {
 						ItemStack is;
 						// if (durability.get(names.indexOf(s)) != -1) {
-						if (durability.indexOf(names.indexOf(s)) != -1) {
+						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
@@ -2033,7 +2001,7 @@ public class Quester {
 					for (String s : names) {
 						ItemStack is;
 						// if (durability.get(names.indexOf(s)) != -1) {
-						if (durability.indexOf(names.indexOf(s)) != -1) {
+						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
@@ -2049,7 +2017,7 @@ public class Quester {
 					for (String s : names) {
 						ItemStack is;
 						// if (durability.get(names.indexOf(s)) != -1) {
-						if (durability.indexOf(names.indexOf(s)) != -1) {
+						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
@@ -2065,7 +2033,7 @@ public class Quester {
 					for (String s : names) {
 						ItemStack is;
 						// if (durability.get(names.indexOf(s)) != -1) {
-						if (durability.indexOf(names.indexOf(s)) != -1) {
+						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
