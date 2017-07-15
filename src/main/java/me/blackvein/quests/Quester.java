@@ -1045,6 +1045,7 @@ public class Quester {
 	 *            See CustomObjective class
 	 */
 	public void finishObjective(Quest quest, String objective, ItemStack material, ItemStack delivery, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
+		//TODO ItemStack material, is largely unnecessary as .name() can be obtained thru getQuestData(quest).blocksXXXX
 		Player p = getPlayer();
 		if (getCurrentStage(quest).objectiveOverride != null) {
 			if (testComplete(quest)) {
@@ -1062,34 +1063,44 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("damageBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("damage") + " " + prettyItemString(material.getType().name());
-			message = message + " " + material.getAmount() + "/" + material.getAmount();
+			String stack = getQuestData(quest).blocksDamaged.toString();
+			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
+			message = message + " " + amount + "/" + amount;
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("breakBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("break") + " " + prettyItemString(material.getType().name());
-			message = message + " " + material.getAmount() + "/" + material.getAmount();
+			String stack = getQuestData(quest).blocksBroken.toString();
+			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
+			message = message + " " + amount + "/" + amount;
 			p.sendMessage(message);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("placeBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("place") + " " + prettyItemString(material.getType().name());
-			message = message + " " + material.getAmount() + "/" + material.getAmount();
+			String stack = getQuestData(quest).blocksPlaced.toString();
+			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
+			message = message + " " + amount + "/" + amount;
 			p.sendMessage(message);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("useBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("use") + " " + prettyItemString(material.getType().name());
-			message = message + " " + material.getAmount() + "/" + material.getAmount();
+			String stack = getQuestData(quest).blocksUsed.toString();
+			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
+			message = message + " " + amount + "/" + amount;
 			p.sendMessage(message);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("cutBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("cut") + " " + prettyItemString(material.getType().name());
-			message = message + " " + material.getAmount() + "/" + material.getAmount();
+			String stack = getQuestData(quest).blocksCut.toString();
+			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
+			message = message + " " + amount + "/" + amount;
 			p.sendMessage(message);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
