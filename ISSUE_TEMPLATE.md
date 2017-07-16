@@ -4,6 +4,6 @@ In your issue, please include:
 
 - Description of problem & console errors
 
-- An example quest from quests.yml for testing, if applicable
+- Pastebin an example quest from quests.yml for testing, if applicable
 
 Failure to provide the first 2 bullets may result in your issue being closed!
