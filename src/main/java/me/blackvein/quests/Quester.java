@@ -1910,18 +1910,21 @@ public class Quester {
 			return false;
 		}
 		hardClear();
-		if (data.contains("completedRedoableQuests")) {
-			for (String s : data.getStringList("completedRedoableQuests")) {
-				for (Object o : data.getList("completedQuestTimes")) {
-					for (Quest q : plugin.quests) {
-						if (q.name.equalsIgnoreCase(s)) {
-							completedTimes.put(q.name, (Long) o);
-							break;
-						}
-					}
-				}
-			}
-		}
+        if (data.contains("completedRedoableQuests") && data.contains("completedQuestTimes")) {
+            List<String> redoableQuestNames = data.getStringList("completedRedoableQuests");
+            List<Object> redoableQuestTimes = (List<Object>) data.getList("completedQuestTimes");
+
+            if (redoableQuestNames.size() != redoableQuestTimes.size()) {
+                plugin.getLogger().log(Level.WARNING, "completedRedoableQuests has " + redoableQuestNames.size() + " Entries but completedQuestTimes has " + redoableQuestTimes.size() + " Entries for player " + id.toString() + ". This will cause errors, trying to prevent complete data loss now.");
+            }
+
+            for (int i = 0; i < redoableQuestNames.size(); i++) {
+                if (i < redoableQuestTimes.size())
+                    completedTimes.put(redoableQuestNames.get(i), (Long) redoableQuestTimes.get(i));
+                else
+                    completedTimes.put(redoableQuestNames.get(i), System.currentTimeMillis()); // This will cause the cooldown to be reset but at least, the rest of the data does not get lost
+            }
+        }
 		if (data.contains("amountsCompletedQuests")) {
 			List<String> list1 = data.getStringList("amountsCompletedQuests");
 			List<Integer> list2 = data.getIntegerList("amountsCompleted");
