@@ -1568,20 +1568,18 @@ public class EventFactory implements ConversationAbandonedListener {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetMobAmountsFirst"));
 					return new QuestMobPrompt(mobIndex, questMob);
 				}
-				if (context.getSessionData(CK.E_MOB_TYPES) == null) {
+				if (context.getSessionData(CK.E_MOB_TYPES) == null || ((LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)).isEmpty()) {
 					LinkedList<String> list = new LinkedList<String>();
 					list.add(questMob.serialize());
 					context.setSessionData(CK.E_MOB_TYPES, list);
 				} else {
-					if (((LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)).isEmpty()) {
-						LinkedList<String> list = new LinkedList<String>();
-						list.add(questMob.serialize());
-						context.setSessionData(CK.E_MOB_TYPES, list);
-					} else {
-						LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+					LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+					if (mobIndex < list.size()) {
 						list.set(mobIndex, questMob.serialize());
-						context.setSessionData(CK.E_MOB_TYPES, list);
+					} else {
+						list.add(questMob.serialize());
 					}
+					context.setSessionData(CK.E_MOB_TYPES, list);
 				}
 				return new MobPrompt();
 			} else if (input.equalsIgnoreCase("16")) {
