@@ -1868,6 +1868,7 @@ public class Quester {
 			for (String s : completedTimes.keySet()) {
 				questTimeNames.add(s);
 				questTimes.add(completedTimes.get(s));
+				System.out.println("Saving = " + s + "  " + completedTimes.get(s));
 			}
 			data.set("completedRedoableQuests", questTimeNames);
 			data.set("completedQuestTimes", questTimes);
@@ -1911,13 +1912,13 @@ public class Quester {
 		}
 		hardClear();
 		if (data.contains("completedRedoableQuests")) {
-			for (String s : data.getStringList("completedRedoableQuests")) {
-				for (Object o : data.getList("completedQuestTimes")) {
-					for (Quest q : plugin.quests) {
-						if (q.name.equalsIgnoreCase(s)) {
-							completedTimes.put(q.name, (Long) o);
-							break;
-						}
+			List<String> redoNames = data.getStringList("completedRedoableQuests");
+			List<Long> redoTimes = data.getLongList("completedQuestTimes");
+			for (String s : redoNames) {
+				for (Quest q : plugin.quests) {
+					if (q.name.equalsIgnoreCase(s)) {
+						completedTimes.put(q.name, redoTimes.get(redoNames.indexOf(s)));
+						break;
 					}
 				}
 			}
