@@ -1868,7 +1868,6 @@ public class Quester {
 			for (String s : completedTimes.keySet()) {
 				questTimeNames.add(s);
 				questTimes.add(completedTimes.get(s));
-				System.out.println("Saving = " + s + "  " + completedTimes.get(s));
 			}
 			data.set("completedRedoableQuests", questTimeNames);
 			data.set("completedQuestTimes", questTimes);

@@ -3614,7 +3614,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public static boolean removeItem(Inventory inventory, ItemStack is) {
 		int amount = is.getAmount();
-		HashMap<Integer, ? extends ItemStack> allItems = inventory.all(is);
+		HashMap<Integer, ? extends ItemStack> allItems = inventory.all(is.getType());
 		HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
 		int foundAmount = 0;
 		for (Map.Entry<Integer, ? extends ItemStack> item : allItems.entrySet()) {
