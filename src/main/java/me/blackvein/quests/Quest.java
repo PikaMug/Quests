@@ -423,13 +423,17 @@ public class Quest {
 			if (found != null) {
 				Map<String, Object> datamap = customRewards.get(found.getName());
 				String message = found.getRewardName();
-				for (String key : datamap.keySet()) {
-					message = message.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
+				if (message != null) {
+					for (String key : datamap.keySet()) {
+						message = message.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
+					}
+					player.sendMessage("- " + ChatColor.GOLD + message);
+				} else {
+					plugin.getLogger().warning("Failed to notify player: Custom Reward does not have an assigned name");
 				}
-				player.sendMessage("- " + ChatColor.GOLD + message);
 				found.giveReward(player, customRewards.get(s));
 			} else {
-				plugin.getLogger().warning("[Quests] Quester \"" + player.getName() + "\" completed the Quest \"" + name + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
+				plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \"" + name + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
 			}
 			none = null;
 		}
