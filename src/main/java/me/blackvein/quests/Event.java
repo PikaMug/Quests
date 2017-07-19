@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.QuestMob;
 
 public class Event {
@@ -37,6 +38,8 @@ public class Event {
 	int stormDuration = 0;
 	World thunderWorld = null;
 	int thunderDuration = 0;
+	Integer timer = 0;
+	Boolean cancelTimer = false;
 	public LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>() {
 
 		private static final long serialVersionUID = -761974607799449780L;
@@ -65,6 +68,10 @@ public class Event {
 	int saturation = -1;
 	float health = -1;
 	Location teleport;
+
+	public Event(final Quests plugin) {
+		this.plugin = plugin;
+	}
 
 	public int hashCode() {
 		assert false : "hashCode not designed";
@@ -232,13 +239,58 @@ public class Event {
 		if (failQuest == true) {
 			quest.failQuest(quester);
 		}
+		if (timer > 0) {
+			player.sendMessage(Quests.parseString(String.format(Lang.get("timerStart"), timer), quest));
+			if (timer > 60) {
+				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 60, false)
+						.runTaskLaterAsynchronously(plugin, (timer-60)*20).getTaskId(), quest);
+			}
+			if (timer > 30) {
+				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 30, false)
+						.runTaskLaterAsynchronously(plugin, (timer-30)*20).getTaskId(), quest);
+			}
+			if (timer > 10) {
+				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 10, false)
+						.runTaskLaterAsynchronously(plugin, (timer-10)*20).getTaskId(), quest);
+			}
+			if (timer > 5) {
+				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 5, false)
+						.runTaskLaterAsynchronously(plugin, (timer-5)*20).getTaskId(), quest);
+			}
+			if (timer > 4) {
+				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 4, false)
+						.runTaskLaterAsynchronously(plugin, (timer-4)*20).getTaskId(), quest);
+			}
+			if (timer > 3) {
+				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 3, false)
+						.runTaskLaterAsynchronously(plugin, (timer-3)*20).getTaskId(), quest);
+			}
+			if (timer > 2) {
+				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 2, false)
+						.runTaskLaterAsynchronously(plugin, (timer-2)*20).getTaskId(), quest);
+			}
+			if (timer > 1) {
+				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 1, false)
+						.runTaskLaterAsynchronously(plugin, (timer-1)*20).getTaskId(), quest);
+			}
+			quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 0, true)
+					.runTaskLaterAsynchronously(plugin, timer*20).getTaskId(), quest);
+		}
+		if (cancelTimer) {
+			for (Map.Entry<Integer, Quest> entry : quester.timers.entrySet()) {
+				if (entry.getValue().getName().equals(quest.getName())) {
+					plugin.getServer().getScheduler().cancelTask(entry.getKey());
+					quester.timers.remove(entry.getKey());
+				}
+			}
+		}
 	}
 
 	public static Event loadEvent(String name, Quests plugin) {
 		if (name == null || plugin == null) {
 			return null;
 		}
-		Event event = new Event();
+		Event event = new Event(plugin);
 		FileConfiguration data = new YamlConfiguration();
 		try {
 			data.load(new File(plugin.getDataFolder(), "events.yml"));
@@ -510,6 +562,22 @@ public class Event {
 				event.teleport = l;
 			} else {
 				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "teleport-location: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a location!");
+				return null;
+			}
+		}
+		if (data.contains(eventKey + "timer")) {
+			if (data.isInt(eventKey + "timer")) {
+				event.timer = data.getInt(eventKey + "timer");
+			} else {
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "timer: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
+				return null;
+			}
+		}
+		if (data.contains(eventKey + "cancel-timer")) {
+			if (data.isBoolean(eventKey + "cancel-timer")) {
+				event.cancelTimer = data.getBoolean(eventKey + "cancel-timer");
+			} else {
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cancel-timer: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a boolean!");
 				return null;
 			}
 		}

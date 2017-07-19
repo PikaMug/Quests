@@ -100,6 +100,9 @@ public class Quest {
 				completeQuest(q);
 			} else {
 				try {
+					if (q.getCurrentStage(this).finishEvent != null) {
+						q.getCurrentStage(this).finishEvent.fire(q, this);
+					}
 					setStage(q, q.currentQuests.get(this) + 1);
 				} catch (InvalidStageException e) {
 					e.printStackTrace();
@@ -257,6 +260,12 @@ public class Quest {
 		q.completedQuests.add(name);
 		String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
 		final String ps = Quests.parseString(finished, this);
+		for (Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
+			if (entry.getValue().getName().equals(getName())) {
+				plugin.getServer().getScheduler().cancelTask(entry.getKey());
+				q.timers.remove(entry.getKey());
+			}
+		}
 		org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 
 			@Override
