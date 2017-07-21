@@ -2515,7 +2515,12 @@ public class Quester {
 				meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
 				if (!meta.hasLore()) {
 					LinkedList<String> lines = new LinkedList<String>();
-					lines = MiscUtil.makeLines(quests.get(i).description, " ", 40, ChatColor.DARK_GREEN);
+					String desc = quests.get(i).description;
+					if (desc == ChatColor.stripColor(quests.get(i).description)) {
+						lines = MiscUtil.makeLines(quests.get(i).description, " ", 40, ChatColor.DARK_GREEN);
+					} else {
+						lines = MiscUtil.makeLines(quests.get(i).description, " ", 40, null);
+					}
 					meta.setLore(lines);
 				}
 				display.setItemMeta(meta);

@@ -97,7 +97,11 @@ public class MiscUtil {
 		int currentLength = 0;
 		for (String piece : split) {
 			if ((currentLength + piece.length()) > (lineLength + 1)) {
-				toReturn.add(lineColor + line.replaceAll("^" + wordDelimiter, ""));
+				if (lineColor != null) {
+					toReturn.add(lineColor + line.replaceAll("^" + wordDelimiter, ""));
+				} else {
+					toReturn.add(line.replaceAll("^" + wordDelimiter, ""));
+				}
 				line = piece + wordDelimiter;
 				currentLength = piece.length() + 1;
 			} else {
@@ -106,7 +110,11 @@ public class MiscUtil {
 			}
 		}
 		if (line.equals("") == false)
-			toReturn.add(lineColor + line);
+			if (lineColor != null) {
+				toReturn.add(lineColor + line);
+			} else {
+				toReturn.add(line);
+			}
 		return toReturn;
 	}
 }
