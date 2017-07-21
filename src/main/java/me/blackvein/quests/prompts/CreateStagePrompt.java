@@ -632,11 +632,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					} else {
 						missing = one;
 					}
-					LinkedList<Integer> noEntry = new LinkedList<Integer>();
+					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
 					for (int i = 0; i < missing; i++) {
-						noEntry.add(0);
+						elements.add(0);
 					}
-					context.setSessionData(pref + CK.S_BREAK_DURABILITY, noEntry);
+					context.setSessionData(pref + CK.S_BREAK_DURABILITY, elements);
 					return new CreateStagePrompt(stageNum, questFactory, citizens);
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
@@ -847,11 +847,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					} else {
 						missing = one;
 					}
-					LinkedList<Integer> noEntry = new LinkedList<Integer>();
+					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
 					for (int i = 0; i < missing; i++) {
-						noEntry.add(0);
+						elements.add(0);
 					}
-					context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, noEntry);
+					context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, elements);
 					return new DamageBlockListPrompt();
 				}
 			}
@@ -1059,11 +1059,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					} else {
 						missing = one;
 					}
-					LinkedList<Integer> noEntry = new LinkedList<Integer>();
+					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
 					for (int i = 0; i < missing; i++) {
-						noEntry.add(0);
+						elements.add(0);
 					}
-					context.setSessionData(pref + CK.S_PLACE_DURABILITY, noEntry);
+					context.setSessionData(pref + CK.S_PLACE_DURABILITY, elements);
 					return new PlaceBlockListPrompt();
 				}
 			}
@@ -1271,11 +1271,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					} else {
 						missing = one;
 					}
-					LinkedList<Integer> noEntry = new LinkedList<Integer>();
+					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_DURABILITY);
 					for (int i = 0; i < missing; i++) {
-						noEntry.add(0);
+						elements.add(0);
 					}
-					context.setSessionData(pref + CK.S_USE_DURABILITY, noEntry);
+					context.setSessionData(pref + CK.S_USE_DURABILITY, elements);
 				}
 			}
 			return null;
@@ -1482,11 +1482,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					} else {
 						missing = one;
 					}
-					LinkedList<Integer> noEntry = new LinkedList<Integer>();
+					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
 					for (int i = 0; i < missing; i++) {
-						noEntry.add(0);
+						elements.add(0);
 					}
-					context.setSessionData(pref + CK.S_CUT_DURABILITY, noEntry);
+					context.setSessionData(pref + CK.S_CUT_DURABILITY, elements);
 					return new CutBlockListPrompt();
 				}
 			}
