@@ -272,12 +272,13 @@ public class Lang {
 		langMap.put("stageEditorCustomAlreadyAdded", "That custom objective has already been added!");
 		langMap.put("stageEditorCustomCleared", "Custom objectives cleared.");
 		langMap.put("stageEditorCustomDataPrompt", "Enter value for <data>:");
-		langMap.put("stageEditorEnterBlockNames", "Enter block names, separating each one by a space, or enter \'cancel\' to return.");
-		langMap.put("stageEditorBreakBlocksPrompt", "Enter block amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		langMap.put("stageEditorEnterBlockNames", "Enter block names (or IDs), separating each one by a space, or enter \'cancel\' to return.");
+		langMap.put("stageEditorBreakBlocksPrompt", "Enter break amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
 		langMap.put("stageEditorDamageBlocksPrompt", "Enter damage amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
 		langMap.put("stageEditorPlaceBlocksPrompt", "Enter place amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
 		langMap.put("stageEditorUseBlocksPrompt", "Enter use amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
 		langMap.put("stageEditorCutBlocksPrompt", "Enter cut amounts (numbers), separating each one by a space, or enter \'cancel\' to return.");
+		langMap.put("stageEditorEnterBlockDurability", "Enter block durability (numbers), separating each one by a space, or enter \'cancel\' to return.");
 		langMap.put("stageEditorCatchFishPrompt", "Enter number of fish to catch, or 0 to clear the fish catch objective, or -1 to cancel");
 		langMap.put("stageEditorKillPlayerPrompt", "Enter number of players to kill, or 0 to clear the player kill objective, or -1 to cancel");
 		langMap.put("stageEditorEnchantTypePrompt", "Enter enchantment names, separating each one by a comma, or enter \'cancel\' to return.");

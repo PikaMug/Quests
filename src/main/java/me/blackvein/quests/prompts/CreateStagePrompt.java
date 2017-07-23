@@ -733,7 +733,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorBreakBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
 		}
 
 		@Override
@@ -853,6 +853,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					}
 					context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, elements);
 					return new DamageBlockListPrompt();
+				} else {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
+					return new DamageBlockListPrompt();
 				}
 			}
 			return null;
@@ -945,7 +948,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorDamageBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
 		}
 
 		@Override
@@ -1065,6 +1068,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					}
 					context.setSessionData(pref + CK.S_PLACE_DURABILITY, elements);
 					return new PlaceBlockListPrompt();
+				} else {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
+					return new PlaceBlockListPrompt();
 				}
 			}
 			return null;
@@ -1157,7 +1163,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorPlaceBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
 		}
 
 		@Override
@@ -1276,6 +1282,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						elements.add(0);
 					}
 					context.setSessionData(pref + CK.S_USE_DURABILITY, elements);
+				} else {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
+					return new UseBlockListPrompt();
 				}
 			}
 			return null;
@@ -1368,7 +1377,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorUseBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
 		}
 
 		@Override
@@ -1488,6 +1497,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					}
 					context.setSessionData(pref + CK.S_CUT_DURABILITY, elements);
 					return new CutBlockListPrompt();
+				} else {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
+					return new CutBlockListPrompt();
 				}
 			}
 			return null;
@@ -1580,7 +1592,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorCutBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
 		}
 
 		@Override
