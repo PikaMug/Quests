@@ -64,8 +64,6 @@ public class Quest {
 	List<String> commands = new LinkedList<String>();
 	List<String> permissions = new LinkedList<String>();
 	LinkedList<ItemStack> itemRewards = new LinkedList<ItemStack>();
-	LinkedList<Integer> rpgItemRewardIDs = new LinkedList<Integer>();
-	LinkedList<Integer> rpgItemRewardAmounts = new LinkedList<Integer>();
 	List<String> mcmmoSkills = new LinkedList<String>();
 	List<Integer> mcmmoAmounts = new LinkedList<Integer>();
 	List<String> heroesClasses = new LinkedList<String>();
@@ -233,7 +231,7 @@ public class Quest {
 					return false;
 				}
 			} else {
-				plugin.getLogger().warning("[Quests] Quester \"" + player.getName() + "\" attempted to take Quest \"" + name + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");
+				plugin.getLogger().warning("Quester \"" + player.getName() + "\" attempted to take Quest \"" + name + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");
 			}
 		}
 		if (quester.questPoints < questPointsReq) {
@@ -243,7 +241,6 @@ public class Quest {
 			return false;
 		}
 		for (String q : blockQuests) {
-			// TODO make sure this works
 			Quest questObject = new Quest();
 			questObject.name = q;
 			if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(questObject)) {
@@ -514,12 +511,6 @@ public class Quest {
 			if (other.itemRewards.equals(itemRewards) == false) {
 				return false;
 			}
-			if (other.rpgItemRewardIDs.equals(rpgItemRewardIDs) == false) {
-				return false;
-			}
-			if (other.rpgItemRewardAmounts.equals(rpgItemRewardAmounts) == false) {
-				return false;
-			}
 			if (other.mcmmoAmounts.equals(mcmmoAmounts) == false) {
 				return false;
 			}
@@ -645,8 +636,6 @@ public class Quest {
 		hash = 53 * hash + (this.commands != null ? this.commands.hashCode() : 0);
 		hash = 53 * hash + (this.permissions != null ? this.permissions.hashCode() : 0);
 		hash = 53 * hash + (this.itemRewards != null ? this.itemRewards.hashCode() : 0);
-		hash = 53 * hash + (this.rpgItemRewardIDs != null ? this.rpgItemRewardIDs.hashCode() : 0);
-		hash = 53 * hash + (this.rpgItemRewardAmounts != null ? this.rpgItemRewardAmounts.hashCode() : 0);
 		hash = 53 * hash + (this.mcmmoSkills != null ? this.mcmmoSkills.hashCode() : 0);
 		hash = 53 * hash + (this.mcmmoAmounts != null ? this.mcmmoAmounts.hashCode() : 0);
 		hash = 53 * hash + (this.heroesClasses != null ? this.heroesClasses.hashCode() : 0);
