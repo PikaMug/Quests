@@ -625,14 +625,16 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				} else {
 					two = 0;
 				}
-				if (one == two) {
+				if (one == two) {					
 					int missing;
+					LinkedList<Integer> elements;
 					if (context.getSessionData(pref + CK.S_BREAK_DURABILITY) != null) {
 						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_BREAK_DURABILITY)).size();
+						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
 					} else {
 						missing = one;
+						elements = new LinkedList<Integer>();
 					}
-					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
 					for (int i = 0; i < missing; i++) {
 						elements.add(0);
 					}
@@ -842,12 +844,14 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {
 					int missing;
+					LinkedList<Integer> elements;
 					if (context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) != null) {
 						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY)).size();
+						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
 					} else {
 						missing = one;
+						elements = new LinkedList<Integer>();
 					}
-					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
 					for (int i = 0; i < missing; i++) {
 						elements.add(0);
 					}
@@ -1057,12 +1061,14 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {
 					int missing;
+					LinkedList<Integer> elements;
 					if (context.getSessionData(pref + CK.S_PLACE_DURABILITY) != null) {
 						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_PLACE_DURABILITY)).size();
+						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
 					} else {
 						missing = one;
+						elements = new LinkedList<Integer>();
 					}
-					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
 					for (int i = 0; i < missing; i++) {
 						elements.add(0);
 					}
@@ -1272,12 +1278,14 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {
 					int missing;
+					LinkedList<Integer> elements;
 					if (context.getSessionData(pref + CK.S_USE_DURABILITY) != null) {
 						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_USE_DURABILITY)).size();
+						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_DURABILITY);
 					} else {
 						missing = one;
+						elements = new LinkedList<Integer>();
 					}
-					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_DURABILITY);
 					for (int i = 0; i < missing; i++) {
 						elements.add(0);
 					}
@@ -1487,12 +1495,14 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {
 					int missing;
+					LinkedList<Integer> elements;
 					if (context.getSessionData(pref + CK.S_CUT_DURABILITY) != null) {
 						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_CUT_DURABILITY)).size();
+						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
 					} else {
 						missing = one;
+						elements = new LinkedList<Integer>();
 					}
-					LinkedList<Integer> elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
 					for (int i = 0; i < missing; i++) {
 						elements.add(0);
 					}
