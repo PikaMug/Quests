@@ -852,7 +852,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						elements.add(0);
 					}
 					context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, elements);
-					return new DamageBlockListPrompt();
+					return new CreateStagePrompt(stageNum, questFactory, citizens);
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
 					return new DamageBlockListPrompt();
@@ -1067,7 +1067,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						elements.add(0);
 					}
 					context.setSessionData(pref + CK.S_PLACE_DURABILITY, elements);
-					return new PlaceBlockListPrompt();
+					return new CreateStagePrompt(stageNum, questFactory, citizens);
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
 					return new PlaceBlockListPrompt();
@@ -1282,6 +1282,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						elements.add(0);
 					}
 					context.setSessionData(pref + CK.S_USE_DURABILITY, elements);
+					return new CreateStagePrompt(stageNum, questFactory, citizens);
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
 					return new UseBlockListPrompt();
@@ -1496,7 +1497,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						elements.add(0);
 					}
 					context.setSessionData(pref + CK.S_CUT_DURABILITY, elements);
-					return new CutBlockListPrompt();
+					return new CreateStagePrompt(stageNum, questFactory, citizens);
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListNotSameSize"));
 					return new CutBlockListPrompt();
