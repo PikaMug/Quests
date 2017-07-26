@@ -3249,7 +3249,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				getLogger().log(Level.SEVERE, "Could not find section \"events\" from events.yml. Skipping.");
 			}
 		} else {
-			getLogger().log(Level.WARNING, "Unable to load events.yml as it was empty. Skipping.");
+			getLogger().log(Level.WARNING, "Empty file events.yml was not loaded.");
 		}
 	}
 
