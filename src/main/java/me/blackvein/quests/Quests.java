@@ -3227,21 +3227,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public void loadEvents() {
 		YamlConfiguration config = new YamlConfiguration();
 		File eventsFile = new File(this.getDataFolder(), "events.yml");
-		try {
-			config.load(eventsFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvalidConfigurationException e) {
-			e.printStackTrace();
-		}
-		ConfigurationSection sec = config.getConfigurationSection("events");
-		for (String s : sec.getKeys(false)) {
-			Event event = Event.loadEvent(s, this);
-			if (event != null) {
-				events.add(event);
-			} else {
-				getLogger().log(Level.SEVERE, "Failed to load Event \"" + s + "\". Skipping.");
+		if (eventsFile.length() != 0) {
+			try {
+				config.load(eventsFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InvalidConfigurationException e) {
+				e.printStackTrace();
 			}
+			ConfigurationSection sec = config.getConfigurationSection("events");
+			if (sec != null) {
+				for (String s : sec.getKeys(false)) {
+					Event event = Event.loadEvent(s, this);
+					if (event != null) {
+						events.add(event);
+					} else {
+						getLogger().log(Level.SEVERE, "Failed to load Event \"" + s + "\". Skipping.");
+					}
+				}
+			} else {
+				getLogger().log(Level.SEVERE, "Could not find section \"events\" from events.yml. Skipping.");
+			}
+		} else {
+			getLogger().log(Level.WARNING, "Unable to load events.yml as it was empty. Skipping.");
 		}
 	}
 
