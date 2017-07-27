@@ -1586,7 +1586,7 @@ public class Quester {
 	public void saveData() {
 		FileConfiguration data = getBaseData();
 		try {
-			data.save(new File(plugin.getDataFolder(), "data/" + id + ".yml"));
+			data.save(new File(plugin.getDataFolder(), "data" + File.separator + id + ".yml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1624,19 +1624,6 @@ public class Quester {
 				QuestData questData = getQuestData(quest);
 				if (questData == null)
 					continue;
-				if (questData.blocksDamaged.isEmpty() == false) {
-					LinkedList<String> blockNames = new LinkedList<String>();
-					LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
-					LinkedList<Short> blockDurability = new LinkedList<Short>();
-					for (ItemStack m : questData.blocksDamaged) {
-						blockNames.add(m.getType().name());
-						blockAmounts.add(m.getAmount());
-						blockDurability.add(m.getDurability());
-					}
-					questSec.set("blocks-damaged-names", blockNames);
-					questSec.set("blocks-damaged-amounts", blockAmounts);
-					questSec.set("blocks-damaged-durability", blockDurability);
-				}
 				if (questData.blocksBroken.isEmpty() == false) {
 					LinkedList<String> blockNames = new LinkedList<String>();
 					LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
@@ -1649,6 +1636,19 @@ public class Quester {
 					questSec.set("blocks-broken-names", blockNames);
 					questSec.set("blocks-broken-amounts", blockAmounts);
 					questSec.set("blocks-broken-durability", blockDurability);
+				}
+				if (questData.blocksDamaged.isEmpty() == false) {
+					LinkedList<String> blockNames = new LinkedList<String>();
+					LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+					LinkedList<Short> blockDurability = new LinkedList<Short>();
+					for (ItemStack m : questData.blocksDamaged) {
+						blockNames.add(m.getType().name());
+						blockAmounts.add(m.getAmount());
+						blockDurability.add(m.getDurability());
+					}
+					questSec.set("blocks-damaged-names", blockNames);
+					questSec.set("blocks-damaged-amounts", blockAmounts);
+					questSec.set("blocks-damaged-durability", blockDurability);
 				}
 				if (questData.blocksPlaced.isEmpty() == false) {
 					LinkedList<String> blockNames = new LinkedList<String>();
@@ -1895,10 +1895,10 @@ public class Quester {
 	public boolean loadData() {
 		FileConfiguration data = new YamlConfiguration();
 		try {
-			File dataFile = new File(plugin.getDataFolder(), "data/" + id.toString() + ".yml");
+			File dataFile = new File(plugin.getDataFolder(), "data" + File.separator + id.toString() + ".yml");
 			if (dataFile.exists() == false) {
 				OfflinePlayer p = getOfflinePlayer();
-				dataFile = new File(plugin.getDataFolder(), "data/" + p.getName() + ".yml");
+				dataFile = new File(plugin.getDataFolder(), "data" + File.separator + p.getName() + ".yml");
 				if (dataFile.exists() == false) {
 					return false;
 				}
@@ -1973,36 +1973,34 @@ public class Quester {
 				addEmpties(quest);
 				if (questSec == null)
 					continue;
-				if (questSec.contains("blocks-damaged-names")) {
-					List<String> names = questSec.getStringList("blocks-damaged-names");
-					List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
-					List<Short> durability = questSec.getShortList("blocks-damaged-durability");
-					for (String s : names) {
-						ItemStack is;
-						// if (durability.get(names.indexOf(s)) != -1) {
-						if (durability.indexOf((short)names.indexOf(s)) != -1) {
-							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
-						} else {
-							// Legacy
-							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
-						}
-						getQuestData(quest).blocksDamaged.add(is); // TODO should be .set() ?
-					}
-				}
 				if (questSec.contains("blocks-broken-names")) {
 					List<String> names = questSec.getStringList("blocks-broken-names");
 					List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
 					List<Short> durability = questSec.getShortList("blocks-broken-durability");
 					for (String s : names) {
 						ItemStack is;
-						// if (durability.get(names.indexOf(s)) != -1) {
 						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksBroken.add(is); // TODO should be .set() ?
+						getQuestData(quest).blocksBroken.set(names.indexOf(s), is);
+					}
+				}
+				if (questSec.contains("blocks-damaged-names")) {
+					List<String> names = questSec.getStringList("blocks-damaged-names");
+					List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
+					List<Short> durability = questSec.getShortList("blocks-damaged-durability");
+					for (String s : names) {
+						ItemStack is;
+						if (durability.indexOf((short)names.indexOf(s)) != -1) {
+							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
+						} else {
+							// Legacy
+							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
+						}
+						getQuestData(quest).blocksDamaged.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("blocks-placed-names")) {
@@ -2011,14 +2009,13 @@ public class Quester {
 					List<Short> durability = questSec.getShortList("blocks-placed-durability");
 					for (String s : names) {
 						ItemStack is;
-						// if (durability.get(names.indexOf(s)) != -1) {
 						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksPlaced.add(is); // TODO should be .set() ?
+						getQuestData(quest).blocksPlaced.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("blocks-used-names")) {
@@ -2027,14 +2024,13 @@ public class Quester {
 					List<Short> durability = questSec.getShortList("blocks-used-durability");
 					for (String s : names) {
 						ItemStack is;
-						// if (durability.get(names.indexOf(s)) != -1) {
 						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksUsed.add(is); // TODO should be .set() ?
+						getQuestData(quest).blocksUsed.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("blocks-cut-names")) {
@@ -2043,14 +2039,13 @@ public class Quester {
 					List<Short> durability = questSec.getShortList("blocks-cut-durability");
 					for (String s : names) {
 						ItemStack is;
-						// if (durability.get(names.indexOf(s)) != -1) {
 						if (durability.indexOf((short)names.indexOf(s)) != -1) {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
 						} else {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksCut.add(is); // TODO should be .set() ?
+						getQuestData(quest).blocksCut.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("fish-caught")) {

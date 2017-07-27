@@ -603,7 +603,7 @@ public class PlayerListener implements Listener {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 			Quester quester = new Quester(plugin);
 			quester.id = evt.getPlayer().getUniqueId();
-			if (new File(plugin.getDataFolder(), "data/" + quester.id + ".yml").exists()) {
+			if (new File(plugin.getDataFolder(), "data" + File.separator + quester.id + ".yml").exists()) {
 				quester.loadData();
 			} else if (Quests.genFilesOnJoin) {
 				quester.saveData();
