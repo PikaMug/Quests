@@ -1018,19 +1018,19 @@ public class QuestFactory implements ConversationAbandonedListener {
 		String pref;
 		LinkedList<Integer> breakIds;
 		LinkedList<Integer> breakAmounts;
-		LinkedList<Integer> breakDurability;
+		LinkedList<Short> breakDurability;
 		LinkedList<Integer> damageIds;
 		LinkedList<Integer> damageAmounts;
-		LinkedList<Integer> damageDurability;
+		LinkedList<Short> damageDurability;
 		LinkedList<Integer> placeIds;
 		LinkedList<Integer> placeAmounts;
-		LinkedList<Integer> placeDurability;
+		LinkedList<Short> placeDurability;
 		LinkedList<Integer> useIds;
 		LinkedList<Integer> useAmounts;
-		LinkedList<Integer> useDurability;
+		LinkedList<Short> useDurability;
 		LinkedList<Integer> cutIds;
 		LinkedList<Integer> cutAmounts;
-		LinkedList<Integer> cutDurability;
+		LinkedList<Short> cutDurability;
 		Integer fish;
 		Integer players;
 		LinkedList<String> enchantments;
@@ -1132,27 +1132,27 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (cc.getSessionData(pref + CK.S_BREAK_NAMES) != null) {
 				breakIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_NAMES);
 				breakAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_AMOUNTS);
-				breakDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_DURABILITY);
+				breakDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_BREAK_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
 				damageIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_NAMES);
 				damageAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
-				damageDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
+				damageDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_PLACE_NAMES) != null) {
 				placeIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_NAMES);
 				placeAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_AMOUNTS);
-				placeDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_DURABILITY);
+				placeDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_PLACE_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_USE_NAMES) != null) {
 				useIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_NAMES);
 				useAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_AMOUNTS);
-				useDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_DURABILITY);
+				useDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_USE_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_CUT_NAMES) != null) {
 				cutIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_NAMES);
 				cutAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_AMOUNTS);
-				cutDurability = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_DURABILITY);
+				cutDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_CUT_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_FISH) != null) {
 				fish = (Integer) cc.getSessionData(pref + CK.S_FISH);

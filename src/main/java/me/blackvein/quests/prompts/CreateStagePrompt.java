@@ -577,8 +577,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
-					for (Integer i : getBlockDurability(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+					for (Short s : getBlockDurability(context)) {
+						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -627,16 +627,16 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {					
 					int missing;
-					LinkedList<Integer> elements;
+					LinkedList<Short> elements;
 					if (context.getSessionData(pref + CK.S_BREAK_DURABILITY) != null) {
-						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_BREAK_DURABILITY)).size();
-						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
+						missing = one - ((List<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY)).size();
+						elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
 					} else {
 						missing = one;
-						elements = new LinkedList<Integer>();
+						elements = new LinkedList<Short>();
 					}
 					for (int i = 0; i < missing; i++) {
-						elements.add(0);
+						elements.add((short) 0);
 					}
 					context.setSessionData(pref + CK.S_BREAK_DURABILITY, elements);
 					return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -659,8 +659,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		}
 
 		@SuppressWarnings("unchecked")
-		private List<Integer> getBlockDurability(ConversationContext context) {
-			return (List<Integer>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
+		private List<Short> getBlockDurability(ConversationContext context) {
+			return (List<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
 		}
 	}
 
@@ -742,11 +742,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<Integer> durability = new LinkedList<Integer>();
+				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Integer.parseInt(s) > 0) {
-							durability.add(Integer.parseInt(s));
+						if (Short.parseShort(s) > 0) {
+							durability.add(Short.parseShort(s));
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
 							return new BreakBlockDurabilityPrompt();
@@ -794,8 +794,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
-					for (Integer i : getBlockDurability(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+					for (Short s : getBlockDurability(context)) {
+						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -844,16 +844,16 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {
 					int missing;
-					LinkedList<Integer> elements;
+					LinkedList<Short> elements;
 					if (context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) != null) {
-						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY)).size();
-						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
+						missing = one - ((List<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY)).size();
+						elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
 					} else {
 						missing = one;
-						elements = new LinkedList<Integer>();
+						elements = new LinkedList<Short>();
 					}
 					for (int i = 0; i < missing; i++) {
-						elements.add(0);
+						elements.add((short) 0);
 					}
 					context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, elements);
 					return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -876,8 +876,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		}
 
 		@SuppressWarnings("unchecked")
-		private List<Integer> getBlockDurability(ConversationContext context) {
-			return (List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
+		private List<Short> getBlockDurability(ConversationContext context) {
+			return (List<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
 		}
 	}
 
@@ -959,11 +959,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<Integer> durability = new LinkedList<Integer>();
+				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Integer.parseInt(s) > 0) {
-							durability.add(Integer.parseInt(s));
+						if (Short.parseShort(s) > 0) {
+							durability.add(Short.parseShort(s));
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
 							return new DamageBlockDurabilityPrompt();
@@ -1011,8 +1011,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
-					for (Integer i : getBlockDurability(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+					for (Short s : getBlockDurability(context)) {
+						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -1061,16 +1061,16 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {
 					int missing;
-					LinkedList<Integer> elements;
+					LinkedList<Short> elements;
 					if (context.getSessionData(pref + CK.S_PLACE_DURABILITY) != null) {
-						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_PLACE_DURABILITY)).size();
-						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
+						missing = one - ((List<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY)).size();
+						elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
 					} else {
 						missing = one;
-						elements = new LinkedList<Integer>();
+						elements = new LinkedList<Short>();
 					}
 					for (int i = 0; i < missing; i++) {
-						elements.add(0);
+						elements.add((short) 0);
 					}
 					context.setSessionData(pref + CK.S_PLACE_DURABILITY, elements);
 					return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -1093,8 +1093,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		}
 
 		@SuppressWarnings("unchecked")
-		private List<Integer> getBlockDurability(ConversationContext context) {
-			return (List<Integer>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
+		private List<Short> getBlockDurability(ConversationContext context) {
+			return (List<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
 		}
 	}
 
@@ -1176,11 +1176,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<Integer> durability = new LinkedList<Integer>();
+				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Integer.parseInt(s) > 0) {
-							durability.add(Integer.parseInt(s));
+						if (Short.parseShort(s) > 0) {
+							durability.add(Short.parseShort(s));
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
 							return new PlaceBlockDurabilityPrompt();
@@ -1228,8 +1228,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
-					for (Integer i : getBlockDurability(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+					for (Short s : getBlockDurability(context)) {
+						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -1278,16 +1278,16 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {
 					int missing;
-					LinkedList<Integer> elements;
+					LinkedList<Short> elements;
 					if (context.getSessionData(pref + CK.S_USE_DURABILITY) != null) {
-						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_USE_DURABILITY)).size();
-						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_DURABILITY);
+						missing = one - ((List<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY)).size();
+						elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY);
 					} else {
 						missing = one;
-						elements = new LinkedList<Integer>();
+						elements = new LinkedList<Short>();
 					}
 					for (int i = 0; i < missing; i++) {
-						elements.add(0);
+						elements.add((short) 0);
 					}
 					context.setSessionData(pref + CK.S_USE_DURABILITY, elements);
 					return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -1310,8 +1310,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		}
 
 		@SuppressWarnings("unchecked")
-		private List<Integer> getBlockDurability(ConversationContext context) {
-			return (List<Integer>) context.getSessionData(pref + CK.S_USE_DURABILITY);
+		private List<Short> getBlockDurability(ConversationContext context) {
+			return (List<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY);
 		}
 	}
 
@@ -1393,11 +1393,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<Integer> durability = new LinkedList<Integer>();
+				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Integer.parseInt(s) > 0) {
-							durability.add(Integer.parseInt(s));
+						if (Short.parseShort(s) > 0) {
+							durability.add(Short.parseShort(s));
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
 							return new UseBlockDurabilityPrompt();
@@ -1445,8 +1445,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetBlockDurability") + "\n";
-					for (Integer i : getBlockDurability(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+					for (Short s : getBlockDurability(context)) {
+						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -1495,16 +1495,16 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (one == two) {
 					int missing;
-					LinkedList<Integer> elements;
+					LinkedList<Short> elements;
 					if (context.getSessionData(pref + CK.S_CUT_DURABILITY) != null) {
-						missing = one - ((List<Integer>) context.getSessionData(pref + CK.S_CUT_DURABILITY)).size();
-						elements = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
+						missing = one - ((List<Short>) context.getSessionData(pref + CK.S_CUT_DURABILITY)).size();
+						elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
 					} else {
 						missing = one;
-						elements = new LinkedList<Integer>();
+						elements = new LinkedList<Short>();
 					}
 					for (int i = 0; i < missing; i++) {
-						elements.add(0);
+						elements.add((short) 0);
 					}
 					context.setSessionData(pref + CK.S_CUT_DURABILITY, elements);
 					return new CreateStagePrompt(stageNum, questFactory, citizens);
@@ -1527,8 +1527,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		}
 
 		@SuppressWarnings("unchecked")
-		private List<Integer> getBlockDurability(ConversationContext context) {
-			return (List<Integer>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
+		private List<Short> getBlockDurability(ConversationContext context) {
+			return (List<Short>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
 		}
 	}
 
@@ -1610,11 +1610,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<Integer> durability = new LinkedList<Integer>();
+				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Integer.parseInt(s) > 0) {
-							durability.add(Integer.parseInt(s));
+						if (Short.parseShort(s) > 0) {
+							durability.add(Short.parseShort(s));
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
 							return new CutBlockDurabilityPrompt();
