@@ -356,17 +356,6 @@ public class Quester {
 		LinkedList<String> unfinishedObjectives = new LinkedList<String>();
 		LinkedList<String> finishedObjectives = new LinkedList<String>();
 		LinkedList<String> objectives = new LinkedList<String>();
-		for (ItemStack e : getCurrentStage(quest).blocksToDamage) {
-			for (ItemStack e2 : getQuestData(quest).blocksDamaged) {
-				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-					if (e2.getAmount() < e.getAmount()) {
-						unfinishedObjectives.add(ChatColor.GREEN + Lang.get("damage") + " " + Items.itemByType(e2.getType()).getName() + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
-					} else {
-						finishedObjectives.add(ChatColor.GRAY + Lang.get("damage") + " " + Items.itemByType(e2.getType()).getName() + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
-					}
-				}
-			}
-		}
 		for (ItemStack e : getCurrentStage(quest).blocksToBreak) {
 			for (ItemStack e2 : getQuestData(quest).blocksBroken) {
 				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
@@ -374,6 +363,17 @@ public class Quester {
 						unfinishedObjectives.add(ChatColor.GREEN + Lang.get("break") + " " + Items.itemByType(e2.getType()).getName() + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
 					} else {
 						finishedObjectives.add(ChatColor.GRAY + Lang.get("break") + " " + Items.itemByType(e2.getType()).getName() + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+					}
+				}
+			}
+		}
+		for (ItemStack e : getCurrentStage(quest).blocksToDamage) {
+			for (ItemStack e2 : getQuestData(quest).blocksDamaged) {
+				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
+					if (e2.getAmount() < e.getAmount()) {
+						unfinishedObjectives.add(ChatColor.GREEN + Lang.get("damage") + " " + Items.itemByType(e2.getType()).getName() + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+					} else {
+						finishedObjectives.add(ChatColor.GRAY + Lang.get("damage") + " " + Items.itemByType(e2.getType()).getName() + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
 					}
 				}
 			}
@@ -693,7 +693,6 @@ public class Quester {
 		if (broken.getAmount() < toBreak.getAmount()) {
 			ItemStack newBroken = broken;
 			newBroken.setAmount(broken.getAmount() + 1);
-			// TODO is this correct?
 			getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
 			if (broken.getAmount() == toBreak.getAmount()) {
 				finishObjective(quest, "breakBlock", m, null, null, null, null, null, null, null, null, null);
@@ -719,7 +718,6 @@ public class Quester {
 		if (damaged.getAmount() < toDamage.getAmount()) {
 			ItemStack newDamaged = damaged;
 			newDamaged.setAmount(damaged.getAmount() + 1);
-			// TODO is this correct?
 			getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
 			if (damaged.getAmount() == toDamage.getAmount()) {
 				finishObjective(quest, "damageBlock", m, null, null, null, null, null, null, null, null, null);
@@ -745,7 +743,6 @@ public class Quester {
 		if (placed.getAmount() < toPlace.getAmount()) {
 			ItemStack newplaced = placed;
 			newplaced.setAmount(placed.getAmount() + 1);
-			// TODO is this correct?
 			getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newplaced);
 			if (placed.getAmount() == toPlace.getAmount()) {
 				finishObjective(quest, "placeBlock", m, null, null, null, null, null, null, null, null, null);
@@ -771,7 +768,6 @@ public class Quester {
 		if (used.getAmount() < toUse.getAmount()) {
 			ItemStack newUsed = used;
 			newUsed.setAmount(used.getAmount() + 1);
-			// TODO is this correct?
 			getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
 			if (used.getAmount() == toUse.getAmount()) {
 				finishObjective(quest, "useBlock", m, null, null, null, null, null, null, null, null, null);
@@ -797,7 +793,6 @@ public class Quester {
 		if (cut.getAmount() < toCut.getAmount()) {
 			ItemStack newCut = cut;
 			newCut.setAmount(cut.getAmount() + 1);
-			// TODO is this correct?
 			getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
 			if (cut.getAmount() == toCut.getAmount()) {
 				finishObjective(quest, "cutBlock", m, null, null, null, null, null, null, null, null, null);
@@ -930,9 +925,9 @@ public class Quester {
 					}
 				}
 			} catch (IndexOutOfBoundsException e) {
-				System.out.println("An error has occurred with Quests. Please report on Github. Include the info below");
-				System.out.println("index = " + getQuestData(quest).locationsReached.indexOf(location));
-				System.out.println("locationsReached = " + getQuestData(quest).locationsReached.toString());
+				plugin.getLogger().severe("An error has occurred with Quests. Please report on Github. Include the info below");
+				plugin.getLogger().severe("index = " + getQuestData(quest).locationsReached.indexOf(location));
+				plugin.getLogger().severe("locationsReached = " + getQuestData(quest).locationsReached.toString());
 				e.printStackTrace();
 			}
 		}
@@ -1446,13 +1441,6 @@ public class Quester {
 			for (Integer n : quest.getStage(stage).citizensToKill) {
 				data.citizensKilled.add(n);
 				data.citizenNumKilled.add(0);
-			}
-		}
-		if (quest.getStage(stage).blocksToCut.isEmpty() == false) {
-			for (ItemStack is : quest.getStage(stage).blocksToCut) {
-				// TODO should be .set() ?
-				is.setAmount(0);
-				data.blocksCut.add(is);
 			}
 		}
 		if (quest.getStage(stage).locationsToReach.isEmpty() == false) {

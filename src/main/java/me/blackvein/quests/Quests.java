@@ -1115,7 +1115,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 			}
 		} catch (NullPointerException npe) {
-			System.out.println("Please report this full error in Github ticket #130");
 			npe.printStackTrace();
 		}
 	}
@@ -1131,7 +1130,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				quester.hardClear();
 				quester.saveData();
 				quester.updateJournal();
-				final File dataFolder = new File(this.getDataFolder(), "data/");
+				final File dataFolder = new File(this.getDataFolder(), "data" + File.separator);
 				final File found = new File(dataFolder, quester.id + ".yml");
 				found.delete();
 				addToBlacklist(quester.id);
@@ -1164,7 +1163,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				quester.hardClear();
 				quester.saveData();
 				quester.updateJournal();
-				final File dataFolder = new File(this.getDataFolder(), "data/");
+				final File dataFolder = new File(this.getDataFolder(), "data" + File.separator);
 				final File found = new File(dataFolder, id + ".yml");
 				found.delete();
 				String msg = Lang.get("questReset");
