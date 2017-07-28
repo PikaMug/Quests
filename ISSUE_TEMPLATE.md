@@ -1,9 +1,5 @@
-In your issue, please include:
+(__Required__) What is your Quests version / build number (do _not_ say "latest")?
 
-- Spigot and Quests versions (do not say "latest")
+(__Required__) Please describe the problem and how to replicate it. Any console errors?
 
-- Description of problem & console errors
-
-- Pastebin an example quest from quests.yml for testing, if applicable
-
-Failure to provide the first 2 bullets may result in your issue being closed!
+(__Optional__) Can you provide an example quest from quests.yml _using Pastebin.com_?
