@@ -930,6 +930,7 @@ public class Lang {
 		langMap.put("quest", "Quest");
 		langMap.put("quests", "Quests");
 		langMap.put("createdBy", "Created by");
+		langMap.put("continuedBy", "and continued by");
 		langMap.put("questPoints", "Quest Points");
 		langMap.put("complete", "Complete");
 		langMap.put("redoable", "Redoable");

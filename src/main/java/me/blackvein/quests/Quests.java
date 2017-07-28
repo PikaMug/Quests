@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -1274,7 +1274,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	private boolean questsInfo(final CommandSender cs) {
 		cs.sendMessage(ChatColor.GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
-		cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.DARK_RED + "Blackvein");
+		cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.DARK_RED + "Blackvein"
+				+ ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.DARK_RED + "FlyingPikachu");
+		cs.sendMessage(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "https://www.spigotmc.org/resources/quests.3711/");
 		return true;
 	}
 
@@ -3912,8 +3914,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		int numQuesters = 0;
 		int succeeded = 0;
 		int failed = 0;
-		final File dataFolder = new File(this.getDataFolder(), "data/");
-		final File oldDataFolder = new File(this.getDataFolder(), "data/old/");
+		final File dataFolder = new File(this.getDataFolder(), "data" + File.separator);
+		final File oldDataFolder = new File(this.getDataFolder(), "data" + File.separator + "old" + File.separator);
 		if (oldDataFolder.exists() == false || oldDataFolder.exists() && oldDataFolder.isDirectory() == false) {
 			oldDataFolder.mkdir();
 		}
@@ -3960,7 +3962,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							idMap = fetcher.call();
 						} catch (Exception ex) {
 							getLogger().severe("Error retrieving data from Mojang account database. Error log:");
-							Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
+							ex.printStackTrace();
 							return;
 						}
 						for (Entry<String, UUID> entry : idMap.entrySet()) {
@@ -3990,7 +3992,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							}
 						}
 						getLogger().info("Conversion completed: " + converted + " Converted. " + failed + " Failed.");
-						getLogger().info("Old data files stored in /Quests/data/old");
+						getLogger().info("Old data files stored in " 
+								+ File.separator + "Quests" + File.separator + "data" + File.separator + "old");
 					}
 				});
 			} else {
