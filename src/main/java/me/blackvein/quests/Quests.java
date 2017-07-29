@@ -1936,7 +1936,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		if (quester == null) {
 			if (!questerBlacklist.contains(id.toString())) {
-				getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval..");
+				getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval...");
 			}
 			quester = new Quester(this);
 			quester.id = id;
