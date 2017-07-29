@@ -2780,10 +2780,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								itemsToDeliver = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".items-to-deliver");
 								itemDeliveryTargetIds = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".npc-delivery-ids");
 								deliveryMessages.addAll(config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".delivery-messages"));
+								int index = 0;
 								for (String item : itemsToDeliver) {
 									ItemStack is = ItemUtil.readItemStack("" + item);
+									int npcId = itemDeliveryTargetIds.get(index);
+									index++;
 									if (is != null) {
-										int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
 										NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
 										if (npc != null) {
 											oStage.itemsToDeliver.add(is);
