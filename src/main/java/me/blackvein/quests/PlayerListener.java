@@ -48,7 +48,6 @@ import org.bukkit.projectiles.ProjectileSource;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
@@ -650,6 +649,12 @@ public class PlayerListener implements Listener {
 					currentStage.disconnectEvent.fire(quester, quest);
 				}
 			}
+			quester.timers.keySet().forEach(timerId -> {
+				plugin.getServer().getScheduler().cancelTask(timerId);
+				quester.timers.get(timerId).failQuest(quester);
+				quester.timers.remove(timerId);
+			});
+
 			if (quester.hasData()) {
 				quester.saveData();
 			}

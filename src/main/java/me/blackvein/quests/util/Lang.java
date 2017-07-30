@@ -433,6 +433,9 @@ public class Lang {
 		langMap.put("eventEditorSetHunger", "Set player hunger level");
 		langMap.put("eventEditorSetSaturation", "Set player saturation level");
 		langMap.put("eventEditorSetHealth", "Set player health level");
+		langMap.put("eventEditorEnterTimerSeconds", "Set number of seconds left before the quest fails (use cancel-timer event to cancel timers)");
+		langMap.put("eventEditorSetTimer", "Set time to fail quest");
+		langMap.put("eventEditorCancelTimer", "Cancel the quest timer");
 		langMap.put("eventEditorSetTeleport", "Set player teleport location");
 		langMap.put("eventEditorSetCommands", "Set commands to execute");
 		langMap.put("eventEditorItems", "Event Items");
@@ -944,6 +947,9 @@ public class Lang {
 		langMap.put("valRequired", "Value required");
 		langMap.put("enchantedItem", "*Enchanted*");
 		langMap.put("experience", "Experience");
+		// Timers
+		langMap.put("timerMessage", "<green>Time left to finish the quest/stage: <red>%s seconds");
+		langMap.put("timerStart", "<green>You have <red>%s seconds <green>to finish this quest/stage");
 		//
 		// Error Messages
 		langMap.put("questErrorReadingFile", "Error reading Quests file.");

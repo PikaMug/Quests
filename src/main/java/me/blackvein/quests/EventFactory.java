@@ -163,6 +163,8 @@ public class EventFactory implements ConversationAbandonedListener {
 		context.setSessionData(CK.E_HEALTH, null);
 		context.setSessionData(CK.E_TELEPORT, null);
 		context.setSessionData(CK.E_COMMANDS, null);
+		context.setSessionData(CK.E_TIMER, null);
+		context.setSessionData(CK.E_CANCEL_TIMER, null);
 	}
 
 	public static void loadData(Event event, ConversationContext context) {
@@ -250,6 +252,12 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 		if (event.commands != null) {
 			context.setSessionData(CK.E_COMMANDS, event.commands);
+		}
+		if (event.timer > 0) {
+			context.setSessionData(CK.E_TIMER, event.timer);
+		}
+		if (event.cancelTimer) {
+			context.setSessionData(CK.E_CANCEL_TIMER, true);
 		}
 	}
 
@@ -358,7 +366,7 @@ public class EventFactory implements ConversationAbandonedListener {
 	private class CreateMenuPrompt extends FixedSetPrompt {
 
 		public CreateMenuPrompt() {
-			super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19");
+			super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21");
 		}
 
 		@SuppressWarnings("unchecked")
@@ -477,8 +485,17 @@ public class EventFactory implements ConversationAbandonedListener {
 					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 				}
 			}
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "18" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done") + "\n";
-			text += ChatColor.RED + "" + ChatColor.BOLD + "19" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("quit");
+			if (context.getSessionData(CK.E_TIMER) == null) {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "18" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetTimer") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+			} else {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "18" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetTimer") + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.E_TIMER) + "\"" + ChatColor.YELLOW + ")\n";
+			}
+			if (context.getSessionData(CK.E_CANCEL_TIMER) == null) {
+				context.setSessionData(CK.E_CANCEL_TIMER, "No");
+			}
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "19" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorCancelTimer") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_CANCEL_TIMER) + "\n";
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "20" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done") + "\n";
+			text += ChatColor.RED + "" + ChatColor.BOLD + "21" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("quit");
 			return text;
 		}
 
@@ -534,15 +551,39 @@ public class EventFactory implements ConversationAbandonedListener {
 			} else if (input.equalsIgnoreCase("17")) {
 				return new CommandsPrompt();
 			} else if (input.equalsIgnoreCase("18")) {
+				return new TimerPrompt();
+			} else if (input.equalsIgnoreCase("19")) {
+				String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
+				if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+					context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
+				} else {
+					context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("yesWord"));
+				}
+				return new CreateMenuPrompt();
+			} else if (input.equalsIgnoreCase("20")) {
 				if (context.getSessionData(CK.E_OLD_EVENT) != null) {
 					return new FinishPrompt((String) context.getSessionData(CK.E_OLD_EVENT));
 				} else {
 					return new FinishPrompt(null);
 				}
-			} else if (input.equalsIgnoreCase("19")) {
+			} else if (input.equalsIgnoreCase("21")) {
 				return new QuitPrompt();
 			}
 			return null;
+		}
+	}
+
+	private class TimerPrompt extends NumericPrompt {
+
+		@Override
+		protected Prompt acceptValidatedInput(final ConversationContext context, final Number number) {
+			context.setSessionData(CK.E_TIMER, number);
+			return new CreateMenuPrompt();
+		}
+
+		@Override
+		public String getPromptText(final ConversationContext conversationContext) {
+			return ChatColor.YELLOW + Lang.get("eventEditorEnterTimerSeconds");
 		}
 	}
 
@@ -820,6 +861,15 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 		if (context.getSessionData(CK.E_TELEPORT) != null) {
 			section.set("teleport-location", getCString(context, CK.E_TELEPORT));
+		}
+		if (context.getSessionData(CK.E_TIMER) != null && (int) context.getSessionData(CK.E_TIMER) > 0) {
+			section.set("timer", getCInt(context, CK.E_TIMER));
+		}
+		if (context.getSessionData(CK.E_CANCEL_TIMER) != null) {
+			String s = getCString(context, CK.E_CANCEL_TIMER);
+			if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+				section.set("cancel-timer", true);
+			}
 		}
 		try {
 			data.save(eventsFile);

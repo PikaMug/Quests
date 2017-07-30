@@ -77,3 +77,64 @@ quests:
           fish-to-catch: 5
     rewards:
       exp: 250
+
+  TimedQuest:
+    name: 'Timed Quest'
+    ask-message: 'This is timed quest, mine dirt before time runs out!'
+    finish-message: 'You did it in time!'
+    stages:
+      ordered:
+        '1':
+          break-block-names:
+          - DIRT
+          break-block-amounts:
+          - 10
+          break-block-durability:
+          - 0
+          start-event: TimerEvent
+
+  TimedQuest2:
+    name: 'Timed Quest 2'
+    ask-message: 'This is timed quest 2, mine dirt and then grass before time runs out!'
+    finish-message: 'You did it in time!'
+    stages:
+      ordered:
+        '1':
+          break-block-names:
+          - DIRT
+          break-block-amounts:
+          - 10
+          break-block-durability:
+          - 0
+          start-event: TimerEvent
+          finish-event: CancelTimer
+        '2':
+          break-block-names:
+          - GRASS
+          break-block-amounts:
+          - 10
+          break-block-durability:
+          - 0
+          start-event: TimerEvent
+
+  TimedQuest3:
+    name: 'Timed Quest 3'
+    ask-message: 'This is timed quest 3, mine dirt and then grass before time runs out!'
+    finish-message: 'You did it in time!'
+    stages:
+      ordered:
+        '1':
+          break-block-names:
+          - DIRT
+          break-block-amounts:
+          - 10
+          break-block-durability:
+          - 0
+          start-event: TimerEvent
+        '2':
+          break-block-names:
+          - GRASS
+          break-block-amounts:
+          - 10
+          break-block-durability:
+          - 0

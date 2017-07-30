@@ -20,3 +20,7 @@ events:
     message: "<green>Here you go!"
     items:
       - name-fishing_rod:amount-1
+  TimerEvent:
+    timer: 40
+  CancelTimer:
+    cancel-timer: true
