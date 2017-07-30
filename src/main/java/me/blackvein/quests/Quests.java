@@ -1275,7 +1275,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		cs.sendMessage(ChatColor.GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
 		cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.DARK_RED + "Blackvein"
 				+ ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.DARK_RED + "FlyingPikachu");
-		cs.sendMessage(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "https://www.spigotmc.org/resources/quests.3711/");
+		cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE + "https://www.spigotmc.org/resources/quests.3711/");
 		return true;
 	}
 
@@ -1936,7 +1936,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		if (quester == null) {
 			if (!questerBlacklist.contains(id.toString())) {
-				getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval..");
+				getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval...");
 			}
 			quester = new Quester(this);
 			quester.id = id;
@@ -2780,10 +2780,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								itemsToDeliver = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".items-to-deliver");
 								itemDeliveryTargetIds = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".npc-delivery-ids");
 								deliveryMessages.addAll(config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".delivery-messages"));
+								int index = 0;
 								for (String item : itemsToDeliver) {
 									ItemStack is = ItemUtil.readItemStack("" + item);
+									int npcId = itemDeliveryTargetIds.get(index);
+									index++;
 									if (is != null) {
-										int npcId = itemDeliveryTargetIds.get(itemsToDeliver.indexOf(item));
 										NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
 										if (npc != null) {
 											oStage.itemsToDeliver.add(is);

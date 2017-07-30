@@ -496,10 +496,12 @@ public class Quester {
 				finishedObjectives.add(ChatColor.GRAY + Lang.get("killPlayer") + ChatColor.GRAY + ": " + getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
 			}
 		}
+		int index2 = 0;
 		for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
 			int delivered = getQuestData(quest).itemsDelivered.get(is);
 			int amt = is.getAmount();
-			Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(is));
+			Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(index2);
+			index2++;
 			if (delivered < amt) {
 				String obj = Lang.get("deliver");
 				obj = obj.replaceAll("<item>", ItemUtil.getName(is));
@@ -2204,17 +2206,17 @@ public class Quester {
 
 	public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec, String questName) {
 		ConfigurationSection newData = questSec.createSection("questData");
-		if (questSec.contains("blocks-damaged-names")) {
-			List<String> names = questSec.getStringList("blocks-damaged-names");
-			List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
-			newData.set(questName + ".blocks-damaged-names", names);
-			newData.set(questName + ".blocks-damaged-amounts", amounts);
-		}
 		if (questSec.contains("blocks-broken-names")) {
 			List<String> names = questSec.getStringList("blocks-broken-names");
 			List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
 			newData.set(questName + ".blocks-broken-names", names);
 			newData.set(questName + ".blocks-broken-amounts", amounts);
+		}
+		if (questSec.contains("blocks-damaged-names")) {
+			List<String> names = questSec.getStringList("blocks-damaged-names");
+			List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
+			newData.set(questName + ".blocks-damaged-names", names);
+			newData.set(questName + ".blocks-damaged-amounts", amounts);
 		}
 		if (questSec.contains("blocks-placed-names")) {
 			List<String> names = questSec.getStringList("blocks-placed-names");

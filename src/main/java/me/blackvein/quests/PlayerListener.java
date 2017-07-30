@@ -679,9 +679,11 @@ public class PlayerListener implements Listener {
 			}
 			if (isPlayer) {
 				Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-				for (Quest quest : quester.currentQuests.keySet()) {
-					if (quester.hasObjective(quest, "reachLocation")) {
-						quester.reachLocation(quest, evt.getTo());
+				if (quester != null) {
+					for (Quest quest : quester.currentQuests.keySet()) {
+						if (quester.hasObjective(quest, "reachLocation")) {
+							quester.reachLocation(quest, evt.getTo());
+						}
 					}
 				}
 			}
