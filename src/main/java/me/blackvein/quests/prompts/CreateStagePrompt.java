@@ -717,7 +717,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Integer.parseInt(s) > 0) {
 							amounts.add(Integer.parseInt(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
 							return new BreakBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -745,10 +745,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Short.parseShort(s) > 0) {
+						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
 							return new BreakBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -962,10 +962,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Short.parseShort(s) > 0) {
+						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
 							return new DamageBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1179,10 +1179,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Short.parseShort(s) > 0) {
+						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
 							return new PlaceBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1396,10 +1396,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Short.parseShort(s) > 0) {
+						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
 							return new UseBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1613,10 +1613,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<Short> durability = new LinkedList<Short>();
 				for (String s : args) {
 					try {
-						if (Short.parseShort(s) > 0) {
+						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditortNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
 							return new CutBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
