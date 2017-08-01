@@ -1477,8 +1477,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		//
 		// Stages
+		int index = 1;
 		for (Stage stage : q.orderedStages) {
-			final String pref = "stage" + (q.orderedStages.indexOf(stage) + 1);
+			final String pref = "stage" + index;
+			index++;
 			cc.setSessionData(pref, Boolean.TRUE);
 			if (stage.blocksToBreak != null) {
 				LinkedList<String> names = new LinkedList<String>();
