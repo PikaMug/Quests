@@ -2,6 +2,7 @@ language: "en"
 allow-command-questing: true
 allow-command-quests-with-npcs: false
 show-requirements: true
+show-titles: true
 allow-quitting: true
 use-compass: true
 ignore-locked-quests: false

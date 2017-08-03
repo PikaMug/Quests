@@ -124,6 +124,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public boolean allowCommands = true;
 	public boolean allowCommandsForNpcQuests = false;
 	public boolean showQuestReqs = true;
+	public boolean showQuestTitles = true;
 	public boolean allowQuitting = true;
 	public boolean convertData = false;
 	public boolean load = false;
@@ -408,6 +409,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		allowCommands = config.getBoolean("allow-command-questing", true);
 		allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
 		showQuestReqs = config.getBoolean("show-requirements", true);
+		showQuestTitles = config.getBoolean("show-titles", true);
 		allowQuitting = config.getBoolean("allow-quitting", true);
 		useCompass = config.getBoolean("use-compass", true);
 		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);

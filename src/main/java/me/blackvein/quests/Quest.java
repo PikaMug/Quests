@@ -339,6 +339,12 @@ public class Quest {
 		complete = complete.replaceAll("<quest>", ChatColor.YELLOW + name + ChatColor.GOLD);
 		player.sendMessage(ChatColor.GOLD + complete);
 		player.sendMessage(ChatColor.GREEN + Lang.get("questRewardsTitle"));
+		if (plugin.showQuestTitles) {
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
+					+ " title " + "{\"text\":\"" + Lang.get("quest") + " " + Lang.get("complete") +  "\",\"color\":\"gold\"}");
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
+					+ " subtitle " + "{\"text\":\"" + name + "\",\"color\":\"yellow\"}");
+		}
 		if (questPoints > 0) {
 			player.sendMessage("- " + ChatColor.DARK_GREEN + questPoints + " " + Lang.get("questPoints"));
 			q.questPoints += questPoints;

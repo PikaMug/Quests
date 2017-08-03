@@ -312,6 +312,12 @@ public class Quester {
 				accepted = accepted.replaceAll("<quest>", q.name);
 				player.sendMessage(ChatColor.GREEN + accepted);
 				player.sendMessage("");
+				if (plugin.showQuestTitles) {
+					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
+							+ " title " + "{\"text\":\"" + Lang.get("quest") + " " + Lang.get("accepted") +  "\",\"color\":\"gold\"}");
+					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
+							+ " subtitle " + "{\"text\":\"" + q.name + "\",\"color\":\"yellow\"}");
+				}
 			}
 			String msg = Lang.get("questObjectivesTitle");
 			msg = msg.replaceAll("<quest>", q.name);
