@@ -1337,8 +1337,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			for (String s : sortedMap.keySet()) {
 				int i = (Integer) sortedMap.get(s);
 				s = s.trim();
-				UUID id = UUID.fromString(s);
-				s = Bukkit.getOfflinePlayer(id).getName();
+				try {
+					UUID id = UUID.fromString(s);
+					s = Bukkit.getOfflinePlayer(id).getName();
+				} catch (IllegalArgumentException e) {
+					getLogger().warning("Invalid file name \"" + s + "\"in /data folder. Replace with player UUID"
+							+ " or start the plugin with the \"convert-data-on-startup\" enabled in config.yml");
+					break;
+				}
 				numPrinted++;
 				cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + ChatColor.DARK_PURPLE + i + ChatColor.YELLOW + " " + Lang.get("questPoints"));
 				if (numPrinted == topNumber) {
