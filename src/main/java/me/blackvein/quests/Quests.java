@@ -3414,23 +3414,44 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public static Location getLocation(String arg) {
 		String[] info = arg.split(" ");
-		if (info.length != 4) {
+		
+		if (info.length < 4) {
 			return null;
 		}
+		
+		StringBuilder sb = new StringBuilder();
+		int index = 0;
+		
+		for (String s : info) {
+			try  {
+				Double.parseDouble(s);
+				break;
+			} catch (Exception e) {
+				if (index == 0) {
+					sb.append(s);
+				} else {
+					sb.append(" " + s);
+				}
+				index++;
+			}
+		}
+		
+		String world = sb.toString();
+		
 		double x;
 		double y;
 		double z;
 		try {
-			x = Double.parseDouble(info[1]);
-			y = Double.parseDouble(info[2]);
-			z = Double.parseDouble(info[3]);
-		} catch (NumberFormatException e) {
+			x = Double.parseDouble(info[index]);
+			y = Double.parseDouble(info[index + 1]);
+			z = Double.parseDouble(info[index + 2]);
+		} catch (Exception e) {
 			return null;
 		}
-		if (Bukkit.getServer().getWorld(info[0]) == null) {
+		if (Bukkit.getServer().getWorld(world) == null) {
 			return null;
 		}
-		Location finalLocation = new Location(Bukkit.getServer().getWorld(info[0]), x, y, z);
+		Location finalLocation = new Location(Bukkit.getServer().getWorld(world), x, y, z);
 		return finalLocation;
 	}
 
