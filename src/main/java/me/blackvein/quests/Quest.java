@@ -164,9 +164,10 @@ public class Quest {
 		} else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0) {
 			targetLocation = nextStage.locationsToReach.getFirst();
 		}
-		if (targetLocation != null && targetLocation.getWorld().equals(quester.getPlayer().getWorld())) {
-			// plugin.getLogger().info("Setting compass target for " + quester.getPlayer().getName() + " to " + targetLocation);
-			quester.getPlayer().setCompassTarget(targetLocation);
+		if (targetLocation != null) {
+			if (targetLocation.getWorld().equals(quester.getPlayer().getWorld())) {
+				quester.getPlayer().setCompassTarget(targetLocation);
+			}
 		}
 		return targetLocation != null;
 	}
