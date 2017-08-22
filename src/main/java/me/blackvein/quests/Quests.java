@@ -950,27 +950,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 			} else {
 				Quester quester = getQuester(target.getUniqueId());
-				if (quester.currentQuests.isEmpty()) {
-					String msg = Lang.get("noCurrentQuest");
-					msg = msg.replaceAll("<player>", target.getName());
-					cs.sendMessage(ChatColor.YELLOW + msg);
-				} else {
-					Quest found = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
-					if (found == null) {
-						cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
-						return;
-					}
-					String msg1 = Lang.get("questForceFinish");
-					msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-					msg1 = msg1.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
-					cs.sendMessage(ChatColor.GOLD + msg1);
-					String msg2 = Lang.get("questForcedFinish");
-					msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-					msg2 = msg2.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
-					target.sendMessage(ChatColor.GREEN + msg2);
-					found.completeQuest(quester);
-					quester.saveData();
-				}
+			    Quest found = findQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
+			    if (found == null) {
+			    	cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
+			    	return;
+			    }
+			    String msg1 = Lang.get("questForceFinish");
+			    msg1 = msg1.replaceAll("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+			    msg1 = msg1.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
+			    cs.sendMessage(ChatColor.GOLD + msg1);
+			    String msg2 = Lang.get("questForcedFinish");
+			    msg2 = msg2.replaceAll("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+			    msg2 = msg2.replaceAll("<quest>", ChatColor.DARK_PURPLE + found.name + ChatColor.GOLD);
+			    target.sendMessage(ChatColor.GREEN + msg2);
+			    found.completeQuest(quester);
+			    quester.saveData();
 			}
 		} else {
 			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
