@@ -506,6 +506,9 @@ public class PlayerListener implements Listener {
 									okay = false;
 								}
 							}
+							if (evt.getEntity().getUniqueId().equals(player.getUniqueId())) {
+							    okay = false;
+							}
 							if (okay) {
 								Quester quester = plugin.getQuester(player.getUniqueId());
 								for (Quest quest : quester.currentQuests.keySet()) {
@@ -524,6 +527,9 @@ public class PlayerListener implements Listener {
 							if (CitizensAPI.getNPCRegistry().isNPC(player) || CitizensAPI.getNPCRegistry().isNPC(evt.getEntity())) {
 								okay = false;
 							}
+						}
+						if (evt.getEntity().getUniqueId().equals(player.getUniqueId())) {
+						    okay = false;
 						}
 						if (okay) {
 							Quester quester = plugin.getQuester(player.getUniqueId());
