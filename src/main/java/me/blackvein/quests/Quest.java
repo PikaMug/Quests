@@ -165,7 +165,7 @@ public class Quest {
 			targetLocation = nextStage.locationsToReach.getFirst();
 		}
 		if (targetLocation != null) {
-			if (targetLocation.getWorld().equals(quester.getPlayer().getWorld())) {
+			if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
 				quester.getPlayer().setCompassTarget(targetLocation);
 			}
 		}
