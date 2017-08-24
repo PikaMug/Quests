@@ -101,6 +101,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static int acceptTimeout = 20;
 	public static int maxQuests = 0;
 	public static String effect = "note";
+	public static String repeatEffect = "enchant";
 	public final Map<UUID, Quester> questers = new HashMap<UUID, Quester>();
 	public final List<String> questerBlacklist = new LinkedList<String>();
 	public final List<CustomRequirement> customRequirements = new LinkedList<CustomRequirement>();
@@ -154,19 +155,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		questFactory = new QuestFactory(this);
 		eventFactory = new EventFactory(this);
 		linkOtherPlugins();
-		saveDefaultConfig();
-		// defaultConfigFile();
+		
+		// Save resources
 		saveResource("quests.yml", false);
 		saveResource("events.yml", false);
 		saveResource("data.yml", false);
+		
+		// Save/load lang
 		defaultLangFile();
-		// defaultQuestsFile();
-		// defaultEventsFile();
-		// defaultDataFile();
+		
+		// Load files
 		loadConfig();
 		loadModules();
 		loadData();
 		loadCommands();
+		
+		// Save config with any new options
+		getConfig().options().copyDefaults(true);
+		saveConfig();
+		
 		getServer().getPluginManager().registerEvents(pListener, this);
 		if (npcEffects) {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
@@ -177,7 +184,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private void defaultLangFile() {
 		lang = new Lang(this);
 		lang.initPhrases();
-		if (new File(this.getDataFolder(), "/lang/en.yml").exists() == false) {
+		if (new File(this.getDataFolder(), File.separator + "lang" + File.separator + "en.yml").exists() == false) {
 			getLogger().info("Translation data not found, writing defaults to file.");
 			lang.saveNewLang();
 		} else {
@@ -209,35 +216,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 		}, 5L);
 	}
-	/*
-	 * private void defaultDataFile() { if (new File(this.getDataFolder(), "data.yml").exists() == false) {
-	 * getLogger().info("Data file not found, writing default to file."); FileConfiguration data = new YamlConfiguration();
-	 * data.options().copyHeader(true); data.options().copyDefaults(true); try { data.save(new File(this.getDataFolder(), "data.yml")); } catch
-	 * (IOException e) { e.printStackTrace(); } } else { loadData(); } }
-	 */
-	/*
-	 * private void defaultEventsFile() { if (new File(this.getDataFolder(), "events.yml").exists() == false) {
-	 * getLogger().info("Events data not found, writing defaults to file."); FileConfiguration data = new YamlConfiguration();
-	 * data.options().copyHeader(true); data.options().copyDefaults(true); try { data.load(this.getTextResource("events.yml")); data.save(new
-	 * File(this.getDataFolder(), "events.yml")); } catch (IOException e) { e.printStackTrace(); } catch (InvalidConfigurationException e) {
-	 * e.printStackTrace(); } } }
-	 */
-	/*
-	 * private void defaultQuestsFile() { if (new File(this.getDataFolder(), "quests.yml").exists() == false) {
-	 * 
-	 * getLogger().info("Quest data not found, writing defaults to file."); FileConfiguration data = new YamlConfiguration(); try {
-	 * data.load(this.getTextResource("quests.yml")); data.set("events", null); data.save(new File(this.getDataFolder(), "quests.yml")); } catch
-	 * (IOException e) { e.printStackTrace(); } catch (InvalidConfigurationException e) { e.printStackTrace(); }
-	 * 
-	 * } }
-	 */
 
-	/*
-	 * private void defaultConfigFile() { if (new File(this.getDataFolder(), "config.yml").exists() == false) {
-	 * getLogger().info("Config not found, writing default to file."); FileConfiguration config = new YamlConfiguration(); try {
-	 * config.load(this.getTextResource("config.yml")); config.save(new File(this.getDataFolder(), "config.yml")); } catch (IOException e) {
-	 * e.printStackTrace(); } catch (InvalidConfigurationException e) { e.printStackTrace(); } } }
-	 */
 	public void loadCommands() {
 		// [] - required
 		// {} - optional
@@ -413,8 +392,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		allowQuitting = config.getBoolean("allow-quitting", true);
 		useCompass = config.getBoolean("use-compass", true);
 		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
-		npcEffects = config.getBoolean("show-npc-effects", true);
-		effect = config.getString("npc-effect", "note");
+		npcEffects = config.getBoolean("npc-effects.enabled", true);
+		effect = config.getString("npc-effects.new-quest", "note");
+		repeatEffect = config.getString("npc-effects.repeatable-quest", "note");
 		killDelay = config.getInt("kill-delay", 600);
 		acceptTimeout = config.getInt("accept-timeout", 20);
 		convertData = config.getBoolean("convert-data-on-startup", false);

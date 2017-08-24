@@ -1,4 +1,5 @@
-language: "en"
+# See https://github.com/FlyingPikachu/Quests/wiki/Configuration
+language: en
 allow-command-questing: true
 allow-command-quests-with-npcs: false
 show-requirements: true
@@ -8,12 +9,13 @@ use-compass: true
 ignore-locked-quests: false
 generate-files-on-join: true
 kill-delay: 600
-accept-timeout: 20
-show-npc-effects: true
-npc-effect: "note"
+npc-effects:
+  enabled: true
+  new-quest: note
+  repeat-quest: enchant
 max-quests: 0
 convert-data-on-startup: false
 quester-blacklist:
-  - "UUID"
-  - "UUID"
-  - "UUID"
+- UUID
+- UUID
+- UUID
