@@ -38,7 +38,9 @@ public class NpcEffectThread implements Runnable {
 						if (plugin.citizens.getNPCRegistry().isNPC(e)) {
 							NPC npc = plugin.citizens.getNPCRegistry().getNPC(e);
 							if (plugin.hasQuest(npc, quester)) {
-								showEffect(player, npc);
+								showEffect(player, npc, Quests.effect);
+							} else if (plugin.hasCompletedQuest(npc, quester)) {
+								showEffect(player, npc, Quests.repeatEffect);
 							}
 						}
 					}
@@ -47,65 +49,66 @@ public class NpcEffectThread implements Runnable {
 		}
 	}
 
-	private static void showEffect(Player player, NPC npc) {
+	// effectType is either effectType or Quests.repeatEffect
+	private static void showEffect(Player player, NPC npc, String effectType) {
 		if (Bukkit.getBukkitVersion().contains("1.7.9")) {
-			showEffect_R3(player, npc);
+			showEffect_R3(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.7.10")) {
-			showEffect_R4(player, npc);
+			showEffect_R4(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.8.4") || Bukkit.getBukkitVersion().contains("1.8.5") || Bukkit.getBukkitVersion().contains("1.8.6") || Bukkit.getBukkitVersion().contains("1.8.7") || Bukkit.getBukkitVersion().contains("1.8.8")) {
-			showEffect_1_8_R3(player, npc);
+			showEffect_1_8_R3(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.8.3")) {
-			showEffect_1_8_R2(player, npc);
+			showEffect_1_8_R2(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.8")) {
-			showEffect_1_8_R1(player, npc);
+			showEffect_1_8_R1(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.9.4")) {
-			showEffect_1_9_R2(player, npc);
+			showEffect_1_9_R2(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.9")) {
-			showEffect_1_9_R1(player, npc);
+			showEffect_1_9_R1(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.10")) {
-			showEffect_1_10_R1(player, npc);
+			showEffect_1_10_R1(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.11")) {
-			showEffect_1_11_R1(player, npc);
+			showEffect_1_11_R1(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.12")) {
-			showEffect_1_12_R1(player, npc);
+			showEffect_1_12_R1(player, npc, effectType);
 		}
 	}
 
-	private static void showEffect_1_12_R1(Player player, NPC npc) {
+	private static void showEffect_1_12_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_12_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_12_R1.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_12_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_12_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_12_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -113,26 +116,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_12_R1.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_12_R1.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_12_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -140,7 +143,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -148,7 +151,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_12_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
@@ -156,49 +159,48 @@ public class NpcEffectThread implements Runnable {
 			}
 		} else {
 			try {
-				Eff_1_12_R1.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_12_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
-				e.printStackTrace();
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_11_R1(Player player, NPC npc) {
+	private static void showEffect_1_11_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_11_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_11_R1.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_11_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_11_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_11_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -206,26 +208,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_11_R1.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_11_R1.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_11_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -233,7 +235,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -241,7 +243,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_11_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
@@ -249,49 +251,48 @@ public class NpcEffectThread implements Runnable {
 			}
 		} else {
 			try {
-				Eff_1_11_R1.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_11_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
-				e.printStackTrace();
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_10_R1(Player player, NPC npc) {
+	private static void showEffect_1_10_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_10_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_10_R1.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_10_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_10_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_10_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -299,26 +300,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_10_R1.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_10_R1.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_10_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -326,7 +327,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -334,7 +335,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_10_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
@@ -342,49 +343,48 @@ public class NpcEffectThread implements Runnable {
 			}
 		} else {
 			try {
-				Eff_1_10_R1.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_10_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
-				e.printStackTrace();
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_9_R2(Player player, NPC npc) {
+	private static void showEffect_1_9_R2(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_9_R2.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_9_R2.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_9_R2.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_9_R2.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_9_R2.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -392,26 +392,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_9_R2.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_9_R2.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_9_R2.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -419,7 +419,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -427,7 +427,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_9_R2.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
@@ -435,49 +435,48 @@ public class NpcEffectThread implements Runnable {
 			}
 		} else {
 			try {
-				Eff_1_9_R2.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_9_R2.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
-				e.printStackTrace();
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_9_R1(Player player, NPC npc) {
+	private static void showEffect_1_9_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_9_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_9_R1.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_9_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_9_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_9_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -485,26 +484,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_9_R1.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_9_R1.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_9_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -512,7 +511,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -520,7 +519,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_9_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
@@ -528,49 +527,48 @@ public class NpcEffectThread implements Runnable {
 			}
 		} else {
 			try {
-				Eff_1_9_R1.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_9_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
-				e.printStackTrace();
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_8_R3(Player player, NPC npc) {
+	private static void showEffect_1_8_R3(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_8_R3.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_8_R3.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_8_R3.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_8_R3.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_8_R3.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -578,26 +576,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_8_R3.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_8_R3.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_8_R3.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -605,7 +603,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -613,7 +611,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_8_R3.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
@@ -621,49 +619,48 @@ public class NpcEffectThread implements Runnable {
 			}
 		} else {
 			try {
-				Eff_1_8_R3.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_8_R3.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
-				e.printStackTrace();
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_8_R2(Player player, NPC npc) {
+	private static void showEffect_1_8_R2(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_8_R2.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_8_R2.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_8_R2.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_8_R2.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_8_R2.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -671,26 +668,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_8_R2.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_8_R2.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_8_R2.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -698,7 +695,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -706,7 +703,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_8_R2.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
@@ -714,49 +711,48 @@ public class NpcEffectThread implements Runnable {
 			}
 		} else {
 			try {
-				Eff_1_8_R2.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_8_R2.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
-				e.printStackTrace();
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_8_R1(Player player, NPC npc) {
+	private static void showEffect_1_8_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_8_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_8_R1.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_8_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_8_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_8_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -764,26 +760,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_8_R1.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_8_R1.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_8_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -791,7 +787,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -799,7 +795,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_8_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
@@ -807,49 +803,48 @@ public class NpcEffectThread implements Runnable {
 			}
 		} else {
 			try {
-				Eff_1_8_R1.valueOf(Quests.effect).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_8_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(Quests.effect + " is not a valid effect name!");
-				e.printStackTrace();
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_R4(Player player, NPC npc) {
+	private static void showEffect_R4(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_7_R4.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_7_R4.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_7_R4.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_7_R4.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_7_R4.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -857,26 +852,26 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_7_R4.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
 				Eff_1_7_R4.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_7_R4.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -884,7 +879,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -892,50 +887,56 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_7_R4.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		} else {
+			try {
+				Eff_1_7_R4.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
+			} catch (Exception e) {
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+			}
 		}
 	}
 
-	private static void showEffect_R3(Player player, NPC npc) {
+	private static void showEffect_R3(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		if (Quests.effect.equalsIgnoreCase("enchant")) {
+		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
 				Eff_1_7_R3.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("crit")) {
+		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
 				Eff_1_7_R3.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("spell")) {
+		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
 				Eff_1_7_R3.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("magiccrit")) {
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
 				Eff_1_7_R3.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("mobspell")) {
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
 				Eff_1_7_R3.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("note")) {
+		} else if (effectType.equalsIgnoreCase("note")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -943,13 +944,13 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("portal")) {
+		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
 				Eff_1_7_R3.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("dust")) {
+		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -957,13 +958,13 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("witch")) {
+		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
 				Eff_1_7_R3.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("snowball")) {
+		} else if (effectType.equalsIgnoreCase("snowball")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -971,7 +972,7 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("splash")) {
+		} else if (effectType.equalsIgnoreCase("splash")) {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
@@ -979,11 +980,17 @@ public class NpcEffectThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (Quests.effect.equalsIgnoreCase("smoke")) {
+		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
 				Eff_1_7_R3.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20);
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		} else {
+			try {
+				Eff_1_7_R3.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
+			} catch (Exception e) {
+				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
