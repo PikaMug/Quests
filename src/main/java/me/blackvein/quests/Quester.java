@@ -2502,7 +2502,12 @@ public class Quester {
 			if (quests.get(i).guiDisplay != null) {
 				ItemStack display = quests.get(i).guiDisplay;
 				ItemMeta meta = display.getItemMeta();
-				meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
+				if (completedQuests.contains(quests.get(i).name)) {
+					meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName()
+							+ " " + ChatColor.GREEN + Lang.get("completedTag"), npc));
+				} else {
+					meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
+				}
 				if (!meta.hasLore()) {
 					LinkedList<String> lines = new LinkedList<String>();
 					String desc = quests.get(i).description;
