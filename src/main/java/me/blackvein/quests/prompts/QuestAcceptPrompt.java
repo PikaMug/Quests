@@ -38,7 +38,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 		for (int i = 1; i <= quests.size(); i++) {
 			Quest quest = quests.get(i - 1);
 			if (quester.completedQuests.contains(quest.getName())) {
-				menu += ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" + ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName() + ChatColor.RESET + "" + ChatColor.GREEN + " (" + Lang.get("repeatable") + ")\n";
+				menu += ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" + ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName() + ChatColor.RESET + "" + ChatColor.GREEN + " " + Lang.get("completedTag") + "\n";
 			} else {
 				menu += ChatColor.GOLD + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" + ChatColor.YELLOW + "" + ChatColor.ITALIC + quest.getName() + "\n";
 			}
