@@ -2534,6 +2534,14 @@ public class Quester {
 			if (questData.containsKey(quest)) {
 				questData.remove(quest);
 			}
+			if (!timers.isEmpty()) {
+				for (Map.Entry<Integer, Quest> entry : timers.entrySet()) {
+					if (entry.getValue().getName().equals(quest.getName())) {
+						plugin.getServer().getScheduler().cancelTask(entry.getKey());
+						timers.remove(entry.getKey());
+					}
+				}
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
