@@ -1243,11 +1243,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					return true;
 				}
 			} else {
-				cs.sendMessage(ChatColor.YELLOW + "This command may only be performed in-game.");
+				cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
 				return true;
 			}
 		} else {
-			cs.sendMessage(ChatColor.YELLOW + "This command may only be performed in-game.");
+			cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
 			return true;
 		}
 		return true;
@@ -1621,7 +1621,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				return true;
 			}
 		} else {
-			cs.sendMessage(ChatColor.YELLOW + "This command may only be performed in-game.");
+			cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
 			return true;
 		}
 		return true;

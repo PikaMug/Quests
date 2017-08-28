@@ -755,6 +755,7 @@ public class Lang {
 		langMap.put("completed", "Completed");
 		langMap.put("redoCompleted", "(Completed)");
 		//
+		langMap.put("consoleError", "This command may only be performed in-game.");
 		langMap.put("invalidSelection", "Invalid selection!");
 		langMap.put("noActiveQuest", "You do not currently have any active Quests.");
 		langMap.put("speakTo", "Start: Speak to <npc>");
