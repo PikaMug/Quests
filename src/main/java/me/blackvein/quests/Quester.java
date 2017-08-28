@@ -2504,7 +2504,7 @@ public class Quester {
 				ItemMeta meta = display.getItemMeta();
 				if (completedQuests.contains(quests.get(i).name)) {
 					meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName()
-							+ " " + ChatColor.GREEN + Lang.get("completedTag"), npc));
+							+ " " + ChatColor.GREEN + Lang.get("redoCompleted"), npc));
 				} else {
 					meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
 				}

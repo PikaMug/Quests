@@ -101,7 +101,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static int acceptTimeout = 20;
 	public static int maxQuests = 0;
 	public static String effect = "note";
-	public static String repeatEffect = "angry_villager";
+	public static String redoEffect = "angry_villager";
 	public final Map<UUID, Quester> questers = new HashMap<UUID, Quester>();
 	public final List<String> questerBlacklist = new LinkedList<String>();
 	public final List<CustomRequirement> customRequirements = new LinkedList<CustomRequirement>();
@@ -394,7 +394,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
 		npcEffects = config.getBoolean("npc-effects.enabled", true);
 		effect = config.getString("npc-effects.new-quest", "note");
-		repeatEffect = config.getString("npc-effects.repeat-quest", "angry_villager");
+		redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
 		killDelay = config.getInt("kill-delay", 600);
 		acceptTimeout = config.getInt("accept-timeout", 20);
 		convertData = config.getBoolean("convert-data-on-startup", false);

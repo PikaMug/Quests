@@ -40,7 +40,7 @@ public class NpcEffectThread implements Runnable {
 							if (plugin.hasQuest(npc, quester)) {
 								showEffect(player, npc, Quests.effect);
 							} else if (plugin.hasCompletedQuest(npc, quester)) {
-								showEffect(player, npc, Quests.repeatEffect);
+								showEffect(player, npc, Quests.redoEffect);
 							}
 						}
 					}

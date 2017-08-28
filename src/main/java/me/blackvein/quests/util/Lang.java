@@ -753,7 +753,7 @@ public class Lang {
 		langMap.put("shearSheep", "Shear <color> sheep");
 		langMap.put("goTo", "Go to <location>");
 		langMap.put("completed", "Completed");
-		langMap.put("completedTag", "(Completed)");
+		langMap.put("redoCompleted", "(Completed)");
 		//
 		langMap.put("invalidSelection", "Invalid selection!");
 		langMap.put("noActiveQuest", "You do not currently have any active Quests.");

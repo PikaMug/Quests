@@ -12,7 +12,7 @@ kill-delay: 600
 npc-effects:
   enabled: true
   new-quest: note
-  repeat-quest: angry_villager
+  redo-quest: angry_villager
 max-quests: 0
 convert-data-on-startup: false
 quester-blacklist:
