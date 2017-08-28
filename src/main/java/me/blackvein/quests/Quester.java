@@ -1930,7 +1930,9 @@ public class Quester {
 			for (String s : data.getStringList("completed-Quests")) {
 				for (Quest q : plugin.quests) {
 					if (q.name.equalsIgnoreCase(s)) {
-						completedQuests.add(q.name);
+						if (!completedQuests.contains(q.name)) {
+							completedQuests.add(q.name);
+						}
 						break;
 					}
 				}

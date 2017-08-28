@@ -258,7 +258,9 @@ public class Quest {
 	public void completeQuest(Quester q) {
 		final Player player = plugin.getServer().getPlayer(q.id);
 		q.hardQuit(this);
-		q.completedQuests.add(name);
+		if (!q.completedQuests.contains(name)) {
+			q.completedQuests.add(name);
+		}
 		String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
 		final String ps = Quests.parseString(finished, this);
 		for (Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
@@ -282,6 +284,11 @@ public class Quest {
 		}
 		if (redoDelay > -1) {
 			q.completedTimes.put(this.name, System.currentTimeMillis());
+			if (q.amountsCompleted.containsKey(this.name)) {
+				q.amountsCompleted.put(this.name, q.amountsCompleted.get(this.name) + 1);
+			} else {
+				q.amountsCompleted.put(this.name, 1);
+			}
 		}
 		for (ItemStack i : itemRewards) {
 			Quests.addItem(player, i);
