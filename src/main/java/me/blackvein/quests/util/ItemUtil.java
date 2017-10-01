@@ -182,8 +182,9 @@ public class ItemUtil {
 		} else {
 			try {
 				text = ChatColor.AQUA + Items.itemByStack(is).getName();
-			} catch (NullPointerException ne) {
-				Bukkit.getLogger().severe("This error is caused by an incompatible version of Vault. Please update!");
+			} catch (Exception ne) {
+				text = ChatColor.AQUA + is.getType().name().toLowerCase().replace("_", " ");
+				Bukkit.getLogger().severe("This error is caused by an incompatible version of Vault. Please consider updating.");
 				ne.printStackTrace();
 			}
 		}

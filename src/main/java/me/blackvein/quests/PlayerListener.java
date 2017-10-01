@@ -407,6 +407,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent evt) {
+		System.out.println("1");
 		// NPCs count as a Player so we check for them through Citizens
 		boolean isTargetNPC = false;
 		if (plugin.citizens != null) {
@@ -414,11 +415,14 @@ public class PlayerListener implements Listener {
 				isTargetNPC = true;
 			}
 		}
-		if (evt.getEntity() instanceof Player == false || isTargetNPC) {
+		if (/*evt.getEntity() instanceof Player == false ||*/ isTargetNPC) {
+			System.out.println("2");
 			if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+				System.out.println("3");
 				EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
 				Entity damager = damageEvent.getDamager();
 				if (damager != null) {
+					System.out.println("4");
 					if (damager instanceof Projectile) {
 						Projectile projectile = (Projectile) damager;
 						ProjectileSource source = projectile.getShooter();
@@ -430,11 +434,14 @@ public class PlayerListener implements Listener {
 									okay = false;
 								}
 							}
+							System.out.println("5");
 							if (okay) {
 								if (isTargetNPC) {
+									System.out.println("6");
 									Quester quester = plugin.getQuester(player.getUniqueId());
 									for (Quest quest : quester.currentQuests.keySet()) {
 										if (quester.hasObjective(quest, "killNPC")) {
+											System.out.println("7");
 											quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(evt.getEntity()));
 										}
 									}
@@ -442,6 +449,7 @@ public class PlayerListener implements Listener {
 									Quester quester = plugin.getQuester(player.getUniqueId());
 									for (Quest quest : quester.currentQuests.keySet()) {
 										if (quester.hasObjective(quest, "killMob")) {
+											System.out.println("7-2");
 											quester.killMob(quest, evt.getEntity().getLocation(), evt.getEntity().getType());
 										}
 									}
@@ -469,6 +477,7 @@ public class PlayerListener implements Listener {
 							}
 						}
 					} else if (damager instanceof Player) {
+						System.out.println("7-3");
 						boolean okay = true;
 						if (plugin.citizens != null) {
 							if (CitizensAPI.getNPCRegistry().isNPC(damager)) {
@@ -476,10 +485,12 @@ public class PlayerListener implements Listener {
 							}
 						}
 						if (okay) {
+							System.out.println("7-4");
 							Player player = (Player) damager;
 							Quester quester = plugin.getQuester(player.getUniqueId());
 							for (Quest quest : quester.currentQuests.keySet()) {
 								if (quester.hasObjective(quest, "killMob")) {
+									System.out.println("7-5");
 									quester.killMob(quest, evt.getEntity().getLocation(), evt.getEntity().getType());
 								}
 							}
