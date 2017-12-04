@@ -1,7 +1,10 @@
 package me.blackvein.quests.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -9,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -959,7 +963,7 @@ public class Lang {
 		langMap.put("questSaveError", "An error occurred while saving.");
 		langMap.put("questBlacklisted", "You are blacklisted. Contact an admin if this is in error.");
 		//
-		File file = new File(plugin.getDataFolder(), "/lang/" + lang + ".yml");
+		File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + lang + ".yml");
 		YamlConfiguration langFile = YamlConfiguration.loadConfiguration(file);
 		for (Entry<String, Object> e : langFile.getValues(true).entrySet()) {
 			langMap.put(e.getKey(), (String) e.getValue());
@@ -968,8 +972,8 @@ public class Lang {
 
 	public void saveNewLang() {
 		FileConfiguration data = new YamlConfiguration();
-		File dir = new File(plugin.getDataFolder(), "/lang");
-		File file = new File(plugin.getDataFolder(), "/lang/en.yml");
+		File dir = new File(plugin.getDataFolder(), File.separator + "lang");
+		File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + "en.yml");
 		for (Entry<String, String> e : langMap.entrySet()) {
 			data.set(e.getKey(), e.getValue());
 		}
@@ -988,7 +992,7 @@ public class Lang {
 	}
 
 	public void loadLang() {
-		File langFile = new File(plugin.getDataFolder(), "/lang/" + lang + ".yml");
+		File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + lang + ".yml");
 		boolean newLangs = false;
 		if (langFile.exists()) {
 			LinkedHashMap<String, String> tempMap = new LinkedHashMap<String, String>();
@@ -1010,7 +1014,7 @@ public class Lang {
 				}
 				langMap.putAll(toPut);
 				if (newLangs) {
-					File file = new File(plugin.getDataFolder(), "/lang/" + lang + "_new.yml");
+					File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + lang + "_new.yml");
 					if (file.exists()) {
 						file.delete();
 					}
@@ -1035,6 +1039,30 @@ public class Lang {
 		} else {
 			plugin.getLogger().severe("Attempted to load language file: /lang/" + lang + ".yml but the file was not found. Using default language EN");
 		}
+	}
+	
+	/**
+	 * Load YAML file using UTF8 format to allow extended characters
+	 * @param file
+	 * @return yaml
+	 * @throws InvalidConfigurationException
+	 * @throws IOException
+	 */
+	public static YamlConfiguration loadYamlUTF8(File file) throws InvalidConfigurationException, IOException {
+		StringBuilder sb = new StringBuilder((int) file.length());
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+		char[] buf = new char[1024];
+		int l;
+		while ((l = in.read(buf, 0, buf.length)) > -1) {
+			sb = sb.append(buf, 0, l);
+		}
+		in.close();
+		
+		YamlConfiguration yaml = new YamlConfiguration();
+		yaml.loadFromString(sb.toString());
+		
+		return yaml;
 	}
 
 	private static class LangToken {
