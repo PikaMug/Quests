@@ -3401,18 +3401,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		
 		StringBuilder sb = new StringBuilder();
 		int index = 0;
+		int xIndex = info.length -3;
+		int yIndex = info.length -2;
+		int zIndex = info.length -1;
 		
-		for (String s : info) {
-			try  {
-				Double.parseDouble(s);
-				break;
-			} catch (Exception e) {
-				if (index == 0) {
-					sb.append(s);
-				} else {
-					sb.append(" " + s);
-				}
-				index++;
+		while (index < xIndex) {
+			String s = info[index];
+			if (index == 0) {
+				sb.append(s);
+			} else {
+				sb.append(" " + s);
 			}
 		}
 		
@@ -3422,10 +3420,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		double y;
 		double z;
 		try {
-			x = Double.parseDouble(info[index]);
-			y = Double.parseDouble(info[index + 1]);
-			z = Double.parseDouble(info[index + 2]);
+			x = Double.parseDouble(info[xIndex]);
+			y = Double.parseDouble(info[yIndex]);
+			z = Double.parseDouble(info[zIndex]);
 		} catch (Exception e) {
+			Bukkit.getLogger().severe("Please inform developer location was wrong for "
+					+ world + " " + info[xIndex] + " " + info[yIndex] + " " + info[zIndex] + " ");
 			return null;
 		}
 		if (Bukkit.getServer().getWorld(world) == null) {
