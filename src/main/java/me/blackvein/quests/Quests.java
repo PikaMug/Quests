@@ -131,7 +131,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public boolean load = false;
 	public int killDelay = 0;
 	public int totalQuestPoints = 0;
-	public Lang lang;
+	public Lang lang = new Lang(this);
 	public HashMap<String, Integer> commands = new HashMap<String, Integer>();
 	public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
 	private static Quests instance = null;
@@ -161,14 +161,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		saveResource("events.yml", false);
 		saveResource("data.yml", false);
 		
-		// Save/load lang
-		defaultLangFile();
-		
 		// Load files
 		loadConfig();
 		loadModules();
 		loadData();
 		loadCommands();
+		
+		// Save/load lang
+		defaultLangFile();
 		
 		// Save config with any new options
 		getConfig().options().copyDefaults(true);
@@ -182,7 +182,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	private void defaultLangFile() {
-		lang = new Lang(this);
 		lang.initPhrases();
 		if (new File(this.getDataFolder(), File.separator + "lang" + File.separator + "en.yml").exists() == false) {
 			getLogger().info("Translation data not found, writing defaults to file.");
@@ -398,23 +397,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		killDelay = config.getInt("kill-delay", 600);
 		acceptTimeout = config.getInt("accept-timeout", 20);
 		convertData = config.getBoolean("convert-data-on-startup", false);
-		if (config.contains("language")) {
-			Lang.lang = config.getString("language");
-		} else {
-			config.set("language", "en");
-		}
-		if (config.contains("ignore-locked-quests")) {
-			ignoreLockedQuests = config.getBoolean("ignore-locked-quests");
-		} else {
-			config.set("ignore-locked-quests", false);
-		}
-		if (config.contains("max-quests")) {
-			maxQuests = config.getInt("max-quests");
-		} else {
-			config.set("max-quests", maxQuests);
-		}
+		ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);
+		maxQuests = config.getInt("max-quests", maxQuests);
 		for (String s : config.getStringList("quester-blacklist")) {
-			if (!s.equals("UUID")) {
+			if (!s.equalsIgnoreCase("UUID")) {
 				questerBlacklist.add(s);
 			}
 		}
