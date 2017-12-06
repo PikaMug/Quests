@@ -1902,17 +1902,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			quester = questers.get(id);
 		}
 		if (quester == null) {
+			quester = new Quester(this);
+			quester.id = id;
+			if (citizens != null) {
+				if (citizens.getNPCRegistry().getByUniqueId(id) != null) {
+					return quester;
+				}
+			}
+			
 			if (!questerBlacklist.contains(id.toString())) {
 				getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval...");
 			}
-			quester = new Quester(this);
-			quester.id = id;
+			
 			if (quester.loadData() == false && !questerBlacklist.contains(id.toString())) {
-				if (citizens != null) {
-					if (citizens.getNPCRegistry().getByUniqueId(id) != null) {
-						return quester;
-					}
-				}
 				getLogger().info("Quester not found for UUID \"" + id.toString() + "\". Consider adding them to the Quester blacklist.");
 			} else {
 				if (!questerBlacklist.contains(id.toString())) {
