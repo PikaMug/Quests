@@ -161,14 +161,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		saveResource("events.yml", false);
 		saveResource("data.yml", false);
 		
-		// Load files
+		// Load stuff
 		loadConfig();
 		loadModules();
+		defaultLangFile();
 		loadData();
 		loadCommands();
-		
-		// Save/load lang
-		defaultLangFile();
 		
 		// Save config with any new options
 		getConfig().options().copyDefaults(true);

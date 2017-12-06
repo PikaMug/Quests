@@ -992,7 +992,6 @@ public class Lang {
 	}
 
 	public void loadLang() {
-		System.out.println("lang reads = " + lang);
 		File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + lang + ".yml");
 		boolean newLangs = false;
 		if (langFile.exists()) {
