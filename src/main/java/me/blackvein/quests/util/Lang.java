@@ -151,10 +151,10 @@ public class Lang {
 		langMap.put("questEditorStages", "Edit Stages");
 		langMap.put("questEditorRews", "Edit Rewards");
 		langMap.put("questEditorEnterQuestName", "Enter Quest name (or 'cancel' to return)");
-		langMap.put("questEditorEditEnterQuestName", "Enter Quest name to edit, or 'cancel' to return");
+		langMap.put("questEditorEditEnterQuestName", "Enter Quest name to edit (or 'cancel' to return)");
 		langMap.put("questEditorEnterAskMessage", "Enter ask message (or 'cancel' to return)");
 		langMap.put("questEditorEnterFinishMessage", "Enter finish message (or 'cancel' to return)");
-		langMap.put("questEditorEnterRedoDelay", "Enter amount of time (in seconds), 0 to clear the redo delay or -1 to cancel ");
+		langMap.put("questEditorEnterRedoDelay", "Enter amount of time (in seconds), 0 to clear the redo delay or -1 to cancel");
 		langMap.put("questEditorEnterNPCStart", "Enter NPC ID, -1 to clear the NPC start or -2 to cancel");
 		langMap.put("questEditorEnterBlockStart", "Right-click on a block to use as a start point, then enter 'done' to save, or enter 'clear' to clear the block start, or 'cancel' to return");
 		langMap.put("questEditorEnterInitialEvent", "Enter an Event name, or enter 'clear' to clear the initial Event, or 'cancel' to return");
