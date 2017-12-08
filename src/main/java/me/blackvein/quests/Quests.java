@@ -3398,6 +3398,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			} else {
 				sb.append(" " + s);
 			}
+			index++;
 		}
 		
 		String world = sb.toString();
