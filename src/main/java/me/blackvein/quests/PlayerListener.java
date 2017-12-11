@@ -415,7 +415,7 @@ public class PlayerListener implements Listener {
 				isTargetNPC = true;
 			}
 		}
-		if (/*evt.getEntity() instanceof Player == false ||*/ isTargetNPC) {
+		//if (/*evt.getEntity() instanceof Player == false ||*/ isTargetNPC) {
 			System.out.println("2");
 			if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 				System.out.println("3");
@@ -498,7 +498,7 @@ public class PlayerListener implements Listener {
 					}
 				}
 			}
-		}
+		//}
 	}
 
 	@EventHandler
