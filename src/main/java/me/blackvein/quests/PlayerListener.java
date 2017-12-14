@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -407,98 +408,69 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent evt) {
-		System.out.println("1");
-		// NPCs count as a Player so we check for them through Citizens
-		boolean isTargetNPC = false;
-		if (plugin.citizens != null) {
-			if (CitizensAPI.getNPCRegistry().isNPC(evt.getEntity())) {
-				isTargetNPC = true;
+		if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
+			Entity damager = damageEvent.getDamager();
+				
+			if (damager != null) {
+				if (damager instanceof Projectile) {
+					Projectile projectile = (Projectile) damager;
+					ProjectileSource source = projectile.getShooter();
+					if (source instanceof Entity) {
+						killMob((Entity)source, evt.getEntity());
+					}				
+				} else if (damager instanceof TNTPrimed) {
+					TNTPrimed tnt = (TNTPrimed) damager;
+					Entity source = tnt.getSource();
+					if (source.isValid()) {
+						killMob(source, evt.getEntity());
+					}
+				} else if (damager instanceof Wolf) {
+					Wolf wolf = (Wolf) damager;
+					if (wolf.isTamed()) {
+						Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
+						killPlayer(quester.getPlayer(), evt.getEntity());
+					}
+				} else {
+					killMob(damager, evt.getEntity());
+				}
 			}
 		}
-		//if (/*evt.getEntity() instanceof Player == false ||*/ isTargetNPC) {
-			System.out.println("2");
-			if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-				System.out.println("3");
-				EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
-				Entity damager = damageEvent.getDamager();
-				if (damager != null) {
-					System.out.println("4");
-					if (damager instanceof Projectile) {
-						Projectile projectile = (Projectile) damager;
-						ProjectileSource source = projectile.getShooter();
-						if (source instanceof Player) {
-							Player player = (Player) source;
-							boolean okay = true;
-							if (plugin.citizens != null) {
-								if (CitizensAPI.getNPCRegistry().isNPC(player)) {
-									okay = false;
-								}
-							}
-							System.out.println("5");
-							if (okay) {
-								if (isTargetNPC) {
-									System.out.println("6");
-									Quester quester = plugin.getQuester(player.getUniqueId());
-									for (Quest quest : quester.currentQuests.keySet()) {
-										if (quester.hasObjective(quest, "killNPC")) {
-											System.out.println("7");
-											quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(evt.getEntity()));
-										}
-									}
-								} else {
-									Quester quester = plugin.getQuester(player.getUniqueId());
-									for (Quest quest : quester.currentQuests.keySet()) {
-										if (quester.hasObjective(quest, "killMob")) {
-											System.out.println("7-2");
-											quester.killMob(quest, evt.getEntity().getLocation(), evt.getEntity().getType());
-										}
-									}
-								}
-							}
-						}
-					} else if (damager instanceof TNTPrimed) {
-						TNTPrimed tnt = (TNTPrimed) damager;
-						Entity source = tnt.getSource();
-						if (source instanceof Player) {
-							Player player = (Player) source;
-							boolean okay = true;
-							if (plugin.citizens != null) {
-								if (CitizensAPI.getNPCRegistry().isNPC(player)) {
-									okay = false;
-								}
-							}
-							if (okay) {
-								Quester quester = plugin.getQuester(player.getUniqueId());
-								for (Quest quest : quester.currentQuests.keySet()) {
-									if (quester.hasObjective(quest, "killMob")) {
-										quester.killMob(quest, evt.getEntity().getLocation(), evt.getEntity().getType());
-									}
-								}
-							}
-						}
-					} else if (damager instanceof Player) {
-						System.out.println("7-3");
-						boolean okay = true;
-						if (plugin.citizens != null) {
-							if (CitizensAPI.getNPCRegistry().isNPC(damager)) {
-								okay = false;
-							}
-						}
-						if (okay) {
-							System.out.println("7-4");
-							Player player = (Player) damager;
-							Quester quester = plugin.getQuester(player.getUniqueId());
-							for (Quest quest : quester.currentQuests.keySet()) {
-								if (quester.hasObjective(quest, "killMob")) {
-									System.out.println("7-5");
-									quester.killMob(quest, evt.getEntity().getLocation(), evt.getEntity().getType());
-								}
-							}
-						}
+	}
+	
+	/**
+	 * Checks if damager is blacklisted
+	 * Ensures damager is Player and not NPC
+	 * Kills target mob/NPC if objective exists
+	 * 
+	 * @param damager the attacking entity
+	 * @param target the entity being attacked
+	 * @since 3.1.4
+	 */
+	public void killMob(Entity damager, Entity target) {
+		if (plugin.checkQuester(damager.getUniqueId()) == false) {
+			return;
+		}
+		//Ensure damager is Player AND not an NPC
+		if (damager instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(damager)) {
+			//If target is an NPC...
+			if (CitizensAPI.getNPCRegistry().isNPC(target)) {
+				Quester quester = plugin.getQuester(damager.getUniqueId());
+				for (Quest quest : quester.currentQuests.keySet()) {
+					if (quester.hasObjective(quest, "killNPC")) {
+						quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+					}
+				}
+			//No? Must be a mob...
+			} else {
+				Quester quester = plugin.getQuester(damager.getUniqueId());
+				for (Quest quest : quester.currentQuests.keySet()) {
+					if (quester.hasObjective(quest, "killMob")) {
+						quester.killMob(quest, target.getLocation(), target.getType());
 					}
 				}
 			}
-		//}
+		}
 	}
 
 	@EventHandler
@@ -506,57 +478,39 @@ public class PlayerListener implements Listener {
 		if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
 			Entity damager = damageEvent.getDamager();
+
 			if (damager != null) {
+				//Ignore suicide
+				if (evt.getEntity().getUniqueId().equals(damager.getUniqueId())) {
+				    return;
+				}
 				if (damager instanceof Projectile) {
-					if (evt.getEntity().getLastDamageCause().getEntity() instanceof Player) {
-						Player player = (Player) evt.getEntity().getLastDamageCause().getEntity();
-						if (plugin.checkQuester(player.getUniqueId()) == false) {
-							boolean okay = true;
-							if (plugin.citizens != null) {
-								if (CitizensAPI.getNPCRegistry().isNPC(player) || CitizensAPI.getNPCRegistry().isNPC(evt.getEntity())) {
-									okay = false;
-								}
-							}
-							if (evt.getEntity().getUniqueId().equals(player.getUniqueId())) {
-							    okay = false;
-							}
-							if (okay) {
-								Quester quester = plugin.getQuester(player.getUniqueId());
-								for (Quest quest : quester.currentQuests.keySet()) {
-									if (quester.hasObjective(quest, "killPlayer")) {
-										quester.killPlayer(quest, evt.getEntity());
-									}
-								}
-							}
-						}
+					Projectile projectile = (Projectile) damager;
+					ProjectileSource source = projectile.getShooter();
+					if (source instanceof Entity) {
+						killPlayer((Entity)source, evt.getEntity());
 					}
-				} else if (damager instanceof Player) {
-					Player player = (Player) damager;
-					if (plugin.checkQuester(player.getUniqueId()) == false) {
-						boolean okay = true;
-						if (plugin.citizens != null) {
-							if (CitizensAPI.getNPCRegistry().isNPC(player) || CitizensAPI.getNPCRegistry().isNPC(evt.getEntity())) {
-								okay = false;
-							}
-						}
-						if (evt.getEntity().getUniqueId().equals(player.getUniqueId())) {
-						    okay = false;
-						}
-						if (okay) {
-							Quester quester = plugin.getQuester(player.getUniqueId());
-							for (Quest quest : quester.currentQuests.keySet()) {
-								if (quester.hasObjective(quest, "killPlayer")) {
-									quester.killPlayer(quest, evt.getEntity());
-								}
-							}
-						}
+				} else if (damager instanceof TNTPrimed) {
+					TNTPrimed tnt = (TNTPrimed) damager;
+					Entity source = tnt.getSource();
+					if (source.isValid()) {
+						killPlayer(source, evt.getEntity());
 					}
+				} else if (damager instanceof Wolf) {
+					Wolf wolf = (Wolf) damager;
+					if (wolf.isTamed()) {
+						Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
+						killPlayer(quester.getPlayer(), evt.getEntity());
+					}
+				} else {
+					killPlayer(damager, evt.getEntity());
 				}
 			}
 		}
-		Player player = evt.getEntity();
-		if (plugin.checkQuester(player.getUniqueId()) == false) {
-			Quester quester = plugin.getQuester(player.getUniqueId());
+			
+		Player target = evt.getEntity();
+		if (plugin.checkQuester(target.getUniqueId()) == false) {
+			Quester quester = plugin.getQuester(target.getUniqueId());
 			for (Quest quest : quester.currentQuests.keySet()) {
 				Stage stage = quester.getCurrentStage(quest);
 				if (stage != null && stage.deathEvent != null) {
@@ -572,9 +526,36 @@ public class PlayerListener implements Listener {
 			}
 		}
 		if (found != null) {
-			Quester quester = plugin.getQuester(player.getUniqueId());
+			Quester quester = plugin.getQuester(target.getUniqueId());
 			evt.getDrops().remove(found);
 			quester.hasJournal = false;
+		}
+	}
+	
+	/**
+	 * Checks if damager is blacklisted
+	 * Ensures damager is Player and not NPC
+	 * Kills target Player if objective exists
+	 * 
+	 * @param damager the attacking entity
+	 * @param target the entity being attacked
+	 * @since 3.1.4
+	 */
+	public void killPlayer(Entity damager, Entity target) {
+		if (plugin.checkQuester(damager.getUniqueId()) == false) {
+			return;
+		}
+		//Ensure damager is player AND not an NPC
+		if (damager instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(damager)) {
+			//If target is player AND not an NPC...
+			if (target instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(target)) {
+				Quester quester = plugin.getQuester(damager.getUniqueId());
+				for (Quest quest : quester.currentQuests.keySet()) {
+					if (quester.hasObjective(quest, "killPlayer")) {
+						quester.killPlayer(quest, (Player)target);
+					}
+				}
+			}
 		}
 	}
 

@@ -3646,6 +3646,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return false;
 	}
 
+	/**
+	 * Checks whether player has been blacklisted from Quests
+	 * 
+	 * @param uuid the entity UUID to be checked
+	 * @return {@code true} if UUID is blacklisted
+	 */
 	public boolean checkQuester(UUID uuid) {
 		for (String s : questerBlacklist) {
 			try {
