@@ -3655,7 +3655,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public boolean checkQuester(UUID uuid) {
 		for (String s : questerBlacklist) {
 			try {
-				UUID.fromString(s);
+				uuid.equals(UUID.fromString(s));
 				return true;
 			} catch (IllegalArgumentException e) {
 				getLogger().warning(s + " in config.yml is not a valid UUID for quester-blacklist");

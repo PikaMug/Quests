@@ -448,7 +448,7 @@ public class PlayerListener implements Listener {
 	 * @since 3.1.4
 	 */
 	public void killMob(Entity damager, Entity target) {
-		if (plugin.checkQuester(damager.getUniqueId()) == false) {
+		if (plugin.checkQuester(damager.getUniqueId()) == true) {
 			return;
 		}
 		//Ensure damager is Player AND not an NPC
@@ -542,7 +542,7 @@ public class PlayerListener implements Listener {
 	 * @since 3.1.4
 	 */
 	public void killPlayer(Entity damager, Entity target) {
-		if (plugin.checkQuester(damager.getUniqueId()) == false) {
+		if (plugin.checkQuester(damager.getUniqueId()) == true) {
 			return;
 		}
 		//Ensure damager is player AND not an NPC
