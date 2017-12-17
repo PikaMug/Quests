@@ -1,25 +1,11 @@
 package me.blackvein.quests;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
+import net.citizensnpcs.api.npc.NPC;
+import net.milkbowl.vault.item.Items;
+import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,11 +20,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.blackvein.quests.util.ItemUtil;
-import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.MiscUtil;
-import net.citizensnpcs.api.npc.NPC;
-import net.milkbowl.vault.item.Items;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Quester {
 
@@ -669,7 +655,13 @@ public class Quester {
 	}
 
 	public boolean hasCustomObjective(Quest quest, String s) {
-		if (getQuestData(quest).customObjectiveCounts.containsKey(s)) {
+		final QuestData questData = getQuestData(quest);
+
+		if (questData == null) {
+		    return false;
+        }
+
+		if (questData.customObjectiveCounts.containsKey(s)) {
 			int count = getQuestData(quest).customObjectiveCounts.get(s);
 			int index = -1;
 			for (int i = 0; i < getCurrentStage(quest).customObjectives.size(); i++) {
