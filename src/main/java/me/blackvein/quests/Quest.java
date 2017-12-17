@@ -439,7 +439,7 @@ public class Quest {
                 String message = found.getRewardName();
                 if (message != null) {
                     for (String key : datamap.keySet()) {
-                        message = message.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
+                        message = message.replaceAll("%" + key + "%", ((String) datamap.get(key)));
                     }
                     player.sendMessage("- " + ChatColor.GOLD + message);
                 } else {
@@ -612,14 +612,11 @@ public class Quest {
             if (other.redoDelay != redoDelay) {
                 return false;
             }
-            if (other.orderedStages.equals(orderedStages) == false) {
-                return false;
-            }
+			return other.orderedStages.equals(orderedStages) != false;
         } else {
             return false;
         }
-        return true;
-    }
+	}
 
     @Override
     public int hashCode() {

@@ -942,7 +942,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             ClassLoader cl = URLClassLoader.newInstance(urls, getClassLoader());
             int count = 0;
             while (e.hasMoreElements()) {
-                JarEntry je = (JarEntry) e.nextElement();
+                JarEntry je = e.nextElement();
                 if (je.isDirectory() || !je.getName().endsWith(".class")) {
                     continue;
                 }
@@ -1794,7 +1794,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             msg = msg.replaceAll("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
             cs.sendMessage(ChatColor.GOLD + msg);
             for (String s : sortedMap.keySet()) {
-                int i = (Integer) sortedMap.get(s);
+                int i = sortedMap.get(s);
                 s = s.trim();
                 try {
                     UUID id = UUID.fromString(s);
@@ -1828,7 +1828,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         } else {
             quester = getQuester(((Player) cs).getUniqueId());
-            cs.sendMessage(ChatColor.GOLD + "- " + ((Player) cs).getName() + " -");
+            cs.sendMessage(ChatColor.GOLD + "- " + cs.getName() + " -");
         }
         cs.sendMessage(ChatColor.YELLOW + Lang.get("questPointsDisplay") + " " + ChatColor.DARK_PURPLE + quester.questPoints);
         if (quester.currentQuests.isEmpty()) {
@@ -1909,7 +1909,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     private boolean questsQuit(final Player player, String[] args) {
         if (allowQuitting == true) {
-            if (((Player) player).hasPermission("quests.quit")) {
+            if (player.hasPermission("quests.quit")) {
                 if (args.length == 1) {
                     player.sendMessage(ChatColor.RED + Lang.get("COMMAND_QUIT_HELP"));
                     return true;
@@ -1945,7 +1945,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     private void questsTake(final Player player, String[] args) {
         if (allowCommands == true) {
-            if (((Player) player).hasPermission("quests.take")) {
+            if (player.hasPermission("quests.take")) {
                 if (args.length == 1) {
                     player.sendMessage(ChatColor.YELLOW + Lang.get("COMMAND_TAKE_USAGE"));
                 } else {
@@ -2029,13 +2029,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             }
                             if (takeable == true) {
                                 if (player instanceof Conversable) {
-                                    if (((Player) player).isConversing() == false) {
+                                    if (player.isConversing() == false) {
                                         quester.questToTake = q.name;
                                         String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + getQuest(quester.questToTake).description + "\n";
                                         for (String msg : s.split("<br>")) {
                                             player.sendMessage(msg);
                                         }
-                                        conversationFactory.buildConversation((Conversable) player).begin();
+                                        conversationFactory.buildConversation(player).begin();
                                     } else {
                                         player.sendMessage(ChatColor.YELLOW + Lang.get("alreadyConversing"));
                                     }
@@ -2056,7 +2056,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
 
     private void questsList(final CommandSender cs, String[] args) {
-        if (((Player) cs).hasPermission("quests.list")) {
+        if (cs.hasPermission("quests.list")) {
             if (args.length == 1) {
                 listQuests((Player) cs, 1);
             } else if (args.length == 2) {
@@ -2079,7 +2079,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
 
     private void questsHelp(final CommandSender cs) {
-        if (((Player) cs).hasPermission("quests.quests")) {
+        if (cs.hasPermission("quests.quests")) {
             Player p = (Player) cs;
             printHelp(p);
         } else {
@@ -2089,7 +2089,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     private boolean questCommandHandler(final CommandSender cs, String[] args) {
         if (cs instanceof Player) {
-            if (((Player) cs).hasPermission("quests.quest")) {
+            if (cs.hasPermission("quests.quest")) {
                 if (args.length == 0) {
                     showObjectives((Player) cs);
                 } else {
@@ -2107,7 +2107,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
 
     private void showQuestDetails(final CommandSender cs, String[] args) {
-        if (((Player) cs).hasPermission("quests.questinfo")) {
+        if (cs.hasPermission("quests.questinfo")) {
             String name = "";
             if (args.length == 1) {
                 name = args[0].toLowerCase();

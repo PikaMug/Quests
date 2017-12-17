@@ -240,9 +240,6 @@ public class QuestMob {
         if (!spawnAmounts.equals(other.spawnAmounts)) {
             return false;
         }
-        if (!spawnLocation.equals(other.spawnLocation)) {
-            return false;
-        }
-        return true;
-    }
+		return spawnLocation.equals(other.spawnLocation);
+	}
 }

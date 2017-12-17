@@ -180,10 +180,7 @@ public abstract class CustomObjective implements Listener {
             if (other.showCount != showCount) {
                 return false;
             }
-            if (other.count != count) {
-                return false;
-            }
-            return true;
+            return other.count == count;
         }
         return false;
     }

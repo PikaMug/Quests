@@ -6,7 +6,6 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.Lang;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -95,7 +94,7 @@ public class QuestAcceptPrompt extends StringPrompt {
                             for (String msg : s.split("<br>")) {
                                 player.sendMessage(msg);
                             }
-                            plugin.conversationFactory.buildConversation((Conversable) player).begin();
+                            plugin.conversationFactory.buildConversation(player).begin();
                         } else {
                             player.sendMessage(q.failRequirements);
                         }
@@ -121,7 +120,7 @@ public class QuestAcceptPrompt extends StringPrompt {
                             for (String msg : s.split("<br>")) {
                                 player.sendMessage(msg);
                             }
-                            plugin.conversationFactory.buildConversation((Conversable) player).begin();
+                            plugin.conversationFactory.buildConversation(player).begin();
                         }
                     } else if (quester.currentQuests.containsKey(q) == false) {
                         String msg = Lang.get("questMaxAllowed");

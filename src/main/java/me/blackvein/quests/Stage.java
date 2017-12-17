@@ -297,14 +297,10 @@ public class Stage {
                 return false;
             }
             if (other.objectiveOverride != null && objectiveOverride != null) {
-                if (other.objectiveOverride.equals(objectiveOverride) == false) {
-                    return false;
-                }
+				return other.objectiveOverride.equals(objectiveOverride) != false;
             } else if (other.objectiveOverride != null && objectiveOverride == null) {
                 return false;
-            } else if (other.objectiveOverride == null && objectiveOverride != null) {
-                return false;
-            }
+            } else return other.objectiveOverride != null || objectiveOverride == null;
         }
         return true;
     }

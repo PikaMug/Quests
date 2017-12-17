@@ -185,9 +185,7 @@ public class ItemUtil {
     public static boolean isItem(ItemStack is) {
         if (is == null)
             return false;
-        if (is.getType().equals(Material.AIR))
-            return false;
-        return true;
+        return !is.getType().equals(Material.AIR);
     }
 
     public static boolean isJournal(ItemStack is) {

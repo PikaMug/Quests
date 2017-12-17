@@ -454,14 +454,10 @@ public class Event {
                 return false;
             }
             if (other.teleport != null && teleport != null) {
-                if (other.teleport.equals(teleport) == false) {
-                    return false;
-                }
+				return other.teleport.equals(teleport) != false;
             } else if (other.teleport != null && teleport == null) {
                 return false;
-            } else if (other.teleport == null && teleport != null) {
-                return false;
-            }
+            } else return other.teleport != null || teleport == null;
         }
         return true;
     }

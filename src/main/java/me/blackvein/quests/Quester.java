@@ -469,7 +469,7 @@ public class Quester {
             int amount = inNew.getAmount();
             HashMap<Integer, ? extends ItemStack> items = inInv.all(inNew.getType());
             for (int i = 0; i < inInv.getSize(); i++) {
-                if (!items.containsKey((Integer) i)) {
+                if (!items.containsKey(i)) {
                     continue;
                 }
                 ItemStack item = items.get((Integer) i);
@@ -897,7 +897,7 @@ public class Quester {
                     String display = co.getDisplay();
                     Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
                     for (String key : co.datamap.keySet()) {
-                        display = display.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
+                        display = display.replaceAll("%" + key + "%", ((String) datamap.get(key)));
                     }
                     if (entry.getValue() < getCurrentStage(quest).customObjectiveCounts.get(index)) {
                         if (co.isCountShown() && co.isEnableCount()) {
@@ -1503,7 +1503,7 @@ public class Quester {
             }
             Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
             for (String key : co.datamap.keySet()) {
-                message = message.replaceAll("%" + ((String) key) + "%", (String) datamap.get(key));
+                message = message.replaceAll("%" + key + "%", (String) datamap.get(key));
             }
             if (co.isCountShown() && co.isEnableCount()) {
                 message = message.replaceAll("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
@@ -1590,7 +1590,7 @@ public class Quester {
         data.setFishCaught(0);
         if (quest.getStage(0).itemsToEnchant.isEmpty() == false) {
             for (Entry<Map<Enchantment, Material>, Integer> e : quest.getStage(0).itemsToEnchant.entrySet()) {
-                Map<Enchantment, Material> map = (Map<Enchantment, Material>) e.getKey();
+                Map<Enchantment, Material> map = e.getKey();
                 data.itemsEnchanted.put(map, 0);
             }
         }
@@ -1720,7 +1720,7 @@ public class Quester {
         data.setFishCaught(0);
         if (quest.getStage(stage).itemsToEnchant.isEmpty() == false) {
             for (Entry<Map<Enchantment, Material>, Integer> e : quest.getStage(stage).itemsToEnchant.entrySet()) {
-                Map<Enchantment, Material> map = (Map<Enchantment, Material>) e.getKey();
+                Map<Enchantment, Material> map = e.getKey();
                 data.itemsEnchanted.put(map, 0);
             }
         }
@@ -1901,11 +1901,11 @@ public class Quester {
                     LinkedList<String> itemNames = new LinkedList<String>();
                     LinkedList<Integer> enchAmounts = new LinkedList<Integer>();
                     for (Entry<Map<Enchantment, Material>, Integer> e : questData.itemsEnchanted.entrySet()) {
-                        Map<Enchantment, Material> enchMap = (Map<Enchantment, Material>) e.getKey();
+                        Map<Enchantment, Material> enchMap = e.getKey();
                         enchAmounts.add(questData.itemsEnchanted.get(enchMap));
                         for (Entry<Enchantment, Material> e2 : enchMap.entrySet()) {
-                            enchantments.add(Quester.prettyEnchantmentString((Enchantment) e2.getKey()));
-                            itemNames.add(((Material) e2.getValue()).name());
+                            enchantments.add(Quester.prettyEnchantmentString(e2.getKey()));
+                            itemNames.add(e2.getValue().name());
                         }
                     }
                     questSec.set("enchantments", enchantments);

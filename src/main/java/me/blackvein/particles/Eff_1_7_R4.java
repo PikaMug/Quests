@@ -81,7 +81,7 @@ public enum Eff_1_7_R4 {
      * @throws Exception A ReportedException may be thrown if the network manager
      *                   fails to handle the packet.
      */
-    public void sendToPlayer(Player player, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count) throws Exception {
+    public void sendToPlayer(Player player, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count) {
         PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(particleName, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }

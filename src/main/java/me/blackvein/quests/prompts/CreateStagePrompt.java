@@ -40,7 +40,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
     public String getPromptText(ConversationContext context) {
         try {
             context.setSessionData(pref, Boolean.TRUE);
-            String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE + " | " + Lang.get("stageEditorStage") + " " + ChatColor.DARK_PURPLE + stageNum + ChatColor.LIGHT_PURPLE + " -\n";
+            String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.AQUA + context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE + " | " + Lang.get("stageEditorStage") + " " + ChatColor.DARK_PURPLE + stageNum + ChatColor.LIGHT_PURPLE + " -\n";
             if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
                 text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorBreakBlocks") + ChatColor.GRAY + "  (" + Lang.get("noneSet") + ")\n";
             } else {
@@ -2041,7 +2041,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
                 }
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
             }
-            questFactory.selectingNPCs.remove((Player) context.getForWhom());
+            questFactory.selectingNPCs.remove(context.getForWhom());
             return new DeliveryListPrompt();
         }
     }
@@ -2093,7 +2093,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
                         return new NPCIDsToTalkToPrompt();
                     }
                 }
-                questFactory.selectingNPCs.remove((Player) context.getForWhom());
+                questFactory.selectingNPCs.remove(context.getForWhom());
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, null);
@@ -2215,7 +2215,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
                 }
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
             }
-            questFactory.selectingNPCs.remove((Player) context.getForWhom());
+            questFactory.selectingNPCs.remove(context.getForWhom());
             return new NPCKillListPrompt();
         }
     }
@@ -3108,22 +3108,22 @@ public class CreateStagePrompt extends FixedSetPrompt {
             if (context.getSessionData(pref + CK.S_START_EVENT) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorStartEvent") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorStartEvent") + " (" + ChatColor.AQUA + ((String) context.getSessionData(pref + CK.S_START_EVENT)) + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorStartEvent") + " (" + ChatColor.AQUA + context.getSessionData(pref + CK.S_START_EVENT) + ChatColor.YELLOW + ")\n";
             }
             if (context.getSessionData(pref + CK.S_FINISH_EVENT) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorFinishEvent") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorFinishEvent") + " (" + ChatColor.AQUA + ((String) context.getSessionData(pref + CK.S_FINISH_EVENT)) + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorFinishEvent") + " (" + ChatColor.AQUA + context.getSessionData(pref + CK.S_FINISH_EVENT) + ChatColor.YELLOW + ")\n";
             }
             if (context.getSessionData(pref + CK.S_DEATH_EVENT) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeathEvent") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeathEvent") + " (" + ChatColor.AQUA + ((String) context.getSessionData(pref + CK.S_DEATH_EVENT)) + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeathEvent") + " (" + ChatColor.AQUA + context.getSessionData(pref + CK.S_DEATH_EVENT) + ChatColor.YELLOW + ")\n";
             }
             if (context.getSessionData(pref + CK.S_DISCONNECT_EVENT) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDisconnectEvent") + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDisconnectEvent") + " (" + ChatColor.AQUA + ((String) context.getSessionData(pref + CK.S_DISCONNECT_EVENT)) + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDisconnectEvent") + " (" + ChatColor.AQUA + context.getSessionData(pref + CK.S_DISCONNECT_EVENT) + ChatColor.YELLOW + ")\n";
             }
             if (context.getSessionData(pref + CK.S_CHAT_EVENTS) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorChatEvents") + " (" + Lang.get("noneSet") + ")\n";
@@ -3750,7 +3750,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
             for (String dataKey : datamapKeys) {
                 text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + dataKey;
                 if (datamap.get(dataKey) != null) {
-                    text += ChatColor.GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+                    text += ChatColor.GREEN + " (" + datamap.get(dataKey) + ")\n";
                 } else {
                     text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
                 }

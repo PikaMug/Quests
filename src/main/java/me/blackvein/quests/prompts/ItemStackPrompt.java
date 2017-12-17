@@ -166,7 +166,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
                 ItemStack stack = new ItemStack(Material.matchMaterial(name), amount);
                 ItemMeta meta = stack.getItemMeta();
                 if (data != -1) {
-                    stack.setDurability((short) data);
+                    stack.setDurability(data);
                 }
                 if (enchs != null) {
                     for (Entry<Enchantment, Integer> e : enchs.entrySet()) {
@@ -202,19 +202,19 @@ public class ItemStackPrompt extends FixedSetPrompt {
                 String name = (String) cc.getSessionData("tempName");
                 item = ChatColor.AQUA + Quester.prettyItemString(name);
                 if (cc.getSessionData("tempData") != null) {
-                    item += ":" + ChatColor.BLUE + (Short) cc.getSessionData("tempData");
+                    item += ":" + ChatColor.BLUE + cc.getSessionData("tempData");
                 }
             } else {
-                item = ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (String) cc.getSessionData("tempDisplay") + ChatColor.RESET + "" + ChatColor.GRAY + " (";
+                item = ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + cc.getSessionData("tempDisplay") + ChatColor.RESET + "" + ChatColor.GRAY + " (";
                 String name = (String) cc.getSessionData("tempName");
                 item += ChatColor.AQUA + Quester.prettyItemString(name);
                 if (cc.getSessionData("tempData") != null) {
-                    item += ":" + ChatColor.BLUE + (Short) cc.getSessionData("tempData");
+                    item += ":" + ChatColor.BLUE + cc.getSessionData("tempData");
                 }
                 item += ChatColor.GRAY + ")";
             }
             if (cc.getSessionData("tempAmount") != null) {
-                item += ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + (Integer) cc.getSessionData("tempAmount");
+                item += ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + cc.getSessionData("tempAmount");
             } else {
                 item += ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + "1";
             }

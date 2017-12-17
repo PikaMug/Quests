@@ -928,7 +928,7 @@ public class QuestFactory implements ConversationAbandonedListener {
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
         if (abandonedEvent.getContext().getSessionData(CK.Q_NAME) != null) {
-            names.remove((String) abandonedEvent.getContext().getSessionData(CK.Q_NAME));
+            names.remove(abandonedEvent.getContext().getSessionData(CK.Q_NAME));
         }
         Player player = (Player) abandonedEvent.getContext().getForWhom();
         selectedBlockStarts.remove(player.getUniqueId());
@@ -1313,14 +1313,14 @@ public class QuestFactory implements ConversationAbandonedListener {
                     return new SetNpcStartPrompt();
                 }
                 context.setSessionData(CK.Q_START_NPC, input.intValue());
-                selectingNPCs.remove((Player) context.getForWhom());
+                selectingNPCs.remove(context.getForWhom());
                 return new CreateMenuPrompt();
             } else if (input.intValue() == -1) {
                 context.setSessionData(CK.Q_START_NPC, null);
-                selectingNPCs.remove((Player) context.getForWhom());
+                selectingNPCs.remove(context.getForWhom());
                 return new CreateMenuPrompt();
             } else if (input.intValue() == -2) {
-                selectingNPCs.remove((Player) context.getForWhom());
+                selectingNPCs.remove(context.getForWhom());
                 return new CreateMenuPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
@@ -1393,7 +1393,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new QuestNamePrompt();
                 }
-                names.remove((String) context.getSessionData(CK.Q_NAME));
+                names.remove(context.getSessionData(CK.Q_NAME));
                 context.setSessionData(CK.Q_NAME, input);
                 names.add(input);
             }
@@ -1764,7 +1764,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.RED + Lang.get("questEditorDeleted") + " \"" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\"?\n";
+            String text = ChatColor.RED + Lang.get("questEditorDeleted") + " \"" + ChatColor.GOLD + context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\"?\n";
             text += ChatColor.YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
             return text;
         }
