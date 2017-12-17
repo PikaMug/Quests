@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>3.0.6</version>
+    <version>3.0.7</version>
     <name>quests</name>
     <url>https://github.com/FlyingPikachu/Quests/</url>
     <packaging>jar</packaging>
@@ -182,7 +182,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.7.0</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                     <source>1.8</source>

@@ -1,8 +1,7 @@
 package me.blackvein.quests;
 
-import org.bukkit.scheduler.BukkitRunnable;
-
 import me.blackvein.quests.util.Lang;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ObjectiveTimer extends BukkitRunnable {
 
