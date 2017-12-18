@@ -669,6 +669,9 @@ public class Quester {
 	}
 
 	public boolean hasCustomObjective(Quest quest, String s) {
+		if (getQuestData(quest) == null) {
+			return false;
+		}
 		if (getQuestData(quest).customObjectiveCounts.containsKey(s)) {
 			int count = getQuestData(quest).customObjectiveCounts.get(s);
 			int index = -1;
