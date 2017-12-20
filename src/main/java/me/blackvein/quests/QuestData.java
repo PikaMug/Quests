@@ -5,7 +5,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -305,40 +304,6 @@ public class QuestData {
 
 		@Override
 		public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
-			super.putAll(m);
-			if (doJournalUpdate)
-				quester.updateJournal();
-		}
-	};
-	public Map<UUID, Long> playerKillTimes = new HashMap<UUID, Long>() {
-
-		private static final long serialVersionUID = 9069594419068019465L;
-
-		@Override
-		public Long put(UUID key, Long val) {
-			Long data = super.put(key, val);
-			if (doJournalUpdate)
-				quester.updateJournal();
-			return data;
-		}
-
-		@Override
-		public Long remove(Object key) {
-			Long i = super.remove(key);
-			if (doJournalUpdate)
-				quester.updateJournal();
-			return i;
-		}
-
-		@Override
-		public void clear() {
-			super.clear();
-			if (doJournalUpdate)
-				quester.updateJournal();
-		}
-
-		@Override
-		public void putAll(Map<? extends UUID, ? extends Long> m) {
 			super.putAll(m);
 			if (doJournalUpdate)
 				quester.updateJournal();

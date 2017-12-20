@@ -842,10 +842,8 @@ public class Quester {
 	}
 
 	public void killMob(Quest quest, Location killedLocation, EntityType e) {
-		System.out.println("8");
 		QuestData questData = getQuestData(quest);
 		if (questData.mobsKilled.contains(e) == false) {
-			System.out.println("9");
 			return;
 		}
 		Stage currentStage = getCurrentStage(quest);
@@ -853,7 +851,6 @@ public class Quester {
 		Integer numberOfSpecificMobKilled = questData.mobNumKilled.get(indexOfMobKilled);
 		Integer numberOfSpecificMobNeedsToBeKilledInCurrentStage = currentStage.mobNumToKill.get(indexOfMobKilled);
 		if (questData.locationsToKillWithin.isEmpty() == false) {
-			System.out.println("10-1");
 			Location locationToKillWithin = questData.locationsToKillWithin.get(indexOfMobKilled);
 			double radius = questData.radiiToKillWithin.get(indexOfMobKilled);
 			// Check world #name, not the object
@@ -872,30 +869,15 @@ public class Quester {
 			}
 		}
 		if (numberOfSpecificMobKilled < numberOfSpecificMobNeedsToBeKilledInCurrentStage) {
-			System.out.println("10-2");
 			Integer newNumberOfSpecificMobKilled = numberOfSpecificMobKilled + 1;
 			questData.mobNumKilled.set(indexOfMobKilled, newNumberOfSpecificMobKilled);
 			if ((newNumberOfSpecificMobKilled).equals(numberOfSpecificMobNeedsToBeKilledInCurrentStage)) {
-				System.out.println("11");
 				finishObjective(quest, "killMob", null, null, null, e, null, null, null, null, null, null);
 			}
 		}
 	}
 
 	public void killPlayer(Quest quest, Player player) {
-		if (getQuestData(quest).playerKillTimes.containsKey(player.getUniqueId())) {
-			long killTime = getQuestData(quest).playerKillTimes.get(player.getUniqueId());
-			long comparator = plugin.killDelay * 1000;
-			long currentTime = System.currentTimeMillis();
-			if ((currentTime - killTime) < comparator) {
-				String error = Lang.get("killNotValid");
-				error = error.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(comparator - (currentTime - killTime)) + ChatColor.RED);
-				error = error.replaceAll("<player>", ChatColor.DARK_PURPLE + player.getName() + ChatColor.RED);
-				getPlayer().sendMessage(ChatColor.RED + error);
-				return;
-			}
-		}
-		getQuestData(quest).playerKillTimes.put(player.getUniqueId(), System.currentTimeMillis());
 		if (getQuestData(quest).getPlayersKilled() < getCurrentStage(quest).playersToKill) {
 			getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled() + 1);
 			if (((Integer) getQuestData(quest).getPlayersKilled()).equals(getCurrentStage(quest).playersToKill)) {
@@ -1056,7 +1038,6 @@ public class Quester {
 	 */
 	public void finishObjective(Quest quest, String objective, ItemStack material, ItemStack delivery, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
 		//TODO ItemStack material, is largely unnecessary as .name() can be obtained thru getQuestData(quest).blocksXXXX
-		System.out.println("13");
 		Player p = getPlayer();
 		if (getCurrentStage(quest).objectiveOverride != null) {
 			if (testComplete(quest)) {
@@ -1148,12 +1129,10 @@ public class Quester {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("killMob")) {
-			System.out.println("14");
 			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("kill") + " " + mob.name();
 			message = message + " " + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob)) + "/" + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob));
 			p.sendMessage(message);
 			if (testComplete(quest)) {
-				System.out.println("15");
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("killPlayer")) {
@@ -2058,14 +2037,6 @@ public class Quester {
 				}
 				if (questSec.contains("fish-caught")) {
 					getQuestData(quest).setFishCaught(questSec.getInt("fish-caught"));
-				}
-				if (questSec.contains("players-killed")) {
-					getQuestData(quest).setPlayersKilled(questSec.getInt("players-killed"));
-					List<String> playerNames = questSec.getStringList("player-killed-names");
-					List<Long> killTimes = questSec.getLongList("kill-times");
-					for (String s : playerNames) {
-						getQuestData(quest).playerKillTimes.put(UUID.fromString(s), killTimes.get(playerNames.indexOf(s)));
-					}
 				}
 				if (questSec.contains("enchantments")) {
 					LinkedList<Enchantment> enchantments = new LinkedList<Enchantment>();
