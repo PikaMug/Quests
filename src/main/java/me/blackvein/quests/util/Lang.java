@@ -774,7 +774,6 @@ public class Lang {
 		langMap.put("alreadyConversing", "You already are in a conversation!");
 		langMap.put("inputNum", "Input must be a number.");
 		langMap.put("inputPosNum", "Input must be a positive number.");
-		langMap.put("killNotValid", "Kill did not count. You must wait <time> before you can kill <player> again.");
 		langMap.put("questModified", "Your active Quest <quest> has been modified. You have been forced to quit the Quest.");
 		langMap.put("questNotExist", "Your active Quest <quest> no longer exists. You have been forced to quit the Quest.");
 		langMap.put("questInvalidChoice", "Invalid choice. Type \'Yes\' or \'No\'");
