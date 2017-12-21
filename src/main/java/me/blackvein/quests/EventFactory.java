@@ -205,11 +205,11 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 		if (event.stormWorld != null) {
 			context.setSessionData(CK.E_WORLD_STORM, event.stormWorld.getName());
-			context.setSessionData(CK.E_WORLD_STORM_DURATION, (long) event.stormDuration);
+			context.setSessionData(CK.E_WORLD_STORM_DURATION, (int) event.stormDuration);
 		}
 		if (event.thunderWorld != null) {
 			context.setSessionData(CK.E_WORLD_THUNDER, event.thunderWorld.getName());
-			context.setSessionData(CK.E_WORLD_THUNDER_DURATION, (long) event.thunderDuration);
+			context.setSessionData(CK.E_WORLD_THUNDER_DURATION, (int) event.thunderDuration);
 		}
 		if (event.mobSpawns != null && event.mobSpawns.isEmpty() == false) {
 			LinkedList<String> questMobs = new LinkedList<String>();
@@ -418,12 +418,12 @@ public class EventFactory implements ConversationAbandonedListener {
 			if (context.getSessionData(CK.E_WORLD_STORM) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetStorm") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetStorm") + " (" + ChatColor.AQUA + (String) context.getSessionData(CK.E_WORLD_STORM) + ChatColor.YELLOW + " -> " + ChatColor.DARK_AQUA + Quests.getTime((Long) context.getSessionData(CK.E_WORLD_STORM_DURATION)) + ChatColor.YELLOW + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetStorm") + " (" + ChatColor.AQUA + (String) context.getSessionData(CK.E_WORLD_STORM) + ChatColor.YELLOW + " -> " + ChatColor.DARK_AQUA + Quests.getTime(Long.valueOf((int)context.getSessionData(CK.E_WORLD_STORM_DURATION) * 1000)) + ChatColor.YELLOW + ")\n";
 			}
 			if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetThunder") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetThunder") + " (" + ChatColor.AQUA + (String) context.getSessionData(CK.E_WORLD_THUNDER) + ChatColor.YELLOW + " -> " + ChatColor.DARK_AQUA + Quests.getTime((Long) context.getSessionData(CK.E_WORLD_THUNDER_DURATION)) + ChatColor.YELLOW + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetThunder") + " (" + ChatColor.AQUA + (String) context.getSessionData(CK.E_WORLD_THUNDER) + ChatColor.YELLOW + " -> " + ChatColor.DARK_AQUA + Quests.getTime(Long.valueOf((int)context.getSessionData(CK.E_WORLD_THUNDER_DURATION) * 1000)) + ChatColor.YELLOW + ")\n";
 			}
 			if (context.getSessionData(CK.E_MOB_TYPES) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
@@ -688,6 +688,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		return (LinkedList<Boolean>) context.getSessionData(path);
 	}
 
+	@SuppressWarnings({ "unused" })
 	private static Long getCLong(ConversationContext context, String path) {
 		return (Long) context.getSessionData(path);
 	}
@@ -787,15 +788,15 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 		if (context.getSessionData(CK.E_WORLD_STORM) != null) {
 			String world = getCString(context, CK.E_WORLD_STORM);
-			Long duration = getCLong(context, CK.E_WORLD_STORM_DURATION);
+			int duration = getCInt(context, CK.E_WORLD_STORM_DURATION);
 			section.set("storm-world", world);
-			section.set("storm-duration", duration / 50L);
+			section.set("storm-duration", duration);
 		}
 		if (context.getSessionData(CK.E_WORLD_THUNDER) != null) {
 			String world = getCString(context, CK.E_WORLD_THUNDER);
-			Long duration = getCLong(context, CK.E_WORLD_THUNDER_DURATION);
+			int duration = getCInt(context, CK.E_WORLD_THUNDER_DURATION);
 			section.set("thunder-world", world);
-			section.set("thunder-duration", duration / 50L);
+			section.set("thunder-duration", duration);
 		}
 		try {
 			if (context.getSessionData(CK.E_MOB_TYPES) != null) {
@@ -1278,8 +1279,8 @@ public class EventFactory implements ConversationAbandonedListener {
 				if (context.getSessionData(CK.E_WORLD_STORM_DURATION) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					Long dur = (Long) context.getSessionData(CK.E_WORLD_STORM_DURATION);
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur) + ChatColor.YELLOW + ")\n";
+					int dur = (int) context.getSessionData(CK.E_WORLD_STORM_DURATION);
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur * 1000) + ChatColor.YELLOW + ")\n";
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
@@ -1346,16 +1347,16 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorEnterStormDuration");
+			return ChatColor.YELLOW + Lang.get("eventEditorEnterDuration");
 		}
 
 		@Override
 		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.longValue() < 1000) {
+			if (input.intValue() < 1) {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAtLeastOneSecond"));
 				return new StormDurationPrompt();
 			}
-			context.setSessionData(CK.E_WORLD_STORM_DURATION, input.longValue());
+			context.setSessionData(CK.E_WORLD_STORM_DURATION, input.intValue());
 			return new StormPrompt();
 		}
 	}
@@ -1379,8 +1380,8 @@ public class EventFactory implements ConversationAbandonedListener {
 				if (context.getSessionData(CK.E_WORLD_THUNDER_DURATION) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					Long dur = (Long) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur) + ChatColor.YELLOW + ")\n";
+					int dur = (int) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur * 1000) + ChatColor.YELLOW + ")\n";
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
@@ -1452,11 +1453,11 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.longValue() < 1000) {
+			if (input.intValue() < 1) {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAtLeastOneSecond"));
 				return new ThunderDurationPrompt();
 			} else {
-				context.setSessionData(CK.E_WORLD_THUNDER_DURATION, input.longValue());
+				context.setSessionData(CK.E_WORLD_THUNDER_DURATION, input.intValue());
 			}
 			return new ThunderPrompt();
 		}
