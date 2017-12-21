@@ -887,11 +887,19 @@ public class Quester {
 	}
 
 	public void interactWithNPC(Quest quest, NPC n) {
-		if (getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
-			if (getQuestData(quest).citizensInteracted.get(n.getId()) == false) {
-				getQuestData(quest).citizensInteracted.put(n.getId(), true);
-				finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
+		try {
+			if (getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
+				if (getQuestData(quest).citizensInteracted.get(n.getId()) == false) {
+					getQuestData(quest).citizensInteracted.put(n.getId(), true);
+					finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
+				}
 			}
+		} catch (NullPointerException e) {
+			//Github ticket #155
+			plugin.getLogger().severe("An error has occurred with Quests. Please report on Github. Include the info below");
+			plugin.getLogger().severe("npc + id = " + n.getName() + " + " + n.getId());
+			plugin.getLogger().severe("citizensInteracted = " + getQuestData(quest).citizensInteracted.toString());
+			e.printStackTrace();
 		}
 	}
 

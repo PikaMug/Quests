@@ -78,7 +78,6 @@ public class NpcListener implements Listener {
 								break;
 							}
 						}
-						// break;
 					}
 				}
 			}
