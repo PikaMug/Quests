@@ -2451,16 +2451,20 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String mobs = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorMobsTitle") + "\n";
-			final EntityType[] mobArr = EntityType.values();
-			for (int i = 0; i < mobArr.length; i++) {
-				final EntityType type = mobArr[i];
-				if (type.isAlive() == false) {
-					continue;
+			LinkedList<EntityType> mobArr = new LinkedList<EntityType>(Arrays.asList(EntityType.values()));
+			LinkedList<EntityType> toRemove = new LinkedList<EntityType>();
+			for (int i = 0; i < mobArr.size(); i++) {
+				final EntityType type = mobArr.get(i);
+				if (type.isAlive() == false || type.name().equals("PLAYER")) {
+					toRemove.add(type);
 				}
-				if (i < (mobArr.length - 1)) {
-					mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
+			}
+			mobArr.removeAll(toRemove);
+			for (int i = 0; i < mobArr.size(); i++) {
+				if (i < (mobArr.size() - 1)) {
+					mobs += MiscUtil.getProperMobName(mobArr.get(i)) + ", ";
 				} else {
-					mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
+					mobs += MiscUtil.getProperMobName(mobArr.get(i)) + "\n";
 				}
 			}
 			return mobs + ChatColor.YELLOW + Lang.get("stageEditorMobsPrompt");
