@@ -1,3 +1,3 @@
 files:
-  - source: /src/main/resources/lang/en/strings.yml
+  - source: /src/main/resources/lang/en-US/strings.yml
     translation: /src/main/resources/lang/%locale%/%original_file_name%
