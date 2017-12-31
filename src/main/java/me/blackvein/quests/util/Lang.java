@@ -20,7 +20,7 @@ import me.blackvein.quests.Quests;
 
 public class Lang {
 
-	public static String lang = "en";
+	public static String iso = "en";
 	private static final LangToken tokens = new LangToken();
 	private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
 	private final Quests plugin;
@@ -962,7 +962,7 @@ public class Lang {
 		langMap.put("questSaveError", "An error occurred while saving.");
 		langMap.put("questBlacklisted", "You are blacklisted. Contact an admin if this is in error.");
 		//
-		File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + lang + ".yml");
+		File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "lang.yml");
 		YamlConfiguration langFile = YamlConfiguration.loadConfiguration(file);
 		for (Entry<String, Object> e : langFile.getValues(true).entrySet()) {
 			langMap.put(e.getKey(), (String) e.getValue());
@@ -971,27 +971,31 @@ public class Lang {
 
 	public void saveNewLang() {
 		FileConfiguration data = new YamlConfiguration();
-		File dir = new File(plugin.getDataFolder(), File.separator + "lang");
-		File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + "en.yml");
+		File dir1 = new File(plugin.getDataFolder(), File.separator + "lang");
+		File dir2 = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso);
+		File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings.yml");
 		for (Entry<String, String> e : langMap.entrySet()) {
 			data.set(e.getKey(), e.getValue());
 		}
+		if (dir1.exists() == false || dir1.isDirectory() == false) {
+			dir1.mkdir();
+		}
 		try {
-			if (dir.exists() == false || dir.isDirectory() == false) {
-				dir.mkdir();
+			if (dir2.exists() == false || dir2.isDirectory() == false) {
+				dir2.mkdir();
 			}
 			PrintWriter out = new PrintWriter(file);
 			for (String key : data.getKeys(false)) {
 				out.println(key + ": \"" + data.getString(key) + "\"");
 			}
 			out.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
 		}
 	}
 
 	public void loadLang() {
-		File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + lang + ".yml");
+		File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings.yml");
 		boolean newLangs = false;
 		if (langFile.exists()) {
 			LinkedHashMap<String, String> tempMap = new LinkedHashMap<String, String>();
@@ -1013,7 +1017,7 @@ public class Lang {
 				}
 				langMap.putAll(toPut);
 				if (newLangs) {
-					File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + lang + "_new.yml");
+					File file = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings_new.yml");
 					if (file.exists()) {
 						file.delete();
 					}
@@ -1028,15 +1032,15 @@ public class Lang {
 						e.printStackTrace();
 						return;
 					}
-					plugin.getLogger().info("There are new language phrases with the current version. They have been stored in /lang/" + lang + "_new.yml");
+					plugin.getLogger().info("There are new language phrases with the current version. They have been stored in /lang/" + iso + "/lang_new.yml");
 				}
 			} catch (Exception e) {
-				plugin.getLogger().severe("There was an error reading the language file: /lang/" + lang + ".yml");
+				plugin.getLogger().severe("There was an error reading the language file: /lang/" + iso + "/strings.yml");
 				plugin.getLogger().severe("Language loading aborted. Error log:");
 				e.printStackTrace();
 			}
 		} else {
-			plugin.getLogger().severe("Attempted to load language file: /lang/" + lang + ".yml but the file was not found. Using default language EN");
+			plugin.getLogger().severe("Attempted to load language file: /lang/" + iso + "/strings.yml but the file was not found. Using default language EN");
 		}
 	}
 	

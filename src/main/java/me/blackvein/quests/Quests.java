@@ -1,3 +1,15 @@
+/*******************************************************************************************************
+ * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
+
 package me.blackvein.quests;
 
 import java.io.File;
@@ -181,7 +193,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	private void defaultLangFile() {
 		lang.initPhrases();
-		if (new File(this.getDataFolder(), File.separator + "lang" + File.separator + "en.yml").exists() == false) {
+		if (new File(this.getDataFolder(), File.separator + "lang" + File.separator + "en" + File.separator + "strings.yml").exists() == false) {
 			getLogger().info("Translation data not found, writing defaults to file.");
 			lang.saveNewLang();
 		} else {
@@ -381,7 +393,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public void loadConfig() {
 		FileConfiguration config = getConfig();
-		Lang.lang = config.getString("language", "en");
+		Lang.iso = config.getString("language", "en");
 		allowCommands = config.getBoolean("allow-command-questing", true);
 		allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
 		showQuestReqs = config.getBoolean("show-requirements", true);
