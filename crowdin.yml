@@ -1,3 +1,1 @@
-files:
-  - source: /src/main/resources/lang/en/strings.yml
-    translation: /src/main/resources/lang/%two_letters_code%/%original_file_name%
+files: []
