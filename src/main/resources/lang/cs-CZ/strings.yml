@@ -339,7 +339,7 @@ eventEditorFinishAndSave: "Opravdu chcete dokončit a uložit Event"
 eventEditorModifiedNote: 'Poznámka: Upravili jste událost, kterou používají následující úkoly:'
 eventEditorForcedToQuit: "Jestliže uložíš Event, někdo, kdo teď dělá nějaký z úkolů bude nucen přestat."
 eventEditorEventInUse: "Následující úkoly používají event"
-eventEditorMustModifyQuests: "eventEditorNeníNalezen"
+eventEditorMustModifyQuests: "You must modify these Quests first!"
 eventEditorListSizeMismatch: "Seznamy nejsou stejně velké!"
 eventEditorListDuplicates: "Seznam obsahuje duplikáty!"
 eventEditorNotANumberList: "Vstup nebyl seznam čísel!"
