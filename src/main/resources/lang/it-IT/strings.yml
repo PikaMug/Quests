@@ -339,7 +339,7 @@ eventEditorFinishAndSave: "Are you sure you want to finish and save the Event"
 eventEditorModifiedNote: 'Note: You have modified an Event that the following Quests use:'
 eventEditorForcedToQuit: "If you save the Event, anyone who is actively doing any of these Quests will be forced to quit them."
 eventEditorEventInUse: "Le segueti missioni utilizzano l'evento"
-eventEditorMustModifyQuests: "editorEventiNonTrovato"
+eventEditorMustModifyQuests: "You must modify these Quests first!"
 eventEditorListSizeMismatch: "Gli elenchi non hanno la stessa dimensione!"
 eventEditorListDuplicates: "La lista contiene duplicati!"
 eventEditorNotANumberList: "L'input non era una lista di numeri!"
