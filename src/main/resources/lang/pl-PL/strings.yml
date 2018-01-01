@@ -339,7 +339,7 @@ eventEditorFinishAndSave: "Czy jesteś pewny że chcesz ukończyć i zapisać wy
 eventEditorModifiedNote: 'Zapis: Zmodyfikowałeś wydarzenie które używa następujących zadań:'
 eventEditorForcedToQuit: "Jeśli zapisałeś wydarzenie, ktokolwiek kto aktualnie robi którekolwiek z tych zadań będzie mógł je zamknąć."
 eventEditorEventInUse: "Następujące zadania są używane w wydarzeniu"
-eventEditorMustModifyQuests: "edytorwydarzenianieznaleziony"
+eventEditorMustModifyQuests: "You must modify these Quests first!"
 eventEditorListSizeMismatch: " listy nie są tego damego rozmiaru!"
 eventEditorListDuplicates: "lista zawiera powtórzenia!"
 eventEditorNotANumberList: "wejście nie było na liście!"
