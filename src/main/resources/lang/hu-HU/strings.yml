@@ -339,7 +339,7 @@ eventEditorFinishAndSave: "Biztosan befejezed és mented az eseményt"
 eventEditorModifiedNote: 'Megjegyzés: Módosítottál egy olyan eseményt, amelyet a következő küldetések használnak:'
 eventEditorForcedToQuit: "Ha elmented az eseményt, mindenki, aki aktívan végez ezen a küldetést, kénytelen lesz kilépni."
 eventEditorEventInUse: "A következő küldetések használják az eseményt"
-eventEditorMustModifyQuests: "You must modify these Quests first!"
+eventEditorMustModifyQuests: "Először módosítsd ezeket a küldetéseket!"
 eventEditorListSizeMismatch: "A listák nem azonos méretűek!"
 eventEditorListDuplicates: "A lista duplikátumokat tartalmaz!"
 eventEditorNotANumberList: "A bevitel nem számok listája!"
