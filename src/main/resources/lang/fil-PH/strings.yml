@@ -339,7 +339,7 @@ eventEditorFinishAndSave: "Ikaw ba ay sigurado na gusto mong tapusin at i-save a
 eventEditorModifiedNote: 'Paalala: Babaguhin mo ang kaganapan na ginamit sa sumusunod na pakikipagsapalaran:'
 eventEditorForcedToQuit: "Kung isi-save mo ang Kaganapan, ang bawat isa na aktibong ginagawa ang lahat ng pakikipagsapalaran ay mapipilitang sila ay umalis."
 eventEditorEventInUse: "Ang sumusunod na Pakikipagsapalaran ay ginamit sa kaganapan"
-eventEditorMustModifyQuests: "angeditorngkaganapanayhindimatagpuan"
+eventEditorMustModifyQuests: "You must modify these Quests first!"
 eventEditorListSizeMismatch: "Ang listahan ay hindi magkatulad ang laki!"
 eventEditorListDuplicates: "Listahan ng mga nilalaman ng mga kopya!"
 eventEditorNotANumberList: "Input ay hindi kasama sa listahan ng numero!"
