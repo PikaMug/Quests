@@ -418,7 +418,7 @@ public class Lang {
 		langMap.put("eventEditorModifiedNote", "Note: You have modified an Event that the following Quests use:");
 		langMap.put("eventEditorForcedToQuit", "If you save the Event, anyone who is actively doing any of these Quests will be forced to quit them.");
 		langMap.put("eventEditorEventInUse", "The following Quests use the Event");
-		langMap.put("eventEditorMustModifyQuests", "eventEditorNotFound");
+		langMap.put("eventEditorMustModifyQuests", "You must modify these Quests first!");
 		langMap.put("eventEditorListSizeMismatch", "The lists are not the same size!");
 		langMap.put("eventEditorListDuplicates", "List contains duplicates!");
 		langMap.put("eventEditorNotANumberList", "Input was not a list of numbers!");
