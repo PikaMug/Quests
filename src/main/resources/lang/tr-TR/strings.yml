@@ -339,7 +339,7 @@ eventEditorFinishAndSave: "Etkinliği bitirmek ve kaydetmek istediğinizden emin
 eventEditorModifiedNote: 'Not: Aşağıdaki Görevlerin kullandığı bir Olayı değiştirdiniz:'
 eventEditorForcedToQuit: "Olayı kaydederseniz, bu Görevleri aktif olarak yapan herkes onlardan çıkmak zorunda kalacaktır."
 eventEditorEventInUse: "Aşağıdaki Görevler Etkinliği kullanıyor"
-eventEditorMustModifyQuests: "olayDüzenleyicisiBulunamadı"
+eventEditorMustModifyQuests: "You must modify these Quests first!"
 eventEditorListSizeMismatch: "Listeler aynı boyutta değil!"
 eventEditorListDuplicates: "Listede kopyalar var!"
 eventEditorNotANumberList: "Giriş bir sayı listesi değildi!"
