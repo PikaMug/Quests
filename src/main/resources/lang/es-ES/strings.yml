@@ -339,7 +339,7 @@ eventEditorFinishAndSave: "Estás seguro que quieres terminar y guardar el Event
 eventEditorModifiedNote: 'Nota: Has modificado un Evento que usan las siguientes Misiones:'
 eventEditorForcedToQuit: "Si guardas el Evento, cualquier que esté haciendo activamente algunas de estás Misiones serán obligados a abandonarlas."
 eventEditorEventInUse: "Las siguientes misiones usan el Evento"
-eventEditorMustModifyQuests: "eventoEditorNoEncontrado"
+eventEditorMustModifyQuests: "You must modify these Quests first!"
 eventEditorListSizeMismatch: "Las listas no son del mismo tamaño!"
 eventEditorListDuplicates: "La lista contiene duplicados!"
 eventEditorNotANumberList: "¡La entrada no era una lista de números!"
