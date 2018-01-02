@@ -871,7 +871,7 @@ public class Lang {
 		langMap.put("ENCHANTMENT_PROTECTION_FIRE", "FireProtection");
 		langMap.put("ENCHANTMENT_PROTECTION_PROJECTILE", "ProjectileProtection");
 		langMap.put("ENCHANTMENT_SILK_TOUCH", "SilkTouch");
-		langMap.put("ENCHANTMENT_SWEEPING", "Sweeping");
+		langMap.put("ENCHANTMENT_SWEEPING_EDGE", "SweepingEdge");
 		langMap.put("ENCHANTMENT_THORNS", "Thorns");
 		langMap.put("ENCHANTMENT_VANISHING_CURSE", "VanishingCurse");
 		langMap.put("ENCHANTMENT_WATER_WORKER", "AquaAffinity");
