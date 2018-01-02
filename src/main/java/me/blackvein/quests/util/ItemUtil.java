@@ -161,7 +161,7 @@ public class ItemUtil {
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
 		} else {
-			text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
+			text = ChatColor.AQUA + getName(is);
 			if (is.getDurability() != 0) {
 				text += ChatColor.AQUA + ":" + is.getDurability();
 			}
@@ -178,7 +178,7 @@ public class ItemUtil {
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
 		} else {
-			text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
+			text = ChatColor.AQUA + getName(is);
 			if (is.getDurability() != 0) {
 				text += ChatColor.AQUA + ":" + is.getDurability();
 			}

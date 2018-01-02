@@ -468,12 +468,12 @@ public class Quester {
 				if (enchantment2 == enchantment) {
 					if (num1 < num2) {
 						String obj = Lang.get("enchantItem");
-						obj = obj.replaceAll("<item>", Quester.prettyItemString(mat.name()));
+						obj = obj.replaceAll("<item>", ItemUtil.getName(new ItemStack(mat)));
 						obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
 						unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + num1 + "/" + num2);
 					} else {
 						String obj = Lang.get("enchantItem");
-						obj = obj.replaceAll("<item>", Quester.prettyItemString(mat.name()));
+						obj = obj.replaceAll("<item>", ItemUtil.getName(new ItemStack(mat)));
 						obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
 						finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + num1 + "/" + num2);
 					}
@@ -1074,7 +1074,7 @@ public class Quester {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("breakBlock")) {
-			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("break") + " " + prettyItemString(material.getType().name());
+			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("break") + " " + ItemUtil.getName(material);
 			String stack = getQuestData(quest).blocksBroken.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
@@ -1083,7 +1083,7 @@ public class Quester {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("damageBlock")) {
-			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("damage") + " " + prettyItemString(material.getType().name());
+			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("damage") + " " + ItemUtil.getName(material);
 			String stack = getQuestData(quest).blocksDamaged.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
@@ -1091,7 +1091,7 @@ public class Quester {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("placeBlock")) {
-			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("place") + " " + prettyItemString(material.getType().name());
+			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("place") + " " + ItemUtil.getName(material);
 			String stack = getQuestData(quest).blocksPlaced.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
@@ -1100,7 +1100,7 @@ public class Quester {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("useBlock")) {
-			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("use") + " " + prettyItemString(material.getType().name());
+			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("use") + " " + ItemUtil.getName(material);
 			String stack = getQuestData(quest).blocksUsed.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
@@ -1109,7 +1109,7 @@ public class Quester {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("cutBlock")) {
-			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("cut") + " " + prettyItemString(material.getType().name());
+			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + Lang.get("cut") + " " + ItemUtil.getName(material);
 			String stack = getQuestData(quest).blocksCut.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
@@ -1126,7 +1126,7 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("enchantItem")) {
 			String obj = Lang.get("enchantItem");
-			obj = obj.replaceAll("<item>", prettyItemString(material.getType().name()));
+			obj = obj.replaceAll("<item>", ItemUtil.getName(material));
 			obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
 			String message = ChatColor.GREEN + "(" + Lang.get("completed") + ") " + obj;
 			for (Map<Enchantment, Material> map : getCurrentStage(quest).itemsToEnchant.keySet()) {
@@ -1500,7 +1500,7 @@ public class Quester {
 		return capitalized;
 	}
 
-	// TODO eliminate and replace all with Items.itemByType(is.getType()).getName()
+	// NOTE: Use ItemUtil.getString(itemStack) instead if possible
 	public static String prettyItemString(String itemName) {
 		String baseString = Material.matchMaterial(itemName).toString();
 		String[] substrings = baseString.split("_");
