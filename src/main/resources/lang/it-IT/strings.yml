@@ -234,7 +234,7 @@ stageEditorDelayMessagePrompt: "Enter delay message, or enter 'clear' to clear t
 stageEditorScriptPrompt: "Enter script name, or enter 'clear' to clear the script, or 'cancel' to return"
 stageEditorStartMessagePrompt: "Enter start message, or enter 'clear' to clear the message, or 'cancel' to return"
 stageEditorCompleteMessagePrompt: "Inserisci il messaggio completo, o inserisci 'eliminare' per eliminare il messaggio, o 'cancellare' per tornare"
-stageEditorPasswordDisplayPrompt: "Enter a password display, or 'cancel' to return"
+stageEditorPasswordDisplayPrompt: "Immetere una visualizzazione della password, o 'cancellare' per tornare"
 stageEditorPasswordDisplayHint: "(This is the text that will be displayed to the player as their objective)"
 stageEditorPasswordPhrasePrompt: "Inserisci una frase password o 'cancellare' to return"
 stageEditorPasswordPhraseHint1: "(Questo è il testo che un giocatore deve dire per completare l'obiettivo)"
