@@ -160,6 +160,7 @@
                 <directory>${basedir}/src/main/resources/</directory>
                 <filtering>true</filtering>
                 <includes>
+                    <include>lang/**/*.*</include>
                     <include>config.yml</include>
                     <include>plugin.yml</include>
                     <include>events.yml</include>
