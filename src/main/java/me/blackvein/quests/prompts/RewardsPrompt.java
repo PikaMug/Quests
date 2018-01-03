@@ -191,7 +191,12 @@ public class RewardsPrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = Lang.get("rewMoneyPrompt");
-			text = text.replaceAll("<money>", ChatColor.AQUA + (Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural()) + ChatColor.YELLOW);
+			if (Quests.economy != null) {
+				text = text.replaceAll("<money>", ChatColor.AQUA + (Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural()) + ChatColor.YELLOW);
+			} else {
+				text = text.replaceAll("<money>", ChatColor.AQUA + Lang.get("money") + ChatColor.YELLOW);
+
+			}
 			return ChatColor.YELLOW + text;
 		}
 

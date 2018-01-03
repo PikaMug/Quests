@@ -313,7 +313,9 @@ public class Quester {
 			Stage stage = q.getStage(0);
 			if (!override) {
 				if (q.moneyReq > 0) {
-					Quests.economy.withdrawPlayer(getOfflinePlayer(), q.moneyReq);
+					if (Quests.economy != null) {
+						Quests.economy.withdrawPlayer(getOfflinePlayer(), q.moneyReq);
+					}
 				}
 				for (ItemStack is : q.items) {
 					if (q.removeItems.get(q.items.indexOf(is)) == true) {

@@ -194,8 +194,10 @@ public class Quest {
 
 	public boolean testRequirements(Player player) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
-		if (moneyReq != 0 && Quests.economy.getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) < moneyReq) {
-			return false;
+		if (moneyReq != 0 && Quests.economy != null) {
+			if (Quests.economy.getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) < moneyReq) {
+				return false;
+			}
 		}
 		PlayerInventory inventory = player.getInventory();
 		int num = 0;
@@ -334,7 +336,9 @@ public class Quest {
 				player.giveExp(lb.getExp());
 			}
 			if (lb.getMoney() > 0) {
-				Quests.economy.depositPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), lb.getMoney());
+				if (Quests.economy != null) {
+					Quests.economy.depositPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), lb.getMoney());
+				}
 			}
 			if (lb.getItemList().isEmpty() == false) {
 				phatLootItems.addAll(lb.getItemList());

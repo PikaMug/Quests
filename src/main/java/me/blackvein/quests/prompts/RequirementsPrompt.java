@@ -192,7 +192,11 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = Lang.get("reqMoneyPrompt");
-			text = text.replaceAll("<money>", ChatColor.DARK_PURPLE + ((Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural())) + ChatColor.YELLOW);
+			if (Quests.economy != null) {
+				text = text.replaceAll("<money>", ChatColor.DARK_PURPLE + ((Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural())) + ChatColor.YELLOW);
+			} else {
+				text = text.replaceAll("<money>", ChatColor.DARK_PURPLE + Lang.get("money") + ChatColor.YELLOW);
+			}
 			return ChatColor.YELLOW + text;
 		}
 
