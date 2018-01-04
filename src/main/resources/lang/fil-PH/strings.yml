@@ -238,7 +238,7 @@ stageEditorPasswordDisplayPrompt: "Ilagay ang password ng display, o 'kansel' pa
 stageEditorPasswordDisplayHint: "(Ito ay ang teksto na dapat makita sa mga manlalaro na ito ang kanilang layunin)"
 stageEditorPasswordPhrasePrompt: "Ilagay ang password parirala, o 'kansel' upang bumalik"
 stageEditorPasswordPhraseHint1: "(Ito ay ang teksto na ang mga manlalaro ay dapat kompletuhin ang layunin)"
-stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
+stageEditorPasswordPhraseHint2: "Kung gusto mong multiple password parirala, ihiwalay sila gamit ang | (tubo)"
 stageEditorObjectiveOverridePrompt: "Ilagay ang layuning larawan i-override, o 'linisin' para linisin ang override, o 'kansel' upang bumalik."
 stageEditorObjectiveOverrideHint: "(Ang layuning larawan na override ay makikita sa mga manlalarong kasalukuyang may layunin)"
 stageEditorObjectiveOverrideCleared: "Layuning display override ay malinis na."
