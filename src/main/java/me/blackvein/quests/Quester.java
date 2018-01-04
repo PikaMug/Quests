@@ -308,7 +308,7 @@ public class Quester {
 	public void takeQuest(Quest q, boolean override) {
 		Player player = getPlayer();
 		if (q.testRequirements(player) == true || override) {
-			addEmpties(q);
+			addEmptiesFor(q, 0);
 			currentQuests.put(q, 0);
 			Stage stage = q.getStage(0);
 			if (!override) {
@@ -606,11 +606,13 @@ public class Quester {
 			}
 		}
 		for (String s : getCurrentStage(quest).passwordDisplays) {
-			Boolean b = getQuestData(quest).passwordsSaid.get(s);
-			if (b != null && !b) {
-				unfinishedObjectives.add(ChatColor.GREEN + s);
-			} else {
-				finishedObjectives.add(ChatColor.GRAY + s);
+			if (getQuestData(quest).passwordsSaid.containsKey(s)) {
+				Boolean b = getQuestData(quest).passwordsSaid.get(s);
+				if (b != null && !b) {
+					unfinishedObjectives.add(ChatColor.GREEN + s);
+				} else {
+					finishedObjectives.add(ChatColor.GRAY + s);
+				}
 			}
 		}
 		int index = 0;
@@ -902,18 +904,13 @@ public class Quester {
 	}
 
 	public void interactWithNPC(Quest quest, NPC n) {
-		try {
-			Boolean b = getQuestData(quest).citizensInteracted.containsKey(n.getId());
-			if (b != null && !b) {
-				getQuestData(quest).citizensInteracted.put(n.getId(), true);
-				finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
+			if (getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
+				Boolean b = getQuestData(quest).citizensInteracted.get(n.getId());
+				if (b != null && !b) {
+					getQuestData(quest).citizensInteracted.put(n.getId(), true);
+					finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
+				}
 			}
-		} catch (NullPointerException e) {
-			//TODO Github ticket #220
-			plugin.getLogger().severe("An error has occurred with Quests. Please report on Github. Include the info below");
-			plugin.getLogger().severe("npc + id = " + n.getName() + " + " + n.getId());
-			e.printStackTrace();
-		}
 	}
 
 	public void killNPC(Quest quest, NPC n) {
@@ -1233,144 +1230,19 @@ public class Quester {
 		}
 		return true;
 	}
-
-	public void addEmpties(Quest quest) {
-		QuestData data = new QuestData(this);
-		data.setDoJournalUpdate(false);
-		if (quest.getStage(0).blocksToBreak.isEmpty() == false) {
-			for (ItemStack i : quest.getStage(0).blocksToBreak) {
-				if (data.blocksBroken.indexOf(i) != -1) {
-					// TODO Will this ever happen?
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksBroken.set(data.blocksBroken.indexOf(temp), temp);
-				} else {
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksBroken.add(temp);
-				}
-			}
-		}
-		if (quest.getStage(0).blocksToDamage.isEmpty() == false) {
-			for (ItemStack i : quest.getStage(0).blocksToDamage) {
-				if (data.blocksDamaged.indexOf(i) != -1) {
-					// TODO Will this ever happen?
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksDamaged.set(data.blocksDamaged.indexOf(temp), temp);
-				} else {
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksDamaged.add(temp);
-				}
-			}
-		}
-		if (quest.getStage(0).blocksToPlace.isEmpty() == false) {
-			for (ItemStack i : quest.getStage(0).blocksToPlace) {
-				if (data.blocksPlaced.indexOf(i) != -1) {
-					// TODO Will this ever happen?
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksPlaced.set(data.blocksPlaced.indexOf(temp), temp);
-				} else {
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksPlaced.add(temp);
-				}
-			}
-		}
-		if (quest.getStage(0).blocksToUse.isEmpty() == false) {
-			for (ItemStack i : quest.getStage(0).blocksToUse) {
-				if (data.blocksUsed.indexOf(i) != -1) {
-					// TODO Will this ever happen?
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksUsed.set(data.blocksUsed.indexOf(temp), temp);
-				} else {
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksUsed.add(temp);
-				}
-			}
-		}
-		if (quest.getStage(0).blocksToCut.isEmpty() == false) {
-			for (ItemStack i : quest.getStage(0).blocksToCut) {
-				if (data.blocksCut.indexOf(i) != -1) {
-					// TODO Will this ever happen?
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksCut.set(data.blocksCut.indexOf(temp), temp);
-				} else {
-					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-					data.blocksCut.add(temp);
-				}
-			}
-		}
-		data.setFishCaught(0);
-		if (quest.getStage(0).itemsToEnchant.isEmpty() == false) {
-			for (Entry<Map<Enchantment, Material>, Integer> e : quest.getStage(0).itemsToEnchant.entrySet()) {
-				Map<Enchantment, Material> map = (Map<Enchantment, Material>) e.getKey();
-				data.itemsEnchanted.put(map, 0);
-			}
-		}
-		if (quest.getStage(0).mobsToKill.isEmpty() == false) {
-			for (EntityType e : quest.getStage(0).mobsToKill) {
-				data.mobsKilled.add(e);
-				data.mobNumKilled.add(0);
-				if (quest.getStage(0).locationsToKillWithin.isEmpty() == false) {
-					data.locationsToKillWithin.add(quest.getStage(0).locationsToKillWithin.get(data.mobsKilled.indexOf(e)));
-				}
-				if (quest.getStage(0).radiiToKillWithin.isEmpty() == false) {
-					data.radiiToKillWithin.add(quest.getStage(0).radiiToKillWithin.get(data.mobsKilled.indexOf(e)));
-				}
-			}
-		}
-		data.setPlayersKilled(0);
-		if (quest.getStage(0).itemsToDeliver.isEmpty() == false) {
-			for (ItemStack is : quest.getStage(0).itemsToDeliver) {
-				data.itemsDelivered.put(is, 0);
-			}
-		}
-		if (quest.getStage(0).citizensToInteract.isEmpty() == false) {
-			for (Integer n : quest.getStage(0).citizensToInteract) {
-				data.citizensInteracted.put(n, false);
-			}
-		}
-		if (quest.getStage(0).citizensToKill.isEmpty() == false) {
-			for (Integer n : quest.getStage(0).citizensToKill) {
-				data.citizensKilled.add(n);
-				data.citizenNumKilled.add(0);
-			}
-		}
-		if (quest.getStage(0).locationsToReach.isEmpty() == false) {
-			for (Location l : quest.getStage(0).locationsToReach) {
-				data.locationsReached.add(l);
-				data.hasReached.add(false);
-				data.radiiToReachWithin.add(quest.getStage(0).radiiToReachWithin.get(data.locationsReached.indexOf(l)));
-			}
-		}
-		if (quest.getStage(0).mobsToTame.isEmpty() == false) {
-			for (EntityType e : quest.getStage(0).mobsToTame.keySet()) {
-				data.mobsTamed.put(e, 0);
-			}
-		}
-		if (quest.getStage(0).sheepToShear.isEmpty() == false) {
-			for (DyeColor d : quest.getStage(0).sheepToShear.keySet()) {
-				data.sheepSheared.put(d, 0);
-			}
-		}
-		if (quest.getStage(0).passwordDisplays.isEmpty() == false) {
-			for (String display : quest.getStage(0).passwordDisplays) {
-				data.passwordsSaid.put(display, false);
-			}
-		}
-		if (quest.getStage(0).customObjectives.isEmpty() == false) {
-			for (CustomObjective co : quest.getStage(0).customObjectives) {
-				data.customObjectiveCounts.put(co.getName(), 0);
-			}
-		}
-		data.setDoJournalUpdate(true);
-		hardDataPut(quest, data);
-	}
-
+	
+	/**
+	 * Add empty map values per Quest stage
+	 * 
+	 * @param quest Quest with at least one stage
+	 * @param stage Where first stage is '0'
+	 */
 	public void addEmptiesFor(Quest quest, int stage) {
 		QuestData data = new QuestData(this);
 		data.setDoJournalUpdate(false);
 		if (quest.getStage(stage).blocksToBreak.isEmpty() == false) {
 			for (ItemStack i : quest.getStage(stage).blocksToBreak) {
 				if (data.blocksBroken.indexOf(i) != -1) {
-					// TODO Will this ever happen?
 					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
 					data.blocksBroken.set(data.blocksBroken.indexOf(temp), temp);
 				} else {
@@ -1382,7 +1254,6 @@ public class Quester {
 		if (quest.getStage(stage).blocksToDamage.isEmpty() == false) {
 			for (ItemStack i : quest.getStage(stage).blocksToDamage) {
 				if (data.blocksDamaged.indexOf(i) != -1) {
-					// TODO Will this ever happen?
 					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
 					data.blocksDamaged.set(data.blocksDamaged.indexOf(temp), temp);
 				} else {
@@ -1394,7 +1265,6 @@ public class Quester {
 		if (quest.getStage(stage).blocksToPlace.isEmpty() == false) {
 			for (ItemStack i : quest.getStage(stage).blocksToPlace) {
 				if (data.blocksPlaced.indexOf(i) != -1) {
-					// TODO Will this ever happen?
 					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
 					data.blocksPlaced.set(data.blocksPlaced.indexOf(temp), temp);
 				} else {
@@ -1406,7 +1276,6 @@ public class Quester {
 		if (quest.getStage(stage).blocksToUse.isEmpty() == false) {
 			for (ItemStack i : quest.getStage(stage).blocksToUse) {
 				if (data.blocksUsed.indexOf(i) != -1) {
-					// TODO Will this ever happen?
 					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
 					data.blocksUsed.set(data.blocksUsed.indexOf(temp), temp);
 				} else {
@@ -1418,7 +1287,6 @@ public class Quester {
 		if (quest.getStage(stage).blocksToCut.isEmpty() == false) {
 			for (ItemStack i : quest.getStage(stage).blocksToCut) {
 				if (data.blocksCut.indexOf(i) != -1) {
-					// TODO Will this ever happen?
 					ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
 					data.blocksCut.set(data.blocksCut.indexOf(temp), temp);
 				} else {
@@ -1501,7 +1369,13 @@ public class Quester {
 		return capitalized;
 	}
 
-	// NOTE: Use ItemUtil.getString(itemStack) instead if possible
+	/**
+	 * Cleans up item names. 'WOODEN_BUTTON' becomes 'Wooden Button'
+	 * 
+	 * @deprecated Use ItemUtil.getString(itemStack) instead if possible
+	 * @param itemName any item name, ideally
+	 * @return cleaned-up string
+	 */
 	public static String prettyItemString(String itemName) {
 		String baseString = Material.matchMaterial(itemName).toString();
 		String[] substrings = baseString.split("_");
@@ -1978,7 +1852,7 @@ public class Quester {
 					plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + id + "\" on Quest \"" + quest.name + "\". Quest ended.");
 					continue;
 				}
-				addEmpties(quest);
+				addEmptiesFor(quest, 0);
 				if (questSec == null)
 					continue;
 				if (questSec.contains("blocks-broken-names")) {

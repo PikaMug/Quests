@@ -52,7 +52,7 @@ public class StageTimer implements Runnable {
 					currentStage.finishEvent.fire(quester, quest);
 				}
 				quester.hardStagePut(quest, stageNum);
-				quester.addEmpties(quest);
+				quester.addEmptiesFor(quest, 0);
 				quester.getQuestData(quest).delayStartTime = 0;
 				quester.getQuestData(quest).delayTimeLeft = -1;
 				String msg = Lang.get("questObjectivesTitle");
