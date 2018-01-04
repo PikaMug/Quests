@@ -238,7 +238,7 @@ stageEditorPasswordDisplayPrompt: "Enter a password display, or 'cancel' t' retu
 stageEditorPasswordDisplayHint: "('Tis th' text that shall be displayed t' th' player as thar objective)"
 stageEditorPasswordPhrasePrompt: "Enter a password phrase, or 'cancel' t' return"
 stageEditorPasswordPhraseHint1: "('Tis th' text that a player has t' say t' complete th' objective)"
-stageEditorPasswordPhraseHint2: "If ye wants multiple password phrases, separate them by a | (pipe)"
+stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
 stageEditorObjectiveOverridePrompt: "Enter objective display override, or 'clear' to clear the override, or 'cancel' to return."
 stageEditorObjectiveOverrideHint: "(The objective display override will show up as the players current objective)"
 stageEditorObjectiveOverrideCleared: "Objective display override cleared."
