@@ -2284,7 +2284,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 				}
 				if (failed) {
-					skipQuestProcess(new String[] { "" + ChatColor.LIGHT_PURPLE + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!", "Make sure you are using the Quest name: value, and not the block name." });
+					skipQuestProcess(new String[] { "" + ChatColor.LIGHT_PURPLE + failedQuest + " inside quests: Requirement for Quest " 
+							+ quest.name + " is not a valid Quest name!", "Make sure you aren\'t using the config section identifier." });
 				}
 			} else {
 				skipQuestProcess("quest-blocks: Requirement for Quest " + quest.name + " is not a list of Quest names!");
@@ -2311,7 +2312,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 				}
 				if (failed) {
-					skipQuestProcess(new String[] { "" + failedQuest + " inside quests: Requirement for Quest " + quest.name + " is not a valid Quest name!", "Make sure you are using the Quest name: value, and not the block name." });
+					skipQuestProcess(new String[] { "" + failedQuest + " inside quests: Requirement for Quest "
+							+ quest.name + " is not a valid Quest name!", "Make sure you aren\'t using the config section idetifier." });
 				}
 			} else {
 				skipQuestProcess("quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
