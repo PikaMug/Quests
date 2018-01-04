@@ -238,7 +238,7 @@ stageEditorPasswordDisplayPrompt: "Masukkan kata sandi tampilan, atau 'cancel' u
 stageEditorPasswordDisplayHint: "(Ini adalah teks yang akan ditampilkan kepada pemain sebagai tujuan mereka)"
 stageEditorPasswordPhrasePrompt: "Masukkan frase kata kunci, atau 'batalkan' untuk kembali"
 stageEditorPasswordPhraseHint1: "(Ini adalah teks yang harus dikatakan seorang pemain untuk menyelesaikan tujuannya)"
-stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
+stageEditorPasswordPhraseHint2: "Jika Anda ingin beberapa frase kata kunci, jelaskan dengan a | (pipe)"
 stageEditorObjectiveOverridePrompt: "Masukkan override tampilan objektif, atau 'clear' untuk menghapus override, atau 'cancel' untuk kembali."
 stageEditorObjectiveOverrideHint: "(Tampilan override yang objektif akan muncul sebagai tujuan pemain saat ini)"
 stageEditorObjectiveOverrideCleared: "Penutupan tayang obyektif dihapus."
