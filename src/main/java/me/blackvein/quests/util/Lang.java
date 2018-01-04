@@ -316,7 +316,7 @@ public class Lang {
 		langMap.put("stageEditorPasswordDisplayHint", "(This is the text that will be displayed to the player as their objective)");
 		langMap.put("stageEditorPasswordPhrasePrompt", "Enter a password phrase, or 'cancel' to return");
 		langMap.put("stageEditorPasswordPhraseHint1", "(This is the text that a player has to say to complete the objective)");
-		langMap.put("stageEditorPasswordPhraseHint2", "If you want multiple password phrases, seperate them by a | (pipe)");
+		langMap.put("stageEditorPasswordPhraseHint2", "If you want multiple password phrases, separate them by a | (pipe)");
 		langMap.put("stageEditorObjectiveOverridePrompt", "Enter objective display override, or 'clear' to clear the override, or 'cancel' to return.");
 		langMap.put("stageEditorObjectiveOverrideHint", "(The objective display override will show up as the players current objective)");
 		langMap.put("stageEditorObjectiveOverrideCleared", "Objective display override cleared.");
