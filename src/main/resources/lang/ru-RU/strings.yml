@@ -81,7 +81,7 @@ questEditorEnterQuestName: "Введите имя квеста (или 'cancel' 
 questEditorEditEnterQuestName: "Введите имя квеста для изменения (или 'cancel' для возврата)"
 questEditorEnterAskMessage: "Введите сообщение перед началом квеста (или 'cancel' для возврата)"
 questEditorEnterFinishMessage: "Введите заключительное сообщение (или 'cancel' для возврата)"
-questEditorEnterRedoDelay: "Введите время в секундах, 0 для отмены повтора или -1 для возврата"
+questEditorEnterRedoDelay: "Введите время (в секундах), 0 для отмены повтора или -1 для возврата"
 questEditorEnterNPCStart: "Введите id НПС, -1 для очистки НПС или -2 для возврата"
 questEditorEnterBlockStart: "Щелкните правой кнопкой мыши на блок, чтобы использовать его как начальную точку, затем введите 'done' для сохранения, или введите 'clear', чтобы очистить начальный блок. Введите 'cancel' для возврата"
 questEditorEnterInitialEvent: "Введите имя события, или введите 'clear', чтобы удалить исходное событие или 'cancel' для возврата"
