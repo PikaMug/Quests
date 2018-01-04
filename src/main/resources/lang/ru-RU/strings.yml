@@ -46,7 +46,7 @@ COMMAND_QUESTADMIN_GIVEPOINTS_HELP: "givepoints [player] [amount] - Дать б�
 COMMAND_QUESTADMIN_POINTSALL: "pointsall"
 COMMAND_QUESTADMIN_POINTSALL_HELP: "pointsall [amount] - Установить баллы всем игрокам"
 COMMAND_QUESTADMIN_FINISH: "finish"
-COMMAND_QUESTADMIN_FINISH_HELP: "finish [player] [quest] - Immediately force Quest completion for a player"
+COMMAND_QUESTADMIN_FINISH_HELP: "finish [player] [quest] - Принудительно завершить квест для игрока"
 COMMAND_QUESTADMIN_NEXTSTAGE: "nextstage"
 COMMAND_QUESTADMIN_NEXTSTAGE_HELP: "nextstage [player] [quest] - Immediately force Stage completion for a player"
 COMMAND_QUESTADMIN_SETSTAGE: "setstage"
