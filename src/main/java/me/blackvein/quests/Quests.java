@@ -3915,7 +3915,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public boolean testSecondaryHeroesClass(String secondaryClass, UUID uuid) {
 		Hero hero = getHero(uuid);
-		return hero.getHeroClass().getName().equalsIgnoreCase(secondaryClass);
+		return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);
 	}
 
 	public void updateData() {
