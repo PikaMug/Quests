@@ -854,5 +854,5 @@ experience: "Karanasan"
 timerMessage: '<green> Natitirang oras para tapos ang pagsusulit/yugto: <red>%s mga segundo'
 timerStart: "<green> mayroon ka <red>%s segundo <green>para taposin ang pagsusulit/yugtong ito"
 questErrorReadingFile: "Di mabasang file ng pagsusulit."
-questSaveError: "An error occurred while saving."
-questBlacklisted: "You are blacklisted. Contact an admin if this is in error."
+questSaveError: "Mayroong error ang lumabas habang ikaw ay nagsisave."
+questBlacklisted: "Ikaw ay nasa blacklisted. Kontakin ang admin kung ito ay isang error."
