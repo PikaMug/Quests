@@ -23,7 +23,7 @@ COMMAND_STATS: "istatistika"
 COMMAND_STATS_HELP: "istatistika - Tingan ang iyong Sinusubukang istatistika"
 COMMAND_TOP: "itaas"
 COMMAND_TOP_HELP: "itaas [number] - Tignan ang taas ng Sumusubok"
-COMMAND_TOP_USAGE: 'Paggamit: /pagsubok sa itaas ng [number]'
+COMMAND_TOP_USAGE: 'Paggamit: /pagayaw itaas [numero]'
 COMMAND_INFO: "impormasyon"
 COMMAND_INFO_HELP: "impormasyon - Ilarawan at isasak ang impormasyon"
 COMMAND_JOURNAL: "talaarawan"
