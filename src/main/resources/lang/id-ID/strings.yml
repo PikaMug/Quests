@@ -548,7 +548,7 @@ rewHeroesListsNotSameSize: "Daftar daftar kelas dan daftar pengalaman tidak ukur
 rewHeroesInvalidClass: "<input> bukan nama kelas Heroes yang valid!"
 rewPhatLootsInvalid: "<input> bukan nama PhatLoot yang valid!"
 rewPhatLootsCleared: "Hadiah PhatLoots dibersihkan."
-rewCustomAlreadyAdded: "Hadiah kustom itu telah ditambahkan!"
+rewCustomAlreadyAdded: "Hadiah ubahsuaian itu telah ditambahkan!"
 rewCustomNotFound: "Modul penghargaan khusus tidak ditemukan."
 rewCustomCleared: "Imbalan khusus dihapus."
 rewNoPhat: "PhatLoot tidak diinstal"
