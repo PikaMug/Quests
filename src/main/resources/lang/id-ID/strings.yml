@@ -460,9 +460,9 @@ eventEditorSetTeleportPrompt: "Right-click on a block to teleport the player to,
 eventEditorCommandsNote: 'Note: You may use <player> to refer to the player''s name.'
 eventEditorSetCommandsPrompt: "Enter commands separating each one by a comma, or enter 'clear' to clear the list, or enter 'cancel' to return."
 reqSetMoney: "Set money requirement"
-reqSetQuestPoints: "Set Quest Points requirement"
-reqSetItem: "Set item requirements"
-reqSetPerms: "Set permission requirements"
+reqSetQuestPoints: "Tetapkan persyaratan Quest Points"
+reqSetItem: "Tetapkan persyaratan item"
+reqSetPerms: "Tetapkan persyaratan izin"
 reqSetQuest: "Set Quest requirements"
 reqSetQuestBlocks: "Set Quest blocks"
 reqSetMcMMO: "Set mcMMO requirements"
