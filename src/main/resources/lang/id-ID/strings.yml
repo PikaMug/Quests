@@ -730,14 +730,14 @@ questPointsGiven: "<player> memberi Anda <number> Poin Pencarian."
 enableNPCGUI: "<npc> sekarang akan menyediakan GUI Tampilan Pencarian."
 disableNPCGUI: "<npc> tidak akan lagi memberikan a GUI Tampilan Pencarian."
 invalidNumber: "Nomor tidak sah."
-noCurrentQuest: "<player> does not currently have any active Quests."
-playerNotFound: "Player not found."
-invalidStageNum: "Invalid stage number for Quest <quest>"
-errorNPCID: 'Error: There is no NPC with ID <number>'
-errorReading: "Error reading <file>, skipping.."
-errorReadingSuppress: "Error reading <file>, suppressing further errors."
-errorDataFolder: 'Error: Unable to read Quests data folder!'
-questsPlayerHasQuestAlready: "<player> is already on the Quest <quest>!"
+noCurrentQuest: "<player> Saat ini tidak ada Pencarian aktif."
+playerNotFound: "Pemain tidak ditemukan."
+invalidStageNum: "Nomor tahap tidak sah untuk Pencarian <quest>"
+errorNPCID: 'Kesalahan: Tidak ada NPC dengan ID <number>'
+errorReading: "Kesalahan saat membaca <file>, melompat-lompat.."
+errorReadingSuppress: "Kesalahan saat membaca <file>, menekan kesalahan lebih lanjut."
+errorDataFolder: 'Kesalahan: Tidak dapat membaca folder data Pencarian!'
+questsPlayerHasQuestAlready: "<player> sudah di Pencarian <quest>!"
 questsUnknownAdminCommand: "Unknown Questsadmin command. Type /questsadmin for help."
 unknownError: "An unknown error occurred. See console output."
 journalTaken: "You take out your Quest Journal."
