@@ -719,7 +719,7 @@ questForcedNextStage: "<player> telah maju Anda ke Tahap berikutnya dalam Pencar
 questPurged: "<player> telah dibersihkan dan dimasukkan dalam daftar hitam."
 questReset: "<player> telah diatur ulang."
 questRemoved: "Quest <quest> telah dihapus dari Quest-quest yang diselesaikan pemain <player>."
-settingAllQuestPoints: "Setting all players' Quest Points..."
+settingAllQuestPoints: "Menetapkan Poin Pencarian semua pemain..."
 allQuestPointsSet: "All players' Quest Points have been set to <number>!"
 setQuestPoints: "<player>'s Quest Points have been set to <number>."
 questPointsSet: "<player> has set your Quest Points to <number>."
