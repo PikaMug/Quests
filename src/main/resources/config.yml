@@ -1,20 +1,21 @@
 # See https://github.com/FlyingPikachu/Quests/wiki/Configuration
-language: en
 allow-command-questing: true
 allow-command-quests-with-npcs: false
-show-requirements: true
-show-titles: true
 allow-quitting: true
-use-compass: true
-ignore-locked-quests: false
+ask-confirmation: true
+convert-data-on-startup: false
 generate-files-on-join: true
+ignore-locked-quests: false
 kill-delay: 600
+language: en-US
+max-quests: 0
 npc-effects:
   enabled: true
   new-quest: note
   redo-quest: angry_villager
-max-quests: 0
-convert-data-on-startup: false
+show-requirements: true
+show-titles: true
+use-compass: true
 quester-blacklist:
 - UUID
 - UUID

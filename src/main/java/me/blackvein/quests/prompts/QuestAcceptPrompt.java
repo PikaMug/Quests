@@ -108,7 +108,11 @@ public class QuestAcceptPrompt extends StringPrompt {
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
 							}
-							plugin.conversationFactory.buildConversation((Conversable) player).begin();
+							if (!Quests.askConfirmation) {
+								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).questToTake), false);
+							} else {
+								plugin.conversationFactory.buildConversation((Conversable) player).begin();
+							}
 						} else {
 							player.sendMessage(q.failRequirements);
 						}
@@ -134,7 +138,11 @@ public class QuestAcceptPrompt extends StringPrompt {
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
 							}
-							plugin.conversationFactory.buildConversation((Conversable) player).begin();
+							if (!Quests.askConfirmation) {
+								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).questToTake), false);
+							} else {
+								plugin.conversationFactory.buildConversation((Conversable) player).begin();
+							}
 						}
 					} else if (quester.currentQuests.containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");

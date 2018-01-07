@@ -13,9 +13,13 @@
 package me.blackvein.quests;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -24,17 +28,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -110,6 +115,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static boolean useCompass = true;
 	public static boolean ignoreLockedQuests = false;
 	public static boolean genFilesOnJoin = true;
+	public static boolean askConfirmation = true;
 	public static int acceptTimeout = 20;
 	public static int maxQuests = 0;
 	public static String effect = "note";
@@ -151,7 +157,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	@SuppressWarnings("serial")
 	class StageFailedException extends Exception {
 	}
-
 	@SuppressWarnings("serial")
 	class SkipQuest extends Exception {
 	}
@@ -169,14 +174,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		linkOtherPlugins();
 		
 		// Save resources
-		saveResource("quests.yml", false);
-		saveResource("events.yml", false);
-		saveResource("data.yml", false);
+		saveResourceAs("quests.yml", "quests.yml", false);
+		saveResourceAs("events.yml", "events.yml", false);
+		saveResourceAs("data.yml", "data.yml", false);
 		
 		// Load stuff
 		loadConfig();
 		loadModules();
-		defaultLangFile();
+		try {
+			setupLang();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 		loadData();
 		loadCommands();
 		
@@ -191,15 +202,68 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		delayLoadQuestInfo();
 	}
 
-	private void defaultLangFile() {
-		lang.initPhrases();
-		if (new File(this.getDataFolder(), File.separator + "lang" + File.separator + "en" + File.separator + "strings.yml").exists() == false) {
-			getLogger().info("Translation data not found, writing defaults to file.");
-			lang.saveNewLang();
-		} else {
+	private void setupLang() throws IOException, URISyntaxException {
+		final String path = "lang";
+		final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+		if(jarFile.isFile()) {
+			final JarFile jar = new JarFile(jarFile);
+			final Enumeration<JarEntry> entries = jar.entries(); //ALL entries in jar
+			Set<String> results = new HashSet<String>();
+			while(entries.hasMoreElements()) {
+			    final String name = entries.nextElement().getName();
+			    if (name.startsWith(path + "/") && name.contains("strings.yml")) {
+			    	results.add(name);
+			    }
+			}
+			for (String resourcePath : results) {
+			    saveResourceAs(resourcePath, resourcePath, false);
+			    saveResourceAs(resourcePath, resourcePath.replace(".yml", "_new.yml"), true);
+			}
+			jar.close();
+		}
+		try {
 			lang.loadLang();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
 		}
 	}
+	
+    public void saveResourceAs(String resourcePath, String outputPath, boolean replace) {
+    	if (resourcePath == null || resourcePath.equals("")) {
+            throw new IllegalArgumentException("ResourcePath cannot be null or empty");
+        }
+
+        resourcePath = resourcePath.replace('\\', '/');
+        InputStream in = getResource(resourcePath);
+        if (in == null) {
+            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in Quests jar");
+        }
+
+        File outFile = new File(getDataFolder(), outputPath);
+        int lastIndex = resourcePath.lastIndexOf('/');
+        File outDir = new File(getDataFolder(), outputPath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+
+        if (!outDir.exists()) {
+            outDir.mkdirs();
+        }
+
+        try {
+            if (!outFile.exists() || replace) {
+                OutputStream out = new FileOutputStream(outFile);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                out.close();
+                in.close();
+            } /*else {
+                getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+            }*/
+        } catch (IOException ex) {
+            getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
+        }
+    }
 
 	private void delayLoadQuestInfo() {
 		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
@@ -360,26 +424,36 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("acceptQuest") + "  " + ChatColor.GREEN + Lang.get("yesWord") + " / " + Lang.get("noWord");
+			/*if (!askConfirmation) {
+				Player player = (Player) context.getForWhom();
+				getQuester(player.getUniqueId()).takeQuest(getQuest(getQuester(player.getUniqueId()).questToTake), false);
+				return "";
+			} else {*/
+				return ChatColor.YELLOW + Lang.get("acceptQuest") + "  " + ChatColor.GREEN + Lang.get("yesWord") + " / " + Lang.get("noWord");
+			//}
 		}
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String s) {
-			Player player = (Player) context.getForWhom();
-			if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
-				try {
-					getQuester(player.getUniqueId()).takeQuest(getQuest(getQuester(player.getUniqueId()).questToTake), false);
-				} catch (Exception e) {
-					e.printStackTrace();
+			/*if (!askConfirmation) {
+				return Prompt.END_OF_CONVERSATION;
+			} else {*/
+				Player player = (Player) context.getForWhom();
+				if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+					try {
+						getQuester(player.getUniqueId()).takeQuest(getQuest(getQuester(player.getUniqueId()).questToTake), false);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return Prompt.END_OF_CONVERSATION;
+				} else if (s.equalsIgnoreCase(Lang.get("noWord"))) {
+					player.sendMessage(ChatColor.YELLOW + Lang.get("cancelled"));
+					return Prompt.END_OF_CONVERSATION;
+				} else {
+					player.sendMessage(ChatColor.RED + Lang.get("questInvalidChoice"));
+					return new QuestPrompt();
 				}
-				return Prompt.END_OF_CONVERSATION;
-			} else if (s.equalsIgnoreCase(Lang.get("noWord"))) {
-				player.sendMessage(ChatColor.YELLOW + Lang.get("cancelled"));
-				return Prompt.END_OF_CONVERSATION;
-			} else {
-				player.sendMessage(ChatColor.RED + Lang.get("questInvalidChoice"));
-				return new QuestPrompt();
-			}
+			//}
 		}
 	}
 
@@ -393,7 +467,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public void loadConfig() {
 		FileConfiguration config = getConfig();
-		Lang.iso = config.getString("language", "en");
+		if (config.getString("language").equalsIgnoreCase("en")) {
+			//Legacy
+			Lang.iso = "en-US";
+		} else {
+			Lang.iso = config.getString("language", "en-US");
+		}
 		allowCommands = config.getBoolean("allow-command-questing", true);
 		allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
 		showQuestReqs = config.getBoolean("show-requirements", true);
@@ -401,6 +480,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		allowQuitting = config.getBoolean("allow-quitting", true);
 		useCompass = config.getBoolean("use-compass", true);
 		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
+		askConfirmation = config.getBoolean("ask-confirmation", true);
 		npcEffects = config.getBoolean("npc-effects.enabled", true);
 		effect = config.getString("npc-effects.new-quest", "note");
 		redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
@@ -1897,8 +1977,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		reloadConfig();
 		loadConfig();
 		Lang.clearPhrases();
-		lang.initPhrases();
-		lang.loadLang();
+		try {
+			lang.loadLang();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		for (Quester quester : questers.values()) {
 			for (Quest q : quester.currentQuests.keySet()) {
 				quester.checkQuest(q);
