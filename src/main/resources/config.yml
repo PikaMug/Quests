@@ -1,4 +1,5 @@
 # See https://github.com/FlyingPikachu/Quests/wiki/Configuration
+accept-timeout: 20
 allow-command-questing: true
 allow-command-quests-with-npcs: false
 allow-quitting: true
