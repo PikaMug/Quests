@@ -239,9 +239,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in Quests jar");
         }
 
-        File outFile = new File(getDataFolder(), outputPath);
-        int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(getDataFolder(), outputPath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+        String outPath = outputPath.replaceAll("/", File.separator);
+        File outFile = new File(getDataFolder(), outPath);
+        int lastIndex = resourcePath.lastIndexOf(File.separator);
+        File outDir = new File(getDataFolder(), outPath.substring(0, lastIndex >= 0 ? lastIndex : 0));
 
         if (!outDir.exists()) {
             outDir.mkdirs();

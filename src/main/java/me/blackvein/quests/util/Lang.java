@@ -82,13 +82,10 @@ public class Lang {
 	public void loadLang() throws InvalidConfigurationException, IOException {
 		File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings.yml");
 		File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings_new.yml");
-		if (langFile.exists()) {
-			LinkedHashMap<String, String> allStrings = new LinkedHashMap<String, String>();
-			FileConfiguration config = new YamlConfiguration();
-			FileConfiguration config_new = new YamlConfiguration();
-			config_new.options().header("Below are the new strings for your current version of Quests! Transfer them to the strings.yml of the"
-					+ " same folder to stay up-to-date and suppress console warnings.");
-			config_new.options().copyHeader(true);
+		LinkedHashMap<String, String> allStrings = new LinkedHashMap<String, String>();
+		FileConfiguration config = new YamlConfiguration();
+		FileConfiguration config_new = new YamlConfiguration();
+		if (langFile.exists() && langFile_new.exists()) {
 			config = loadYamlUTF8(langFile);
 			config_new = loadYamlUTF8(langFile_new);
 			//Load user's lang file and determine new strings
@@ -105,15 +102,19 @@ public class Lang {
 							+ " You must transfer them to, or regenerate, strings.yml to remove this warning!");
 				}
 			}
+			config_new.options().header("Below are any new strings for your current version of Quests! Transfer them to the strings.yml of the"
+					+ " same folder to stay up-to-date and suppress console warnings.");
+			config_new.options().copyHeader(true);
 			config_new.save(langFile_new);
 			langMap.putAll(allStrings);
 		} else {
-			plugin.getLogger().severe("Failed loading /lang/" + iso + "/strings.yml because the file was not found. Using default en-US");
-			if (!iso.equals("en-US")) {
-				iso = "en-US";
-				loadLang();
+			plugin.getLogger().severe("Failed loading lang files for " + iso + " because they were not found. Using default en-US");
+			iso = "en-US";
+			config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"))); //TODO better than loadYamlUTF*() ?
+			for (String key : config.getKeys(false)) {
+				allStrings.put(key, config.getString(key));
 			}
-			return;
+			langMap.putAll(allStrings);
 		}
 		plugin.getLogger().info("Loaded language " + iso + ". Translations via Crowdin");
 	}
