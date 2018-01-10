@@ -710,13 +710,29 @@ public class Quester {
 		ItemStack broken = temp;
 		ItemStack toBreak = temp;
 		for (ItemStack is : getQuestData(quest).blocksBroken) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				broken = is;
+			if (m.getType() == is.getType()) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						broken = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					broken = is;
+				}
 			}
 		}
 		for (ItemStack is : getCurrentStage(quest).blocksToBreak) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				toBreak = is;
+			if (m.getType() == is.getType()) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						toBreak = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					toBreak = is;
+				}
 			}
 		}
 		if (broken.getAmount() < toBreak.getAmount()) {
@@ -735,13 +751,29 @@ public class Quester {
 		ItemStack damaged = temp;
 		ItemStack toDamage = temp;
 		for (ItemStack is : getQuestData(quest).blocksDamaged) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				damaged = is;
+			if (m.getType() == is.getType()) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						damaged = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					damaged = is;
+				}
 			}
 		}
 		for (ItemStack is : getCurrentStage(quest).blocksToDamage) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				toDamage = is;
+			if (m.getType() == is.getType()) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						toDamage = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					toDamage = is;
+				}
 			}
 		}
 		if (damaged.getAmount() < toDamage.getAmount()) {
@@ -760,13 +792,29 @@ public class Quester {
 		ItemStack placed = temp;
 		ItemStack toPlace = temp;
 		for (ItemStack is : getQuestData(quest).blocksPlaced) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				placed = is;
+			if (m.getType() == is.getType()) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						placed = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					placed = is;
+				}
 			}
 		}
 		for (ItemStack is : getCurrentStage(quest).blocksToPlace) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				toPlace = is;
+			if (m.getType() == is.getType()) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						toPlace = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					toPlace = is;
+				}
 			}
 		}
 		if (placed.getAmount() < toPlace.getAmount()) {
@@ -785,13 +833,29 @@ public class Quester {
 		ItemStack used = temp;
 		ItemStack toUse = temp;
 		for (ItemStack is : getQuestData(quest).blocksUsed) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				used = is;
+			if (m.getType() == is.getType() ) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						used = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					used = is;
+				}
 			}
 		}
 		for (ItemStack is : getCurrentStage(quest).blocksToUse) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				toUse = is;
+			if (m.getType() == is.getType() ) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid, so check durability
+					if (m.getDurability() == is.getDurability()) {
+						toUse = is;
+					}
+				} else {
+					//Blocks are not solid, so ignore durability
+					toUse = is;
+				}
 			}
 		}
 		if (used.getAmount() < toUse.getAmount()) {
@@ -810,13 +874,29 @@ public class Quester {
 		ItemStack cut = temp;
 		ItemStack toCut = temp;
 		for (ItemStack is : getQuestData(quest).blocksCut) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				cut = is;
+			if (m.getType() == is.getType()) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						cut = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					cut = is;
+				}
 			}
 		}
 		for (ItemStack is : getCurrentStage(quest).blocksToCut) {
-			if (m.getType() == is.getType() && m.getDurability() == is.getDurability()) {
-				toCut = is;
+			if (m.getType() == is.getType()) {
+				if (m.getType().isSolid() && is.getType().isSolid()) {
+					//Blocks are solid so check for durability
+					if (m.getDurability() == is.getDurability()) {
+						toCut = is;
+					}
+				} else {
+					//Blocks are not solid so ignore durability
+					toCut = is;
+				}
 			}
 		}
 		if (cut.getAmount() < toCut.getAmount()) {
@@ -1055,7 +1135,6 @@ public class Quester {
 	 *            See CustomObjective class
 	 */
 	public void finishObjective(Quest quest, String objective, ItemStack material, ItemStack delivery, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
-		//TODO ItemStack material, is largely unnecessary as .name() can be obtained thru getQuestData(quest).blocksXXXX
 		Player p = getPlayer();
 		if (getCurrentStage(quest).objectiveOverride != null) {
 			if (testComplete(quest)) {

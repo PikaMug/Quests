@@ -187,16 +187,17 @@ public class ItemUtil {
 		return text;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static String getName(ItemStack is) {
 		String text = "";
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName();
 		} else {
 			try {
-				text = ChatColor.AQUA + Items.itemByStack(is).getName();
+				text = ChatColor.AQUA + Items.itemByType(is.getType()).getName();
 			} catch (Exception ne) {
-				text = ChatColor.AQUA + is.getType().name().toLowerCase().replace("_", " ");
-				Bukkit.getLogger().severe("This error is caused by an incompatible version of Vault. Please consider updating.");
+				text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
+				Bukkit.getLogger().severe("This error is likely caused by an incompatible version of Vault. Please consider updating.");
 				ne.printStackTrace();
 			}
 		}
