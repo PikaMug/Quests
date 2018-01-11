@@ -1,6 +1,6 @@
 ---
-questFailed: "*QUEST FAILED*"
-questMaxAllowed: "You may only have up to <number> Quests."
+questFailed: "*TEHTÄVÄ EPÄONNISTUI*"
+questMaxAllowed: "Sinulla voi olla ainoastaan <number> tehtävää."
 questAlreadyOn: "You are already on that Quest!"
 questTooEarly: "You may not take <quest> again for another <time>."
 questAlreadyCompleted: "You have already completed <quest>."
