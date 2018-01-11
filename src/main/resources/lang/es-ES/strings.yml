@@ -309,7 +309,7 @@ stageEditorShearCleared: "Objetivo de esquilar ovejas completado."
 stageEditorStartMessageCleared: "Mensaje de inicio despejado."
 stageEditorCompleteMessageCleared: "Mensaje completo despejado."
 stageEditorConfirmStageDelete: "¿Estás seguro que quieres eliminar este escenario?"
-stageEditorConfirmStageNote: "Cualquier etapa despues, será desplazada un lugar"
+stageEditorConfirmStageNote: "Cualquier etapa después, será desplazada un lugar"
 stageEditorDeleteSucces: "Etapa eliminada con éxito."
 stageEditorEnchantments: "Encantamientos"
 stageEditorNPCNote: 'Nota: Puedes especificar el nombre del NPC con <npc>'
