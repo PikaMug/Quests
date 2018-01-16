@@ -228,6 +228,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 	}
 	
+	/**
+	 * Save a Quests plugin resource to a specific path in the filesystem
+	 * 
+	 * @param resourcePath jar file location starting from resource folder, i.e. "lang/el-GR/strings.yml"
+	 * @param outputPath file destination starting from Quests folder, i.e. "lang/el-GR/strings.yml"
+	 * @param replace whether or not to replace the destination file
+	 */
     public void saveResourceAs(String resourcePath, String outputPath, boolean replace) {
     	if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
@@ -238,12 +245,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (in == null) {
             throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in Quests jar");
         }
-
-        String outPath = outputPath.replaceAll("/", File.separator);
+        
+        String outPath = outputPath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
         File outFile = new File(getDataFolder(), outPath);
-        int lastIndex = resourcePath.lastIndexOf(File.separator);
-        File outDir = new File(getDataFolder(), outPath.substring(0, lastIndex >= 0 ? lastIndex : 0));
-
+        File outDir = new File(outFile.getPath().replace(outFile.getName(), ""));
+        
         if (!outDir.exists()) {
             outDir.mkdirs();
         }
