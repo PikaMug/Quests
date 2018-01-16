@@ -118,7 +118,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "8 - " + Lang.get("rewSetHeroes") + " (" + Lang.get("rewNoHeroes") + ")\n";
+			text += ChatColor.GRAY + "8 - " + Lang.get("rewSetHeroes") + " (" + Lang.get("reqNoHeroes") + ")\n";
 		}
 		if (Quests.phatLoots != null) {
 			if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
