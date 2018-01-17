@@ -244,7 +244,7 @@ stageEditorPasswordDisplayPrompt: "Immettere una visualizzazione della password,
 stageEditorPasswordDisplayHint: "(Questo è il testo verrà mostrato al giocatore come suo obiettivo)"
 stageEditorPasswordPhrasePrompt: "Inserisci una frase password o 'cancellare' to return"
 stageEditorPasswordPhraseHint1: "(Questo è il testo che un giocatore deve dire per completare l'obiettivo)"
-stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
+stageEditorPasswordPhraseHint2: "Se vuoi più frasi di password, separale da un | (tubo)"
 stageEditorObjectiveOverridePrompt: "Inserisci l'override del display obiettivo, oppure 'cancella' per cancellare l'override, o 'cancellare' per tornare."
 stageEditorObjectiveOverrideHint: "(L'override della visualizzazione dell'obiettivo verrà visualizzato come obiettivo attuale di giocatori)"
 stageEditorObjectiveOverrideCleared: "Override di visualizzazione obiettive deselezionata."
