@@ -244,7 +244,7 @@ stageEditorPasswordDisplayPrompt: "Wprowadź hasło do ekranu, lub 'cancel' aby 
 stageEditorPasswordDisplayHint: "(Ten tekst zostanie wyświetlony graczowi jako jego obiekt)"
 stageEditorPasswordPhrasePrompt: "Wprowadź hasło, lub 'cancel' aby powrócić"
 stageEditorPasswordPhraseHint1: "(To jest tekst który gracz ma powiedzieć aby ukończyć cel)"
-stageEditorPasswordPhraseHint2: "Jeśli chcesz mieć wielodostępowe frazy hasła, oddziel je poprzez | (kreska)"
+stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
 stageEditorObjectiveOverridePrompt: "Wprowadź nadpisany objekt monitora, lub 'clear' aby usunąć nadpisanie, lub 'cancel' aby wrócić."
 stageEditorObjectiveOverrideHint: "(Przesłonięcie celu obiektywnego pojawi się jako bieżący cel gracza)"
 stageEditorObjectiveOverrideCleared: "Usunięto obiektywy nadpisany wyświetlacz."
