@@ -244,7 +244,7 @@ stageEditorPasswordDisplayPrompt: "Adja meg a jelszó kijelzését, vagy a 'canc
 stageEditorPasswordDisplayHint: "(Ez a szöveg, amelyet a játékosnak célul kell megjelenítenie)"
 stageEditorPasswordPhrasePrompt: "Adja meg a jelszó kifejezést vagy a 'cancel'-t a visszatéréshez"
 stageEditorPasswordPhraseHint1: "(Ez a szöveg, amit egy játékosnak meg kell mondania, hogy teljesítse a célt)"
-stageEditorPasswordPhraseHint2: "Ha több jelszó-kifejezést szeretne, külön is el kell különíteni őket | (cső)"
+stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
 stageEditorObjectiveOverridePrompt: "Adja meg az objektív megjelenítés felülbírálatát, vagy a 'clear'-t, hogy törölje a felülbírálást, vagy 'cancel'-t a visszatéréshez."
 stageEditorObjectiveOverrideHint: "(Az objektív megjelenítés felülírása megjelenik a játékos aktuális céljaként)"
 stageEditorObjectiveOverrideCleared: "Az objektív megjelenítés felülírása törölve."
