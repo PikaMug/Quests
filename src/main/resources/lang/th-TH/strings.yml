@@ -174,7 +174,7 @@ stageEditorSetPlaceAmounts: "ตั้งค่าจำนวนสถานท
 stageEditorSetUseAmounts: "ตั้งค่าจำนวนที่ใช้"
 stageEditorSetCutAmounts: "ตั้งค่าจำนวนที่ตัด"
 stageEditorSetKillAmounts: "ตั้งค่าจำนวนที่ฆ่า"
-stageEditorSetEnchantAmounts: "ตั้งค่า enchant"
+stageEditorSetEnchantAmounts: "ตั้งค่าจำนวนที่เสน่ห์"
 stageEditorSetMobAmounts: "ตั้งค่าม็อบ"
 stageEditorSetEnchantments: "ตั้งมนต์เสน่ห์"
 stageEditorSetItemNames: "ตั้งชื่อรายการ"
