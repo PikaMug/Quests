@@ -244,7 +244,7 @@ stageEditorPasswordDisplayPrompt: "Bir şifre ekranı girin veya geri dönmek i�
 stageEditorPasswordDisplayHint: "(Bu, oyuncunun hedefi olarak gösterilecek metin)"
 stageEditorPasswordPhrasePrompt: "Bir şifre öbeği girin, veya geri dönmek için 'iptal et'"
 stageEditorPasswordPhraseHint1: "(Bu, nesneyi tamamlamak için bir oyuncunun söyleyeceği metindir)"
-stageEditorPasswordPhraseHint2: "Birden fazla şifre cümlesi istiyorsanız, onları bir arada ayırmak | (boru)"
+stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
 stageEditorObjectiveOverridePrompt: "Nesnel ekran geçersiz kılma girin, veya geçersiz kılmayı temizlemek için 'temizle', ya da geri dönmek için 'iptal et'."
 stageEditorObjectiveOverrideHint: "(Nesnel ekran geçersiz kılma, oyuncuların mevcut hedefi olarak görünecektir)"
 stageEditorObjectiveOverrideCleared: "Nesnel ekran geçersiz kılma temizlendi."
