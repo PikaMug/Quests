@@ -1,5 +1,5 @@
 ---
-questFailed: "*QUEST FAILED*"
+questFailed: "*MISSÃO FALHADA*"
 questMaxAllowed: "You may only have up to <number> Quests."
 questAlreadyOn: "You are already on that Quest!"
 questTooEarly: "You may not take <quest> again for another <time>."
