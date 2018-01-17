@@ -244,7 +244,7 @@ stageEditorPasswordDisplayPrompt: "Nhập mật khẩu, gõ 'cancel' để quay 
 stageEditorPasswordDisplayHint: "(Đoạn văn bản này sẽ hiển thị cho người chơi như là mục tiêu của họ)"
 stageEditorPasswordPhrasePrompt: "Nhập mật khẩu, gõ 'cancel' để quay lại"
 stageEditorPasswordPhraseHint1: "(Đây là văn bản mà người chơi phải nói để hoàn thành mục tiêu)"
-stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
+stageEditorPasswordPhraseHint2: "Nếu bạn muốn nhiều mật khẩu, tách chúng bằng một dấu '|' (ống)"
 stageEditorObjectiveOverridePrompt: "Ghi đè hiển thị của mục tiêu, gõ 'clear' để xóa ghi đè, gõ 'cancel' để quay lại."
 stageEditorObjectiveOverrideHint: "(Mục tiêu được ghi đè sẽ hiển thị như là mục tiêu hiện tại của người chơi)"
 stageEditorObjectiveOverrideCleared: "Xóa ghi đè mục tiêu."
