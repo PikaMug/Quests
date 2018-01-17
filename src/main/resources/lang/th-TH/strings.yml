@@ -234,7 +234,7 @@ stageEditorChatEventsTriggerPromptA: "ป้อนทริกเกอร์ก
 stageEditorChatEventsTriggerPromptB: "หรือป้อน 'ยกเลิก' เพื่อกลับ"
 stageEditorCommandEventsPrompt: "Enter an event name to add, or enter 'clear' to clear all command events, or 'cancel' to return"
 stageEditorCommandEventsTriggerPromptA: "Enter a command trigger for"
-stageEditorCommandEventsTriggerPromptB: "or enter 'cancel' to return."
+stageEditorCommandEventsTriggerPromptB: "หรือป้อน 'ยกเลิก' เพื่อกลับ"
 stageEditorDelayPrompt: "ป้อนเวลา (เป็นวินาที) หรือป้อน 'clear' เพื่อล้างการหน่วงเวลาหรือ 'ยกเลิก' เพื่อกลับ"
 stageEditorDelayMessagePrompt: "ป้อนข้อความล่าช้าหรือป้อน 'clear' เพื่อล้างข้อความหรือ 'ยกเลิก' เพื่อกลับ"
 stageEditorScriptPrompt: "ป้อนชื่อสคริปต์หรือป้อน 'ล้าง' เพื่อล้างสคริปต์หรือ 'ยกเลิก' เพื่อส่งคืน"
