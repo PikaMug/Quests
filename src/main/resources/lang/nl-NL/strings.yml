@@ -1,5 +1,5 @@
 ---
-questFailed: "* De zoektocht is mislukt *"
+questFailed: "*ZOEKTOCHT IS MISLUKT*"
 questMaxAllowed: "Je kan maar <number> zoektochten tegelijk hebben."
 questAlreadyOn: "Je hebt deze zoektocht al!"
 questTooEarly: "Je moet <time> wachten voordat je <quest> opnieuw mag doen."
@@ -51,7 +51,7 @@ COMMAND_QUESTADMIN_NEXTSTAGE: "volgendefase"
 COMMAND_QUESTADMIN_NEXTSTAGE_HELP: "volgendefase [player] [quest] - Forceer de voltooiing van een fase voor een speler"
 COMMAND_QUESTADMIN_SETSTAGE: "setfase"
 COMMAND_QUESTADMIN_SETSTAGE_HELP: "setfase [player] [quest] [fase] - Set de huidige fase voor een speler"
-COMMAND_QUESTADMIN_SETSTAGE_USAGE: 'Gebruik: /questadmin setfase'
+COMMAND_QUESTADMIN_SETSTAGE_USAGE: 'Gebruik: /questadmin setfase [player] [quest] [fase]'
 COMMAND_QUESTADMIN_PURGE: "verwijder"
 COMMAND_QUESTADMIN_PURGE_HELP: "purge [player] - Verwijder alle Zoektocht data van een speler EN BLACKLIST HEM"
 COMMAND_QUESTADMIN_RESET: "reset"
