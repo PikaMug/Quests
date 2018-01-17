@@ -244,7 +244,7 @@ stageEditorPasswordDisplayPrompt: "ป้อนการแสดงรหัส
 stageEditorPasswordDisplayHint: "(นี่คือข้อความที่จะแสดงให้ผู้เล่นเห็นว่าเป็นเป้าหมายของพวกเขา)"
 stageEditorPasswordPhrasePrompt: "ป้อนรหัสผ่านหรือ 'ยกเลิก' เพื่อกลับ"
 stageEditorPasswordPhraseHint1: "(นี่คือข้อความที่ผู้เล่นได้กล่าวเพื่อทำให้เป้าหมายสมบูรณ์)"
-stageEditorPasswordPhraseHint2: "If you want multiple password phrases, separate them by a | (pipe)"
+stageEditorPasswordPhraseHint2: "(การแทนที่การแสดงเป้าหมายจะแสดงเป็นเป้าหมายปัจจุบันของผู้เล่น)"
 stageEditorObjectiveOverridePrompt: "ป้อนการแทนที่การแสดงเป้าหมายหรือ 'ล้าง' เพื่อยกเลิกการลบล้างหรือ 'ยกเลิก' เพื่อส่งคืน"
 stageEditorObjectiveOverrideHint: "(การแทนแสดงวัตถุประสงค์จะแสดงเป็นวัตถุประสงค์ปัจจุบันผู้เล่น)"
 stageEditorObjectiveOverrideCleared: "ยกเลิกการลบการแสดงผลเป้าหมาย"
