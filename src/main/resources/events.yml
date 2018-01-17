@@ -1,6 +1,6 @@
 events:
-  ExampleEvent:
-    message: '<red>Event happened!'
+  ApplyPotion:
+    message: "<blue>You received potion effects!"
     potion-effect-types:
       - Speed
       - Jump
@@ -10,17 +10,21 @@ events:
     potion-effect-amplifiers:
       - 3
       - 2
-  GoodJob:
-    message: "<green>Good job!"
+  NiceFinish:
+    message: "<green>Nice work!"
   DeathFail:
     fail-quest: true
-  FishingStart:
+  RodStart:
     message: "<yellow>Type 'rod' in chat to get a fishing rod!"
-  RodEvent:
+  GiveRod:
     message: "<green>Here you go!"
     items:
       - name-fishing_rod:amount-1
-  TimerEvent:
+  TimerStart:
     timer: 40
   CancelTimer:
     cancel-timer: true
+  RunCommand:
+    message: "<red>Did you mean 'help'?"
+    commands:
+    - help

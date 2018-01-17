@@ -1078,6 +1078,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 		String disconnectEvent;
 		LinkedList<String> chatEvents;
 		LinkedList<String> chatEventTriggers;
+		LinkedList<String> commandEvents;
+		LinkedList<String> commandEventTriggers;
 		Long delay;
 		String overrideDisplay;
 		String delayMessage;
@@ -1136,6 +1138,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 			disconnectEvent = null;
 			chatEvents = null;
 			chatEventTriggers = null;
+			commandEvents = null;
+			commandEventTriggers = null;
 			delay = null;
 			overrideDisplay = null;
 			delayMessage = null;
@@ -1235,6 +1239,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (cc.getSessionData(pref + CK.S_CHAT_EVENTS) != null) {
 				chatEvents = (LinkedList<String>) cc.getSessionData(pref + CK.S_CHAT_EVENTS);
 				chatEventTriggers = (LinkedList<String>) cc.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS);
+			}
+			if (cc.getSessionData(pref + CK.S_COMMAND_EVENTS) != null) {
+				commandEvents = (LinkedList<String>) cc.getSessionData(pref + CK.S_COMMAND_EVENTS);
+				commandEventTriggers = (LinkedList<String>) cc.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS);
 			}
 			if (cc.getSessionData(pref + CK.S_DELAY) != null) {
 				delay = (Long) cc.getSessionData(pref + CK.S_DELAY);
@@ -1343,6 +1351,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (chatEvents != null && chatEvents.isEmpty() == false) {
 				stage.set("chat-events", chatEvents);
 				stage.set("chat-event-triggers", chatEventTriggers);
+			}
+			if (commandEvents != null && commandEvents.isEmpty() == false) {
+				stage.set("command-events", commandEvents);
+				stage.set("command-event-triggers", commandEventTriggers);
 			}
 			if (delay != null) {
 				stage.set("delay", delay.intValue() / 1000);
@@ -1693,6 +1705,16 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cc.setSessionData(pref + CK.S_CHAT_EVENTS, chatEvents);
 				cc.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
 			}
+			if (stage.commandEvents != null) {
+				LinkedList<String> commandEvents = new LinkedList<String>();
+				LinkedList<String> commandEventTriggers = new LinkedList<String>();
+				for (String s : stage.commandEvents.keySet()) {
+					commandEventTriggers.add(s);
+					commandEvents.add(stage.commandEvents.get(s).getName());
+				}
+				cc.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
+				cc.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
+			}
 			if (stage.delay != -1) {
 				cc.setSessionData(pref + CK.S_DELAY, stage.delay);
 				if (stage.delayMessage != null) {
@@ -1712,7 +1734,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cc.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
 			}
 		}
-		//
 	}
 
 	private class SelectDeletePrompt extends StringPrompt {

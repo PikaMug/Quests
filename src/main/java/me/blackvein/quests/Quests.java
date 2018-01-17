@@ -3266,6 +3266,35 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("chat-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
 				}
 			}
+			if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".command-events")) {
+				if (config.isList("quests." + questName + ".stages.ordered." + s2 + ".command-events")) {
+					if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".command-event-triggers")) {
+						if (config.isList("quests." + questName + ".stages.ordered." + s2 + ".command-event-triggers")) {
+							List<String> commandEvents = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".command-events");
+							List<String> commandEventTriggers = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".command-event-triggers");
+							boolean loadEventFailed = false;
+							for (int i = 0; i < commandEvents.size(); i++) {
+								Event evt = Event.loadEvent(commandEvents.get(i), this);
+								if (evt != null) {
+									oStage.commandEvents.put(commandEventTriggers.get(i), evt);
+								} else {
+									loadEventFailed = true;
+									stageFailed("" + commandEvents.get(i) + " inside of command-events: in Stage " + s2 + " of Quest " + quest.name + " failed to load.");
+								}
+							}
+							if (loadEventFailed) {
+								break;
+							}
+						} else {
+							stageFailed("command-event-triggers in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+						}
+					} else {
+						stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing command-event-triggers!");
+					}
+				} else {
+					stageFailed("command-events in Stage " + s2 + " of Quest " + quest.name + " is not in list format!");
+				}
+			}
 			if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".delay")) {
 				if (config.getLong("quests." + questName + ".stages.ordered." + s2 + ".delay", -999) != -999) {
 					oStage.delay = config.getInt("quests." + questName + ".stages.ordered." + s2 + ".delay") * 1000;

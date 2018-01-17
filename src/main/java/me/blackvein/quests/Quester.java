@@ -348,6 +348,11 @@ public class Quester {
 					questData.get(q).eventFired.put(chatTrigger, false);
 				}
 			}
+			if (stage.commandEvents.isEmpty() == false) {
+				for (String commandTrigger : stage.commandEvents.keySet()) {
+					questData.get(q).eventFired.put(commandTrigger, false);
+				}
+			}
 			if (q.initialEvent != null) {
 				q.initialEvent.fire(this, q);
 			}
@@ -1790,14 +1795,25 @@ public class Quester {
 					questSec.set("stage-delay", questData.delayTimeLeft);
 				}
 				if (questData.eventFired.isEmpty() == false) {
-					LinkedList<String> triggers = new LinkedList<String>();
+					LinkedList<String> chatTriggers = new LinkedList<String>();
 					for (String trigger : questData.eventFired.keySet()) {
 						if (questData.eventFired.get(trigger) == true) {
-							triggers.add(trigger);
+							chatTriggers.add(trigger);
 						}
 					}
-					if (triggers.isEmpty() == false) {
-						questSec.set("chat-triggers", triggers);
+					if (chatTriggers.isEmpty() == false) {
+						questSec.set("chat-triggers", chatTriggers);
+					}
+				}
+				if (questData.eventFired.isEmpty() == false) {
+					LinkedList<String> commandTriggers = new LinkedList<String>();
+					for (String commandTrigger : questData.eventFired.keySet()) {
+						if (questData.eventFired.get(commandTrigger) == true) {
+							commandTriggers.add(commandTrigger);
+						}
+					}
+					if (commandTriggers.isEmpty() == false) {
+						questSec.set("command-triggers", commandTriggers);
 					}
 				}
 			}
@@ -2153,13 +2169,24 @@ public class Quester {
 					getQuestData(quest).delayTimeLeft = questSec.getLong("stage-delay");
 				}
 				if (getCurrentStage(quest).chatEvents.isEmpty() == false) {
-					for (String trig : getCurrentStage(quest).chatEvents.keySet()) {
-						getQuestData(quest).eventFired.put(trig, false);
+					for (String chatTrig : getCurrentStage(quest).chatEvents.keySet()) {
+						getQuestData(quest).eventFired.put(chatTrig, false);
 					}
 				}
 				if (questSec.contains("chat-triggers")) {
-					List<String> triggers = questSec.getStringList("chat-triggers");
-					for (String s : triggers) {
+					List<String> chatTriggers = questSec.getStringList("chat-triggers");
+					for (String s : chatTriggers) {
+						getQuestData(quest).eventFired.put(s, true);
+					}
+				}
+				if (getCurrentStage(quest).commandEvents.isEmpty() == false) {
+					for (String commandTrig : getCurrentStage(quest).commandEvents.keySet()) {
+						getQuestData(quest).eventFired.put(commandTrig, false);
+					}
+				}
+				if (questSec.contains("command-triggers")) {
+					List<String> commandTriggers = questSec.getStringList("command-triggers");
+					for (String s : commandTriggers) {
 						getQuestData(quest).eventFired.put(s, true);
 					}
 				}
@@ -2288,8 +2315,12 @@ public class Quester {
 			newData.set(questName + ".stage-delay", questSec.getLong("stage-delay"));
 		}
 		if (questSec.contains("chat-triggers")) {
-			List<String> triggers = questSec.getStringList("chat-triggers");
-			newData.set(questName + ".chat-triggers", triggers);
+			List<String> chatTriggers = questSec.getStringList("chat-triggers");
+			newData.set(questName + ".chat-triggers", chatTriggers);
+		}
+		if (questSec.contains("command-triggers")) {
+			List<String> commandTriggers = questSec.getStringList("command-triggers");
+			newData.set(questName + ".command-triggers", commandTriggers);
 		}
 		return newData;
 	}

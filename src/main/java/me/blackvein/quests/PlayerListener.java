@@ -46,6 +46,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
@@ -311,6 +312,33 @@ public class PlayerListener implements Listener {
 					}
 					if (quester.hasObjective(quest, "password")) {
 						quester.sayPass(quest, evt);
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent evt) {
+		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+			if (quester.currentQuests.isEmpty() == false) {
+				for (Quest quest : quester.currentQuests.keySet()) {
+					Stage currentStage = quester.getCurrentStage(quest);
+					if (currentStage == null) {
+						plugin.getLogger().severe("currentStage was null for " + quester.id.toString() + " on command");
+						continue;
+					}
+					if (currentStage.commandEvents.isEmpty() == false) {
+						String command = evt.getMessage();
+						for (String s : currentStage.commandEvents.keySet()) {
+							if (command.equalsIgnoreCase("/" + s)) {
+								if (quester.getQuestData(quest).eventFired.get(s) == null || quester.getQuestData(quest).eventFired.get(s) == false) {
+									currentStage.commandEvents.get(s).fire(quester, quest);
+									quester.getQuestData(quest).eventFired.put(s, true);
+								}
+							}
+						}
 					}
 				}
 			}

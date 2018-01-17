@@ -3127,7 +3127,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 	private class EventListPrompt extends FixedSetPrompt {
 
 		public EventListPrompt() {
-			super("1", "2", "3", "4", "5", "6");
+			super("1", "2", "3", "4", "5", "6", "7");
 		}
 
 		@SuppressWarnings("unchecked")
@@ -3164,15 +3164,20 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.AQUA + "    - " + event + ChatColor.BLUE + " (" + Lang.get("stageEditorTriggeredBy") + ": \"" + chatEventTriggers.get(chatEvents.indexOf(event)) + "\")\n";
 				}
 			}
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("back");
+			if (context.getSessionData(pref + CK.S_COMMAND_EVENTS) == null) {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorCommandEvents") + " (" + Lang.get("noneSet") + ")\n";
+			} else {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorCommandEvents") + "\n";
+				LinkedList<String> commandEvents = (LinkedList<String>) context.getSessionData(pref + CK.S_COMMAND_EVENTS);
+				LinkedList<String> commandEventTriggers = (LinkedList<String>) context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS);
+				for (String event : commandEvents) {
+					text += ChatColor.AQUA + "    - " + event + ChatColor.BLUE + " (" + Lang.get("stageEditorTriggeredBy") + ": \"" + commandEventTriggers.get(commandEvents.indexOf(event)) + "\")\n";
+				}
+			}
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("back");
 			return text;
 		}
 
-		/*
-		 * en.put("stageEditorStageEvents", "Stage Events"); en.put("stageEditorStartEvent", "Start Event"); en.put("stageEditorFinishEvent",
-		 * "Finish Event"); en.put("stageEditorChatEvents", "Chat Events"); en.put("stageEditorDeathEvent", "Death Event");
-		 * en.put("stageEditorDisconnectEvent", "Disconnect Event");
-		 */
 		@Override
 		protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase("1")) {
@@ -3186,6 +3191,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			} else if (input.equalsIgnoreCase("5")) {
 				return new ChatEventPrompt();
 			} else if (input.equalsIgnoreCase("6")) {
+				return new CommandEventPrompt();
+			} else if (input.equalsIgnoreCase("7")) {
 				return new CreateStagePrompt(stageNum, questFactory, citizens);
 			} else {
 				return new EventListPrompt();
@@ -3456,6 +3463,93 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				return new EventListPrompt();
 			} else {
 				return new ChatEventTriggerPrompt();
+			}
+		}
+	}
+	
+	private class CommandEventPrompt extends StringPrompt {
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String text = ChatColor.DARK_GREEN + "- " + Lang.get("stageEditorCommandEvents") + " -\n";
+			if (questFactory.quests.events.isEmpty()) {
+				text += ChatColor.RED + "- " + Lang.get("none");
+			} else {
+				for (Event e : questFactory.quests.events) {
+					text += ChatColor.GREEN + "- " + e.getName() + "\n";
+				}
+			}
+			return text + ChatColor.YELLOW + Lang.get("stageEditorCommandEventsPrompt");
+		}
+
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			Player player = (Player) context.getForWhom();
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				Event found = null;
+				for (Event e : questFactory.quests.events) {
+					if (e.getName().equalsIgnoreCase(input)) {
+						found = e;
+						break;
+					}
+				}
+				if (found == null) {
+					player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " + Lang.get("stageEditorInvalidEvent"));
+					return new CommandEventPrompt();
+				} else {
+					context.setSessionData(pref + CK.S_COMMAND_TEMP_EVENT, found.getName());
+					return new CommandEventTriggerPrompt();
+				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+				return new EventListPrompt();
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				context.setSessionData(pref + CK.S_COMMAND_EVENTS, null);
+				context.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, null);
+				player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorCommandEventsCleared"));
+				return new EventListPrompt();
+			} else {
+				return new CommandEventPrompt();
+			}
+		}
+	}
+
+	private class CommandEventTriggerPrompt extends StringPrompt {
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String tempEvent = (String) context.getSessionData(pref + CK.S_COMMAND_TEMP_EVENT);
+			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorCommandTrigger") + " -\n";
+			text += ChatColor.YELLOW + Lang.get("stageEditorCommandEventsTriggerPromptA") + " " + ChatColor.AQUA + tempEvent + " " + ChatColor.YELLOW + Lang.get("stageEditorCommandEventsTriggerPromptB");
+			return text;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+				if (context.getSessionData(pref + CK.S_COMMAND_EVENTS) == null) {
+					LinkedList<String> commandEvents = new LinkedList<String>();
+					LinkedList<String> commandEventTriggers = new LinkedList<String>();
+					String event = (String) context.getSessionData(pref + CK.S_COMMAND_TEMP_EVENT);
+					commandEvents.add(event);
+					commandEventTriggers.add(input.trim());
+					context.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
+					context.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
+					return new EventListPrompt();
+				} else {
+					LinkedList<String> commandEvents = (LinkedList<String>) context.getSessionData(pref + CK.S_COMMAND_EVENTS);
+					LinkedList<String> commandEventTriggers = (LinkedList<String>) context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS);
+					String event = (String) context.getSessionData(pref + CK.S_COMMAND_TEMP_EVENT);
+					commandEvents.add(event);
+					commandEventTriggers.add(input.trim());
+					context.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
+					context.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
+					return new EventListPrompt();
+				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+				return new EventListPrompt();
+			} else {
+				return new CommandEventTriggerPrompt();
 			}
 		}
 	}

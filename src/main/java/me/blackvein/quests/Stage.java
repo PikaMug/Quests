@@ -117,6 +117,7 @@ public class Stage {
 	public Event startEvent = null;
 	public Event deathEvent = null;
 	public Map<String, Event> chatEvents = new HashMap<String, Event>();
+	public Map<String, Event> commandEvents = new HashMap<String, Event>();
 	public Event disconnectEvent = null;
 	public Event finishEvent = null;
 	public long delay = -1;
@@ -276,6 +277,9 @@ public class Stage {
 				return false;
 			}
 			if (other.chatEvents.equals(chatEvents) == false) {
+				return false;
+			}
+			if (other.commandEvents.equals(commandEvents) == false) {
 				return false;
 			}
 			if (other.delay != delay) {

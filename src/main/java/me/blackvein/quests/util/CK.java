@@ -104,6 +104,9 @@ public class CK {
 	public static final String S_CHAT_EVENTS = "chatEvents";
 	public static final String S_CHAT_EVENT_TRIGGERS = "chatEventTriggers";
 	public static final String S_CHAT_TEMP_EVENT = "chatTempEvent";
+	public static final String S_COMMAND_EVENTS = "commandEvents";
+	public static final String S_COMMAND_EVENT_TRIGGERS = "commandEventTriggers";
+	public static final String S_COMMAND_TEMP_EVENT = "commandTempEvent";
 	public static final String S_DEATH_EVENT = "deathEvent";
 	public static final String S_DISCONNECT_EVENT = "disconnectEvent";
 	public static final String S_DELAY = "delay";
