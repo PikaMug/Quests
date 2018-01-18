@@ -1,4 +1,4 @@
-# Quests
+# Quests [![Build Status](http://ci.ac3-servers.eu/buildStatus/icon?job=Quests)](https://travis-ci.org/neolumia/vault)
 
 Quests plugin for Spigot. This work depends highly on code contributions!
 
