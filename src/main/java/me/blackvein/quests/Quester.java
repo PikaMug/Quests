@@ -265,18 +265,22 @@ public class Quester {
 						currentLength += quest.name.length();
 						currentLines += (quest.name.length() / 19);
 					}
-					for (String obj : getObjectivesReal(quest)) {
-						// Length/Line check
-						if ((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
-							book.addPage(page);
-							page = obj + "\n";
-							currentLength = obj.length();
-							currentLines = (obj.length() % 19) == 0 ? (obj.length() / 19) : (obj.length() + 1);
-						} else {
-							page += obj + "\n";
-							currentLength += obj.length();
-							currentLines += (obj.length() / 19);
+					if (getObjectivesReal(quest) != null) {
+						for (String obj : getObjectivesReal(quest)) {
+							// Length/Line check
+							if ((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
+								book.addPage(page);
+								page = obj + "\n";
+								currentLength = obj.length();
+								currentLines = (obj.length() % 19) == 0 ? (obj.length() / 19) : (obj.length() + 1);
+							} else {
+								page += obj + "\n";
+								currentLength += obj.length();
+								currentLines += (obj.length() / 19);
+							}
 						}
+					} else {
+						plugin.getLogger().severe("Quest Journal: objectives were null for " + quest.name);
 					}
 					if (currentLines < 13)
 						page += "\n";
