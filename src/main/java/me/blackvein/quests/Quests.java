@@ -1868,7 +1868,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								player.sendMessage(s);
 							}
 						} catch (NullPointerException e) {
-							getLogger().severe("Objectives were null for " + q.name + ". Include quests.yml in Github report");
+							getLogger().severe("Objectives were null for " + q.name + ". Include quests.yml in Github #238");
 							e.printStackTrace();
 						}
 					}
