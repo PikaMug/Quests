@@ -61,7 +61,7 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "remove [spieler] [quest] - Entfernt eine abgesc
 COMMAND_QUESTADMIN_TOGGLEGUI: "interfaceUmschalten"
 COMMAND_QUESTADMIN_TOGGLEGUI_HELP: "togglegui [Npc Id] - Schalte das GUI Quest Menü auf einem NPC an/aus"
 COMMAND_QUESTADMIN_RELOAD: "neuLaden"
-COMMAND_QUESTADMIN_RELOAD_HELP: "reload - Alle Quests werden neu geladen"
+COMMAND_QUESTADMIN_RELOAD_HELP: "neuLaden - Alle Quests werden neu geladen"
 questEditorHeader: "Quest erstellen"
 questEditorCreate: "Eine neue Quest erstellen"
 questEditorEdit: "Eine Quest bearbeiten"
