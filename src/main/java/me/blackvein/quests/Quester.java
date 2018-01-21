@@ -1960,13 +1960,13 @@ public class Quester {
 					List<Short> durability = questSec.getShortList("blocks-broken-durability");
 					for (String s : names) {
 						ItemStack is;
-						if (durability.indexOf((short)names.indexOf(s)) != -1) {
+						try {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
-						} else {
+						} catch (IndexOutOfBoundsException e) {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksBroken.add(names.indexOf(s), is);
+						getQuestData(quest).blocksBroken.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("blocks-damaged-names")) {
@@ -1975,9 +1975,9 @@ public class Quester {
 					List<Short> durability = questSec.getShortList("blocks-damaged-durability");
 					for (String s : names) {
 						ItemStack is;
-						if (durability.indexOf((short)names.indexOf(s)) != -1) {
+						try {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
-						} else {
+						} catch (IndexOutOfBoundsException e) {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
@@ -1990,9 +1990,9 @@ public class Quester {
 					List<Short> durability = questSec.getShortList("blocks-placed-durability");
 					for (String s : names) {
 						ItemStack is;
-						if (durability.indexOf((short)names.indexOf(s)) != -1) {
+						try {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
-						} else {
+						} catch (IndexOutOfBoundsException e) {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
@@ -2005,9 +2005,9 @@ public class Quester {
 					List<Short> durability = questSec.getShortList("blocks-used-durability");
 					for (String s : names) {
 						ItemStack is;
-						if (durability.indexOf((short)names.indexOf(s)) != -1) {
+						try {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
-						} else {
+						} catch (IndexOutOfBoundsException e) {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
@@ -2020,9 +2020,9 @@ public class Quester {
 					List<Short> durability = questSec.getShortList("blocks-cut-durability");
 					for (String s : names) {
 						ItemStack is;
-						if (durability.indexOf((short)names.indexOf(s)) != -1) {
+						try {
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), durability.get(names.indexOf(s)));
-						} else {
+						} catch (IndexOutOfBoundsException e) {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
