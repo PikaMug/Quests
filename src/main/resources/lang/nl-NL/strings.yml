@@ -1,5 +1,5 @@
 ---
-questFailed: "*ZOEKTOCHT IS MISLUKT*"
+questFailed: "*ZOEKTOCHT MISLUKT*"
 questMaxAllowed: "Je kan maar <number> zoektochten tegelijk hebben."
 questAlreadyOn: "Je hebt deze zoektocht al!"
 questTooEarly: "Je moet <time> wachten voordat je <quest> opnieuw mag doen."
@@ -55,9 +55,9 @@ COMMAND_QUESTADMIN_SETSTAGE_USAGE: 'Gebruik: /questadmin setfase [player] [quest
 COMMAND_QUESTADMIN_PURGE: "verwijder"
 COMMAND_QUESTADMIN_PURGE_HELP: "purge [player] - Verwijder alle Zoektocht data van een speler EN BLACKLIST HEM"
 COMMAND_QUESTADMIN_RESET: "reset"
-COMMAND_QUESTADMIN_RESET_HELP: "Reset [Spelersnaam] - Verwijdert alle Quest data van deze speler"
+COMMAND_QUESTADMIN_RESET_HELP: "reset [speler] - Verwijdert alle Quest data van deze speler"
 COMMAND_QUESTADMIN_REMOVE: "verwijder"
-COMMAND_QUESTADMIN_REMOVE_HELP: "Remove [spelersnaam] [Questnaam] - Verwijder een afgeronde Quest van deze speler"
+COMMAND_QUESTADMIN_REMOVE_HELP: "remove [speler] [quest] - Verwijder een afgeronde Quest van deze speler"
 COMMAND_QUESTADMIN_TOGGLEGUI: "togglegui"
 COMMAND_QUESTADMIN_TOGGLEGUI_HELP: "togglegui [npc id] - Toggle Quest GUI vertoning voor een NPC"
 COMMAND_QUESTADMIN_RELOAD: "herlaad"
