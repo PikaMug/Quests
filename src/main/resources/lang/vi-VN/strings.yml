@@ -340,11 +340,11 @@ eventEditorDeleted: "Sự kiện đã bị xóa, Nhiệm vụ và Các sự ki�
 eventEditorSaved: "Sự kiện đã được lưu, Nhiệm vụ và Các sự kiện đã được tải lại."
 eventEditorEnterEventName: "Nhập tên sự kiện, hoặc 'cancel' để trở về."
 eventEditorDeletePrompt: "Bạn có chắc muốn xóa sự kiện này"
-eventEditorQuitWithoutSaving: "Are you sure you want to quit without saving?"
-eventEditorFinishAndSave: "Are you sure you want to finish and save the Event"
-eventEditorModifiedNote: 'Note: You have modified an Event that the following Quests use:'
-eventEditorForcedToQuit: "If you save the Event, anyone who is actively doing any of these Quests will be forced to quit them."
-eventEditorEventInUse: "The following Quests use the Event"
+eventEditorQuitWithoutSaving: "Bạn có chắc muốn thoát mà không lưu lại?"
+eventEditorFinishAndSave: "Bạn có chắc muốn hoàn thành và lưu lại sự kiện"
+eventEditorModifiedNote: 'Lưu ý: Bạn đã thay đổi một sự kiện mà các nhiệm vụ sau sử dụng:'
+eventEditorForcedToQuit: "Nếu bạn lưu sự kiện này, bất cứ ai đang tích cực làm bất kỳ trong số nhiệm vụ này sẽ buộc phải bỏ chúng."
+eventEditorEventInUse: "Các nhiệm vụ sau đây sử dụng sự kiện này"
 eventEditorMustModifyQuests: "You must modify these Quests first!"
 eventEditorListSizeMismatch: "The lists are not the same size!"
 eventEditorListDuplicates: "List contains duplicates!"
