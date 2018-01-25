@@ -2954,26 +2954,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".locations-to-kill"), String.class)) {
 					List<String> locations = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".locations-to-kill");
 					for (String loc : locations) {
-						String[] info = loc.split(" ");
-						if (info.length == 4) {
-							double x = 0;
-							double y = 0;
-							double z = 0;
-							try {
-								x = Double.parseDouble(info[1]);
-								y = Double.parseDouble(info[2]);
-								z = Double.parseDouble(info[3]);
-							} catch (NumberFormatException e) {
-								stageFailed(new String[] { "" + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!", "Proper location format is: \"WorldName x y z\"" });
-							}
-							if (getServer().getWorld(info[0]) != null) {
-								Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-								locationsToKillWithin.add(finalLocation);
-							} else {
-								stageFailed("" + info[0] + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
-							}
+						if (getLocation(loc) != null) {
+							locationsToKillWithin.add(getLocation(loc));
 						} else {
-							stageFailed(new String[] { "" + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!", "Proper location format is: \"WorldName x y z\"" });
+							stageFailed(new String[] { "" + loc + " inside locations-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!", 
+									"Proper location format is: \"WorldName x y z\"" });
 						}
 					}
 				} else {
@@ -3020,26 +3005,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".locations-to-reach"), String.class)) {
 					List<String> locations = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".locations-to-reach");
 					for (String loc : locations) {
-						String[] info = loc.split(" ");
-						if (info.length == 4) {
-							double x = 0;
-							double y = 0;
-							double z = 0;
-							try {
-								x = Double.parseDouble(info[1]);
-								y = Double.parseDouble(info[2]);
-								z = Double.parseDouble(info[3]);
-							} catch (NumberFormatException e) {
-								stageFailed(new String[] { "" + loc + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!", "Proper location format is: \"WorldName x y z\"" });
-							}
-							if (getServer().getWorld(info[0]) != null) {
-								Location finalLocation = new Location(getServer().getWorld(info[0]), x, y, z);
-								oStage.locationsToReach.add(finalLocation);
-							} else {
-								stageFailed("" + info[0] + " inside locations-to-reach: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid world name!");
-							}
+						if (getLocation(loc) != null) {
+							oStage.locationsToReach.add(getLocation(loc));
 						} else {
-							stageFailed(new String[] { "" + loc + " inside mobs-to-kill: inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!", "Proper location format is: \"WorldName x y z\"" });
+							stageFailed(new String[] { "" + loc + " inside locations-to-reach inside Stage " + s2 + " of Quest " + quest.name + " is not in proper location format!", 
+									"Proper location format is: \"WorldName x y z\"" });
 						}
 					}
 				} else {
