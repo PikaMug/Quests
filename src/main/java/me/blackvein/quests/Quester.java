@@ -949,6 +949,9 @@ public class Quester {
 
 	public void killMob(Quest quest, Location killedLocation, EntityType e) {
 		QuestData questData = getQuestData(quest);
+		if (questData.mobsKilled.isEmpty() == false && e != null) {
+			return;
+		}
 		if (questData.mobsKilled.contains(e) == false) {
 			return;
 		}
