@@ -166,6 +166,7 @@
                     <include>events.yml</include>
                     <include>quests.yml</include>
                     <include>data.yml</include>
+                    <include>strings.yml</include>
                 </includes>
             </resource>
             <resource>
