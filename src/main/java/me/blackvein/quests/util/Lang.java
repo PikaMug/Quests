@@ -110,7 +110,7 @@ public class Lang {
 		} else {
 			plugin.getLogger().severe("Failed loading lang files for " + iso + " because they were not found. Using default en-US");
 			iso = "en-US";
-			config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"))); //TODO better than loadYamlUTF*() ?
+			config = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8")); //TODO better than loadYamlUTF*() ?
 			for (String key : config.getKeys(false)) {
 				allStrings.put(key, config.getString(key));
 			}
