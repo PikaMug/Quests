@@ -249,7 +249,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.LIGHT_PURPLE + Lang.get("questListTitle") + "\n" + ChatColor.DARK_PURPLE;
+			String text = ChatColor.LIGHT_PURPLE + Lang.get("reqQuestListTitle") + "\n" + ChatColor.DARK_PURPLE;
 			boolean none = true;
 			for (Quest q : quests.getQuests()) {
 				text += q.getName() + ", ";
@@ -261,7 +261,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				text = text.substring(0, (text.length() - 2));
 				text += "\n";
 			}
-			String lang = Lang.get("reqQuestPrompt");
+			String lang = Lang.get("reqQuestPrompt") + Lang.orCancelToReturn;
 			lang = lang.replaceAll("<comma>", ChatColor.RED + "" + ChatColor.BOLD + Lang.get("comma") + ChatColor.RESET + ChatColor.YELLOW);
 			text += ChatColor.YELLOW + lang;
 			return text;
@@ -410,7 +410,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("reqRemoveItemsPrompt");
+			return ChatColor.YELLOW + Lang.get("reqRemoveItemsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -440,7 +440,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("reqPermissionsPrompt");
+			return ChatColor.YELLOW + Lang.get("reqPermissionsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -463,13 +463,13 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + Lang.get("customRequirementsTitle") + "\n";
 			if (quests.customRequirements.isEmpty()) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
+				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
 			} else {
 				for (CustomRequirement cr : quests.customRequirements) {
 					text += ChatColor.DARK_PURPLE + " - " + cr.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("reqCustomPrompt");
+			return text + ChatColor.YELLOW + Lang.get("reqCustomPrompt") + Lang.orCancelToReturn;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -683,7 +683,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					skillList += ChatColor.GREEN + skills[i].getName() + "\n\n";
 				}
 			}
-			return skillList + ChatColor.YELLOW + Lang.get("reqMcMMOPrompt");
+			return skillList + ChatColor.YELLOW + Lang.get("reqMcMMOPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -721,7 +721,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("reqMcMMOAmountsPrompt");
+			return ChatColor.YELLOW + Lang.get("reqMcMMOAmountsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -807,7 +807,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					text += ChatColor.DARK_PURPLE + "- " + ChatColor.LIGHT_PURPLE + s + "\n";
 				}
 			}
-			text += ChatColor.YELLOW + Lang.get("reqHeroesPrimaryPrompt");
+			text += ChatColor.YELLOW + Lang.get("reqHeroesPrimaryPrompt") + Lang.orCancelToReturn;
 			return text;
 		}
 
@@ -858,7 +858,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					text += ChatColor.DARK_PURPLE + "- " + ChatColor.LIGHT_PURPLE + s + "\n";
 				}
 			}
-			text += ChatColor.YELLOW + Lang.get("reqHeroesSecondaryPrompt");
+			text += ChatColor.YELLOW + Lang.get("reqHeroesSecondaryPrompt") + Lang.orCancelToReturn;
 			return text;
 		}
 
@@ -894,7 +894,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("reqFailMessagePrompt");
+			return ChatColor.YELLOW + Lang.get("reqFailMessagePrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override

@@ -351,7 +351,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			for (Quest q : quests.getQuests()) {
 				s += ChatColor.GRAY + "- " + ChatColor.YELLOW + q.getName() + "\n";
 			}
-			return s + ChatColor.GOLD + Lang.get("questEditorEditEnterQuestName");
+			return s + ChatColor.GOLD + Lang.get("questEditorEditEnterQuestName") + " (" + Lang.orCancelToReturn + ")";
 		}
 
 		@Override
@@ -387,7 +387,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + Lang.get("questCreateTitle") + "\n";
-			text += ChatColor.AQUA + Lang.get("questEditorCreate") + " " + ChatColor.GOLD + "- " + Lang.get("questEditorEnterQuestName");
+			text += ChatColor.AQUA + Lang.get("questEditorCreate") + " " + ChatColor.GOLD + "- " 
+					+ Lang.get("questEditorEnterQuestName") + " (" + Lang.orCancelToReturn + ")";
 			return text;
 		}
 
@@ -453,7 +454,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("questEditorEnterBlockStart");
+			return ChatColor.YELLOW + Lang.get("questEditorEnterBlockStart") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -487,7 +488,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
+			return ChatColor.YELLOW + Lang.get("questEditorEnterQuestName") + " (" + Lang.orCancelToReturn + ")";
 		}
 
 		@Override
@@ -525,7 +526,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("questEditorEnterAskMessage");
+			return ChatColor.YELLOW + Lang.get("questEditorEnterAskMessage") + " (" + Lang.orCancelToReturn + ")";
 		}
 
 		@Override
@@ -547,7 +548,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("questEditorEnterFinishMessage");
+			return ChatColor.YELLOW + Lang.get("questEditorEnterFinishMessage") + " (" + Lang.orCancelToReturn + ")";
 		}
 
 		@Override
@@ -577,7 +578,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("questEditorEnterInitialEvent");
+			return text + ChatColor.YELLOW + Lang.get("questEditorEnterInitialEvent" + Lang.orCancelToReturn);
 		}
 
 		@Override
@@ -681,7 +682,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			} else {
 				text += ChatColor.GRAY + "(" + Lang.get("none") + ")\n\n";
 			}
-			return text + ChatColor.YELLOW + Lang.get("questWGPrompt");
+			return text + ChatColor.YELLOW + Lang.get("questWGPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -800,7 +801,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 						}
 						quests.updateData();
 					}
-					context.getForWhom().sendRawMessage(ChatColor.BOLD + Lang.get("questEditorSaved"));
+					context.getForWhom().sendRawMessage(ChatColor.GREEN
+							+ Lang.get("questEditorSaved").replaceAll("<command>", "/questadmin " + Lang.get("COMMAND_QUESTADMIN_RELOAD")));
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (InvalidConfigurationException e) {

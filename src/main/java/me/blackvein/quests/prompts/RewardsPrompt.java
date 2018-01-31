@@ -319,7 +319,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String lang1 = Lang.get("rewCommandPrompt");
+			String lang1 = Lang.get("rewCommandPrompt") + Lang.orCancelToReturn;
 			lang1 = lang1.replaceAll("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET + ChatColor.YELLOW);
 			String lang2 = Lang.get("rewCommandPromptHint");
 			return ChatColor.YELLOW + lang1 + "\n" + lang2;
@@ -348,7 +348,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("rewPermissionsPrompt");
+			return ChatColor.YELLOW + Lang.get("rewPermissionsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -463,7 +463,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					skillList += ChatColor.GREEN + skills[i].getName() + "\n\n";
 				}
 			}
-			return skillList + Lang.get("rewMcMMOPrompt") + "\n" + ChatColor.GOLD + Lang.get("rewMcMMOPromptHint");
+			return skillList + Lang.get("rewMcMMOPrompt") + Lang.orCancelToReturn + "\n" + ChatColor.GOLD + Lang.get("rewMcMMOPromptHint");
 		}
 
 		@Override
@@ -622,7 +622,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 				text = text.substring(0, text.length() - 2) + "\n";
 			}
-			text += ChatColor.YELLOW + Lang.get("rewHeroesClassesPrompt");
+			text += ChatColor.YELLOW + Lang.get("rewHeroesClassesPrompt") + Lang.orCancelToReturn;
 			return text;
 		}
 
@@ -655,7 +655,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext cc) {
 			String text = Lang.get("heroesExperienceTitle") + "\n";
-			text += ChatColor.YELLOW + Lang.get("rewHeroesExperiencePrompt");
+			text += ChatColor.YELLOW + Lang.get("rewHeroesExperiencePrompt") + Lang.orCancelToReturn;
 			return text;
 		}
 
@@ -691,7 +691,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			for (PhatLoot pl : PhatLootsAPI.getAllPhatLoots()) {
 				text += ChatColor.GRAY + "- " + ChatColor.BLUE + pl.name + "\n";
 			}
-			text += ChatColor.YELLOW + Lang.get("rewPhatLootsPrompt");
+			text += ChatColor.YELLOW + Lang.get("rewPhatLootsPrompt") + Lang.orCancelToReturn;
 			return text;
 		}
 
@@ -727,13 +727,13 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + Lang.get("customRewardsTitle") + "\n";
 			if (quests.customRewards.isEmpty()) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
+				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
 			} else {
 				for (CustomReward cr : quests.customRewards) {
 					text += ChatColor.DARK_PURPLE + " - " + cr.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("rewCustomRewardPrompt");
+			return text + ChatColor.YELLOW + Lang.get("rewCustomRewardPrompt") + Lang.orCancelToReturn;
 		}
 
 		@SuppressWarnings("unchecked")

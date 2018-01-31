@@ -1956,7 +1956,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if ((quests.size() + rows) < ((page * rows)) || quests.size() == 0) {
             player.sendMessage(ChatColor.YELLOW + Lang.get("pageNotExist"));
         } else {
-            player.sendMessage(ChatColor.GOLD + Lang.get("questsTitle"));
+            player.sendMessage(ChatColor.GOLD + Lang.get("questListTitle"));
             int fromOrder = (page - 1) * rows;
  
             List<Quest> subQuests;

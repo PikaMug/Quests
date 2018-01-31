@@ -35,6 +35,7 @@ public class Lang {
 	private static final LangToken tokens = new LangToken();
 	public static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
 	private final Quests plugin;
+	public static String orCancelToReturn = "or 'cancel' to return";
 
 	public Lang(Quests plugin) {
 		tokens.initTokens();
@@ -116,6 +117,7 @@ public class Lang {
 			}
 			langMap.putAll(allStrings);
 		}
+		orCancelToReturn = get("strCancel").replaceAll("<cancel>", get("cmdCancel"));
 		plugin.getLogger().info("Loaded language " + iso + ". Translations via Crowdin");
 	}
 	

@@ -1,6 +1,6 @@
 name: Quests
 main: me.blackvein.quests.Quests
-version: ${project.version}-b${env.BUILD_NUMBER}
+version: ${project.version}-b${env.BUILD_NUMBER}-UNSTABLE
 description: Player questing system
 website: http://dev.bukkit.org/server-mods/quests/
 dev-url: https://github.com/Blackvein/Quests/

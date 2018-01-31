@@ -289,9 +289,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "23 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorCompleteMessage") + ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + ChatColor.GRAY + ")\n";
 			}
 			if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
-				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "24 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageObjectiveOverride") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "24 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorObjectiveOverride") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
-				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "24 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageObjectiveOverride") + ChatColor.GRAY + "(" + ChatColor.DARK_AQUA + "\"" + context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) + "\"" + ChatColor.GRAY + ")\n";
+				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "24 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorObjectiveOverride") + ChatColor.GRAY + "(" + ChatColor.DARK_AQUA + "\"" + context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) + "\"" + ChatColor.GRAY + ")\n";
 			}
 			text += ChatColor.RED + "" + ChatColor.BOLD + "25 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorDelete") + "\n";
 			text += ChatColor.GREEN + "" + ChatColor.BOLD + "26 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("done") + "\n";
@@ -481,7 +481,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.YELLOW + Lang.get("stageEditorPasswordDisplayPrompt") + "\n";
+			String text = ChatColor.YELLOW + Lang.get("stageEditorPasswordDisplayPrompt") + Lang.orCancelToReturn + "\n";
 			text += ChatColor.ITALIC + "" + ChatColor.GOLD + Lang.get("stageEditorPasswordDisplayHint");
 			return text;
 		}
@@ -508,7 +508,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.YELLOW + Lang.get("stageEditorPasswordPhrasePrompt") + "\n";
+			String text = ChatColor.YELLOW + Lang.get("stageEditorPasswordPhrasePrompt") + Lang.orCancelToReturn + "\n";
 			text += ChatColor.ITALIC + "" + ChatColor.GOLD + Lang.get("stageEditorPasswordPhraseHint1") + "\n";
 			text += ChatColor.RESET + "" + ChatColor.YELLOW + Lang.get("stageEditorPasswordPhraseHint2");
 			return text;
@@ -540,7 +540,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.YELLOW + Lang.get("stageEditorObjectiveOverridePrompt") + "\n";
+			String text = ChatColor.YELLOW + Lang.get("stageEditorObjectiveOverridePrompt") + Lang.orCancelToReturn + "\n";
 			text += ChatColor.ITALIC + "" + ChatColor.GOLD + Lang.get("stageEditorObjectiveOverrideHint");
 			return text;
 		}
@@ -680,7 +680,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockNames");
+			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockNames") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -716,7 +716,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorBreakBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorBreakBlocksPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -747,7 +747,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
+			return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -933,7 +933,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorDamageBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorDamageBlocksPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -1150,7 +1150,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorPlaceBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorPlaceBlocksPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -1367,7 +1367,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorUseBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorUseBlocksPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -1584,7 +1584,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorCutBlocksPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorCutBlocksPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -1809,7 +1809,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				text += ChatColor.GREEN + Quester.prettyEnchantmentString(e) + ", ";
 			}
 			text = text.substring(0, text.length() - 1);
-			return text + "\n" + ChatColor.YELLOW + Lang.get("stageEditorEnchantTypePrompt");
+			return text + "\n" + ChatColor.YELLOW + Lang.get("stageEditorEnchantTypePrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -1848,7 +1848,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorItemNamesPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorItemNamesPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -1884,7 +1884,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorEnchantAmountsPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorEnchantAmountsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -2042,7 +2042,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			questFactory.selectingNPCs.add((Player) context.getForWhom());
-			return ChatColor.YELLOW + Lang.get("stageEditorNPCPrompt") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
+			return ChatColor.YELLOW + Lang.get("stageEditorNPCPrompt") + Lang.orCancelToReturn + "\n" + ChatColor.GOLD + Lang.get("npcHint");
 		}
 
 		@Override
@@ -2076,7 +2076,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String note = ChatColor.GOLD + Lang.get("stageEditorNPCNote");
-			return ChatColor.YELLOW + Lang.get("stageEditorDeliveryMessagesPrompt") + "\n" + note;
+			return ChatColor.YELLOW + Lang.get("stageEditorDeliveryMessagesPrompt") + Lang.orCancelToReturn + "\n" + note;
 		}
 
 		@Override
@@ -2096,7 +2096,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			questFactory.selectingNPCs.add((Player) context.getForWhom());
-			return ChatColor.YELLOW + Lang.get("stageEditorNPCToTalkToPrompt") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
+			return ChatColor.YELLOW + Lang.get("stageEditorNPCToTalkToPrompt") + Lang.orCancelToReturn + "\n" + ChatColor.GOLD + Lang.get("npcHint");
 		}
 
 		@Override
@@ -2216,7 +2216,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			questFactory.selectingNPCs.add((Player) context.getForWhom());
-			return ChatColor.YELLOW + Lang.get("stageEditorNPCPrompt") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
+			return ChatColor.YELLOW + Lang.get("stageEditorNPCPrompt") + Lang.orCancelToReturn + "\n" + ChatColor.GOLD + Lang.get("npcHint");
 		}
 
 		@Override
@@ -2249,7 +2249,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorKillNPCsPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorKillNPCsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -2479,7 +2479,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					mobs += MiscUtil.getProperMobName(mobArr.get(i)) + "\n";
 				}
 			}
-			return mobs + ChatColor.YELLOW + Lang.get("stageEditorMobsPrompt");
+			return mobs + ChatColor.YELLOW + Lang.get("stageEditorMobsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -2505,7 +2505,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorMobAmountsPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorMobAmountsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -2536,7 +2536,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorMobLocationPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorMobLocationPrompt") + Lang.orCancelToReturn;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -2574,7 +2574,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorMobLocationRadiiPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorMobLocationRadiiPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -2605,7 +2605,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorMobLocationNamesPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorMobLocationNamesPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -2737,7 +2737,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorReachLocationPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorReachLocationPrompt") + Lang.orCancelToReturn;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -2775,7 +2775,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorReachLocationRadiiPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorReachLocationRadiiPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -2806,7 +2806,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorReachLocationNamesPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorReachLocationNamesPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -2947,7 +2947,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorTameAmountsPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorTameAmountsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3071,7 +3071,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					cols += Quests.getDyeString(colArr[i]) + "\n";
 				}
 			}
-			return cols + ChatColor.YELLOW + Lang.get("stageEditorShearColorsPrompt");
+			return cols + ChatColor.YELLOW + Lang.get("stageEditorShearColorsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3097,7 +3097,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorShearAmountsPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorShearAmountsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3212,7 +3212,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("stageEditorEventsPrompt");
+			return text + ChatColor.YELLOW + Lang.get("stageEditorEventsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3257,7 +3257,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("stageEditorEventsPrompt");
+			return text + ChatColor.YELLOW + Lang.get("stageEditorEventsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3302,7 +3302,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("stageEditorEventsPrompt");
+			return text + ChatColor.YELLOW + Lang.get("stageEditorEventsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3347,7 +3347,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("stageEditorEventsPrompt");
+			return text + ChatColor.YELLOW + Lang.get("stageEditorEventsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3392,7 +3392,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("stageEditorChatEventsPrompt");
+			return text + ChatColor.YELLOW + Lang.get("stageEditorChatEventsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3432,7 +3432,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String tempEvent = (String) context.getSessionData(pref + CK.S_CHAT_TEMP_EVENT);
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorChatTrigger") + " -\n";
-			text += ChatColor.YELLOW + Lang.get("stageEditorChatEventsTriggerPromptA") + " " + ChatColor.AQUA + tempEvent + " " + ChatColor.YELLOW + Lang.get("stageEditorChatEventsTriggerPromptB");
+			text += ChatColor.YELLOW + Lang.get("stageEditorChatEventsTriggerPrompt") + " " + ChatColor.AQUA + tempEvent + " " + ChatColor.YELLOW + Lang.orCancelToReturn;
 			return text;
 		}
 
@@ -3479,7 +3479,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("stageEditorCommandEventsPrompt");
+			return text + ChatColor.YELLOW + Lang.get("stageEditorCommandEventsPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3519,7 +3519,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String tempEvent = (String) context.getSessionData(pref + CK.S_COMMAND_TEMP_EVENT);
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorCommandTrigger") + " -\n";
-			text += ChatColor.YELLOW + Lang.get("stageEditorCommandEventsTriggerPromptA") + " " + ChatColor.AQUA + tempEvent + " " + ChatColor.YELLOW + Lang.get("stageEditorCommandEventsTriggerPromptB");
+			text += ChatColor.YELLOW + Lang.get("stageEditorCommandEventsTriggerPrompt") + " " + ChatColor.AQUA + tempEvent + " " + ChatColor.YELLOW + Lang.orCancelToReturn;
 			return text;
 		}
 
@@ -3558,7 +3558,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorDelayPrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorDelayPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3624,7 +3624,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			for (String s : ScriptRegistry._getScriptNames()) {
 				text += ChatColor.AQUA + "- " + s + "\n";
 			}
-			return text + ChatColor.YELLOW + Lang.get("stageEditorScriptPrompt");
+			return text + ChatColor.YELLOW + Lang.get("stageEditorScriptPrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3677,7 +3677,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorStartMessagePrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorStartMessagePrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3700,7 +3700,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("stageEditorCompleteMessagePrompt");
+			return ChatColor.YELLOW + Lang.get("stageEditorCompleteMessagePrompt") + Lang.orCancelToReturn;
 		}
 
 		@Override
@@ -3725,13 +3725,13 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorCustom") + " -\n";
 			if (questFactory.quests.customObjectives.isEmpty()) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ")";
+				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
 			} else {
 				for (CustomObjective co : questFactory.quests.customObjectives) {
 					text += ChatColor.DARK_PURPLE + " - " + co.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("stageEditorCustomPrompt");
+			return text + ChatColor.YELLOW + Lang.get("stageEditorCustomPrompt") + Lang.orCancelToReturn;
 		}
 
 		@SuppressWarnings("unchecked")
