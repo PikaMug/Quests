@@ -123,12 +123,24 @@ public class Lang {
 	}
 	
 	private void finishLang() {
-		// or 'cancel' to return
-		if (get("strCancel") != null) {
-			langMap.put("strCancel", get("strCancel").replaceAll("<command>", get("cmdCancel")));
-		}
-		for (String s : langMap.keySet()) {
-			langMap.put(s, get(s).replaceAll("<cancel>", get("strCancel")));
+		langMap.put("strAdd", get("strAdd").replaceAll("<command>", get("cmdAdd")));
+		langMap.put("strClear", get("strClear").replaceAll("<command>", get("cmdClear")));
+		langMap.put("strCancel", get("strCancel").replaceAll("<command>", get("cmdCancel")));
+		langMap.put("strDone", get("strDone").replaceAll("<command>", get("cmdDone")));
+		
+		for (String key : langMap.keySet()) {
+			String value = get(key);
+			
+			// then enter 'add' to include it
+			value.replaceAll("<add>", get("strAdd"));
+			// or 'clear' to erase all data
+			value.replaceAll("<clear>", get("strClear"));
+			// or 'cancel' to return
+			value.replaceAll("<cancel>", get("strCancel"));
+			// then enter '<command>' to save
+			value.replaceAll("<done>", get("strDone"));
+			
+			langMap.put(key, value);
 		}
 	}
 	

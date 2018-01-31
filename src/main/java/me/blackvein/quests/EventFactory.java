@@ -1039,9 +1039,9 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdNone")) == false) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				context.setSessionData(CK.E_MESSAGE, input);
-			} else if (input.equalsIgnoreCase(Lang.get("cmdNone"))) {
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.E_MESSAGE, null);
 			}
 			return new CreateMenuPrompt();
