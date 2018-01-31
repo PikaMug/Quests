@@ -35,7 +35,7 @@ public class Lang {
 	private static final LangToken tokens = new LangToken();
 	public static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
 	private final Quests plugin;
-	public static String orCancelToReturn = "or 'cancel' to return";
+	//public static String orCancelToReturn = "or 'cancel' to return";
 
 	public Lang(Quests plugin) {
 		tokens.initTokens();
@@ -108,6 +108,7 @@ public class Lang {
 			config_new.options().copyHeader(true);
 			config_new.save(langFile_new);
 			langMap.putAll(allStrings);
+			finishLang();
 		} else {
 			plugin.getLogger().severe("Failed loading lang files for " + iso + " because they were not found. Using default en-US");
 			iso = "en-US";
@@ -116,9 +117,19 @@ public class Lang {
 				allStrings.put(key, config.getString(key));
 			}
 			langMap.putAll(allStrings);
+			finishLang();
 		}
-		orCancelToReturn = get("strCancel").replaceAll("<cancel>", get("cmdCancel"));
 		plugin.getLogger().info("Loaded language " + iso + ". Translations via Crowdin");
+	}
+	
+	private void finishLang() {
+		// or 'cancel' to return
+		if (get("strCancel") != null) {
+			langMap.put("strCancel", get("strCancel").replaceAll("<command>", get("cmdCancel")));
+		}
+		for (String s : langMap.keySet()) {
+			langMap.put(s, get(s).replaceAll("<cancel>", get("strCancel")));
+		}
 	}
 	
 	/**

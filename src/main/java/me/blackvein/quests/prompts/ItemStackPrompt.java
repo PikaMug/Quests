@@ -217,7 +217,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext cc) {
-			return ChatColor.YELLOW + Lang.get("itemCreateEnterName") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("itemCreateEnterName");
 		}
 
 		@Override
@@ -259,7 +259,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext cc) {
-			return ChatColor.YELLOW + Lang.get("itemCreateEnterAmount") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("itemCreateEnterAmount");
 		}
 
 		@Override
@@ -288,7 +288,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext cc) {
-			return ChatColor.YELLOW + Lang.get("itemCreateEnterDurab") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("itemCreateEnterDurab");
 		}
 
 		@Override
@@ -323,7 +323,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				text += ChatColor.GREEN + Quester.prettyEnchantmentString(e) + ", ";
 			}
 			text = text.substring(0, text.length() - 2);
-			return text + "\n" + ChatColor.YELLOW + Lang.get("itemCreateEnterEnch") + Lang.orCancelToReturn;
+			return text + "\n" + ChatColor.YELLOW + Lang.get("itemCreateEnterEnch");
 		}
 
 		@Override
@@ -390,7 +390,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext cc) {
-			return ChatColor.YELLOW + Lang.get("itemCreateEnterDisplay") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("itemCreateEnterDisplay");
 		}
 
 		@Override
@@ -409,7 +409,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext cc) {
-			return ChatColor.YELLOW + Lang.get("itemCreateEnterLore") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("itemCreateEnterLore");
 		}
 
 		@Override

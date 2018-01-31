@@ -282,7 +282,7 @@ public class EventFactory implements ConversationAbandonedListener {
 				text += ChatColor.AQUA + evt.name + ChatColor.YELLOW + ", ";
 			}
 			text = text.substring(0, text.length() - 2) + "\n";
-			text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName") + Lang.orCancelToReturn;
+			text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
 			return text;
 		}
 
@@ -314,7 +314,7 @@ public class EventFactory implements ConversationAbandonedListener {
 				text += ChatColor.AQUA + evt.name + ChatColor.YELLOW + ",";
 			}
 			text = text.substring(0, text.length() - 1) + "\n";
-			text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName") + Lang.orCancelToReturn;
+			text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
 			return text;
 		}
 
@@ -905,7 +905,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.AQUA + Lang.get("eventEditorCreate") + ChatColor.GOLD + " - " 
-					+ Lang.get("eventEditorEnterEventName") + Lang.orCancelToReturn;
+					+ Lang.get("eventEditorEnterEventName");
 			return text;
 		}
 
@@ -960,7 +960,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorExplosionPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorExplosionPrompt");
 		}
 
 		@SuppressWarnings("unchecked")
@@ -1002,7 +1002,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorEnterEventName") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
 		}
 
 		@Override
@@ -1034,7 +1034,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorSetMessagePrompt") + "(" + Lang.orCancelToReturn + ")";
+			return ChatColor.YELLOW + Lang.get("eventEditorSetMessagePrompt");
 		}
 
 		@Override
@@ -1194,7 +1194,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorEffectLocationPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorEffectLocationPrompt");
 		}
 
 		@SuppressWarnings("unchecked")
@@ -1243,7 +1243,7 @@ public class EventFactory implements ConversationAbandonedListener {
 			effects += ChatColor.DARK_PURPLE + "GHAST_SHRIEK " + ChatColor.GRAY + "- " + Lang.get("effGhastShriek") + "\n";
 			effects += ChatColor.DARK_PURPLE + "ZOMBIE_CHEW_IRON_DOOR " + ChatColor.GRAY + "- " + Lang.get("effZombieWood") + "\n";
 			effects += ChatColor.DARK_PURPLE + "ZOMBIE_CHEW_WOODEN_DOOR " + ChatColor.GRAY + "- " + Lang.get("effZombieIron") + "\n";
-			return ChatColor.YELLOW + effects + Lang.get("effEnterName") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + effects + Lang.get("effEnterName");
 		}
 
 		@SuppressWarnings("unchecked")
@@ -1338,7 +1338,7 @@ public class EventFactory implements ConversationAbandonedListener {
 				effects += w.getName() + ", ";
 			}
 			effects = effects.substring(0, effects.length());
-			return ChatColor.YELLOW + effects + Lang.get("eventEditorEnterStormWorld") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + effects + Lang.get("eventEditorEnterStormWorld");
 		}
 
 		@Override
@@ -1439,7 +1439,7 @@ public class EventFactory implements ConversationAbandonedListener {
 				effects += w.getName() + ", ";
 			}
 			effects = effects.substring(0, effects.length());
-			return ChatColor.YELLOW + effects + Lang.get("eventEditorEnterThunderWorld") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + effects + Lang.get("eventEditorEnterThunderWorld");
 		}
 
 		@Override
@@ -1666,7 +1666,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.YELLOW + Lang.get("eventEditorSetMobNamePrompt") + Lang.orCancelToReturn;
+			String text = ChatColor.YELLOW + Lang.get("eventEditorSetMobNamePrompt");
 			return text;
 		}
 
@@ -1710,7 +1710,7 @@ public class EventFactory implements ConversationAbandonedListener {
 					mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
 				}
 			}
-			return mobs + ChatColor.YELLOW + Lang.get("eventEditorSetMobTypesPrompt") + Lang.orCancelToReturn;
+			return mobs + ChatColor.YELLOW + Lang.get("eventEditorSetMobTypesPrompt");
 		}
 
 		@Override
@@ -1740,7 +1740,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorSetMobAmountsPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorSetMobAmountsPrompt");
 		}
 
 		@Override
@@ -1776,7 +1776,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorSetMobLocationPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorSetMobLocationPrompt");
 		}
 
 		@Override
@@ -1845,7 +1845,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorLightningPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorLightningPrompt");
 		}
 
 		@SuppressWarnings("unchecked")
@@ -1993,7 +1993,7 @@ public class EventFactory implements ConversationAbandonedListener {
 			for (PotionEffectType pet : PotionEffectType.values()) {
 				effs += (pet != null && pet.getName() != null) ? (ChatColor.DARK_PURPLE + pet.getName() + "\n") : "";
 			}
-			return effs + ChatColor.YELLOW + Lang.get("eventEditorSetPotionEffectsPrompt") + Lang.orCancelToReturn;
+			return effs + ChatColor.YELLOW + Lang.get("eventEditorSetPotionEffectsPrompt");
 		}
 
 		@Override
@@ -2019,7 +2019,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorSetPotionDurationsPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorSetPotionDurationsPrompt");
 		}
 
 		@Override
@@ -2051,7 +2051,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorSetPotionMagnitudesPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorSetPotionMagnitudesPrompt");
 		}
 
 		@Override
@@ -2151,7 +2151,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorSetTeleportPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("eventEditorSetTeleportPrompt");
 		}
 
 		@Override
@@ -2186,7 +2186,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "" + ChatColor.ITALIC + Lang.get("eventEditorCommandsNote");
-			return ChatColor.YELLOW + Lang.get("eventEditorSetCommandsPrompt") + Lang.orCancelToReturn + "\n" + text;
+			return ChatColor.YELLOW + Lang.get("eventEditorSetCommandsPrompt") + "\n" + text;
 		}
 
 		@Override

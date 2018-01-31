@@ -50,8 +50,8 @@ public class Event {
 	int stormDuration = 0;
 	World thunderWorld = null;
 	int thunderDuration = 0;
-	Integer timer = 0;
-	Boolean cancelTimer = false;
+	int timer = 0;
+	boolean cancelTimer = false;
 	public LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>() {
 
 		private static final long serialVersionUID = -761974607799449780L;
@@ -252,7 +252,7 @@ public class Event {
 			quest.failQuest(quester);
 		}
 		if (timer > 0) {
-			player.sendMessage(Quests.parseString(String.format(Lang.get("timerStart"), timer), quest));
+			player.sendMessage(Lang.get("timerStart").replaceAll("<time>", String.valueOf(timer)));
 			if (timer > 60) {
 				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 60, false)
 						.runTaskLaterAsynchronously(plugin, (timer-60)*20).getTaskId(), quest);

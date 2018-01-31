@@ -39,7 +39,7 @@ public class ObjectiveTimer extends BukkitRunnable {
             quest.failQuest(quester);
             quester.updateJournal();
         } else {
-            quester.getPlayer().sendMessage(Quests.parseString(String.format(Lang.get("timerMessage"), time), quest));
+            quester.getPlayer().sendMessage(Lang.get("timerMessage").replaceAll("<time>", String.valueOf(time)));
         }
     }
 }

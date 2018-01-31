@@ -261,7 +261,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				text = text.substring(0, (text.length() - 2));
 				text += "\n";
 			}
-			String lang = Lang.get("reqQuestPrompt") + Lang.orCancelToReturn;
+			String lang = Lang.get("reqQuestPrompt");
 			lang = lang.replaceAll("<comma>", ChatColor.RED + "" + ChatColor.BOLD + Lang.get("comma") + ChatColor.RESET + ChatColor.YELLOW);
 			text += ChatColor.YELLOW + lang;
 			return text;
@@ -410,7 +410,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("reqRemoveItemsPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("reqRemoveItemsPrompt");
 		}
 
 		@Override
@@ -440,7 +440,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("reqPermissionsPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("reqPermissionsPrompt");
 		}
 
 		@Override
@@ -469,7 +469,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					text += ChatColor.DARK_PURPLE + " - " + cr.getName() + "\n";
 				}
 			}
-			return text + ChatColor.YELLOW + Lang.get("reqCustomPrompt") + Lang.orCancelToReturn;
+			return text + ChatColor.YELLOW + Lang.get("reqCustomPrompt");
 		}
 
 		@SuppressWarnings("unchecked")
@@ -683,7 +683,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					skillList += ChatColor.GREEN + skills[i].getName() + "\n\n";
 				}
 			}
-			return skillList + ChatColor.YELLOW + Lang.get("reqMcMMOPrompt") + Lang.orCancelToReturn;
+			return skillList + ChatColor.YELLOW + Lang.get("reqMcMMOPrompt");
 		}
 
 		@Override
@@ -721,7 +721,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("reqMcMMOAmountsPrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("reqMcMMOAmountsPrompt");
 		}
 
 		@Override
@@ -807,7 +807,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					text += ChatColor.DARK_PURPLE + "- " + ChatColor.LIGHT_PURPLE + s + "\n";
 				}
 			}
-			text += ChatColor.YELLOW + Lang.get("reqHeroesPrimaryPrompt") + Lang.orCancelToReturn;
+			text += ChatColor.YELLOW + Lang.get("reqHeroesPrimaryPrompt");
 			return text;
 		}
 
@@ -858,7 +858,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					text += ChatColor.DARK_PURPLE + "- " + ChatColor.LIGHT_PURPLE + s + "\n";
 				}
 			}
-			text += ChatColor.YELLOW + Lang.get("reqHeroesSecondaryPrompt") + Lang.orCancelToReturn;
+			text += ChatColor.YELLOW + Lang.get("reqHeroesSecondaryPrompt");
 			return text;
 		}
 
@@ -894,7 +894,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("reqFailMessagePrompt") + Lang.orCancelToReturn;
+			return ChatColor.YELLOW + Lang.get("reqFailMessagePrompt");
 		}
 
 		@Override
