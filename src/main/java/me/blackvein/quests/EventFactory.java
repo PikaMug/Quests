@@ -2192,7 +2192,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				String[] commands = input.split(",");
+				String[] commands = input.split(Lang.get("charSemi"));
 				LinkedList<String> cmdList = new LinkedList<String>();
 				cmdList.addAll(Arrays.asList(commands));
 				context.setSessionData(CK.E_COMMANDS, cmdList);

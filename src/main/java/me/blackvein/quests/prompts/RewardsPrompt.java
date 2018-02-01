@@ -328,7 +328,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				String[] args = input.split(",");
+				String[] args = input.split(Lang.get("charSemi"));
 				LinkedList<String> commands = new LinkedList<String>();
 				for (String s : args) {
 					if (s.startsWith("/")) {

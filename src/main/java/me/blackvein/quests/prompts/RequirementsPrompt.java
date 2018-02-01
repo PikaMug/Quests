@@ -261,16 +261,14 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				text = text.substring(0, (text.length() - 2));
 				text += "\n";
 			}
-			String lang = Lang.get("reqQuestPrompt");
-			lang = lang.replaceAll("<comma>", ChatColor.RED + "" + ChatColor.BOLD + Lang.get("comma") + ChatColor.RESET + ChatColor.YELLOW);
-			text += ChatColor.YELLOW + lang;
+			text += ChatColor.YELLOW + Lang.get("reqQuestPrompt");
 			return text;
 		}
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				String[] args = input.split(",");
+				String[] args = input.split(Lang.get("charSemi"));
 				LinkedList<String> questNames = new LinkedList<String>();
 				for (String s : args) {
 					if (quests.getQuest(s) == null) {

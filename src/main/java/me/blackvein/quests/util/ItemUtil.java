@@ -165,10 +165,13 @@ public class ItemUtil {
 			if (is.getDurability() != 0) {
 				text += ChatColor.AQUA + ":" + is.getDurability();
 			}
-			text += ChatColor.AQUA + " x " + is.getAmount();
 			if (is.getEnchantments().isEmpty() == false) {
-				text += " " + ChatColor.DARK_PURPLE + Lang.get("enchantedItem");
+				text += " " + ChatColor.GRAY + Lang.get("with") + ChatColor.DARK_PURPLE;
+				for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
+					text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+				}
 			}
+			text += ChatColor.AQUA + " x " + is.getAmount();
 		}
 		return text;
 	}

@@ -136,7 +136,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES);
 				LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
 				for (int i = 0; i < enchants.size(); i++) {
-					text += ChatColor.GRAY + "    - " + ChatColor.BLUE + Quester.prettyItemString(names.get(i)) + ChatColor.GRAY + " " + Lang.get("with") + " " + ChatColor.AQUA + Quester.prettyString(enchants.get(i)) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+					text += ChatColor.GRAY + "    - " + ChatColor.BLUE + Quester.prettyItemString(names.get(i)) + ChatColor.GRAY + " " + Lang.get("with") + " " + ChatColor.AQUA + Quester.prettyEnchantmentString(Quests.getEnchantment(enchants.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
 				}
 			}
 			if (questFactory.quests.citizens != null) {
@@ -188,7 +188,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
 				if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
 					for (int i = 0; i < mobs.size(); i++) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + Quester.prettyString(mobs.get(i)) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + Quester.prettyMobString(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
 					}
 				} else {
 					LinkedList<String> locs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS);
@@ -197,7 +197,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					for (int i = 0; i < mobs.size(); i++) {
 						String msg = Lang.get("blocksWithin");
 						msg = msg.replaceAll("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
-						text += ChatColor.GRAY + "    - " + ChatColor.BLUE + Quester.prettyString(mobs.get(i)) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW + names.get(i) + " (" + locs.get(i) + ")\n";
+						text += ChatColor.GRAY + "    - " + ChatColor.BLUE + Quester.prettyMobString(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW + names.get(i) + " (" + locs.get(i) + ")\n";
 					}
 				}
 			}
@@ -509,8 +509,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.YELLOW + Lang.get("stageEditorPasswordPhrasePrompt") + "\n";
-			text += ChatColor.ITALIC + "" + ChatColor.GOLD + Lang.get("stageEditorPasswordPhraseHint1") + "\n";
-			text += ChatColor.RESET + "" + ChatColor.YELLOW + Lang.get("stageEditorPasswordPhraseHint2");
+			text += ChatColor.ITALIC + "" + ChatColor.GOLD + Lang.get("stageEditorPasswordPhraseHint");
 			return text;
 		}
 
@@ -521,13 +520,13 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					@SuppressWarnings("unchecked")
 					LinkedList<LinkedList<String>> phrases = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
 					LinkedList<String> newPhrases = new LinkedList<String>();
-					newPhrases.addAll(Arrays.asList(input.split("\\|")));
+					newPhrases.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
 					phrases.add(newPhrases);
 					context.setSessionData(pref + CK.S_PASSWORD_PHRASES, phrases);
 				} else {
 					LinkedList<LinkedList<String>> phrases = new LinkedList<LinkedList<String>>();
 					LinkedList<String> newPhrases = new LinkedList<String>();
-					newPhrases.addAll(Arrays.asList(input.split("\\|")));
+					newPhrases.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
 					phrases.add(newPhrases);
 					context.setSessionData(pref + CK.S_PASSWORD_PHRASES, phrases);
 				}
@@ -1805,8 +1804,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + Lang.get("stageEditorEnchantments") + ChatColor.LIGHT_PURPLE + " -\n";
-			for (Enchantment e : Enchantment.values()) {
-				text += ChatColor.GREEN + Quester.prettyEnchantmentString(e) + ", ";
+			for (int i = 0; i < Enchantment.values().length; i++) {
+				if (i == Enchantment.values().length - 1) {
+					text += ChatColor.GREEN + Quester.prettyEnchantmentString(Enchantment.values()[i]) + " ";
+				} else {
+					text += ChatColor.GREEN + Quester.prettyEnchantmentString(Enchantment.values()[i]) + ", ";
+				}
 			}
 			text = text.substring(0, text.length() - 1);
 			return text + "\n" + ChatColor.YELLOW + Lang.get("stageEditorEnchantTypePrompt");
@@ -1815,7 +1818,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				String[] args = input.split(",");
+				String[] args = input.split(Lang.get("charSemi"));
 				LinkedList<String> enchs = new LinkedList<String>();
 				boolean valid;
 				for (String s : args) {
@@ -2082,7 +2085,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				String[] args = input.split(";");
+				String[] args = input.split(Lang.get("charSemi"));
 				LinkedList<String> messages = new LinkedList<String>();
 				messages.addAll(Arrays.asList(args));
 				context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, messages);
@@ -2612,7 +2615,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				LinkedList<String> locNames = new LinkedList<String>();
-				locNames.addAll(Arrays.asList(input.split(",")));
+				locNames.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
 				context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, locNames);
 			}
 			return new MobListPrompt();
@@ -2813,7 +2816,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				LinkedList<String> locNames = new LinkedList<String>();
-				locNames.addAll(Arrays.asList(input.split(",")));
+				locNames.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
 				context.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, locNames);
 			}
 			return new ReachListPrompt();

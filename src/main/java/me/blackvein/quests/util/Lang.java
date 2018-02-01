@@ -35,7 +35,6 @@ public class Lang {
 	private static final LangToken tokens = new LangToken();
 	public static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
 	private final Quests plugin;
-	//public static String orCancelToReturn = "or 'cancel' to return";
 
 	public Lang(Quests plugin) {
 		tokens.initTokens();
@@ -107,8 +106,6 @@ public class Lang {
 					+ " same folder to stay up-to-date and suppress console warnings.");
 			config_new.options().copyHeader(true);
 			config_new.save(langFile_new);
-			langMap.putAll(allStrings);
-			finishLang();
 		} else {
 			plugin.getLogger().severe("Failed loading lang files for " + iso + " because they were not found. Using default en-US");
 			iso = "en-US";
@@ -116,32 +113,41 @@ public class Lang {
 			for (String key : config.getKeys(false)) {
 				allStrings.put(key, config.getString(key));
 			}
-			langMap.putAll(allStrings);
-			finishLang();
 		}
-		plugin.getLogger().info("Loaded language " + iso + ". Translations via Crowdin");
-	}
-	
-	private void finishLang() {
-		langMap.put("strAdd", get("strAdd").replaceAll("<command>", get("cmdAdd")));
-		langMap.put("strClear", get("strClear").replaceAll("<command>", get("cmdClear")));
-		langMap.put("strCancel", get("strCancel").replaceAll("<command>", get("cmdCancel")));
-		langMap.put("strDone", get("strDone").replaceAll("<command>", get("cmdDone")));
 		
-		for (String key : langMap.keySet()) {
-			String value = get(key);
-			
-			// then enter 'add' to include it
-			value.replaceAll("<add>", get("strAdd"));
-			// or 'clear' to erase all data
-			value.replaceAll("<clear>", get("strClear"));
-			// or 'cancel' to return
-			value.replaceAll("<cancel>", get("strCancel"));
-			// then enter '<command>' to save
-			value.replaceAll("<done>", get("strDone"));
-			
-			langMap.put(key, value);
+		String cmdAdd = allStrings.get("cmdAdd");
+		String cmdClear = allStrings.get("cmdClear");
+		String cmdCancel = allStrings.get("cmdCancel");
+		String cmdDone = allStrings.get("cmdDone");
+		
+		String strAdd = allStrings.get("strAdd").replaceAll("<command>", cmdAdd);
+		String strClear = allStrings.get("strClear").replaceAll("<command>", cmdClear);
+		String strCancel = allStrings.get("strCancel").replaceAll("<command>", cmdCancel);
+		String strDone = allStrings.get("strDone").replaceAll("<command>", cmdDone);
+		String strSpace = allStrings.get("strSpace");
+		String strSemicolon = allStrings.get("strSemicolon");
+		for (Entry<String, String> entry : allStrings.entrySet()) {
+			if (entry.getValue().contains("<add>")) {
+				allStrings.put(entry.getKey(), entry.getValue().replaceAll("<add>", strAdd));
+			}
+			if (entry.getValue().contains("<clear>")) {
+				allStrings.put(entry.getKey(), entry.getValue().replaceAll("<clear>", strClear));
+			}
+			if (entry.getValue().contains("<cancel>")) {
+				allStrings.put(entry.getKey(), entry.getValue().replaceAll("<cancel>", strCancel));
+			}
+			if (entry.getValue().contains("<done>")) {
+				allStrings.put(entry.getKey(), entry.getValue().replaceAll("<done>", strDone));
+			} 
+			if (entry.getValue().contains("<space>")) {
+				allStrings.put(entry.getKey(), entry.getValue().replaceAll("<space>", strSpace));
+			}
+			if (entry.getValue().contains("<semicolon>")) {
+				allStrings.put(entry.getKey(), entry.getValue().replaceAll("<semicolon>", strSemicolon));
+			}
 		}
+		langMap.putAll(allStrings);
+		plugin.getLogger().info("Loaded language " + iso + ". Translations via Crowdin");
 	}
 	
 	/**

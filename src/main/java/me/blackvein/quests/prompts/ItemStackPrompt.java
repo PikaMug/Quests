@@ -417,7 +417,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				input = Quests.parseString(input);
 				LinkedList<String> lore = new LinkedList<String>();
-				lore.addAll(Arrays.asList(input.split(";")));
+				lore.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
 				cc.setSessionData("tempLore", lore);
 			} else if (input.equalsIgnoreCase("clear")) {
 				cc.setSessionData("tempLore", null);

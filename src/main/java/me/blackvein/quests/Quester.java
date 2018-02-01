@@ -1481,7 +1481,13 @@ public class Quester {
 		}
 		return prettyString;
 	}
-
+	
+	/**
+	 * Gets player-friendly name from type. 'ENDER_DRAGON' becomes 'Ender Dragon'
+	 * 
+	 * @param type any mob type, ideally
+	 * @return cleaned-up string
+	 */
 	public static String prettyMobString(EntityType type) {
 		String baseString = type.toString();
 		String[] substrings = baseString.split("_");
@@ -1499,21 +1505,26 @@ public class Quester {
 		}
 		return prettyString;
 	}
-
-	public static String prettyString(String s) {
-		String[] substrings = s.split("_");
-		String prettyString = "";
-		int size = 1;
-		for (String sb : substrings) {
-			prettyString = prettyString.concat(Quester.getCapitalized(sb));
-			if (size < substrings.length) {
-				prettyString = prettyString.concat(" ");
-			}
-			size++;
-		}
-		return prettyString;
+	
+	public static String prettyColorString(DyeColor color) {
+		return Lang.get("COLOR_" + color.name());
 	}
 
+	public static String prettyEnchantmentString(Enchantment e) {
+		String prettyString = enchantmentString(e);
+		prettyString = capitalsToSpaces(prettyString);
+		return prettyString;
+	}
+	
+	public static String enchantmentString(Enchantment e) {
+		try {
+			return (Lang.get("ENCHANTMENT_" + e.getName()));
+		} catch (NullPointerException ne) {
+			Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to " + "update the file or simply add an entry for the enchantment");
+			return e.getName().toLowerCase().replaceAll("_", " ");
+		}
+	}
+	
 	public static String capitalsToSpaces(String s) {
 		int max = s.length();
 		for (int i = 1; i < max; i++) {
@@ -1534,24 +1545,6 @@ public class Quester {
 		s = s.substring(0, (index + 1)) + Character.toUpperCase(s.charAt(index + 1)) + s.substring(index + 2);
 		s = s.replaceFirst(" ", "");
 		return s;
-	}
-
-	public static String prettyEnchantmentString(Enchantment e) {
-		String prettyString = enchantmentString(e);
-		prettyString = capitalsToSpaces(prettyString);
-		return prettyString;
-	}
-
-	public static String enchantmentString(Enchantment e) {
-		if (Lang.get("ENCHANTMENT_" + e.getName()).equals("NULL")) {
-			Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to " + "update the file or simply add an entry for the enchantment");
-			return e.getName().toLowerCase().replaceAll("_", " ");
-		}
-		return (Lang.get("ENCHANTMENT_" + e.getName()));
-	}
-
-	public static String prettyColorString(DyeColor color) {
-		return Lang.get("COLOR_" + color.name());
 	}
 
 	public void saveData() {

@@ -2812,7 +2812,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("enchantments: in Stage " + s2 + " of Quest " + quest.name + " is not a list of enchantment names!");
 				}
 				if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-names")) {
-					if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-names"), Integer.class)) {
+					if (Quests.checkList(config.getList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-names"), String.class)) {
 						for (String item : config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".enchantment-item-names")) {
 							if (Material.matchMaterial(item) != null) {
 								itemsToEnchant.add(Material.matchMaterial(item));
@@ -2821,7 +2821,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							}
 						}
 					} else {
-						stageFailed("enchantment-item-names: in Stage " + s2 + " of Quest " + quest.name + " is not a list of numbers!");
+						stageFailed("enchantment-item-names: in Stage " + s2 + " of Quest " + quest.name + " is not a valid item name!");
 					}
 				} else {
 					stageFailed("Stage " + s2 + " of Quest " + quest.name + " is missing enchantment-item-names:");
@@ -3847,60 +3847,60 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	public static Enchantment getEnchantment(String enchant) {
-		String ench = Lang.getKey(enchant);
+		String ench = Lang.getKey(enchant.replaceAll(" ", ""));
 		ench = ench.replace("ENCHANTMENT_", "");
 		Enchantment e = Enchantment.getByName(ench);
-		return e != null ? e : getEnchantmentLegacy(ench);
+		return e != null ? e : getEnchantmentLegacy(ench.replaceAll(" ", ""));
 	}
 
 	public static Enchantment getEnchantmentLegacy(String enchant) {
-		if (enchant.equalsIgnoreCase("Power")) {
+		if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_DAMAGE"))) {
 			return Enchantment.ARROW_DAMAGE;
-		} else if (enchant.equalsIgnoreCase("Flame")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_FIRE"))) {
 			return Enchantment.ARROW_FIRE;
-		} else if (enchant.equalsIgnoreCase("Infinity")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_INFINITE"))) {
 			return Enchantment.ARROW_INFINITE;
-		} else if (enchant.equalsIgnoreCase("Punch")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_KNOCKBACK"))) {
 			return Enchantment.ARROW_KNOCKBACK;
-		} else if (enchant.equalsIgnoreCase("Sharpness")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_ALL"))) {
 			return Enchantment.DAMAGE_ALL;
-		} else if (enchant.equalsIgnoreCase("BaneOfArthropods")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_ARTHROPODS"))) {
 			return Enchantment.DAMAGE_ARTHROPODS;
-		} else if (enchant.equalsIgnoreCase("Smite")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_UNDEAD"))) {
 			return Enchantment.DAMAGE_UNDEAD;
-		} else if (enchant.equalsIgnoreCase("Efficiency")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DIG_SPEED"))) {
 			return Enchantment.DIG_SPEED;
-		} else if (enchant.equalsIgnoreCase("Unbreaking")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DURABILITY"))) {
 			return Enchantment.DURABILITY;
-		} else if (enchant.equalsIgnoreCase("FireAspect")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_FIRE_ASPECT"))) {
 			return Enchantment.FIRE_ASPECT;
-		} else if (enchant.equalsIgnoreCase("Knockback")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_KNOCKBACK"))) {
 			return Enchantment.KNOCKBACK;
-		} else if (enchant.equalsIgnoreCase("Fortune")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LOOT_BONUS_BLOCKS"))) {
 			return Enchantment.LOOT_BONUS_BLOCKS;
-		} else if (enchant.equalsIgnoreCase("Looting")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LOOT_BONUS_MOBS"))) {
 			return Enchantment.LOOT_BONUS_MOBS;
-		} else if (enchant.equalsIgnoreCase("LuckOfTheSea")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LUCK"))) {
 			return Enchantment.LOOT_BONUS_MOBS;
-		} else if (enchant.equalsIgnoreCase("Lure")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LURE"))) {
 			return Enchantment.LOOT_BONUS_MOBS;
-		} else if (enchant.equalsIgnoreCase("Respiration")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_OXYGEN"))) {
 			return Enchantment.OXYGEN;
-		} else if (enchant.equalsIgnoreCase("Protection")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_ENVIRONMENTAL"))) {
 			return Enchantment.PROTECTION_ENVIRONMENTAL;
-		} else if (enchant.equalsIgnoreCase("BlastProtection")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_EXPLOSIONS"))) {
 			return Enchantment.PROTECTION_EXPLOSIONS;
-		} else if (enchant.equalsIgnoreCase("FeatherFalling")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_FALL"))) {
 			return Enchantment.PROTECTION_FALL;
-		} else if (enchant.equalsIgnoreCase("FireProtection")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_FIRE"))) {
 			return Enchantment.PROTECTION_FIRE;
-		} else if (enchant.equalsIgnoreCase("ProjectileProtection")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_PROJECTILE"))) {
 			return Enchantment.PROTECTION_PROJECTILE;
-		} else if (enchant.equalsIgnoreCase("SilkTouch")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_SILK_TOUCH"))) {
 			return Enchantment.SILK_TOUCH;
-		} else if (enchant.equalsIgnoreCase("Thorns")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_THORNS"))) {
 			return Enchantment.THORNS;
-		} else if (enchant.equalsIgnoreCase("AquaAffinity")) {
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_WATER_WORKER"))) {
 			return Enchantment.WATER_WORKER;
 		} else {
 			return null;
