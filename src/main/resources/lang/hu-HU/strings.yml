@@ -641,11 +641,11 @@ strAdd: "majd írja be a '<command>' kifejezést"
 cmdClear: "törlés"
 strClear: "vagy '<command>' az összes adat törléséhez"
 cmdCancel: "mégse"
-strCancel: "or '<command>' to return"
+strCancel: "vagy a <command> visszatéréshez"
 cmdDone: "kész"
-strDone: "then enter '<command>' to save"
-strSpace: separating each by a space
-strSemicolon: separating each by a semicolon
+strDone: "majd írja be a <command> parancsot a mentéshez"
+strSpace: elválasztva mindegyiket szóközzel
+strSemicolon: pontosvesszővel elválasztva
 charSemi: ";"
 acceptQuest: "Elfogadja a küldetést?"
 enterAnOption: "Adjon meg egy lehetőséget"
