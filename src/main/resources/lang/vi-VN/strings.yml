@@ -526,7 +526,7 @@ rewSetPhat: "Thiếp lập PhatLoot nhận được"
 rewSetCustom: "Thiết lập phần thưởng tùy chỉnh"
 rewSetHeroesClasses: "Set classes"
 rewSetHeroesAmounts: "Thiết lập số lượng kinh nghiệm"
-rewMoneyPrompt: "Enter amount of <money>, or 0 to clear the money reward, or -1 to cancel"
+rewMoneyPrompt: "Nhập số lượng <money>, hoặc 0 để xóa tiền thưởng, hoặc -1 để hủy bỏ"
 rewExperiencePrompt: "Enter amount of experience, or 0 to clear the experience reward, or -1 to cancel"
 rewCommandPrompt: "Enter command rewards, <semicolon>, <clear>, <cancel>"
 rewCommandPromptHint: 'Note: You may put <player> to specify the player who completed the Quest. e.g. smite <player>'
