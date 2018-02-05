@@ -86,7 +86,7 @@ public class NpcListener implements Listener {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-								evt.getClicker().sendMessage(Lang.get("questInvalidDeliveryItem").replaceAll("<item>", text));
+								evt.getClicker().sendMessage(Lang.get(player, "questInvalidDeliveryItem").replaceAll("<item>", text));
 								break;
 							}
 						}
@@ -139,18 +139,18 @@ public class NpcListener implements Listener {
 									}
 									plugin.conversationFactory.buildConversation(player).begin();
 								} else if (quester.currentQuests.containsKey(q) == false) {
-									String msg = Lang.get("questMaxAllowed");
+									String msg = Lang.get(player, "questMaxAllowed");
 									msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
 									player.sendMessage(ChatColor.YELLOW + msg);
 								}
 							} else if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
 								if (quester.getDifference(q) > 0) {
-									String early = Lang.get("questTooEarly");
+									String early = Lang.get(player, "questTooEarly");
 									early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
 									early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
 									player.sendMessage(ChatColor.YELLOW + early);
 								} else if (q.redoDelay < 0) {
-									String completed = Lang.get("questAlreadyCompleted");
+									String completed = Lang.get(player, "questAlreadyCompleted");
 									completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
 									player.sendMessage(ChatColor.YELLOW + completed);
 								} else {
@@ -162,12 +162,12 @@ public class NpcListener implements Listener {
 									plugin.conversationFactory.buildConversation(player).begin();
 								}
 							} else if (quester.currentQuests.containsKey(q) == false) {
-								String msg = Lang.get("questMaxAllowed");
+								String msg = Lang.get(player, "questMaxAllowed");
 								msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
 								player.sendMessage(ChatColor.YELLOW + msg);
 							}
 						} else if (npcQuests.isEmpty()) {
-							evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get("noMoreQuest"));
+							evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
 						}
 					}
 				}

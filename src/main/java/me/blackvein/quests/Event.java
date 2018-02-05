@@ -252,7 +252,7 @@ public class Event {
 			quest.failQuest(quester);
 		}
 		if (timer > 0) {
-			player.sendMessage(Lang.get("timerStart").replaceAll("<time>", String.valueOf(timer)));
+			player.sendMessage(Lang.get(player, "timerStart").replaceAll("<time>", String.valueOf(timer)));
 			if (timer > 60) {
 				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 60, false)
 						.runTaskLaterAsynchronously(plugin, (timer-60)*20).getTaskId(), quest);

@@ -151,7 +151,7 @@ public class Quest {
 			nextStage.startEvent.fire(quester, this);
 		}
 		updateCompass(quester, nextStage);
-		String msg = Lang.get("questObjectivesTitle");
+		String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");
 		msg = msg.replaceAll("<quest>", name);
 		quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
 		for (String s : quester.getObjectivesReal(this)) {
@@ -278,7 +278,7 @@ public class Quest {
 		if (!q.completedQuests.contains(name)) {
 			q.completedQuests.add(name);
 		}
-		String none = ChatColor.GRAY + "- (" + Lang.get("none") + ")";
+		String none = ChatColor.GRAY + "- (" + Lang.get(player, "none") + ")";
 		final String ps = Quests.parseString(finished, this);
 		for (Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
 			if (entry.getValue().getName().equals(getName())) {
@@ -362,18 +362,18 @@ public class Quest {
 			player.giveExp(exp);
 			none = null;
 		}
-		String complete = Lang.get("questCompleteTitle");
+		String complete = Lang.get(player, "questCompleteTitle");
 		complete = complete.replaceAll("<quest>", ChatColor.YELLOW + name + ChatColor.GOLD);
 		player.sendMessage(ChatColor.GOLD + complete);
-		player.sendMessage(ChatColor.GREEN + Lang.get("questRewardsTitle"));
+		player.sendMessage(ChatColor.GREEN + Lang.get(player, "questRewardsTitle"));
 		if (plugin.showQuestTitles) {
 			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
-					+ " title " + "{\"text\":\"" + Lang.get("quest") + " " + Lang.get("complete") +  "\",\"color\":\"gold\"}");
+					+ " title " + "{\"text\":\"" + Lang.get(player, "quest") + " " + Lang.get(player, "complete") +  "\",\"color\":\"gold\"}");
 			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
 					+ " subtitle " + "{\"text\":\"" + name + "\",\"color\":\"yellow\"}");
 		}
 		if (questPoints > 0) {
-			player.sendMessage("- " + ChatColor.DARK_GREEN + questPoints + " " + Lang.get("questPoints"));
+			player.sendMessage("- " + ChatColor.DARK_GREEN + questPoints + " " + Lang.get(player, "questPoints"));
 			q.questPoints += questPoints;
 			none = null;
 		}
@@ -383,7 +383,7 @@ public class Quest {
 				if (i.getEnchantments().isEmpty()) {
 					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount();
 				} else {
-					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " " + Lang.get("with") 
+					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " " + Lang.get(player, "with") 
 							+ ChatColor.DARK_PURPLE;
 					for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
 						text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
@@ -394,7 +394,7 @@ public class Quest {
 				if (i.getEnchantments().isEmpty()) {
 					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount();
 				} else {
-					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY + " " + Lang.get("with");
+					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY + " " + Lang.get(player, "with");
 					for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
 						text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
 					}
@@ -404,7 +404,7 @@ public class Quest {
 				if (i.getEnchantments().isEmpty()) {
 					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " + i.getAmount();
 				} else {
-					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " " + Lang.get("with");
+					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " " + Lang.get(player, "with");
 					for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
 						text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
 					}
@@ -419,19 +419,19 @@ public class Quest {
 				if (i.getEnchantments().isEmpty()) {
 					player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
 				} else {
-					player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
+					player.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get(player, "enchantedItem"));
 				}
 			} else if (i.getDurability() != 0) {
 				if (i.getEnchantments().isEmpty()) {
 					player.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
 				} else {
-					player.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
+					player.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get(player, "enchantedItem"));
 				}
 			} else {
 				if (i.getEnchantments().isEmpty()) {
 					player.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " + i.getAmount());
 				} else {
-					player.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get("enchantedItem"));
+					player.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get(player, "enchantedItem"));
 				}
 			}
 			none = null;
@@ -445,18 +445,18 @@ public class Quest {
 		}
 		if (exp > 0 || phatLootExp > 0) {
 			int tot = exp + phatLootExp;
-			player.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " " + Lang.get("experience"));
+			player.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " " + Lang.get(player, "experience"));
 			none = null;
 		}
 		if (mcmmoSkills.isEmpty() == false) {
 			for (String s : mcmmoSkills) {
-				player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " " + Lang.get("experience"));
+				player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " " + Lang.get(player, "experience"));
 			}
 			none = null;
 		}
 		if (heroesClasses.isEmpty() == false) {
 			for (String s : heroesClasses) {
-				player.sendMessage("- " + ChatColor.AQUA + heroesAmounts.get(heroesClasses.indexOf(s)) + " " + ChatColor.BLUE + s + " " + Lang.get("experience"));
+				player.sendMessage("- " + ChatColor.AQUA + heroesAmounts.get(heroesClasses.indexOf(s)) + " " + ChatColor.BLUE + s + " " + Lang.get(player, "experience"));
 			}
 			none = null;
 		}
@@ -503,10 +503,10 @@ public class Quest {
 	@SuppressWarnings("deprecation")
 	public void failQuest(Quester q) {
 		Player player = plugin.getServer().getPlayer(q.id);
-		String title = Lang.get("questTitle");
+		String title = Lang.get(player, "questTitle");
 		title = title.replaceAll("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
 		player.sendMessage(ChatColor.AQUA + title);
-		player.sendMessage(ChatColor.RED + Lang.get("questFailed"));
+		player.sendMessage(ChatColor.RED + Lang.get(player, "questFailed"));
 		q.hardQuit(this);
 		q.saveData();
 		player.updateInventory();

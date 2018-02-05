@@ -26,8 +26,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quests;
+import me.clip.placeholderapi.PlaceholderAPI;
 
 public class Lang {
 
@@ -40,7 +42,24 @@ public class Lang {
 		tokens.initTokens();
 		this.plugin = plugin;
 	}
+	
+	/**
+	 * Get lang string AND pass Player for use with PlaceholderAPI, if installed
+	 * 
+	 * @param p the Player whom will receive the string
+	 * @param key label as it appears in lang file, such as "journalNoQuests"
+	 * @return formatted string, plus processing through PlaceholderAPI by clip
+	 */
+	public static String get(Player p, String key) {
+		return langMap.containsKey(key) ? tokens.convertString(p, langMap.get(key)) : "NULL";
+	}
 
+	/**
+	 * Get lang string
+	 * 
+	 * @param key label as it appears in lang file, such as "journalNoQuests"
+	 * @return formatted string
+	 */
 	public static String get(String key) {
 		return langMap.containsKey(key) ? tokens.convertString(langMap.get(key)) : "NULL";
 	}
@@ -209,6 +228,17 @@ public class Lang {
 			for (String token : tokenMap.keySet()) {
 				s = s.replace(token, tokenMap.get(token));
 				s = s.replace(token.toUpperCase(), tokenMap.get(token));
+			}
+			return s;
+		}
+		
+		public String convertString(Player p, String s) {
+			for (String token : tokenMap.keySet()) {
+				s = s.replace(token, tokenMap.get(token));
+				s = s.replace(token.toUpperCase(), tokenMap.get(token));
+				if (Quests.placeholder != null) {
+					s = PlaceholderAPI.setPlaceholders(p, s);
+				}
 			}
 			return s;
 		}
