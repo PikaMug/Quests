@@ -1,5 +1,5 @@
 ---
-COMMAND_LIST: "list"
+COMMAND_LIST: "リスト"
 COMMAND_LIST_HELP: "リスト [page] - クエスト一覧を表示します"
 COMMAND_TAKE: "取る"
 COMMAND_TAKE_HELP: "取る [quest name] - クエストを受け入れる"
@@ -7,8 +7,8 @@ COMMAND_TAKE_USAGE: '使用法: /quests 取る [quest]'
 COMMAND_QUIT: "終了"
 COMMAND_QUIT_HELP: "終了 [quest] - 現在のクエストを終了"
 COMMAND_EDITOR: "エディタ"
-COMMAND_EDITOR_HELP: "editor - クエストを作成/編集できます。"
-COMMAND_EVENTS_EDITOR: "events"
+COMMAND_EDITOR_HELP: "エディタ - クエストを作成/編集できます"
+COMMAND_EVENTS_EDITOR: "イベント"
 COMMAND_EVENTS_EDITOR_HELP: "イベント - イベントの作成/編集"
 COMMAND_STATS: "stats"
 COMMAND_STATS_HELP: "stats - ステータスを表示します。"
