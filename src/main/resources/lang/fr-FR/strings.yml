@@ -641,7 +641,7 @@ strAdd: "then enter '<command>' to include it"
 cmdClear: "effacer"
 strClear: "or '<command>' to erase all data"
 cmdCancel: "annuler"
-strCancel: "or '<command>' to return"
+strCancel: "ou « <command> » pour revenir"
 cmdDone: "fini"
 strDone: "then enter '<command>' to save"
 strSpace: separating each by a space
