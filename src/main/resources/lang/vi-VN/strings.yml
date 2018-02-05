@@ -672,7 +672,7 @@ redoCompleted: "(Đã hoàn thành)"
 consoleError: "Lệnh này chỉ có thể thực hiện khi bạn đang trong game [ nhiệm vụ]."
 invalidSelection: "Lựa chọn không phù hợp!"
 noActiveQuest: "Bạn chưa nhận nhiệm vụ nào hết."
-speakTo: 'Start: Speak to <npc>'
+speakTo: 'Bắt đầu: Nói chuyện với <npc>'
 mustSpeakTo: "You must speak to <npc> to start this Quest."
 noCommandStart: "<quest> may not be started via command."
 permissionDisplay: "Quyền:"
