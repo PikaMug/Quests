@@ -527,9 +527,9 @@ rewSetCustom: "Thiết lập phần thưởng tùy chỉnh"
 rewSetHeroesClasses: "Set classes"
 rewSetHeroesAmounts: "Thiết lập số lượng kinh nghiệm"
 rewMoneyPrompt: "Nhập số lượng <money>, hoặc 0 để xóa tiền thưởng, hoặc -1 để hủy bỏ"
-rewExperiencePrompt: "Enter amount of experience, or 0 to clear the experience reward, or -1 to cancel"
-rewCommandPrompt: "Enter command rewards, <semicolon>, <clear>, <cancel>"
-rewCommandPromptHint: 'Note: You may put <player> to specify the player who completed the Quest. e.g. smite <player>'
+rewExperiencePrompt: "Nhập số lượng kinh nghiệm, hoặc 0 để xóa phần thưởng kinh nghiệm, hoặc -1 để hủy bỏ"
+rewCommandPrompt: "Nhập lệnh thưởng, <semicolon>, <clear>, <cancel>"
+rewCommandPromptHint: 'Lưu ý: Bạn có thể dùng <player> để xác định người chơi hoàn thành Nhiệm vụ. Ví dụ: trừng phạt <player>'
 rewPermissionsPrompt: "Enter permission rewards, <space>, <clear>, <cancel>"
 rewQuestPointsPrompt: "Enter amount of Quest Points, or 0 to clear the Quest Point reward, or -1 to cancel"
 rewMcMMOPrompt: "Enter mcMMO skills, <space>, <cancel>"
