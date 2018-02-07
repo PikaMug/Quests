@@ -479,8 +479,8 @@ public class PlayerListener implements Listener {
 	}
 	
 	/**
-	 * Checks if damager is blacklisted
-	 * Ensures damager is Player and not NPC
+	 * Checks if damager is blacklisted.
+	 * Ensures damager is Player and not NPC.
 	 * Kills target mob/NPC if objective exists
 	 * 
 	 * @param damager the attacking entity
@@ -491,23 +491,22 @@ public class PlayerListener implements Listener {
 		if (plugin.checkQuester(damager.getUniqueId()) == true) {
 			return;
 		}
-		//Ensure damager is Player AND not an NPC
-		if (damager instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(damager)) {
-			//If target is an NPC...
-			if (CitizensAPI.getNPCRegistry().isNPC(target)) {
-				Quester quester = plugin.getQuester(damager.getUniqueId());
-				for (Quest quest : quester.currentQuests.keySet()) {
-					if (quester.hasObjective(quest, "killNPC")) {
-						quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+		if (damager instanceof Player) {
+			if (plugin.citizens != null) {
+				if (CitizensAPI.getNPCRegistry().isNPC(target)) {
+					Quester quester = plugin.getQuester(damager.getUniqueId());
+					for (Quest quest : quester.currentQuests.keySet()) {
+						if (quester.hasObjective(quest, "killNPC")) {
+							quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+						}
 					}
+					return;
 				}
-			//No? Must be a mob...
-			} else {
-				Quester quester = plugin.getQuester(damager.getUniqueId());
-				for (Quest quest : quester.currentQuests.keySet()) {
-					if (quester.hasObjective(quest, "killMob")) {
-						quester.killMob(quest, target.getLocation(), target.getType());
-					}
+			}
+			Quester quester = plugin.getQuester(damager.getUniqueId());
+			for (Quest quest : quester.currentQuests.keySet()) {
+				if (quester.hasObjective(quest, "killMob")) {
+					quester.killMob(quest, target.getLocation(), target.getType());
 				}
 			}
 		}
