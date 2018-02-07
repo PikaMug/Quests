@@ -310,7 +310,7 @@ stageEditorNPCNote: 'Remarque : Vous pouvez spécifier le nom du PNJ avec <npc>
 stageEditorOptional: "Optionnel"
 stageEditorColors: "Couleurs de moutons"
 allListsNotSameSize: "Vos listes n'ont pas le même taille!"
-eventEditorCreate: "Créer un nouvel événement"
+eventEditorCreate: "Créer un nouvel Événement"
 eventEditorEdit: "Modifiez un Événement"
 eventEditorDelete: "Supprimer un Événement"
 eventEditorCreatePermisssions: "Vous n'avez pas la permission de créer Événements."
