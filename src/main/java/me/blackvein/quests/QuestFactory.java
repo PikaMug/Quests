@@ -744,7 +744,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 				delay = i * 1000;
 			} catch (NumberFormatException e) {
 				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " " + Lang.get("stageEditorInvalidNumber"));
-				// delay = MiscUtil.getTimeFromString(input);
 				return new RedoDelayPrompt();
 			}
 			if (delay < -1) {

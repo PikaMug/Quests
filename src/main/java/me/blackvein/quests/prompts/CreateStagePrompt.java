@@ -3575,22 +3575,19 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				player.sendMessage(ChatColor.GREEN + Lang.get("stageEditorDelayCleared"));
 				return new CreateStagePrompt(stageNum, questFactory, citizens);
 			}
-			long l;
+			long stageDelay;
 			try {
-				l = Long.parseLong(input);
+				int i = Integer.parseInt(input);
+				stageDelay = i * 1000;
 			} catch (NumberFormatException e) {
-				// returns -1 if incorrect input
-				l = MiscUtil.getTimeFromString(input);
-				if (l == -1) {
-					player.sendMessage(ChatColor.RED + Lang.get("stageEditorNoNumber"));
-					return new DelayPrompt();
-				}
+				player.sendMessage(ChatColor.RED + Lang.get("stageEditorNoNumber"));
+				return new DelayPrompt();
 			}
-			if (l < 1000) {
+			if (stageDelay < 1000) {
 				player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidDelay"));
 				return new DelayPrompt();
 			} else {
-				context.setSessionData(pref + CK.S_DELAY, l);
+				context.setSessionData(pref + CK.S_DELAY, stageDelay);
 				return new CreateStagePrompt(stageNum, questFactory, citizens);
 			}
 		}
