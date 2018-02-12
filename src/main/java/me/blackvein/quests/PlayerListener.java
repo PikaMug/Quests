@@ -462,7 +462,7 @@ public class PlayerListener implements Listener {
 				} else if (damager instanceof TNTPrimed) {
 					TNTPrimed tnt = (TNTPrimed) damager;
 					Entity source = tnt.getSource();
-					if (source.isValid()) {
+					if (source != null && source.isValid()) {
 						killMob(source, evt.getEntity());
 					}
 				} else if (damager instanceof Wolf) {
