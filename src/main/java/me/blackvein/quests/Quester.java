@@ -2064,12 +2064,9 @@ public class Quester {
 							LinkedList<Location> locations = new LinkedList<Location>();
 							List<Integer> radii = questSec.getIntegerList("mob-kill-location-radii");
 							for (String loc : questSec.getStringList("mob-kill-locations")) {
-								String[] info = loc.split(" ");
-								double x = Double.parseDouble(info[1]);
-								double y = Double.parseDouble(info[2]);
-								double z = Double.parseDouble(info[3]);
-								Location finalLocation = new Location(plugin.getServer().getWorld(info[0]), x, y, z);
-								locations.add(finalLocation);
+								if (Quests.getLocation(loc) != null) {
+									locations.add(Quests.getLocation(loc));
+								}
 							}
 							getQuestData(quest).locationsToKillWithin = locations;
 							getQuestData(quest).radiiToKillWithin.clear();
@@ -2109,12 +2106,9 @@ public class Quester {
 					List<Boolean> has = questSec.getBooleanList("has-reached-location");
 					List<Integer> radii = questSec.getIntegerList("radii-to-reach-within");
 					for (String loc : questSec.getStringList("locations-to-reach")) {
-						String[] info = loc.split(" ");
-						double x = Double.parseDouble(info[1]);
-						double y = Double.parseDouble(info[2]);
-						double z = Double.parseDouble(info[3]);
-						Location finalLocation = new Location(plugin.getServer().getWorld(info[0]), x, y, z);
-						locations.add(finalLocation);
+						if (Quests.getLocation(loc) != null) {
+							locations.add(Quests.getLocation(loc));
+						}
 					}
 					getQuestData(quest).locationsReached = locations;
 					getQuestData(quest).hasReached.clear();
