@@ -31,6 +31,7 @@ import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.CustomObjective;
@@ -2915,15 +2916,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			final EntityType[] mobArr = EntityType.values();
 			for (int i = 0; i < mobArr.length; i++) {
 				final EntityType type = mobArr[i];
-				if (type.isAlive() == false) {
+				if (type.isAlive() == false || Tameable.class.isAssignableFrom(type.getEntityClass()) == false) {
 					continue;
 				}
-				if (i < (mobArr.length - 1)) {
-					mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
-				} else {
-					mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
-				}
+				mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
 			}
+			mobs = mobs.substring(0, mobs.length() - 2) + "\n";
 			return mobs + ChatColor.YELLOW + Lang.get("stageEditorMobsPrompt");
 		}
 
