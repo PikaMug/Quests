@@ -2014,17 +2014,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					return quester;
 				}
 			}
-			
-			if (!questerBlacklist.contains(id.toString())) {
-				getLogger().log(Level.WARNING, "Quester data for UUID \"" + id.toString() + "\" not stored. Attempting manual data retrieval...");
-			}
-			
-			if (quester.loadData() == false && !questerBlacklist.contains(id.toString())) {
-				getLogger().info("Quester not found for UUID \"" + id.toString() + "\". Consider adding them to the Quester blacklist.");
-			} else {
-				if (!questerBlacklist.contains(id.toString())) {
-					getLogger().log(Level.INFO, "Manual data retrieval succeeded for UUID \"" + id.toString() + "\"");
-				}
+			if (quester.loadData() == true) {
 				questers.put(id, quester);
 			}
 		}

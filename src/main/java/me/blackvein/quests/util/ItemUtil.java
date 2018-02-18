@@ -28,8 +28,6 @@ import net.milkbowl.vault.item.Items;
 
 public class ItemUtil {
 
-	static Quests plugin;
-
 	/**
 	 * Will compare stacks by name, amount, data, display name/lore and enchantments
 	 *
@@ -82,8 +80,14 @@ public class ItemUtil {
 		}
 	}
 
-	// Formats -> name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
-	// Returns null if invalid format
+	/**
+	 * Get ItemStack from formatted string. See serialize() for reverse function.
+	 * 
+	 * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
+	 * 
+	 * @param data formatted string
+	 * @return ItemStack, or null if invalid format
+	 */
 	public static ItemStack readItemStack(String data) {
 		if (data == null) {
 			return null;
@@ -94,7 +98,6 @@ public class ItemUtil {
 		LinkedList<String> lore = new LinkedList<String>();
 		for (String arg : args) {
 			if (arg.startsWith("name-")) {
-				// Attempt to match item name. Returns null if invalid format
 				try {
 					stack = new ItemStack(Material.matchMaterial(arg.substring(5)));
 				} catch (NullPointerException npe) {
@@ -124,6 +127,14 @@ public class ItemUtil {
 		return stack;
 	}
 
+	/**
+	 * Get formatted string from ItemStack. See readItemStack() for reverse function.
+	 * 
+	 * <p>Returned format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
+	 * 
+	 * @param is ItemStack
+	 * @return formatted string, or null if invalid stack
+	 */
 	public static String serialize(ItemStack is) {
 		String serial;
 		if (is == null) {
@@ -207,6 +218,12 @@ public class ItemUtil {
 		return text;
 	}
 
+	/**
+	 * Ensures that an ItemStack if a valid, non-AIR material
+	 * 
+	 * @param is ItemStack to check
+	 * @return true if stack is not null or Material.AIR
+	 */
 	public static boolean isItem(ItemStack is) {
 		if (is == null)
 			return false;
@@ -215,6 +232,12 @@ public class ItemUtil {
 		return true;
 	}
 
+	/**
+	 * Checks whether an ItemStack is a Quest Journal based on book title
+	 * 
+	 * @param is IemsStack to check
+	 * @return true if display name equals colored journal title
+	 */
 	public static boolean isJournal(ItemStack is) {
 		if (is == null)
 			return false;
