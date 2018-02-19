@@ -2131,11 +2131,7 @@ public class Quester {
 					List<String> mobs = questSec.getStringList("mobs-to-tame");
 					List<Integer> amounts = questSec.getIntegerList("mob-tame-amounts");
 					for (String mob : mobs) {
-						if (mob.equalsIgnoreCase("Wolf")) {
-							getQuestData(quest).mobsTamed.put(EntityType.WOLF, amounts.get(mobs.indexOf(mob)));
-						} else {
-							getQuestData(quest).mobsTamed.put(EntityType.OCELOT, amounts.get(mobs.indexOf(mob)));
-						}
+						getQuestData(quest).mobsTamed.put(EntityType.valueOf(mob), amounts.get(mobs.indexOf(mob)));
 					}
 				}
 				if (questSec.contains("sheep-to-shear")) {
