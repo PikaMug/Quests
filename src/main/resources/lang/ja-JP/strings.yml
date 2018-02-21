@@ -44,7 +44,7 @@ COMMAND_QUESTADMIN_SETSTAGE: "setstage"
 COMMAND_QUESTADMIN_SETSTAGE_HELP: "setstage [player] [quest] [stage] - プレイヤーの現在のステージを設定します。"
 COMMAND_QUESTADMIN_SETSTAGE_USAGE: '使い方: /questadmin setstage [player] [quest] [stage]'
 COMMAND_QUESTADMIN_PURGE: "パージ"
-COMMAND_QUESTADMIN_PURGE_HELP: "purge [player] - プレイヤーのすべての(Questsの) データとそれらのブラックリストをクリア"
+COMMAND_QUESTADMIN_PURGE_HELP: "パージ [player] - プレイヤーのすべての(Questsの) データとそれらのブラックリストをクリア"
 COMMAND_QUESTADMIN_RESET: "リセット"
 COMMAND_QUESTADMIN_RESET_HELP: "reset [player] - (Questsの) プレイヤーのすべてのデータをクリアします。"
 COMMAND_QUESTADMIN_REMOVE: "削除"
