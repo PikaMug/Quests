@@ -280,7 +280,7 @@ stageEditorNPCKillsNotSameSize: "Die NPC-Liste und die Killmenge-Liste sind nich
 stageEditorAllListsNotSameSize: "Alle Listen sind nicht gleich große!"
 stageEditorMobTypesNotSameSize: "Die Mobtypen-Liste und die Mobmenge-Liste sind nicht gleich große!"
 stageEditorTameMobsNotSameSize: "Die Mobtypen-Liste und die Zähmungsmenge-Liste sind nicht gleich große!"
-stageEditorShearNotSameSize: "Die Schaffarben-Liste und die Scherungsmengen-Liste sind nicht gleich große!"
+stageEditorShearNotSameSize: "Die Schaffarben-Liste und die Scherungsmengen-Liste sind nicht gleich groß!"
 stageEditorMustSetPasswordDisplays: "Du musst zunächst mindestens eine Passwort Anzeige hinzufügen!"
 stageEditorAddPasswordCleared: "Passwort-Ziele wurden zurückgesetzt."
 stageEditorPasswordNotSameSize: "Die Passwort-Anzeige und der Passwort-Satz haben nicht die selbe größe!"
