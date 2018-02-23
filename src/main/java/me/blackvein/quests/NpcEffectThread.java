@@ -51,7 +51,7 @@ public class NpcEffectThread implements Runnable {
 							NPC npc = plugin.citizens.getNPCRegistry().getNPC(e);
 							if (plugin.hasQuest(npc, quester)) {
 								showEffect(player, npc, Quests.effect);
-							} else if (plugin.hasCompletedQuest(npc, quester)) {
+							} else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
 								showEffect(player, npc, Quests.redoEffect);
 							}
 						}

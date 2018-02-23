@@ -3966,9 +3966,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return false;
 	}
 	
+	// Unused internally, left for external use
 	public boolean hasCompletedQuest(NPC npc, Quester quester) {
 		for (Quest q : quests) {
 			if (q.npcStart != null && quester.completedQuests.contains(q.name) == true) {
+				if (q.npcStart.getId() == npc.getId()) {
+					if (ignoreLockedQuests == false || ignoreLockedQuests == true && q.testRequirements(quester) == true) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasCompletedRedoableQuest(NPC npc, Quester quester) {
+		for (Quest q : quests) {
+			if (q.npcStart != null && quester.completedQuests.contains(q.name) == true && q.redoDelay > -1) {
 				if (q.npcStart.getId() == npc.getId()) {
 					if (ignoreLockedQuests == false || ignoreLockedQuests == true && q.testRequirements(quester) == true) {
 						return true;
