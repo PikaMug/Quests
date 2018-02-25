@@ -213,7 +213,7 @@ stageEditorMobAmountsPrompt: "Введите количества мобов, <s
 stageEditorMobLocationPrompt: "Щелкните правой кнопкой мыши на блок чтобы выбрать его, <add>, <cancel>"
 stageEditorMobLocationRadiiPrompt: "Введите радиусе областей для убийства (количество блоков), <space>, <cancel>"
 stageEditorMobLocationNamesPrompt: "Введите названия областей, <semicolon>, <cancel>"
-stageEditorReachLocationPrompt: "Right-click on a block to select it, <add>, <cancel>"
+stageEditorReachLocationPrompt: "ПКМ по блоку, чтобы выбрать его, <add>, <cancel>"
 stageEditorReachLocationRadiiPrompt: "Введите радиусы областей для достижения (количество блоков), <space>, <cancel>"
 stageEditorReachLocationNamesPrompt: "Введите названия областей, <semicolon>, <cancel>"
 stageEditorTameAmountsPrompt: "Введите количества приручений, <space>, <cancel>"
