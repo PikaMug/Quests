@@ -308,7 +308,7 @@ stageEditorDeleteSucces: "Stage deleted successfully."
 stageEditorEnchantments: "Encantamentos"
 stageEditorNPCNote: 'Note: You may specify the name of the NPC with <npc>'
 stageEditorOptional: "Opcional"
-stageEditorColors: "Cores da ovelha"
+stageEditorColors: "Cores da Ovelha"
 allListsNotSameSize: "Todas as suas listas têm tamanhos diferentes!"
 eventEditorCreate: "Create new Event"
 eventEditorEdit: "Edit an Event"
