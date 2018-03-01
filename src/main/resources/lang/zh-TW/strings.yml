@@ -17,7 +17,7 @@ COMMAND_TOP_HELP: "top [number] - 查看最新任務"
 COMMAND_TOP_USAGE: '用法: /quests top [number]'
 COMMAND_INFO: "資訊"
 COMMAND_INFO_HELP: "資訊 - 顯示程式資訊"
-COMMAND_JOURNAL: "journal"
+COMMAND_JOURNAL: "查看/收起 你的任務日誌"
 COMMAND_JOURNAL_HELP: "journal - View/Put away your Quest Journal"
 COMMAND_QUEST_HELP: "- 顯示目前完成任務的條件"
 COMMAND_QUESTINFO_HELP: "[quest name] - 顯示任務資訊"
