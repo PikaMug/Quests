@@ -102,11 +102,11 @@ public class Lang {
 		File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings.yml");
 		File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings_new.yml");
 		LinkedHashMap<String, String> allStrings = new LinkedHashMap<String, String>();
-		FileConfiguration config = new YamlConfiguration();
-		FileConfiguration config_new = new YamlConfiguration();
+		FileConfiguration config;
+		FileConfiguration config_new;
 		if (langFile.exists() && langFile_new.exists()) {
-			config = loadYamlUTF8(langFile);
-			config_new = loadYamlUTF8(langFile_new);
+			config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
+			config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(langFile_new), "UTF-8"));
 			//Load user's lang file and determine new strings
 			for (String key : config.getKeys(false)) {
 				allStrings.put(key, config.getString(key));
@@ -116,7 +116,7 @@ public class Lang {
 			for (String key : config_new.getKeys(false)) {
 				String value = config_new.getString(key);
 				if (value != null) {
-					allStrings.put(key, config_new.getString(key));
+					allStrings.put(key, value);
 					plugin.getLogger().warning("There are new language phrases in /lang/" + iso + "/strings_new.yml for the current version!"
 							+ " You must transfer them to, or regenerate, strings.yml to remove this warning!");
 				}
@@ -128,7 +128,7 @@ public class Lang {
 		} else {
 			plugin.getLogger().severe("Failed loading lang files for " + iso + " because they were not found. Using default en-US");
 			iso = "en-US";
-			config = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8")); //TODO better than loadYamlUTF*() ?
+			config = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"));
 			for (String key : config.getKeys(false)) {
 				allStrings.put(key, config.getString(key));
 			}
@@ -167,29 +167,6 @@ public class Lang {
 		}
 		langMap.putAll(allStrings);
 		plugin.getLogger().info("Loaded language " + iso + ". Translations via Crowdin");
-	}
-	
-	/**
-	 * Load YAML file using UTF8 format to allow extended characters
-	 * @param file system file in YAML format
-	 * @return yaml
-	 * @throws InvalidConfigurationException
-	 * @throws IOException
-	 */
-	public static YamlConfiguration loadYamlUTF8(File file) throws InvalidConfigurationException, IOException {
-		StringBuilder sb = new StringBuilder((int) file.length());
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-		char[] buf = new char[1024];
-		int l;
-		while ((l = in.read(buf, 0, buf.length)) > -1) {
-			sb = sb.append(buf, 0, l);
-		}
-		in.close();
-		
-		YamlConfiguration yaml = new YamlConfiguration();
-		yaml.loadFromString(sb.toString());
-		return yaml;
 	}
 
 	private static class LangToken {

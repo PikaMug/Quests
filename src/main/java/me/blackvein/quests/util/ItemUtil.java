@@ -101,6 +101,7 @@ public class ItemUtil {
 				try {
 					stack = new ItemStack(Material.matchMaterial(arg.substring(5)));
 				} catch (NullPointerException npe) {
+					Bukkit.getLogger().severe("[Quests] The item name \'" + arg.substring(5) + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
 					return null;
 				}
 				meta = stack.getItemMeta();
@@ -110,8 +111,14 @@ public class ItemUtil {
 				stack.setDurability(Short.parseShort(arg.substring(5)));
 			} else if (arg.startsWith("enchantment-")) {
 				String[] enchs = arg.substring(12).split(" ");
-				Enchantment e = Quests.getEnchantment(enchs[0]);
-				meta.addEnchant(e, Integer.parseInt(enchs[1]), true);
+				try {
+					System.out.println("enchs[0] " + enchs[0]);
+					Enchantment e = Quests.getEnchantment(enchs[0]);
+					meta.addEnchant(e, Integer.parseInt(enchs[1]), true);
+				} catch (IllegalArgumentException e) {
+					Bukkit.getLogger().severe("[Quests] The enchantment name \'" + enchs[0] + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
+					return null;
+				}
 			} else if (arg.startsWith("displayname-")) {
 				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', arg.substring(12)));
 			} else if (arg.startsWith("lore-")) {

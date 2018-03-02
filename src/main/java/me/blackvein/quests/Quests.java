@@ -13,10 +13,12 @@
 package me.blackvein.quests;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.net.URISyntaxException;
@@ -2067,114 +2069,116 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		boolean failedToLoad;
 		totalQuestPoints = 0;
 		needsSaving = false;
-		FileConfiguration config = new YamlConfiguration();
+		FileConfiguration config = null;
 		File file = new File(this.getDataFolder(), "quests.yml");
 		try {
-			config.load(file);
+			config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (InvalidConfigurationException e) {
-			e.printStackTrace();
 		}
-		ConfigurationSection questsSection;
-		if (config.contains("quests")) {
-			questsSection = config.getConfigurationSection("quests");
-		} else {
-			questsSection = config.createSection("quests");
-			needsSaving = true;
-		}
-		for (String key : questsSection.getKeys(false)) {
-			try { // main "skip quest" try/catch block
-				questName = key;
-				quest = new Quest();
-				failedToLoad = false;
-				if (config.contains("quests." + questName + ".name")) {
-					quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
-				} else {
-					skipQuestProcess("Quest block \'" + questName + "\' is missing " + ChatColor.RED + "name:");
-				}
-				if (citizens != null && config.contains("quests." + questName + ".npc-giver-id")) {
-					if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")) != null) {
-						quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id"));
-						questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")));
-					} else {
-						skipQuestProcess("npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
-					}
-				}
-				if (config.contains("quests." + questName + ".block-start")) {
-					Location location = getLocation(config.getString("quests." + questName + ".block-start"));
-					if (location != null) {
-						quest.blockStart = location;
-					} else {
-						skipQuestProcess(new String[] { "block-start: for Quest " + quest.name + " is not in proper location format!", "Proper location format is: \"WorldName x y z\"" });
-					}
-				}
-				if (config.contains("quests." + questName + ".region")) {
-					String region = config.getString("quests." + questName + ".region");
-					boolean exists = regionFound(quest, region);
-					if (!exists) {
-						skipQuestProcess("region: for Quest " + quest.name + " is not a valid WorldGuard region!");
-					}
-				}
-				if (config.contains("quests." + questName + ".gui-display")) {
-					String item = config.getString("quests." + questName + ".gui-display");
-					try {
-						ItemStack stack = ItemUtil.readItemStack(item);
-						if (stack != null) {
-							quest.guiDisplay = stack;
-						}
-					} catch (Exception e) {
-						instance.getLogger().warning(item + " in items: GUI Display in Quest " + quest.name + "is not properly formatted!");
-					}
-				}
-				if (config.contains("quests." + questName + ".redo-delay")) {
-					if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
-						quest.redoDelay = config.getInt("quests." + questName + ".redo-delay") * 1000;
-					} else {
-						skipQuestProcess("redo-delay: for Quest " + quest.name + " is not a number!");
-					}
-				}
-				if (config.contains("quests." + questName + ".finish-message")) {
-					quest.finished = parseString(config.getString("quests." + questName + ".finish-message"), quest);
-				} else {
-					skipQuestProcess("Quest " + quest.name + " is missing finish-message:");
-				}
-				if (config.contains("quests." + questName + ".ask-message")) {
-					quest.description = parseString(config.getString("quests." + questName + ".ask-message"), quest);
-				} else {
-					skipQuestProcess("Quest " + quest.name + " is missing ask-message:");
-				}
-				if (config.contains("quests." + questName + ".event")) {
-					Event evt = Event.loadEvent(config.getString("quests." + questName + ".event"), this);
-					if (evt != null) {
-						quest.initialEvent = evt;
-					} else {
-						skipQuestProcess("Initial Event in Quest " + quest.name + " failed to load.");
-					}
-				}
-				if (config.contains("quests." + questName + ".requirements")) {
-					loadQuestRequirements(config, questsSection);
-				}
-				quest.plugin = this;
-				processStages(quest, config, questName); // needsSaving may be modified as a side-effect
-				loadRewards(config);
-				quests.add(quest);
-				if (needsSaving) {
-					try {
-						config.save(file);
-					} catch (IOException e) {
-						getLogger().log(Level.SEVERE, "Failed to save Quest \"" + questName + "\"");
-						e.printStackTrace();
-					}
-				}
-				if (failedToLoad == true) {
-					getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questName + "\". Skipping.");
-				}
-			} catch (SkipQuest ex) {
-				continue;
-			} catch (StageFailedException ex) {
-				continue;
+		if (config != null) {
+			ConfigurationSection questsSection;
+			if (config.contains("quests")) {
+				questsSection = config.getConfigurationSection("quests");
+			} else {
+				questsSection = config.createSection("quests");
+				needsSaving = true;
 			}
+			for (String key : questsSection.getKeys(false)) {
+				try { // main "skip quest" try/catch block
+					questName = key;
+					quest = new Quest();
+					failedToLoad = false;
+					if (config.contains("quests." + questName + ".name")) {
+						quest.name = parseString(config.getString("quests." + questName + ".name"), quest);
+					} else {
+						skipQuestProcess("Quest block \'" + questName + "\' is missing " + ChatColor.RED + "name:");
+					}
+					if (citizens != null && config.contains("quests." + questName + ".npc-giver-id")) {
+						if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")) != null) {
+							quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id"));
+							questNPCs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questName + ".npc-giver-id")));
+						} else {
+							skipQuestProcess("npc-giver-id: for Quest " + quest.name + " is not a valid NPC id!");
+						}
+					}
+					if (config.contains("quests." + questName + ".block-start")) {
+						Location location = getLocation(config.getString("quests." + questName + ".block-start"));
+						if (location != null) {
+							quest.blockStart = location;
+						} else {
+							skipQuestProcess(new String[] { "block-start: for Quest " + quest.name + " is not in proper location format!", "Proper location format is: \"WorldName x y z\"" });
+						}
+					}
+					if (config.contains("quests." + questName + ".region")) {
+						String region = config.getString("quests." + questName + ".region");
+						boolean exists = regionFound(quest, region);
+						if (!exists) {
+							skipQuestProcess("region: for Quest " + quest.name + " is not a valid WorldGuard region!");
+						}
+					}
+					if (config.contains("quests." + questName + ".gui-display")) {
+						String item = config.getString("quests." + questName + ".gui-display");
+						try {
+							ItemStack stack = ItemUtil.readItemStack(item);
+							if (stack != null) {
+								quest.guiDisplay = stack;
+							}
+						} catch (Exception e) {
+							instance.getLogger().warning(item + " in items: GUI Display in Quest " + quest.name + "is not properly formatted!");
+						}
+					}
+					if (config.contains("quests." + questName + ".redo-delay")) {
+						if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
+							quest.redoDelay = config.getInt("quests." + questName + ".redo-delay") * 1000;
+						} else {
+							skipQuestProcess("redo-delay: for Quest " + quest.name + " is not a number!");
+						}
+					}
+					if (config.contains("quests." + questName + ".finish-message")) {
+						quest.finished = parseString(config.getString("quests." + questName + ".finish-message"), quest);
+					} else {
+						skipQuestProcess("Quest " + quest.name + " is missing finish-message:");
+					}
+					if (config.contains("quests." + questName + ".ask-message")) {
+						quest.description = parseString(config.getString("quests." + questName + ".ask-message"), quest);
+					} else {
+						skipQuestProcess("Quest " + quest.name + " is missing ask-message:");
+					}
+					if (config.contains("quests." + questName + ".event")) {
+						Event evt = Event.loadEvent(config.getString("quests." + questName + ".event"), this);
+						if (evt != null) {
+							quest.initialEvent = evt;
+						} else {
+							skipQuestProcess("Initial Event in Quest " + quest.name + " failed to load.");
+						}
+					}
+					if (config.contains("quests." + questName + ".requirements")) {
+						loadQuestRequirements(config, questsSection);
+					}
+					quest.plugin = this;
+					processStages(quest, config, questName); // needsSaving may be modified as a side-effect
+					loadRewards(config);
+					quests.add(quest);
+					if (needsSaving) {
+						try {
+							config.save(file);
+						} catch (IOException e) {
+							getLogger().log(Level.SEVERE, "Failed to save Quest \"" + questName + "\"");
+							e.printStackTrace();
+						}
+					}
+					if (failedToLoad == true) {
+						getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questName + "\". Skipping.");
+					}
+				} catch (SkipQuest ex) {
+					continue;
+				} catch (StageFailedException ex) {
+					continue;
+				}
+			}
+		} else {
+			getLogger().severe("Unable to load quests.yml");
 		}
 	}
 
