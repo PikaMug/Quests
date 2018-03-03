@@ -1,3 +1,4 @@
+# For non-English characters, this file MUST stay encoded in UTF-8
 quests:
   Miner:
     name: 'Stone Miner'
