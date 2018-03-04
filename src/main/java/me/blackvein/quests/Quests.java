@@ -358,7 +358,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	public String getQuestsCommandUsage(String cmd) {
-		return ChatColor.RED + Lang.get("usage") + ":" + ChatColor.YELLOW + "/quests " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
+		return ChatColor.RED + Lang.get("usage") + ": " + ChatColor.YELLOW + "/quests " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
 	}
 
 	public String getQuestadminCommandUsage(String cmd) {
