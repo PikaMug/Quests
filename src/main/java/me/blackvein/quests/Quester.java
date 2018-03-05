@@ -1962,7 +1962,7 @@ public class Quester {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksBroken.set(names.indexOf(s), is);
+						getQuestData(quest).blocksBroken.add(is);
 					}
 				}
 				if (questSec.contains("blocks-damaged-names")) {
