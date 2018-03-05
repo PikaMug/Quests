@@ -2191,10 +2191,6 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.contains(":")) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidEntry") + " \':\'");
-				return new CommandsPrompt();
-			}
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				String[] commands = input.split(Lang.get("charSemi"));
 				LinkedList<String> cmdList = new LinkedList<String>();
