@@ -108,7 +108,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "6 - " + Lang.get("reqSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
+			text += ChatColor.GRAY + "7 - " + Lang.get("reqSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
 		}
 		if (Quests.heroes != null) {
 			if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
