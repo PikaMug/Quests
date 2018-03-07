@@ -670,7 +670,6 @@ goTo: "Gehe nach <location>"
 completed: "Erledigt"
 redoCompleted: "(Erledigt)"
 consoleError: "Dieser Befehl kann nur im Spiel ausgeführt werden."
-invalidSelection: "Ungültige Auswahl!"
 noActiveQuest: "Du hast aktuell keine offene Quests."
 speakTo: 'Start: Spreche mit <npc>'
 mustSpeakTo: "Um die Quest zu starten musst du zuerst mit <npc> sprechen."
