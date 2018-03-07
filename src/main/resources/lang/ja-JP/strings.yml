@@ -41,8 +41,8 @@ COMMAND_QUESTADMIN_FINISH_HELP: "finish [player] [quest] - クエストを完了
 COMMAND_QUESTADMIN_NEXTSTAGE: "nextstage"
 COMMAND_QUESTADMIN_NEXTSTAGE_HELP: "nextstage [player] [quest] - クエストを進行させる。"
 COMMAND_QUESTADMIN_SETSTAGE: "setstage"
-COMMAND_QUESTADMIN_SETSTAGE_HELP: "setstage [player] [quest] [stage] - プレイヤーの現在のステージを設定します。"
-COMMAND_QUESTADMIN_SETSTAGE_USAGE: '使い方: /questadmin setstage [player] [quest] [stage]'
+COMMAND_QUESTADMIN_SETSTAGE_HELP: "セットステージ [player] [quest] [stage] - プレイヤーの現在のステージを設定します。"
+COMMAND_QUESTADMIN_SETSTAGE_USAGE: '使い方: /questadmin セットステージ [player] [quest] [stage]'
 COMMAND_QUESTADMIN_PURGE: "パージ"
 COMMAND_QUESTADMIN_PURGE_HELP: "パージ [player] - プレイヤーのすべての(Questsの) データとそれらのブラックリストをクリア"
 COMMAND_QUESTADMIN_RESET: "リセット"
