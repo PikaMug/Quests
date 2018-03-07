@@ -670,7 +670,6 @@ goTo: "Pumunta sa <location>"
 completed: "Kompleto na"
 redoCompleted: "(Kompleto na)"
 consoleError: "Ang utos na ito ay nagaganap lamang sa larong ito."
-invalidSelection: "Di wastong pagpili!"
 noActiveQuest: "Ikaw ay walang aktibong pagsusulit sa kasalukuyan."
 speakTo: 'Magsimula: Mangusap sa <npc>'
 mustSpeakTo: "Kailangan mong mangusap sa <npc> para simulan ang Pagsusulit."
