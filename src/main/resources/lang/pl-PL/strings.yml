@@ -670,7 +670,6 @@ goTo: "Idź do <location>"
 completed: "Zakończone"
 redoCompleted: "(Ukończone)"
 consoleError: "Ta komenda może być jedynie użyta w grze."
-invalidSelection: "Nieprawidłowy wybór!"
 noActiveQuest: "Nie masz obecnie żadnych aktywnych misji."
 speakTo: 'Start: Rozmawiaj z <npc>'
 mustSpeakTo: "Musisz porozmawiać z <npc>, aby rozpocząć te misję."
