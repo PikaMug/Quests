@@ -670,7 +670,6 @@ goTo: "Pergi ke <location>"
 completed: "Selesai"
 redoCompleted: "(Selesai)"
 consoleError: "Perintah ini hanya bisa dilakukan dalam game."
-invalidSelection: "Pilihan tidak valid!"
 noActiveQuest: "Anda tidak memiliki Quests yang aktif saat ini."
 speakTo: 'Mulai: Berbicara kepada <npc>'
 mustSpeakTo: "Anda harus berbicara kepada <npc> untuk memulai Quest ini."
