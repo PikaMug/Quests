@@ -1831,7 +1831,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 			return;
 		}
 		quests.reloadQuests();
-		
 		context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
 	}
 }
