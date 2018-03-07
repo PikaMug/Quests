@@ -670,7 +670,6 @@ goTo: "<location> Git"
 completed: "Tamamlandı"
 redoCompleted: "(Tamamlandı)"
 consoleError: "Bu komut sadece oyun içinde kullanılabilir."
-invalidSelection: "Geçersiz seçim!"
 noActiveQuest: "Şu anda aktif bir göreviniz yok."
 speakTo: 'Start: Speak to <npc>'
 mustSpeakTo: "You must speak to <npc> to start this Quest."
