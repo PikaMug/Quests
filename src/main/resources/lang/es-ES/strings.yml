@@ -670,7 +670,6 @@ goTo: "Ir a <location>"
 completed: "Completado"
 redoCompleted: "(Completado)"
 consoleError: "Este comando solo debe ser presentado en el juego."
-invalidSelection: "¡Selección invalida!"
 noActiveQuest: "Usted no tiene actualmente ninguna Búsqueda activa."
 speakTo: 'Inicio: Hablar con <npc>'
 mustSpeakTo: "Usted debería hablar con <npc>para comenzar esta Búsqueda."
