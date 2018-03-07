@@ -112,7 +112,6 @@ public class ItemUtil {
 			} else if (arg.startsWith("enchantment-")) {
 				String[] enchs = arg.substring(12).split(" ");
 				try {
-					System.out.println("enchs[0] " + enchs[0]);
 					Enchantment e = Quests.getEnchantment(enchs[0]);
 					meta.addEnchant(e, Integer.parseInt(enchs[1]), true);
 				} catch (IllegalArgumentException e) {
