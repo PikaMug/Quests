@@ -27,8 +27,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class Stage {
 
-	LinkedList<ItemStack> blocksToDamage = new LinkedList<ItemStack>();
 	LinkedList<ItemStack> blocksToBreak = new LinkedList<ItemStack>();
+	LinkedList<ItemStack> blocksToDamage = new LinkedList<ItemStack>();
 	LinkedList<ItemStack> blocksToPlace = new LinkedList<ItemStack>();
 	LinkedList<ItemStack> blocksToUse = new LinkedList<ItemStack>();
 	LinkedList<ItemStack> blocksToCut = new LinkedList<ItemStack>();
@@ -125,7 +125,23 @@ public class Stage {
 	public String completeMessage = null;
 	public String startMessage = null;
 	public String objectiveOverride = null;
-
+	
+	/**
+	 * Check if stage has at least one objective EXCLUDING start/complete message
+	 * 
+	 * @return true if stage contains an objective
+	 */
+	public boolean hasObjective() {
+		if (blocksToBreak.isEmpty() == false) { return true; }
+		if (blocksToDamage.isEmpty() == false) { return true; }
+		if (blocksToPlace.isEmpty() == false) { return true; }
+		if (blocksToUse.isEmpty() == false) { return true; }
+		if (blocksToCut.isEmpty() == false) { return true; }
+		if (fishToCatch != null) { return true; }
+		if (playersToKill != null) { return true; }
+		return false;
+	}
+	
 	public int hashCode() {
 		assert false : "hashCode not designed";
 		return 42; // any arbitrary constant will do
@@ -135,10 +151,10 @@ public class Stage {
 	public boolean equals(Object o) {
 		if (o instanceof Stage) {
 			Stage other = (Stage) o;
-			if (other.blocksToDamage.equals(blocksToDamage) == false) {
+			if (other.blocksToBreak.equals(blocksToBreak) == false) {
 				return false;
 			}
-			if (other.blocksToBreak.equals(blocksToBreak) == false) {
+			if (other.blocksToDamage.equals(blocksToDamage) == false) {
 				return false;
 			}
 			if (other.blocksToPlace.equals(blocksToPlace) == false) {

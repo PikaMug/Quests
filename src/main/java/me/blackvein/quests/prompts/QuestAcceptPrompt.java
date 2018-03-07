@@ -96,7 +96,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 				}
 			}
 			if (q == null) {
-				cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidSelection"));
+				cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
 				return new QuestAcceptPrompt(plugin);
 			} else {
 				Player player = quester.getPlayer();
