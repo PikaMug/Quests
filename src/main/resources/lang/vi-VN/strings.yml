@@ -670,7 +670,6 @@ goTo: "Đi đến <location>"
 completed: "Đã hoàn thành"
 redoCompleted: "(Đã hoàn thành)"
 consoleError: "Lệnh này chỉ có thể thực hiện khi bạn đang trong game [ nhiệm vụ]."
-invalidSelection: "Lựa chọn không phù hợp!"
 noActiveQuest: "Bạn chưa nhận nhiệm vụ nào hết."
 speakTo: 'Bắt đầu: Nói chuyện với <npc>'
 mustSpeakTo: "Bạn phải nói chuyện với <npc> để bắt đầu Nhiệm vụ này."
