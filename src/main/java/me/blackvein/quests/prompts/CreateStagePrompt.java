@@ -1014,7 +1014,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				if (context.getSessionData(pref + CK.S_PLACE_AMOUNTS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetPlaceAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + "stageEditorSetPlaceAmounts" + "\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetPlaceAmounts") + "\n";
 					for (Integer i : getBlockAmounts(context)) {
 						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
 					}
