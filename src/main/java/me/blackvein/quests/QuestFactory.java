@@ -158,13 +158,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (context.getSessionData(CK.Q_REDO_DELAY) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorRedoDelay") + " (" + Lang.get("noneSet") + ")\n";
 			} else {
-				// something here is throwing an exception
-				try {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorRedoDelay") + " (" + Quests.getTime((Long) context.getSessionData(CK.Q_REDO_DELAY)) + ")\n";
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				//
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorRedoDelay") + " (" + Quests.getTime((Long) context.getSessionData(CK.Q_REDO_DELAY)) + ")\n";
 			}
 			if (context.getSessionData(CK.Q_START_NPC) == null && quests.citizens != null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("noneSet") + ")\n";
