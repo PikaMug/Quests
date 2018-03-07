@@ -670,7 +670,6 @@ goTo: "Gå til <location>"
 completed: "Gennemført"
 redoCompleted: "(Gennemført)"
 consoleError: "Denne kommando kan kun bruges in-game."
-invalidSelection: "Ugyldig markering!"
 noActiveQuest: "Du har i øjeblikket ikke nogen aktive Quests."
 speakTo: 'Start: Tal til <npc>'
 mustSpeakTo: "Du skal tale med <npc> for at starte denne Quest."
