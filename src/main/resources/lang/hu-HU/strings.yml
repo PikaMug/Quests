@@ -670,7 +670,6 @@ goTo: "Menj <location>"
 completed: "Teljesítve"
 redoCompleted: "(Teljesítve)"
 consoleError: "Ez a parancs csak játékban játszható le."
-invalidSelection: "Érvénytelen kiválasztás!"
 noActiveQuest: "Jelenleg nincs aktív küldetés."
 speakTo: 'Kezdés: Beszélj <npc>-vel'
 mustSpeakTo: "A <npc> kifejezéssel kell beszélnie, hogy elindítsd ezt a küldetést."
