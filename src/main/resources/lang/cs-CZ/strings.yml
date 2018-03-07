@@ -670,7 +670,6 @@ goTo: "Běž do <location>"
 completed: "Dokončeno"
 redoCompleted: "(Dokončeno)"
 consoleError: "Tento příkaz může být proveden pouze ve hře."
-invalidSelection: "Neplatný výběr!"
 noActiveQuest: "Nemáš nyní žádný rozdělaný úkol."
 speakTo: 'Začni: Mluv s <npc>'
 mustSpeakTo: "Musíš si promluvit s <npc> pro odstartování úkolu."
