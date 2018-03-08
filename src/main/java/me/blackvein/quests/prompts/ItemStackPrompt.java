@@ -37,7 +37,7 @@ import me.blackvein.quests.util.Lang;
 
 public class ItemStackPrompt extends FixedSetPrompt {
 
-	// Stores itemstack in "tempStack" context data.
+	// Stores ItemStack in "tempStack" context data
 	// Stores name in "tempName"
 	// Stores amount in "tempAmount"
 	// Stores data in "tempData"
@@ -426,6 +426,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private String getItemData(ConversationContext cc) {
 		if (cc.getSessionData("tempName") != null) {
 			String item;

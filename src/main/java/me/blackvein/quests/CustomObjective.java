@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 
 public abstract class CustomObjective implements Listener {
 
+	private Quests plugin = Quests.getPlugin(Quests.class);
 	private String name = null;
 	private String author = null;
 	public final Map<String, Object> datamap = new HashMap<String, Object>();
@@ -94,8 +95,8 @@ public abstract class CustomObjective implements Listener {
 		this.enableCount = enableCount;
 	}
 
-	public static Map<String, Object> getDatamap(Player player, CustomObjective obj, Quest quest) {
-		Quester quester = Quests.getInstance().getQuester(player.getUniqueId());
+	public Map<String, Object> getDatamap(Player player, CustomObjective obj, Quest quest) {
+		Quester quester = plugin.getQuester(player.getUniqueId());
 		if (quester != null) {
 			Stage currentStage = quester.getCurrentStage(quest);
 			if (currentStage == null)
@@ -116,8 +117,8 @@ public abstract class CustomObjective implements Listener {
 		return null;
 	}
 
-	public static void incrementObjective(Player player, CustomObjective obj, int count, Quest quest) {
-		Quester quester = Quests.getInstance().getQuester(player.getUniqueId());
+	public void incrementObjective(Player player, CustomObjective obj, int count, Quest quest) {
+		Quester quester = plugin.getQuester(player.getUniqueId());
 		if (quester != null) {
 			// Check if the player has Quest with objective
 			boolean hasQuest = false;
@@ -130,9 +131,9 @@ public abstract class CustomObjective implements Listener {
 			if (hasQuest && quester.hasCustomObjective(quest, obj.getName())) {
 				if (quester.getQuestData(quest).customObjectiveCounts.containsKey(obj.getName())) {
 					int old = quester.getQuestData(quest).customObjectiveCounts.get(obj.getName());
-					Quests.getInstance().getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts.put(obj.getName(), old + count);
+					plugin.getInstance().getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts.put(obj.getName(), old + count);
 				} else {
-					Quests.getInstance().getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts.put(obj.getName(), count);
+					plugin.getInstance().getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts.put(obj.getName(), count);
 				}
 				int index = -1;
 				for (int i = 0; i < quester.getCurrentStage(quest).customObjectives.size(); i++) {

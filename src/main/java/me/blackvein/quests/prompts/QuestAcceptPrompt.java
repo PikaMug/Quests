@@ -101,14 +101,14 @@ public class QuestAcceptPrompt extends StringPrompt {
 			} else {
 				Player player = quester.getPlayer();
 				if (!quester.completedQuests.contains(q.name)) {
-					if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
+					if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
 						if (q.testRequirements(quester)) {
 							quester.questToTake = q.name;
 							String s = extracted(quester);
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
 							}
-							if (!Quests.askConfirmation) {
+							if (!plugin.askConfirmation) {
 								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).questToTake), false);
 							} else {
 								plugin.conversationFactory.buildConversation((Conversable) player).begin();
@@ -118,11 +118,11 @@ public class QuestAcceptPrompt extends StringPrompt {
 						}
 					} else if (quester.currentQuests.containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
-						msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+						msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 						player.sendMessage(ChatColor.YELLOW + msg);
 					}
 				} else if (quester.completedQuests.contains(q.name)) {
-					if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
+					if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
 						if (quester.getDifference(q) > 0) {
 							String early = Lang.get("questTooEarly");
 							early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
@@ -138,7 +138,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
 							}
-							if (!Quests.askConfirmation) {
+							if (!plugin.askConfirmation) {
 								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).questToTake), false);
 							} else {
 								plugin.conversationFactory.buildConversation((Conversable) player).begin();
@@ -146,7 +146,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 						}
 					} else if (quester.currentQuests.containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
-						msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+						msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 						player.sendMessage(ChatColor.YELLOW + msg);
 					}
 				}

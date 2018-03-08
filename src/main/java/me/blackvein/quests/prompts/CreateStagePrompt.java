@@ -62,7 +62,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		this.questFactory = qf;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
 	public String getPromptText(ConversationContext context) {
 		try {
@@ -149,7 +149,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GRAY + "    - " + ChatColor.BLUE + Quester.prettyItemString(names.get(i)) + ChatColor.GRAY + " " + Lang.get("with") + " " + ChatColor.AQUA + Quester.prettyEnchantmentString(Quests.getEnchantment(enchants.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
 				}
 			}
-			if (questFactory.quests.citizens != null) {
+			if (Quests.citizens != null) {
 				if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
 					text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "9 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorDeliverItems") + ChatColor.GRAY + "  (" + Lang.get("noneSet") + ")\n";
 				} else {
@@ -164,7 +164,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.GRAY + "" + ChatColor.BOLD + "9 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("stageEditorDeliverItems") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
 			}
-			if (questFactory.quests.citizens != null) {
+			if (Quests.citizens != null) {
 				if (context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null) {
 					text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "10 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorTalkToNPCs") + ChatColor.GRAY + "  (" + Lang.get("noneSet") + ")\n";
 				} else {
@@ -178,7 +178,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.GRAY + "" + ChatColor.BOLD + "10 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("stageEditorTalkToNPCs") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
 			}
-			if (questFactory.quests.citizens != null) {
+			if (Quests.citizens != null) {
 				if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
 					text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "11 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorKillNPCs") + ChatColor.GRAY + "  (" + Lang.get("noneSet") + ")\n";
 				} else {
@@ -264,7 +264,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "18 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorDelayMessage") + ChatColor.GRAY + " (" + ChatColor.AQUA + "\"" + context.getSessionData(pref + CK.S_DELAY_MESSAGE) + "\"" + ChatColor.GRAY + ")\n";
 			}
-			if (questFactory.quests.denizen == null) {
+			if (Quests.denizen == null) {
 				text += ChatColor.GRAY + "" + ChatColor.BOLD + "19 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("questDenNotInstalled") + ")\n";
 			} else {
 				if (context.getSessionData(pref + CK.S_DENIZEN) == null) {
@@ -354,21 +354,21 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		} else if (input.equalsIgnoreCase("8")) {
 			return new EnchantmentListPrompt();
 		} else if (input.equalsIgnoreCase("9")) {
-			if (questFactory.quests.citizens != null) {
+			if (Quests.citizens != null) {
 				return new DeliveryListPrompt();
 			} else {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
 				return new CreateStagePrompt(stageNum, questFactory, citizens);
 			}
 		} else if (input.equalsIgnoreCase("10")) {
-			if (questFactory.quests.citizens != null) {
+			if (Quests.citizens != null) {
 				return new NPCIDsToTalkToPrompt();
 			} else {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
 				return new CreateStagePrompt(stageNum, questFactory, citizens);
 			}
 		} else if (input.equalsIgnoreCase("11")) {
-			if (questFactory.quests.citizens != null) {
+			if (Quests.citizens != null) {
 				return new NPCKillListPrompt();
 			} else {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
@@ -394,7 +394,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				return new DelayMessagePrompt();
 			}
 		} else if (input.equalsIgnoreCase("19")) {
-			if (questFactory.quests.denizen == null) {
+			if (Quests.denizen == null) {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDenizen"));
 				return new CreateStagePrompt(stageNum, questFactory, citizens);
 			} else {
@@ -610,6 +610,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorBreakBlocks") + " -\n";
@@ -827,6 +828,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorDamageBlocks") + " -\n";
@@ -1044,6 +1046,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorPlaceBlocks") + " -\n";
@@ -1261,6 +1264,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorUseBlocks") + " -\n";
@@ -1478,6 +1482,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorCutBlocks") + " -\n";
@@ -1741,6 +1746,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorEnchantItems") + " -\n";
@@ -3253,10 +3259,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.DARK_GREEN + "- " + Lang.get("stageEditorStartEvent") + " -\n";
-			if (questFactory.quests.events.isEmpty()) {
+			if (questFactory.plugin.events.isEmpty()) {
 				text += ChatColor.RED + "- None";
 			} else {
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -3268,7 +3274,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				Event found = null;
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -3298,10 +3304,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.DARK_GREEN + "- " + Lang.get("stageEditorFinishEvent") + " -\n";
-			if (questFactory.quests.events.isEmpty()) {
+			if (questFactory.plugin.events.isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -3313,7 +3319,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				Event found = null;
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -3343,10 +3349,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.DARK_GREEN + "- " + Lang.get("stageEditorDeathEvent") + " -\n";
-			if (questFactory.quests.events.isEmpty()) {
+			if (questFactory.plugin.events.isEmpty()) {
 				text += ChatColor.RED + "- None";
 			} else {
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -3358,7 +3364,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				Event found = null;
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -3388,10 +3394,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.DARK_GREEN + "- " + Lang.get("stageEditorDisconnectEvent") + " -\n";
-			if (questFactory.quests.events.isEmpty()) {
+			if (questFactory.plugin.events.isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -3403,7 +3409,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				Event found = null;
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -3433,10 +3439,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.DARK_GREEN + "- " + Lang.get("stageEditorChatEvents") + " -\n";
-			if (questFactory.quests.events.isEmpty()) {
+			if (questFactory.plugin.events.isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -3448,7 +3454,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				Event found = null;
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -3520,10 +3526,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.DARK_GREEN + "- " + Lang.get("stageEditorCommandEvents") + " -\n";
-			if (questFactory.quests.events.isEmpty()) {
+			if (questFactory.plugin.events.isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -3535,7 +3541,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				Event found = null;
-				for (Event e : questFactory.quests.events) {
+				for (Event e : questFactory.plugin.events) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -3769,10 +3775,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorCustom") + " -\n";
-			if (questFactory.quests.customObjectives.isEmpty()) {
+			if (questFactory.plugin.customObjectives.isEmpty()) {
 				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
 			} else {
-				for (CustomObjective co : questFactory.quests.customObjectives) {
+				for (CustomObjective co : questFactory.plugin.customObjectives) {
 					text += ChatColor.DARK_PURPLE + " - " + co.getName() + "\n";
 				}
 			}
@@ -3784,14 +3790,14 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				CustomObjective found = null;
-				for (CustomObjective co : questFactory.quests.customObjectives) {
+				for (CustomObjective co : questFactory.plugin.customObjectives) {
 					if (co.getName().equalsIgnoreCase(input)) {
 						found = co;
 						break;
 					}
 				}
 				if (found == null) {
-					for (CustomObjective co : questFactory.quests.customObjectives) {
+					for (CustomObjective co : questFactory.plugin.customObjectives) {
 						if (co.getName().toLowerCase().contains(input.toLowerCase())) {
 							found = co;
 							break;
@@ -3857,7 +3863,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			String objName = list.getLast();
 			text += objName + " -\n";
 			CustomObjective found = null;
-			for (CustomObjective co : questFactory.quests.customObjectives) {
+			for (CustomObjective co : questFactory.plugin.customObjectives) {
 				if (co.getName().equals(objName)) {
 					found = co;
 					break;
@@ -3879,7 +3885,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
 				String objName = list.getLast();
 				CustomObjective found = null;
-				for (CustomObjective co : questFactory.quests.customObjectives) {
+				for (CustomObjective co : questFactory.plugin.customObjectives) {
 					if (co.getName().equals(objName)) {
 						found = co;
 						break;

@@ -108,9 +108,9 @@ public class PlayerListener implements Listener {
 				for (Quest quest : plugin.quests) {
 					if (quest.guiDisplay != null) {
 						if (ItemUtil.compareItems(clicked, quest.guiDisplay, false) == 0) {
-							if (quester.currentQuests.size() >= Quests.maxQuests && Quests.maxQuests > 0) {
+							if (quester.currentQuests.size() >= plugin.maxQuests && plugin.maxQuests > 0) {
 								String msg = Lang.get(player, "questMaxAllowed");
-								msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+								msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 								player.sendMessage(ChatColor.YELLOW + msg);
 							} else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
 								String completed = Lang.get(player, "questAlreadyCompleted");
@@ -241,9 +241,9 @@ public class PlayerListener implements Listener {
 						for (final Quest q : plugin.quests) {
 							if (q.blockStart != null) {
 								if (q.blockStart.equals(evt.getClickedBlock().getLocation())) {
-									if (quester.currentQuests.size() >= Quests.maxQuests && Quests.maxQuests > 0) {
+									if (quester.currentQuests.size() >= plugin.maxQuests && plugin.maxQuests > 0) {
 										String msg = Lang.get(player, "questMaxAllowed");
-										msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+										msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 										player.sendMessage(ChatColor.YELLOW + msg);
 									} else {
 										if (quester.completedQuests.contains(q.name)) {
@@ -492,7 +492,7 @@ public class PlayerListener implements Listener {
 			return;
 		}
 		if (damager instanceof Player) {
-			if (plugin.citizens != null) {
+			if (Quests.citizens != null) {
 				if (CitizensAPI.getNPCRegistry().isNPC(target)) {
 					Quester quester = plugin.getQuester(damager.getUniqueId());
 					for (Quest quest : quester.currentQuests.keySet()) {
@@ -642,11 +642,11 @@ public class PlayerListener implements Listener {
 			quester.id = evt.getPlayer().getUniqueId();
 			if (new File(plugin.getDataFolder(), "data" + File.separator + quester.id + ".yml").exists()) {
 				quester.loadData();
-			} else if (Quests.genFilesOnJoin) {
+			} else if (plugin.genFilesOnJoin) {
 				quester.saveData();
 			}
 			plugin.questers.put(evt.getPlayer().getUniqueId(), quester);
-			if (Quests.useCompass) {
+			if (plugin.useCompass) {
 				quester.resetCompass();
 			}
 			for (String s : quester.completedQuests) {
@@ -710,7 +710,7 @@ public class PlayerListener implements Listener {
 		}
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 			boolean isPlayer = true;
-			if (plugin.citizens != null) {
+			if (Quests.citizens != null) {
 				if (CitizensAPI.getNPCRegistry().isNPC(evt.getPlayer())) {
 					isPlayer = false;
 				}

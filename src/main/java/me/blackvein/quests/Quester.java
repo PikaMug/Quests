@@ -1091,7 +1091,7 @@ public class Quester {
 					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
 					player.getInventory().setItem(player.getInventory().first(i), null);
 					player.updateInventory();
-					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(random.nextInt(getCurrentStage(quest).deliverMessages.size())), plugin.citizens.getNPCRegistry().getById(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
+					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(random.nextInt(getCurrentStage(quest).deliverMessages.size())), Quests.citizens.getNPCRegistry().getById(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
 					player.sendMessage(message);
 				}
 			}
@@ -2490,7 +2490,7 @@ public class Quester {
 				if (!meta.hasLore()) {
 					LinkedList<String> lines = new LinkedList<String>();
 					String desc = quests.get(i).description;
-					if (desc == ChatColor.stripColor(desc)) {
+					if (desc.equals(ChatColor.stripColor(desc))) {
 						lines = MiscUtil.makeLines(desc, " ", 40, ChatColor.DARK_GREEN);
 					} else {
 						lines = MiscUtil.makeLines(desc, " ", 40, null);
@@ -2559,7 +2559,7 @@ public class Quester {
 	}
 
 	public void resetCompass() {
-		if (!Quests.useCompass)
+		if (!plugin.useCompass)
 			return;
 		Player player = getPlayer();
 		if (player == null)
@@ -2572,7 +2572,7 @@ public class Quester {
 	}
 
 	public void findCompassTarget() {
-		if (!Quests.useCompass)
+		if (!plugin.useCompass)
 			return;
 		Player player = getPlayer();
 		if (player == null)

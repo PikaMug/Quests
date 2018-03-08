@@ -18,6 +18,7 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
 import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
@@ -55,9 +56,9 @@ public class StagesPrompt extends StringPrompt {
 		if (i < 0) {
 			return new StagesPrompt(questFactory);
 		} else if (i < (stages + 1) && i > 0) {
-			return new CreateStagePrompt((i), questFactory, questFactory.quests.citizens);
+			return new CreateStagePrompt((i), questFactory, Quests.citizens);
 		} else if (i == (stages + 1)) {
-			return new CreateStagePrompt((stages + 1), questFactory, questFactory.quests.citizens);
+			return new CreateStagePrompt((stages + 1), questFactory, Quests.citizens);
 		} else if (i == (stages + 2)) {
 			return questFactory.returnToMenu();
 		} else {

@@ -110,7 +110,7 @@ public class NpcListener implements Listener {
 							if (quester.currentQuests.containsKey(q))
 								continue;
 							if (q.npcStart != null && q.npcStart.getId() == evt.getNPC().getId()) {
-								if (Quests.ignoreLockedQuests && (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1)) {
+								if (plugin.ignoreLockedQuests && (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1)) {
 									if (q.testRequirements(quester)) {
 										npcQuests.add(q);
 									}
@@ -131,7 +131,7 @@ public class NpcListener implements Listener {
 						} else if (npcQuests.size() == 1) {
 							Quest q = npcQuests.get(0);
 							if (!quester.completedQuests.contains(q.name)) {
-								if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
+								if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
 									quester.questToTake = q.name;
 									String s = extracted(quester);
 									for (String msg : s.split("<br>")) {
@@ -140,10 +140,10 @@ public class NpcListener implements Listener {
 									plugin.conversationFactory.buildConversation(player).begin();
 								} else if (quester.currentQuests.containsKey(q) == false) {
 									String msg = Lang.get(player, "questMaxAllowed");
-									msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+									msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 									player.sendMessage(ChatColor.YELLOW + msg);
 								}
-							} else if (quester.currentQuests.size() < Quests.maxQuests || Quests.maxQuests < 1) {
+							} else if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
 								if (quester.getDifference(q) > 0) {
 									String early = Lang.get(player, "questTooEarly");
 									early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
@@ -163,7 +163,7 @@ public class NpcListener implements Listener {
 								}
 							} else if (quester.currentQuests.containsKey(q) == false) {
 								String msg = Lang.get(player, "questMaxAllowed");
-								msg = msg.replaceAll("<number>", String.valueOf(Quests.maxQuests));
+								msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 								player.sendMessage(ChatColor.YELLOW + msg);
 							}
 						} else if (npcQuests.isEmpty()) {
@@ -192,7 +192,7 @@ public class NpcListener implements Listener {
 					if (evt.getNPC().getEntity().getLastDamageCause().getEntity() instanceof Player) {
 						Player player = (Player) evt.getNPC().getEntity().getLastDamageCause().getEntity();
 						boolean okay = true;
-						if (plugin.citizens != null) {
+						if (Quests.citizens != null) {
 							if (CitizensAPI.getNPCRegistry().isNPC(player)) {
 								okay = false;
 							}
@@ -208,8 +208,8 @@ public class NpcListener implements Listener {
 					}
 				} else if (damager instanceof Player) {
 					boolean okay = true;
-					if (plugin.citizens != null) {
-						if (plugin.citizens.getNPCRegistry().isNPC(damager)) {
+					if (Quests.citizens != null) {
+						if (Quests.citizens.getNPCRegistry().isNPC(damager)) {
 							okay = false;
 						}
 					}

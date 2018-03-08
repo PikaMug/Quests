@@ -109,6 +109,7 @@ import net.milkbowl.vault.permission.Permission;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener {
 
+	// Dependencies
 	public static Economy economy = null;
 	public static Permission permission = null;
 	public static WorldGuardPlugin worldGuard = null;
@@ -116,15 +117,30 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static Heroes heroes = null;
 	public static PhatLoots phatLoots = null;
 	public static PlaceholderAPIPlugin placeholder = null;
-	public static boolean npcEffects = true;
-	public static boolean useCompass = true;
-	public static boolean ignoreLockedQuests = false;
-	public static boolean genFilesOnJoin = true;
-	public static boolean askConfirmation = true;
-	public static int acceptTimeout = 20;
-	public static int maxQuests = 0;
-	public static String effect = "note";
-	public static String redoEffect = "angry_villager";
+	public static Vault vault = null;
+	public static CitizensPlugin citizens;
+	public static Denizen denizen = null;
+	// Config settings
+	public int acceptTimeout = 20;
+	public boolean allowCommands = true;
+	public boolean allowCommandsForNpcQuests = false;
+	public boolean allowQuitting = true;
+	public boolean askConfirmation = true;
+	public boolean convertData = false;
+	public boolean genFilesOnJoin = true;
+	public boolean ignoreLockedQuests = false;
+	public int killDelay = 0;
+	public int maxQuests = 0;
+	public boolean npcEffects = true;
+	public String effect = "note";
+	public String redoEffect = "angry_villager";
+	public boolean showQuestReqs = true;
+	public boolean showQuestTitles = true;
+	public boolean translateSubCommands = false;
+	public boolean useCompass = true;
+	// Interfaces
+	public HashMap<String, Integer> commands = new HashMap<String, Integer>();
+	public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
 	public final Map<UUID, Quester> questers = new HashMap<UUID, Quester>();
 	public final List<String> questerBlacklist = new LinkedList<String>();
 	public final List<CustomRequirement> customRequirements = new LinkedList<CustomRequirement>();
@@ -134,30 +150,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public final LinkedList<Event> events = new LinkedList<Event>();
 	public final LinkedList<NPC> questNPCs = new LinkedList<NPC>();
 	public final LinkedList<Integer> questNPCGUIs = new LinkedList<Integer>();
+	// Classes
 	public ConversationFactory conversationFactory;
 	public ConversationFactory NPCConversationFactory;
 	public QuestFactory questFactory;
 	public EventFactory eventFactory;
-	public Vault vault = null;
-	public CitizensPlugin citizens;
 	public PlayerListener pListener;
 	public NpcListener npcListener;
 	public NpcEffectThread effListener;
-	public Denizen denizen = null;
 	public QuestTaskTrigger trigger;
-	public boolean allowCommands = true;
-	public boolean allowCommandsForNpcQuests = false;
-	public boolean showQuestReqs = true;
-	public boolean showQuestTitles = true;
-	public boolean allowQuitting = true;
-	public boolean convertData = false;
-	public boolean load = false;
-	public int killDelay = 0;
-	public int totalQuestPoints = 0;
 	public Lang lang = new Lang(this);
-	public HashMap<String, Integer> commands = new HashMap<String, Integer>();
-	public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
-	private static Quests instance = null;
 
 	@SuppressWarnings("serial")
 	class StageFailedException extends Exception {
@@ -171,7 +173,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		pListener = new PlayerListener(this);
 		effListener = new NpcEffectThread(this);
 		npcListener = new NpcListener(this);
-		instance = this;
 		this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix()).withFirstPrompt(new QuestPrompt()).withTimeout(acceptTimeout).thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
 		this.NPCConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestAcceptPrompt(this)).withTimeout(acceptTimeout).withLocalEcho(false).addConversationAbandonedListener(this);
 		questFactory = new QuestFactory(this);
@@ -207,12 +208,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		delayLoadQuestInfo();
 	}
 
+	/**
+	 * Transfer language files from jar to disk
+	 */
 	private void setupLang() throws IOException, URISyntaxException {
 		final String path = "lang";
 		final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
 		if(jarFile.isFile()) {
 			final JarFile jar = new JarFile(jarFile);
-			final Enumeration<JarEntry> entries = jar.entries(); //ALL entries in jar
+			final Enumeration<JarEntry> entries = jar.entries();
 			Set<String> results = new HashSet<String>();
 			while(entries.hasMoreElements()) {
 			    final String name = entries.nextElement().getName();
@@ -305,30 +309,58 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public void loadCommands() {
 		// [] - required
 		// {} - optional
-		commands.put(Lang.get("COMMAND_LIST"), 1); // list {page}
-		commands.put(Lang.get("COMMAND_TAKE"), 2); // take [quest]
-		commands.put(Lang.get("COMMAND_QUIT"), 2); // quit [quest]
-		commands.put(Lang.get("COMMAND_EDITOR"), 1); // editor
-		commands.put(Lang.get("COMMAND_EVENTS_EDITOR"), 1); // events
-		commands.put(Lang.get("COMMAND_STATS"), 1); // stats
-		commands.put(Lang.get("COMMAND_TOP"), 2); // top [number]
-		commands.put(Lang.get("COMMAND_INFO"), 1); // info
-		commands.put(Lang.get("COMMAND_JOURNAL"), 1); // journal
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_STATS"), 2); // stats [player]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVE"), 3); // give [player] [quest]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_QUIT"), 3); // quit [player] [quest]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_REMOVE"), 3); // remove [player] [quest]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_POINTS"), 3); // points [player] [amount]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"), 3); // takepoints [player] [amount]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"), 3); // givepoints [player] [amount]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_POINTSALL"), 2); // pointsall [amount]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_FINISH"), 3); // finish [player] [quest]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_PURGE"), 2); // purge [player]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RESET"), 2); // purge [player]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
-		adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
+		if (translateSubCommands) {
+			commands.put(Lang.get("COMMAND_LIST"), 1); // list {page}
+			commands.put(Lang.get("COMMAND_TAKE"), 2); // take [quest]
+			commands.put(Lang.get("COMMAND_QUIT"), 2); // quit [quest]
+			commands.put(Lang.get("COMMAND_EDITOR"), 1); // editor
+			commands.put(Lang.get("COMMAND_EVENTS_EDITOR"), 1); // events
+			commands.put(Lang.get("COMMAND_STATS"), 1); // stats
+			commands.put(Lang.get("COMMAND_TOP"), 2); // top [number]
+			commands.put(Lang.get("COMMAND_INFO"), 1); // info
+			commands.put(Lang.get("COMMAND_JOURNAL"), 1); // journal
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_STATS"), 2); // stats [player]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVE"), 3); // give [player] [quest]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_QUIT"), 3); // quit [player] [quest]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_REMOVE"), 3); // remove [player] [quest]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_POINTS"), 3); // points [player] [amount]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"), 3); // takepoints [player] [amount]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"), 3); // givepoints [player] [amount]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_POINTSALL"), 2); // pointsall [amount]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_FINISH"), 3); // finish [player] [quest]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_PURGE"), 2); // purge [player]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RESET"), 2); // reset [player]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
+			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
+		} else {
+			commands.put("list", 1); // list {page}
+			commands.put("take", 2); // take [quest]
+			commands.put("quit", 2); // quit [quest]
+			commands.put("editor", 1); // editor
+			commands.put("events", 1); // events
+			commands.put("stats", 1); // stats
+			commands.put("top", 2); // top [number]
+			commands.put("info", 1); // info
+			commands.put("journal", 1); // journal
+			adminCommands.put("stats", 2); // stats [player]
+			adminCommands.put("give", 3); // give [player] [quest]
+			adminCommands.put("quit", 3); // quit [player] [quest]
+			adminCommands.put("remove", 3); // remove [player] [quest]
+			adminCommands.put("points", 3); // points [player] [amount]
+			adminCommands.put("takepoints", 3); // takepoints [player] [amount]
+			adminCommands.put("givepoints", 3); // givepoints [player] [amount]
+			adminCommands.put("pointsall", 2); // pointsall [amount]
+			adminCommands.put("finish", 3); // finish [player] [quest]
+			adminCommands.put("nextstage", 3); // nextstage [player] [quest]
+			adminCommands.put("setstage", 4); // setstage [player] [quest] [stage]
+			adminCommands.put("purge", 2); // purge [player]
+			adminCommands.put("reset", 2); // reset [player]
+			adminCommands.put("togglegui", 2); // togglegui [npc id]
+			adminCommands.put("reload", 1); // reload
+		}
+		
 	}
 
 	public String checkCommand(String cmd, String[] args) {
@@ -432,8 +464,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 	}
 
-	public static Quests getInstance() {
-		return instance;
+	public Quests getInstance() {
+		return this;
 	}
 
 	private class QuestPrompt extends StringPrompt {
@@ -473,28 +505,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public void loadConfig() {
 		FileConfiguration config = getConfig();
-		if (config.getString("language").equalsIgnoreCase("en")) {
-			//Legacy
-			Lang.iso = "en-US";
-		} else {
-			Lang.iso = config.getString("language", "en-US");
-		}
+		acceptTimeout = config.getInt("accept-timeout", 20);
 		allowCommands = config.getBoolean("allow-command-questing", true);
 		allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
-		showQuestReqs = config.getBoolean("show-requirements", true);
-		showQuestTitles = config.getBoolean("show-titles", true);
 		allowQuitting = config.getBoolean("allow-quitting", true);
-		useCompass = config.getBoolean("use-compass", true);
-		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
 		askConfirmation = config.getBoolean("ask-confirmation", true);
+		convertData = config.getBoolean("convert-data-on-startup", false);
+		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
+		ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);
+		killDelay = config.getInt("kill-delay", 600);
+		if (config.getString("language").equalsIgnoreCase("en")) {
+			//Legacy
+			lang.iso = "en-US";
+		} else {
+			lang.iso = config.getString("language", "en-US");
+		}
+		maxQuests = config.getInt("max-quests", maxQuests);
 		npcEffects = config.getBoolean("npc-effects.enabled", true);
 		effect = config.getString("npc-effects.new-quest", "note");
 		redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
-		killDelay = config.getInt("kill-delay", 600);
-		acceptTimeout = config.getInt("accept-timeout", 20);
-		convertData = config.getBoolean("convert-data-on-startup", false);
-		ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);
-		maxQuests = config.getInt("max-quests", maxQuests);
+		showQuestReqs = config.getBoolean("show-requirements", true);
+		showQuestTitles = config.getBoolean("show-titles", true);
+		translateSubCommands = config.getBoolean("translate-subcommands", false);
+		useCompass = config.getBoolean("use-compass", true);
 		for (String s : config.getStringList("quester-blacklist")) {
 			if (!s.equalsIgnoreCase("UUID")) {
 				questerBlacklist.add(s);
@@ -526,9 +559,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		File f = new File(this.getDataFolder(), "modules");
 		if (f.exists() && f.isDirectory()) {
 			File[] modules = f.listFiles();
-			for (File module : modules) {
-				if (module.isDirectory() == false && module.getName().endsWith(".jar")) {
-					loadModule(module);
+			if (modules != null) {
+				for (File module : modules) {
+					if (module.isDirectory() == false && module.getName().endsWith(".jar")) {
+						loadModule(module);
+					}
 				}
 			}
 		} else {
@@ -601,31 +636,40 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		player.sendMessage(ChatColor.GOLD + Lang.get(player, "questHelpTitle"));
 		player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "questDisplayHelp"));
 		if (player.hasPermission("quests.list")) {
-			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_LIST_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/quests "+ Lang.get(player, "COMMAND_LIST_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_LIST") : "list"));
 		}
 		if (player.hasPermission("quests.take")) {
-			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_TAKE_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_TAKE_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_TAKE") : "take"));
 		}
 		if (player.hasPermission("quests.quit")) {
-			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_QUIT_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_QUIT_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_QUIT") : "quit"));
 		}
 		if (player.hasPermission("quests.journal")) {
-			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_JOURNAL_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_JOURNAL_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_JOURNAL") : "journal"));
 		}
 		if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.editor")) {
-			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EDITOR_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EDITOR_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_EDITOR") : "editor"));
 		}
 		if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.events.editor")) {
-			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EVENTS_EDITOR_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EVENTS_EDITOR_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_EVENTS") : "events"));
 		}
 		if (player.hasPermission("quests.stats")) {
-			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_STATS_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_STATS_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_STATS") : "stats"));
 		}
 		if (player.hasPermission("quests.top")) {
-			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_TOP_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_TOP_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_TOP") : "top"));
 		}
 		// player.sendMessage(GOLD + "/quests party - Quest Party commands");
-		player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_INFO_HELP"));
+		player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_INFO_HELP")
+				.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_INFO") : "info"));
 		player.sendMessage(" ");
 		player.sendMessage(ChatColor.YELLOW + "/quest " + Lang.get(player, "COMMAND_QUEST_HELP"));
 		if (player.hasPermission("quests.questinfo")) {
@@ -675,36 +719,36 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			adminHelp(cs);
 			return true;
 		}
-		if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
-			adminReload(cs);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
-			adminPointsAll(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
-			adminGive(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
-			adminPoints(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
-			adminTakePoints(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
-			adminGivePoints(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"))) {
-			adminToggieGUI(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
-			adminQuit(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
-			adminNextStage(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
-			adminSetStage(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
-			adminFinish(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_PURGE"))) {
-			adminPurge(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RESET"))) {
-			adminReset(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_STATS"))) {
+		if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_STATS") : "stats")) {
 			adminStats(cs, args);
-		} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_REMOVE"))) {
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVE") : "give")) {
+			adminGive(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_QUIT") : "quit")) {
+			adminQuit(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTS") : "points")) {
+			adminPoints(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints")) {
+			adminTakePoints(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints")) {
+			adminGivePoints(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall")) {
+			adminPointsAll(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_FINISH") : "finish")) {
+			adminFinish(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage")) {
+			adminNextStage(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage")) {
+			adminSetStage(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_PURGE") : "purge")) {
+			adminPurge(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset")) {
+			adminReset(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove")) {
 			adminRemove(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI") : "togglegui")) {
+			adminToggieGUI(cs, args);
+		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload")) {
+			adminReload(cs);
 		} else {
 			cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownAdminCommand"));
 		}
@@ -944,39 +988,42 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 				@Override
 				public void run() {
-					File questerFolder = new File(Quests.this.getDataFolder(), "data");
+					File questerFolder = new File(getDataFolder(), "data");
 					if (questerFolder.exists() && questerFolder.isDirectory()) {
 						FileConfiguration data = new YamlConfiguration();
+						File[] files = questerFolder.listFiles();
 						int failCount = 0;
 						boolean suppressed = false;
-						for (File f : questerFolder.listFiles()) {
-							try {
-								data.load(f);
-								data.set("quest-points", amount);
-								data.save(f);
-							} catch (IOException e) {
-								if (failCount < 10) {
-									String msg = Lang.get("errorReading");
-									msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
-									cs.sendMessage(ChatColor.RED + msg);
-									failCount++;
-								} else if (suppressed == false) {
-									String msg = Lang.get("errorReadingSuppress");
-									msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
-									cs.sendMessage(ChatColor.RED + msg);
-									suppressed = true;
-								}
-							} catch (InvalidConfigurationException e) {
-								if (failCount < 10) {
-									String msg = Lang.get("errorReading");
-									msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
-									cs.sendMessage(ChatColor.RED + msg);
-									failCount++;
-								} else if (suppressed == false) {
-									String msg = Lang.get("errorReadingSuppress");
-									msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
-									cs.sendMessage(ChatColor.RED + msg);
-									suppressed = true;
+						if (files != null) {
+							for (File f : files) {
+								try {
+									data.load(f);
+									data.set("quest-points", amount);
+									data.save(f);
+								} catch (IOException e) {
+									if (failCount < 10) {
+										String msg = Lang.get("errorReading");
+										msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+										cs.sendMessage(ChatColor.RED + msg);
+										failCount++;
+									} else if (suppressed == false) {
+										String msg = Lang.get("errorReadingSuppress");
+										msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+										cs.sendMessage(ChatColor.RED + msg);
+										suppressed = true;
+									}
+								} catch (InvalidConfigurationException e) {
+									if (failCount < 10) {
+										String msg = Lang.get("errorReading");
+										msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+										cs.sendMessage(ChatColor.RED + msg);
+										failCount++;
+									} else if (suppressed == false) {
+										String msg = Lang.get("errorReadingSuppress");
+										msg = msg.replaceAll("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+										cs.sendMessage(ChatColor.RED + msg);
+										suppressed = true;
+									}
 								}
 							}
 						}
@@ -1378,17 +1425,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			File folder = new File(this.getDataFolder(), "data");
 			File[] playerFiles = folder.listFiles();
 			Map<String, Integer> questPoints = new HashMap<String, Integer>();
-			for (File f : playerFiles) {
-				FileConfiguration data = new YamlConfiguration();
-				try {
-					data.load(f);
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (InvalidConfigurationException e) {
-					e.printStackTrace();
+			if (playerFiles != null) {
+				for (File f : playerFiles) {
+					FileConfiguration data = new YamlConfiguration();
+					try {
+						data.load(f);
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InvalidConfigurationException e) {
+						e.printStackTrace();
+					}
+					String name = f.getName().substring(0, (f.getName().indexOf(".")));
+					questPoints.put(name, data.getInt("quest-points"));
 				}
-				String name = f.getName().substring(0, (f.getName().indexOf(".")));
-				questPoints.put(name, data.getInt("quest-points"));
 			}
 			LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) Quests.sort(questPoints);
 			int numPrinted = 0;
@@ -1884,66 +1933,96 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		cs.sendMessage("");
 		cs.sendMessage(ChatColor.DARK_RED + "/questadmin" + ChatColor.RED + " " + Lang.get("COMMAND_QUESTADMIN_HELP"));
 		if (cs.hasPermission("quests.admin.*")) {
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_STATS") : "stats"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVE") : "give"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_QUIT") : "quit"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTS") : "points"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_FINISH") : "finish"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_PURGE") : "purge"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI") : "togglegui"));
+			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP")
+					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload"));
 		} else {
 			if (cs.hasPermission("quests.admin.stats")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_STATS") : "stats"));
 			}
 			if (cs.hasPermission("quests.admin.give")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVE") : "give"));
 			}
 			if (cs.hasPermission("quests.admin.quit")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_QUIT") : "quit"));
 			}
 			if (cs.hasPermission("quests.admin.points")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTS") : "points"));
 			}
 			if (cs.hasPermission("quests.admin.takepoints")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints"));
 			}
 			if (cs.hasPermission("quests.admin.givepoints")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints"));
 			}
 			if (cs.hasPermission("quests.admin.pointsall")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall"));
 			}
 			if (cs.hasPermission("quests.admin.finish")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_FINISH") : "finish"));
 			}
 			if (cs.hasPermission("quests.admin.nextstage")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage"));
 			}
 			if (cs.hasPermission("quests.admin.setstage")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage"));
 			}
 			if (cs.hasPermission("quests.admin.purge")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_PURGE") : "purge"));
 			}
 			if (cs.hasPermission("quests.admin.reset")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset"));
 			}
 			if (cs.hasPermission("quests.admin.remove")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove"));
 			}
-			if (citizens != null && cs.hasPermission("quests.admin.togglegui")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP"));
+			if (cs.hasPermission("quests.admin.togglegui")) {
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI") : "togglegui"));
 			}
 			if (cs.hasPermission("quests.admin.reload")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP"));
+				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP")
+						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload"));
 			}
 		}
 	}
@@ -2067,7 +2146,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public void loadQuests() {
 		boolean failedToLoad;
-		totalQuestPoints = 0;
 		needsSaving = false;
 		FileConfiguration config = null;
 		File file = new File(this.getDataFolder(), "quests.yml");
@@ -2125,7 +2203,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								quest.guiDisplay = stack;
 							}
 						} catch (Exception e) {
-							instance.getLogger().warning(item + " in items: GUI Display in Quest " + quest.name + "is not properly formatted!");
+							this.getLogger().warning(item + " in items: GUI Display in Quest " + quest.name + "is not properly formatted!");
 						}
 					}
 					if (config.contains("quests." + questName + ".redo-delay")) {
@@ -2232,7 +2310,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (config.contains("quests." + questName + ".rewards.quest-points")) {
 			if (config.getInt("quests." + questName + ".rewards.quest-points", -999) != -999) {
 				quest.questPoints = config.getInt("quests." + questName + ".rewards.quest-points");
-				totalQuestPoints += quest.questPoints;
 			} else {
 				skipQuestProcess("quest-points: Reward in Quest " + quest.name + " is not a number!");
 			}
@@ -4053,77 +4130,80 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					return dir.getPath().equals(dataFolder.getPath()) && name.endsWith(".yml");
 				}
 			});
-			numQuesters = files.length;
-			if (numQuesters > 0) {
-				final ArrayList<String> names = new ArrayList<String>();
-				getLogger().info("Gathering Quester information...");
-				for (int i = 0; i < numQuesters; i++) {
-					final File file = files[i];
-					final File old = new File(oldDataFolder, file.getName());
-					final String name = file.getName().substring(0, file.getName().length() - 4);
-					final FileConfiguration config = new YamlConfiguration();
-					try {
-						config.load(file);
-						config.save(old);
-						config.set("lastKnownName", name);
-						config.save(file);
-					} catch (Exception e) {
-						failed++;
-					}
-					names.add(name.toLowerCase());
-					succeeded++;
-				}
-				getLogger().info("Completed: " + succeeded + " Success(es). " + failed + " Failure(s). " + numQuesters + " Total.");
-				getLogger().info("Preparing to convert data.");
-				Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-
-					@Override
-					public void run() {
-						getLogger().info("Done. Converting data...");
-						int converted = 0;
-						int failed = 0;
-						final UUIDFetcher fetcher = new UUIDFetcher(names);
-						final Map<String, UUID> idMap;
+			
+			if (files != null) {
+				numQuesters = files.length;
+				if (numQuesters > 0) {
+					final ArrayList<String> names = new ArrayList<String>();
+					getLogger().info("Gathering Quester information...");
+					for (int i = 0; i < numQuesters; i++) {
+						final File file = files[i];
+						final File old = new File(oldDataFolder, file.getName());
+						final String name = file.getName().substring(0, file.getName().length() - 4);
+						final FileConfiguration config = new YamlConfiguration();
 						try {
-							idMap = fetcher.call();
-						} catch (Exception ex) {
-							getLogger().severe("Error retrieving data from Mojang account database. Error log:");
-							ex.printStackTrace();
-							return;
+							config.load(file);
+							config.save(old);
+							config.set("lastKnownName", name);
+							config.save(file);
+						} catch (Exception e) {
+							failed++;
 						}
-						for (Entry<String, UUID> entry : idMap.entrySet()) {
-							try {
-								final File found = new File(dataFolder, entry.getKey() + ".yml");
-								final File copy = new File(dataFolder, entry.getValue() + ".yml");
-								final FileConfiguration config = new YamlConfiguration();
-								final FileConfiguration newConfig = new YamlConfiguration();
-								config.load(found);
-								if (config.contains("currentQuest")) {
-									LinkedList<String> currentQuests = new LinkedList<String>();
-									currentQuests.add(config.getString("currentQuest"));
-									LinkedList<Integer> currentStages = new LinkedList<Integer>();
-									currentStages.add(config.getInt("currentStage"));
-									newConfig.set("currentQuests", currentQuests);
-									newConfig.set("currentStages", currentStages);
-									newConfig.set("hasJournal", false);
-									newConfig.set("lastKnownName", entry.getKey());
-									ConfigurationSection dataSec = Quester.getLegacyQuestData(config, config.getString("currentQuest"));
-									newConfig.set("questData", dataSec);
-								}
-								newConfig.save(copy);
-								found.delete();
-								converted++;
-							} catch (Exception ex) {
-								failed++;
-							}
-						}
-						getLogger().info("Conversion completed: " + converted + " Converted. " + failed + " Failed.");
-						getLogger().info("Old data files stored in " 
-								+ File.separator + "Quests" + File.separator + "data" + File.separator + "old");
+						names.add(name.toLowerCase());
+						succeeded++;
 					}
-				});
-			} else {
-				getLogger().info("No Questers to convert!");
+					getLogger().info("Completed: " + succeeded + " Success(es). " + failed + " Failure(s). " + numQuesters + " Total.");
+					getLogger().info("Preparing to convert data.");
+					Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+
+						@Override
+						public void run() {
+							getLogger().info("Done. Converting data...");
+							int converted = 0;
+							int failed = 0;
+							final UUIDFetcher fetcher = new UUIDFetcher(names);
+							final Map<String, UUID> idMap;
+							try {
+								idMap = fetcher.call();
+							} catch (Exception ex) {
+								getLogger().severe("Error retrieving data from Mojang account database. Error log:");
+								ex.printStackTrace();
+								return;
+							}
+							for (Entry<String, UUID> entry : idMap.entrySet()) {
+								try {
+									final File found = new File(dataFolder, entry.getKey() + ".yml");
+									final File copy = new File(dataFolder, entry.getValue() + ".yml");
+									final FileConfiguration config = new YamlConfiguration();
+									final FileConfiguration newConfig = new YamlConfiguration();
+									config.load(found);
+									if (config.contains("currentQuest")) {
+										LinkedList<String> currentQuests = new LinkedList<String>();
+										currentQuests.add(config.getString("currentQuest"));
+										LinkedList<Integer> currentStages = new LinkedList<Integer>();
+										currentStages.add(config.getInt("currentStage"));
+										newConfig.set("currentQuests", currentQuests);
+										newConfig.set("currentStages", currentStages);
+										newConfig.set("hasJournal", false);
+										newConfig.set("lastKnownName", entry.getKey());
+										ConfigurationSection dataSec = Quester.getLegacyQuestData(config, config.getString("currentQuest"));
+										newConfig.set("questData", dataSec);
+									}
+									newConfig.save(copy);
+									found.delete();
+									converted++;
+								} catch (Exception ex) {
+									failed++;
+								}
+							}
+							getLogger().info("Conversion completed: " + converted + " Converted. " + failed + " Failed.");
+							getLogger().info("Old data files stored in " 
+									+ File.separator + "Quests" + File.separator + "data" + File.separator + "old");
+						}
+					});
+				} else {
+					getLogger().info("No Questers to convert!");
+				}
 			}
 		} else {
 			getLogger().info("Data folder does not exist!");

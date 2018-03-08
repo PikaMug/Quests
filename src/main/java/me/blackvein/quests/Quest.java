@@ -98,7 +98,7 @@ public class Quest {
 		if (stageCompleteMessage != null) {
 			q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
 		}
-		if (Quests.useCompass) {
+		if (plugin.useCompass) {
 			q.resetCompass();
 			q.findCompassTarget();
 		}
@@ -165,7 +165,7 @@ public class Quest {
 	}
 
 	public boolean updateCompass(Quester quester, Stage nextStage) {
-		if (!Quests.useCompass)
+		if (!plugin.useCompass)
 			return false;
 		Location targetLocation = null;
 		if (nextStage == null) {

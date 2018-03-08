@@ -16,6 +16,7 @@ npc-effects:
   redo-quest: angry_villager
 show-requirements: true
 show-titles: true
+translate-subcommands: false
 use-compass: true
 quester-blacklist:
 - UUID

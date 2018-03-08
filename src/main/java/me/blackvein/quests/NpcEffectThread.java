@@ -46,13 +46,13 @@ public class NpcEffectThread implements Runnable {
 			List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
 			if (nearby.isEmpty() == false) {
 				for (Entity e : nearby) {
-					if (plugin.citizens != null) {
-						if (plugin.citizens.getNPCRegistry().isNPC(e)) {
-							NPC npc = plugin.citizens.getNPCRegistry().getNPC(e);
+					if (Quests.citizens != null) {
+						if (Quests.citizens.getNPCRegistry().isNPC(e)) {
+							NPC npc = Quests.citizens.getNPCRegistry().getNPC(e);
 							if (plugin.hasQuest(npc, quester)) {
-								showEffect(player, npc, Quests.effect);
+								showEffect(player, npc, plugin.effect);
 							} else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
-								showEffect(player, npc, Quests.redoEffect);
+								showEffect(player, npc, plugin.redoEffect);
 							}
 						}
 					}
@@ -62,7 +62,7 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	// effectType is either effectType or Quests.repeatEffect
-	private static void showEffect(Player player, NPC npc, String effectType) {
+	private void showEffect(Player player, NPC npc, String effectType) {
 		if (Bukkit.getBukkitVersion().contains("1.7.9")) {
 			showEffect_R3(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.7.10")) {
@@ -86,7 +86,7 @@ public class NpcEffectThread implements Runnable {
 		}
 	}
 
-	private static void showEffect_1_12_R1(Player player, NPC npc, String effectType) {
+	private void showEffect_1_12_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -173,12 +173,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_12_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getInstance().getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_11_R1(Player player, NPC npc, String effectType) {
+	private void showEffect_1_11_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -265,12 +265,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_11_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_10_R1(Player player, NPC npc, String effectType) {
+	private void showEffect_1_10_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -357,12 +357,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_10_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_9_R2(Player player, NPC npc, String effectType) {
+	private void showEffect_1_9_R2(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -449,12 +449,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_9_R2.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_9_R1(Player player, NPC npc, String effectType) {
+	private void showEffect_1_9_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -541,12 +541,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_9_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_8_R3(Player player, NPC npc, String effectType) {
+	private void showEffect_1_8_R3(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -633,12 +633,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_8_R3.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_8_R2(Player player, NPC npc, String effectType) {
+	private void showEffect_1_8_R2(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -725,12 +725,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_8_R2.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_1_8_R1(Player player, NPC npc, String effectType) {
+	private void showEffect_1_8_R1(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -817,12 +817,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_8_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_R4(Player player, NPC npc, String effectType) {
+	private void showEffect_R4(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -909,12 +909,12 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_7_R4.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
 
-	private static void showEffect_R3(Player player, NPC npc, String effectType) {
+	private void showEffect_R3(Player player, NPC npc, String effectType) {
 		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
@@ -1002,7 +1002,7 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_7_R3.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3);
 			} catch (Exception e) {
-				Quests.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
