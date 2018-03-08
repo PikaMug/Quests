@@ -1,6 +1,6 @@
 ---
-COMMAND_LIST: "list"
-COMMAND_LIST_HELP: "list [page] - List available Quests"
+COMMAND_LIST: "список"
+COMMAND_LIST_HELP: "[page] список - список доступних квести"
 COMMAND_TAKE: "take"
 COMMAND_TAKE_HELP: "take [quest name] - Accept a Quest"
 COMMAND_TAKE_USAGE: 'Usage: /quests take [quest]'
