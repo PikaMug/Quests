@@ -223,7 +223,7 @@ stageEditorEventsPrompt: "Введите название события, <clear
 stageEditorChatEventsPrompt: "Введите название события для добавления, <clear>, <cancel>"
 stageEditorChatEventsTriggerPrompt: "%yellow%Введите чат-триггер для%aqua% <event>%yellow% <cancel>"
 stageEditorCommandEventsPrompt: "Введите название события для добавления, <clear>, <cancel>"
-stageEditorCommandEventsTriggerPrompt: "%yellow%Enter a command trigger for%aqua% <event>%yellow% <cancel>"
+stageEditorCommandEventsTriggerPrompt: "%yellow%Введите чат-триггер для%aqua% <event>%yellow% <cancel>"
 stageEditorDelayPrompt: "Enter time (in seconds), <clear>, <cancel>"
 stageEditorDelayMessagePrompt: "Enter delay message, <clear>, <cancel>"
 stageEditorScriptPrompt: "Enter script name, <clear>, <cancel>"
