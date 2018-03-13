@@ -52,7 +52,7 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [spelare] [quest] - Ta bort ett slutf
 COMMAND_QUESTADMIN_TOGGLEGUI: "togglegui"
 COMMAND_QUESTADMIN_TOGGLEGUI_HELP: "<command> [npc id] - Stäng av/sätt på GUI för en NPC"
 COMMAND_QUESTADMIN_RELOAD: "reload"
-COMMAND_QUESTADMIN_RELOAD_HELP: "reload - Ladda om alla Uppdrag"
+COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Ladda om alla Uppdrag"
 questEditorHeader: "Skapa Uppdrag"
 questEditorCreate: "Skapa nytt Uppdrag"
 questEditorEdit: "Redigera ett Uppdrag"
