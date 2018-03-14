@@ -249,7 +249,11 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GRAY + "    - " + ChatColor.BLUE + colors.get(i) + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
 				}
 			}
-			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "16 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorEvents") + "\n";
+			if (!hasObjective) {
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "16 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("stageEditorEvents") + ChatColor.GRAY + " (" + Lang.get("stageEditorOptional") + ")\n";
+			} else {
+				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "16 " + ChatColor.RESET + ChatColor.YELLOW + "- " + Lang.get("stageEditorEvents") + "\n";
+			}
 			if (context.getSessionData(pref + CK.S_DELAY) == null) {
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "17 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("delay") + ChatColor.GRAY + "  (" + Lang.get("noneSet") + ")\n";
 			} else {
@@ -383,7 +387,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		} else if (input.equalsIgnoreCase("15")) {
 			return new ShearListPrompt();
 		} else if (input.equalsIgnoreCase("16")) {
-			return new EventListPrompt();
+			if (hasObjective) {
+				return new EventListPrompt();
+			} else {
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+				return new CreateStagePrompt(stageNum, questFactory, citizens);
+			}
 		} else if (input.equalsIgnoreCase("17")) {
 			return new DelayPrompt();
 		} else if (input.equalsIgnoreCase("18")) {
