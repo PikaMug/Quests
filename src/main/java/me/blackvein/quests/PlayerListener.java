@@ -178,8 +178,11 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerDropItem(PlayerDropItemEvent evt) {
-		if (ItemUtil.isJournal(evt.getItemDrop().getItemStack()))
-			evt.setCancelled(true);
+		if (ItemUtil.isJournal(evt.getItemDrop().getItemStack())) {
+			if (!evt.getPlayer().hasPermission("quests.admin.drop")) {
+				evt.setCancelled(true);
+			}
+		}
 	}
 
 	@EventHandler

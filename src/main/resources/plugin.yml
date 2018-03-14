@@ -83,6 +83,9 @@ permissions:
     quests.admin.reload:
         description: Reload all Quests
         default: op
+    quests.admin.drop:
+        description: Drop Quests Journal
+        default: op
     quests.editor.editor:
         description: Open Quests Editor
         default: op
