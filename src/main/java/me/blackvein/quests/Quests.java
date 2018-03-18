@@ -1339,23 +1339,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				questsHelp(cs);
 				return true;
 			} else {
-				if (args[0].equalsIgnoreCase(Lang.get("COMMAND_LIST"))) {
+				if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_LIST") : "list")) {
 					questsList(cs, args);
-				} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TAKE"))) {
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_TAKE") : "take")) {
 					questsTake((Player) cs, args);
-				} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_QUIT"))) {
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUIT") : "quit")) {
 					questsQuit((Player) cs, args);
-				} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_STATS") : "stats")) {
 					questsStats(cs, null);
-				} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_JOURNAL"))) {
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_JOURNAL") : "journal")) {
 					questsJournal((Player) cs);
-				} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_TOP"))) {
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_TOP") : "top")) {
 					questsTop(cs, args);
-				} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EDITOR"))) {
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EDITOR") : "editor")) {
 					questsEditor(cs);
-				} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_EVENTS_EDITOR"))) {
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EVENTS_EDITOR") : "events")) {
 					questsEvents(cs);
-				} else if (args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_INFO") : "info")) {
 					questsInfo(cs);
 				} else {
 					cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownCommand"));
