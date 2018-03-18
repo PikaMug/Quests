@@ -112,7 +112,7 @@ public class PlayerListener implements Listener {
 								String msg = Lang.get(player, "questMaxAllowed");
 								msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 								player.sendMessage(ChatColor.YELLOW + msg);
-							} else if (quester.completedQuests.contains(quest.name) && quest.redoDelay < 0) {
+							} else if (quester.completedQuests.contains(quest.name) && quest.cooldownPlanner < 0) {
 								String completed = Lang.get(player, "questAlreadyCompleted");
 								completed = completed.replaceAll("<quest>", ChatColor.AQUA + quest.name + ChatColor.YELLOW);
 								player.sendMessage(ChatColor.YELLOW + completed);
@@ -250,13 +250,13 @@ public class PlayerListener implements Listener {
 										player.sendMessage(ChatColor.YELLOW + msg);
 									} else {
 										if (quester.completedQuests.contains(q.name)) {
-											if (q.redoDelay > -1 && (quester.getDifference(q)) > 0) {
+											if (q.cooldownPlanner > -1 && (quester.getDifference(q)) > 0) {
 												String early = Lang.get(player, "questTooEarly");
 												early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
 												early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
 												player.sendMessage(ChatColor.YELLOW + early);
 												return;
-											} else if (quester.completedQuests.contains(q.name) && q.redoDelay < 0) {
+											} else if (quester.completedQuests.contains(q.name) && q.cooldownPlanner < 0) {
 												String completed = Lang.get(player, "questAlreadyCompleted");
 												completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
 												player.sendMessage(ChatColor.YELLOW + completed);
@@ -655,7 +655,7 @@ public class PlayerListener implements Listener {
 			for (String s : quester.completedQuests) {
 				Quest q = plugin.getQuest(s);
 				if (q != null) {
-					if (quester.completedTimes.containsKey(q.name) == false && q.redoDelay > -1) {
+					if (quester.completedTimes.containsKey(q.name) == false && q.cooldownPlanner > -1) {
 						quester.completedTimes.put(q.name, System.currentTimeMillis());
 					}
 				}

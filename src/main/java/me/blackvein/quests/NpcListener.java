@@ -110,11 +110,11 @@ public class NpcListener implements Listener {
 							if (quester.currentQuests.containsKey(q))
 								continue;
 							if (q.npcStart != null && q.npcStart.getId() == evt.getNPC().getId()) {
-								if (plugin.ignoreLockedQuests && (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1)) {
+								if (plugin.ignoreLockedQuests && (quester.completedQuests.contains(q.name) == false || q.cooldownPlanner > -1)) {
 									if (q.testRequirements(quester)) {
 										npcQuests.add(q);
 									}
-								} else if (quester.completedQuests.contains(q.name) == false || q.redoDelay > -1) {
+								} else if (quester.completedQuests.contains(q.name) == false || q.cooldownPlanner > -1) {
 									npcQuests.add(q);
 								}
 							}
@@ -149,7 +149,7 @@ public class NpcListener implements Listener {
 									early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
 									early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
 									player.sendMessage(ChatColor.YELLOW + early);
-								} else if (q.redoDelay < 0) {
+								} else if (q.cooldownPlanner < 0) {
 									String completed = Lang.get(player, "questAlreadyCompleted");
 									completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
 									player.sendMessage(ChatColor.YELLOW + completed);

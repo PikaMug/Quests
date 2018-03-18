@@ -1565,7 +1565,7 @@ public class Quester {
 		} else {
 			lastTime = completedTimes.get(q.name);
 		}
-		long comparator = q.redoDelay;
+		long comparator = q.cooldownPlanner;
 		long difference = (comparator - (currentTime - lastTime));
 		return difference;
 	}

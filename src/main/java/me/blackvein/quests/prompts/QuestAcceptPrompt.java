@@ -128,7 +128,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 							early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
 							early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + early);
-						} else if (q.redoDelay < 0) {
+						} else if (q.cooldownPlanner < 0) {
 							String completed = Lang.get("questAlreadyCompleted");
 							completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + completed);

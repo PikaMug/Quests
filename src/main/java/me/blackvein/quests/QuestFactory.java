@@ -50,6 +50,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
+import me.blackvein.quests.prompts.PlannerPrompt;
 import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
@@ -154,104 +155,49 @@ public class QuestFactory implements ConversationAbandonedListener {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorFinishMessage") + " (\"" + context.getSessionData(CK.Q_FINISH_MESSAGE) + "\")\n";
 			}
-			if (context.getSessionData(CK.Q_REDO_DELAY) == null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorRedoDelay") + " (" + Lang.get("noneSet") + ")\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorRedoDelay") + " (" + Quests.getTime((Long) context.getSessionData(CK.Q_REDO_DELAY)) + ")\n";
-			}
 			if (context.getSessionData(CK.Q_START_NPC) == null && Quests.citizens != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("noneSet") + ")\n";
 			} else if (Quests.citizens != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData(CK.Q_START_NPC)).getName() + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData(CK.Q_START_NPC)).getName() + ")\n";
+			} else {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("questCitNotInstalled") + ")\n";
 			}
 			if (context.getSessionData(CK.Q_START_BLOCK) == null) {
-				if (Quests.citizens != null) {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + Lang.get("noneSet") + ")\n";
-				} else {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + Lang.get("noneSet") + ")\n";
-				}
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + Lang.get("noneSet") + ")\n";
 			} else {
-				if (Quests.citizens != null) {
-					Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
-				} else {
-					Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
-				}
+				Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
 			}
 			if (Quests.worldGuard != null) {
 				if (context.getSessionData(CK.Q_REGION) == null) {
-					if (Quests.citizens != null) {
-						text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("noneSet") + ")\n";
-					} else {
-						text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("noneSet") + ")\n";
-					}
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					if (Quests.citizens != null) {
-						String s = (String) context.getSessionData(CK.Q_REGION);
-						text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + ChatColor.GREEN + s + ChatColor.YELLOW + ")\n";
-					} else {
-						String s = (String) context.getSessionData(CK.Q_REGION);
-						text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + ChatColor.GREEN + s + ChatColor.YELLOW + ")\n";
-					}
+					String s = (String) context.getSessionData(CK.Q_REGION);
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + ChatColor.GREEN + s + ChatColor.YELLOW + ")\n";
 				}
 			} else {
-				if (Quests.citizens != null) {
-					text += ChatColor.GRAY + "7 - " + Lang.get("questWGSetRegion") + " (" + Lang.get("questWGNotInstalled") + ")\n";
-				} else {
-					text += ChatColor.GRAY + "6 - " + Lang.get("questWGSetRegion") + " (" + Lang.get("questWGNotInstalled") + ")\n";
-				}
+				text += ChatColor.GRAY + "6 - " + Lang.get("questWGSetRegion") + " (" + Lang.get("questWGNotInstalled") + ")\n";
 			}
 			if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
-				if (Quests.citizens != null) {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + Lang.get("noneSet") + ")\n";
-				} else {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + Lang.get("noneSet") + ")\n";
-				}
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + Lang.get("noneSet") + ")\n";
 			} else {
-				if (Quests.citizens != null) {
-					String s = (String) context.getSessionData(CK.Q_INITIAL_EVENT);
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + s + ")\n";
-				} else {
-					String s = (String) context.getSessionData(CK.Q_INITIAL_EVENT);
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + s + ")\n";
-				}
+				String s = (String) context.getSessionData(CK.Q_INITIAL_EVENT);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + s + ")\n";
 			}
-			if (Quests.citizens != null) {
-				if (context.getSessionData(CK.Q_GUIDISPLAY) == null) {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("noneSet") + ")\n";
-				} else {
-					ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + ItemUtil.getDisplayString(stack) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
-				}
+			if (context.getSessionData(CK.Q_GUIDISPLAY) == null && Quests.citizens != null) {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("noneSet") + ")\n";
+			} else if (Quests.citizens != null ){
+				ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + ItemUtil.getDisplayString(stack) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 			} else {
 				text += ChatColor.GRAY + "8 - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("questCitNotInstalled") + ")\n";
 			}
-			if (Quests.citizens != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.DARK_AQUA + " - " + Lang.get("questEditorReqs") + "\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.DARK_AQUA + " - " + Lang.get("questEditorReqs") + "\n";
-			}
-			if (Quests.citizens != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + " - " + Lang.get("questEditorStages") + "\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + " - " + Lang.get("questEditorStages") + "\n";
-			}
-			if (Quests.citizens != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("questEditorRews") + "\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("questEditorRews") + "\n";
-			}
-			if (Quests.citizens != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("save") + "\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("save") + "\n";
-			}
-			if (Quests.citizens != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("exit") + "\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("exit") + "\n";
-			}
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.DARK_AQUA + " - " + Lang.get("questEditorReqs") + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.DARK_PURPLE + " - " + Lang.get("questEditorPlned") + " **WIP**" + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + " - " + Lang.get("questEditorStages") + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("questEditorRews") + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("save") + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("exit") + "\n";
 			return text;
 		}
 
@@ -264,73 +210,40 @@ public class QuestFactory implements ConversationAbandonedListener {
 			} else if (input.equalsIgnoreCase("3")) {
 				return new FinishMessagePrompt();
 			} else if (input.equalsIgnoreCase("4")) {
-				return new RedoDelayPrompt();
-			} else if (input.equalsIgnoreCase("5")) {
 				if (Quests.citizens != null) {
 					return new SetNpcStartPrompt();
 				} else {
-					selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
-					return new BlockStartPrompt();
+					return new CreateMenuPrompt();
 				}
+			} else if (input.equalsIgnoreCase("5")) {
+				selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
+				return new BlockStartPrompt();
 			} else if (input.equalsIgnoreCase("6")) {
-				if (Quests.citizens != null) {
-					selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
-					return new BlockStartPrompt();
-				} else if (Quests.worldGuard != null) {
+				if (Quests.worldGuard != null) {
 					return new RegionPrompt();
 				} else {
 					return new CreateMenuPrompt();
 				}
 			} else if (input.equalsIgnoreCase("7")) {
-				if (Quests.citizens != null && Quests.worldGuard != null) {
-					return new RegionPrompt();
-				} else if (Quests.citizens != null) {
-					return new CreateMenuPrompt();
-				} else {
-					return new InitialEventPrompt();
-				}
+				return new InitialEventPrompt();
 			} else if (input.equalsIgnoreCase("8")) {
 				if (Quests.citizens != null) {
-					return new InitialEventPrompt();
-				} else {
 					return new GUIDisplayPrompt();
-				}
-			} else if (input.equalsIgnoreCase("9")) {
-				if (Quests.citizens != null) {
-					return new GUIDisplayPrompt();
-				} else {
-					return new RequirementsPrompt(plugin, QuestFactory.this);
-				}
-			} else if (input.equalsIgnoreCase("10")) {
-				if (Quests.citizens != null) {
-					return new RequirementsPrompt(plugin, QuestFactory.this);
-				} else {
-					return new StagesPrompt(QuestFactory.this);
-				}
-			} else if (input.equalsIgnoreCase("11")) {
-				if (Quests.citizens != null) {
-					return new StagesPrompt(QuestFactory.this);
-				} else {
-					return new RewardsPrompt(plugin, QuestFactory.this);
-				}
-			} else if (input.equalsIgnoreCase("12")) {
-				if (Quests.citizens != null) {
-					return new RewardsPrompt(plugin, QuestFactory.this);
-				} else {
-					return new SavePrompt();
-				}
-			} else if (input.equalsIgnoreCase("13")) {
-				if (Quests.citizens != null) {
-					return new SavePrompt();
-				} else {
-					return new ExitPrompt();
-				}
-			} else if (input.equalsIgnoreCase("14")) {
-				if (Quests.citizens != null) {
-					return new ExitPrompt();
 				} else {
 					return new CreateMenuPrompt();
 				}
+			} else if (input.equalsIgnoreCase("8")) {
+				return new RequirementsPrompt(plugin, QuestFactory.this);
+			} else if (input.equalsIgnoreCase("10")) {
+				return new PlannerPrompt(plugin, QuestFactory.this);
+			} else if (input.equalsIgnoreCase("11")) {
+				return new StagesPrompt(QuestFactory.this);
+			} else if (input.equalsIgnoreCase("12")) {
+				return new RewardsPrompt(plugin, QuestFactory.this);
+			} else if (input.equalsIgnoreCase("13")) {
+				return new SavePrompt();
+			} else if (input.equalsIgnoreCase("14")) {
+				return new ExitPrompt();
 			}
 			return null;
 		}
@@ -716,40 +629,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 	}
 
-	private class RedoDelayPrompt extends StringPrompt {
-
-		@Override
-		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("questEditorEnterRedoDelay");
-		}
-
-		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-				return new CreateMenuPrompt();
-			}
-			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-				context.setSessionData(CK.Q_REDO_DELAY, null);
-			}
-			long delay;
-			try {
-				int i = Integer.parseInt(input);
-				delay = i * 1000;
-			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " " + Lang.get("stageEditorInvalidNumber"));
-				return new RedoDelayPrompt();
-			}
-			if (delay < -1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
-			} else if (delay == 0) {
-				context.setSessionData(CK.Q_REDO_DELAY, null);
-			} else if (delay != -1) {
-				context.setSessionData(CK.Q_REDO_DELAY, delay);
-			}
-			return new CreateMenuPrompt();
-		}
-	}
-
 	private class SavePrompt extends StringPrompt {
 
 		@Override
@@ -851,7 +730,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 		String name = (String) cc.getSessionData(CK.Q_NAME);
 		String desc = (String) cc.getSessionData(CK.Q_ASK_MESSAGE);
 		String finish = (String) cc.getSessionData(CK.Q_FINISH_MESSAGE);
-		Long redo = null;
 		Integer npcStart = null;
 		String blockStart = null;
 		String initialEvent = null;
@@ -886,9 +764,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		LinkedList<String> phatLootRews = null;
 		LinkedList<String> customRews = null;
 		LinkedList<Map<String, Object>> customRewsData = null;
-		if (cc.getSessionData(CK.Q_REDO_DELAY) != null) {
-			redo = (Long) cc.getSessionData(CK.Q_REDO_DELAY);
-		}
+		Long startDatePln = null;
+		Long endDatePln = null;
+		Long repeatCyclePln = null;
+		Long cooldownPln = null;
 		if (cc.getSessionData(CK.Q_START_NPC) != null) {
 			npcStart = (Integer) cc.getSessionData(CK.Q_START_NPC);
 		}
@@ -977,12 +856,21 @@ public class QuestFactory implements ConversationAbandonedListener {
 			customRews = (LinkedList<String>) cc.getSessionData(CK.REW_CUSTOM);
 			customRewsData = (LinkedList<Map<String, Object>>) cc.getSessionData(CK.REW_CUSTOM_DATA);
 		}
+		if (cc.getSessionData(CK.PLN_START_DATE) != null) {
+			startDatePln = (Long) cc.getSessionData(CK.PLN_START_DATE);
+		}
+		if (cc.getSessionData(CK.PLN_END_DATE) != null) {
+			endDatePln = (Long) cc.getSessionData(CK.PLN_END_DATE);
+		}
+		if (cc.getSessionData(CK.PLN_REPEAT_CYCLE) != null) {
+			repeatCyclePln = (Long) cc.getSessionData(CK.PLN_REPEAT_CYCLE);
+		}
+		if (cc.getSessionData(CK.PLN_COOLDOWN) != null) {
+			cooldownPln = (Long) cc.getSessionData(CK.PLN_COOLDOWN);
+		}
 		cs.set("name", name);
 		cs.set("npc-giver-id", npcStart);
 		cs.set("block-start", blockStart);
-		if (redo != null) {
-			cs.set("redo-delay", redo.intValue() / 1000);
-		}
 		cs.set("ask-message", desc);
 		cs.set("finish-message", finish);
 		cs.set("event", initialEvent);
@@ -1384,6 +1272,23 @@ public class QuestFactory implements ConversationAbandonedListener {
 		} else {
 			cs.set("rewards", null);
 		}
+		if (startDatePln != null || endDatePln != null || repeatCyclePln != null || cooldownPln != null) {
+			ConfigurationSection sch = cs.createSection("planner");
+			if (startDatePln != null) {
+				sch.set("start", startDatePln.intValue() / 1000);
+			}
+			if (endDatePln != null) {
+				sch.set("end", endDatePln.intValue() / 1000);
+			}
+			if (repeatCyclePln != null) {
+				sch.set("repeat", repeatCyclePln.intValue() / 1000);
+			}
+			if (cooldownPln != null) {
+				sch.set("cooldown", cooldownPln.intValue() / 1000);
+			}
+		} else {
+			cs.set("planner", null);
+		}
 	}
 
 	public static void loadQuest(ConversationContext cc, Quest q) {
@@ -1393,9 +1298,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cc.setSessionData(CK.Q_START_NPC, q.npcStart.getId());
 		}
 		cc.setSessionData(CK.Q_START_BLOCK, q.blockStart);
-		if (q.redoDelay != -1) {
-			cc.setSessionData(CK.Q_REDO_DELAY, q.redoDelay);
-		}
 		cc.setSessionData(CK.Q_ASK_MESSAGE, q.description);
 		cc.setSessionData(CK.Q_FINISH_MESSAGE, q.finished);
 		if (q.initialEvent != null) {
@@ -1492,6 +1394,20 @@ public class QuestFactory implements ConversationAbandonedListener {
 		if (q.customRewards.isEmpty() == false) {
 			cc.setSessionData(CK.REW_CUSTOM, new LinkedList<String>(q.customRewards.keySet()));
 			cc.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(q.customRewards.values()));
+		}
+		//
+		//Planner
+		if (q.startPlanner != -1) {
+			cc.setSessionData(CK.PLN_START_DATE, q.startPlanner);
+		}
+		if (q.endPlanner != -1) {
+			cc.setSessionData(CK.PLN_END_DATE, q.endPlanner);
+		}
+		if (q.repeatPlanner != -1) {
+			cc.setSessionData(CK.PLN_REPEAT_CYCLE, q.repeatPlanner);
+		}
+		if (q.cooldownPlanner != -1) {
+			cc.setSessionData(CK.PLN_COOLDOWN, q.cooldownPlanner);
 		}
 		//
 		// Stages

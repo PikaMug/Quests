@@ -99,9 +99,9 @@ public class ItemUtil {
 		for (String arg : args) {
 			if (arg.startsWith("name-")) {
 				try {
-					stack = new ItemStack(Material.matchMaterial(arg.substring(5)));
+					stack = new ItemStack(Material.matchMaterial(arg.substring(5).toUpperCase()));
 				} catch (NullPointerException npe) {
-					Bukkit.getLogger().severe("[Quests] The item name \'" + arg.substring(5) + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
+					Bukkit.getLogger().severe("[Quests] The item name \'" + arg.substring(5).toUpperCase() + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
 					return null;
 				}
 				meta = stack.getItemMeta();

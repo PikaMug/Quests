@@ -46,7 +46,6 @@ public class Quest {
 	public String name;
 	public String description;
 	public String finished;
-	public long redoDelay = -1;
 	public String region = null;
 	public ItemStack guiDisplay = null;
 	public int parties = 0;
@@ -70,7 +69,6 @@ public class Quest {
 	Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
 	Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
 	public String failRequirements = null;
-	//
 	// Rewards
 	int moneyReward = 0;
 	int questPoints = 0;
@@ -83,7 +81,11 @@ public class Quest {
 	List<String> heroesClasses = new LinkedList<String>();
 	List<Double> heroesAmounts = new LinkedList<Double>();
 	List<String> phatLootRewards = new LinkedList<String>();
-	//
+	//Planner
+	public long startPlanner = -1;
+	public long endPlanner = -1;
+	public long repeatPlanner = -1;
+	public long cooldownPlanner = -1;
 
 	public Stage getStage(int index) {
 		try {
@@ -299,7 +301,7 @@ public class Quest {
 			Quests.economy.depositPlayer(q.getOfflinePlayer(), moneyReward);
 			none = null;
 		}
-		if (redoDelay > -1) {
+		if (cooldownPlanner > -1) {
 			q.completedTimes.put(this.name, System.currentTimeMillis());
 			if (q.amountsCompleted.containsKey(this.name)) {
 				q.amountsCompleted.put(this.name, q.amountsCompleted.get(this.name) + 1);
@@ -649,10 +651,19 @@ public class Quest {
 			if (other.questPointsReq != questPointsReq) {
 				return false;
 			}
-			if (other.redoDelay != redoDelay) {
+			if (other.orderedStages.equals(orderedStages) == false) {
 				return false;
 			}
-			if (other.orderedStages.equals(orderedStages) == false) {
+			if (other.startPlanner != startPlanner) {
+				return false;
+			}
+			if (other.endPlanner != endPlanner) {
+				return false;
+			}
+			if (other.repeatPlanner != repeatPlanner) {
+				return false;
+			}
+			if (other.cooldownPlanner != cooldownPlanner) {
 				return false;
 			}
 		} else {
@@ -667,7 +678,10 @@ public class Quest {
 		hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
 		hash = 53 * hash + (this.description != null ? this.description.hashCode() : 0);
 		hash = 53 * hash + (this.finished != null ? this.finished.hashCode() : 0);
-		hash = 53 * hash + (int) (this.redoDelay ^ (this.redoDelay >>> 32));
+		hash = 53 * hash + (int) (this.startPlanner ^ (this.startPlanner >>> 32));
+		hash = 53 * hash + (int) (this.endPlanner ^ (this.endPlanner >>> 32));
+		hash = 53 * hash + (int) (this.repeatPlanner ^ (this.repeatPlanner >>> 32));
+		hash = 53 * hash + (int) (this.cooldownPlanner ^ (this.cooldownPlanner >>> 32));
 		hash = 53 * hash + (this.region != null ? this.region.hashCode() : 0);
 		hash = 53 * hash + (this.guiDisplay != null ? this.guiDisplay.hashCode() : 0);
 		hash = 53 * hash + (this.orderedStages != null ? this.orderedStages.hashCode() : 0);

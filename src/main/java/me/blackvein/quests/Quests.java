@@ -1636,7 +1636,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						} else if (quester.currentQuests.containsKey(q)) {
 							String msg = Lang.get(player, "questAlreadyOn");
 							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (quester.completedQuests.contains(q.name) && q.redoDelay < 0) {
+						} else if (quester.completedQuests.contains(q.name) && q.cooldownPlanner < 0) {
 							String msg = Lang.get(player, "questAlreadyCompleted");
 							msg = msg.replaceAll("<quest>", ChatColor.DARK_PURPLE + q.name + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + msg);
@@ -1783,7 +1783,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				Quester quester = getQuester(player.getUniqueId());
 				cs.sendMessage(ChatColor.GOLD + "- " + q.name + " -");
 				cs.sendMessage(" ");
-				if (q.redoDelay > -1) {
+				/*if (q.redoDelay > -1) {
 					if (q.redoDelay == 0) {
 						cs.sendMessage(ChatColor.DARK_AQUA + Lang.get("readoable"));
 					} else {
@@ -1791,7 +1791,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						msg = msg.replaceAll("<time>", ChatColor.AQUA + getTime(q.redoDelay) + ChatColor.DARK_AQUA);
 						cs.sendMessage(ChatColor.DARK_AQUA + msg);
 					}
-				}
+				}*/
 				if (q.npcStart != null) {
 					String msg = Lang.get("speakTo");
 					msg = msg.replaceAll("<npc>", q.npcStart.getName());
@@ -2207,8 +2207,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						}
 					}
 					if (config.contains("quests." + questName + ".redo-delay")) {
+						//Legacy
 						if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
-							quest.redoDelay = config.getInt("quests." + questName + ".redo-delay") * 1000;
+							quest.cooldownPlanner = config.getInt("quests." + questName + ".redo-delay") * 1000;
 						} else {
 							skipQuestProcess("redo-delay: for Quest " + quest.name + " is not a number!");
 						}
@@ -2233,6 +2234,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 					if (config.contains("quests." + questName + ".requirements")) {
 						loadQuestRequirements(config, questsSection);
+					}
+					if (config.contains("quests." + questName + ".planner")) {
+						loadQuestPlanner(config, questsSection);
 					}
 					quest.plugin = this;
 					processStages(quest, config, questName); // needsSaving may be modified as a side-effect
@@ -2562,6 +2566,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				quest.customRequirements.put(name, data);
 			}
 		}
+	}
+	
+	private void loadQuestPlanner(FileConfiguration config, ConfigurationSection questsSection) throws SkipQuest {
+		if (config.contains("quests." + questName + ".planner.start")) {
+			quest.startPlanner = config.getLong("quests." + questName + ".planner.start");
+		} /*else {
+			skipQuestProcess("Planner for Quest " + quest.name + " is missing start:");
+		}*/
+		if (config.contains("quests." + questName + ".planner.end")) {
+			quest.endPlanner = config.getLong("quests." + questName + ".planner.end");
+		} /*else {
+			skipQuestProcess("Planner for Quest " + quest.name + " is missing end:");
+		}*/
+		if (config.contains("quests." + questName + ".planner.repeat")) {
+			quest.repeatPlanner = config.getLong("quests." + questName + ".planner.repeat");
+		} /*else {
+			skipQuestProcess("Planner for Quest " + quest.name + " is missing repeat:");
+		}*/
+		if (config.contains("quests." + questName + ".planner.cooldown")) {
+			quest.cooldownPlanner = config.getLong("quests." + questName + ".planner.cooldown");
+		} /*else {
+			skipQuestProcess("Planner for Quest " + quest.name + " is missing cooldown:");
+		}*/
 	}
 
 	private void skipQuestProcess(String[] msgs) throws SkipQuest {
@@ -4063,7 +4090,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	
 	public boolean hasCompletedRedoableQuest(NPC npc, Quester quester) {
 		for (Quest q : quests) {
-			if (q.npcStart != null && quester.completedQuests.contains(q.name) == true && q.redoDelay > -1) {
+			if (q.npcStart != null && quester.completedQuests.contains(q.name) == true && q.cooldownPlanner > -1) {
 				if (q.npcStart.getId() == npc.getId()) {
 					if (ignoreLockedQuests == false || ignoreLockedQuests == true && q.testRequirements(quester) == true) {
 						return true;

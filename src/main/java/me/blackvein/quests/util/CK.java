@@ -21,7 +21,6 @@ public class CK {
 	public static final String Q_NAME = "questName";
 	public static final String Q_ASK_MESSAGE = "askMessage";
 	public static final String Q_FINISH_MESSAGE = "finishMessage";
-	public static final String Q_REDO_DELAY = "redoDelay";
 	public static final String Q_START_NPC = "npcStart";
 	public static final String Q_START_BLOCK = "blockStart";
 	public static final String Q_FAIL_MESSAGE = "failMessage";
@@ -44,22 +43,6 @@ public class CK {
 	public static final String REQ_CUSTOM_DATA = "customReqData";
 	public static final String REQ_CUSTOM_DATA_DESCRIPTIONS = "customReqDataDesc";
 	public static final String REQ_CUSTOM_DATA_TEMP = "customReqDataTemp";
-	// Rewards
-	public static final String REW_MONEY = "moneyRew";
-	public static final String REW_QUEST_POINTS = "questPointsRew";
-	public static final String REW_ITEMS = "itemRews";
-	public static final String REW_EXP = "expRew";
-	public static final String REW_COMMAND = "commandRews";
-	public static final String REW_PERMISSION = "permissionRews";
-	public static final String REW_MCMMO_SKILLS = "mcMMOSkillRews";
-	public static final String REW_MCMMO_AMOUNTS = "mcMMOSkillAmounts";
-	public static final String REW_HEROES_CLASSES = "heroesClassRews";
-	public static final String REW_HEROES_AMOUNTS = "heroesAmountRews";
-	public static final String REW_PHAT_LOOTS = "phatLootRews";
-	public static final String REW_CUSTOM = "customRews";
-	public static final String REW_CUSTOM_DATA = "customRewData";
-	public static final String REW_CUSTOM_DATA_DESCRIPTIONS = "customRewDataDesc";
-	public static final String REW_CUSTOM_DATA_TEMP = "customRewDataTemp";
 	// Stages
 	public static final String S_BREAK_NAMES = "breakNames";
 	public static final String S_BREAK_AMOUNTS = "breakAmounts";
@@ -122,6 +105,27 @@ public class CK {
 	public static final String S_CUSTOM_OBJECTIVES_DATA = "customObjectiveData";
 	public static final String S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS = "customObjectiveDataDescriptions";
 	public static final String S_CUSTOM_OBJECTIVES_DATA_TEMP = "customObjectiveDataTemp";
+	// Rewards
+	public static final String REW_MONEY = "moneyRew";
+	public static final String REW_QUEST_POINTS = "questPointsRew";
+	public static final String REW_ITEMS = "itemRews";
+	public static final String REW_EXP = "expRew";
+	public static final String REW_COMMAND = "commandRews";
+	public static final String REW_PERMISSION = "permissionRews";
+	public static final String REW_MCMMO_SKILLS = "mcMMOSkillRews";
+	public static final String REW_MCMMO_AMOUNTS = "mcMMOSkillAmounts";
+	public static final String REW_HEROES_CLASSES = "heroesClassRews";
+	public static final String REW_HEROES_AMOUNTS = "heroesAmountRews";
+	public static final String REW_PHAT_LOOTS = "phatLootRews";
+	public static final String REW_CUSTOM = "customRews";
+	public static final String REW_CUSTOM_DATA = "customRewData";
+	public static final String REW_CUSTOM_DATA_DESCRIPTIONS = "customRewDataDesc";
+	public static final String REW_CUSTOM_DATA_TEMP = "customRewDataTemp";
+	//Planner
+	public static final String PLN_START_DATE = "startDatePln";
+	public static final String PLN_END_DATE = "endDatePln";
+	public static final String PLN_REPEAT_CYCLE = "repeatCyclePln";
+	public static final String PLN_COOLDOWN = "cooldownPln";
 	// Events
 	public static final String E_OLD_EVENT = "oldEvent";
 	public static final String E_NAME = "evtName";
