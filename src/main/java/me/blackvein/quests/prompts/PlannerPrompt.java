@@ -41,24 +41,24 @@ public class PlannerPrompt extends FixedSetPrompt {
 		lang = lang.replaceAll("<quest>", ChatColor.BLUE + (String) context.getSessionData(CK.Q_NAME));
 		text = ChatColor.AQUA + lang + "\n";
 		if (context.getSessionData(CK.PLN_START_DATE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("schStart") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("schStart") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_START_DATE)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_START_DATE)) + ")\n";
 		}
 		if (context.getSessionData(CK.PLN_END_DATE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("schEnd") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("schEnd") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_END_DATE)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_END_DATE)) + ")\n";
 		}
 		if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("schRepeat") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("schRepeat") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ")\n";
 		}
 		if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("schCooldown") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("schCooldown") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) + ")\n";
 		}
 		text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 		return text;
@@ -84,7 +84,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("schStartPrompt");
+			return ChatColor.YELLOW + Lang.get("plnStartPrompt");
 		}
 
 		@Override
@@ -118,7 +118,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("schEndPrompt");
+			return ChatColor.YELLOW + Lang.get("plnEndPrompt");
 		}
 
 		@Override
@@ -152,7 +152,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("schRepeatPrompt");
+			return ChatColor.YELLOW + Lang.get("plnRepeatPrompt");
 		}
 
 		@Override
@@ -186,7 +186,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("schCooldownPrompt");
+			return ChatColor.YELLOW + Lang.get("plnCooldownPrompt");
 		}
 
 		@Override
