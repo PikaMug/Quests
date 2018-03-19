@@ -173,8 +173,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		pListener = new PlayerListener(this);
 		effListener = new NpcEffectThread(this);
 		npcListener = new NpcListener(this);
-		this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix()).withFirstPrompt(new QuestPrompt()).withTimeout(acceptTimeout).thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
-		this.NPCConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestAcceptPrompt(this)).withTimeout(acceptTimeout).withLocalEcho(false).addConversationAbandonedListener(this);
 		questFactory = new QuestFactory(this);
 		eventFactory = new EventFactory(this);
 		linkOtherPlugins();
@@ -200,6 +198,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		// Save config with any new options
 		getConfig().options().copyDefaults(true);
 		saveConfig();
+		
+		//Setup conversation factory after timeout has loaded
+		this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix()).withFirstPrompt(new QuestPrompt()).withTimeout(acceptTimeout).thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
+		this.NPCConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestAcceptPrompt(this)).withTimeout(acceptTimeout).withLocalEcho(false).addConversationAbandonedListener(this);
 		
 		getServer().getPluginManager().registerEvents(pListener, this);
 		if (npcEffects) {
