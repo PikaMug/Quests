@@ -69,6 +69,11 @@ public class Quest {
 	Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
 	Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
 	public String failRequirements = null;
+	//Planner
+	public long startPlanner = -1;
+	public long endPlanner = -1;
+	public long repeatPlanner = -1;
+	public long cooldownPlanner = -1;
 	// Rewards
 	int moneyReward = 0;
 	int questPoints = 0;
@@ -81,11 +86,6 @@ public class Quest {
 	List<String> heroesClasses = new LinkedList<String>();
 	List<Double> heroesAmounts = new LinkedList<Double>();
 	List<String> phatLootRewards = new LinkedList<String>();
-	//Planner
-	public long startPlanner = -1;
-	public long endPlanner = -1;
-	public long repeatPlanner = -1;
-	public long cooldownPlanner = -1;
 
 	public Stage getStage(int index) {
 		try {

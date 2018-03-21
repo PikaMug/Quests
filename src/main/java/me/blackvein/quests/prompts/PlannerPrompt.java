@@ -43,12 +43,12 @@ public class PlannerPrompt extends FixedSetPrompt {
 		if (context.getSessionData(CK.PLN_START_DATE) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_START_DATE)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " (" + getDate((String) context.getSessionData(CK.PLN_START_DATE)) + ")\n";
 		}
 		if (context.getSessionData(CK.PLN_END_DATE) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_END_DATE)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " (" + getDate((String) context.getSessionData(CK.PLN_END_DATE)) + ")\n";
 		}
 		if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
@@ -214,5 +214,25 @@ public class PlannerPrompt extends FixedSetPrompt {
 			}
 			return new PlannerPrompt(quests, factory);
 		}
+	}
+	
+	private String getDate(String formattedDate) {
+		String[] date = formattedDate.split(":");
+		String day = date[0];
+		String month = date[1];
+		String year = date[2];
+		String hour = date[3];
+		String minute = date[4];
+		String second = date[5];
+		String zone = date[6];
+		String output = day + "-" + month + "-" + year + " "
+				+ hour + ":" + minute + ":" + second + " UTC";
+		if (Integer.parseInt(date[6]) < 0) {
+			output += "-";
+		} else {
+			output += "+";
+		}
+		output += zone;
+		return output;
 	}
 }

@@ -232,7 +232,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				} else {
 					return new CreateMenuPrompt();
 				}
-			} else if (input.equalsIgnoreCase("8")) {
+			} else if (input.equalsIgnoreCase("9")) {
 				return new RequirementsPrompt(plugin, QuestFactory.this);
 			} else if (input.equalsIgnoreCase("10")) {
 				return new PlannerPrompt(plugin, QuestFactory.this);
