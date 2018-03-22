@@ -786,7 +786,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Integer.parseInt(s) > 0) {
 							amounts.add(Integer.parseInt(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new BreakBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -817,7 +817,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 							return new BreakBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1004,7 +1004,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Integer.parseInt(s) > 0) {
 							amounts.add(Integer.parseInt(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new DamageBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1035,7 +1035,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 							return new DamageBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1222,7 +1222,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Integer.parseInt(s) > 0) {
 							amounts.add(Integer.parseInt(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new PlaceBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1253,7 +1253,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 							return new PlaceBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1440,7 +1440,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Integer.parseInt(s) > 0) {
 							amounts.add(Integer.parseInt(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new UseBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1471,7 +1471,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 							return new UseBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1658,7 +1658,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Integer.parseInt(s) > 0) {
 							amounts.add(Integer.parseInt(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new CutBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1689,7 +1689,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Short.parseShort(s) >= 0) {
 							durability.add(Short.parseShort(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 							return new CutBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -1963,7 +1963,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Integer.parseInt(s) > 0) {
 							amounts.add(Integer.parseInt(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new EnchantAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -2328,7 +2328,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						if (Integer.parseInt(s) > 0) {
 							amounts.add(Integer.parseInt(s));
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new NpcAmountsToKillPrompt();
 						}
 					} catch (NumberFormatException e) {
@@ -2583,7 +2583,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					try {
 						int i = Integer.parseInt(s);
 						if (i < 1) {
-							player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new MobAmountsPrompt();
 						}
 						mobAmounts.add(i);
@@ -2652,7 +2652,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					try {
 						int i = Integer.parseInt(s);
 						if (i < 1) {
-							player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new MobRadiiPrompt();
 						}
 						radii.add(i);
@@ -2853,7 +2853,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					try {
 						int i = Integer.parseInt(s);
 						if (i < 1) {
-							player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new ReachRadiiPrompt();
 						}
 						radii.add(i);
@@ -3022,7 +3022,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					try {
 						int i = Integer.parseInt(s);
 						if (i < 1) {
-							player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new TameAmountsPrompt();
 						}
 						mobAmounts.add(i);
@@ -3172,7 +3172,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					try {
 						int i = Integer.parseInt(s);
 						if (i < 1) {
-							player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorNotGreaterThanZero"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new ShearAmountsPrompt();
 						}
 						shearAmounts.add(i);
@@ -3644,7 +3644,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				return new DelayPrompt();
 			}
 			if (stageDelay < 1000) {
-				player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidDelay"));
+				player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 				return new DelayPrompt();
 			} else {
 				context.setSessionData(pref + CK.S_DELAY, stageDelay);

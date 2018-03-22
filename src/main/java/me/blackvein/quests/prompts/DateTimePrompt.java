@@ -89,7 +89,8 @@ public class DateTimePrompt extends FixedSetPrompt {
 				try {
 					int amt = Integer.parseInt(input);
 					if (amt < 1 || amt > 31) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("dateCreateInvalidDay"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+								.replace("<least>", "1").replace("<greatest>", "31"));
 						return new DayPrompt();
 					} else {
 						cc.setSessionData("tempDay", Integer.parseInt(input));
@@ -118,7 +119,8 @@ public class DateTimePrompt extends FixedSetPrompt {
 				try {
 					int amt = Integer.parseInt(input);
 					if (amt < 1 || amt > 12) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("dateCreateInvalidMonth"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+								.replace("<least>", "1").replace("<greatest>", "12"));
 						return new MonthPrompt();
 					} else {
 						cc.setSessionData("tempMonth", Integer.parseInt(input));
@@ -147,7 +149,8 @@ public class DateTimePrompt extends FixedSetPrompt {
 				try {
 					int amt = Integer.parseInt(input);
 					if (amt < 1000 || amt > 9999) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("dateCreateInvalidYear"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+								.replace("<least>", "1000").replace("<greatest>", "9999"));
 						return new YearPrompt();
 					} else {
 						cc.setSessionData("tempYear", Integer.parseInt(input));
@@ -176,7 +179,8 @@ public class DateTimePrompt extends FixedSetPrompt {
 				try {
 					int amt = Integer.parseInt(input);
 					if (amt < 0 || amt > 23) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("dateCreateInvalidHour"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+								.replace("<least>", "0").replace("<greatest>", "23"));
 						return new HourPrompt();
 					} else {
 						cc.setSessionData("tempHour", Integer.parseInt(input));
@@ -205,7 +209,8 @@ public class DateTimePrompt extends FixedSetPrompt {
 				try {
 					int amt = Integer.parseInt(input);
 					if (amt < 0 || amt > 59) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("dateCreateInvalidMinute"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+								.replace("<least>", "0").replace("<greatest>", "59"));
 						return new MinutePrompt();
 					} else {
 						cc.setSessionData("tempMinute", Integer.parseInt(input));
@@ -234,7 +239,8 @@ public class DateTimePrompt extends FixedSetPrompt {
 				try {
 					int amt = Integer.parseInt(input);
 					if (amt < 0 || amt > 59) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("dateCreateInvalidSecond"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+								.replace("<least>", "0").replace("<greatest>", "59"));
 						return new SecondPrompt();
 					} else {
 						cc.setSessionData("tempSecond", Integer.parseInt(input));
@@ -263,7 +269,8 @@ public class DateTimePrompt extends FixedSetPrompt {
 				try {
 					int amt = Integer.parseInt(input.replaceAll("UTC", ""));
 					if (amt < -12 || amt > 14) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("dateCreateInvalidZone"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+							.replace("<least>", "-12").replace("<greatest>", "14"));
 						return new ZonePrompt();
 					} else {
 						cc.setSessionData("tempZone", Integer.parseInt(input));

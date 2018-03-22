@@ -226,7 +226,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		@Override
 		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 			if (input.intValue() < -1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqGreaterThanZero"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 				return new QuestPointsPrompt();
 			} else if (input.intValue() == -1) {
 				return new RequirementsPrompt(quests, factory);

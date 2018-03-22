@@ -268,7 +268,8 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				try {
 					int amt = Integer.parseInt(input);
 					if (amt < 1 || amt > 64) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidAmount"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+								.replace("<least>", "1").replace("<greatest>", "64"));
 						return new AmountPrompt();
 					} else {
 						cc.setSessionData("tempAmount", Integer.parseInt(input));
@@ -363,7 +364,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				try {
 					int num = Integer.parseInt(input);
 					if (num < 1) {
-						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidLevel"));
+						cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 						return new LevelPrompt(enchantment);
 					} else {
 						if (cc.getSessionData("tempEnchantments") != null) {

@@ -1366,7 +1366,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		@Override
 		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 			if (input.intValue() < 1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAtLeastOneSecond"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 				return new StormDurationPrompt();
 			}
 			context.setSessionData(CK.E_WORLD_STORM_DURATION, input.intValue());
@@ -1750,7 +1750,7 @@ public class EventFactory implements ConversationAbandonedListener {
 				try {
 					int i = Integer.parseInt(input);
 					if (i < 1) {
-						player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("eventEditorNotGreaterThanZero"));
+						player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 						return new MobAmountPrompt(mobIndex, questMob);
 					}
 					questMob.setSpawnAmounts(i);
@@ -1829,11 +1829,13 @@ public class EventFactory implements ConversationAbandonedListener {
 			try {
 				chance = Float.parseFloat(input);
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidDropChance"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+						.replace("<least>", "0.0").replace("<greatest>", "1.0"));
 				return new MobDropPrompt(invIndex, mobIndex, questMob);
 			}
 			if (chance > 1 || chance < 0) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidDropChance"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+						.replace("<least>", "0.0").replace("<greatest>", "1.0"));
 				return new MobDropPrompt(invIndex, mobIndex, questMob);
 			}
 			questMob.dropChances[invIndex] = chance;
@@ -2032,7 +2034,7 @@ public class EventFactory implements ConversationAbandonedListener {
 						int i = Integer.parseInt(s);
 						long l = i * 1000;
 						if (l < 1000) {
-							player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("eventEditorNotGreaterThanOneSecond"));
+							player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new PotionDurationsPrompt();
 						}
 						effDurations.add(l / 50L);
@@ -2063,7 +2065,7 @@ public class EventFactory implements ConversationAbandonedListener {
 					try {
 						int i = Integer.parseInt(s);
 						if (i < 1) {
-							player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("eventEditorNotGreaterThanZero"));
+							player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 							return new PotionMagnitudesPrompt();
 						}
 						magAmounts.add(i);
@@ -2089,7 +2091,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 			if (input.intValue() != -1) {
 				if (input.intValue() < 0) {
-					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorHungerLevelAtLeastZero"));
+					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 					return new HungerPrompt();
 				} else {
 					context.setSessionData(CK.E_HUNGER, (Integer) input.intValue());
@@ -2112,7 +2114,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 			if (input.intValue() != -1) {
 				if (input.intValue() < 0) {
-					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorSaturationLevelAtLeastZero"));
+					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 					return new SaturationPrompt();
 				} else {
 					context.setSessionData(CK.E_SATURATION, (Integer) input.intValue());
@@ -2135,7 +2137,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 			if (input.intValue() != -1) {
 				if (input.intValue() < 0) {
-					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorHealthLevelAtLeastZero"));
+					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
 					return new HealthPrompt();
 				} else {
 					context.setSessionData(CK.E_HEALTH, (Integer) input.intValue());
