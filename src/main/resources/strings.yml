@@ -737,7 +737,7 @@ giveQuestPoints: "Gave <number> Quest Points from <player>."
 questPointsGiven: "<player> gave you <number> Quest Points."
 enableNPCGUI: "<npc> will now provide a GUI Quest Display."
 disableNPCGUI: "<npc> will no longer provide a GUI Quest Display."
-invalidMinimum: "Input must be at least <number>!
+invalidMinimum: "Input must be at least <number>!"
 invalidRange: "Input must be between <least> and <greatest>!"
 invalidOption: "Invalid option!"
 invalidNumber: "Invalid number."
