@@ -148,12 +148,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("questEditorAskMessage") + " " + ChatColor.DARK_RED + "(" + Lang.get("questRequiredNoneSet") + ")\n";
 			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorAskMessage") + " (\"" + context.getSessionData(CK.Q_ASK_MESSAGE) + "\")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorAskMessage") + " (" + context.getSessionData(CK.Q_ASK_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 			}
 			if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("questEditorFinishMessage") + " " + ChatColor.DARK_RED + "(" + Lang.get("questRequiredNoneSet") + ")\n";
 			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorFinishMessage") + " (\"" + context.getSessionData(CK.Q_FINISH_MESSAGE) + "\")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorFinishMessage") + " (" + context.getSessionData(CK.Q_FINISH_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 			}
 			if (context.getSessionData(CK.Q_START_NPC) == null && Quests.citizens != null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("noneSet") + ")\n";
@@ -193,7 +193,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				text += ChatColor.GRAY + "8 - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("questCitNotInstalled") + ")\n";
 			}
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.DARK_AQUA + " - " + Lang.get("questEditorReqs") + "\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.DARK_PURPLE + " - " + Lang.get("questEditorPln") + " **WIP**" + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.AQUA + " - " + Lang.get("questEditorPln") + " **WIP**" + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + " - " + Lang.get("questEditorStages") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("questEditorRews") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("save") + "\n";

@@ -290,7 +290,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				for (Event evt : quests.events) {
-					if (evt.name.equalsIgnoreCase(input)) {
+					if (evt.name.toLowerCase().startsWith(input.toLowerCase())) {
 						context.setSessionData(CK.E_OLD_EVENT, evt.name);
 						context.setSessionData(CK.E_NAME, evt.name);
 						loadData(evt, context);
@@ -389,7 +389,7 @@ public class EventFactory implements ConversationAbandonedListener {
 			if (context.getSessionData(CK.E_MESSAGE) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMessage") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMessage") + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.E_MESSAGE) + "\"" + ChatColor.YELLOW + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMessage") + " (" + ChatColor.AQUA + context.getSessionData(CK.E_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 			}
 			if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
 				context.setSessionData(CK.E_CLEAR_INVENTORY, "No");

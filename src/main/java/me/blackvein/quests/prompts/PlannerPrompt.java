@@ -67,9 +67,11 @@ public class PlannerPrompt extends FixedSetPrompt {
 	@Override
 	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 		if (input.equalsIgnoreCase("1")) {
-			return new StartPrompt();
+			//return new StartPrompt();
+			return new DateTimePrompt(PlannerPrompt.this);
 		} else if (input.equalsIgnoreCase("2")) {
-			return new EndPrompt();
+			//return new EndPrompt();
+			return new DateTimePrompt(PlannerPrompt.this);
 		} else if (input.equalsIgnoreCase("3")) {
 			return new RepeatPrompt();
 		} else if (input.equalsIgnoreCase("4")) {
@@ -80,7 +82,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 		return null;
 	}
 	
-	private class StartPrompt extends StringPrompt {
+	/*private class StartPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -146,7 +148,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 			}
 			return new PlannerPrompt(quests, factory);
 		}
-	}
+	}*/
 	
 	private class RepeatPrompt extends StringPrompt {
 

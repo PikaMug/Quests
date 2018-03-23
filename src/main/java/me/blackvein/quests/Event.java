@@ -314,7 +314,7 @@ public class Event {
 		String eventKey = "events." + name + ".";
 		event.name = name;
 		if (data.contains(eventKey + "message")) {
-			event.message = data.getString(eventKey + "message");
+			event.message = Quests.parseString(data.getString(eventKey + "message"));
 		}
 		if (data.contains(eventKey + "clear-inventory")) {
 			if (data.isBoolean(eventKey + "clear-inventory")) {

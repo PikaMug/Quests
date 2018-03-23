@@ -2,7 +2,7 @@
 quests:
   Miner:
     name: 'Stone Miner'
-    ask-message: '<yellow>Mine <purple>10<yellow> blocks of <purple>Stone<yellow> and gather the <purple>10 pieces of <purple>Cobblestone<yellow>.'
+    ask-message: '<yellow>Mine <pink>10<yellow> blocks of <pink>Stone<yellow> and gather the <pink>10 pieces of <pink>Cobblestone<yellow>.'
     finish-message: '<yellow>Well done. Here is your reward.'
     redo-delay: 1800
     requirements:
@@ -10,7 +10,7 @@ quests:
         - name-wood_pickaxe:amount-1
       remove-items:
         - false
-      fail-requirement-message: '<red>You must have a <purple>Wooden Pickaxe<red> first.'
+      fail-requirement-message: '<red>You must have a <pink>Wooden Pickaxe<red> first.'
     stages:
       ordered:
         1:
@@ -26,11 +26,11 @@ quests:
   Hunter:
     name: 'Mob Hunter'
     ask-message: '<yellow>Kill an assortment of Mobs.'
-    finish-message: '<yellow>Excellent. Here is a <purple>Diamond Sword<yellow>.'
+    finish-message: '<yellow>Excellent. Here is a <pink>Diamond Sword<yellow>.'
     requirements:
       quests:
         - Stone Miner
-      fail-requirement-message: '<red>Complete <purple>Stone Miner<red> first.'
+      fail-requirement-message: '<red>Complete <pink>Stone Miner<red> first.'
     stages:
       ordered:
         1:
@@ -65,7 +65,7 @@ quests:
     requirements:
       quests:
         - Stone Miner
-      fail-requirement-message: '<red>Complete <purple>Stone Miner<red> first.'
+      fail-requirement-message: '<red>Complete <pink>Stone Miner<red> first.'
     stages:
       ordered:
         1:
@@ -80,8 +80,8 @@ quests:
       exp: 250
   TimedQuest:
     name: 'Timed Quest'
-    ask-message: '<yellow>Dig up <purple>10<yellow> blocks of <purple>Dirt<yellow> before time runs out!'
-    finish-message: '<yellow>You did it in time! Have an <purple>Iron Shovel<yellow> and some <green>experience<yellow>.'
+    ask-message: '<yellow>Dig up <pink>10<yellow> blocks of <pink>Dirt<yellow> before time runs out!'
+    finish-message: '<yellow>You did it in time! Have an <pink>Iron Shovel<yellow> and some <green>experience<yellow>.'
     stages:
       ordered:
         '1':

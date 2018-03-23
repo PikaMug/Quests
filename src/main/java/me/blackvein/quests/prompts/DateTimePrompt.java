@@ -1,5 +1,8 @@
 package me.blackvein.quests.prompts;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 import me.blackvein.quests.util.Lang;
 
 import org.bukkit.ChatColor;
@@ -20,6 +23,34 @@ public class DateTimePrompt extends FixedSetPrompt {
 	@Override
 	public String getPromptText(ConversationContext cc) {
 		String menu = ChatColor.YELLOW + Lang.get("dateTimeTitle") + "\n";
+		String dateData = "";
+		if (cc.getSessionData("tempDay") != null) {
+			dateData += (String) cc.getSessionData("tempDay") + "/";
+		}
+		if (cc.getSessionData("tempMonth") != null) {
+			dateData += (String) cc.getSessionData("tempMonth") + "/";
+		}
+		if (cc.getSessionData("tempYear") != null) {
+			dateData += (String) cc.getSessionData("tempYear") + " ";
+		}
+		if (cc.getSessionData("tempHour") != null) {
+			dateData += (String) cc.getSessionData("tempHour") + ":";
+		}
+		if (cc.getSessionData("tempMinute") != null) {
+			dateData += (String) cc.getSessionData("tempMinute") + ":";
+		}
+		if (cc.getSessionData("tempSecond") != null) {
+			dateData += (String) cc.getSessionData("tempSecond") + " ";
+		}
+		if (cc.getSessionData("tempZone") == null) {
+			cc.setSessionData("tempZone", TimeZone.getDefault().getID());
+		}
+		TimeZone tz = TimeZone.getTimeZone((String) cc.getSessionData("tempZone"));
+		//TODO - CHANGE CURRENT SYSTEM TIME TO USER-SPECIFIED DATE
+		dateData += tz.getOffset(System.currentTimeMillis() / 1000 / 60) + " (" + tz.getID() + ")" + " test - " + tz.getDisplayName(Locale.FRENCH);
+		if (dateData != null) {
+			menu += dateData + "\n";
+		}
 		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "1. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeDay") + "\n";
 		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "2. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeMonth") + "\n";
 		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "3. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeYear") + "\n";
@@ -63,7 +94,7 @@ public class DateTimePrompt extends FixedSetPrompt {
 			int hour = (Integer) cc.getSessionData("tempHour");
 			int minute = (Integer) cc.getSessionData("tempMinute");
 			int second = (Integer) cc.getSessionData("tempSecond");
-			int zone = (Integer) cc.getSessionData("tempZone");
+			String zone = (String) cc.getSessionData("tempZone");
 			String date = day + ":" + month + ":" + year + ":"
 					+ hour + ":" + minute + ":" + second + ":" + zone;
 			cc.setSessionData("tempDate", date);
@@ -94,7 +125,7 @@ public class DateTimePrompt extends FixedSetPrompt {
 						return new DayPrompt();
 					} else {
 						cc.setSessionData("tempDay", Integer.parseInt(input));
-						return new ItemStackPrompt(oldPrompt);
+						return new DateTimePrompt(oldPrompt);
 					}
 				} catch (NumberFormatException e) {
 					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
