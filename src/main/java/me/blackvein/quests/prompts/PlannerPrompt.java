@@ -68,10 +68,10 @@ public class PlannerPrompt extends FixedSetPrompt {
 	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 		if (input.equalsIgnoreCase("1")) {
 			//return new StartPrompt();
-			return new DateTimePrompt(PlannerPrompt.this);
+			return new DateTimePrompt(quests, PlannerPrompt.this);
 		} else if (input.equalsIgnoreCase("2")) {
 			//return new EndPrompt();
-			return new DateTimePrompt(PlannerPrompt.this);
+			return new DateTimePrompt(quests, PlannerPrompt.this);
 		} else if (input.equalsIgnoreCase("3")) {
 			return new RepeatPrompt();
 		} else if (input.equalsIgnoreCase("4")) {
