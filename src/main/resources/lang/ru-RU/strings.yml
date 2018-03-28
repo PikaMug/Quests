@@ -2,7 +2,7 @@
 COMMAND_LIST: "список"
 COMMAND_LIST_HELP: "<command> [page] - Список доступных заданий"
 COMMAND_TAKE: "принять"
-COMMAND_TAKE_HELP: "<command> [quest] - Accept a Quest"
+COMMAND_TAKE_HELP: "<command> [quest] - Принять Квест"
 COMMAND_TAKE_USAGE: "Использование: /quests take [quest]"
 COMMAND_QUIT: "выйти"
 COMMAND_QUIT_HELP: "<command> [quest] - Отклонить текущее задание"
