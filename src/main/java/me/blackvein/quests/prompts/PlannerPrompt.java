@@ -12,6 +12,12 @@
 
 package me.blackvein.quests.prompts;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
@@ -41,24 +47,32 @@ public class PlannerPrompt extends FixedSetPrompt {
 		lang = lang.replaceAll("<quest>", ChatColor.BLUE + (String) context.getSessionData(CK.Q_NAME));
 		text = ChatColor.AQUA + lang + "\n";
 		if (context.getSessionData(CK.PLN_START_DATE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " "
+					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " (" + getDate((String) context.getSessionData(CK.PLN_START_DATE)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + "\n";
+			text += "    - " + getDate((String) context.getSessionData(CK.PLN_START_DATE)) + "\n";
 		}
 		if (context.getSessionData(CK.PLN_END_DATE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " "
+					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " (" + getDate((String) context.getSessionData(CK.PLN_END_DATE)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + "\n";
+			text += "    - " + getDate((String) context.getSessionData(CK.PLN_END_DATE)) + "\n";
 		}
 		if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " "
+					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " ("
+					+ Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 		}
 		if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " "
+					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " (" + Quests.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " ("
+					+ Quests.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 		}
 		text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 		return text;
@@ -67,11 +81,9 @@ public class PlannerPrompt extends FixedSetPrompt {
 	@Override
 	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 		if (input.equalsIgnoreCase("1")) {
-			//return new StartPrompt();
-			return new DateTimePrompt(quests, PlannerPrompt.this);
+			return new DateTimePrompt(quests, PlannerPrompt.this, "start");
 		} else if (input.equalsIgnoreCase("2")) {
-			//return new EndPrompt();
-			return new DateTimePrompt(quests, PlannerPrompt.this);
+			return new DateTimePrompt(quests, PlannerPrompt.this, "end");
 		} else if (input.equalsIgnoreCase("3")) {
 			return new RepeatPrompt();
 		} else if (input.equalsIgnoreCase("4")) {
@@ -81,75 +93,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 		}
 		return null;
 	}
-	
-	/*private class StartPrompt extends StringPrompt {
 
-		@Override
-		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("plnStartPrompt");
-		}
-
-		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-				return new PlannerPrompt(quests, factory);
-			}
-			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-				context.setSessionData(CK.PLN_START_DATE, null);
-			}
-			long delay;
-			try {
-				int i = Integer.parseInt(input);
-				delay = i * 1000;
-			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " " + Lang.get("stageEditorInvalidNumber"));
-				return new StartPrompt();
-			}
-			if (delay < -1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
-			} else if (delay == 0) {
-				context.setSessionData(CK.PLN_START_DATE, null);
-			} else if (delay != -1) {
-				context.setSessionData(CK.PLN_START_DATE, delay);
-			}
-			return new PlannerPrompt(quests, factory);
-		}
-	}
-	
-	private class EndPrompt extends StringPrompt {
-
-		@Override
-		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("plnEndPrompt");
-		}
-
-		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-				return new PlannerPrompt(quests, factory);
-			}
-			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-				context.setSessionData(CK.PLN_END_DATE, null);
-			}
-			long delay;
-			try {
-				int i = Integer.parseInt(input);
-				delay = i * 1000;
-			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " " + Lang.get("stageEditorInvalidNumber"));
-				return new EndPrompt();
-			}
-			if (delay < -1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
-			} else if (delay == 0) {
-				context.setSessionData(CK.PLN_END_DATE, null);
-			} else if (delay != -1) {
-				context.setSessionData(CK.PLN_END_DATE, delay);
-			}
-			return new PlannerPrompt(quests, factory);
-		}
-	}*/
-	
 	private class RepeatPrompt extends StringPrompt {
 
 		@Override
@@ -170,7 +114,8 @@ public class PlannerPrompt extends FixedSetPrompt {
 				int i = Integer.parseInt(input);
 				delay = i * 1000;
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " " + Lang.get("stageEditorInvalidNumber"));
+				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " "
+						+ Lang.get("stageEditorInvalidNumber"));
 				return new RepeatPrompt();
 			}
 			if (delay < -1) {
@@ -204,7 +149,8 @@ public class PlannerPrompt extends FixedSetPrompt {
 				int i = Integer.parseInt(input);
 				delay = i * 1000;
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " " + Lang.get("stageEditorInvalidNumber"));
+				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " "
+						+ Lang.get("stageEditorInvalidNumber"));
 				return new CooldownPrompt();
 			}
 			if (delay < -1) {
@@ -219,22 +165,30 @@ public class PlannerPrompt extends FixedSetPrompt {
 	}
 	
 	private String getDate(String formattedDate) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
 		String[] date = formattedDate.split(":");
-		String day = date[0];
-		String month = date[1];
-		String year = date[2];
-		String hour = date[3];
-		String minute = date[4];
-		String second = date[5];
-		String zone = date[6];
-		String output = day + "-" + month + "-" + year + " "
-				+ hour + ":" + minute + ":" + second + " UTC";
-		if (Integer.parseInt(date[6]) < 0) {
-			output += "-";
-		} else {
-			output += "+";
-		}
-		output += zone;
+		int day = Integer.valueOf(date[0]);
+		int month = Integer.valueOf(date[1]);
+		int year = Integer.valueOf(date[2]);
+		int hour = Integer.valueOf(date[3]);
+		int minute = Integer.valueOf(date[4]);
+		int second = Integer.valueOf(date[5]);
+		
+		cal.set(year, month, day, hour, minute, second);
+		String output = ChatColor.DARK_AQUA + dateFormat.format(cal.getTime());
+		output += ChatColor.AQUA + " " + timeFormat.format(cal.getTime());
+		
+		TimeZone tz = TimeZone.getTimeZone(date[6]);
+		cal.setTimeZone(tz);
+		String[] iso = quests.lang.iso.split("-");
+		Locale loc = new Locale(iso[0], iso[1]);
+		Double zhour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
+		String[] sep = String.valueOf(zhour).replace("-", "").split("\\.");
+		DecimalFormat zoneFormat = new DecimalFormat("00");
+		output += ChatColor.LIGHT_PURPLE + " UTC" + (zhour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0])) + ":"
+				+ zoneFormat.format(Integer.valueOf(sep[1])) + ChatColor.GREEN + " (" + cal.getTimeZone().getDisplayName(loc) + ")";
 		return output;
 	}
 }

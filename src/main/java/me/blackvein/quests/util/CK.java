@@ -121,7 +121,7 @@ public class CK {
 	public static final String REW_CUSTOM_DATA = "customRewData";
 	public static final String REW_CUSTOM_DATA_DESCRIPTIONS = "customRewDataDesc";
 	public static final String REW_CUSTOM_DATA_TEMP = "customRewDataTemp";
-	//Planner
+	// Planner
 	public static final String PLN_START_DATE = "startDatePln";
 	public static final String PLN_END_DATE = "endDatePln";
 	public static final String PLN_REPEAT_CYCLE = "repeatCyclePln";
