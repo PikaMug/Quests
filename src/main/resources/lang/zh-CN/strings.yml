@@ -226,7 +226,7 @@ stageEditorCommandEventsTriggerPrompt: "%yellow%Enter a command trigger for%aqua
 stageEditorDelayPrompt: "输入时间 (以秒为单位), <clear>, <cancel>"
 stageEditorDelayMessagePrompt: "输入延迟消息, <clear>, <cancel>"
 stageEditorScriptPrompt: "输入脚本名称, <clear>, <cancel>"
-stageEditorStartMessagePrompt: "Enter start message, <clear>, <cancel>"
+stageEditorStartMessagePrompt: "输入开始任务时显示的消息, <clear>, <cancel>"
 stageEditorCompleteMessagePrompt: "Enter complete message, <clear>, <cancel>"
 stageEditorPasswordDisplayPrompt: "Enter password display, <cancel>"
 stageEditorPasswordDisplayHint: "(This is the text that will be displayed to the player as their objective)"
