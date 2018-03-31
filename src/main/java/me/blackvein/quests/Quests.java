@@ -2572,25 +2572,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	
 	private void loadQuestPlanner(FileConfiguration config, ConfigurationSection questsSection) throws SkipQuest {
 		if (config.contains("quests." + questName + ".planner.start")) {
-			quest.startPlanner = config.getLong("quests." + questName + ".planner.start");
+			quest.startPlanner = config.getString("quests." + questName + ".planner.start");
 		} /*else {
 			skipQuestProcess("Planner for Quest " + quest.name + " is missing start:");
 		}*/
 		if (config.contains("quests." + questName + ".planner.end")) {
-			quest.endPlanner = config.getLong("quests." + questName + ".planner.end");
+			quest.endPlanner = config.getString("quests." + questName + ".planner.end");
 		} /*else {
 			skipQuestProcess("Planner for Quest " + quest.name + " is missing end:");
 		}*/
 		if (config.contains("quests." + questName + ".planner.repeat")) {
-			quest.repeatPlanner = config.getLong("quests." + questName + ".planner.repeat");
-		} /*else {
-			skipQuestProcess("Planner for Quest " + quest.name + " is missing repeat:");
-		}*/
+			if (config.getInt("quests." + questName + ".planner.repeat", -999) != -999) {
+				quest.repeatPlanner = config.getInt("quests." + questName + ".planner.repeat") * 1000;
+			} else {
+				skipQuestProcess("repeat: for Quest " + quest.name + " is not a number!");
+			}
+		}
 		if (config.contains("quests." + questName + ".planner.cooldown")) {
-			quest.cooldownPlanner = config.getLong("quests." + questName + ".planner.cooldown");
-		} /*else {
-			skipQuestProcess("Planner for Quest " + quest.name + " is missing cooldown:");
-		}*/
+			if (config.getInt("quests." + questName + ".planner.cooldown", -999) != -999) {
+				quest.cooldownPlanner = config.getInt("quests." + questName + ".planner.cooldown") * 1000;
+			} else {
+				skipQuestProcess("cooldown: for Quest " + quest.name + " is not a number!");
+			}
+		}
 	}
 
 	private void skipQuestProcess(String[] msgs) throws SkipQuest {

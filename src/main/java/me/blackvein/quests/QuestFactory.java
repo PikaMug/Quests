@@ -764,8 +764,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 		LinkedList<String> phatLootRews = null;
 		LinkedList<String> customRews = null;
 		LinkedList<Map<String, Object>> customRewsData = null;
-		Long startDatePln = null;
-		Long endDatePln = null;
+		String startDatePln = null;
+		String endDatePln = null;
 		Long repeatCyclePln = null;
 		Long cooldownPln = null;
 		if (cc.getSessionData(CK.Q_START_NPC) != null) {
@@ -857,10 +857,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 			customRewsData = (LinkedList<Map<String, Object>>) cc.getSessionData(CK.REW_CUSTOM_DATA);
 		}
 		if (cc.getSessionData(CK.PLN_START_DATE) != null) {
-			startDatePln = (Long) cc.getSessionData(CK.PLN_START_DATE);
+			startDatePln = (String) cc.getSessionData(CK.PLN_START_DATE);
 		}
 		if (cc.getSessionData(CK.PLN_END_DATE) != null) {
-			endDatePln = (Long) cc.getSessionData(CK.PLN_END_DATE);
+			endDatePln = (String) cc.getSessionData(CK.PLN_END_DATE);
 		}
 		if (cc.getSessionData(CK.PLN_REPEAT_CYCLE) != null) {
 			repeatCyclePln = (Long) cc.getSessionData(CK.PLN_REPEAT_CYCLE);
@@ -1275,10 +1275,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		if (startDatePln != null || endDatePln != null || repeatCyclePln != null || cooldownPln != null) {
 			ConfigurationSection sch = cs.createSection("planner");
 			if (startDatePln != null) {
-				sch.set("start", startDatePln.intValue() / 1000);
+				sch.set("start", startDatePln);
 			}
 			if (endDatePln != null) {
-				sch.set("end", endDatePln.intValue() / 1000);
+				sch.set("end", endDatePln);
 			}
 			if (repeatCyclePln != null) {
 				sch.set("repeat", repeatCyclePln.intValue() / 1000);
@@ -1397,10 +1397,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		//
 		//Planner
-		if (q.startPlanner != -1) {
+		if (q.startPlanner != null) {
 			cc.setSessionData(CK.PLN_START_DATE, q.startPlanner);
 		}
-		if (q.endPlanner != -1) {
+		if (q.endPlanner != null) {
 			cc.setSessionData(CK.PLN_END_DATE, q.endPlanner);
 		}
 		if (q.repeatPlanner != -1) {

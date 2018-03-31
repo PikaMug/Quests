@@ -70,8 +70,8 @@ public class Quest {
 	Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
 	public String failRequirements = null;
 	//Planner
-	public long startPlanner = -1;
-	public long endPlanner = -1;
+	public String startPlanner = null;
+	public String endPlanner = null;
 	public long repeatPlanner = -1;
 	public long cooldownPlanner = -1;
 	// Rewards
@@ -678,8 +678,8 @@ public class Quest {
 		hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
 		hash = 53 * hash + (this.description != null ? this.description.hashCode() : 0);
 		hash = 53 * hash + (this.finished != null ? this.finished.hashCode() : 0);
-		hash = 53 * hash + (int) (this.startPlanner ^ (this.startPlanner >>> 32));
-		hash = 53 * hash + (int) (this.endPlanner ^ (this.endPlanner >>> 32));
+		hash = 53 * hash + (this.startPlanner  != null ? this.startPlanner.hashCode() : 0);
+		hash = 53 * hash + (this.endPlanner  != null ? this.endPlanner.hashCode() : 0);
 		hash = 53 * hash + (int) (this.repeatPlanner ^ (this.repeatPlanner >>> 32));
 		hash = 53 * hash + (int) (this.cooldownPlanner ^ (this.cooldownPlanner >>> 32));
 		hash = 53 * hash + (this.region != null ? this.region.hashCode() : 0);
