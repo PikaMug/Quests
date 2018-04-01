@@ -511,6 +511,8 @@ plnStartPrompt: "Enter amount o' time (in seconds), 0 t' clear th' start date or
 plnEndPrompt: "Enter amount o' time (in seconds), 0 t' clear th' end date or -1 t' cancel"
 plnRepeatPrompt: "Enter amount o' time (in seconds), 0 t' clear th' repeat or -1 t' cancel"
 plnCooldownPrompt: "Enter amount o' time (in seconds), 0 t' clear th' cooldown or -1 t' cancel"
+plnTooEarly: "<quest> will be active in <time>."
+plnTooLate: "<quest> was last active <time> ago."
 rewSetMoney: "Set doubloons reward"
 rewSetQuestPoints: "Set Quest Points reward"
 rewSetItems: "Set item rewards"
