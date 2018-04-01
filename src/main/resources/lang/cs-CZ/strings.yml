@@ -511,6 +511,8 @@ plnStartPrompt: "Zadejte čas (v sekundách), 0 pro vymazání data zahájení n
 plnEndPrompt: "Zadejte čas (v sekundách), 0 pro vymazání data ukončení nebo -1 pro zrušení"
 plnRepeatPrompt: "Zadejte čas (v sekundách), 0 zrušte opakování nebo -1 zrušte"
 plnCooldownPrompt: "Zadejte čas (v sekundách), 0 pro vymazání rozložení nebo -1 pro zrušení"
+plnTooEarly: "<quest> will be active in <time>."
+plnTooLate: "<quest> was last active <time> ago."
 rewSetMoney: "Nastavit peněžní odměnu"
 rewSetQuestPoints: "Nastavit odměnu bodů z úkolu"
 rewSetItems: "Nastavit předmět jako odměnu"
