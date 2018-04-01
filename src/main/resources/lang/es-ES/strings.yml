@@ -511,6 +511,8 @@ plnStartPrompt: "Ingrese la cantidad de tiempo (en segundos), 0 para borrar la f
 plnEndPrompt: "Ingrese la cantidad de tiempo (en segundos), 0 para borrar la fecha de finalización o -1 para cancelar"
 plnRepeatPrompt: "Ingrese la cantidad de tiempo (en segundos), 0 para borrar la repetición o -1 para cancelar"
 plnCooldownPrompt: "Ingrese la cantidad de tiempo (en segundos), 0 para borrar el tiempo de reutilización o -1 para cancelar"
+plnTooEarly: "<quest> will be active in <time>."
+plnTooLate: "<quest> was last active <time> ago."
 rewSetMoney: "Colocar premio monetario"
 rewSetQuestPoints: "Colocar premio de Puntos de Búsqueda"
 rewSetItems: "Colocar premios de ítem"
