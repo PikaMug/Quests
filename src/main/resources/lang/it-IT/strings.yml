@@ -511,6 +511,8 @@ plnStartPrompt: "Immettere l'intervallo di tempo (in secondi), 0 per cancellare 
 plnEndPrompt: "Immettere l'intervallo di tempo (in secondi), 0 per cancellare la data di fine o -1 per annullare"
 plnRepeatPrompt: "Immettere la quantità di tempo (in secondi), 0 per cancellare la ripetizione o -1 per annullare"
 plnCooldownPrompt: "Immettere la quantità di tempo (in secondi), 0 per cancellare il tempo di raffreddamento o -1 per annullare"
+plnTooEarly: "<quest> will be active in <time>."
+plnTooLate: "<quest> was last active <time> ago."
 rewSetMoney: "Imposta la ricompensa in denaro"
 rewSetQuestPoints: "Imposta la ricompensa dei Punti missioni"
 rewSetItems: "Imposta i premi per gli oggetti"
