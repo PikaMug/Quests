@@ -24,7 +24,7 @@ public class ObjectiveTimer extends BukkitRunnable {
     private int time;
     private boolean last;
 
-    ObjectiveTimer(Quests plugin, Quester quester, Quest quest, int time, boolean last) {
+    public ObjectiveTimer(Quests plugin, Quester quester, Quest quest, int time, boolean last) {
         this.quester = quester;
         this.quest = quest;
         this.plugin = plugin;

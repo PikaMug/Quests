@@ -15,6 +15,7 @@ package me.blackvein.quests;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -311,6 +312,73 @@ public class Quester {
 
 	public void takeQuest(Quest q, boolean override) {
 		Player player = getPlayer();
+		long start = -1;
+		long end = -1;
+		if (q.startPlanner != null) {
+			Calendar cal = Calendar.getInstance();
+			String[] s = q.startPlanner.split(":");
+			cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
+					Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+			start = cal.getTimeInMillis();
+		}
+		if (q.endPlanner != null) {
+			Calendar cal = Calendar.getInstance();
+			String[] s = q.endPlanner.split(":");
+			cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
+					Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+			end = cal.getTimeInMillis();
+		}
+		if (start > -1 && end > -1) {
+			if (q.repeatPlanner > -1) {
+				long questLength = end - start;
+				long nextStart = start;
+				while (System.currentTimeMillis() >= nextStart) {
+					nextStart += questLength + q.repeatPlanner;
+				}
+				long nextEnd = nextStart + questLength;
+				if (System.currentTimeMillis() < nextStart) {
+					String early = Lang.get("plnTooEarly");
+					early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+					early = early.replaceAll("<time>", ChatColor.DARK_PURPLE
+							+ Quests.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
+					player.sendMessage(ChatColor.YELLOW + early);
+					return;
+				}
+				//TODO - can this ever happen?
+				if (System.currentTimeMillis() > nextEnd) {
+					if (System.currentTimeMillis() > end) {
+						String late = Lang.get("plnTooLate");
+						late = late.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.RED);
+						late = late.replaceAll("<time>", ChatColor.DARK_PURPLE
+								+ Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
+						player.sendMessage(ChatColor.RED + late);
+						return;
+					}
+					return;
+				}
+			}
+		}
+		if (q.startPlanner != null) {
+			if (System.currentTimeMillis() < start) {
+				String early = Lang.get("plnTooEarly");
+				early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+				early = early.replaceAll("<time>", ChatColor.DARK_PURPLE
+						+ Quests.getTime(start - System.currentTimeMillis()) + ChatColor.YELLOW);
+				player.sendMessage(ChatColor.YELLOW + early);
+				return;
+			}
+		}
+		//TODO - should this even be reported?
+		if (q.endPlanner != null) {
+			if (System.currentTimeMillis() > end) {
+				String late = Lang.get("plnTooLate");
+				late = late.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.RED);
+				late = late.replaceAll("<time>", ChatColor.DARK_PURPLE
+						+ Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
+				player.sendMessage(ChatColor.RED + late);
+				return;
+			}
+		}
 		if (q.testRequirements(player) == true || override) {
 			addEmptiesFor(q, 0);
 			currentQuests.put(q, 0);

@@ -51,14 +51,14 @@ public class PlannerPrompt extends FixedSetPrompt {
 					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + "\n";
-			text += "    - " + getDate((String) context.getSessionData(CK.PLN_START_DATE)) + "\n";
+			text += "    - " + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE)) + "\n";
 		}
 		if (context.getSessionData(CK.PLN_END_DATE) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " "
 					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + "\n";
-			text += "    - " + getDate((String) context.getSessionData(CK.PLN_END_DATE)) + "\n";
+			text += "    - " + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE)) + "\n";
 		}
 		if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " "
@@ -164,7 +164,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 		}
 	}
 	
-	private String getDate(String formattedDate) {
+	private String getPrettyDate(String formattedDate) {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
