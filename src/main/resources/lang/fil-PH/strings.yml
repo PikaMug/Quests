@@ -511,6 +511,8 @@ plnStartPrompt: "Ipasok ang dami ng oras (sa mga segundo), 0 upang i-clear ang p
 plnEndPrompt: "Ipasok ang dami ng oras (sa mga segundo), 0 upang i-clear ang petsa ng pagtatapos o -1 upang kanselahin"
 plnRepeatPrompt: "Ipasok ang dami ng oras (sa mga segundo), 0 upang i-clear ang paulit-ulit o -1 upang kanselahin"
 plnCooldownPrompt: "Ipasok ang dami ng oras (sa mga segundo), 0 upang i-clear ang cooldown o -1 upang kanselahin"
+plnTooEarly: "<quest> will be active in <time>."
+plnTooLate: "<quest> was last active <time> ago."
 rewSetMoney: "Itakda ang perang gantimpala"
 rewSetQuestPoints: "Itakda ang gantimpalang puntos ng pagsusulit"
 rewSetItems: "Itakda ang gantimpalang gamit"
