@@ -45,9 +45,9 @@ COMMAND_QUESTADMIN_SETSTAGE_HELP: "<command> [player] [quest] [stage] - Set the 
 COMMAND_QUESTADMIN_SETSTAGE_USAGE: '用法: /questadmin setstage [player] [quest] [stage]'
 COMMAND_QUESTADMIN_PURGE: "清除"
 COMMAND_QUESTADMIN_PURGE_HELP: "<command> [player] - Clear all Quests data of a player AND BLACKLISTS THEM"
-COMMAND_QUESTADMIN_RESET: "reset"
+COMMAND_QUESTADMIN_RESET: "重置"
 COMMAND_QUESTADMIN_RESET_HELP: "<command> [player] - 清除此玩家所有任務資料"
-COMMAND_QUESTADMIN_REMOVE: "remove"
+COMMAND_QUESTADMIN_REMOVE: "移除"
 COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - 移除玩家已完成任務"
 COMMAND_QUESTADMIN_TOGGLEGUI: "切換顯示"
 COMMAND_QUESTADMIN_TOGGLEGUI_HELP: "<command> [npc id] - Toggle GUI Quest Display on an NPC"
