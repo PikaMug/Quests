@@ -2550,10 +2550,10 @@ public class Quester {
 				ItemStack display = quests.get(i).guiDisplay;
 				ItemMeta meta = display.getItemMeta();
 				if (completedQuests.contains(quests.get(i).name)) {
-					meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName()
+					meta.setDisplayName(ChatColor.GOLD + Quests.parseString(quests.get(i).getName()
 							+ " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), npc));
 				} else {
-					meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
+					meta.setDisplayName(ChatColor.GOLD + Quests.parseString(quests.get(i).getName(), npc));
 				}
 				if (!meta.hasLore()) {
 					LinkedList<String> lines = new LinkedList<String>();
