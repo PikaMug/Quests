@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -31,6 +32,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -228,7 +230,19 @@ public class Event {
 		}
 		if (commands.isEmpty() == false) {
 			for (String s : commands) {
-				quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
+				if (!Bukkit.isPrimaryThread()) {
+			        new BukkitRunnable() {
+			            
+			            @Override
+			            public void run() {
+							quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
+
+			            }
+			            
+			        }.runTask(this.plugin);
+				} else {
+					quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
+				}
 			}
 		}
 		if (potionEffects.isEmpty() == false) {
