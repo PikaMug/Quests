@@ -512,7 +512,7 @@ plnEndPrompt: "Nhập số lượng thời gian (tính bằng giây), 0 để x�
 plnRepeatPrompt: "Nhập số lượng thời gian (tính bằng giây), 0 để xóa lặp lại hoặc -1 để hủy"
 plnCooldownPrompt: "Nhập số lượng thời gian (tính bằng giây), 0 để xóa thời gian cooldown hoặc -1 để hủy"
 plnTooEarly: "<quest> sẽ được kích hoạt trong <time>."
-plnTooLate: "<quest> còn lại <time>."
+plnTooLate: "<quest> đã qua hoạt động <time> trước."
 rewSetMoney: "Thiếp lập số tiền nhận được"
 rewSetQuestPoints: "Thiếp lập số Điểm Nhiệm vụ nhận được"
 rewSetItems: "Thiết lập item nhận được"
