@@ -73,7 +73,7 @@ questEditorEditEnterQuestName: "クエスト名を入力してください(<canc
 questEditorEnterAskMessage: "尋ねるメッセージを入力してください(<cancel>)"
 questEditorEnterFinishMessage: "終了メッセージを入力してください(<cancel>)"
 questEditorEnterNPCStart: "NPCのIDを入力してください、-1と入力するとNPCの開始をクリア、-2を入力するとキャンセルします"
-questEditorEnterBlockStart: "スタートポイント <done>, <clear>, <cancel>として使用するブロックを右クリックしてください。\n \nContext | Request Context\n"
+questEditorEnterBlockStart: "スタートポイント <done>, <clear>, <cancel>として使用するブロックを右クリックしてください"
 questEditorEnterInitialEvent: "イベント名を入力してください、<clear>、<cancel>"
 questRequiredNoneSet: "Required, none set"
 questWGSetRegion: "地域を設定"
