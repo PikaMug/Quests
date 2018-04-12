@@ -10,6 +10,6 @@ Distributed exclusively through Spigot: https://www.spigotmc.org/resources/quest
 
 Documentation can be found in the Wiki: https://github.com/FlyingPikachu/Quests/wiki
 
-## Localization
+## Localization [![Crowdin](https://d322cqt584bo4o.cloudfront.net/translate-quests/localized.svg)](https://crowdin.com/project/translate-quests)
 
 Help translate Quests into your language: https://crowdin.com/project/translate-quests
