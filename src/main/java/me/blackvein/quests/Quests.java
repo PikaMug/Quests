@@ -15,7 +15,6 @@ package me.blackvein.quests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,7 +23,6 @@ import java.lang.reflect.Constructor;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,7 +50,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -80,7 +77,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.codisimus.plugins.phatloots.PhatLoots;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
-import com.evilmidget38.UUIDFetcher;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
@@ -126,7 +122,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public boolean allowCommandsForNpcQuests = false;
 	public boolean allowQuitting = true;
 	public boolean askConfirmation = true;
-	public boolean convertData = false;
 	public boolean genFilesOnJoin = true;
 	public boolean ignoreLockedQuests = false;
 	public int killDelay = 0;
@@ -294,16 +289,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				getLogger().log(Level.INFO, "" + events.size() + " Event(s) loaded.");
 				getLogger().log(Level.INFO, "" + Lang.getPhrases() + " Phrase(s) loaded.");
 				questers.putAll(getOnlineQuesters());
-				if (convertData) {
-					convertQuesters();
-					FileConfiguration config = getConfig();
-					config.set("convert-data-on-startup", false);
-					try {
-						config.save(new File(Quests.this.getDataFolder(), "config.yml"));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
 			}
 		}, 5L);
 	}
@@ -512,7 +497,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
 		allowQuitting = config.getBoolean("allow-quitting", true);
 		askConfirmation = config.getBoolean("ask-confirmation", true);
-		convertData = config.getBoolean("convert-data-on-startup", false);
 		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
 		ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);
 		killDelay = config.getInt("kill-delay", 600);
@@ -1364,18 +1348,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					return true;
 				}
 			}
-		} else if (args.length == 1) {
-			if (args[0].equalsIgnoreCase("convert")) {
-				if (cs instanceof ConsoleCommandSender) {
-					convertQuesters();
-				} else {
-					cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownCommand"));
-					return true;
-				}
-			} else {
-				cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
-				return true;
-			}
 		} else {
 			cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
 			return true;
@@ -1453,8 +1425,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					UUID id = UUID.fromString(s);
 					s = Bukkit.getOfflinePlayer(id).getName();
 				} catch (IllegalArgumentException e) {
-					getLogger().warning("Invalid file name \"" + s + "\"in /data folder. Replace with player UUID"
-							+ " or start the plugin with the \"convert-data-on-startup\" enabled in config.yml");
+					getLogger().warning("File name \"" + s + "\"in /data folder is not a valid player UUID!");
 					break;
 				}
 				numPrinted++;
@@ -2113,13 +2084,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				id = p.getUniqueId();
 				break;
 			}
-		}
-		try {
-			if (id == null) {
-				id = UUIDFetcher.getUUIDOf(name);
-			}
-		} catch (Exception e) {
-			// Do nothing
 		}
 		if (id != null) {
 			quester = getQuester(id);
@@ -4143,103 +4107,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		} catch (Exception e) {
 			getLogger().severe("Unable to update data.yml file");
 			e.printStackTrace();
-		}
-	}
-
-	public void convertQuesters() {
-		int numQuesters = 0;
-		int succeeded = 0;
-		int failed = 0;
-		final File dataFolder = new File(this.getDataFolder(), "data" + File.separator);
-		final File oldDataFolder = new File(this.getDataFolder(), "data" + File.separator + "old" + File.separator);
-		if (oldDataFolder.exists() == false || oldDataFolder.exists() && oldDataFolder.isDirectory() == false) {
-			oldDataFolder.mkdir();
-		}
-		if (dataFolder.exists() && dataFolder.isDirectory()) {
-			final File[] files = dataFolder.listFiles(new FilenameFilter() {
-
-				@Override
-				public boolean accept(File dir, String name) {
-					return dir.getPath().equals(dataFolder.getPath()) && name.endsWith(".yml");
-				}
-			});
-			
-			if (files != null) {
-				numQuesters = files.length;
-				if (numQuesters > 0) {
-					final ArrayList<String> names = new ArrayList<String>();
-					getLogger().info("Gathering Quester information...");
-					for (int i = 0; i < numQuesters; i++) {
-						final File file = files[i];
-						final File old = new File(oldDataFolder, file.getName());
-						final String name = file.getName().substring(0, file.getName().length() - 4);
-						final FileConfiguration config = new YamlConfiguration();
-						try {
-							config.load(file);
-							config.save(old);
-							config.set("lastKnownName", name);
-							config.save(file);
-						} catch (Exception e) {
-							failed++;
-						}
-						names.add(name.toLowerCase());
-						succeeded++;
-					}
-					getLogger().info("Completed: " + succeeded + " Success(es). " + failed + " Failure(s). " + numQuesters + " Total.");
-					getLogger().info("Preparing to convert data.");
-					Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-
-						@Override
-						public void run() {
-							getLogger().info("Done. Converting data...");
-							int converted = 0;
-							int failed = 0;
-							final UUIDFetcher fetcher = new UUIDFetcher(names);
-							final Map<String, UUID> idMap;
-							try {
-								idMap = fetcher.call();
-							} catch (Exception ex) {
-								getLogger().severe("Error retrieving data from Mojang account database. Error log:");
-								ex.printStackTrace();
-								return;
-							}
-							for (Entry<String, UUID> entry : idMap.entrySet()) {
-								try {
-									final File found = new File(dataFolder, entry.getKey() + ".yml");
-									final File copy = new File(dataFolder, entry.getValue() + ".yml");
-									final FileConfiguration config = new YamlConfiguration();
-									final FileConfiguration newConfig = new YamlConfiguration();
-									config.load(found);
-									if (config.contains("currentQuest")) {
-										LinkedList<String> currentQuests = new LinkedList<String>();
-										currentQuests.add(config.getString("currentQuest"));
-										LinkedList<Integer> currentStages = new LinkedList<Integer>();
-										currentStages.add(config.getInt("currentStage"));
-										newConfig.set("currentQuests", currentQuests);
-										newConfig.set("currentStages", currentStages);
-										newConfig.set("hasJournal", false);
-										newConfig.set("lastKnownName", entry.getKey());
-										ConfigurationSection dataSec = Quester.getLegacyQuestData(config, config.getString("currentQuest"));
-										newConfig.set("questData", dataSec);
-									}
-									newConfig.save(copy);
-									found.delete();
-									converted++;
-								} catch (Exception ex) {
-									failed++;
-								}
-							}
-							getLogger().info("Conversion completed: " + converted + " Converted. " + failed + " Failed.");
-							getLogger().info("Old data files stored in " 
-									+ File.separator + "Quests" + File.separator + "data" + File.separator + "old");
-						}
-					});
-				} else {
-					getLogger().info("No Questers to convert!");
-				}
-			}
-		} else {
-			getLogger().info("Data folder does not exist!");
 		}
 	}
 
