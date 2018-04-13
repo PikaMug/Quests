@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -504,14 +505,19 @@ public class Quest {
 
 	@SuppressWarnings("deprecation")
 	public void failQuest(Quester q) {
-		Player player = plugin.getServer().getPlayer(q.id);
-		String title = Lang.get(player, "questTitle");
-		title = title.replaceAll("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
-		player.sendMessage(ChatColor.AQUA + title);
-		player.sendMessage(ChatColor.RED + Lang.get(player, "questFailed"));
-		q.hardQuit(this);
-		q.saveData();
-		player.updateInventory();
+		if (plugin.getServer().getPlayer(q.id) != null) {
+			Player player = plugin.getServer().getPlayer(q.id);
+			String title = Lang.get(player, "questTitle");
+			title = title.replaceAll("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
+			player.sendMessage(ChatColor.AQUA + title);
+			player.sendMessage(ChatColor.RED + Lang.get(player, "questFailed"));
+			q.hardQuit(this);
+			q.saveData();
+			player.updateInventory();
+		} else {
+			q.hardQuit(this);
+			q.saveData();
+		}
 		q.updateJournal();
 	}
 
