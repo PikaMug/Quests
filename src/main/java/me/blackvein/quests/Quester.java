@@ -596,10 +596,8 @@ public class Quester {
 		int index2 = 0;
 		for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
 			int delivered = 0;
-			try {
+			if (getQuestData(quest).itemsDelivered.containsKey(is)) {
 				delivered = getQuestData(quest).itemsDelivered.get(is);
-			} catch (NullPointerException ne) {
-				plugin.getLogger().severe("itemsDelivered did not contain " + is.getType() + ":" + is.getDurability() + " x " + is.getAmount() + " for quest " + quest.name);
 			}
 			int amt = is.getAmount();
 			Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(index2);
