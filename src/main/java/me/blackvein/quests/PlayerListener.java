@@ -59,6 +59,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -307,7 +308,13 @@ public class PlayerListener implements Listener {
 						for (String s : currentStage.chatEvents.keySet()) {
 							if (s.equalsIgnoreCase(chat)) {
 								if (quester.getQuestData(quest).eventFired.get(s) == null || quester.getQuestData(quest).eventFired.get(s) == false) {
-									currentStage.chatEvents.get(s).fire(quester, quest);
+									new BukkitRunnable() {			            
+							            @Override
+							            public void run() {
+							            	currentStage.chatEvents.get(s).fire(quester, quest);
+							            }
+							            
+							        }.runTask(this.plugin);
 									quester.getQuestData(quest).eventFired.put(s, true);
 								}
 							}

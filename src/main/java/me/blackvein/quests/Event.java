@@ -230,19 +230,7 @@ public class Event {
 		}
 		if (commands.isEmpty() == false) {
 			for (String s : commands) {
-				if (!Bukkit.isPrimaryThread()) {
-			        new BukkitRunnable() {
-			            
-			            @Override
-			            public void run() {
-							quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
-
-			            }
-			            
-			        }.runTask(this.plugin);
-				} else {
-					quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
-				}
+				quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
 			}
 		}
 		if (potionEffects.isEmpty() == false) {
