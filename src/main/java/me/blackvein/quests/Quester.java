@@ -2033,7 +2033,7 @@ public class Quester {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksBroken.add(names.indexOf(s), is);
+						getQuestData(quest).blocksBroken.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("blocks-damaged-names")) {
@@ -2048,7 +2048,7 @@ public class Quester {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksDamaged.add(names.indexOf(s), is);
+						getQuestData(quest).blocksDamaged.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("blocks-placed-names")) {
@@ -2063,7 +2063,7 @@ public class Quester {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksPlaced.add(names.indexOf(s), is);
+						getQuestData(quest).blocksPlaced.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("blocks-used-names")) {
@@ -2078,7 +2078,7 @@ public class Quester {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksUsed.add(names.indexOf(s), is);
+						getQuestData(quest).blocksUsed.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("blocks-cut-names")) {
@@ -2093,7 +2093,7 @@ public class Quester {
 							// Legacy
 							is = new ItemStack(Material.matchMaterial(s), amounts.get(names.indexOf(s)), (short) 0);
 						}
-						getQuestData(quest).blocksCut.add(names.indexOf(s), is);
+						getQuestData(quest).blocksCut.set(names.indexOf(s), is);
 					}
 				}
 				if (questSec.contains("fish-caught")) {
