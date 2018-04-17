@@ -58,7 +58,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -465,10 +464,9 @@ public class PlayerListener implements Listener {
 			if (damager != null) {
 				if (damager instanceof Projectile) {
 					Projectile projectile = (Projectile) damager;
-					ProjectileSource source = projectile.getShooter();
-					if (source instanceof Entity) {
-						killMob((Entity)source, evt.getEntity());
-					}				
+					if (projectile.getShooter() != null && projectile.getShooter() instanceof Entity) {
+						killMob((Entity)projectile.getShooter(), evt.getEntity());
+					}
 				} else if (damager instanceof TNTPrimed) {
 					TNTPrimed tnt = (TNTPrimed) damager;
 					Entity source = tnt.getSource();
@@ -535,9 +533,8 @@ public class PlayerListener implements Listener {
 				}
 				if (damager instanceof Projectile) {
 					Projectile projectile = (Projectile) damager;
-					ProjectileSource source = projectile.getShooter();
-					if (source instanceof Entity) {
-						killPlayer((Entity)source, evt.getEntity());
+					if (projectile.getShooter() != null && projectile.getShooter() instanceof Entity) {
+						killPlayer((Entity)projectile.getShooter(), evt.getEntity());
 					}
 				} else if (damager instanceof TNTPrimed) {
 					TNTPrimed tnt = (TNTPrimed) damager;
