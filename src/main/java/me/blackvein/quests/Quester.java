@@ -1655,6 +1655,10 @@ public class Quester {
 			data.set("quest-points", questPoints);
 			ConfigurationSection dataSec = data.createSection("questData");
 			for (Quest quest : currentQuests.keySet()) {
+				if (quest.name == null || quest.name.isEmpty()) {
+					plugin.getLogger().severe("Quest name was null or empty while loading data");
+					return null;
+				}
 				ConfigurationSection questSec = dataSec.createSection(quest.name);
 				QuestData questData = getQuestData(quest);
 				if (questData == null)
