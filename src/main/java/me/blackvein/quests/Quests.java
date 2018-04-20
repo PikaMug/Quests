@@ -1401,16 +1401,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			Map<String, Integer> questPoints = new HashMap<String, Integer>();
 			if (playerFiles != null) {
 				for (File f : playerFiles) {
-					FileConfiguration data = new YamlConfiguration();
-					try {
-						data.load(f);
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (InvalidConfigurationException e) {
-						e.printStackTrace();
+					if (!f.isDirectory()) {
+						FileConfiguration data = new YamlConfiguration();
+						try {
+							data.load(f);
+						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (InvalidConfigurationException e) {
+							e.printStackTrace();
+						}
+						String name = f.getName().substring(0, (f.getName().indexOf(".")));
+						questPoints.put(name, data.getInt("quest-points"));
 					}
-					String name = f.getName().substring(0, (f.getName().indexOf(".")));
-					questPoints.put(name, data.getInt("quest-points"));
 				}
 			}
 			LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) Quests.sort(questPoints);
