@@ -381,7 +381,12 @@ public class Quester {
 		}
 		if (q.testRequirements(player) == true || override) {
 			addEmptiesFor(q, 0);
-			currentQuests.put(q, 0);
+			try {
+				currentQuests.put(q, 0);
+			} catch (NullPointerException npe) {
+				plugin.getLogger().severe("Unable to add quest" + q.name + " for player " + player.getName()
+						+ ". Consider resetting player data or report on Github");
+			}
 			Stage stage = q.getStage(0);
 			if (!override) {
 				if (q.moneyReq > 0) {
