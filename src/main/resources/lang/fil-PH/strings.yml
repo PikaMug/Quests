@@ -858,4 +858,4 @@ timerMessage: "<green>Natitirang oras para tapos ang pagsusulit/yugto: <red>%s m
 timerStart: "<green>Mayroon ka <red>%s segundo <green>para taposin ang pagsusulit/yugtong ito"
 questErrorReadingFile: "Di mabasang file ng pagsusulit."
 questSaveError: "Mayroong error ang lumabas habang ikaw ay nagsisave."
-noPermission: "You do not have permission to do that."
+noPermission: "Wala kang pahintulot na gawin iyon."
