@@ -858,4 +858,4 @@ timerMessage: "<green> Tempo rimanente per finire la missione/fase: <red>%s seco
 timerStart: "<green>Tu hai <red>%ssecondi <green>per finire questa ricerca/fase"
 questErrorReadingFile: "Errore durante la lettura del file missione."
 questSaveError: "Si è verificato un errore durante il salvataggio."
-noPermission: "You do not have permission to do that."
+noPermission: "Non hai il permesso di farlo."
