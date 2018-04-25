@@ -70,6 +70,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -137,7 +138,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public HashMap<String, Integer> commands = new HashMap<String, Integer>();
 	public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
 	public final Map<UUID, Quester> questers = new HashMap<UUID, Quester>();
-	public final List<String> questerBlacklist = new LinkedList<String>();
 	public final List<CustomRequirement> customRequirements = new LinkedList<CustomRequirement>();
 	public final List<CustomReward> customRewards = new LinkedList<CustomReward>();
 	public final List<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
@@ -317,7 +317,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_FINISH"), 3); // finish [player] [quest]
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
-			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_PURGE"), 2); // purge [player]
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RESET"), 2); // reset [player]
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
@@ -342,7 +341,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			adminCommands.put("finish", 3); // finish [player] [quest]
 			adminCommands.put("nextstage", 3); // nextstage [player] [quest]
 			adminCommands.put("setstage", 4); // setstage [player] [quest] [stage]
-			adminCommands.put("purge", 2); // purge [player]
 			adminCommands.put("reset", 2); // reset [player]
 			adminCommands.put("togglegui", 2); // togglegui [npc id]
 			adminCommands.put("reload", 1); // reload
@@ -426,10 +424,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public void onDisable() {
 		getLogger().info("Saving Quester data.");
 		for (Player p : getServer().getOnlinePlayers()) {
-			if (!questerBlacklist.contains(p.getUniqueId().toString())) {
-				Quester quester = getQuester(p.getUniqueId());
-				quester.saveData();
-			}
+			Quester quester = getQuester(p.getUniqueId());
+			quester.saveData();
 		}
 		updateData();
 	}
@@ -514,11 +510,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		showQuestTitles = config.getBoolean("show-titles", true);
 		translateSubCommands = config.getBoolean("translate-subcommands", false);
 		useCompass = config.getBoolean("use-compass", true);
-		for (String s : config.getStringList("quester-blacklist")) {
-			if (!s.equalsIgnoreCase("UUID")) {
-				questerBlacklist.add(s);
-			}
-		}
 		try {
 			config.save(new File(this.getDataFolder(), "config.yml"));
 		} catch (IOException e) {
@@ -681,7 +672,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public boolean onCommand(final CommandSender cs, Command cmd, String label, String[] args) {
 		if (cs instanceof Player) {
 			if (checkQuester(((Player) cs).getUniqueId()) == true) {
-				cs.sendMessage(ChatColor.RED + Lang.get((Player) cs, "questBlacklisted"));
+				cs.sendMessage(ChatColor.RED + Lang.get((Player) cs, "noPermission"));
 				return true;
 			}
 		}
@@ -725,8 +716,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			adminNextStage(cs, args);
 		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage")) {
 			adminSetStage(cs, args);
-		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_PURGE") : "purge")) {
-			adminPurge(cs, args);
 		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset")) {
 			adminReset(cs, args);
 		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove")) {
@@ -745,7 +734,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin")) {
 			printAdminHelp(cs);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -757,7 +746,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			msg = msg.replaceAll("<number>", ChatColor.DARK_PURPLE + String.valueOf(quests.size()) + ChatColor.GOLD);
 			cs.sendMessage(ChatColor.GOLD + msg);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -789,7 +778,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -824,7 +813,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -860,7 +849,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				quester.saveData();
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -896,7 +885,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				quester.saveData();
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -953,7 +942,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1028,7 +1017,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 			thread.start();
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1068,7 +1057,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1126,7 +1115,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1166,7 +1155,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1208,41 +1197,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 				}
 			} else {
-				cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+				cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 			}
 		} catch (NullPointerException npe) {
 			npe.printStackTrace();
-		}
-	}
-
-	private void adminPurge(final CommandSender cs, String[] args) {
-		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.purge")) {
-			Quester quester = getQuester(args[1]);
-			if (quester == null) {
-				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
-				return;
-			}
-			try {
-				quester.hardClear();
-				quester.saveData();
-				quester.updateJournal();
-				final File dataFolder = new File(this.getDataFolder(), "data" + File.separator);
-				final File found = new File(dataFolder, quester.id + ".yml");
-				found.delete();
-				addToBlacklist(quester.id);
-				String msg = Lang.get("questPurged");
-				if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
-					msg = msg.replaceAll("<player>", ChatColor.GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + ChatColor.GOLD);
-				} else {
-					msg = msg.replaceAll("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
-				}
-				cs.sendMessage(ChatColor.GOLD + msg);
-				cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + quester.id);
-			} catch (Exception e) {
-				getLogger().info("Data file does not exist for " + quester.id.toString());
-			}
-		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
 		}
 	}
 
@@ -1278,7 +1236,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			quester.saveData();
 			questers.put(id, quester);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1286,7 +1244,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (cs.hasPermission("quests.admin.*") && cs.hasPermission("quests.admin.stats")) {
 			questsStats(cs, args);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1315,7 +1273,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			quester.saveData();
 			quester.updateJournal();
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1367,7 +1325,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.events.editor")) {
 			eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("eventEditorNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 		return true;
 	}
@@ -1376,7 +1334,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
 			questFactory.convoCreator.buildConversation((Conversable) cs).begin();
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questEditorNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 		return true;
 	}
@@ -1560,7 +1518,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					return true;
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + Lang.get(player, "questQuitNoPerms"));
+				player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
 				return true;
 			}
 		} else {
@@ -1678,7 +1636,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + Lang.get(player, "questTakeNoPerms"));
+				player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
 			}
 		} else {
 			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questTakeDisabled"));
@@ -1704,7 +1662,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				listQuests((Player) cs, page);
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questListNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1713,7 +1671,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			Player p = (Player) cs;
 			printHelp(p);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1726,7 +1684,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					showQuestDetails(cs, args);
 				}
 			} else {
-				cs.sendMessage(ChatColor.RED + Lang.get("questCmdNoPerms"));
+				cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 				return true;
 			}
 		} else {
@@ -1870,7 +1828,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("questInfoNoPerms"));
+			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
 
@@ -1928,8 +1886,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage"));
 			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP")
 					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_PURGE") : "purge"));
 			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP")
 					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset"));
 			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP")
@@ -1978,10 +1934,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			if (cs.hasPermission("quests.admin.setstage")) {
 				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP")
 						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage"));
-			}
-			if (cs.hasPermission("quests.admin.purge")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_PURGE_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_PURGE") : "purge"));
 			}
 			if (cs.hasPermission("quests.admin.reset")) {
 				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP")
@@ -2036,7 +1988,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public void reloadQuests() {
 		quests.clear();
 		events.clear();
-		questerBlacklist.clear();
 		loadQuests();
 		loadData();
 		loadEvents();
@@ -3826,18 +3777,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	/**
-	 * Checks whether player has been blacklisted from Quests
+	 * Checks whether player meets criteria to use Quests
 	 * 
 	 * @param uuid the entity UUID to be checked
 	 * @return {@code true} if UUID is blacklisted
 	 */
 	public boolean checkQuester(UUID uuid) {
-		for (String s : questerBlacklist) {
-			try {
-				uuid.equals(UUID.fromString(s));
+		Player p = Bukkit.getPlayer(uuid);
+		for (PermissionAttachmentInfo pm : p.getEffectivePermissions()) {
+			if (pm.getPermission().startsWith("quests")) {
 				return true;
-			} catch (IllegalArgumentException e) {
-				getLogger().warning(s + " in config.yml is not a valid UUID for quester-blacklist");
 			}
 		}
 		return false;
@@ -4109,18 +4058,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		} catch (Exception e) {
 			getLogger().severe("Unable to update data.yml file");
 			e.printStackTrace();
-		}
-	}
-
-	public void addToBlacklist(UUID id) {
-		List<String> blacklist = getConfig().getStringList("quester-blacklist");
-		if (!blacklist.contains(id.toString())) {
-			blacklist.add(id.toString());
-			getConfig().set("quester-blacklist", blacklist);
-			saveConfig();
-		}
-		if (!questerBlacklist.contains(id.toString())) {
-			questerBlacklist.add(id.toString());
 		}
 	}
 }

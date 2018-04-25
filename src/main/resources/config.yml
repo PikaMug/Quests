@@ -4,7 +4,6 @@ allow-command-questing: true
 allow-command-quests-with-npcs: false
 allow-quitting: true
 ask-confirmation: true
-convert-data-on-startup: false
 generate-files-on-join: true
 ignore-locked-quests: false
 kill-delay: 600
@@ -18,7 +17,3 @@ show-requirements: true
 show-titles: true
 translate-subcommands: false
 use-compass: true
-quester-blacklist:
-- UUID
-- UUID
-- UUID

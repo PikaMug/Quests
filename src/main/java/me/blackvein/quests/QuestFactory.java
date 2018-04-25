@@ -106,21 +106,21 @@ public class QuestFactory implements ConversationAbandonedListener {
 				if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.create")) {
 					return new QuestNamePrompt();
 				} else {
-					player.sendMessage(ChatColor.RED + Lang.get("questEditorNoPermsCreate"));
+					player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 					return new MenuPrompt();
 				}
 			} else if (input.equalsIgnoreCase("2")) {
 				if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.edit")) {
 					return new SelectEditPrompt();
 				} else {
-					player.sendMessage(ChatColor.RED + Lang.get("questEditorNoPermsCreate"));
+					player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 					return new MenuPrompt();
 				}
 			} else if (input.equalsIgnoreCase("3")) {
 				if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.delete")) {
 					return new SelectDeletePrompt();
 				} else {
-					player.sendMessage(ChatColor.RED + Lang.get("questEditorNoPermsDelete"));
+					player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 					return new MenuPrompt();
 				}
 			} else if (input.equalsIgnoreCase("4")) {

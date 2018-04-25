@@ -111,7 +111,7 @@ public class EventFactory implements ConversationAbandonedListener {
 					context.setSessionData(CK.E_OLD_EVENT, "");
 					return new EventNamePrompt();
 				} else {
-					player.sendMessage(ChatColor.RED + Lang.get("eventEditorCreatePermisssions"));
+					player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 					return new MenuPrompt();
 				}
 			} else if (input.equalsIgnoreCase("2")) {
@@ -123,7 +123,7 @@ public class EventFactory implements ConversationAbandonedListener {
 						return new SelectEditPrompt();
 					}
 				} else {
-					player.sendMessage(ChatColor.RED + Lang.get("eventEditorEditPermisssions"));
+					player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 					return new MenuPrompt();
 				}
 			} else if (input.equalsIgnoreCase("3")) {
@@ -135,7 +135,7 @@ public class EventFactory implements ConversationAbandonedListener {
 						return new SelectDeletePrompt();
 					}
 				} else {
-					player.sendMessage(ChatColor.RED + Lang.get("eventEditorDeletePermisssions"));
+					player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 					return new MenuPrompt();
 				}
 			} else if (input.equalsIgnoreCase("4")) {
