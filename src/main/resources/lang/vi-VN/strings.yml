@@ -858,4 +858,4 @@ timerMessage: "%green%Thời gian còn lại để hoàn thành nhiệm vụ/gia
 timerStart: "%green%Bạn có%red% <time> giây%green% để hoàn thành nhiệm vụ/giai đoạn này"
 questErrorReadingFile: "Lỗi khi đang đọc file Nhiệm vụ."
 questSaveError: "Có lỗi xảy ra trong khi đang lưu."
-noPermission: "You do not have permission to do that."
+noPermission: "Bạn không có quyền để làm điều đó."
