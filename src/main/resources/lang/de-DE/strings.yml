@@ -858,4 +858,4 @@ timerMessage: "%green%Restzeit für den Abschluss der Quest/Abschnitt:%red% <tim
 timerStart: "%green%Du hat%red% <time> Sekunden%green% um diese Quest/Abschnitt abzuschliessen"
 questErrorReadingFile: "Fehler beim Lesen der Questdatei."
 questSaveError: "Beim Speichern ist ein Fehler aufgetreten."
-noPermission: "You do not have permission to do that."
+noPermission: "Du hast keine Erlaubnis das zu tun."
