@@ -858,4 +858,4 @@ timerMessage: "<green>Waktu tersisa untuk menyelesaikan pencarian/tahap: <red>%s
 timerStart: "<green>Kamu punya <red>%s detik <green>untuk menyelesaikan pencarian ini/tahap"
 questErrorReadingFile: "Kesalahan saat membaca berkas Pencarian."
 questSaveError: "Terjadi kesalahan saat menyimpan."
-noPermission: "You do not have permission to do that."
+noPermission: "Anda tidak memiliki izin untuk melakukan itu."
