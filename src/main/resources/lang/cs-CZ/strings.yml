@@ -858,4 +858,4 @@ timerMessage: "<green>Zbývající čas k dokončení úkolu/fáze: <red>%s vte�
 timerStart: "<green>Máte <red>%s sekund <green>k dokončení úkolu/fáze"
 questErrorReadingFile: "Chyba při čtení souborů úkolů."
 questSaveError: "Při ukládání nastala chyba."
-noPermission: "You do not have permission to do that."
+noPermission: "Nemáte k tomu povolení."
