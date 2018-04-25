@@ -858,4 +858,4 @@ timerMessage: "<green> Tiempo restante para terminar la búsqueda/etapa: <red>%s
 timerStart: "<green> Usted tiene <red>%s segundos <green> para terminar la búsqueda/etapa"
 questErrorReadingFile: "Error en la lectura de la carpeta de la Búsqueda."
 questSaveError: "A ocurrido un error al guardar."
-noPermission: "You do not have permission to do that."
+noPermission: "No tienes permiso para hacer eso."
