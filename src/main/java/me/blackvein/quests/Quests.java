@@ -3784,10 +3784,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 */
 	public boolean checkQuester(UUID uuid) {
 		Player p = Bukkit.getPlayer(uuid);
-		for (PermissionAttachmentInfo pm : p.getEffectivePermissions()) {
-			if (pm.getPermission().startsWith("quests")) {
-				return false;
+		try {
+			for (PermissionAttachmentInfo pm : p.getEffectivePermissions()) {
+				if (pm.getPermission().startsWith("quests")) {
+					return false;
+				}
 			}
+		} catch (NullPointerException ne) {
+			// User has no permissions
 		}
 		return true;
 	}
