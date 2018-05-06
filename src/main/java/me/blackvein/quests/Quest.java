@@ -98,6 +98,9 @@ public class Quest {
 	public void nextStage(Quester q) {
 		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
 		if (stageCompleteMessage != null) {
+			if(Quests.placeholder != null) {
+				s = PlaceholderAPI.setPlaceholders(quester.getPlayer(), s);
+			}
 			q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
 		}
 		if (plugin.useCompass) {
@@ -153,15 +156,18 @@ public class Quest {
 			nextStage.startEvent.fire(quester, this);
 		}
 		updateCompass(quester, nextStage);
+		String stageStartMessage = quester.getCurrentStage(this).startMessage;
+		if (stageStartMessage != null) {
+			quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this));
+		}
 		String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");
 		msg = msg.replaceAll("<quest>", name);
 		quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
 		for (String s : quester.getObjectivesReal(this)) {
+			if(Quests.placeholder != null) {
+				s = PlaceholderAPI.setPlaceholders(quester.getPlayer(), s);
+			}
 			quester.getPlayer().sendMessage(s);
-		}
-		String stageStartMessage = quester.getCurrentStage(this).startMessage;
-		if (stageStartMessage != null) {
-			quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this));
 		}
 		quester.updateJournal();
 	}
