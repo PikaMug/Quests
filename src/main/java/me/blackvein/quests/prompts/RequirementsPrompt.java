@@ -22,7 +22,6 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
@@ -187,7 +186,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		return null;
 	}
 
-	private class MoneyPrompt extends NumericPrompt {
+	private class MoneyPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -201,40 +200,56 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		}
 
 		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.intValue() < -1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqGreaterThanZero"));
-				return new MoneyPrompt();
-			} else if (input.intValue() == -1) {
-				return new RequirementsPrompt(quests, factory);
-			} else if (input.intValue() == 0) {
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i > 0) {
+						context.setSessionData(CK.REQ_MONEY, i);
+					} else {
+						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
+						return new MoneyPrompt();
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+							+ Lang.get("stageEditorInvalidNumber"));
+					return new MoneyPrompt();
+				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REQ_MONEY, null);
 				return new RequirementsPrompt(quests, factory);
 			}
-			context.setSessionData(CK.REQ_MONEY, input.intValue());
 			return new RequirementsPrompt(quests, factory);
 		}
 	}
 
-	private class QuestPointsPrompt extends NumericPrompt {
+	private class QuestPointsPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
 			return ChatColor.YELLOW + Lang.get("reqQuestPointsPrompt");
 		}
-
+		
 		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.intValue() < -1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
-				return new QuestPointsPrompt();
-			} else if (input.intValue() == -1) {
-				return new RequirementsPrompt(quests, factory);
-			} else if (input.intValue() == 0) {
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i > 0) {
+						context.setSessionData(CK.REQ_QUEST_POINTS, i);
+					} else {
+						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
+						return new QuestPointsPrompt();
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+							+ Lang.get("stageEditorInvalidNumber"));
+					return new QuestPointsPrompt();
+				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REQ_QUEST_POINTS, null);
 				return new RequirementsPrompt(quests, factory);
 			}
-			context.setSessionData(CK.REQ_QUEST_POINTS, input.intValue());
 			return new RequirementsPrompt(quests, factory);
 		}
 	}

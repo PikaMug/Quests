@@ -25,7 +25,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
@@ -759,7 +758,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new BreakBlockNamesPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListofNumbers") + "\n" + ChatColor.LIGHT_PURPLE + s);
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new BreakBlockNamesPrompt();
 					}
 				}
@@ -790,7 +789,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new BreakBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new BreakBlockAmountsPrompt();
 					}
 				}
@@ -821,7 +820,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new BreakBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new BreakBlockDurabilityPrompt();
 					}
 				}
@@ -977,7 +976,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new DamageBlockNamesPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new DamageBlockNamesPrompt();
 					}
 				}
@@ -1008,7 +1007,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new DamageBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new DamageBlockAmountsPrompt();
 					}
 				}
@@ -1039,7 +1038,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new DamageBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new DamageBlockDurabilityPrompt();
 					}
 				}
@@ -1195,7 +1194,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new PlaceBlockNamesPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new PlaceBlockNamesPrompt();
 					}
 				}
@@ -1226,7 +1225,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new PlaceBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new PlaceBlockAmountsPrompt();
 					}
 				}
@@ -1257,7 +1256,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new PlaceBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new PlaceBlockDurabilityPrompt();
 					}
 				}
@@ -1413,7 +1412,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new UseBlockNamesPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new UseBlockNamesPrompt();
 					}
 				}
@@ -1444,7 +1443,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new UseBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new UseBlockAmountsPrompt();
 					}
 				}
@@ -1475,7 +1474,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new UseBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new UseBlockDurabilityPrompt();
 					}
 				}
@@ -1631,7 +1630,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new CutBlockNamesPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new CutBlockNamesPrompt();
 					}
 				}
@@ -1662,7 +1661,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new CutBlockAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new CutBlockAmountsPrompt();
 					}
 				}
@@ -1693,7 +1692,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new CutBlockDurabilityPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new CutBlockDurabilityPrompt();
 					}
 				}
@@ -1703,7 +1702,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		}
 	}
 
-	private class FishPrompt extends NumericPrompt {
+	private class FishPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -1711,22 +1710,29 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		}
 
 		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number number) {
-			int num = number.intValue();
-			Player player = (Player) context.getForWhom();
-			if (num < -1) {
-				player.sendMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
-				return new FishPrompt();
-			} else if (num == 0) {
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i < 0) {
+						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
+						return new FishPrompt();
+					} else if (i > 0) {
+						context.setSessionData(pref + CK.S_FISH, i);
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+							+ Lang.get("stageEditorInvalidNumber"));
+					return new FishPrompt();
+				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(pref + CK.S_FISH, null);
-			} else if (num > 0) {
-				context.setSessionData(pref + CK.S_FISH, num);
 			}
 			return new CreateStagePrompt(stageNum, questFactory, citizens);
 		}
 	}
 
-	private class KillPlayerPrompt extends NumericPrompt {
+	private class KillPlayerPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -1734,16 +1740,23 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		}
 
 		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number number) {
-			int num = number.intValue();
-			Player player = (Player) context.getForWhom();
-			if (num < -1) {
-				player.sendMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
-				return new KillPlayerPrompt();
-			} else if (num == 0) {
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i < 0) {
+						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
+						return new FishPrompt();
+					} else if (i > 0) {
+						context.setSessionData(pref + CK.S_PLAYER_KILL, i);
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+							+ Lang.get("stageEditorInvalidNumber"));
+					return new FishPrompt();
+				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(pref + CK.S_PLAYER_KILL, null);
-			} else if (num > 0) {
-				context.setSessionData(pref + CK.S_PLAYER_KILL, num);
 			}
 			return new CreateStagePrompt(stageNum, questFactory, citizens);
 		}
@@ -1936,7 +1949,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new EnchantItemsPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new EnchantItemsPrompt();
 					}
 				}
@@ -1967,7 +1980,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new EnchantAmountsPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new EnchantAmountsPrompt();
 					}
 				}
@@ -2126,7 +2139,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new DeliveryNPCsPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new DeliveryNPCsPrompt();
 					}
 				}
@@ -2180,7 +2193,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new NPCIDsToTalkToPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new NPCIDsToTalkToPrompt();
 					}
 				}
@@ -2300,7 +2313,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new NpcIdsToKillPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new NpcIdsToKillPrompt();
 					}
 				}
@@ -2332,7 +2345,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 							return new NpcAmountsToKillPrompt();
 						}
 					} catch (NumberFormatException e) {
-						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+						context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
 						return new NpcAmountsToKillPrompt();
 					}
 				}
@@ -3640,7 +3653,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				int i = Integer.parseInt(input);
 				stageDelay = i * 1000;
 			} catch (NumberFormatException e) {
-				player.sendMessage(ChatColor.RED + Lang.get("stageEditorNoNumber"));
+				player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorInvalidNumber"));
 				return new DelayPrompt();
 			}
 			if (stageDelay < 1000) {
@@ -3907,7 +3920,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					return new CreateStagePrompt(stageNum, questFactory, citizens);
 				}
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoNumber"));
+				context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorInvalidNumber"));
 				return new CustomObjectiveCountPrompt();
 			}
 		}

@@ -37,7 +37,6 @@ import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.FixedSetPrompt;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
@@ -324,7 +323,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 	}
 
-	private class SetNpcStartPrompt extends NumericPrompt {
+	private class SetNpcStartPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -333,26 +332,29 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 
 		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.intValue() > -1) {
-				if (CitizensAPI.getNPCRegistry().getById(input.intValue()) == null) {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i > -1) {
+						if (CitizensAPI.getNPCRegistry().getById(i) == null) {
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
+							return new SetNpcStartPrompt();
+						}
+						context.setSessionData(CK.Q_START_NPC, i);
+						selectingNPCs.remove((Player) context.getForWhom());
+						return new CreateMenuPrompt();
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+							+ Lang.get("stageEditorInvalidNumber"));
 					return new SetNpcStartPrompt();
 				}
-				context.setSessionData(CK.Q_START_NPC, input.intValue());
-				selectingNPCs.remove((Player) context.getForWhom());
-				return new CreateMenuPrompt();
-			} else if (input.intValue() == -1) {
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.Q_START_NPC, null);
-				selectingNPCs.remove((Player) context.getForWhom());
-				return new CreateMenuPrompt();
-			} else if (input.intValue() == -2) {
-				selectingNPCs.remove((Player) context.getForWhom());
-				return new CreateMenuPrompt();
-			} else {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
-				return new SetNpcStartPrompt();
 			}
+			selectingNPCs.remove((Player) context.getForWhom());
+			return new CreateMenuPrompt();
 		}
 	}
 

@@ -52,7 +52,6 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.QuestMob;
-import net.citizensnpcs.api.CitizensAPI;
 
 public class EventFactory implements ConversationAbandonedListener {
 
@@ -932,27 +931,6 @@ public class EventFactory implements ConversationAbandonedListener {
 			} else {
 				return new MenuPrompt();
 			}
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private class SetNpcStartPrompt extends NumericPrompt {
-
-		@Override
-		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("eventEditorEnterNPCId");
-		}
-
-		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.intValue() != -1) {
-				if (CitizensAPI.getNPCRegistry().getById(input.intValue()) == null) {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorNoNPCExists"));
-					return new SetNpcStartPrompt();
-				}
-				context.setSessionData("npcStart", input.intValue());
-			}
-			return new CreateMenuPrompt();
 		}
 	}
 
@@ -2080,7 +2058,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 	}
 
-	private class HungerPrompt extends NumericPrompt {
+	private class HungerPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -2088,13 +2066,20 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 
 		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.intValue() != -1) {
-				if (input.intValue() < 0) {
-					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i < 0) {
+						((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+						return new HungerPrompt();
+					} else {
+						context.setSessionData(CK.E_HUNGER, (Integer) i);
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+							+ Lang.get("stageEditorInvalidNumber"));
 					return new HungerPrompt();
-				} else {
-					context.setSessionData(CK.E_HUNGER, (Integer) input.intValue());
 				}
 			} else {
 				context.setSessionData(CK.E_HUNGER, null);
@@ -2103,7 +2088,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 	}
 
-	private class SaturationPrompt extends NumericPrompt {
+	private class SaturationPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -2111,13 +2096,20 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 
 		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.intValue() != -1) {
-				if (input.intValue() < 0) {
-					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i < 0) {
+						((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+						return new SaturationPrompt();
+					} else {
+						context.setSessionData(CK.E_SATURATION, (Integer) i);
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+							+ Lang.get("stageEditorInvalidNumber"));
 					return new SaturationPrompt();
-				} else {
-					context.setSessionData(CK.E_SATURATION, (Integer) input.intValue());
 				}
 			} else {
 				context.setSessionData(CK.E_SATURATION, null);
@@ -2126,7 +2118,7 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 	}
 
-	private class HealthPrompt extends NumericPrompt {
+	private class HealthPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -2134,13 +2126,20 @@ public class EventFactory implements ConversationAbandonedListener {
 		}
 
 		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-			if (input.intValue() != -1) {
-				if (input.intValue() < 0) {
-					((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i < 0) {
+						((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+						return new HealthPrompt();
+					} else {
+						context.setSessionData(CK.E_HEALTH, (Integer) i);
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+							+ Lang.get("stageEditorInvalidNumber"));
 					return new HealthPrompt();
-				} else {
-					context.setSessionData(CK.E_HEALTH, (Integer) input.intValue());
 				}
 			} else {
 				context.setSessionData(CK.E_HEALTH, null);

@@ -113,17 +113,15 @@ public class PlannerPrompt extends FixedSetPrompt {
 			try {
 				int i = Integer.parseInt(input);
 				delay = i * 1000;
+				if (delay < 1) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
+				} else {
+					context.setSessionData(CK.PLN_REPEAT_CYCLE, delay);
+				}
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " "
+				context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED
 						+ Lang.get("stageEditorInvalidNumber"));
 				return new RepeatPrompt();
-			}
-			if (delay < -1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
-			} else if (delay == 0) {
-				context.setSessionData(CK.PLN_REPEAT_CYCLE, null);
-			} else if (delay != -1) {
-				context.setSessionData(CK.PLN_REPEAT_CYCLE, delay);
 			}
 			return new PlannerPrompt(quests, factory);
 		}
@@ -148,17 +146,15 @@ public class PlannerPrompt extends FixedSetPrompt {
 			try {
 				int i = Integer.parseInt(input);
 				delay = i * 1000;
+				if (delay < 1) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
+				} else {
+					context.setSessionData(CK.PLN_COOLDOWN, delay);
+				}
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.ITALIC + "" + ChatColor.RED + input + ChatColor.RESET + ChatColor.RED + " "
+				context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED
 						+ Lang.get("stageEditorInvalidNumber"));
 				return new CooldownPrompt();
-			}
-			if (delay < -1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
-			} else if (delay == 0) {
-				context.setSessionData(CK.PLN_COOLDOWN, null);
-			} else if (delay != -1) {
-				context.setSessionData(CK.PLN_COOLDOWN, delay);
 			}
 			return new PlannerPrompt(quests, factory);
 		}
