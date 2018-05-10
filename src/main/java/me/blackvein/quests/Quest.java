@@ -39,6 +39,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 public class Quest {
@@ -98,10 +99,11 @@ public class Quest {
 	public void nextStage(Quester q) {
 		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
 		if (stageCompleteMessage != null) {
+			String s = Quests.parseString(stageCompleteMessage, this);
 			if(Quests.placeholder != null) {
-				s = PlaceholderAPI.setPlaceholders(quester.getPlayer(), s);
+				s = PlaceholderAPI.setPlaceholders(q.getPlayer(), s);
 			}
-			q.getPlayer().sendMessage(Quests.parseString(stageCompleteMessage, this));
+			q.getPlayer().sendMessage(s);
 		}
 		if (plugin.useCompass) {
 			q.resetCompass();
