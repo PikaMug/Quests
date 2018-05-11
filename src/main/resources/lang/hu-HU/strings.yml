@@ -435,7 +435,7 @@ eventEditorSetPotionDurationsPrompt: "Add meg a hatás időtartamát (másodperc
 eventEditorSetPotionMagnitudesPrompt: "Add meg a bájital hatás nagyságát, <space>, <cancel>"
 eventEditorSetHungerPrompt: "Add meg az éhség szintet, <clear>"
 eventEditorSetSaturationPrompt: "Add meg a telítettség szintet, <clear>"
-eventEditorSetHealthPrompt: "Add meg az egészség szintet, <clear>"
+eventEditorSetHealthPrompt: "Add meg az élet szintet, <clear>"
 eventEditorSetTeleportPrompt: "Jobb egérgombbal kattints egy blokkra hogy teleportálja a játékost, <done>, <clear>, <cancel>"
 eventEditorCommandsNote: "Megjegyzés: Használhatod a <player> kifejezést a játékos nevére."
 eventEditorSetCommandsPrompt: "Add meg a parancsokat, <semicolon>, <clear>, <cancel>"
