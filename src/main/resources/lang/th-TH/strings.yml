@@ -200,7 +200,7 @@ stageEditorEnchantAmountsPrompt: "ป้อนจำนวนเงิน (ต�
 stageEditorItemNamesPrompt: "ป้อนชื่อไอเทม <space> <cancel>"
 stageEditorNPCPrompt: "ป้อนไอดี NPC <space> <cancel>"
 stageEditorNPCToTalkToPrompt: "Enter NPC IDs, <space>, <clear>, <cancel>"
-stageEditorDeliveryMessagesPrompt: "Enter delivery messages, <semicolon>, <cancel>"
+stageEditorDeliveryMessagesPrompt: "ป้อนข้อความที่ใช้ส่งของ <semicolon>,<cancel>"
 stageEditorKillNPCsPrompt: "ป้อนจำนวนเงินที่ฆ่า (จำนวน) <space> <cancel>"
 stageEditorMobsPrompt: "Enter mob names, <space>, <cancel>"
 stageEditorMobAmountsPrompt: "Enter mob amounts, <space>, <cancel>"
