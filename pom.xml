@@ -19,7 +19,7 @@
         </repository>
         <repository>
             <id>citizens</id>
-            <url>http://repo.citizensnpcs.co</url>
+            <url>http://repo.citizensnpcs.co/</url>
         </repository>
         <repository>
 			<id>sk89q-repo</id>
@@ -28,6 +28,14 @@
 		<repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>heroes-stripped</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
+        </repository>
+        <repository>
+            <id>Vault</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -104,7 +112,7 @@
         <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizens</artifactId>
-            <version>2.0.22-SNAPSHOT</version>
+            <version>2.0.21-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -116,9 +124,8 @@
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
-            <version>1.4.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
+            <version>1.6.6</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
@@ -128,11 +135,10 @@
             <systemPath>${project.basedir}/lib/mcMMO.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.herocraftonline</groupId>
-            <artifactId>Heroes</artifactId>
-            <version>1.5.5.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Heroes.jar</systemPath>
+            <groupId>com.herocraftonline.heroes</groupId>
+            <artifactId>heroes-stripped</artifactId>
+            <version>4dd3dd85</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.codisimus</groupId>
