@@ -204,7 +204,7 @@ stageEditorDeliveryMessagesPrompt: "Enter delivery messages, <semicolon>, <cance
 stageEditorKillNPCsPrompt: "Enter kill amounts (numbers), <space>, <cancel>"
 stageEditorMobsPrompt: "Enter mob names, <space>, <cancel>"
 stageEditorMobAmountsPrompt: "Enter mob amounts, <space>, <cancel>"
-stageEditorMobLocationPrompt: "Right-click on a block to select it, <add>, <cancel>"
+stageEditorMobLocationPrompt: "右鍵一個方塊來選擇它,<add>,<cancel>"
 stageEditorMobLocationRadiiPrompt: "Enter kill location radii (number of blocks), <space>, <cancel>"
 stageEditorMobLocationNamesPrompt: "Enter location names, <semicolon>, <cancel>"
 stageEditorReachLocationPrompt: "Right-click on a block to select it, <add>, <cancel>"
