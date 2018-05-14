@@ -158,13 +158,13 @@ public class Quest {
 			nextStage.startEvent.fire(quester, this);
 		}
 		updateCompass(quester, nextStage);
+		String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");
+		msg = msg.replaceAll("<quest>", name);
+		quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
 		String stageStartMessage = quester.getCurrentStage(this).startMessage;
 		if (stageStartMessage != null) {
 			quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this));
 		}
-		String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");
-		msg = msg.replaceAll("<quest>", name);
-		quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
 		for (String s : quester.getObjectivesReal(this)) {
 			if(Quests.placeholder != null) {
 				s = PlaceholderAPI.setPlaceholders(quester.getPlayer(), s);
