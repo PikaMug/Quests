@@ -444,13 +444,14 @@ public class Quester {
 	}
 
 	public LinkedList<String> getObjectivesReal(Quest quest) {
-		if (getCurrentStage(quest).objectiveOverride != null) {
-			LinkedList<String> objectives = new LinkedList<String>();
-			objectives.add(ChatColor.GREEN + getCurrentStage(quest).objectiveOverride);
-			return objectives;
-		} else {
-			return getObjectives(quest);
+		if (getCurrentStage(quest) != null) {
+			if (getCurrentStage(quest).objectiveOverride != null) {
+				LinkedList<String> objectives = new LinkedList<String>();
+				objectives.add(ChatColor.GREEN + getCurrentStage(quest).objectiveOverride);
+				return objectives;
+			}
 		}
+		return getObjectives(quest);
 	}
 
 	public LinkedList<String> getObjectives(Quest quest) {
