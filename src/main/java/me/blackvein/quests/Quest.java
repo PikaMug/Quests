@@ -158,10 +158,6 @@ public class Quest {
 			nextStage.startEvent.fire(quester, this);
 		}
 		updateCompass(quester, nextStage);
-		String stageStartMessage = quester.getCurrentStage(this).startMessage;
-		if (stageStartMessage != null) {
-			quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this));
-		}
 		String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");
 		msg = msg.replaceAll("<quest>", name);
 		quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
@@ -170,6 +166,10 @@ public class Quest {
 				s = PlaceholderAPI.setPlaceholders(quester.getPlayer(), s);
 			}
 			quester.getPlayer().sendMessage(s);
+		}
+		String stageStartMessage = quester.getCurrentStage(this).startMessage;
+		if (stageStartMessage != null) {
+			quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this));
 		}
 		quester.updateJournal();
 	}
