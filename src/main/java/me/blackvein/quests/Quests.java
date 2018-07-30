@@ -2403,7 +2403,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				if (failed) {
 					skipQuestProcess(new String[] { "" + failedQuest + " inside quests: Requirement for Quest "
-							+ quest.name + " is not a valid Quest name!", "Make sure you aren\'t using the config section idetifier." });
+							+ quest.name + " is not a valid Quest name!", "Make sure you aren\'t using the config section identifier." });
 				}
 			} else {
 				skipQuestProcess("quests: Requirement for Quest " + quest.name + " is not a list of Quest names!");
