@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "Kuzu renkler liscetsi ve miktarlar listesi aynı b
 stageEditorMustSetPasswordDisplays: "Önce en az bir şifre görüntüsü eklemelisiniz!"
 stageEditorAddPasswordCleared: "Şifre Objektifleri silindi."
 stageEditorPasswordNotSameSize: "Şifre değistirme görünümü ve şifre ifade listeleri aynı boyutta değiller!"
-stageEditorListContainsDuplicates: " Liste kopyalar içermekte!"
+stageEditorListContainsDuplicates: "List contains duplicates!"
 stageEditorDelayCleared: "Gecikme silindi."
 stageEditorDelayMessageCleared: "Gecikme mesajı silindi."
 stageEditorDenizenCleared: "Müdavim senaryosu kaldırıldı."
