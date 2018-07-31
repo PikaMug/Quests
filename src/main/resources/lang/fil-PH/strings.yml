@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "Ang listahan ng kulay ng tupa at ang halaga ng lis
 stageEditorMustSetPasswordDisplays: "Kinakailangang ikaw ay magdagdag ng kahit isang password display!"
 stageEditorAddPasswordCleared: "Ang Layuning Password ay tapos na."
 stageEditorPasswordNotSameSize: "Ang display ng password at listahan ng phrase ng password ay hindi magkatulad ng laki!"
-stageEditorListContainsDuplicates: "List contains duplicates!"
+stageEditorListContainsDuplicates: "Listahan ng kupya ng nilalaman!"
 stageEditorDelayCleared: "Pagkaalantala ay tapos na."
 stageEditorDelayMessageCleared: "Pagkaalantala ng mensahe ay tapos na."
 stageEditorDenizenCleared: "Denizen script ay tapos na."
