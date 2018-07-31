@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "¡La lista de colores de ovejas y la lista de cant
 stageEditorMustSetPasswordDisplays: "¡Primero debes añadir al menos una pantalla de contraseña!"
 stageEditorAddPasswordCleared: "Objetivos de contraseña despejados."
 stageEditorPasswordNotSameSize: "¡La contraseña mostrada y la contraseña de la frase de la lista no tienen el mismo tamaño!"
-stageEditorListContainsDuplicates: " ¡Lista contiene duplicados!"
+stageEditorListContainsDuplicates: "List contains duplicates!"
 stageEditorDelayCleared: "Retraso despejado."
 stageEditorDelayMessageCleared: "Retraso de mensaje despejado."
 stageEditorDenizenCleared: "Script de habitantes borrados."
