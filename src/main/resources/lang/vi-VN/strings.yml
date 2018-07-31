@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "Danh sách màu sắc lông cừu và số lần c
 stageEditorMustSetPasswordDisplays: "Bạn cần thêm ít nhất 1 mật khẩu hiển thị!"
 stageEditorAddPasswordCleared: "Mật khẩu Mục tiêu đã được xóa."
 stageEditorPasswordNotSameSize: "Mật khẩu hiển thị và danh sách mật khẩu diễn đạt bằng lời không giống nhau!"
-stageEditorListContainsDuplicates: " Danh sách trùng lặp!"
+stageEditorListContainsDuplicates: "List contains duplicates!"
 stageEditorDelayCleared: "Độ trễ đã được xóa."
 stageEditorDelayMessageCleared: "Độ trễ thông báo đã được xóa."
 stageEditorDenizenCleared: "Kịch bản Denizen đã được xóa."
