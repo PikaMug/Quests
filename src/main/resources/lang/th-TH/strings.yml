@@ -71,7 +71,7 @@ questEditorEditEnterQuestName: "ป้อนชื่อเควสที่จ
 questEditorEnterAskMessage: "ป้อนข้อความที่ต้องการ (<cancel>)"
 questEditorEnterFinishMessage: "ป้อนข้อความที่ต้องการ (<cancel>)"
 questEditorEnterNPCStart: "ป้อนไอดีของ NPC <clear>,<cancel>"
-questEditorEnterBlockStart: "คลิกขวาบนบล็อกเพื่อใช้เป็นจุดเริ่มต้น <done>, <clear>, <cancel>"
+questEditorEnterBlockStart: "คลิกขวาบนบล็อกเพื่อใช้เป็นจุดเริ่มต้น, <done>, <clear>, <cancel>"
 questEditorEnterInitialEvent: "Enter an Event name, <clear>, <cancel>"
 questRequiredNoneSet: "จำเป็น ไม่มีกำหนด"
 questWGSetRegion: "การตั้งค่าภูมิภาค"
