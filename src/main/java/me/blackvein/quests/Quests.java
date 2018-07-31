@@ -446,7 +446,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 		}
 	}
-
+	
+	/**
+	 * See Github issue #428
+	 * 
+	 * @deprecated Do not use this method! Will be removed in future release.
+	 */
 	public Quests getInstance() {
 		return this;
 	}
