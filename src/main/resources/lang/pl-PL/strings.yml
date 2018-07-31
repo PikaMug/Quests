@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "Lista kolorów owiec, oraz lista poziomu strzyżen
 stageEditorMustSetPasswordDisplays: "Musisz najpierw dodać co najmniej jedno hasło!"
 stageEditorAddPasswordCleared: "Cele haseł wyczyszczone."
 stageEditorPasswordNotSameSize: "Wyświetlanie hasła, oraz lista haseł nie są tej samej wielkości!"
-stageEditorListContainsDuplicates: " Lista zawiera powtórzenia!"
+stageEditorListContainsDuplicates: "Lista zawiera powtórzenia!"
 stageEditorDelayCleared: "Opóźnienie wyczyszczone."
 stageEditorDelayMessageCleared: "Opóźnienie wiadomości wyczyszczone."
 stageEditorDenizenCleared: "Usunięto skrypt mieszkańca."

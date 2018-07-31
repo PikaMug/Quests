@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "Seznam barev ovcí a seznam množství ostříhán
 stageEditorMustSetPasswordDisplays: "Nejprve musíte přidat alespoň jedno zobrazení hesla!"
 stageEditorAddPasswordCleared: "Cíl hesel vymazán."
 stageEditorPasswordNotSameSize: "Zobrazení hesla a fráze hesel nejsou stejné velikosti!"
-stageEditorListContainsDuplicates: " Seznam obsahuje duplikáty!"
+stageEditorListContainsDuplicates: "Seznam obsahuje duplikáty!"
 stageEditorDelayCleared: "Prodleva vymazána."
 stageEditorDelayMessageCleared: "Startovací zpráva vymazána."
 stageEditorDenizenCleared: "Denizen skript vymazán."

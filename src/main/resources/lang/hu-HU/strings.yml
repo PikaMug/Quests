@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "A bárány színlista és a nyírási mennyiség l
 stageEditorMustSetPasswordDisplays: "Először hozzá kell adni legalább egy jelszó-kijelzőt!"
 stageEditorAddPasswordCleared: "A jelszócélok kitisztítva."
 stageEditorPasswordNotSameSize: "A jelszókijelző és a jelszavak listája nem azonos méretű!"
-stageEditorListContainsDuplicates: " A lista duplikátumokat tartalmaz!"
+stageEditorListContainsDuplicates: "A lista duplikátumokat tartalmaz!"
 stageEditorDelayCleared: "Késleltetés törölve."
 stageEditorDelayMessageCleared: "Késleltetett üzenet törölve."
 stageEditorDenizenCleared: "Denizen script törölve."

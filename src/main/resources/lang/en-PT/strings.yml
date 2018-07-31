@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "Th' sheep colors list 'n th' shear amounts list ar
 stageEditorMustSetPasswordDisplays: "Ye must add at least one password display first!"
 stageEditorAddPasswordCleared: "Password Objectives cleared."
 stageEditorPasswordNotSameSize: "Th' password display 'n password phrase lists are nah th' same size!"
-stageEditorListContainsDuplicates: " List contains duplicates!"
+stageEditorListContainsDuplicates: "List contains duplicates!"
 stageEditorDelayCleared: "Delay cleared."
 stageEditorDelayMessageCleared: "Delay message cleared."
 stageEditorDenizenCleared: "Denizen script cleared."
