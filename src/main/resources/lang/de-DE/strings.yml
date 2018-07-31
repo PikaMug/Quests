@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "Die Schaffarben-Liste und die Scherungsmengen-List
 stageEditorMustSetPasswordDisplays: "Du musst zunächst mindestens eine Passwort Anzeige hinzufügen!"
 stageEditorAddPasswordCleared: "Passwort-Ziele wurden zurückgesetzt."
 stageEditorPasswordNotSameSize: "Die Passwort-Anzeige und der Passwort-Satz haben nicht die selbe größe!"
-stageEditorListContainsDuplicates: " Liste enthält Duplikate!"
+stageEditorListContainsDuplicates: "List contains duplicates!"
 stageEditorDelayCleared: "Verzögerung gelöscht."
 stageEditorDelayMessageCleared: "Verzögerungs Nachricht entfernt."
 stageEditorDenizenCleared: "Denizen script wurde entfernt."
