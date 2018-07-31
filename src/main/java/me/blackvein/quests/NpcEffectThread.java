@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import me.blackvein.particles.Eff_1_10_R1;
 import me.blackvein.particles.Eff_1_11_R1;
 import me.blackvein.particles.Eff_1_12_R1;
+import me.blackvein.particles.Eff_1_13_R1;
 import me.blackvein.particles.Eff_1_7_R3;
 import me.blackvein.particles.Eff_1_7_R4;
 import me.blackvein.particles.Eff_1_8_R1;
@@ -83,6 +84,100 @@ public class NpcEffectThread implements Runnable {
 			showEffect_1_11_R1(player, npc, effectType);
 		} else if (Bukkit.getBukkitVersion().contains("1.12")) {
 			showEffect_1_12_R1(player, npc, effectType);
+		} else if (Bukkit.getBukkitVersion().contains("1.13")) {
+			showEffect_1_13_R1(player, npc, effectType);
+		}
+	}
+	
+	private void showEffect_1_13_R1(Player player, NPC npc, String effectType) {
+		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
+		Location eyeLoc = npc.getEntity().getLocation();
+		eyeLoc.setY(eyeLoc.getY() + 1.5);
+		if (effectType.equalsIgnoreCase("enchant")) {
+			try {
+				Eff_1_13_R1.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("crit")) {
+			try {
+				Eff_1_13_R1.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("spell")) {
+			try {
+				Eff_1_13_R1.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("magiccrit")) {
+			try {
+				Eff_1_13_R1.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("mobspell")) {
+			try {
+				Eff_1_13_R1.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("note")) {
+			try {
+				Location old = eyeLoc;
+				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
+				Eff_1_13_R1.NOTE.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("portal")) {
+			try {
+				Eff_1_13_R1.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("dust")) {
+			try {
+				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
+				Eff_1_13_R1.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("witch")) {
+			try {
+				Eff_1_13_R1.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("snowball")) {
+			try {
+				Location old = eyeLoc;
+				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
+				Eff_1_13_R1.SNOWBALL_POOF.sendToPlayer(player, newLoc, 0, 0, 0, 1, 3, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("splash")) {
+			try {
+				Location old = eyeLoc;
+				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
+				Eff_1_13_R1.SPLASH.sendToPlayer(player, newLoc, 0, 0, 0, 1, 4, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (effectType.equalsIgnoreCase("smoke")) {
+			try {
+				Eff_1_13_R1.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				Eff_1_13_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+			} catch (Exception e) {
+				plugin.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+			}
 		}
 	}
 
