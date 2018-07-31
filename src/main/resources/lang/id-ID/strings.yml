@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "Daftar warna domba dan daftar jumlah geser tidak s
 stageEditorMustSetPasswordDisplays: "Anda harus menambahkan setidaknya satu tampilan kata sandi terlebih dahulu!"
 stageEditorAddPasswordCleared: "Kata Sandi Tujuan dibersihkan."
 stageEditorPasswordNotSameSize: "Daftar kata sandi dan daftar frase password tidak sama ukurannya!"
-stageEditorListContainsDuplicates: "List contains duplicates!"
+stageEditorListContainsDuplicates: "Daftar berisi duplikat!"
 stageEditorDelayCleared: "Penundaan dihapus."
 stageEditorDelayMessageCleared: "Pesan penundaan dihapus."
 stageEditorDenizenCleared: "Skrip penghuni dihapuskan."
