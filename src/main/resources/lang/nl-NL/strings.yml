@@ -193,7 +193,7 @@ stageEditorPlaceBlocksPrompt: "Typ aantal geplaatste (nummers), <space>, <cancel
 stageEditorUseBlocksPrompt: "Typ gebruikt aantal (nummers), <space>, <cancel>"
 stageEditorCutBlocksPrompt: "Typ aantal geschoren (nummers), <space>, <cancel>"
 stageEditorEnterBlockDurability: "Typ blok duurzaamheid (nummers), <space>, <cancel>"
-stageEditorCatchFishPrompt: "Voer de hoeveelheid vis in die gevangen moet worden,<clear>,<cancel>"
+stageEditorCatchFishPrompt: "Voer de hoeveelheid vis in die gevangen moet worden, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "Enter number of players to kill, <clear>, <cancel>"
 stageEditorEnchantTypePrompt: "Typ betoveringsnamen, <semicolon>, <cancel>"
 stageEditorEnchantAmountsPrompt: "Typ betoverd aantal (nummers), <space>, <cancel>"
