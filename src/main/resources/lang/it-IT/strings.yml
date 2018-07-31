@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "L'elenco dei colori delle pecore e l'elenco degli 
 stageEditorMustSetPasswordDisplays: "Devi prima aggiungere almeno una password!"
 stageEditorAddPasswordCleared: "Target password cancellati."
 stageEditorPasswordNotSameSize: "Lo schermo della password e gli elenchi di frasi password non hanno la stessa dimensione!"
-stageEditorListContainsDuplicates: "List contains duplicates!"
+stageEditorListContainsDuplicates: "Elenco contiene i duplicati!"
 stageEditorDelayCleared: "Chiaro ritardo."
 stageEditorDelayMessageCleared: "Messaggio di ritardo cancellato."
 stageEditorDenizenCleared: "Script di Denizen cancellato."
