@@ -720,20 +720,17 @@ public class PlayerListener implements Listener {
 		if (evt.getFrom().getBlock().equals(evt.getTo().getBlock())) {
 			return;
 		}
-		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
-			boolean isPlayer = true;
-			if (Quests.citizens != null) {
-				if (CitizensAPI.getNPCRegistry().isNPC(evt.getPlayer())) {
-					isPlayer = false;
-				}
+		if (Quests.citizens != null) {
+			if (CitizensAPI.getNPCRegistry().isNPC(evt.getPlayer())) {
+				return;
 			}
-			if (isPlayer) {
-				if (plugin.getQuester(evt.getPlayer().getUniqueId()) != null) {
-					Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-					for (Quest quest : quester.currentQuests.keySet()) {
-						if (quester.hasObjective(quest, "reachLocation")) {
-							quester.reachLocation(quest, evt.getTo());
-						}
+		}
+		if (plugin.getQuester(evt.getPlayer().getUniqueId()) != null) {
+			if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+				Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+				for (Quest quest : quester.currentQuests.keySet()) {
+					if (quester.hasObjective(quest, "reachLocation")) {
+						quester.reachLocation(quest, evt.getTo());
 					}
 				}
 			}
