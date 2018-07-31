@@ -275,7 +275,7 @@ stageEditorShearNotSameSize: "La liste de couleurs de moutons et la liste de mon
 stageEditorMustSetPasswordDisplays: "Vous devez ajouter l’affichage d’au moins un mot de passe tout d’abord !"
 stageEditorAddPasswordCleared: "Objectifs de mot de passe est désactivée."
 stageEditorPasswordNotSameSize: "L’écran de mot de passe et les listes de mots de passe ne sont pas la même taille !"
-stageEditorListContainsDuplicates: "List contains duplicates!"
+stageEditorListContainsDuplicates: "La liste contient des doublons !"
 stageEditorDelayCleared: "Délai supprime."
 stageEditorDelayMessageCleared: "Le délai du message a bien été supprimé."
 stageEditorDenizenCleared: "Script Denizen effacée."
