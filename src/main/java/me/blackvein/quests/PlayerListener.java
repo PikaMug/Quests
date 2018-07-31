@@ -185,6 +185,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation") // since 1.13
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent evt) {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
@@ -354,6 +355,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation") // since 1.13
 	@EventHandler
 	public void onBlockDamage(BlockDamageEvent evt) {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
@@ -367,6 +369,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation") // since 1.13
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent evt) {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {

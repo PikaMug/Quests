@@ -43,6 +43,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -3118,7 +3119,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								} else if (color.equalsIgnoreCase("Red")) {
 									oStage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
 								} else if (color.equalsIgnoreCase("Silver")) {
-									oStage.sheepToShear.put(DyeColor.SILVER, shearAmounts.get(sheep.indexOf(color)));
+									// 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
+									oStage.sheepToShear.put(DyeColor.getByColor(Color.SILVER), shearAmounts.get(sheep.indexOf(color)));
 								} else if (color.equalsIgnoreCase("White")) {
 									oStage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
 								} else if (color.equalsIgnoreCase("Yellow")) {
@@ -3873,7 +3875,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		return count - subtract;
 	}
-
+	
+	@SuppressWarnings("deprecation") // since 1.13
 	public static Enchantment getEnchantment(String enchant) {
 		String ench = Lang.getKey(enchant.replaceAll(" ", ""));
 		ench = ench.replace("ENCHANTMENT_", "");
@@ -3981,8 +3984,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			return DyeColor.PURPLE;
 		} else if (s.equalsIgnoreCase("Red")) {
 			return DyeColor.RED;
+		// 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
 		} else if (s.equalsIgnoreCase("Silver")) {
-			return DyeColor.SILVER;
+			return DyeColor.getByColor(Color.SILVER);
 		} else if (s.equalsIgnoreCase("White")) {
 			return DyeColor.WHITE;
 		} else if (s.equalsIgnoreCase("Yellow")) {

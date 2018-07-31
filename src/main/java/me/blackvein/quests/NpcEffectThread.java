@@ -176,7 +176,7 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_13_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				plugin.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}
@@ -268,7 +268,7 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Eff_1_12_R1.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
-				plugin.getInstance().getLogger().info(effectType + " is not a valid effect name!");
+				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
 		}
 	}

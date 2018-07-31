@@ -1593,6 +1593,7 @@ public class Quester {
 		return prettyString;
 	}
 	
+	@SuppressWarnings("deprecation") // since 1.13
 	public static String enchantmentString(Enchantment e) {
 		try {
 			return (Lang.get("ENCHANTMENT_" + e.getName()));
