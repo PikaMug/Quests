@@ -1149,6 +1149,13 @@ public class Quester {
 		}
 		if (found != null) {
 			int amount = getQuestData(quest).itemsDelivered.get(found);
+			if (getCurrentStage(quest).itemsToDeliver.indexOf(found) < 0) {
+				plugin.getLogger().severe("Index out of bounds while delivering " + found.getType() + " x " + found.getAmount() + " for quest " 
+						+ quest.name + " with " + i.getType() + " x " + i.getAmount() + " already delivered. Int -amount- reports value of " + 
+						+ amount + ". Please report this error on Github issue #448");
+				player.sendMessage("Quests had a problem delivering your item, please contact an administrator!");
+				return;
+			}
 			int req = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(found)).getAmount();
 			Material m = i.getType();
 			if (amount < req) {
