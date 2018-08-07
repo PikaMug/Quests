@@ -3092,38 +3092,38 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							List<String> sheep = config.getStringList("quests." + questName + ".stages.ordered." + s2 + ".sheep-to-shear");
 							List<Integer> shearAmounts = config.getIntegerList("quests." + questName + ".stages.ordered." + s2 + ".sheep-amounts");
 							for (String color : sheep) {
-								if (color.equalsIgnoreCase("Black")) {
+								if (color.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
 									oStage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Blue")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_BLUE"))) {
 									oStage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Brown")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_BROWN"))) {
 									oStage.sheepToShear.put(DyeColor.BROWN, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Cyan")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_CYAN"))) {
 									oStage.sheepToShear.put(DyeColor.CYAN, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Gray")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_GRAY"))) {
 									oStage.sheepToShear.put(DyeColor.GRAY, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Green")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_GREEN"))) {
 									oStage.sheepToShear.put(DyeColor.GREEN, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("LightBlue")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_LIGHT_BLUE"))) {
 									oStage.sheepToShear.put(DyeColor.LIGHT_BLUE, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Lime")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_LIME"))) {
 									oStage.sheepToShear.put(DyeColor.LIME, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Magenta")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_MAGENTA"))) {
 									oStage.sheepToShear.put(DyeColor.MAGENTA, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Orange")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_ORANGE"))) {
 									oStage.sheepToShear.put(DyeColor.ORANGE, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Pink")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_PINK"))) {
 									oStage.sheepToShear.put(DyeColor.PINK, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Purple")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_PURPLE"))) {
 									oStage.sheepToShear.put(DyeColor.PURPLE, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Red")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_RED"))) {
 									oStage.sheepToShear.put(DyeColor.RED, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Silver")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
 									// 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
 									oStage.sheepToShear.put(DyeColor.getByColor(Color.SILVER), shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("White")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_WHITE"))) {
 									oStage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
-								} else if (color.equalsIgnoreCase("Yellow")) {
+								} else if (color.equalsIgnoreCase(Lang.get("COLOR_YELLOW"))) {
 									oStage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
 								} else {
 									stageFailed("" + color + " inside sheep-to-shear: inside Stage " + s2 + " of Quest " + quest.name + " is not a valid color!");
@@ -3958,38 +3958,38 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	public static DyeColor getDyeColorLegacy(String s) {
-		if (s.equalsIgnoreCase("Black")) {
+		if (s.equalsIgnoreCase("Black") || s.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
 			return DyeColor.BLACK;
-		} else if (s.equalsIgnoreCase("Blue")) {
+		} else if (s.equalsIgnoreCase("Blue") || s.equalsIgnoreCase(Lang.get("COLOR_BLUE"))) {
 			return DyeColor.BLUE;
-		} else if (s.equalsIgnoreCase("Brown")) {
+		} else if (s.equalsIgnoreCase("Brown") || s.equalsIgnoreCase(Lang.get("COLOR_BROWN"))) {
 			return DyeColor.BROWN;
-		} else if (s.equalsIgnoreCase("Cyan")) {
+		} else if (s.equalsIgnoreCase("Cyan") || s.equalsIgnoreCase(Lang.get("COLOR_CYAN"))) {
 			return DyeColor.CYAN;
-		} else if (s.equalsIgnoreCase("Gray")) {
+		} else if (s.equalsIgnoreCase("Gray") || s.equalsIgnoreCase(Lang.get("COLOR_GRAY"))) {
 			return DyeColor.GRAY;
-		} else if (s.equalsIgnoreCase("Green")) {
+		} else if (s.equalsIgnoreCase("Green") || s.equalsIgnoreCase(Lang.get("COLOR_GREEN"))) {
 			return DyeColor.GREEN;
-		} else if (s.equalsIgnoreCase("LightBlue")) {
+		} else if (s.equalsIgnoreCase("LightBlue") || s.equalsIgnoreCase(Lang.get("COLOR_LIGHT_BLUE"))) {
 			return DyeColor.LIGHT_BLUE;
-		} else if (s.equalsIgnoreCase("Lime")) {
+		} else if (s.equalsIgnoreCase("Lime") || s.equalsIgnoreCase(Lang.get("COLOR_LIME"))) {
 			return DyeColor.LIME;
-		} else if (s.equalsIgnoreCase("Magenta")) {
+		} else if (s.equalsIgnoreCase("Magenta") || s.equalsIgnoreCase(Lang.get("COLOR_MAGENTA"))) {
 			return DyeColor.MAGENTA;
-		} else if (s.equalsIgnoreCase("Orange")) {
+		} else if (s.equalsIgnoreCase("Orange") || s.equalsIgnoreCase(Lang.get("COLOR_ORAGE"))) {
 			return DyeColor.ORANGE;
-		} else if (s.equalsIgnoreCase("Pink")) {
+		} else if (s.equalsIgnoreCase("Pink") || s.equalsIgnoreCase(Lang.get("COLOR_PINK"))) {
 			return DyeColor.PINK;
-		} else if (s.equalsIgnoreCase("Purple")) {
+		} else if (s.equalsIgnoreCase("Purple") || s.equalsIgnoreCase(Lang.get("COLOR_PURPLE"))) {
 			return DyeColor.PURPLE;
-		} else if (s.equalsIgnoreCase("Red")) {
+		} else if (s.equalsIgnoreCase("Red") || s.equalsIgnoreCase(Lang.get("COLOR_RED"))) {
 			return DyeColor.RED;
 		// 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
-		} else if (s.equalsIgnoreCase("Silver")) {
+		} else if (s.equalsIgnoreCase("Silver") || s.equalsIgnoreCase("LightGray") || s.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
 			return DyeColor.getByColor(Color.SILVER);
-		} else if (s.equalsIgnoreCase("White")) {
+		} else if (s.equalsIgnoreCase("White") || s.equalsIgnoreCase(Lang.get("COLOR_WHITE"))) {
 			return DyeColor.WHITE;
-		} else if (s.equalsIgnoreCase("Yellow")) {
+		} else if (s.equalsIgnoreCase("Yellow") || s.equalsIgnoreCase(Lang.get("COLOR_YELLOW"))) {
 			return DyeColor.YELLOW;
 		} else {
 			return null;
