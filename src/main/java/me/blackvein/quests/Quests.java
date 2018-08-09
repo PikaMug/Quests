@@ -3787,9 +3787,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 * Checks if player CANNOT use Quests
 	 * 
 	 * @param uuid the entity UUID to be checked
-	 * @return {@code true} if entity has no permission
+	 * @return {@code true} if entity has no permission or is not a player
 	 */
 	public boolean checkQuester(UUID uuid) {
+		if (!(Bukkit.getPlayer(uuid) instanceof Player)) {
+			return true;
+		}
 		Player p = Bukkit.getPlayer(uuid);
 		if (p.isOp()) {
 			return false;
