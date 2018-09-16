@@ -2028,8 +2028,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					return quester;
 				}
 			}
-			if (quester.loadData() == true) {
-				questers.put(id, quester);
+			questers.put(id, quester);
+			if (!quester.loadData()) {
+				questers.remove(id);
 			}
 		}
 		return quester;
