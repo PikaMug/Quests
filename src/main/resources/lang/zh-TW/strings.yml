@@ -213,7 +213,7 @@ stageEditorReachLocationNamesPrompt: "Enter location names, <semicolon>, <cancel
 stageEditorTameAmountsPrompt: "Enter tame amounts, <space>, <cancel>"
 stageEditorShearColorsPrompt: "Enter sheep colors, <space>, <cancel>"
 stageEditorShearAmountsPrompt: "Enter shear amounts, <space>, <cancel>"
-stageEditorEventsPrompt: "Enter an event name, <clear>, <cancel>"
+stageEditorEventsPrompt: "輸入任務活動名稱, <clear>, <cancel>"
 stageEditorChatEventsPrompt: "Enter an event name to add, <clear>, <cancel>"
 stageEditorChatEventsTriggerPrompt: "%yellow%Enter a chat trigger for%aqua% <event>%yellow% <cancel>"
 stageEditorCommandEventsPrompt: "Enter an event name to add, <clear>, <cancel>"
