@@ -37,6 +37,10 @@
             <id>Vault</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
+        <repository>
+            <id>citizensbooks_repo</id>
+            <url>https://raw.github.com/nicuch/maven_repo/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -170,6 +174,12 @@
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.8.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ro.nicuch</groupId>
+            <artifactId>CitizensBooks</artifactId>
+            <version>2.4.4</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

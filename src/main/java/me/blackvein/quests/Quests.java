@@ -104,6 +104,8 @@ import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import ro.nicuch.citizensbooks.CitizensBooksAPI;
+import ro.nicuch.citizensbooks.CitizensBooksPlugin;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener {
 
@@ -118,6 +120,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static Vault vault = null;
 	public static CitizensPlugin citizens;
 	public static Denizen denizen = null;
+	public static CitizensBooksAPI citizensBooks;
 	// Config settings
 	public int acceptTimeout = 20;
 	public boolean allowCommands = true;
@@ -412,6 +415,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			placeholder = (PlaceholderAPIPlugin) getServer().getPluginManager().getPlugin("PlaceholderAPI");
 		}
+		if (getServer().getPluginManager().getPlugin("CitizensBooks") != null) {
+		    citizensBooks = ((CitizensBooksPlugin) getServer().getPluginManager().getPlugin("CitizensBooks")).getAPI();
+        }
 		if (!setupEconomy()) {
 			getLogger().warning("Economy not found.");
 		}

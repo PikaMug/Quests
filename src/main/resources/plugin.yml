@@ -6,7 +6,7 @@ website: https://www.spigotmc.org/resources/quests.3711/
 dev-url: https://github.com/FlyingPikachu/Quests
 author: HappyPikachu
 depend: [Vault]
-softdepend: [Citizens, PhatLoots, PlaceholderAPI]
+softdepend: [Citizens, PhatLoots, PlaceholderAPI, CitizensBooks]
 permissions:
     quests.quest:
         description: View current Quest objectives

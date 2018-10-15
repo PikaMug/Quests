@@ -79,6 +79,7 @@ public class Event {
 	int saturation = -1;
 	float health = -1;
 	Location teleport;
+	String book = "";
 
 	public Event(final Quests plugin) {
 		this.plugin = plugin;
@@ -176,6 +177,9 @@ public class Event {
 			} else if (other.teleport == null && teleport != null) {
 				return false;
 			}
+			if (other.book != book) {
+                return false;
+            }
 		}
 		return true;
 	}
@@ -247,6 +251,11 @@ public class Event {
 		if (teleport != null) {
 			player.teleport(teleport);
 		}
+		if (!(book == null && book.isEmpty() && plugin.citizensBooks == null)) {
+		    if (plugin.citizensBooks.hasFilter(book)) {
+                plugin.citizensBooks.openBook(player, plugin.citizensBooks.getFilter(book));
+            }
+        }
 		if (failQuest == true) {
 			quest.failQuest(quester);
 		}
@@ -315,6 +324,9 @@ public class Event {
 		if (data.contains(eventKey + "message")) {
 			event.message = Quests.parseString(data.getString(eventKey + "message"));
 		}
+		if (data.contains(eventKey + "open-book")) {
+		    event.book = data.getString(eventKey + "open-book");
+        }
 		if (data.contains(eventKey + "clear-inventory")) {
 			if (data.isBoolean(eventKey + "clear-inventory")) {
 				event.clearInv = data.getBoolean(eventKey + "clear-inventory");
