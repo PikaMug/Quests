@@ -831,7 +831,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		if (cc.getSessionData(CK.REW_ITEMS) != null) {
 			itemRews = new LinkedList<String>();
 			for (ItemStack is : (LinkedList<ItemStack>) cc.getSessionData(CK.REW_ITEMS)) {
-				itemRews.add(ItemUtil.serialize(is));
+				itemRews.add(ItemUtil.serializeItemStack(is));
 			}
 		}
 		if (cc.getSessionData(CK.REW_EXP) != null) {
@@ -877,13 +877,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 		cs.set("finish-message", finish);
 		cs.set("event", initialEvent);
 		cs.set("region", region);
-		cs.set("gui-display", ItemUtil.serialize(guiDisplay));
+		cs.set("gui-display", ItemUtil.serializeItemStack(guiDisplay));
 		if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) || heroesPrimaryReq != null || heroesSecondaryReq != null || customReqs != null) {
 			ConfigurationSection reqs = cs.createSection("requirements");
 			List<String> items = new LinkedList<String>();
 			if (itemReqs != null) {
 				for (ItemStack is : itemReqs) {
-					items.add(ItemUtil.serialize(is));
+					items.add(ItemUtil.serializeItemStack(is));
 				}
 			}
 			reqs.set("items", (items.isEmpty() == false) ? items : null);
@@ -1177,7 +1177,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (deliveryItems != null && deliveryItems.isEmpty() == false) {
 				LinkedList<String> items = new LinkedList<String>();
 				for (ItemStack is : deliveryItems) {
-					items.add(ItemUtil.serialize(is));
+					items.add(ItemUtil.serializeItemStack(is));
 				}
 				stage.set("items-to-deliver", items);
 			} else {

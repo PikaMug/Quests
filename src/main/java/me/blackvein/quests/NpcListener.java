@@ -15,6 +15,7 @@ package me.blackvein.quests;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
@@ -34,6 +35,7 @@ import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.milkbowl.vault.item.Items;
 
 public class NpcListener implements Listener {
 
@@ -81,7 +83,15 @@ public class NpcListener implements Listener {
 								if (hand.hasItemMeta()) {
 									text += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
 								}
-								text += ChatColor.AQUA + ItemUtil.getName(hand) + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
+								String base = "error";
+								try {
+									base = ChatColor.AQUA + Items.itemByType(hand.getType()).getName();
+								} catch (Exception ne) {
+									text = ChatColor.AQUA + Quester.prettyItemString(hand.getType().name());
+									Bukkit.getLogger().severe("Likely caused by an incompatible version of Vault. Consider updating!");
+									ne.printStackTrace();
+								}
+								text += ChatColor.AQUA + base + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
 								if (hand.hasItemMeta()) {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}

@@ -2016,20 +2016,20 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
 				text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("stageEditorNoItemsSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("stageEditorNoItemsSet") + ")\n";
 				if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null) {
-					text += ChatColor.BLUE + "3 - " + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					text += ChatColor.BLUE + "3 - " + Lang.get("stageEditorDeliveryMessages") + "\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorDeliveryMessages") + "\n";
 					for (String s : getDeliveryMessages(context)) {
 						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + "\"" + s + "\"";
 					}
 				}
 			} else {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
 				for (ItemStack is : getItems(context)) {
 					text += ChatColor.GRAY + "    - " + ItemUtil.getDisplayString(is) + "\n";
 				}
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
 				if (context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
@@ -2039,9 +2039,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					}
 				}
 				if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null) {
-					text += ChatColor.BLUE + "3 - " + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					text += ChatColor.BLUE + "3 - " + Lang.get("stageEditorDeliveryMessages") + "\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorDeliveryMessages") + "\n";
 					for (String s : getDeliveryMessages(context)) {
 						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + "\"" + s + "\"\n";
 					}

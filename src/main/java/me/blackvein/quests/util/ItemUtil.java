@@ -12,12 +12,19 @@
 
 package me.blackvein.quests.util;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -95,8 +102,12 @@ public class ItemUtil {
 		ItemStack stack = null;
 		String[] args = data.split(":");
 		ItemMeta meta = null;
+		Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
+		String display = null;
 		LinkedList<String> lore = new LinkedList<String>();
-		for (String arg : args) {
+		LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
+		for (String targ : args) {
+			String arg = targ.replace("minecraft|", "minecraft:");
 			if (arg.startsWith("name-")) {
 				try {
 					stack = new ItemStack(Material.matchMaterial(arg.substring(5).toUpperCase()));
@@ -110,23 +121,56 @@ public class ItemUtil {
 			} else if (arg.startsWith("data-")) {
 				stack.setDurability(Short.parseShort(arg.substring(5)));
 			} else if (arg.startsWith("enchantment-")) {
-				String[] enchs = arg.substring(12).split(" ");
+				String[] temp = arg.substring(12).split(" ");
 				try {
-					Enchantment e = Quests.getEnchantment(enchs[0]);
-					meta.addEnchant(e, Integer.parseInt(enchs[1]), true);
+					enchs.put(Quests.getEnchantment(temp[0]), Integer.parseInt(temp[1]));
 				} catch (IllegalArgumentException e) {
-					Bukkit.getLogger().severe("[Quests] The enchantment name \'" + enchs[0] + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
+					Bukkit.getLogger().severe("[Quests] The enchantment name \'" + temp[0] + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
 					return null;
 				}
 			} else if (arg.startsWith("displayname-")) {
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', arg.substring(12)));
+				display = ChatColor.translateAlternateColorCodes('&', arg.substring(12));
 			} else if (arg.startsWith("lore-")) {
 				lore.add(ChatColor.translateAlternateColorCodes('&', arg.substring(5)));
+			} else if (arg.contains("-")) {
+				
+				int dash = arg.lastIndexOf('-');
+				String key = arg.substring(0, dash);
+				String value = arg.substring(dash + 1);
+				
+				int i = -1;
+				try {
+					// Num such as book generation
+					i = Integer.valueOf(value);
+				} catch (NumberFormatException e) {
+					// Do nothing
+				}
+				
+				if (i > -1) {
+					extra.put(key, i);
+				} else if (value.startsWith("[") && value.endsWith("]")) {
+					// Map such as book pages
+					List<String> pages = Arrays.asList(value.split(", "));
+					extra.put(key, pages);
+				} else {
+					extra.put(key, value);
+				}
 			} else {
 				return null;
 			}
 		}
-		if (lore.isEmpty() == false) {
+		if (!extra.isEmpty()) {
+			meta = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) extra);
+		}
+		if (!enchs.isEmpty()) {
+			for (Enchantment e : enchs.keySet()) {
+				meta.addEnchant(e, enchs.get(e), true);
+			}
+		}
+		if (display != null) {
+			meta.setDisplayName(display);
+		}
+		if (!lore.isEmpty()) {
 			meta.setLore(lore);
 		}
 		stack.setItemMeta(meta);
@@ -141,7 +185,7 @@ public class ItemUtil {
 	 * @param is ItemStack
 	 * @return formatted string, or null if invalid stack
 	 */
-	public static String serialize(ItemStack is) {
+	public static String serializeItemStack(ItemStack is) {
 		String serial;
 		if (is == null) {
 			return null;
@@ -166,8 +210,26 @@ public class ItemUtil {
 					serial += ":lore-" + s;
 				}
 			}
+			
+			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+			map.putAll(meta.serialize());
+			
+			if (map.containsKey("lore")) {
+				map.remove("lore");
+			}
+			if (map.containsKey("display-name")) {
+				map.remove("display-name");
+			}
+			for (String key : map.keySet()) {
+				serial += ":" + key + "-" + map.get(key).toString().replace("minecraft:", "minecraft|");
+			}
 		}
 		return serial;
+	}
+	
+	public static ItemMeta deserializeItemMeta(Class<? extends ItemMeta> itemMetaClass, Map<String, Object> args) {
+		DelegateDeserialization delegate = itemMetaClass.getAnnotation(DelegateDeserialization.class);
+		return (ItemMeta) ConfigurationSerialization.deserializeObject(args, delegate.value());
 	}
 
 	public static String getDisplayString(ItemStack is) {

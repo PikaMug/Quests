@@ -148,23 +148,23 @@ public class QuestMob {
 			string += "::amounts-" + spawnAmounts;
 		}
 		if (inventory[0] != null) {
-			string += "::hand-" + ItemUtil.serialize(inventory[0]);
+			string += "::hand-" + ItemUtil.serializeItemStack(inventory[0]);
 			string += "::hand_drop-" + dropChances[0];
 		}
 		if (inventory[1] != null) {
-			string += "::boots-" + ItemUtil.serialize(inventory[1]);
+			string += "::boots-" + ItemUtil.serializeItemStack(inventory[1]);
 			string += "::boots_drop-" + dropChances[1];
 		}
 		if (inventory[2] != null) {
-			string += "::leggings-" + ItemUtil.serialize(inventory[2]);
+			string += "::leggings-" + ItemUtil.serializeItemStack(inventory[2]);
 			string += "::leggings_drop-" + dropChances[2];
 		}
 		if (inventory[3] != null) {
-			string += "::chest-" + ItemUtil.serialize(inventory[3]);
+			string += "::chest-" + ItemUtil.serializeItemStack(inventory[3]);
 			string += "::chest_drop-" + dropChances[3];
 		}
 		if (inventory[4] != null) {
-			string += "::helmet-" + ItemUtil.serialize(inventory[4]);
+			string += "::helmet-" + ItemUtil.serializeItemStack(inventory[4]);
 			string += "::helmet_drop-" + dropChances[4];
 		}
 		return string;

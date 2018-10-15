@@ -15,6 +15,7 @@ package me.blackvein.quests.prompts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 
 public class ItemStackPrompt extends FixedSetPrompt {
@@ -44,20 +46,38 @@ public class ItemStackPrompt extends FixedSetPrompt {
 	// Stores enchantments in "tempEnchantments"
 	// Stores display name in "tempDisplay"
 	// Stores lore in "tempLore"
+	// Stores book title in "tempBookTitle"
+	// Stores book author in "tempBookAuthor"
+	// Stores book pages in "tempBookPages"
 	final Prompt oldPrompt;
 
 	public ItemStackPrompt(Prompt old) {
-		super("0", "1", "2", "3", "4", "5", "6", "7", "8");
+		super("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
 		oldPrompt = old;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getPromptText(ConversationContext cc) {
 		String menu = ChatColor.YELLOW + Lang.get("createItemTitle") + "\n";
+		LinkedHashMap<String, Object> map = null;
 		if (cc.getSessionData("tempName") != null) {
 			String stackData = getItemData(cc);
 			if (stackData != null) {
 				menu += stackData;
+				if (cc.getSessionData("tempMeta") != null) {
+					map = (LinkedHashMap<String, Object>) cc.getSessionData("tempMeta");
+					if (!map.isEmpty()) {
+						for (String key : map.keySet()) {
+							if (key.equals("pages")) {
+								List<String> pages = (List<String>) map.get(key);
+								menu += ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" + pages.size() + "\n";
+							} else {
+								menu += ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" + map.get(key) + "\n";
+							}
+						}
+					}
+				}
 			}
 		} else {
 			menu += "\n";
@@ -69,8 +89,13 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "4. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("itemCreateSetEnchs") + "\n";
 		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "5. " + ChatColor.RESET + "" + ChatColor.ITALIC + ChatColor.GOLD + Lang.get("itemCreateSetDisplay") + "\n";
 		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "6. " + ChatColor.RESET + "" + ChatColor.ITALIC + ChatColor.GOLD + Lang.get("itemCreateSetLore") + "\n";
-		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.RED + Lang.get("cancel") + "\n";
-		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.GREEN + Lang.get("done") + "\n";
+		if (map != null) {
+			if (!map.isEmpty()) {
+				menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.DARK_GREEN + Lang.get("itemCreateSetClearMeta") + "\n";
+			}
+		}
+		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.RED + Lang.get("cancel") + "\n";
+		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "9. " + ChatColor.RESET + "" + ChatColor.GREEN + Lang.get("done") + "\n";
 		return menu;
 	}
 
@@ -78,8 +103,9 @@ public class ItemStackPrompt extends FixedSetPrompt {
 	@Override
 	protected Prompt acceptValidatedInput(ConversationContext cc, String input) {
 		if (input.equalsIgnoreCase("0")) {
+			cc.setSessionData("tempMeta", null);
+			
 			Player player = (Player) cc.getForWhom();
-			@SuppressWarnings("deprecation")
 			ItemStack is = player.getItemInHand();
 			if (is == null || is.getType().equals(Material.AIR)) {
 				player.sendMessage(ChatColor.RED + Lang.get("itemCreateNoItem"));
@@ -108,11 +134,32 @@ public class ItemStackPrompt extends FixedSetPrompt {
 						lore.addAll(meta.getLore());
 						cc.setSessionData("tempLore", lore);
 					}
+					LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+					map.putAll(meta.serialize());
+					
+					/*for (String key : map.keySet()) {
+						String s = map.get(key).toString();
+						if (s.contains("minecraft:")) {
+							map.put(key, s.replace("minecraft:", "minecraft|"));
+						}
+					}*/
+
+					if (map.containsKey("lore")) {
+						map.remove("lore");
+					}
+					if (map.containsKey("display-name")) {
+						map.remove("display-name");
+					}
+					if (map != null && !map.isEmpty()) {
+						cc.setSessionData("tempMeta", map);
+					}
 				}
 				player.sendMessage(ChatColor.GREEN + Lang.get("itemCreateLoaded"));
 				return new ItemStackPrompt(oldPrompt);
 			}
 		} else if (input.equalsIgnoreCase("1")) {
+			cc.setSessionData("tempMeta", null);
+			
 			return new NamePrompt();
 		} else if (input.equalsIgnoreCase("2")) {
 			if (cc.getSessionData("tempName") != null) {
@@ -150,6 +197,14 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				return new ItemStackPrompt(oldPrompt);
 			}
 		} else if (input.equalsIgnoreCase("7")) {
+			if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
+				cc.setSessionData("tempMeta", null);
+				return new ItemStackPrompt(oldPrompt);
+			} else {
+				cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNoNameAmount"));
+				return new ItemStackPrompt(oldPrompt);
+			}
+		} else if (input.equalsIgnoreCase("8")) {
 			cc.setSessionData("tempStack", null);
 			cc.setSessionData("tempName", null);
 			cc.setSessionData("tempAmount", null);
@@ -157,7 +212,8 @@ public class ItemStackPrompt extends FixedSetPrompt {
 			cc.setSessionData("tempEnchantments", null);
 			cc.setSessionData("tempDisplay", null);
 			cc.setSessionData("tempLore", null);
-		} else if (input.equalsIgnoreCase("8")) {
+			cc.setSessionData("tempMeta", null);
+		} else if (input.equalsIgnoreCase("9")) {
 			if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
 				String name = (String) cc.getSessionData("tempName");
 				int amount = (Integer) cc.getSessionData("tempAmount");
@@ -181,11 +237,18 @@ public class ItemStackPrompt extends FixedSetPrompt {
 						lore.add(ChatColor.translateAlternateColorCodes('&', line));
 					}
 				}
+				
 				ItemStack stack = new ItemStack(Material.matchMaterial(name), amount);
-				ItemMeta meta = stack.getItemMeta();
+				
 				if (data != -1) {
 					stack.setDurability((short) data);
 				}
+				
+				ItemMeta meta = stack.getItemMeta();
+				if ((Map<String, Object>) cc.getSessionData("tempMeta") != null) {
+					meta = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) cc.getSessionData("tempMeta"));
+				}
+				
 				if (enchs != null) {
 					for (Entry<Enchantment, Integer> e : enchs.entrySet()) {
 						meta.addEnchant(e.getKey(), e.getValue(), true);
@@ -197,7 +260,9 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				if (lore != null) {
 					meta.setLore(lore);
 				}
+				
 				stack.setItemMeta(meta);
+				
 				cc.setSessionData("tempStack", stack);
 				cc.setSessionData("newItem", Boolean.TRUE);
 			} else {
@@ -477,4 +542,6 @@ public class ItemStackPrompt extends FixedSetPrompt {
 			return null;
 		}
 	}
+	
+	
 }

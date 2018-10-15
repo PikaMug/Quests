@@ -783,7 +783,7 @@ public class EventFactory implements ConversationAbandonedListener {
 			LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
 			LinkedList<String> lines = new LinkedList<String>();
 			for (ItemStack is : items) {
-				lines.add(ItemUtil.serialize(is));
+				lines.add(ItemUtil.serializeItemStack(is));
 			}
 			section.set("items", lines);
 		}
@@ -825,15 +825,15 @@ public class EventFactory implements ConversationAbandonedListener {
 					ss.set("spawn-location", Quests.getLocationInfo(questMob.getSpawnLocation()));
 					ss.set("mob-type", questMob.getType().name());
 					ss.set("spawn-amounts", questMob.getSpawnAmounts());
-					ss.set("held-item", ItemUtil.serialize(questMob.inventory[0]));
+					ss.set("held-item", ItemUtil.serializeItemStack(questMob.inventory[0]));
 					ss.set("held-item-drop-chance", questMob.dropChances[0]);
-					ss.set("boots", ItemUtil.serialize(questMob.inventory[1]));
+					ss.set("boots", ItemUtil.serializeItemStack(questMob.inventory[1]));
 					ss.set("boots-drop-chance", questMob.dropChances[1]);
-					ss.set("leggings", ItemUtil.serialize(questMob.inventory[2]));
+					ss.set("leggings", ItemUtil.serializeItemStack(questMob.inventory[2]));
 					ss.set("leggings-drop-chance", questMob.dropChances[2]);
-					ss.set("chest-plate", ItemUtil.serialize(questMob.inventory[3]));
+					ss.set("chest-plate", ItemUtil.serializeItemStack(questMob.inventory[3]));
 					ss.set("chest-plate-drop-chance", questMob.dropChances[3]);
-					ss.set("helmet", ItemUtil.serialize(questMob.inventory[4]));
+					ss.set("helmet", ItemUtil.serializeItemStack(questMob.inventory[4]));
 					ss.set("helmet-drop-chance", questMob.dropChances[4]);
 					count++;
 				}
