@@ -338,8 +338,8 @@ public class Quester {
 				long nextEnd = nextStart + questLength;
 				if (System.currentTimeMillis() < nextStart) {
 					String early = Lang.get("plnTooEarly");
-					early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
-					early = early.replaceAll("<time>", ChatColor.DARK_PURPLE
+					early = early.replace("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+					early = early.replace("<time>", ChatColor.DARK_PURPLE
 							+ Quests.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
 					player.sendMessage(ChatColor.YELLOW + early);
 					return;
@@ -348,8 +348,8 @@ public class Quester {
 				if (System.currentTimeMillis() > nextEnd) {
 					if (System.currentTimeMillis() > end) {
 						String late = Lang.get("plnTooLate");
-						late = late.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.RED);
-						late = late.replaceAll("<time>", ChatColor.DARK_PURPLE
+						late = late.replace("<quest>", ChatColor.AQUA + q.name + ChatColor.RED);
+						late = late.replace("<time>", ChatColor.DARK_PURPLE
 								+ Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
 						player.sendMessage(ChatColor.RED + late);
 						return;
@@ -361,8 +361,8 @@ public class Quester {
 		if (q.startPlanner != null) {
 			if (System.currentTimeMillis() < start) {
 				String early = Lang.get("plnTooEarly");
-				early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
-				early = early.replaceAll("<time>", ChatColor.DARK_PURPLE
+				early = early.replace("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+				early = early.replace("<time>", ChatColor.DARK_PURPLE
 						+ Quests.getTime(start - System.currentTimeMillis()) + ChatColor.YELLOW);
 				player.sendMessage(ChatColor.YELLOW + early);
 				return;
@@ -372,8 +372,8 @@ public class Quester {
 		if (q.endPlanner != null) {
 			if (System.currentTimeMillis() > end) {
 				String late = Lang.get("plnTooLate");
-				late = late.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.RED);
-				late = late.replaceAll("<time>", ChatColor.DARK_PURPLE
+				late = late.replace("<quest>", ChatColor.AQUA + q.name + ChatColor.RED);
+				late = late.replace("<time>", ChatColor.DARK_PURPLE
 						+ Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
 				player.sendMessage(ChatColor.RED + late);
 				return;
@@ -400,7 +400,7 @@ public class Quester {
 					}
 				}
 				String accepted = Lang.get(getPlayer(), "questAccepted");
-				accepted = accepted.replaceAll("<quest>", q.name);
+				accepted = accepted.replace("<quest>", q.name);
 				player.sendMessage(ChatColor.GREEN + accepted);
 				player.sendMessage("");
 				if (plugin.showQuestTitles) {
@@ -411,7 +411,7 @@ public class Quester {
 				}
 			}
 			String msg = Lang.get(getPlayer(), "questObjectivesTitle");
-			msg = msg.replaceAll("<quest>", q.name);
+			msg = msg.replace("<quest>", q.name);
 			getPlayer().sendMessage(ChatColor.GOLD + msg);
 			for (String s : getObjectivesReal(q)) {
 				player.sendMessage(s);
@@ -553,13 +553,13 @@ public class Quester {
 				if (enchantment2 == enchantment) {
 					if (num1 < num2) {
 						String obj = Lang.get(getPlayer(), "enchantItem");
-						obj = obj.replaceAll("<item>", ItemUtil.getName(new ItemStack(mat)));
-						obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
+						obj = obj.replace("<item>", ItemUtil.getName(new ItemStack(mat)));
+						obj = obj.replace("<enchantment>", Quester.prettyEnchantmentString(enchantment));
 						unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + num1 + "/" + num2);
 					} else {
 						String obj = Lang.get(getPlayer(), "enchantItem");
-						obj = obj.replaceAll("<item>", ItemUtil.getName(new ItemStack(mat)));
-						obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
+						obj = obj.replace("<item>", ItemUtil.getName(new ItemStack(mat)));
+						obj = obj.replace("<enchantment>", Quester.prettyEnchantmentString(enchantment));
 						finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + num1 + "/" + num2);
 					}
 				}
@@ -574,8 +574,8 @@ public class Quester {
 								unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " + Quester.prettyMobString(e) + ChatColor.GREEN + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							} else {
 								String obj = Lang.get(getPlayer(), "killAtLocation");
-								obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
-								obj = obj.replaceAll("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
+								obj = obj.replace("<mob>", Quester.prettyMobString(e));
+								obj = obj.replace("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
 								unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							}
 						} else {
@@ -583,8 +583,8 @@ public class Quester {
 								finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " + Quester.prettyMobString(e) + ChatColor.GRAY + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							} else {
 								String obj = Lang.get(getPlayer(), "killAtLocation");
-								obj = obj.replaceAll("<mob>", Quester.prettyMobString(e));
-								obj = obj.replaceAll("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
+								obj = obj.replace("<mob>", Quester.prettyMobString(e));
+								obj = obj.replace("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
 								finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							}
 						}
@@ -610,13 +610,13 @@ public class Quester {
 			index2++;
 			if (delivered < amt) {
 				String obj = Lang.get(getPlayer(), "deliver");
-				obj = obj.replaceAll("<item>", ItemUtil.getName(is));
-				obj = obj.replaceAll("<npc>", plugin.getNPCName(npc));
+				obj = obj.replace("<item>", ItemUtil.getName(is));
+				obj = obj.replace("<npc>", plugin.getNPCName(npc));
 				unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + delivered + "/" + amt);
 			} else {
 				String obj = Lang.get(getPlayer(), "deliver");
-				obj = obj.replaceAll("<item>", ItemUtil.getName(is));
-				obj = obj.replaceAll("<npc>", plugin.getNPCName(npc));
+				obj = obj.replace("<item>", ItemUtil.getName(is));
+				obj = obj.replace("<npc>", plugin.getNPCName(npc));
 				finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + delivered + "/" + amt);
 			}
 		}
@@ -625,11 +625,11 @@ public class Quester {
 				if (e.getKey().equals(n)) {
 					if (e.getValue() == false) {
 						String obj = Lang.get(getPlayer(), "talkTo");
-						obj = obj.replaceAll("<npc>", plugin.getNPCName(n));
+						obj = obj.replace("<npc>", plugin.getNPCName(n));
 						unfinishedObjectives.add(ChatColor.GREEN + obj);
 					} else {
 						String obj = Lang.get(getPlayer(), "talkTo");
-						obj = obj.replaceAll("<npc>", plugin.getNPCName(n));
+						obj = obj.replace("<npc>", plugin.getNPCName(n));
 						finishedObjectives.add(ChatColor.GRAY + obj);
 					}
 				}
@@ -664,11 +664,11 @@ public class Quester {
 				if (e.getKey().equals(e2.getKey())) {
 					if (e2.getValue() < e.getValue()) {
 						String obj = Lang.get(getPlayer(), "shearSheep");
-						obj = obj.replaceAll("<color>", e.getKey().name().toLowerCase());
+						obj = obj.replace("<color>", e.getKey().name().toLowerCase());
 						unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue());
 					} else {
 						String obj = Lang.get(getPlayer(), "shearSheep");
-						obj = obj.replaceAll("<color>", e.getKey().name().toLowerCase());
+						obj = obj.replace("<color>", e.getKey().name().toLowerCase());
 						finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue());
 					}
 				}
@@ -680,11 +680,11 @@ public class Quester {
 					if (!getQuestData(quest).hasReached.isEmpty()) {
 						if (getQuestData(quest).hasReached.get(getQuestData(quest).locationsReached.indexOf(l2)) == false) {
 							String obj = Lang.get(getPlayer(), "goTo");
-							obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
+							obj = obj.replace("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
 							unfinishedObjectives.add(ChatColor.GREEN + obj);
 						} else {
 							String obj = Lang.get(getPlayer(), "goTo");
-							obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
+							obj = obj.replace("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(l)));
 							finishedObjectives.add(ChatColor.GRAY + obj);
 						}
 					}
@@ -708,16 +708,16 @@ public class Quester {
 					String display = co.getDisplay();
 					Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
 					for (String key : co.datamap.keySet()) {
-						display = display.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
+						display = display.replace("%" + ((String) key) + "%", ((String) datamap.get(key)));
 					}
 					if (entry.getValue() < getCurrentStage(quest).customObjectiveCounts.get(index)) {
 						if (co.isCountShown() && co.isEnableCount()) {
-							display = display.replaceAll("%count%", entry.getValue() + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
+							display = display.replace("%count%", entry.getValue() + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 						}
 						unfinishedObjectives.add(ChatColor.GREEN + display);
 					} else {
 						if (co.isCountShown() && co.isEnableCount()) {
-							display = display.replaceAll("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
+							display = display.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 						}
 						finishedObjectives.add(ChatColor.GRAY + display);
 					}
@@ -1299,8 +1299,8 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("enchantItem")) {
 			String obj = Lang.get(p, "enchantItem");
-			obj = obj.replaceAll("<item>", ItemUtil.getName(material));
-			obj = obj.replaceAll("<enchantment>", Quester.prettyEnchantmentString(enchantment));
+			obj = obj.replace("<item>", ItemUtil.getName(material));
+			obj = obj.replace("<enchantment>", Quester.prettyEnchantmentString(enchantment));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			for (Map<Enchantment, Material> map : getCurrentStage(quest).itemsToEnchant.keySet()) {
 				if (map.containsKey(enchantment)) {
@@ -1314,8 +1314,8 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("deliverItem")) {
 			String obj = Lang.get(p, "deliver");
-			obj = obj.replaceAll("<item>", ItemUtil.getString(getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
-			obj = obj.replaceAll("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
+			obj = obj.replace("<item>", ItemUtil.getString(getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
+			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			p.sendMessage(message);
 			if (testComplete(quest)) {
@@ -1337,7 +1337,7 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("talkToNPC")) {
 			String obj = Lang.get(p, "talkTo");
-			obj = obj.replaceAll("<npc>", plugin.getNPCName(npc.getId()));
+			obj = obj.replace("<npc>", plugin.getNPCName(npc.getId()));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			p.sendMessage(message);
 			if (testComplete(quest)) {
@@ -1359,7 +1359,7 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("shearSheep")) {
 			String obj = Lang.get(p, "shearSheep");
-			obj = obj.replaceAll("<color>", color.name().toLowerCase());
+			obj = obj.replace("<color>", color.name().toLowerCase());
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			message = message + " " + getCurrentStage(quest).sheepToShear.get(color) + "/" + getCurrentStage(quest).sheepToShear.get(color);
 			p.sendMessage(message);
@@ -1368,7 +1368,7 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("reachLocation")) {
 			String obj = Lang.get(p, "goTo");
-			obj = obj.replaceAll("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(location)));
+			obj = obj.replace("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(location)));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			p.sendMessage(message);
 			if (testComplete(quest)) {
@@ -1385,10 +1385,10 @@ public class Quester {
 			}
 			Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
 			for (String key : co.datamap.keySet()) {
-				message = message.replaceAll("%" + ((String) key) + "%", (String) datamap.get(key));
+				message = message.replace("%" + ((String) key) + "%", (String) datamap.get(key));
 			}
 			if (co.isCountShown() && co.isEnableCount()) {
-				message = message.replaceAll("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
+				message = message.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 			}
 			p.sendMessage(message);
 			if (testComplete(quest)) {
@@ -1606,7 +1606,7 @@ public class Quester {
 			return (Lang.get("ENCHANTMENT_" + e.getName()));
 		} catch (NullPointerException ne) {
 			Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to " + "update the file or simply add an entry for the enchantment");
-			return e.getName().toLowerCase().replaceAll("_", " ");
+			return e.getName().toLowerCase().replace("_", " ");
 		}
 	}
 	
@@ -2457,7 +2457,7 @@ public class Quester {
 					 * 
 					 * hardQuit(quest);
 					 * 
-					 * if (plugin.getServer().getPlayer(id) != null) { String error = Lang.get("questModified"); error = error.replaceAll("<quest>",
+					 * if (plugin.getServer().getPlayer(id) != null) { String error = Lang.get("questModified"); error = error.replace("<quest>",
 					 * ChatColor.DARK_PURPLE + quest.name + ChatColor.RED); plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] "
 					 * + ChatColor.RED + error); updateJournal(); }
 					 * 
@@ -2469,7 +2469,7 @@ public class Quester {
 			if (exists == false) {
 				if (plugin.getServer().getPlayer(id) != null) {
 					String error = Lang.get("questNotExist");
-					error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.name + ChatColor.RED);
+					error = error.replace("<quest>", ChatColor.DARK_PURPLE + quest.name + ChatColor.RED);
 					plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
 				}
 			}
