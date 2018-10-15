@@ -37,10 +37,6 @@
             <id>Vault</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
-        <repository>
-            <id>citizensbooks_repo</id>
-            <url>https://raw.github.com/nicuch/maven_repo/</url>
-        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -179,8 +175,9 @@
         <dependency>
             <groupId>ro.nicuch</groupId>
             <artifactId>CitizensBooks</artifactId>
-            <version>2.4.4</version>
-            <scope>provided</scope>
+            <version>2.4.7</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/CitizensBooks-2.4.7.jar</systemPath>
         </dependency>
     </dependencies>
 
