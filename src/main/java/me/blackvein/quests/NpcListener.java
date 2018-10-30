@@ -45,7 +45,6 @@ public class NpcListener implements Listener {
 		plugin = newPlugin;
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onNPCRightClick(NPCRightClickEvent evt) {
 		if (plugin.questFactory.selectingNPCs.contains(evt.getClicker())) {
@@ -79,24 +78,36 @@ public class NpcListener implements Listener {
 					} else if (!hand.getType().equals(Material.AIR)) {
 						for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
 							if (n.equals(clicked.getId())) {
+								/*try {
+									String[] lang = Lang.get(player, "questInvalidDeliveryItem").split("<item>");
+									String prefix = lang[0];
+									if (hand.hasItemMeta()) {
+										prefix += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
+									}
+									prefix += ChatColor.AQUA;
+									String suffix = (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
+									if (hand.hasItemMeta()) {
+										suffix += (hand.getItemMeta().hasDisplayName() ? ")" : "");
+									}
+									suffix += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.RESET + lang[1];
+									plugin.query.sendMessage(player, prefix, hand.getType(), suffix);
+									break;
+								} catch (IndexOutOfBoundsException e) {
+									plugin.getLogger().severe("Error splitting \"" + Lang.get(player, "questInvalidDeliveryItem") + "\". Maybe missing <item> tag?");
+									player.sendMessage(ChatColor.RED + "Error showing this text. Please contact an administrator.");
+									e.printStackTrace();
+								}*/
 								String text = "";
 								if (hand.hasItemMeta()) {
 									text += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
 								}
-								String base = "error";
-								try {
-									base = ChatColor.AQUA + Items.itemByType(hand.getType()).getName();
-								} catch (Exception ne) {
-									text = ChatColor.AQUA + Quester.prettyItemString(hand.getType().name());
-									Bukkit.getLogger().severe("Likely caused by an incompatible version of Vault. Consider updating!");
-									ne.printStackTrace();
-								}
-								text += ChatColor.AQUA + base + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
+								text += ChatColor.AQUA + "<item>" + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
 								if (hand.hasItemMeta()) {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-								evt.getClicker().sendMessage(Lang.get(player, "questInvalidDeliveryItem").replaceAll("<item>", text));
+								plugin.query.sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType());
+								//evt.getClicker().sendMessage(Lang.get(player, "questInvalidDeliveryItem").replaceAll("<item>", text));
 								break;
 							}
 						}

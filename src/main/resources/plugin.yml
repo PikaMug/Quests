@@ -5,8 +5,7 @@ description: An extensive questing system.
 website: https://www.spigotmc.org/resources/quests.3711/
 dev-url: https://github.com/FlyingPikachu/Quests
 author: HappyPikachu
-depend: [Vault]
-softdepend: [Citizens, CitizensBooks, PhatLoots, PlaceholderAPI]
+softdepend: [Citizens, CitizensBooks, PhatLoots, PlaceholderAPI, Vault]
 permissions:
     quests.quest:
         description: View current Quest objectives

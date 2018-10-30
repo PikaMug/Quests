@@ -94,7 +94,9 @@ import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
+
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.aufdemrand.denizen.Denizen;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
@@ -109,6 +111,7 @@ import ro.nicuch.citizensbooks.CitizensBooksPlugin;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener {
 
+	public static int bukkitVersion = 0;
 	// Dependencies
 	public static Economy economy = null;
 	public static Permission permission = null;
@@ -136,6 +139,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public String redoEffect = "angry_villager";
 	public boolean showQuestReqs = true;
 	public boolean showQuestTitles = true;
+	public boolean translateItems = false;
 	public boolean translateSubCommands = false;
 	public boolean useCompass = true;
 	// Interfaces
@@ -159,6 +163,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public NpcEffectThread effListener;
 	public QuestTaskTrigger trigger;
 	public Lang lang = new Lang(this);
+	public LocaleQuery query = new LocaleQuery(this);
 
 	@SuppressWarnings("serial")
 	class StageFailedException extends Exception {
@@ -169,6 +174,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	@Override
 	public void onEnable() {
+		bukkitVersion = Integer.valueOf(Bukkit.getServer().getBukkitVersion().split("-")[0].replace(".", ""));
 		pListener = new PlayerListener(this);
 		effListener = new NpcEffectThread(this);
 		npcListener = new NpcListener(this);
@@ -418,13 +424,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (getServer().getPluginManager().getPlugin("CitizensBooks") != null) {
 		    citizensBooks = ((CitizensBooksPlugin) getServer().getPluginManager().getPlugin("CitizensBooks")).getAPI();
         }
-		if (!setupEconomy()) {
-			getLogger().warning("Economy not found.");
+		if (getServer().getPluginManager().getPlugin("Vault") != null) {
+			if (!setupEconomy()) {
+				getLogger().warning("Economy not found.");
+			}
+			if (!setupPermissions()) {
+				getLogger().warning("Permissions not found.");
+			}
+			vault = (Vault) getServer().getPluginManager().getPlugin("Vault");
 		}
-		if (!setupPermissions()) {
-			getLogger().warning("Permissions not found.");
-		}
-		vault = (Vault) getServer().getPluginManager().getPlugin("Vault");
 	}
 
 	@Override
@@ -520,6 +528,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
 		showQuestReqs = config.getBoolean("show-requirements", true);
 		showQuestTitles = config.getBoolean("show-titles", true);
+		translateItems = config.getBoolean("translate-items", false);
 		translateSubCommands = config.getBoolean("translate-subcommands", false);
 		useCompass = config.getBoolean("use-compass", true);
 		try {
@@ -1639,7 +1648,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 									} else {
 										player.sendMessage(ChatColor.YELLOW + Lang.get(player, "alreadyConversing"));
 									}
-								} else {
 								}
 							}
 						}
@@ -1790,7 +1798,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						}
 					}
 					if (q.moneyReq != 0) {
-						if (economy.getBalance(quester.getOfflinePlayer()) >= q.moneyReq) {
+						if (economy != null && economy.getBalance(quester.getOfflinePlayer()) >= q.moneyReq) {
 							if (q.moneyReq == 1) {
 								cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + q.moneyReq + " " + Quests.getCurrency(false));
 							} else {

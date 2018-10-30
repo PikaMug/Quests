@@ -31,7 +31,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import net.milkbowl.vault.item.Items;
 
 public class ItemUtil {
 
@@ -227,11 +226,29 @@ public class ItemUtil {
 		return serial;
 	}
 	
+	/**
+	 * Essentially the reverse of ItemMeta.serialize()
+	 * 
+	 * Format is ([display]name:durability) with (enchantments:levels) x (amount)
+	 * 
+	 * @param ItemMeta class, key/value map of metadata
+	 * @return ItemMeta
+	 */
 	public static ItemMeta deserializeItemMeta(Class<? extends ItemMeta> itemMetaClass, Map<String, Object> args) {
 		DelegateDeserialization delegate = itemMetaClass.getAnnotation(DelegateDeserialization.class);
 		return (ItemMeta) ConfigurationSerialization.deserializeObject(args, delegate.value());
 	}
 
+	/**
+	 * Returns a formatted display name. If none exists, returns item name.
+	 * Also returns formatted durability and amount.
+	 * A;so includes formatted enchantments.
+	 * 
+	 * Format is ([display]name:durability) with (enchantments:levels) x (amount)
+	 * 
+	 * @param is ItemStack to check
+	 * @return true display or item name, plus durability and amount, plus enchantments
+	 */
 	public static String getDisplayString(ItemStack is) {
 		String text;
 		if (is == null) {
@@ -254,13 +271,22 @@ public class ItemUtil {
 		}
 		return text;
 	}
-
+	
+	/**
+	 * Returns a formatted display name. If none exists, returns item name.
+	 * Also returns formatted durability and amount.
+	 * 
+	 * Format is ([display]name:durability) x (amount)
+	 * 
+	 * @param is ItemStack to check
+	 * @return true display or item name, plus durability and amount
+	 */
 	public static String getString(ItemStack is) {
 		String text;
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
 		} else {
-			text = ChatColor.AQUA + getName(is);
+			text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
 			if (is.getDurability() != 0) {
 				text += ChatColor.AQUA + ":" + is.getDurability();
 			}
@@ -269,25 +295,24 @@ public class ItemUtil {
 		return text;
 	}
 
-	@SuppressWarnings("deprecation")
+	/**
+	 * Returns a formatted display name. If none exists, returns item name.
+	 * 
+	 * @param is ItemStack to check
+	 * @return true display or item name
+	 */
 	public static String getName(ItemStack is) {
 		String text = "";
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName();
 		} else {
-			try {
-				text = ChatColor.AQUA + Items.itemByType(is.getType()).getName();
-			} catch (Exception ne) {
-				text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
-				Bukkit.getLogger().severe("This error is likely caused by an incompatible version of Vault. Please consider updating.");
-				ne.printStackTrace();
-			}
+			text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
 		}
 		return text;
 	}
 
 	/**
-	 * Ensures that an ItemStack if a valid, non-AIR material
+	 * Ensures that an ItemStack is a valid, non-AIR material
 	 * 
 	 * @param is ItemStack to check
 	 * @return true if stack is not null or Material.AIR

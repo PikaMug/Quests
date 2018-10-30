@@ -14,7 +14,6 @@ package me.blackvein.quests;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -64,27 +63,27 @@ public class NpcEffectThread implements Runnable {
 
 	// effectType is either effectType or Quests.repeatEffect
 	private void showEffect(Player player, NPC npc, String effectType) {
-		if (Bukkit.getBukkitVersion().contains("1.7.9")) {
+		if (Quests.bukkitVersion == 179) {
 			showEffect_R3(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.7.10")) {
+		} else if (Quests.bukkitVersion == 1710) {
 			showEffect_R4(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.8.4") || Bukkit.getBukkitVersion().contains("1.8.5") || Bukkit.getBukkitVersion().contains("1.8.6") || Bukkit.getBukkitVersion().contains("1.8.7") || Bukkit.getBukkitVersion().contains("1.8.8")) {
+		} else if (Quests.bukkitVersion >= 184 && Quests.bukkitVersion <= 188) {
 			showEffect_1_8_R3(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.8.3")) {
+		} else if (Quests.bukkitVersion == 183) {
 			showEffect_1_8_R2(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.8")) {
+		} else if (Quests.bukkitVersion == 18) {
 			showEffect_1_8_R1(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.9.4")) {
+		} else if (Quests.bukkitVersion == 194) {
 			showEffect_1_9_R2(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.9")) {
+		} else if (Quests.bukkitVersion == 19) {
 			showEffect_1_9_R1(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.10")) {
+		} else if (Quests.bukkitVersion == 110) {
 			showEffect_1_10_R1(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.11")) {
+		} else if (Quests.bukkitVersion == 111) {
 			showEffect_1_11_R1(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.12")) {
+		} else if (Quests.bukkitVersion == 112) {
 			showEffect_1_12_R1(player, npc, effectType);
-		} else if (Bukkit.getBukkitVersion().contains("1.13")) {
+		} else if (Quests.bukkitVersion == 113) {
 			showEffect_1_13_R1(player, npc, effectType);
 		}
 	}

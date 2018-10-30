@@ -327,7 +327,9 @@ public class Quest {
 			none = null;
 		}
 		for (String s : permissions) {
-			Quests.permission.playerAdd(player, s);
+			if (Quests.permission != null) {
+				Quests.permission.playerAdd(player, s);
+			}
 			none = null;
 		}
 		for (String s : mcmmoSkills) {

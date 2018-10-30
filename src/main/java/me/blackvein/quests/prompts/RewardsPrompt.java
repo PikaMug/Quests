@@ -194,7 +194,6 @@ public class RewardsPrompt extends FixedSetPrompt {
 				text = text.replaceAll("<money>", ChatColor.AQUA + (Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural()) + ChatColor.YELLOW);
 			} else {
 				text = text.replaceAll("<money>", ChatColor.AQUA + Lang.get("money") + ChatColor.YELLOW);
-
 			}
 			return ChatColor.YELLOW + text;
 		}

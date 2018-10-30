@@ -251,9 +251,9 @@ public class Event {
 		if (teleport != null) {
 			player.teleport(teleport);
 		}
-		if (!(book == null && book.isEmpty() && plugin.citizensBooks == null)) {
-		    if (plugin.citizensBooks.hasFilter(book)) {
-                plugin.citizensBooks.openBook(player, plugin.citizensBooks.getFilter(book));
+		if (!(book == null && book.isEmpty() && Quests.citizensBooks == null)) {
+		    if (Quests.citizensBooks.hasFilter(book)) {
+                Quests.citizensBooks.openBook(player, Quests.citizensBooks.getFilter(book));
             }
         }
 		if (failQuest == true) {

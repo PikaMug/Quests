@@ -15,6 +15,7 @@ package me.blackvein.quests.util;
 import java.util.LinkedList;
 
 import org.bukkit.ChatColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
@@ -28,6 +29,11 @@ public class MiscUtil {
 		s2 = s2.toUpperCase();
 		s = s.substring(1, s.length());
 		return s2 + s;
+	}
+	
+	public static String getProperEnchantmentName(Enchantment enchantment) {
+		String name = enchantment.getName().toLowerCase();
+		return name;
 	}
 
 	public static String getProperMobName(EntityType type) {

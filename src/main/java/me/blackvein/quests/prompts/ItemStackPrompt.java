@@ -42,13 +42,11 @@ public class ItemStackPrompt extends FixedSetPrompt {
 	// Stores ItemStack in "tempStack" context data
 	// Stores name in "tempName"
 	// Stores amount in "tempAmount"
-	// Stores data in "tempData"
+	// Stores durability in "tempData"
 	// Stores enchantments in "tempEnchantments"
 	// Stores display name in "tempDisplay"
 	// Stores lore in "tempLore"
-	// Stores book title in "tempBookTitle"
-	// Stores book author in "tempBookAuthor"
-	// Stores book pages in "tempBookPages"
+	// Stores metadata in "tempMeta"
 	final Prompt oldPrompt;
 
 	public ItemStackPrompt(Prompt old) {
@@ -492,7 +490,6 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private String getItemData(ConversationContext cc) {
 		if (cc.getSessionData("tempName") != null) {
 			String item;

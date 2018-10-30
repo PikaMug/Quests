@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>3.3.8</version>
+    <version>3.4.0</version>
     <name>quests</name>
     <url>https://github.com/FlyingPikachu/Quests/</url>
     <packaging>jar</packaging>
@@ -131,7 +131,7 @@
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
-            <version>1.6.6</version>
+            <version>1.6.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
