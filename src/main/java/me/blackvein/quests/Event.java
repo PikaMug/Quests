@@ -251,7 +251,7 @@ public class Event {
 		if (teleport != null) {
 			player.teleport(teleport);
 		}
-		if (!(book == null && book.isEmpty() && Quests.citizensBooks == null)) {
+		if (!(book == null && book.isEmpty() && Quests.citizensBooks != null)) {
 		    if (Quests.citizensBooks.hasFilter(book)) {
                 Quests.citizensBooks.openBook(player, Quests.citizensBooks.getFilter(book));
             }
