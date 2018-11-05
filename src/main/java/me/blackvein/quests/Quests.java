@@ -123,7 +123,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static Vault vault = null;
 	public static CitizensPlugin citizens;
 	public static Denizen denizen = null;
-	public static CitizensBooksAPI citizensBooks;
+	public static CitizensBooksAPI citizensBooks = null;
 	// Config settings
 	public int acceptTimeout = 20;
 	public boolean allowCommands = true;
