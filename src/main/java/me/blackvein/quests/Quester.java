@@ -414,28 +414,32 @@ public class Quester {
 			msg = msg.replace("<quest>", q.name);
 			getPlayer().sendMessage(ChatColor.GOLD + msg);
 			for (String s : getObjectivesReal(q)) {
-				// TODO ensure all applicable strings are translated
-				String sbegin = s.substring(s.indexOf(ChatColor.AQUA.toString()) + 2);
-				String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
-				
-				String enchant = "";
-				if (s.contains(ChatColor.LIGHT_PURPLE.toString())) {
-					String ebegin = s.substring(s.indexOf(ChatColor.LIGHT_PURPLE.toString()) + 2);
-					enchant = ebegin.substring(0, ebegin.indexOf(ChatColor.GREEN.toString()));
-				}
-				
-				// Order is important
-				if (Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", "")) != null) {
-					Material m = Material.matchMaterial(serial);
-					Enchantment e = Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", ""));
-					plugin.query.sendMessage(player, s.replace(serial, "<item>").replace(enchant, "<enchantment>"), m, e);
-				} else if (Material.matchMaterial(serial) != null) {
-					Material m = Material.matchMaterial(serial);
-					plugin.query.sendMessage(player, s.replace(serial, "<item>"), m);
-				} else if (EntityType.valueOf(serial.toUpperCase().replace(" ", "_")) != null) {
-					EntityType type = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
-					plugin.query.sendMessage(player, s.replace(serial, "<mob>"), type);
-				} else {
+				try {
+					// TODO ensure all applicable strings are translated
+					String sbegin = s.substring(s.indexOf(ChatColor.AQUA.toString()) + 2);
+					String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
+					
+					String enchant = "";
+					if (s.contains(ChatColor.LIGHT_PURPLE.toString())) {
+						String ebegin = s.substring(s.indexOf(ChatColor.LIGHT_PURPLE.toString()) + 2);
+						enchant = ebegin.substring(0, ebegin.indexOf(ChatColor.GREEN.toString()));
+					}
+					
+					// Order is important
+					if (Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", "")) != null) {
+						Material m = Material.matchMaterial(serial);
+						Enchantment e = Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", ""));
+						plugin.query.sendMessage(player, s.replace(serial, "<item>").replace(enchant, "<enchantment>"), m, e);
+					} else if (Material.matchMaterial(serial) != null) {
+						Material m = Material.matchMaterial(serial);
+						plugin.query.sendMessage(player, s.replace(serial, "<item>"), m);
+					} else if (EntityType.valueOf(serial.toUpperCase().replace(" ", "_")) != null) {
+						EntityType type = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
+						plugin.query.sendMessage(player, s.replace(serial, "<mob>"), type);
+					} else {
+						player.sendMessage(s);
+					}
+				} catch (IndexOutOfBoundsException e) {
 					player.sendMessage(s);
 				}
 			}
