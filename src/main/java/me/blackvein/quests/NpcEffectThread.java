@@ -63,28 +63,28 @@ public class NpcEffectThread implements Runnable {
 
 	// effectType is either effectType or Quests.repeatEffect
 	private void showEffect(Player player, NPC npc, String effectType) {
-		if (Quests.bukkitVersion == 179) {
-			showEffect_R3(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 1710) {
-			showEffect_R4(player, npc, effectType);
-		} else if (Quests.bukkitVersion >= 184 && Quests.bukkitVersion <= 188) {
-			showEffect_1_8_R3(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 183) {
-			showEffect_1_8_R2(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 18) {
-			showEffect_1_8_R1(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 194) {
-			showEffect_1_9_R2(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 19) {
-			showEffect_1_9_R1(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 110) {
-			showEffect_1_10_R1(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 111) {
-			showEffect_1_11_R1(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 112) {
-			showEffect_1_12_R1(player, npc, effectType);
-		} else if (Quests.bukkitVersion == 113) {
+		if (Quests.bukkitVersion >= 113) {
 			showEffect_1_13_R1(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 112 ) {
+			showEffect_1_12_R1(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 111) {
+			showEffect_1_11_R1(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 110) {
+			showEffect_1_10_R1(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 194) {
+			showEffect_1_9_R2(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 19) {
+			showEffect_1_9_R1(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 184) {
+			showEffect_1_8_R3(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 183) {
+			showEffect_1_8_R2(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 18) {
+			showEffect_1_8_R1(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 1710) {
+			showEffect_R4(player, npc, effectType);
+		} else if (Quests.bukkitVersion >= 179) {
+			showEffect_R3(player, npc, effectType);
 		}
 	}
 	
