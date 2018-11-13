@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>3.4.1</version>
+    <version>3.4.2</version>
     <name>quests</name>
     <url>https://github.com/FlyingPikachu/Quests/</url>
     <packaging>jar</packaging>
@@ -39,6 +39,13 @@
         </repository>
     </repositories>
     <dependencies>
+            <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit1132</artifactId>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/craftbukkit-1.13.2.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit113</artifactId>

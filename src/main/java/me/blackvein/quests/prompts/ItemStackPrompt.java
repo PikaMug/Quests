@@ -97,7 +97,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		return menu;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
 	protected Prompt acceptValidatedInput(ConversationContext cc, String input) {
 		if (input.equalsIgnoreCase("0")) {
