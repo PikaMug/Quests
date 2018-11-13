@@ -2328,7 +2328,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (config.contains("quests." + questName + ".requirements.fail-requirement-message")) {
 			quest.failRequirements = parseString(config.getString("quests." + questName + ".requirements.fail-requirement-message"), quest);
 		} else {
-			skipQuestProcess("Requirements for Quest " + quest.name + " is missing fail-requirement-message:");
+			skipQuestProcess("Requirements for Quest " + quest.name + " is missing fail-requirement-message!");
 		}
 		if (config.contains("quests." + questName + ".requirements.items")) {
 			if (Quests.checkList(config.getList("quests." + questName + ".requirements.items"), String.class)) {
