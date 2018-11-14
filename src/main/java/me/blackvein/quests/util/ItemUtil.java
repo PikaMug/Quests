@@ -49,6 +49,7 @@ public class ItemUtil {
 	 * @return -4&nbsp;-> stack display name/lore is unequal<br>
 	 * @return -5&nbsp;-> stack enchantments are unequal<br>
 	 */
+	@SuppressWarnings("deprecation")
 	public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
 		if (one == null || two == null) {
 			return 0;
@@ -94,6 +95,7 @@ public class ItemUtil {
 	 * @param data formatted string
 	 * @return ItemStack, or null if invalid format
 	 */
+	@SuppressWarnings("deprecation")
 	public static ItemStack readItemStack(String data) {
 		if (data == null) {
 			return null;
@@ -110,7 +112,7 @@ public class ItemUtil {
 			if (arg.startsWith("name-")) {
 				try {
 					stack = new ItemStack(Material.matchMaterial(arg.substring(5).toUpperCase()));
-				} catch (NullPointerException npe) {
+				} catch (Exception e) {
 					Bukkit.getLogger().severe("[Quests] The item name \'" + arg.substring(5).toUpperCase() + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
 					return null;
 				}
@@ -184,6 +186,7 @@ public class ItemUtil {
 	 * @param is ItemStack
 	 * @return formatted string, or null if invalid stack
 	 */
+	@SuppressWarnings("deprecation")
 	public static String serializeItemStack(ItemStack is) {
 		String serial;
 		if (is == null) {
@@ -249,6 +252,7 @@ public class ItemUtil {
 	 * @param is ItemStack to check
 	 * @return true display or item name, plus durability and amount, plus enchantments
 	 */
+	@SuppressWarnings("deprecation")
 	public static String getDisplayString(ItemStack is) {
 		String text;
 		if (is == null) {
@@ -281,6 +285,7 @@ public class ItemUtil {
 	 * @param is ItemStack to check
 	 * @return true display or item name, plus durability and amount
 	 */
+	@SuppressWarnings("deprecation")
 	public static String getString(ItemStack is) {
 		String text;
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
