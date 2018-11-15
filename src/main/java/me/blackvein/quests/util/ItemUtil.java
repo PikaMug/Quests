@@ -150,9 +150,24 @@ public class ItemUtil {
 				if (i > -1) {
 					extra.put(key, i);
 				} else if (value.startsWith("[") && value.endsWith("]")) {
-					// Map such as book pages
+					// List such as book pages
 					List<String> pages = Arrays.asList(value.split(", "));
 					extra.put(key, pages);
+				} else if (value.startsWith("{") && value.endsWith("}")) {
+					// Map such as stored enchants for enchanted books
+					String[] enchants = value.replace("{", "").replace("}", "").split(", ");
+					Map<String, String> stored = new HashMap<String, String>();
+					for (String s : enchants) {
+						if (s.contains("=")) {
+							String[] keyval = s.split("=");
+							stored.put(keyval[0], keyval[1]);
+						} else {
+							Bukkit.getLogger().severe("Quests does not know how to handle "
+									+ value + " so please contact the developer on Github");
+							return null;
+						}
+					}
+					extra.put(key, stored);
 				} else {
 					extra.put(key, value);
 				}
@@ -231,8 +246,6 @@ public class ItemUtil {
 	
 	/**
 	 * Essentially the reverse of ItemMeta.serialize()
-	 * 
-	 * Format is ([display]name:durability) with (enchantments:levels) x (amount)
 	 * 
 	 * @param ItemMeta class, key/value map of metadata
 	 * @return ItemMeta

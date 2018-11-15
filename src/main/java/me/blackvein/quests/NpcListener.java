@@ -14,11 +14,12 @@ package me.blackvein.quests;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -27,15 +28,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
+import me.blackvein.quests.util.RomanNumeral;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.milkbowl.vault.item.Items;
 
 public class NpcListener implements Listener {
 
@@ -78,25 +81,6 @@ public class NpcListener implements Listener {
 					} else if (!hand.getType().equals(Material.AIR)) {
 						for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
 							if (n.equals(clicked.getId())) {
-								/*try {
-									String[] lang = Lang.get(player, "questInvalidDeliveryItem").split("<item>");
-									String prefix = lang[0];
-									if (hand.hasItemMeta()) {
-										prefix += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
-									}
-									prefix += ChatColor.AQUA;
-									String suffix = (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
-									if (hand.hasItemMeta()) {
-										suffix += (hand.getItemMeta().hasDisplayName() ? ")" : "");
-									}
-									suffix += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.RESET + lang[1];
-									plugin.query.sendMessage(player, prefix, hand.getType(), suffix);
-									break;
-								} catch (IndexOutOfBoundsException e) {
-									plugin.getLogger().severe("Error splitting \"" + Lang.get(player, "questInvalidDeliveryItem") + "\". Maybe missing <item> tag?");
-									player.sendMessage(ChatColor.RED + "Error showing this text. Please contact an administrator.");
-									e.printStackTrace();
-								}*/
 								String text = "";
 								if (hand.hasItemMeta()) {
 									text += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
@@ -107,7 +91,18 @@ public class NpcListener implements Listener {
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
 								plugin.query.sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType());
-								//evt.getClicker().sendMessage(Lang.get(player, "questInvalidDeliveryItem").replaceAll("<item>", text));
+								if (hand.hasItemMeta()) {
+									if (hand.getType().equals(Material.ENCHANTED_BOOK)) {
+										EnchantmentStorageMeta esmeta = (EnchantmentStorageMeta) hand.getItemMeta();
+										if (esmeta.hasStoredEnchants()) {
+											// TODO translate enchantment names
+											for (Entry<Enchantment, Integer> e : esmeta.getStoredEnchants().entrySet()) {
+												player.sendMessage(ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN 
+														+ Quester.prettyEnchantmentString(e.getKey()) + " " + RomanNumeral.toRoman(e.getValue()) + "\n");
+											}
+										}
+									}
+								}
 								break;
 							}
 						}
