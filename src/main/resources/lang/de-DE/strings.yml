@@ -1,6 +1,6 @@
 ---
 COMMAND_LIST: "liste"
-COMMAND_LIST_HELP: "<command> [page] - Verfübare Quests anzeigen"
+COMMAND_LIST_HELP: "<command> [page] - Verfügbare Quests anzeigen"
 COMMAND_TAKE: "nehmen"
 COMMAND_TAKE_HELP: "<command> [quest] - Eine Quest annehmen"
 COMMAND_TAKE_USAGE: "Benutze: /quests take [quest]"
