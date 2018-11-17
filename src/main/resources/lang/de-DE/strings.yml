@@ -35,7 +35,7 @@ COMMAND_QUESTADMIN_TAKEPOINTS_HELP: "<command> [spieler] [menge] - Einem Spieler
 COMMAND_QUESTADMIN_GIVEPOINTS: "gebepunkte"
 COMMAND_QUESTADMIN_GIVEPOINTS_HELP: "<command> [spieler] [menge] - Einem Spieler Questpunkte geben"
 COMMAND_QUESTADMIN_POINTSALL: "punktealler"
-COMMAND_QUESTADMIN_POINTSALL_HELP: "<command> [amount] - Allen Spielern Questpunkte geben"
+COMMAND_QUESTADMIN_POINTSALL_HELP: "<command> [amount] - Gibt allen Spielern Questpunkte"
 COMMAND_QUESTADMIN_FINISH: "beenden"
 COMMAND_QUESTADMIN_FINISH_HELP: "<command> [spieler] [quest] - Eine Quest für einen Spieler sofort erfolgreich abschliessen"
 COMMAND_QUESTADMIN_NEXTSTAGE: "nächstestation"
