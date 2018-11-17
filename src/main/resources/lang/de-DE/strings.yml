@@ -638,7 +638,7 @@ strAdd: "Geben Sie dann <command> ein um es aufzunehmen"
 cmdClear: "löschen"
 strClear: "oder '<command>' um alle Daten zu löschen"
 cmdCancel: "abbrechen"
-strCancel: "oder '<command>' für zurück"
+strCancel: "oder verwende '<command>' um abzubrechen"
 cmdDone: "fertig"
 strDone: "dann gib '<command>' ein um zu speichern"
 strSpace: trenne es jeweils mit einem Leerzeichen
