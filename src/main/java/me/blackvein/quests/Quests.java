@@ -2263,7 +2263,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				if (config.contains("quests." + questName + ".rewards.mcmmo-levels")) {
 					if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-levels"), Integer.class)) {
 						for (String skill : config.getStringList("quests." + questName + ".rewards.mcmmo-skills")) {
-							if (Quests.getMcMMOSkill(skill) == null) {
+							if (Quests.mcmmo == null) {
+								skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " requires the mcMMO plugin!");
+							} else if (Quests.getMcMMOSkill(skill) == null) {
 								skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.name + " is not a valid mcMMO skill name!");
 							}
 						}
@@ -2286,7 +2288,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				if (config.contains("quests." + questName + ".rewards.heroes-exp-amounts")) {
 					if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-amounts"), Double.class)) {
 						for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
-							if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
+							if (Quests.mcmmo == null) {
+								skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " requires the mcMMO plugin!");
+							} else if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
 								skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.name + " is not a valid Heroes class name!");
 							}
 						}
@@ -2308,7 +2312,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			if (config.contains("quests." + questName + ".rewards.phat-loots")) {
 				if (Quests.checkList(config.getList("quests." + questName + ".rewards.phat-loots"), String.class)) {
 					for (String loot : config.getStringList("quests." + questName + ".rewards.phat-loots")) {
-						if (PhatLootsAPI.getPhatLoot(loot) == null) {
+						if (Quests.phatLoots == null) {
+							skipQuestProcess("" + loot + " in phat-loots: Reward in Quest " + quest.name + " requires the PhatLoots plugin!");
+						} else if (PhatLootsAPI.getPhatLoot(loot) == null) {
 							skipQuestProcess("" + loot + " in phat-loots: Reward in Quest " + quest.name + " is not a valid PhatLoot name!");
 						}
 					}
