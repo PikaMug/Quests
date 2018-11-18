@@ -409,8 +409,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (getServer().getPluginManager().getPlugin("Denizen") != null) {
 			denizen = (Denizen) getServer().getPluginManager().getPlugin("Denizen");
 		}
-		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
-			mcmmo = (mcMMO) getServer().getPluginManager().getPlugin("mcMMO");
+		if (getServer().getPluginManager().getPlugin("mcMMO") != null ) {
+			if (!getServer().getPluginManager().getPlugin("mcMMO").isEnabled()) {
+				getLogger().warning("mcMMO was detected, but is not enabled! Fix mcMMO to allow linkage.");
+			} else {
+				mcmmo = (mcMMO) getServer().getPluginManager().getPlugin("mcMMO");
+			}
 		}
 		if (getServer().getPluginManager().getPlugin("Heroes") != null) {
 			heroes = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
