@@ -76,7 +76,7 @@ public enum Eff_1_13_R2 {
 	private final Particle particleEnum;
 
 	/**
-	 * Create a new instance of the Eff_1_13_R1 enum with the given particle type
+	 * Create a new instance of the Eff_1_13_R2 enum with the given particle type
 	 * to be sent.
 	 * 
 	 * @param particleEnum

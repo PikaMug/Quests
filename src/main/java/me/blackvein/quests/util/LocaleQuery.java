@@ -92,26 +92,25 @@ public class LocaleQuery {
 		   player.sendMessage(message.replace("<mob>", Quester.prettyMobString(type)));
 	   }
 	   
-	    /**
+	   /**
 	    * Creates a new LocaleQuery of the specified material
 	    * @param material the item with the material
 	    * @return the new LocaleQuery
 	    * @throws IllegalArgumentException if an item with that material could not be found
 	    */
 	   public String queryByType(Material material) throws IllegalArgumentException{
-	        try {
-	           Object item = MethodUtils.invokeExactStaticMethod(craftMagicNumbers,"getItem", material);
-	           
-	           if (item == null) {
-	           	throw new IllegalArgumentException("An item with that material could not be found! (Perhaps you have specified a block?)");
-	           }
-	           
-	           String name = (String) MethodUtils.invokeExactMethod(item, "getName");
-	           return name;
+	       try {
+	    	   Object item = MethodUtils.invokeExactStaticMethod(craftMagicNumbers,"getItem", material);
+	    	   if (item == null) {
+	    		   throw new IllegalArgumentException("An item with that material could not be found! (Perhaps you have specified a block?)");
+	    	   }
+	        	
+	    	   String name = (String) MethodUtils.invokeExactMethod(item, "getName");
+	    	   return name;
 	       } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-	           e.printStackTrace();
+	    	   e.printStackTrace();
 	       }
-	        return null;
+	       return null;
 	   }
 	   
 	   public void setup() {
