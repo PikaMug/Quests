@@ -190,23 +190,53 @@ public class QuestMob {
 			} else if (string.startsWith("hand-")) {
 				inventory[0] = ItemUtil.readItemStack(string.substring(5));
 			} else if (string.startsWith("hand_drop-")) {
-				dropChances[0] = Float.parseFloat(string.substring(10));
+				try {
+					dropChances[0] = Float.parseFloat(string.substring(10));
+				} catch (NumberFormatException e) {
+					Bukkit.getLogger().info("Drop chance for hand was required, but left empty."
+							+ " Setting to 1.0");
+					dropChances[0] = 1.0f;
+				}
 			} else if (string.startsWith("boots-")) {
 				inventory[1] = ItemUtil.readItemStack(string.substring(6));
 			} else if (string.startsWith("boots_drop-")) {
-				dropChances[1] = Float.parseFloat(string.substring(11));
+				try {
+					dropChances[1] = Float.parseFloat(string.substring(11));
+				} catch (NumberFormatException e) {
+					Bukkit.getLogger().info("Drop chance for boots was required, but left empty."
+							+ " Setting to 1.0");
+					dropChances[1] = 1.0f;
+				}
 			} else if (string.startsWith("leggings-")) {
 				inventory[2] = ItemUtil.readItemStack(string.substring(9));
 			} else if (string.startsWith("leggings_drop-")) {
-				dropChances[2] = Float.parseFloat(string.substring(14));
+				try {
+					dropChances[2] = Float.parseFloat(string.substring(14));
+				} catch (NumberFormatException e) {
+					Bukkit.getLogger().info("Drop chance for leggings was required, but left empty."
+							+ " Setting to 1.0");
+					dropChances[2] = 1.0f;
+				}
 			} else if (string.startsWith("chest-")) {
 				inventory[3] = ItemUtil.readItemStack(string.substring(6));
 			} else if (string.startsWith("chest_drop-")) {
-				dropChances[3] = Float.parseFloat(string.substring(11));
+				try {
+					dropChances[3] = Float.parseFloat(string.substring(11));
+				} catch (NumberFormatException e) {
+					Bukkit.getLogger().info("Drop chance for chest was required, but left empty."
+							+ " Setting to 1.0");
+					dropChances[3] = 1.0f;
+				}
 			} else if (string.startsWith("helmet-")) {
 				inventory[4] = ItemUtil.readItemStack(string.substring(7));
 			} else if (string.startsWith("helmet_drop-")) {
-				dropChances[4] = Float.parseFloat(string.substring(12));
+				try {
+					dropChances[4] = Float.parseFloat(string.substring(12));
+				} catch (NumberFormatException e) {
+					Bukkit.getLogger().info("Drop chance for helmet was required, but left empty."
+							+ " Setting to 1.0");
+					dropChances[4] = 1.0f;
+				}
 			}
 		}
 		QuestMob qm = new QuestMob(entityType, loc, amounts);
