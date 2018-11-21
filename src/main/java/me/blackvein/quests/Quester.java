@@ -430,18 +430,18 @@ public class Quester {
 						Material m = Material.matchMaterial(serial);
 						Enchantment e = Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", ""));
 						plugin.query.sendMessage(player, s.replace(serial, "<item>").replace(enchant, "<enchantment>"), m, e);
+						continue;
 					} else if (Material.matchMaterial(serial) != null) {
 						Material m = Material.matchMaterial(serial);
 						plugin.query.sendMessage(player, s.replace(serial, "<item>"), m);
-					} else if (EntityType.valueOf(serial.toUpperCase().replace(" ", "_")) != null) {
+						continue;
+					} else {
 						try {
 							EntityType type = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
 							plugin.query.sendMessage(player, s.replace(serial, "<mob>"), type);
 						} catch (IllegalArgumentException e) {
 							player.sendMessage(s);
 						}
-					} else {
-						player.sendMessage(s);
 					}
 				} catch (IndexOutOfBoundsException e) {
 					player.sendMessage(s);
