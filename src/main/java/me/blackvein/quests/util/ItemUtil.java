@@ -27,6 +27,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.blackvein.quests.Quester;
@@ -82,9 +83,18 @@ public class ItemUtil {
 		}
 		if (one.getEnchantments().equals(two.getEnchantments()) == false) {
 			return -5;
-		} else {
-			return 0;
 		}
+		if (one.getType().equals(Material.ENCHANTED_BOOK)) {
+			EnchantmentStorageMeta esmeta1 = (EnchantmentStorageMeta) one.getItemMeta();
+			EnchantmentStorageMeta esmeta2 = (EnchantmentStorageMeta) two.getItemMeta();
+			if (esmeta1.hasStoredEnchants() && esmeta2.hasStoredEnchants() == false) {
+				return -6;
+			}
+			if (esmeta1.getStoredEnchants().equals(esmeta2.getStoredEnchants()) == false) {
+				return -6;
+			}
+		}
+		return 0;
 	}
 
 	/**
@@ -103,9 +113,11 @@ public class ItemUtil {
 		ItemStack stack = null;
 		String[] args = data.split(":");
 		ItemMeta meta = null;
+		EnchantmentStorageMeta esmeta = null;
 		Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
 		String display = null;
 		LinkedList<String> lore = new LinkedList<String>();
+		LinkedHashMap<Enchantment, Integer> stored = new LinkedHashMap<Enchantment, Integer>();
 		LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
 		for (String targ : args) {
 			String arg = targ.replace("minecraft|", "minecraft:");
@@ -133,8 +145,17 @@ public class ItemUtil {
 				display = ChatColor.translateAlternateColorCodes('&', arg.substring(12));
 			} else if (arg.startsWith("lore-")) {
 				lore.add(ChatColor.translateAlternateColorCodes('&', arg.substring(5)));
+			} else if (arg.startsWith("stored-enchants")) {
+				int dash = arg.lastIndexOf('-');
+				String value = arg.substring(dash + 1);
+				String[] mapping = value.replace("{", "").replace("}", "").split(", ");
+				for (String s : mapping) {
+					if (s.contains("=")) {
+						String[] keyval = s.split("=");
+						stored.put(Enchantment.getByName(keyval[0]), Integer.valueOf(keyval[1]));
+					}
+				}
 			} else if (arg.contains("-")) {
-				
 				int dash = arg.lastIndexOf('-');
 				String key = arg.substring(0, dash);
 				String value = arg.substring(dash + 1);
@@ -154,20 +175,20 @@ public class ItemUtil {
 					List<String> pages = Arrays.asList(value.split(", "));
 					extra.put(key, pages);
 				} else if (value.startsWith("{") && value.endsWith("}")) {
-					// Map such as stored enchants for enchanted books
-					String[] enchants = value.replace("{", "").replace("}", "").split(", ");
-					Map<String, String> stored = new HashMap<String, String>();
-					for (String s : enchants) {
+					// For nested mappings. Does NOT handle stored enchants, see earlier code
+					String[] mapping = value.replace("{", "").replace("}", "").split(", ");
+					Map<String, String> nested = new HashMap<String, String>();
+					for (String s : mapping) {
 						if (s.contains("=")) {
 							String[] keyval = s.split("=");
-							stored.put(keyval[0], keyval[1]);
+							nested.put(keyval[0], keyval[1]);
 						} else {
 							Bukkit.getLogger().severe("Quests does not know how to handle "
 									+ value + " so please contact the developer on Github");
 							return null;
 						}
 					}
-					extra.put(key, stored);
+					extra.put(key, nested);
 				} else {
 					extra.put(key, value);
 				}
@@ -175,6 +196,7 @@ public class ItemUtil {
 				return null;
 			}
 		}
+		
 		if (!extra.isEmpty()) {
 			meta = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) extra);
 		}
@@ -189,7 +211,15 @@ public class ItemUtil {
 		if (!lore.isEmpty()) {
 			meta.setLore(lore);
 		}
-		stack.setItemMeta(meta);
+		if (stack.getType().equals(Material.ENCHANTED_BOOK)) {
+			esmeta = (EnchantmentStorageMeta) meta;
+			for (Entry<Enchantment, Integer> e : stored.entrySet()) {
+				esmeta.addStoredEnchant(e.getKey(), e.getValue(), true);
+			}
+			stack.setItemMeta(esmeta);
+		} else {
+			stack.setItemMeta(meta);
+		}
 		return stack;
 	}
 
