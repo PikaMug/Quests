@@ -3007,8 +3007,14 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<String> mobTypes = new LinkedList<String>();
 				for (String s : input.split(" ")) {
 					if (Quests.getMobType(s) != null) {
-						mobTypes.add(Quester.prettyMobString(Quests.getMobType(s)));
-						context.setSessionData(pref + CK.S_TAME_TYPES, mobTypes);
+						final EntityType type = Quests.getMobType(s);
+						if (type.isAlive() || Tameable.class.isAssignableFrom(type.getEntityClass())) {
+							mobTypes.add(Quester.prettyMobString(type));
+							context.setSessionData(pref + CK.S_TAME_TYPES, mobTypes);
+						} else {
+							player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorInvalidMob"));
+							return new TameTypesPrompt();
+						}
 					} else {
 						player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorInvalidMob"));
 						return new TameTypesPrompt();
