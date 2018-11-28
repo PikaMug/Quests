@@ -111,7 +111,7 @@ import ro.nicuch.citizensbooks.CitizensBooksPlugin;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener {
 
-	public static int bukkitVersion = 0;
+	public static String bukkitVersion = "0";
 	// Dependencies
 	public static Economy economy = null;
 	public static Permission permission = null;
@@ -174,7 +174,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	@Override
 	public void onEnable() {
-		bukkitVersion = Integer.valueOf(Bukkit.getServer().getBukkitVersion().split("-")[0].replace(".", ""));
+		bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
 		pListener = new PlayerListener(this);
 		effListener = new NpcEffectThread(this);
 		npcListener = new NpcListener(this);
@@ -268,7 +268,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         
         if (!outDir.exists()) {
             if (!outDir.mkdirs()) {
-            	getLogger().log(Level.SEVERE, "Failed to make directories for " + outFile.getName() + "(canWrite= " + outFile.canWrite());
+            	getLogger().log(Level.SEVERE, "Failed to make directories for " + outFile.getName() + " (canWrite= " + outFile.canWrite() + ")");
             }
         }
 

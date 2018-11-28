@@ -70,29 +70,29 @@ public class NpcEffectThread implements Runnable {
 	 */
 	private void showEffect(Player player, NPC npc, String effectType) {
 		try {
-			if (Quests.bukkitVersion >= 1132) {
+			if (Quests.bukkitVersion.contains("1.13.2")) {
 				showEffect_1_13_R2(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 113) {
+			} else if (Quests.bukkitVersion.contains("1.13")) {
 				showEffect_1_13_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 112 ) {
+			} else if (Quests.bukkitVersion.contains("1.12")) {
 				showEffect_1_12_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 111) {
+			} else if (Quests.bukkitVersion.contains("1.11")) {
 				showEffect_1_11_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 110) {
+			} else if (Quests.bukkitVersion.contains("1.10")) {
 				showEffect_1_10_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 194) {
+			} else if (Quests.bukkitVersion.contains("1.9.4")) {
 				showEffect_1_9_R2(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 19) {
+			} else if (Quests.bukkitVersion.contains("1.9")) {
 				showEffect_1_9_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 184) {
+			} else if (Quests.bukkitVersion.contains("1.8.4")) {
 				showEffect_1_8_R3(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 183) {
+			} else if (Quests.bukkitVersion.contains("1.8.3")) {
 				showEffect_1_8_R2(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 18) {
+			} else if (Quests.bukkitVersion.contains("1.8")) {
 				showEffect_1_8_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 1710) {
+			} else if (Quests.bukkitVersion.contains("1.7.10")) {
 				showEffect_R4(player, npc, effectType);
-			} else if (Quests.bukkitVersion >= 179) {
+			} else if (Quests.bukkitVersion.contains("1.7.9")) {
 				showEffect_R3(player, npc, effectType);
 			}
 		} catch (Exception e) {

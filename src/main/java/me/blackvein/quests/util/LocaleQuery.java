@@ -13,6 +13,7 @@
 package me.blackvein.quests.util;
 
 import java.lang.reflect.InvocationTargetException;
+
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 
@@ -24,101 +25,135 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class LocaleQuery {
-	   private static Class<?> craftMagicNumbers = null;
-	   private final Quests plugin;
-	   
-	   public LocaleQuery(Quests plugin){
-		   this.plugin = plugin;
-		   setup();
-	   }
-	   
-	   public void sendMessage(Player player, String message, Material material) {
-		   if (plugin.translateItems) {
-			   String key = queryByType(material);
-			   if (Quests.bukkitVersion <= 1122) {
-				   if (key.startsWith("tile.") || key.startsWith("item.")) {
-					   key = key + ".name";
-				   }
-			   }
-			   if (key != null) {
-				   String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"");
-				   player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
-				   return;
-			   }
-		   }
-		   player.sendMessage(message.replace("<item>", Quester.prettyItemString(material.name())));
-	   }
-	   
-	   public void sendMessage(Player player, String message, Material material, Enchantment enchantment) {
-		   if (plugin.translateItems) {
-			   String key = queryByType(material);
-			   if (Quests.bukkitVersion <= 1122) {
-				   if (key.startsWith("tile.") || key.startsWith("item.")) {
-					   key = key + ".name";
-				   }
-			   }
-			   String key2 = "";
-			   if (Quests.bukkitVersion <= 1122) {
-				   key2 = "enchantment." + MiscUtil.getProperEnchantmentName(enchantment).replace("_", ".")
-						   .replace("environmental", "all").replace("protection", "protect");
-			   } else {
-				   key2 = "enchantment.minecraft." + enchantment.toString().toLowerCase();
-			   }
-			   if (key != null && !key.equals("")) {
-				   String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"")
-						   .replace("<enchantment>", "\",{\"translate\":\"" + key2 + "\"},\"");
-				   player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
-				   return;
-			   }
-		   }
-		   player.sendMessage(message.replace("<item>", Quester.prettyItemString(material.name()))
-				   .replace("<enchantment>", Quester.prettyEnchantmentString(enchantment)));
-	   }
-	   
-	   public void sendMessage(Player player, String message, EntityType type) {
-		   if (plugin.translateItems) {
-			   String key = "";
-			   if (Quests.bukkitVersion <= 1122) {
-				   key = "entity." + MiscUtil.getProperMobName(type) + ".name";
-			   } else {
-				   key = "entity.minecraft." + type.toString().toLowerCase();
-			   }
-			   if (!key.equals("")) {
-				   String msg = message.replace("<mob>", "\",{\"translate\":\"" + key + "\"},\"");
-				   player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
-				   return;
-			   }
-		   }
-		   player.sendMessage(message.replace("<mob>", Quester.prettyMobString(type)));
-	   }
-	   
-	   /**
-	    * Creates a new LocaleQuery of the specified material
-	    * @param material the item with the material
-	    * @return the new LocaleQuery
-	    * @throws IllegalArgumentException if an item with that material could not be found
-	    */
-	   public String queryByType(Material material) throws IllegalArgumentException{
-	       try {
-	    	   Object item = MethodUtils.invokeExactStaticMethod(craftMagicNumbers,"getItem", material);
-	    	   if (item == null) {
-	    		   throw new IllegalArgumentException("An item with that material could not be found! (Perhaps you have specified a block?)");
-	    	   }
+	private static Class<?> craftMagicNumbers = null;
+	private final Quests plugin;
+	static boolean oldVersion = isBelow113();
+	
+	public LocaleQuery(Quests plugin){
+		this.plugin = plugin;
+		setup();
+	}
+	
+	public void sendMessage(Player player, String message, Material material) {
+		if (plugin.translateItems) {
+			String key = queryByType(material);
+			if (oldVersion) {
+				if (key.startsWith("tile.") || key.startsWith("item.")) {
+					key = key + ".name";
+				}
+			}
+			if (key != null) {
+				String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"");
+				player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
+				return;
+			}
+		}
+		player.sendMessage(message.replace("<item>", Quester.prettyItemString(material.name())));
+	}
+	
+	public void sendMessage(Player player, String message, Material material, Enchantment enchantment) {
+		if (plugin.translateItems) {
+			String key = queryByType(material);
+			if (oldVersion) {
+				if (key.startsWith("tile.") || key.startsWith("item.")) {
+					key = key + ".name";
+				}
+			}
+			String key2 = "";
+			if (oldVersion) {
+				key2 = "enchantment." + MiscUtil.getProperEnchantmentName(enchantment).replace("_", ".")
+						.replace("environmental", "all").replace("protection", "protect");
+			} else {
+				key2 = "enchantment.minecraft." + enchantment.toString().toLowerCase();
+			}
+			if (key != null && !key.equals("")) {
+				String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"")
+						.replace("<enchantment>", "\",{\"translate\":\"" + key2 + "\"},\"");
+				player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
+				return;
+			}
+		}
+		player.sendMessage(message.replace("<item>", Quester.prettyItemString(material.name()))
+				.replace("<enchantment>", Quester.prettyEnchantmentString(enchantment)));
+	}
+	
+	public void sendMessage(Player player, String message, EntityType type) {
+		if (plugin.translateItems) {
+			String key = "";
+			if (oldVersion) {
+				key = "entity." + MiscUtil.getProperMobName(type) + ".name";
+			} else {
+				key = "entity.minecraft." + type.toString().toLowerCase();
+			}
+			if (!key.equals("")) {
+				String msg = message.replace("<mob>", "\",{\"translate\":\"" + key + "\"},\"");
+				player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
+				return;
+			}
+		}
+		player.sendMessage(message.replace("<mob>", Quester.prettyMobString(type)));
+	}
+	
+	/**
+	 * Creates a new LocaleQuery of the specified material
+	 * @param material the item with the material
+	 * @return the new LocaleQuery
+	 * @throws IllegalArgumentException if an item with that material could not be found
+	 */
+	public String queryByType(Material material) throws IllegalArgumentException{
+	    try {
+	    	Object item = MethodUtils.invokeExactStaticMethod(craftMagicNumbers,"getItem", material);
+	    	if (item == null) {
+	    		throw new IllegalArgumentException("An item with that material could not be found! (Perhaps you have specified a block?)");
+	    	}
 	        	
-	    	   String name = (String) MethodUtils.invokeExactMethod(item, "getName");
-	    	   return name;
-	       } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-	    	   e.printStackTrace();
-	       }
-	       return null;
-	   }
-	   
-	   public void setup() {
-		   String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-	       try {
-	           craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers".replace("{v}", version));
-	       } catch (ClassNotFoundException e) {
-	           e.printStackTrace();
-	       }
-	   }
+	    	String name = (String) MethodUtils.invokeExactMethod(item, "getName");
+	    	return name;
+	    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+	    	e.printStackTrace();
+	    }
+	    return null;
+	}
+	
+	public void setup() {
+		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+	    try {
+	        craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers".replace("{v}", version));
+	    } catch (ClassNotFoundException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	public static boolean isBelow113() {
+		String ver = Quests.bukkitVersion;
+		if (Quests.bukkitVersion.matches("^[0-9]+$")) {
+			switch(ver) {
+			case "1.12" :
+				return true;
+			case "1.11" :
+				return true;
+			case "1.10" :
+				return true;
+			case "1.9.4" :
+				return true;
+			case "1.9" :
+				return true;
+			case "1.8.4" :
+				return true;
+			case "1.8.3" :
+				return true;
+			case "1.8" :
+				return true;
+			case "1.7.10" :
+				return true;
+			case "1.7.9" :
+				return true;
+			default:
+				// Bukkit version is 1.13+
+				return false;
+			}
+		}
+		Bukkit.getLogger().severe("Invalid Bukkit version " + ver);
+		return false;
+	}
 }
