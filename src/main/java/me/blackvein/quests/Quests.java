@@ -267,7 +267,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         File outDir = new File(outFile.getPath().replace(outFile.getName(), ""));
         
         if (!outDir.exists()) {
-            outDir.mkdirs();
+            if (!outDir.mkdirs()) {
+            	getLogger().log(Level.SEVERE, "Failed to make directories for " + outFile.getName() + "(canWrite= " + outFile.canWrite());
+            }
         }
 
         try {
