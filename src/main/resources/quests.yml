@@ -17,7 +17,7 @@ quests:
           break-block-names:
             - IRON_ORE
           break-block-amounts:
-            - 10
+            - 2
           break-block-durability:
             - 0
     rewards:
