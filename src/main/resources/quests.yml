@@ -1,21 +1,21 @@
 # For non-English characters, this file MUST stay encoded in UTF-8
 quests:
   Miner:
-    name: 'Stone Miner'
-    ask-message: '<yellow>Mine <pink>10<yellow> blocks of <pink>Stone<yellow> and gather the <pink>10 pieces of <pink>Cobblestone<yellow>.'
+    name: 'Iron Miner'
+    ask-message: '<yellow>Mine <pink>2<yellow> blocks of <pink>Iron Ore<yellow> and gather the <pink>2 pieces of <pink>Iron Ore<yellow>.'
     finish-message: '<yellow>Well done. Here is your reward.'
     redo-delay: 1800
     requirements:
       items:
-        - name-wood_pickaxe:amount-1
+        - name-stone_pickaxe:amount-1
       remove-items:
         - false
-      fail-requirement-message: '<red>You must have a <pink>Wooden Pickaxe<red> first.'
+      fail-requirement-message: '<red>You must have a <pink>Stone Pickaxe<red> first.'
     stages:
       ordered:
         1:
           break-block-names:
-            - STONE
+            - IRON_ORE
           break-block-amounts:
             - 10
           break-block-durability:
@@ -29,7 +29,7 @@ quests:
     finish-message: '<yellow>Excellent. Here is a <pink>Diamond Sword<yellow>.'
     requirements:
       quests:
-        - Stone Miner
+        - Iron Miner
       fail-requirement-message: '<red>Complete <pink>Stone Miner<red> first.'
     stages:
       ordered:
@@ -64,7 +64,7 @@ quests:
     finish-message: '<yellow>Good job. Here is some <green>experience<yellow>.'
     requirements:
       quests:
-        - Stone Miner
+        - Iron Miner
       fail-requirement-message: '<red>Complete <pink>Stone Miner<red> first.'
     stages:
       ordered:
