@@ -70,7 +70,8 @@ public class NpcEffectThread implements Runnable {
 	 */
 	private void showEffect(Player player, NPC npc, String effectType) {
 		try {
-			if (Quests.bukkitVersion.contains("1.13.2")) {
+			if (Quests.bukkitVersion.contains("1.13.2")
+					|| Quests.bukkitVersion.contains("1.13.1")) {
 				showEffect_1_13_R2(player, npc, effectType);
 			} else if (Quests.bukkitVersion.contains("1.13")) {
 				showEffect_1_13_R1(player, npc, effectType);
