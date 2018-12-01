@@ -95,5 +95,5 @@ quests:
           finish-event: CancelTimer
     rewards:
       items:
-        - name-IRON_SPADE:amount-1
+        - name-GOLD_INGOT:amount-1
       exp: 150
