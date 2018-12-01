@@ -96,7 +96,6 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
-
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.aufdemrand.denizen.Denizen;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
@@ -2601,6 +2600,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		return exists;
 	}
+	
+	@SuppressWarnings("deprecation")
+	private ItemStack processItemStack(String questName, String material,  int amount, short durability) {
+		try {
+			return new ItemStack(Material.matchMaterial(material), amount, durability);
+		} catch (Exception e) {
+			try {
+				getLogger().warning(material + " is invalid for quest " + questName + "! You may need to update your quests.yml "
+						+ "in accordance with https://github.com/FlyingPikachu/Quests/wiki/Item-Formatting#list");
+				return new ItemStack(Material.matchMaterial(material, true), amount, durability);
+			} catch (Exception e2) {
+				getLogger().severe("Unable to use LEGACY_" + material + " for quest " + questName);
+				e2.printStackTrace();
+				return null;
+			}
+		}
+	}
 
 	private void processStages(Quest quest, FileConfiguration config, String questName) throws StageFailedException {
 		ConfigurationSection questStages = config.getConfigurationSection("quests." + questName + ".stages.ordered");
@@ -2666,10 +2682,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			for (String s : breaknames) {
 				ItemStack is;
 				if (breakdurability.get(breaknames.indexOf(s)) != -1) {
-					is = new ItemStack(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)), breakdurability.get(breaknames.indexOf(s)));
+					is = processItemStack(questName, s, breakamounts.get(breaknames.indexOf(s)), breakdurability.get(breaknames.indexOf(s)));
 				} else {
 					// Legacy
-					is = new ItemStack(Material.matchMaterial(s), breakamounts.get(breaknames.indexOf(s)), (short) 0);
+					is = processItemStack(questName, s, breakamounts.get(breaknames.indexOf(s)), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToBreak.add(is);
@@ -2705,10 +2721,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			for (String s : damagenames) {
 				ItemStack is;
 				if (damagedurability.get(damagenames.indexOf(s)) != -1) {
-					is = new ItemStack(Material.matchMaterial(s), damageamounts.get(damagenames.indexOf(s)), damagedurability.get(damagenames.indexOf(s)));
+					is = processItemStack(questName, s, damageamounts.get(damagenames.indexOf(s)), damagedurability.get(damagenames.indexOf(s)));
 				} else {
 					// Legacy
-					is = new ItemStack(Material.matchMaterial(s), damageamounts.get(damagenames.indexOf(s)), (short) 0);
+					is = processItemStack(questName, s, damageamounts.get(damagenames.indexOf(s)), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToDamage.add(is);
@@ -2744,10 +2760,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			for (String s : placenames) {
 				ItemStack is;
 				if (placedurability.get(placenames.indexOf(s)) != -1) {
-					is = new ItemStack(Material.matchMaterial(s), placeamounts.get(placenames.indexOf(s)), placedurability.get(placenames.indexOf(s)));
+					is = processItemStack(questName, s, placeamounts.get(placenames.indexOf(s)), placedurability.get(placenames.indexOf(s)));
 				} else {
 					// Legacy
-					is = new ItemStack(Material.matchMaterial(s), placeamounts.get(placenames.indexOf(s)), (short) 0);
+					is = processItemStack(questName, s, placeamounts.get(placenames.indexOf(s)), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToPlace.add(is);
@@ -2783,10 +2799,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			for (String s : usenames) {
 				ItemStack is;
 				if (usedurability.get(usenames.indexOf(s)) != -1) {
-					is = new ItemStack(Material.matchMaterial(s), useamounts.get(usenames.indexOf(s)), usedurability.get(usenames.indexOf(s)));
+					is = processItemStack(questName, s, useamounts.get(usenames.indexOf(s)), usedurability.get(usenames.indexOf(s)));
 				} else {
 					// Legacy
-					is = new ItemStack(Material.matchMaterial(s), useamounts.get(usenames.indexOf(s)), (short) 0);
+					is = processItemStack(questName, s, useamounts.get(usenames.indexOf(s)), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToUse.add(is);
@@ -2822,10 +2838,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			for (String s : cutnames) {
 				ItemStack is;
 				if (cutdurability.get(cutnames.indexOf(s)) != -1) {
-					is = new ItemStack(Material.matchMaterial(s), cutamounts.get(cutnames.indexOf(s)), cutdurability.get(cutnames.indexOf(s)));
+					is = processItemStack(questName, s, cutamounts.get(cutnames.indexOf(s)), cutdurability.get(cutnames.indexOf(s)));
 				} else {
 					// Legacy
-					is = new ItemStack(Material.matchMaterial(s), cutamounts.get(cutnames.indexOf(s)), (short) 0);
+					is = processItemStack(questName, s, cutamounts.get(cutnames.indexOf(s)), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToCut.add(is);
