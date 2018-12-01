@@ -85,7 +85,12 @@ public class NpcEffectThread implements Runnable {
 				showEffect_1_9_R2(player, npc, effectType);
 			} else if (Quests.bukkitVersion.contains("1.9")) {
 				showEffect_1_9_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.8.4")) {
+			} else if (Quests.bukkitVersion.contains("1.8.9")
+					|| Quests.bukkitVersion.contains("1.8.8")
+					|| Quests.bukkitVersion.contains("1.8.7")
+					|| Quests.bukkitVersion.contains("1.8.6")
+					|| Quests.bukkitVersion.contains("1.8.5")
+					|| Quests.bukkitVersion.contains("1.8.4")) {
 				showEffect_1_8_R3(player, npc, effectType);
 			} else if (Quests.bukkitVersion.contains("1.8.3")) {
 				showEffect_1_8_R2(player, npc, effectType);
