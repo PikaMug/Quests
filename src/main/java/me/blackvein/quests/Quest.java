@@ -296,7 +296,7 @@ public class Quest {
 				q.timers.remove(entry.getKey());
 			}
 		}
-		org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+		Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 
 			@Override
 			public void run() {
@@ -322,8 +322,18 @@ public class Quest {
 			none = null;
 		}
 		for (String s : commands) {
-			s = s.replaceAll("<player>", player.getName());
-			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), s);
+			final String command = s.replaceAll("<player>", player.getName());
+			if (Bukkit.isPrimaryThread()) {
+				Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+			} else {
+				Bukkit.getScheduler().runTask(plugin, new Runnable() {
+					
+					@Override
+					public void run() {
+						Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+					}
+				});
+			}
 			none = null;
 		}
 		for (String s : permissions) {
