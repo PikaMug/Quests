@@ -393,9 +393,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return ChatColor.RED + Lang.get("usage") + ": " + ChatColor.YELLOW + "/questadmin " + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
 	}
 
+	private boolean isPluginReady(String pluginName) {
+		if (getServer().getPluginManager().getPlugin(pluginName) != null ) {
+			if (!getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
+				getLogger().warning(pluginName + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void linkOtherPlugins() {
 		try {
-			if (getServer().getPluginManager().getPlugin("Citizens") != null) {
+			if (isPluginReady("Citizens")) {
 				citizens = (CitizensPlugin) getServer().getPluginManager().getPlugin("Citizens");
 			}
 			if (citizens != null) {
@@ -404,32 +415,28 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		} catch (Exception e) {
 			getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
 		}
-		if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+		if (isPluginReady("WorldGuard")) {
 			worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
 		}
-		if (getServer().getPluginManager().getPlugin("Denizen") != null) {
+		if (isPluginReady("Denizen")) {
 			denizen = (Denizen) getServer().getPluginManager().getPlugin("Denizen");
 		}
-		if (getServer().getPluginManager().getPlugin("mcMMO") != null ) {
-			if (!getServer().getPluginManager().getPlugin("mcMMO").isEnabled()) {
-				getLogger().warning("mcMMO was detected, but is not enabled! Fix mcMMO to allow linkage.");
-			} else {
-				mcmmo = (mcMMO) getServer().getPluginManager().getPlugin("mcMMO");
-			}
+		if (isPluginReady("mcMMO")) {
+			mcmmo = (mcMMO) getServer().getPluginManager().getPlugin("mcMMO");
 		}
-		if (getServer().getPluginManager().getPlugin("Heroes") != null) {
+		if (isPluginReady("Heroes")) {
 			heroes = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
 		}
-		if (getServer().getPluginManager().getPlugin("PhatLoots") != null) {
+		if (isPluginReady("PhatLoots")) {
 			phatLoots = (PhatLoots) getServer().getPluginManager().getPlugin("PhatLoots");
 		}
-		if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+		if (isPluginReady("PlaceholderAPI")) {
 			placeholder = (PlaceholderAPIPlugin) getServer().getPluginManager().getPlugin("PlaceholderAPI");
 		}
-		if (getServer().getPluginManager().getPlugin("CitizensBooks") != null) {
+		if (isPluginReady("CitizensBooks")) {
 		    citizensBooks = ((CitizensBooksPlugin) getServer().getPluginManager().getPlugin("CitizensBooks")).getAPI();
         }
-		if (getServer().getPluginManager().getPlugin("Vault") != null) {
+		if (isPluginReady("Vault")) {
 			if (!setupEconomy()) {
 				getLogger().warning("Economy not found.");
 			}
