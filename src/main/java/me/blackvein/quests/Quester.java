@@ -1061,6 +1061,8 @@ public class Quester {
 			return;
 		}
 		if (questData.mobsKilled.contains(e) == false) {
+			for (EntityType ee : questData.mobsKilled) {
+			}
 			return;
 		}
 		Stage currentStage = getCurrentStage(quest);
@@ -2443,7 +2445,11 @@ public class Quester {
 		}
 		getQuestData(quest).delayStartTime = System.currentTimeMillis();
 	}
-
+	
+	/**
+	 * Pause the stage timer. Useful when a player quits
+	 * @param quest The quest of which the timer is for
+	 */
 	public void stopStageTimer(Quest quest) {
 		if (getQuestData(quest).delayTimeLeft > -1) {
 			getQuestData(quest).delayTimeLeft = getQuestData(quest).delayTimeLeft - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
