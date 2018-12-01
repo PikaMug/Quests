@@ -126,6 +126,8 @@ public class Lang {
 			config_new.save(langFile_new);
 		} else {
 			plugin.getLogger().severe("Failed loading lang files for " + iso + " because they were not found. Using default en-US");
+			plugin.getLogger().info("If the plugin has not generated language files, ensure Quests has write permissions");
+			plugin.getLogger().info("For help, visit https://github.com/FlyingPikachu/Quests/wiki/Translations#troubleshooting");
 			iso = "en-US";
 			config = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"));
 			for (String key : config.getKeys(false)) {
