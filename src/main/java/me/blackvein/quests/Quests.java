@@ -26,6 +26,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -3857,6 +3858,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 		} catch (NullPointerException ne) {
 			// User has no permissions
+		} catch (ConcurrentModificationException cme) {
+			// Bummer. Not much we can do about it
 		}
 		return true;
 	}
