@@ -3759,14 +3759,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static SkillType getMcMMOSkill(String s) {
 		return SkillType.getSkill(s);
 	}
-
-	public static void addItem(Player p, ItemStack i) {
+	
+	/**
+	 * Adds item to player's inventory. If full, item is dropped at player's location.
+	 * 
+	 * @throws NullPointerException when ItemStack is null
+	 */
+	public static void addItem(Player p, ItemStack i) throws Exception {
+		if (i == null) {
+			throw new NullPointerException("Null item while trying to add to inventory of " + p.getName());
+		}
 		PlayerInventory inv = p.getInventory();
-		HashMap<Integer, ItemStack> leftover = inv.addItem(i);
-		if (leftover != null) {
-			if (leftover.isEmpty() == false) {
-				for (ItemStack i2 : leftover.values()) {
-					p.getWorld().dropItem(p.getLocation(), i2);
+		if (i != null) {
+			HashMap<Integer, ItemStack> leftover = inv.addItem(i);
+			if (leftover != null) {
+				if (leftover.isEmpty() == false) {
+					for (ItemStack i2 : leftover.values()) {
+						p.getWorld().dropItem(p.getLocation(), i2);
+					}
 				}
 			}
 		}

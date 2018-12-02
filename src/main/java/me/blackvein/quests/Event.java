@@ -31,6 +31,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.QuestMob;
@@ -208,7 +209,14 @@ public class Event {
 		}
 		if (items.isEmpty() == false) {
 			for (ItemStack is : items) {
-				Quests.addItem(player, is);
+				try {
+					Quests.addItem(player, is);
+				} catch (Exception e) {
+					plugin.getLogger().severe("Unable to add null item to inventory of " 
+							+ player.getName() + " during quest " + quest.name + " event " + name);
+					player.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
+							+ "Please contact an administrator.");
+				}
 			}
 		}
 		if (stormWorld != null) {

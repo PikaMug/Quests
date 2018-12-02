@@ -318,7 +318,14 @@ public class Quest {
 			}
 		}
 		for (ItemStack i : itemRewards) {
-			Quests.addItem(player, i);
+			try {
+				Quests.addItem(player, i);
+			} catch (Exception e) {
+				plugin.getLogger().severe("Unable to add null reward item to inventory of " 
+						+ player.getName() + " upon completion of quest " + name);
+				player.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
+						+ "Please contact an administrator.");
+			}
 			none = null;
 		}
 		for (String s : commands) {
@@ -368,7 +375,14 @@ public class Quest {
 			if (lb.getItemList().isEmpty() == false) {
 				phatLootItems.addAll(lb.getItemList());
 				for (ItemStack is : lb.getItemList()) {
-					Quests.addItem(player, is);
+					try {
+						Quests.addItem(player, is);
+					} catch (Exception e) {
+						plugin.getLogger().severe("Unable to add PhatLoots item to inventory of " 
+								+ player.getName() + " upon completion of quest " + name);
+						player.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
+								+ "Please contact an administrator.");
+					}
 				}
 			}
 			if (lb.getCommandList().isEmpty() == false) {
