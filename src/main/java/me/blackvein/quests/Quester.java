@@ -739,7 +739,12 @@ public class Quester {
 					String display = co.getDisplay();
 					Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
 					for (String key : co.datamap.keySet()) {
-						display = display.replace("%" + ((String) key) + "%", ((String) datamap.get(key)));
+						try {
+							display = display.replace("%" + key + "%", ((String) datamap.get(key)));
+						} catch (NullPointerException ne) {
+							plugin.getLogger().severe("Unable to fetch display for " + co.getName() + " on " + quest.name);
+							ne.printStackTrace();
+						}
 					}
 					if (entry.getValue() < getCurrentStage(quest).customObjectiveCounts.get(index)) {
 						if (co.isCountShown() && co.isEnableCount()) {
