@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.jar.JarEntry;
@@ -2495,21 +2496,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".requirements.custom-requirements");
 			for (String path : sec.getKeys(false)) {
 				String name = sec.getString(path + ".name");
-				CustomRequirement found = null;
+				Optional<CustomRequirement>found=Optional.empty();
 				for (CustomRequirement cr : customRequirements) {
 					if (cr.getName().equalsIgnoreCase(name)) {
-						found = cr;
+						found=Optional.of(cr);
 						break;
 					}
 				}
-				if (found==null) {
+				if (!found.isPresent()) {
 					getLogger().warning("Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
 					skipQuestProcess((String) null); // null bc we warn, not severe for this one
+				}else {
+					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+					quest.customRequirements.put(name, data);
 				}
 				
-				ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-				Map<String, Object> data=populateCustoms(sec2,found.datamap);
-				quest.customRequirements.put(name, data);
 			}
 		}
 	}
@@ -2558,21 +2560,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".rewards.custom-rewards");
 		for (String path : sec.getKeys(false)) {
 			String name = sec.getString(path + ".name");
-			CustomReward found = null;
+			Optional<CustomReward>found = Optional.empty();
 			for (CustomReward cr : customRewards) {
 				if (cr.getName().equalsIgnoreCase(name)) {
-					found=cr;
+					found=Optional.of(cr);
 					break;
 				}
 			}
-			if (found==null) {
+			if (!found.isPresent()) {
 				getLogger().warning("Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
 				continue;
+			} else {
+				ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+				Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+				quest.customRewards.put(name, data);
 			}
-			
-			ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-			Map<String, Object> data=populateCustoms(sec2,found.datamap);
-			quest.customRewards.put(name, data);
 		}
 	}
 
@@ -2600,7 +2602,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			try {
 				getLogger().warning(material + " is invalid for quest " + questName + "! You may need to update your quests.yml "
 						+ "in accordance with https://github.com/FlyingPikachu/Quests/wiki/Item-Formatting#list");
-				return new ItemStack(Material.matchMaterial(material), amount, durability);
+				return new ItemStack(Material.matchMaterial(material, true), amount, durability);
 			} catch (Exception e2) {
 				getLogger().severe("Unable to use LEGACY_" + material + " for quest " + questName);
 				e2.printStackTrace();
@@ -3196,24 +3198,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				for (String path : sec.getKeys(false)) {
 					String name = sec.getString(path + ".name");
 					int count = sec.getInt(path + ".count");
-					CustomObjective found = null;
+					Optional<CustomObjective> found = Optional.empty();
 					for (CustomObjective cr : customObjectives) {
 						if (cr.getName().equalsIgnoreCase(name)) {
-							found = cr;
+							found = Optional.of(cr);
 							break;
 						}
 					}
-					if (found == null) {
+					if (!found.isPresent()) {
 						getLogger().warning("Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
 						continue;
+					} else {
+						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+						Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+						
+						oStage.customObjectives.add(found.get());
+						oStage.customObjectiveCounts.add(count);
+						oStage.customObjectiveData.add(data);
 					}
-					
-					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-					Map<String, Object> data=populateCustoms(sec2,found.datamap);
-					
-					oStage.customObjectives.add(found);
-					oStage.customObjectiveCounts.add(count);
-					oStage.customObjectiveData.add(data);
 				}
 			}
 			if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".objective-override")) {
