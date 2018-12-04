@@ -860,9 +860,11 @@ public class Quester {
 		if (broken.getAmount() < toBreak.getAmount()) {
 			ItemStack newBroken = broken;
 			newBroken.setAmount(broken.getAmount() + 1);
-			getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
-			if (broken.getAmount() == toBreak.getAmount()) {
-				finishObjective(quest, "breakBlock", m, null, null, null, null, null, null, null, null, null);
+			if (getQuestData(quest).blocksBroken.contains(broken)) {
+				getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
+				if (broken.getAmount() == toBreak.getAmount()) {
+					finishObjective(quest, "breakBlock", m, null, null, null, null, null, null, null, null, null);
+				}
 			}
 		}
 	}
@@ -901,9 +903,11 @@ public class Quester {
 		if (damaged.getAmount() < toDamage.getAmount()) {
 			ItemStack newDamaged = damaged;
 			newDamaged.setAmount(damaged.getAmount() + 1);
-			getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
-			if (damaged.getAmount() == toDamage.getAmount()) {
-				finishObjective(quest, "damageBlock", m, null, null, null, null, null, null, null, null, null);
+			if (getQuestData(quest).blocksDamaged.contains(damaged)) {
+				getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
+				if (damaged.getAmount() == toDamage.getAmount()) {
+					finishObjective(quest, "damageBlock", m, null, null, null, null, null, null, null, null, null);
+				}
 			}
 		}
 	}
@@ -942,9 +946,11 @@ public class Quester {
 		if (placed.getAmount() < toPlace.getAmount()) {
 			ItemStack newplaced = placed;
 			newplaced.setAmount(placed.getAmount() + 1);
-			getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newplaced);
-			if (placed.getAmount() == toPlace.getAmount()) {
-				finishObjective(quest, "placeBlock", m, null, null, null, null, null, null, null, null, null);
+			if (getQuestData(quest).blocksPlaced.contains(placed)) {
+				getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newplaced);
+				if (placed.getAmount() == toPlace.getAmount()) {
+					finishObjective(quest, "placeBlock", m, null, null, null, null, null, null, null, null, null);
+				}
 			}
 		}
 	}
@@ -983,9 +989,11 @@ public class Quester {
 		if (used.getAmount() < toUse.getAmount()) {
 			ItemStack newUsed = used;
 			newUsed.setAmount(used.getAmount() + 1);
-			getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
-			if (used.getAmount() == toUse.getAmount()) {
-				finishObjective(quest, "useBlock", m, null, null, null, null, null, null, null, null, null);
+			if (getQuestData(quest).blocksUsed.contains(used)) {
+				getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
+				if (used.getAmount() == toUse.getAmount()) {
+					finishObjective(quest, "useBlock", m, null, null, null, null, null, null, null, null, null);
+				}
 			}
 		}
 	}
@@ -1024,9 +1032,11 @@ public class Quester {
 		if (cut.getAmount() < toCut.getAmount()) {
 			ItemStack newCut = cut;
 			newCut.setAmount(cut.getAmount() + 1);
-			getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
-			if (cut.getAmount() == toCut.getAmount()) {
-				finishObjective(quest, "cutBlock", m, null, null, null, null, null, null, null, null, null);
+			if (getQuestData(quest).blocksCut.contains(cut)) {
+				getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
+				if (cut.getAmount() == toCut.getAmount()) {
+					finishObjective(quest, "cutBlock", m, null, null, null, null, null, null, null, null, null);
+				}
 			}
 		}
 	}
