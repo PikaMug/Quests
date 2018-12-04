@@ -295,17 +295,17 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent evt) {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
-			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+			final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			if (quester.currentQuests.isEmpty() == false) {
-				for (Quest quest : quester.currentQuests.keySet()) {
-					Stage currentStage = quester.getCurrentStage(quest);
+				for (final Quest quest : quester.currentQuests.keySet()) {
+					final Stage currentStage = quester.getCurrentStage(quest);
 					if (currentStage == null) {
 						plugin.getLogger().severe("currentStage was null for " + quester.id.toString() + " on chat");
 						continue;
 					}
 					if (currentStage.chatEvents.isEmpty() == false) {
 						String chat = evt.getMessage();
-						for (String s : currentStage.chatEvents.keySet()) {
+						for (final String s : currentStage.chatEvents.keySet()) {
 							if (s.equalsIgnoreCase(chat)) {
 								if (quester.getQuestData(quest).eventFired.get(s) == null || quester.getQuestData(quest).eventFired.get(s) == false) {
 									new BukkitRunnable() {			            
