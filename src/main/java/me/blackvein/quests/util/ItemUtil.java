@@ -96,6 +96,32 @@ public class ItemUtil {
 		}
 		return 0;
 	}
+	
+	/**
+	 * Returns an ItemStack based on given values. Checks for legacy pre-1.13 names. Other traits such as
+	 * enchantments and lore cannot be added via this method and must be done separately.
+	 * 
+	 * @param material Item name suitable for Material.matchMaterial()
+	 * @param amount The number of items in the stack
+	 * @param durability The data value of the item, default of 0
+	 * @return ItemStack, or null if invalid format
+	 */
+	@SuppressWarnings("deprecation")
+	public static ItemStack processItemStack(String material, int amount, short durability) {
+		try {
+			return new ItemStack(Material.matchMaterial(material), amount, durability);
+		} catch (Exception e) {
+			try {
+				Bukkit.getLogger().warning(material + " is invalid! You may need to update your quests.yml or events.yml "
+						+ "in accordance with https://github.com/FlyingPikachu/Quests/wiki/Item-Formatting#list");
+				return new ItemStack(Material.matchMaterial(material, true), amount, durability);
+			} catch (Exception e2) {
+				Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " for as item name");
+				e2.printStackTrace();
+				return null;
+			}
+		}
+	}
 
 	/**
 	 * Get ItemStack from formatted string. See serialize() for reverse function.
@@ -112,27 +138,24 @@ public class ItemUtil {
 		}
 		ItemStack stack = null;
 		String[] args = data.split(":");
-		ItemMeta meta = null;
-		EnchantmentStorageMeta esmeta = null;
+		String name = null;
+		int amount = 0;
+		short durability = 0;
 		Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
 		String display = null;
 		LinkedList<String> lore = new LinkedList<String>();
 		LinkedHashMap<Enchantment, Integer> stored = new LinkedHashMap<Enchantment, Integer>();
 		LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
+		ItemMeta meta = null;
+		EnchantmentStorageMeta esmeta = null;
 		for (String targ : args) {
 			String arg = targ.replace("minecraft|", "minecraft:");
 			if (arg.startsWith("name-")) {
-				try {
-					stack = new ItemStack(Material.matchMaterial(arg.substring(5).toUpperCase()));
-				} catch (Exception e) {
-					Bukkit.getLogger().severe("[Quests] The item name \'" + arg.substring(5).toUpperCase() + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
-					return null;
-				}
-				meta = stack.getItemMeta();
+				name = arg.substring(5).toUpperCase();
 			} else if (arg.startsWith("amount-")) {
-				stack.setAmount(Integer.parseInt(arg.substring(7)));
+				amount = Integer.parseInt(arg.substring(7));
 			} else if (arg.startsWith("data-")) {
-				stack.setDurability(Short.parseShort(arg.substring(5)));
+				durability = Short.parseShort(arg.substring(5));
 			} else if (arg.startsWith("enchantment-")) {
 				String[] temp = arg.substring(12).split(" ");
 				try {
@@ -196,7 +219,11 @@ public class ItemUtil {
 				return null;
 			}
 		}
-		
+		stack = processItemStack(name, amount, durability);
+		if (stack == null) {
+			return null;
+		}
+		meta = stack.getItemMeta();
 		if (!extra.isEmpty()) {
 			meta = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) extra);
 		}
