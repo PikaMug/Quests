@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.jar.JarEntry;
@@ -2495,25 +2496,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".requirements.custom-requirements");
 			for (String path : sec.getKeys(false)) {
 				String name = sec.getString(path + ".name");
-				boolean found = false;
+				Optional<CustomRequirement>found=Optional.empty();
 				for (CustomRequirement cr : customRequirements) {
 					if (cr.getName().equalsIgnoreCase(name)) {
-						found = true;
+						found=Optional.of(cr);
 						break;
 					}
 				}
-				if (!found) {
+				if (!found.isPresent()) {
 					getLogger().warning("Custom requirement \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
 					skipQuestProcess((String) null); // null bc we warn, not severe for this one
+				}else {
+					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+					quest.customRequirements.put(name, data);
 				}
-				Map<String, Object> data = new HashMap<String, Object>();
-				ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-				if (sec2 != null) {
-					for (String dataPath : sec2.getKeys(false)) {
-						data.put(dataPath, sec2.get(dataPath));
-					}
-				}
-				quest.customRequirements.put(name, data);
+				
 			}
 		}
 	}
@@ -2562,25 +2560,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".rewards.custom-rewards");
 		for (String path : sec.getKeys(false)) {
 			String name = sec.getString(path + ".name");
-			boolean found = false;
+			Optional<CustomReward>found = Optional.empty();
 			for (CustomReward cr : customRewards) {
 				if (cr.getName().equalsIgnoreCase(name)) {
-					found = true;
+					found=Optional.of(cr);
 					break;
 				}
 			}
-			if (!found) {
+			if (!found.isPresent()) {
 				getLogger().warning("Custom reward \"" + name + "\" for Quest \"" + quest.name + "\" could not be found!");
 				continue;
+			} else {
+				ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+				Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+				quest.customRewards.put(name, data);
 			}
-			Map<String, Object> data = new HashMap<String, Object>();
-			ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-			if (sec2 != null) {
-				for (String dataPath : sec2.getKeys(false)) {
-					data.put(dataPath, sec2.get(dataPath));
-				}
-			}
-			quest.customRewards.put(name, data);
 		}
 	}
 
@@ -3189,27 +3183,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				for (String path : sec.getKeys(false)) {
 					String name = sec.getString(path + ".name");
 					int count = sec.getInt(path + ".count");
-					CustomObjective found = null;
+					Optional<CustomObjective> found = Optional.empty();
 					for (CustomObjective cr : customObjectives) {
 						if (cr.getName().equalsIgnoreCase(name)) {
-							found = cr;
+							found = Optional.of(cr);
 							break;
 						}
 					}
-					if (found == null) {
+					if (!found.isPresent()) {
 						getLogger().warning("Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.name + "\" could not be found!");
 						continue;
+					} else {
+						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+						Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+						
+						oStage.customObjectives.add(found.get());
+						oStage.customObjectiveCounts.add(count);
+						oStage.customObjectiveData.add(data);
 					}
-					Map<String, Object> data = new HashMap<String, Object>();
-					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-					if (sec2 != null) {
-						for (String dataPath : sec2.getKeys(false)) {
-							data.put(dataPath, sec2.get(dataPath));
-						}
-					}
-					oStage.customObjectives.add(found);
-					oStage.customObjectiveCounts.add(count);
-					oStage.customObjectiveData.add(data);
 				}
 			}
 			if (config.contains("quests." + questName + ".stages.ordered." + s2 + ".objective-override")) {
@@ -3343,6 +3334,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			oStage.citizensToInteract = ids;
 			quest.orderedStages.add(oStage);
 		}
+	}
+	
+	/**
+	 * Add possibilty to use fallbacks for customs.
+	 * Avoid null objects in datamap by initialize the entry value with empty string if no fallback present.
+	 */
+
+	static Map<String, Object> populateCustoms(ConfigurationSection sec2,Map<String, Object> datamap) {
+		Map<String,Object>data=new HashMap<String,Object>();
+		if(sec2!=null) {
+			for(String key:datamap.keySet()) {
+				data.put(key,sec2.contains(key)?sec2.get(key):datamap.get(key)!=null?datamap.get(key):new String());
+			}
+		}
+		return data;
 	}
 
 	private void stageFailed(String msg) throws StageFailedException {
@@ -4121,4 +4127,5 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			e.printStackTrace();
 		}
 	}
+	
 }
