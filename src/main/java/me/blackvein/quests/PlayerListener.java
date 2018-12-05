@@ -701,8 +701,10 @@ public class PlayerListener implements Listener {
 			}
 			for (Integer timerId : quester.timers.keySet()) {
 				plugin.getServer().getScheduler().cancelTask(timerId);
-				quester.timers.get(timerId).failQuest(quester);
-				quester.timers.remove(timerId);
+				if (quester.timers.containsKey(timerId)) {
+					quester.timers.get(timerId).failQuest(quester);
+					quester.timers.remove(timerId);
+				}
 			}
 
 			if (quester.hasData()) {
