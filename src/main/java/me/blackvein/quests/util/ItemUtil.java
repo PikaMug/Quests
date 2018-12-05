@@ -26,12 +26,15 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+
+import static me.blackvein.quests.util.MiscUtil.v1_13;
 
 public class ItemUtil {
 
@@ -59,7 +62,7 @@ public class ItemUtil {
 			return -1;
 		} else if ((one.getAmount() != two.getAmount()) && ignoreAmount == false) {
 			return -2;
-		} else if (one.getData().equals(two.getData()) == false) {
+		} else if (!v1_13 && one.getData().equals(two.getData()) == false) {
 			return -3;
 		}
 		if (one.hasItemMeta() || two.hasItemMeta()) {
@@ -126,7 +129,8 @@ public class ItemUtil {
 	/**
 	 * Get ItemStack from formatted string. See serialize() for reverse function.
 	 * 
-	 * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
+	 * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment
+	 * level:displayname-displayname:lore-lore:hideenchants-hideenchants
 	 * 
 	 * @param data formatted string
 	 * @return ItemStack, or null if invalid format
@@ -141,6 +145,7 @@ public class ItemUtil {
 		String name = null;
 		int amount = 0;
 		short durability = 0;
+		boolean hideEnchants = false;
 		Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
 		String display = null;
 		LinkedList<String> lore = new LinkedList<String>();
@@ -178,6 +183,10 @@ public class ItemUtil {
 						stored.put(Enchantment.getByName(keyval[0]), Integer.valueOf(keyval[1]));
 					}
 				}
+			} else if (arg.startsWith("hideenchants-"))
+			{
+				String[] values = arg.split("-");
+				hideEnchants = values.length == 2 && (Integer.parseInt(values[1])) > 0;
 			} else if (arg.contains("-")) {
 				int dash = arg.lastIndexOf('-');
 				String key = arg.substring(0, dash);
@@ -232,6 +241,9 @@ public class ItemUtil {
 				meta.addEnchant(e, enchs.get(e), true);
 			}
 		}
+		if (hideEnchants) {
+			meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		}
 		if (display != null) {
 			meta.setDisplayName(display);
 		}
@@ -253,7 +265,9 @@ public class ItemUtil {
 	/**
 	 * Get formatted string from ItemStack. See readItemStack() for reverse function.
 	 * 
-	 * <p>Returned format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
+	 * <p>Returned format =
+	 * name-name:amount-amount:data-data:enchantment-enchantment
+	 * level:displayname-displayname:lore-lore:hideenchants-hideenchants:
 	 * 
 	 * @param is ItemStack
 	 * @return formatted string, or null if invalid stack
@@ -284,7 +298,10 @@ public class ItemUtil {
 					serial += ":lore-" + s;
 				}
 			}
-			
+			if (meta.hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+				serial += ":hideenchants-1";
+			}
+
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 			map.putAll(meta.serialize());
 			
@@ -294,6 +311,10 @@ public class ItemUtil {
 			if (map.containsKey("display-name")) {
 				map.remove("display-name");
 			}
+			if (map.containsKey("ItemFlags")) {
+				map.remove("ItemFlags");
+			}
+
 			for (String key : map.keySet()) {
 				serial += ":" + key + "-" + map.get(key).toString().replace("minecraft:", "minecraft|");
 			}
@@ -304,7 +325,7 @@ public class ItemUtil {
 	/**
 	 * Essentially the reverse of ItemMeta.serialize()
 	 * 
-	 * @param ItemMeta class, key/value map of metadata
+	 * @param itemMetaClass class, key/value map of metadata
 	 * @return ItemMeta
 	 */
 	public static ItemMeta deserializeItemMeta(Class<? extends ItemMeta> itemMetaClass, Map<String, Object> args) {

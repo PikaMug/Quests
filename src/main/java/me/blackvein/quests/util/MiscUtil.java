@@ -14,11 +14,24 @@ package me.blackvein.quests.util;
 
 import java.util.LinkedList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
+
+	public static final boolean v1_8, v1_9, v1_10, v1_11, v1_12, v1_13;
+
+	static {
+		String vers = Bukkit.getBukkitVersion(); // Returns in format like: 1.12.2-R0.1-SNAPSHOT
+		v1_13 = vers.startsWith("1.13");
+		v1_12 = vers.startsWith("1.12") || v1_13;
+		v1_11 = vers.startsWith("1.11") || v1_12;
+		v1_10 = vers.startsWith("1.10") || v1_11;
+		v1_9 = vers.startsWith("1.9") || v1_10;
+		v1_8 = vers.startsWith("1.8") || v1_9;
+	}
 
 	public static String getCapitalized(String s) {
 		if (s.isEmpty()) {
