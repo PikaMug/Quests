@@ -133,7 +133,7 @@ public class ItemUtil {
 	 * Get ItemStack from formatted string. See serialize() for reverse function.
 	 * 
 	 * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore
-	 * <p>May continue with extraneous data such as :ItemFlags-flags:stored-enchants:{enc, level}:interal-hashstring
+	 * <p>May continue with extraneous data such as :ItemFlags-flags:stored-enchants:{enc, level}:internal-hashstring
 	 * 
 	 * @param data formatted string
 	 * @return ItemStack, or null if invalid format
