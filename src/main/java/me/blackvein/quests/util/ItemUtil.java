@@ -26,6 +26,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -80,6 +81,11 @@ public class ItemUtil {
 			} else if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore() && one.getItemMeta().getLore().equals(two.getItemMeta().getLore()) == false) {
 				return -4;
 			}
+			for (ItemFlag flag : ItemFlag.values()) {
+				if (one.getItemMeta().hasItemFlag(flag) == false && two.getItemMeta().hasItemFlag(flag)) {
+					return -4;
+				}
+			}
 		}
 		if (one.getEnchantments().equals(two.getEnchantments()) == false) {
 			return -5;
@@ -126,7 +132,8 @@ public class ItemUtil {
 	/**
 	 * Get ItemStack from formatted string. See serialize() for reverse function.
 	 * 
-	 * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
+	 * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore
+	 * <p>May continue with extraneous data such as :ItemFlags-flags:stored-enchants:{enc, level}:interal-hashstring
 	 * 
 	 * @param data formatted string
 	 * @return ItemStack, or null if invalid format
@@ -144,6 +151,7 @@ public class ItemUtil {
 		Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
 		String display = null;
 		LinkedList<String> lore = new LinkedList<String>();
+		ItemFlag[] flags = new ItemFlag[ItemFlag.values().length];
 		LinkedHashMap<Enchantment, Integer> stored = new LinkedHashMap<Enchantment, Integer>();
 		LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
 		ItemMeta meta = null;
@@ -161,13 +169,22 @@ public class ItemUtil {
 				try {
 					enchs.put(Quests.getEnchantment(temp[0]), Integer.parseInt(temp[1]));
 				} catch (IllegalArgumentException e) {
-					Bukkit.getLogger().severe("[Quests] The enchantment name \'" + temp[0] + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
+					Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
 					return null;
 				}
 			} else if (arg.startsWith("displayname-")) {
 				display = ChatColor.translateAlternateColorCodes('&', arg.substring(12));
 			} else if (arg.startsWith("lore-")) {
 				lore.add(ChatColor.translateAlternateColorCodes('&', arg.substring(5)));
+			} else if (arg.startsWith("ItemFlags-")) {
+				int dash = arg.lastIndexOf('-');
+				String value = arg.substring(dash + 1);
+				String[] mapping = value.replace("[", "").replace("]", "").split(", ");
+				int index = 0;
+				for (String s : mapping) {
+					flags[index] = ItemFlag.valueOf(s);
+					index++;
+				}
 			} else if (arg.startsWith("stored-enchants")) {
 				int dash = arg.lastIndexOf('-');
 				String value = arg.substring(dash + 1);
@@ -237,6 +254,11 @@ public class ItemUtil {
 		}
 		if (!lore.isEmpty()) {
 			meta.setLore(lore);
+		}
+		if (flags[0] != null && flags[0].toString() != "") {
+			for (ItemFlag flag : flags) {
+				meta.addItemFlags(flag);
+			}
 		}
 		if (stack.getType().equals(Material.ENCHANTED_BOOK)) {
 			esmeta = (EnchantmentStorageMeta) meta;

@@ -24,6 +24,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -419,10 +420,12 @@ public class Quest {
 				if (i.getEnchantments().isEmpty()) {
 					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount();
 				} else {
-					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " " + Lang.get(player, "with") 
-							+ ChatColor.DARK_PURPLE;
-					for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-						text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET;
+					if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+						text +=  ChatColor.GRAY + " " + Lang.get(player, "with") + ChatColor.DARK_PURPLE;
+						for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+							text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+						}
 					}
 					text += ChatColor.GRAY + " x " + i.getAmount();
 				}
@@ -440,9 +443,12 @@ public class Quest {
 				if (i.getEnchantments().isEmpty()) {
 					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " + i.getAmount();
 				} else {
-					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " " + Lang.get(player, "with");
-					for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-						text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i);
+					if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+						text += ChatColor.GRAY + " " + Lang.get(player, "with");
+						for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+							text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+						}
 					}
 					text += ChatColor.GRAY + " x " + i.getAmount();
 				}
