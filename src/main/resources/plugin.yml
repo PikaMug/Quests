@@ -95,16 +95,16 @@ permissions:
     quests.editor.delete:
         description: Ability to delete existing quests
         default: op
-    quests.editor.events.editor:
+    quests.events.editor:
         description: Ability to open Events Editor
         default: op
-    quests.editor.events.create:
+    quests.events.create:
         description: Ability to create new events
         default: op
-    quests.editor.events.edit:
+    quests.events.edit:
         description: Ability to edit existing events
         default: op
-    quests.editor.events.delete:
+    quests.events.delete:
         description: Ability to delete existing events
         default: op
     quests.party.create:
