@@ -658,7 +658,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EDITOR_HELP")
 					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_EDITOR") : "editor"));
 		}
-		if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.events.editor")) {
+		if (player.hasPermission("quests.events.*") || player.hasPermission("quests.events.editor")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EVENTS_EDITOR_HELP")
 					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_EVENTS") : "events"));
 		}
@@ -1348,7 +1348,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	private boolean questsEvents(final CommandSender cs) {
-		if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.events.editor")) {
+		if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.events.editor")) {
 			eventFactory.convoCreator.buildConversation((Conversable) cs).begin();
 		} else {
 			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
