@@ -50,7 +50,7 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - Remover uma Quest 
 COMMAND_QUESTADMIN_TOGGLEGUI: "mudargui"
 COMMAND_QUESTADMIN_TOGGLEGUI_HELP: "<command> [npc id] - Toggle GUI Quest Display on an NPC"
 COMMAND_QUESTADMIN_RELOAD: "recarregar"
-COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Reload all Quests"
+COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Safely reload the plugin"
 questEditorHeader: "Criar Quest"
 questEditorCreate: "Criar nova Quest"
 questEditorEdit: "Editar uma Quest"
