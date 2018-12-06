@@ -585,7 +585,7 @@ questInvalidDeliveryItem: "<item>n’est pas un élément requis pour cette quê
 questSelectedLocation: "Emplacement sélectionné"
 questListTitle: "- Quêtes -"
 questHelpTitle: "- Quêtes -"
-questDisplayHelp: "-Affiche l'aide"
+questDisplayHelp: "- Affiche l'aide"
 questNPCListTitle: "- Quetes | <npc> -"
 questAdminHelpTitle: "- Questadmin -"
 questEditorTitle: "- Éditeur de quête -"
