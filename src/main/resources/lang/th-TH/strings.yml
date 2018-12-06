@@ -278,7 +278,7 @@ stageEditorPasswordNotSameSize: "The password display and password phrase lists 
 stageEditorListContainsDuplicates: "List contains duplicates!"
 stageEditorDelayCleared: "Delay cleared."
 stageEditorDelayMessageCleared: "Delay message cleared."
-stageEditorDenizenCleared: "Denizen สคริป์ cleared"
+stageEditorDenizenCleared: "Denizen script cleared."
 stageEditorBreakBlocksCleared: "ทำลายบล็อคที่กำหนดไว้สำเร็จ"
 stageEditorDamageBlocksCleared: "การทำดาเมจใส่บล็อคสำเร็จเรียบร้อย"
 stageEditorPlaceBlocksCleared: "ล้างข้อมูลสถานที่ไว้เรียบร้อยแล้ว"
