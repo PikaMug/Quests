@@ -9,106 +9,106 @@ author: HappyPikachu
 softdepend: [Citizens, CitizensBooks, PhatLoots, PlaceholderAPI, Vault]
 permissions:
     quests.quest:
-        description: View current Quest objectives
+        description: View current quest objectives
         default: true
     quests.questinfo:
-        description: View information about a Quest
+        description: View information about a quest
         default: true
     quests.quests:
-        description: View Quests help
+        description: Display plugin help
         default: true
     quests.list:
-        description: List Quests
+        description: List all quests
         default: true
     quests.take:
-        description: Accept a Quest via command
+        description: Accept a quest via command
         default: true
     quests.quit:
-        description: Quit current Quest
+        description: Quit current quest
         default: true
     quests.stats:
-        description: View Questing statistics
+        description: View quest statistics
         default: true
     quests.top:
-        description: View Questing leaderboards
+        description: View plugin leaderboards
         default: true
     quests.info:
         description: View plugin information
         default: true
     quests.journal:
-        description: View Quest Journal
+        description: Toggle the Quest Journal
         default: true
     quests.admin:
-        description: Base Questsadmin command
+        description: Display administrator help
         default: op
     quests.admin.stats:
-        description: View Questing statistics of a player
+        description: View quest statistics of a player
         default: op
     quests.admin.give:
-        description: Force a player to take a Quest (Overrides requirements)
+        description: Force a player to take a quest
         default: op
     quests.admin.quit:
-        description: Force a player to quit their current Quest
+        description: Force a player to quit a quest
         default: op
     quests.admin.points:
-        description: Set a players Quest Points
+        description: Set a player's Quest Points
         default: op
     quests.admin.takepoints:
-        description: Take away a players Quest Points
+        description: Take away a player's Quest Points
         default: op
     quests.admin.givepoints:
-        description: Give a player Quest Points
+        description: Add to a player's Quest Points
         default: op
     quests.admin.pointsall:
         description: Set all players' Quest Points
         default: op
     quests.admin.finish:
-        description: Immediately force Quest completion for a player
+        description: Force a player to complete a quest
         default: op
     quests.admin.nextstage:
-        description: Immediately force Stage completion for a player
+        description: Force a player to complete a stage
         default: op
     quests.admin.reset:
         description: Clear all Quests data of a player
         default: op
     quests.admin.remove:
-        description: Remove a completed Quest from a player
+        description: Remove a completed quest from a player
         default: op
     quests.admin.togglegui:
-        description: Toggle GUI Quest Display on NPC's
+        description: Toggle GUI Quest Display on NPCs
         default: op
     quests.admin.reload:
-        description: Reload all Quests
+        description: Safely reload the plugin
         default: op
     quests.admin.drop:
-        description: Drop Quests Journal
+        description: Ability to drop the Quests Journal
         default: op
     quests.editor.editor:
-        description: Open Quests Editor
+        description: Ability to open Quests Editor
         default: op
     quests.editor.create:
-        description: Create new Quests
+        description: Ability to create new quests
         default: op
     quests.editor.edit:
-        description: Edit Quests
+        description: Ability to edit existing quests
         default: op
     quests.editor.delete:
-        description: Delete Quests
+        description: Ability to delete existing quests
         default: op
     quests.editor.events.editor:
-        description: Open Events Editor
+        description: Ability to open Events Editor
         default: op
     quests.editor.events.create:
-        description: Create new Events
+        description: Ability to create new events
         default: op
     quests.editor.events.edit:
-        description: Edit Events
+        description: Ability to edit existing events
         default: op
     quests.editor.events.delete:
-        description: Delete Events
+        description: Ability to delete existing events
         default: op
     quests.party.create:
-        description: Create/Disband Parties
+        description: Ability to create new parties
         default: true
     quests.party.join:
         description: Join parties without invitation
