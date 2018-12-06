@@ -257,7 +257,13 @@ public class ItemUtil {
 		}
 		if (flags[0] != null && flags[0].toString() != "") {
 			for (ItemFlag flag : flags) {
-				meta.addItemFlags(flag);
+				if (flag != null) {
+					try {
+						meta.addItemFlags(flag);
+					} catch (NullPointerException npe) {
+						Bukkit.getLogger().severe(flag + " is not a valid ItemFlag");
+					}
+				}
 			}
 		}
 		if (stack.getType().equals(Material.ENCHANTED_BOOK)) {
