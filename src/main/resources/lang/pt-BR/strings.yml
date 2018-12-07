@@ -29,7 +29,7 @@ COMMAND_QUESTADMIN_GIVE_HELP: "<command> [player] [quest] - Força um jogador a 
 COMMAND_QUESTADMIN_QUIT: "sair"
 COMMAND_QUESTADMIN_QUIT_HELP: "<command> [player] [quest] - Força um jogador a sair da Quest"
 COMMAND_QUESTADMIN_POINTS: "pontos"
-COMMAND_QUESTADMIN_POINTS_HELP: "<command> [player] [amount] - Set a players' Quest Points"
+COMMAND_QUESTADMIN_POINTS_HELP: "<command> [player] [quatidade] - Defina os Pontos de Missão de um jogador"
 COMMAND_QUESTADMIN_TAKEPOINTS: "tirarpontos"
 COMMAND_QUESTADMIN_TAKEPOINTS_HELP: "<command> [player] [quantidade] - Retira um ponto do player"
 COMMAND_QUESTADMIN_GIVEPOINTS: "darpontos"
