@@ -299,7 +299,9 @@ public class ItemUtil {
 		}
 		if (is.getEnchantments().isEmpty() == false) {
 			for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
-				serial += ":enchantment-" + Quester.enchantmentString(e.getKey()) + " " + e.getValue();
+				if (e.getKey() != null) {
+					serial += ":enchantment-" + Quester.enchantmentString(e.getKey()) + " " + e.getValue();
+				}
 			}
 		}
 		if (is.hasItemMeta()) {
