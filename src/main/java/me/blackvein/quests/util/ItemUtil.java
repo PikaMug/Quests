@@ -37,7 +37,7 @@ import me.blackvein.quests.Quests;
 public class ItemUtil {
 
 	/**
-	 * Will compare stacks by name, amount, data, display name/lore and enchantments
+	 * Will compare stacks by name, amount, durability, display name/lore and enchantments
 	 *
 	 *
 	 * @param one
@@ -47,7 +47,7 @@ public class ItemUtil {
 	 * @return 0 if stacks are equal, or the first inequality from the following values:<br>
 	 * @return -1&nbsp;-> stack names are unequal<br>
 	 * @return -2&nbsp;-> stack amounts are unequal<br>
-	 * @return -3&nbsp;-> stack data is unequal<br>
+	 * @return -3&nbsp;-> stack durability is unequal<br>
 	 * @return -4&nbsp;-> stack display name/lore is unequal<br>
 	 * @return -5&nbsp;-> stack enchantments are unequal<br>
 	 */
