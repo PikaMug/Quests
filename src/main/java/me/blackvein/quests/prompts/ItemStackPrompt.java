@@ -36,6 +36,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 public class ItemStackPrompt extends FixedSetPrompt {
 
@@ -170,14 +171,14 @@ public class ItemStackPrompt extends FixedSetPrompt {
 			if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
 				return new DataPrompt();
 			} else {
-				cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNoIDAmount"));
+				cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNoNameAmount"));
 				return new ItemStackPrompt(oldPrompt);
 			}
 		} else if (input.equalsIgnoreCase("4")) {
 			if (cc.getSessionData("tempName") != null && cc.getSessionData("tempAmount") != null) {
 				return new EnchantmentPrompt();
 			} else {
-				cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNoIDAmount"));
+				cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNoNameAmount"));
 				return new ItemStackPrompt(oldPrompt);
 			}
 		} else if (input.equalsIgnoreCase("5")) {
@@ -393,7 +394,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				Enchantment e = Quests.getEnchantmentPretty(input);
+				Enchantment e = Quests.getEnchantmentPretty(MiscUtil.getCapitalized(input));
 				if (e != null) {
 					cc.setSessionData("tempEnchant", e);
 					return new LevelPrompt(Quester.prettyEnchantmentString(e));
