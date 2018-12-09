@@ -37,24 +37,25 @@ import me.blackvein.quests.Quests;
 public class ItemUtil {
 
 	/**
-	 * Will compare stacks by name, amount, durability, display name/lore and enchantments
+	 * Compare two stacks by name, amount, durability, display name, lore, enchantments and stored enchants
 	 *
 	 *
-	 * @param one
-	 *            ItemStack to compare
-	 * @param two
-	 *            ItemStack to compare to
-	 * @return 0 if stacks are equal, or the first inequality from the following values:<br>
-	 * @return -1&nbsp;-> stack names are unequal<br>
-	 * @return -2&nbsp;-> stack amounts are unequal<br>
-	 * @return -3&nbsp;-> stack durability is unequal<br>
-	 * @return -4&nbsp;-> stack display name/lore is unequal<br>
-	 * @return -5&nbsp;-> stack enchantments are unequal<br>
+	 * @param one first ItemStack to compare against second
+	 * @param two second ItemStack to compare against first
+	 * @param ignoreAmount whether to ignore stack amounts
+	 * @return 1 if either stack is null<br>
+	 * 0 if stacks are equal<br>
+	 * -1 if stack names are unequal<br>
+	 * -2 if stack amounts are unequal<br>
+	 * -3 if stack durability is unequal<br>
+	 * -4 if stack display name/lore is unequal<br>
+	 * -5 if stack enchantments are unequal<br>
+	 * -6 if stack stored enchants are unequal
 	 */
 	@SuppressWarnings("deprecation")
 	public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
 		if (one == null || two == null) {
-			return 0;
+			return 1;
 		}
 		if (one.getType().name().equals(two.getType().name()) == false) {
 			return -1;
