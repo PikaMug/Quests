@@ -260,7 +260,7 @@ public class ItemUtil {
 		if (!lore.isEmpty()) {
 			meta.setLore(lore);
 		}
-		if (flags[0] != null && flags[0].toString() != "") {
+		if (flags[0] != null && flags[0].toString().equals("")) {
 			for (ItemFlag flag : flags) {
 				if (flag != null) {
 					try {

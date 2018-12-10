@@ -178,7 +178,7 @@ public class Event {
 			} else if (other.teleport == null && teleport != null) {
 				return false;
 			}
-			if (other.book != book) {
+			if (!other.book.equals(book)) {
                 return false;
             }
 		}
@@ -259,11 +259,13 @@ public class Event {
 		if (teleport != null) {
 			player.teleport(teleport);
 		}
-		if (!(book == null && book.isEmpty())) {
-			if (Quests.citizensBooks != null) {
-				if (Quests.citizensBooks.hasFilter(book)) {
-	                Quests.citizensBooks.openBook(player, Quests.citizensBooks.getFilter(book));
-	            }
+		if (book != null) {
+			if (!book.isEmpty()) {
+				if (Quests.citizensBooks != null) {
+					if (Quests.citizensBooks.hasFilter(book)) {
+		                Quests.citizensBooks.openBook(player, Quests.citizensBooks.getFilter(book));
+		            }
+				}
 			}
         }
 		if (failQuest == true) {

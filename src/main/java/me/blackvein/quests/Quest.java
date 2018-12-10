@@ -699,10 +699,10 @@ public class Quest {
 			if (other.orderedStages.equals(orderedStages) == false) {
 				return false;
 			}
-			if (other.startPlanner != startPlanner) {
+			if (!other.startPlanner.equals(startPlanner)) {
 				return false;
 			}
-			if (other.endPlanner != endPlanner) {
+			if (!other.endPlanner.equals(endPlanner)) {
 				return false;
 			}
 			if (other.repeatPlanner != repeatPlanner) {
