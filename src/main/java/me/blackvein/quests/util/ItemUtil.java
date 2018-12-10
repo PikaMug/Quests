@@ -171,10 +171,10 @@ public class ItemUtil {
 					if (Quests.getEnchantment(temp[0]) != null) {
 						enchs.put(Quests.getEnchantment(temp[0]), Integer.parseInt(temp[1]));
 					} else {
-						Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' is invalid. Make sure it is spelled correctly");
+						Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure it is spelled correctly");
 					}
 				} catch (IllegalArgumentException e) {
-					Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' is invalid. Make sure quests.yml is UTF-8 encoded");
+					Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure quests.yml is UTF-8 encoded");
 					return null;
 				}
 			} else if (arg.startsWith("displayname-")) {
