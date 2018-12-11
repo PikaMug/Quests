@@ -31,6 +31,7 @@ public class MiscUtil {
 		return s2 + s;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static String getProperEnchantmentName(Enchantment enchantment) {
 		String name = enchantment.getName().toLowerCase();
 		return name;

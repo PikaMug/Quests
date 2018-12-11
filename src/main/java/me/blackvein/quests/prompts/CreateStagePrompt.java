@@ -61,7 +61,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		this.questFactory = qf;
 	}
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public String getPromptText(ConversationContext context) {
 		try {
@@ -618,7 +618,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorBreakBlocks") + " -\n";
@@ -836,7 +835,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorDamageBlocks") + " -\n";
@@ -1054,7 +1052,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorPlaceBlocks") + " -\n";
@@ -1272,7 +1269,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorUseBlocks") + " -\n";
@@ -1490,7 +1486,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorCutBlocks") + " -\n";
@@ -1768,7 +1763,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			super("1", "2", "3", "4", "5");
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorEnchantItems") + " -\n";

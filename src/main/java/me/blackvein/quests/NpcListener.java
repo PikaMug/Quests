@@ -47,6 +47,7 @@ public class NpcListener implements Listener {
 		plugin = newPlugin;
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onNPCRightClick(NPCRightClickEvent evt) {
 		if (plugin.questFactory.selectingNPCs.contains(evt.getClicker())) {

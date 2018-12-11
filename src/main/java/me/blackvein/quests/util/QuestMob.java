@@ -245,47 +245,4 @@ public class QuestMob {
 		qm.dropChances = dropChances;
 		return qm;
 	}
-
-	public int hashCode() {
-		assert false : "hashCode not designed";
-		return 42; // any arbitrary constant will do
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if ((o instanceof QuestMob) == false) {
-			return false;
-		}
-		QuestMob other = (QuestMob) o;
-		if (name != null && other.name != null) {
-			if (name.equalsIgnoreCase(other.name) == false) {
-				return false;
-			}
-		} else if (name == null && other.name == null) {
-		} else {
-			return false;
-		}
-		if (!entityType.equals(other.entityType)) {
-			return false;
-		}
-		if (dropChances != other.dropChances) {
-			return false;
-		}
-		if (inventory.length == other.inventory.length) {
-			for (int i = 0; i < inventory.length; i++) {
-				if (ItemUtil.compareItems(inventory[i], other.inventory[i], false) != 0) {
-					return false;
-				}
-			}
-		} else {
-			return false;
-		}
-		if (!spawnAmounts.equals(other.spawnAmounts)) {
-			return false;
-		}
-		if (!spawnLocation.equals(other.spawnLocation)) {
-			return false;
-		}
-		return true;
-	}
 }

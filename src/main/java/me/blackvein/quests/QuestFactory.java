@@ -1293,6 +1293,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void loadQuest(ConversationContext cc, Quest q) {
 		cc.setSessionData(CK.ED_QUEST_EDIT, q.name);
 		cc.setSessionData(CK.Q_NAME, q.name);

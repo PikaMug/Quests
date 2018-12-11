@@ -485,6 +485,7 @@ public class Quester {
 		return getObjectives(quest);
 	}
 
+	@SuppressWarnings("deprecation")
 	public LinkedList<String> getObjectives(Quest quest) {
 		if (getQuestData(quest) == null)
 			return new LinkedList<String>();
@@ -826,6 +827,7 @@ public class Quester {
 		return false;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void breakBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
 		temp.setAmount(0);
@@ -869,6 +871,7 @@ public class Quester {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void damageBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
 		temp.setAmount(0);
@@ -912,6 +915,7 @@ public class Quester {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void placeBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
 		temp.setAmount(0);
@@ -955,6 +959,7 @@ public class Quester {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void useBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
 		temp.setAmount(0);
@@ -998,6 +1003,7 @@ public class Quester {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void cutBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
 		temp.setAmount(0);
@@ -1076,14 +1082,12 @@ public class Quester {
 			return;
 		}
 		if (questData.mobsKilled.contains(e) == false) {
-			for (EntityType ee : questData.mobsKilled) {
-			}
 			return;
 		}
 		Stage currentStage = getCurrentStage(quest);
 		int indexOfMobKilled = questData.mobsKilled.indexOf(e);
-		Integer numberOfSpecificMobKilled = questData.mobNumKilled.get(indexOfMobKilled);
-		Integer numberOfSpecificMobNeedsToBeKilledInCurrentStage = currentStage.mobNumToKill.get(indexOfMobKilled);
+		int numberOfSpecificMobKilled = questData.mobNumKilled.get(indexOfMobKilled);
+		int numberOfSpecificMobNeedsToBeKilledInCurrentStage = currentStage.mobNumToKill.get(indexOfMobKilled);
 		if (questData.locationsToKillWithin.isEmpty() == false) {
 			Location locationToKillWithin = questData.locationsToKillWithin.get(indexOfMobKilled);
 			double radius = questData.radiiToKillWithin.get(indexOfMobKilled);
@@ -1458,6 +1462,7 @@ public class Quester {
 	 * @param quest Quest with at least one stage
 	 * @param stage Where first stage is '0'
 	 */
+	@SuppressWarnings("deprecation")
 	public void addEmptiesFor(Quest quest, int stage) {
 		QuestData data = new QuestData(this);
 		data.setDoJournalUpdate(false);
@@ -1700,6 +1705,7 @@ public class Quester {
 		return difference;
 	}
 
+	@SuppressWarnings("deprecation")
 	public FileConfiguration getBaseData() {
 		FileConfiguration data = new YamlConfiguration();
 		if (currentQuests.isEmpty() == false) {
@@ -2001,6 +2007,7 @@ public class Quester {
 		return data;
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean loadData() {
 		FileConfiguration data = new YamlConfiguration();
 		try {
