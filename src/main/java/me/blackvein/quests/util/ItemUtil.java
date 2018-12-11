@@ -120,7 +120,7 @@ public class ItemUtil {
 		} catch (Exception e) {
 			try {
 				Bukkit.getLogger().warning(material + " is invalid! You may need to update your quests.yml or events.yml "
-						+ "in accordance with https://github.com/FlyingPikachu/Quests/wiki/Item-Formatting#list");
+						+ "in accordance with https://bit.ly/2BkBNNN");
 				return new ItemStack(Material.matchMaterial(material, true), amount, durability);
 			} catch (Exception e2) {
 				Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " for as item name");
@@ -168,12 +168,24 @@ public class ItemUtil {
 			} else if (arg.startsWith("enchantment-")) {
 				String[] temp = arg.substring(12).split(" ");
 				try {
-					if (Quests.getEnchantment(temp[0]) != null) {
-						enchs.put(Quests.getEnchantment(temp[0]), Integer.parseInt(temp[1]));
+					String key = Lang.getKey(temp[0]).replace(" ", "");
+					if (!key.equals("NULL")) {
+						// Legacy localized name
+						Enchantment e = Enchantment.getByName(key.replace("ENCHANTMENT_", ""));
+						if (e != null) {
+							enchs.put(e, Integer.parseInt(temp[1]));
+						} else {
+							Bukkit.getLogger().severe("Legacy enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure it is spelled correctly");
+						}
 					} else {
-						Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure it is spelled correctly");
+						// Modern enum name
+						if (Enchantment.getByName(temp[0]) != null) {
+							enchs.put(Enchantment.getByName(temp[0]), Integer.parseInt(temp[1]));
+						} else {
+							Bukkit.getLogger().severe("Enum enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure it is spelled correctly");
+						}
 					}
-				} catch (IllegalArgumentException e) {
+				} catch (Exception e) {
 					Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure quests.yml is UTF-8 encoded");
 					return null;
 				}
@@ -251,7 +263,11 @@ public class ItemUtil {
 		}
 		if (!enchs.isEmpty()) {
 			for (Enchantment e : enchs.keySet()) {
-				meta.addEnchant(e, enchs.get(e), true);
+				try {
+					meta.addEnchant(e, enchs.get(e), true);
+				} catch (IllegalArgumentException iae) {
+					Bukkit.getLogger().severe("Enchantment on " + name + " cannot be null. Skipping for that quest");
+				}
 			}
 		}
 		if (display != null) {
@@ -304,7 +320,7 @@ public class ItemUtil {
 		}
 		if (is.getEnchantments().isEmpty() == false) {
 			for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
-				serial += ":enchantment-" + Quester.enchantmentString(e.getKey()) + " " + e.getValue();
+				serial += ":enchantment-" + e.getKey().getName() + " " + e.getValue();
 			}
 		}
 		if (is.hasItemMeta()) {

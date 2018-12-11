@@ -63,6 +63,11 @@ public class Lang {
 		return langMap.containsKey(key) ? tokens.convertString(langMap.get(key)) : "NULL";
 	}
 
+	/**
+	 * Get key for lang string
+	 * @param val
+	 * @return key or "NULL" as String
+	 */
 	public static String getKey(String val) {
 		for (Entry<String, String> entry : langMap.entrySet()) {
 			if (entry.getValue().equals(val)) {
@@ -72,6 +77,11 @@ public class Lang {
 		return "NULL";
 	}
 
+	/**
+	 * Get key starting with "COMMAND_" for lang string
+	 * @param val
+	 * @return key or "NULL" as String
+	 */
 	public static String getCommandKey(String val) {
 		for (Entry<String, String> entry : langMap.entrySet()) {
 			if (entry.getValue().equalsIgnoreCase(val) && entry.getKey().toUpperCase().startsWith("COMMAND_")) {

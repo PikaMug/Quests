@@ -1644,12 +1644,24 @@ public class Quester {
 		return Lang.get("COLOR_" + color.name());
 	}
 
+	/**
+	 * Gets player-friendly name from enchantment. 'FIRE_ASPECT' becomes 'Fire Aspect'
+	 * 
+	 * @param e Enchantment to get pretty localized name of
+	 * @return pretty localized name
+	 */
 	public static String prettyEnchantmentString(Enchantment e) {
 		String prettyString = enchantmentString(e);
 		prettyString = capitalsToSpaces(prettyString);
 		return prettyString;
 	}
 	
+	/**
+	 * Gets name of enchantment exactly as it appears in lang file
+	 * 
+	 * @param e Enchantment to get localized name of
+	 * @return localized name
+	 */
 	@SuppressWarnings("deprecation") // since 1.13
 	public static String enchantmentString(Enchantment e) {
 		try {
@@ -1660,6 +1672,12 @@ public class Quester {
 		}
 	}
 	
+	/**
+	 * Adds a single space in front of all capital letters
+	 * 
+	 * @param s string to process
+	 * @return processed string
+	 */
 	public static String capitalsToSpaces(String s) {
 		int max = s.length();
 		for (int i = 1; i < max; i++) {
@@ -1672,6 +1690,12 @@ public class Quester {
 		return s;
 	}
 
+	/**
+	 * Capitalize character after space
+	 * 
+	 * @param s string to process
+	 * @return processed string
+	 */
 	public static String spaceToCapital(String s) {
 		int index = s.indexOf(' ');
 		if (index == -1) {
