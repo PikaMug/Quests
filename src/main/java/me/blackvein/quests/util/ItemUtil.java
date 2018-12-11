@@ -152,7 +152,8 @@ public class ItemUtil {
 		Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
 		String display = null;
 		LinkedList<String> lore = new LinkedList<String>();
-		ItemFlag[] flags = new ItemFlag[ItemFlag.values().length];
+		String[] flags = new String[10];
+		//ItemFlag[] flags = new ItemFlag[ItemFlag.values().length];
 		LinkedHashMap<Enchantment, Integer> stored = new LinkedHashMap<Enchantment, Integer>();
 		LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
 		ItemMeta meta = null;
@@ -199,7 +200,8 @@ public class ItemUtil {
 				String[] mapping = value.replace("[", "").replace("]", "").split(", ");
 				int index = 0;
 				for (String s : mapping) {
-					flags[index] = ItemFlag.valueOf(s);
+					//flags[index] = ItemFlag.valueOf(s);
+					flags[index] = s;
 					index++;
 				}
 			} else if (arg.startsWith("stored-enchants")) {
@@ -277,10 +279,10 @@ public class ItemUtil {
 			meta.setLore(lore);
 		}
 		if (flags[0] != null && flags[0].toString().equals("")) {
-			for (ItemFlag flag : flags) {
+			for (String flag : flags) {
 				if (flag != null) {
 					try {
-						meta.addItemFlags(flag);
+						meta.addItemFlags(ItemFlag.valueOf(flag));
 					} catch (NullPointerException npe) {
 						Bukkit.getLogger().severe(flag + " is not a valid ItemFlag");
 					}
