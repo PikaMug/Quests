@@ -32,7 +32,6 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
 
 public class ItemUtil {
 
