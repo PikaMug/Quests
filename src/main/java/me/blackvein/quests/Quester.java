@@ -1155,9 +1155,11 @@ public class Quester {
 				if (l.getX() < (locationToReach.getX() + radius) && l.getX() > (locationToReach.getX() - radius)) {
 					if (l.getZ() < (locationToReach.getZ() + radius) && l.getZ() > (locationToReach.getZ() - radius)) {
 						if (l.getY() < (locationToReach.getY() + radius) && l.getY() > (locationToReach.getY() - radius)) {
-							if (getQuestData(quest).hasReached.get(index) == false) {
-								getQuestData(quest).hasReached.set(index, true);
-								finishObjective(quest, "reachLocation", null, null, null, null, null, null, location, null, null, null);
+							if (l.getWorld().getName().equals(locationToReach.getWorld().getName())) {
+								if (getQuestData(quest).hasReached.get(index) == false) {
+									getQuestData(quest).hasReached.set(index, true);
+									finishObjective(quest, "reachLocation", null, null, null, null, null, null, location, null, null, null);
+								}
 							}
 						}
 					}

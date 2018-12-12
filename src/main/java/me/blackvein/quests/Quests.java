@@ -3581,11 +3581,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			y = Double.parseDouble(info[yIndex]);
 			z = Double.parseDouble(info[zIndex]);
 		} catch (Exception e) {
-			Bukkit.getLogger().severe("Please inform developer location was wrong for "
+			Bukkit.getLogger().severe("Please inform Quests developer location was wrong for "
 					+ world + " " + info[xIndex] + " " + info[yIndex] + " " + info[zIndex] + " ");
 			return null;
 		}
 		if (Bukkit.getServer().getWorld(world) == null) {
+			Bukkit.getLogger().severe("Quests could not locate world " + world + ", is it loaded?");
 			return null;
 		}
 		Location finalLocation = new Location(Bukkit.getServer().getWorld(world), x, y, z);
