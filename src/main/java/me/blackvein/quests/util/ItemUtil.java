@@ -403,10 +403,13 @@ public class ItemUtil {
 	 * Format is ([display]name:durability) x (amount)
 	 * 
 	 * @param is ItemStack to check
-	 * @return true display or item name, plus durability and amount
+	 * @return true display or item name, plus durability and amount, if stack is not null
 	 */
 	@SuppressWarnings("deprecation")
 	public static String getString(ItemStack is) {
+		if (is == null) {
+			return null;
+		}
 		String text;
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
@@ -424,9 +427,12 @@ public class ItemUtil {
 	 * Returns a formatted display name. If none exists, returns item name.
 	 * 
 	 * @param is ItemStack to check
-	 * @return true display or item name
+	 * @return true display or item name, if stack is not null
 	 */
 	public static String getName(ItemStack is) {
+		if (is == null) {
+			return null;
+		}
 		String text = "";
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName();

@@ -404,7 +404,9 @@ public class EventFactory implements ConversationAbandonedListener {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetItems") + "\n";
 				LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
 				for (ItemStack is : items) {
-					text += ChatColor.GRAY + "    - " + ItemUtil.getString(is) + "\n";
+					if (is != null) {
+						text += ChatColor.GRAY + "    - " + ItemUtil.getString(is) + "\n";
+					}
 				}
 			}
 			if (context.getSessionData(CK.E_EXPLOSIONS) == null) {
