@@ -287,24 +287,17 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				String dataString = null;
-				if (input.contains(":")) {
-					String[] splitInput = input.split(":");
-					input = splitInput[0];
-					if (splitInput.length > 1) {
-						dataString = splitInput[1];
-					}
-				}
-				Material mat = Material.matchMaterial(input.toUpperCase().replace(" ", "_"));
+				String s = input.replace(":", "");
+				Material mat = Material.matchMaterial(s.toUpperCase().replace(" ", "_"));
 				if (mat == null) {
 					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidName"));
 					return new NamePrompt();
 				} else {
 					cc.setSessionData("tempName", mat.name());
 					cc.setSessionData("tempAmount", 1);
-					if (dataString != null) {
+					if (s != null) {
 						try {
-							short data = Short.parseShort(dataString);
+							short data = Short.parseShort(s);
 							cc.setSessionData("tempData", data);
 						} catch (NumberFormatException e) {
 							cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidData"));
@@ -393,8 +386,9 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
 		@Override
 		public Prompt acceptInput(ConversationContext cc, String input) {
-			if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				Enchantment e = Quests.getEnchantmentPretty(MiscUtil.getCapitalized(input));
+			String s = input.replace(":", "");
+			if (s.equalsIgnoreCase(Lang.get("cmdClear")) == false && s.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+				Enchantment e = Quests.getEnchantmentPretty(MiscUtil.getCapitalized(s));
 				if (e != null) {
 					cc.setSessionData("tempEnchant", e);
 					return new LevelPrompt(Quester.prettyEnchantmentString(e));
@@ -402,7 +396,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidEnch"));
 					return new EnchantmentPrompt();
 				}
-			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+			} else if (s.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				cc.setSessionData("tempEnchantments", null);
 			}
 			return new ItemStackPrompt(oldPrompt);
@@ -460,10 +454,11 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
 		@Override
 		public Prompt acceptInput(ConversationContext cc, String input) {
-			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				input = Quests.parseString(input);
-				cc.setSessionData("tempDisplay", input);
-			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+			String s = input.replace(":", "");
+			if (s.equalsIgnoreCase(Lang.get("cmdCancel")) == false && s.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				s = Quests.parseString(s);
+				cc.setSessionData("tempDisplay", s);
+			} else if (s.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				cc.setSessionData("tempDisplay", null);
 			}
 			return new ItemStackPrompt(oldPrompt);
@@ -479,12 +474,13 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
 		@Override
 		public Prompt acceptInput(ConversationContext cc, String input) {
-			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				input = Quests.parseString(input);
+			String s = input.replace(":", "");
+			if (s.equalsIgnoreCase(Lang.get("cmdCancel")) == false && s.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				s = Quests.parseString(s);
 				LinkedList<String> lore = new LinkedList<String>();
-				lore.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
+				lore.addAll(Arrays.asList(s.split(Lang.get("charSemi"))));
 				cc.setSessionData("tempLore", lore);
-			} else if (input.equalsIgnoreCase("clear")) {
+			} else if (s.equalsIgnoreCase("clear")) {
 				cc.setSessionData("tempLore", null);
 			}
 			return new ItemStackPrompt(oldPrompt);
@@ -540,6 +536,4 @@ public class ItemStackPrompt extends FixedSetPrompt {
 			return null;
 		}
 	}
-	
-	
 }
