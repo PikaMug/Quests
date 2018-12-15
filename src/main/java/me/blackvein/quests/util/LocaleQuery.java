@@ -95,9 +95,9 @@ public class LocaleQuery {
 	}
 	
 	/**
-	 * Creates a new LocaleQuery of the specified material
-	 * @param material the item with the material
-	 * @return the new LocaleQuery
+	 * Gets the key name of the specified material as seen in MC lang file
+	 * @param material the material to check
+	 * @return the raw key
 	 * @throws IllegalArgumentException if an item with that material could not be found
 	 */
 	public String queryByType(Material material) throws IllegalArgumentException{
@@ -110,6 +110,7 @@ public class LocaleQuery {
 	    	String name = (String) MethodUtils.invokeExactMethod(item, "getName");
 	    	return name;
 	    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+	    	plugin.getLogger().info("Unable to invoke getName() on MC " + plugin.bukkitVersion);
 	    	e.printStackTrace();
 	    }
 	    return null;
