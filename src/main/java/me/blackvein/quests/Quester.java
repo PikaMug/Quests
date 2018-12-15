@@ -265,8 +265,8 @@ public class Quester {
 						currentLength += quest.name.length();
 						currentLines += (quest.name.length() / 19);
 					}
-					if (getObjectivesReal(quest) != null) {
-						for (String obj : getObjectivesReal(quest)) {
+					if (getObjectives(quest, false) != null) {
+						for (String obj : getObjectives(quest, false)) {
 							// Length/Line check
 							if ((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
 								book.addPage(page);
@@ -309,7 +309,6 @@ public class Quester {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void takeQuest(Quest q, boolean override) {
 		Player player = getPlayer();
 		long start = -1;
@@ -413,40 +412,7 @@ public class Quester {
 			String msg = Lang.get(getPlayer(), "questObjectivesTitle");
 			msg = msg.replace("<quest>", q.name);
 			getPlayer().sendMessage(ChatColor.GOLD + msg);
-			for (String s : getObjectivesReal(q)) {
-				try {
-					// TODO ensure all applicable strings are translated
-					String sbegin = s.substring(s.indexOf(ChatColor.AQUA.toString()) + 2);
-					String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
-					
-					String enchant = "";
-					if (s.contains(ChatColor.LIGHT_PURPLE.toString())) {
-						String ebegin = s.substring(s.indexOf(ChatColor.LIGHT_PURPLE.toString()) + 2);
-						enchant = ebegin.substring(0, ebegin.indexOf(ChatColor.GREEN.toString()));
-					}
-					
-					// Order is important
-					if (Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", "")) != null) {
-						Material m = Material.matchMaterial(serial);
-						Enchantment e = Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", ""));
-						plugin.query.sendMessage(player, s.replace(serial, "<item>").replace(enchant, "<enchantment>"), m, e);
-						continue;
-					} else if (Material.matchMaterial(serial) != null) {
-						Material m = Material.matchMaterial(serial);
-						plugin.query.sendMessage(player, s.replace(serial, "<item>"), m);
-						continue;
-					} else {
-						try {
-							EntityType type = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
-							plugin.query.sendMessage(player, s.replace(serial, "<mob>"), type);
-						} catch (IllegalArgumentException e) {
-							player.sendMessage(s);
-						}
-					}
-				} catch (IndexOutOfBoundsException e) {
-					player.sendMessage(s);
-				}
-			}
+			plugin.showObjectives(q, this, false);
 			String stageStartMessage = stage.startMessage;
 			if (stageStartMessage != null) {
 				getPlayer().sendMessage(Quests.parseString(stageStartMessage, q));
@@ -473,20 +439,25 @@ public class Quester {
 			player.sendMessage(q.failRequirements);
 		}
 	}
-
-	public LinkedList<String> getObjectivesReal(Quest quest) {
-		if (getCurrentStage(quest) != null) {
-			if (getCurrentStage(quest).objectiveOverride != null) {
-				LinkedList<String> objectives = new LinkedList<String>();
-				objectives.add(ChatColor.GREEN + getCurrentStage(quest).objectiveOverride);
-				return objectives;
+	
+	/**
+	 * Get all objectives for a quest.
+	 * 
+	 * @param quest The quest to get objectives of
+	 * @param ignoreOverrides Whether to ignore OP-specified objectives-overrides
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	public LinkedList<String> getObjectives(Quest quest, boolean ignoreOverrides) {
+		if (!ignoreOverrides) {
+			if (getCurrentStage(quest) != null) {
+				if (getCurrentStage(quest).objectiveOverride != null) {
+					LinkedList<String> objectives = new LinkedList<String>();
+					objectives.add(ChatColor.GREEN + getCurrentStage(quest).objectiveOverride);
+					return objectives;
+				}
 			}
 		}
-		return getObjectives(quest);
-	}
-
-	@SuppressWarnings("deprecation")
-	public LinkedList<String> getObjectives(Quest quest) {
 		if (getQuestData(quest) == null)
 			return new LinkedList<String>();
 		LinkedList<String> unfinishedObjectives = new LinkedList<String>();
@@ -1450,7 +1421,7 @@ public class Quester {
 	}
 
 	public boolean testComplete(Quest quest) {
-		for (String s : getObjectives(quest)) {
+		for (String s : getObjectives(quest, true)) {
 			if (s.startsWith(ChatColor.GREEN.toString())) {
 				return false;
 			}

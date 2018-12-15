@@ -13,9 +13,6 @@
 package me.blackvein.quests;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import me.blackvein.quests.util.Lang;
@@ -32,7 +29,6 @@ public class StageTimer implements Runnable {
 		plugin = quests;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		if (quester.getQuestData(quest).delayOver) {
@@ -63,40 +59,7 @@ public class StageTimer implements Runnable {
 				String msg = Lang.get(player, "questObjectivesTitle");
 				msg = msg.replace("<quest>", quest.name);
 				player.sendMessage(ChatColor.GOLD + msg);
-				for (String s : quester.getObjectivesReal(quest)) {
-					try {
-						// TODO ensure all applicable strings are translated
-						String sbegin = s.substring(s.indexOf(ChatColor.AQUA.toString()) + 2);
-						String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
-						
-						String enchant = "";
-						if (s.contains(ChatColor.LIGHT_PURPLE.toString())) {
-							String ebegin = s.substring(s.indexOf(ChatColor.LIGHT_PURPLE.toString()) + 2);
-							enchant = ebegin.substring(0, ebegin.indexOf(ChatColor.GREEN.toString()));
-						}
-						
-						// Order is important
-						if (Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", "")) != null) {
-							Material m = Material.matchMaterial(serial);
-							Enchantment e = Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", ""));
-							plugin.query.sendMessage(player, s.replace(serial, "<item>").replace(enchant, "<enchantment>"), m, e);
-							continue;
-						} else if (Material.matchMaterial(serial) != null) {
-							Material m = Material.matchMaterial(serial);
-							plugin.query.sendMessage(player, s.replace(serial, "<item>"), m);
-							continue;
-						} else {
-							try {
-								EntityType type = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
-								plugin.query.sendMessage(player, s.replace(serial, "<mob>"), type);
-							} catch (IllegalArgumentException e) {
-								player.sendMessage(s);
-							}
-						}
-					} catch (IndexOutOfBoundsException e) {
-						player.sendMessage(s);
-					}
-				}
+				plugin.showObjectives(quest, quester, false);
 				String stageStartMessage = quester.getCurrentStage(quest).startMessage;
 				if (stageStartMessage != null) {
 					quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quest));

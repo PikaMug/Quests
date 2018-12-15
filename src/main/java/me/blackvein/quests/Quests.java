@@ -98,6 +98,7 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.aufdemrand.denizen.Denizen;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
@@ -1704,7 +1705,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (cs instanceof Player) {
 			if (((Player) cs).hasPermission("quests.quest")) {
 				if (args.length == 0) {
-					showObjectives((Player) cs);
+					Player player = (Player) cs;
+					Quester quester = getQuester(player.getUniqueId());
+					if (quester.currentQuests.isEmpty() == false) {
+						for (Quest q : quester.currentQuests.keySet()) {
+							Stage stage = quester.getCurrentStage(q);
+							q.updateCompass(quester, stage);
+							if (getQuester(player.getUniqueId()).getQuestData(q).delayStartTime == 0) {
+								String msg = Lang.get(player, "questObjectivesTitle");
+								msg = msg.replaceAll("<quest>", q.name);
+								player.sendMessage(ChatColor.GOLD + msg);
+								showObjectives(q, quester, false);
+							}
+						}
+					} else {
+						player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
+					}
 				} else {
 					showQuestDetails(cs, args);
 				}
@@ -1856,33 +1872,52 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
 	}
-
-	private void showObjectives(final Player player) {
-		Quester quester = getQuester(player.getUniqueId());
-		if (quester.currentQuests.isEmpty() == false) {
-			for (Quest q : quester.currentQuests.keySet()) {
-				Stage stage = quester.getCurrentStage(q);
-				q.updateCompass(quester, stage);
-				try {
-					if (getQuester(player.getUniqueId()).getQuestData(q).delayStartTime == 0) {
-						String msg = Lang.get(player, "questObjectivesTitle");
-						msg = msg.replaceAll("<quest>", q.name);
-						player.sendMessage(ChatColor.GOLD + msg);
-						try {
-							for (String s : getQuester(player.getUniqueId()).getObjectivesReal(q)) {
-								player.sendMessage(s);
-							}
-						} catch (NullPointerException e) {
-							getLogger().severe("Objectives were null for " + q.name + ". Include quests.yml in Github #238");
-							e.printStackTrace();
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+	
+	/**
+	 * Show all objectives for a quest. Respects PlaceholderAPI and translations, when enabled.
+	 * 
+	 * @param quest The quest to show objectives of
+	 * @param quester The player to show objectives to
+	 */
+	@SuppressWarnings("deprecation")
+	public void showObjectives(Quest quest, Quester quester, boolean ignoreOverrides) {
+		for (String s : quester.getObjectives(quest, false)) {
+			if (placeholder != null) {
+				s = PlaceholderAPI.setPlaceholders(quester.getPlayer(), s);
 			}
-		} else {
-			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
+			try {
+				// TODO ensure all applicable strings are translated
+				String sbegin = s.substring(s.indexOf(ChatColor.AQUA.toString()) + 2);
+				String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
+				
+				String enchant = "";
+				if (s.contains(ChatColor.LIGHT_PURPLE.toString())) {
+					String ebegin = s.substring(s.indexOf(ChatColor.LIGHT_PURPLE.toString()) + 2);
+					enchant = ebegin.substring(0, ebegin.indexOf(ChatColor.GREEN.toString()));
+				}
+				
+				// Order is important
+				if (Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", "")) != null) {
+					Material m = Material.matchMaterial(serial);
+					Enchantment e = Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", ""));
+					query.sendMessage(quester.getPlayer(), s.replace(serial, "<item>").replace(enchant, "<enchantment>"), m, e);
+					continue;
+				} else if (Material.matchMaterial(serial) != null) {
+					Material m = Material.matchMaterial(serial);
+					query.sendMessage(quester.getPlayer(), s.replace(serial, "<item>"), m);
+					continue;
+				} else {
+					try {
+						EntityType type = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
+						query.sendMessage(quester.getPlayer(), s.replace(serial, "<mob>"), type);
+					} catch (IllegalArgumentException e) {
+						getLogger().severe("Entity type " + serial + " is not valid for Bukkit " + bukkitVersion + ", please report on Github.");
+						quester.getPlayer().sendMessage(s);
+					}
+				}
+			} catch (IndexOutOfBoundsException e) {
+				quester.getPlayer().sendMessage(s);
+			}
 		}
 	}
 
