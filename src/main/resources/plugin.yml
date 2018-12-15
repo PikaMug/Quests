@@ -7,7 +7,6 @@ website: https://www.spigotmc.org/resources/quests.3711/
 dev-url: https://github.com/FlyingPikachu/Quests
 author: HappyPikachu
 softdepend: [Citizens, CitizensBooks, Denizen, Heroes, mcMMO, PhatLoots, PlaceholderAPI, Vault, WorldGuard]
-loadbefore
 permissions:
     quests.quest:
         description: View current quest objectives
