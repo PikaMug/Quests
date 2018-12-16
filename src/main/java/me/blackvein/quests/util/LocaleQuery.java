@@ -27,11 +27,15 @@ import org.bukkit.entity.Player;
 public class LocaleQuery {
 	private static Class<?> craftMagicNumbers = null;
 	private final Quests plugin;
-	static boolean oldVersion = isBelow113();
+	private static boolean oldVersion = false;
 	
 	public LocaleQuery(Quests plugin){
 		this.plugin = plugin;
 		setup();
+	}
+	
+	public void setBukkitVersion(String bukkitVersion) {
+		oldVersion = isBelow113(bukkitVersion);
 	}
 	
 	public void sendMessage(Player player, String message, Material material) {
@@ -51,6 +55,7 @@ public class LocaleQuery {
 		player.sendMessage(message.replace("<item>", Quester.prettyItemString(material.name())));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void sendMessage(Player player, String message, Material material, Enchantment enchantment) {
 		if (plugin.translateItems) {
 			String key = queryByType(material);
@@ -61,7 +66,7 @@ public class LocaleQuery {
 			}
 			String key2 = "";
 			if (oldVersion) {
-				key2 = "enchantment." + MiscUtil.getProperEnchantmentName(enchantment).replace("_", ".")
+				key2 = "enchantment." + enchantment.getName().toLowerCase().replace("_", ".")
 						.replace("environmental", "all").replace("protection", "protect");
 			} else {
 				key2 = "enchantment.minecraft." + enchantment.toString().toLowerCase();
@@ -77,11 +82,12 @@ public class LocaleQuery {
 				.replace("<enchantment>", Quester.prettyEnchantmentString(enchantment)));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void sendMessage(Player player, String message, EntityType type) {
 		if (plugin.translateItems) {
 			String key = "";
 			if (oldVersion) {
-				key = "entity." + MiscUtil.getProperMobName(type) + ".name";
+				key = "entity." + type.getName() + ".name";
 			} else {
 				key = "entity.minecraft." + type.toString().toLowerCase();
 			}
@@ -110,7 +116,6 @@ public class LocaleQuery {
 	    	String name = (String) MethodUtils.invokeExactMethod(item, "getName");
 	    	return name;
 	    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-	    	plugin.getLogger().info("Unable to invoke getName() on MC " + plugin.bukkitVersion);
 	    	e.printStackTrace();
 	    }
 	    return null;
@@ -125,10 +130,9 @@ public class LocaleQuery {
 	    }
 	}
 	
-	public static boolean isBelow113() {
-		String ver = Quests.bukkitVersion;
-		if (Quests.bukkitVersion.matches("^[0-9]+$")) {
-			switch(ver) {
+	public static boolean isBelow113(String bukkitVersion) {
+		if (bukkitVersion.matches("^[0-9.]+$")) {
+			switch(bukkitVersion) {
 			case "1.12" :
 				return true;
 			case "1.11" :
@@ -154,7 +158,7 @@ public class LocaleQuery {
 				return false;
 			}
 		}
-		Bukkit.getLogger().severe("Invalid Bukkit version " + ver);
+		Bukkit.getLogger().severe("Quests received invalid Bukkit version " + bukkitVersion);
 		return false;
 	}
 }

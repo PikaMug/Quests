@@ -177,6 +177,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	@Override
 	public void onEnable() {
 		bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
+		query.setBukkitVersion(bukkitVersion);
 		pListener = new PlayerListener(this);
 		effListener = new NpcEffectThread(this);
 		npcListener = new NpcListener(this);
