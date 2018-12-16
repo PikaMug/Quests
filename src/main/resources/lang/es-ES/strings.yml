@@ -666,7 +666,7 @@ redoCompleted: "(Completado)"
 consoleError: "Este comando solo debe ser presentado en el juego."
 noActiveQuest: "Usted no tiene actualmente ninguna Búsqueda activa."
 speakTo: 'Inicio: Hablar con <npc>'
-mustSpeakTo: "Usted debería hablar con <npc>para comenzar esta Búsqueda."
+mustSpeakTo: "Usted debería hablar con <npc> para comenzar esta Búsqueda."
 noCommandStart: "<quest>no debe ser iniciado vía comando."
 permissionDisplay: "Permiso:"
 heroesClass: "clase"
