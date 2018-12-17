@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 
 public class LocaleQuery {
 	private static Class<?> craftMagicNumbers = null;
+	private static Class<?> itemClazz = null;
 	private final Quests plugin;
 	private static boolean oldVersion = false;
 	
@@ -41,12 +42,12 @@ public class LocaleQuery {
 	public void sendMessage(Player player, String message, Material material) {
 		if (plugin.translateItems) {
 			String key = queryByType(material);
-			if (oldVersion) {
-				if (key.startsWith("tile.") || key.startsWith("item.")) {
-					key = key + ".name";
-				}
-			}
 			if (key != null) {
+				if (oldVersion) {
+					if (key.startsWith("tile.") || key.startsWith("item.")) {
+						key = key + ".name";
+					}
+				}
 				String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"");
 				player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
 				return;
@@ -59,23 +60,25 @@ public class LocaleQuery {
 	public void sendMessage(Player player, String message, Material material, Enchantment enchantment) {
 		if (plugin.translateItems) {
 			String key = queryByType(material);
-			if (oldVersion) {
-				if (key.startsWith("tile.") || key.startsWith("item.")) {
-					key = key + ".name";
+			if (key != null) {
+				if (oldVersion) {
+					if (key.startsWith("tile.") || key.startsWith("item.")) {
+						key = key + ".name";
+					}
 				}
-			}
-			String key2 = "";
-			if (oldVersion) {
-				key2 = "enchantment." + enchantment.getName().toLowerCase().replace("_", ".")
-						.replace("environmental", "all").replace("protection", "protect");
-			} else {
-				key2 = "enchantment.minecraft." + enchantment.toString().toLowerCase();
-			}
-			if (key != null && !key.equals("")) {
-				String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"")
-						.replace("<enchantment>", "\",{\"translate\":\"" + key2 + "\"},\"");
-				player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
-				return;
+				String key2 = "";
+				if (oldVersion) {
+					key2 = "enchantment." + enchantment.getName().toLowerCase().replace("_", ".")
+							.replace("environmental", "all").replace("protection", "protect");
+				} else {
+					key2 = "enchantment.minecraft." + enchantment.toString().toLowerCase();
+				}
+				if (!key2.equals("")) {
+					String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"")
+							.replace("<enchantment>", "\",{\"translate\":\"" + key2 + "\"},\"");
+					player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
+					return;
+				}
 			}
 		}
 		player.sendMessage(message.replace("<item>", Quester.prettyItemString(material.name()))
@@ -112,8 +115,7 @@ public class LocaleQuery {
 	    	if (item == null) {
 	    		throw new IllegalArgumentException("An item with that material could not be found! (Perhaps you have specified a block?)");
 	    	}
-	        	
-	    	String name = (String) MethodUtils.invokeExactMethod(item, "getName");
+	    	String name = (String) itemClazz.getMethod("getName").invoke(item);
 	    	return name;
 	    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
 	    	e.printStackTrace();
@@ -125,6 +127,7 @@ public class LocaleQuery {
 		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 	    try {
 	        craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers".replace("{v}", version));
+	        itemClazz = Class.forName("net.minecraft.server.{v}.Item".replace("{v}", version));
 	    } catch (ClassNotFoundException e) {
 	        e.printStackTrace();
 	    }
