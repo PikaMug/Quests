@@ -310,6 +310,9 @@ public class Quester {
 	}
 
 	public void takeQuest(Quest q, boolean override) {
+		if (q == null) {
+			return;
+		}
 		Player player = getPlayer();
 		long start = -1;
 		long end = -1;
