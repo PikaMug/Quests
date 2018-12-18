@@ -253,12 +253,15 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "16 " + ChatColor.RESET + ChatColor.YELLOW + "- " + Lang.get("stageEditorEvents") + "\n";
 			}
-			if (context.getSessionData(pref + CK.S_DELAY) == null) {
-				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "17 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("delay") + ChatColor.GRAY + "  (" + Lang.get("noneSet") + ")\n";
+			if (!hasObjective) {
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "17 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("delay")  + ChatColor.GRAY + " (" + Lang.get("stageEditorOptional") + ")\n";
 			} else {
-				hasObjective = true;
-				long time = (Long) context.getSessionData(pref + CK.S_DELAY);
-				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "17 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("delay") + ChatColor.GRAY + "(" + ChatColor.AQUA + Quests.getTime(time) + ChatColor.GRAY + ")\n";
+				if (context.getSessionData(pref + CK.S_DELAY) == null) {
+					text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "17 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("delay") + ChatColor.GRAY + "  (" + Lang.get("noneSet") + ")\n";
+				} else {
+					long time = (Long) context.getSessionData(pref + CK.S_DELAY);
+					text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "17 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("delay") + ChatColor.GRAY + "(" + ChatColor.AQUA + Quests.getTime(time) + ChatColor.GRAY + ")\n";
+				}
 			}
 			if (context.getSessionData(pref + CK.S_DELAY) == null) {
 				text += ChatColor.GRAY + "" + ChatColor.BOLD + "18 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("stageEditorDelayMessage") + ChatColor.GRAY + " (" + Lang.get("noDelaySet") + ")\n";
@@ -393,7 +396,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				return new CreateStagePrompt(stageNum, questFactory, citizens);
 			}
 		} else if (input.equalsIgnoreCase("17")) {
-			return new DelayPrompt();
+			if (hasObjective) {
+				return new DelayPrompt();
+			} else {
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+				return new CreateStagePrompt(stageNum, questFactory, citizens);
+			}
 		} else if (input.equalsIgnoreCase("18")) {
 			if (context.getSessionData(pref + CK.S_DELAY) == null) {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDelaySet"));
