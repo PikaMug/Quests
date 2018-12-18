@@ -1901,11 +1901,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				if (Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", "")) != null) {
 					Material m = Material.matchMaterial(serial);
 					Enchantment e = Enchantment.getByName(Lang.getKey(enchant).replace("ENCHANTMENT_", ""));
-					query.sendMessage(quester.getPlayer(), s.replace(serial, "<item>").replace(enchant, "<enchantment>"), m, e);
+					query.sendMessage(quester.getPlayer(), s.replace(serial, "<item>").replace(enchant, "<enchantment>"), m, (short) 0, e); //TODO GET DURABILITY VALUE
 					continue;
 				} else if (Material.matchMaterial(serial) != null) {
 					Material m = Material.matchMaterial(serial);
-					query.sendMessage(quester.getPlayer(), s.replace(serial, "<item>"), m);
+					query.sendMessage(quester.getPlayer(), s.replace(serial, "<item>"), m, (short) 0); //TODO GET DURABILITY VALUE
 					continue;
 				} else {
 					try {

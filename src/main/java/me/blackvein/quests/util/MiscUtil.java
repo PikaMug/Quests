@@ -49,7 +49,7 @@ public class MiscUtil {
 		return null;
 	}
 
-	private static String fixUnderscore(String s) {
+	public static String fixUnderscore(String s) {
 		int index = s.indexOf('_');
 		if (index == -1) {
 			return null;

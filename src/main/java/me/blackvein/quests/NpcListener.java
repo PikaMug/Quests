@@ -90,7 +90,7 @@ public class NpcListener implements Listener {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-								plugin.query.sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType());
+								plugin.query.sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability());
 								if (hand.hasItemMeta()) {
 									if (hand.getType().equals(Material.ENCHANTED_BOOK)) {
 										EnchantmentStorageMeta esmeta = (EnchantmentStorageMeta) hand.getItemMeta();

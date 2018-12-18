@@ -19,10 +19,13 @@ import me.blackvein.quests.Quests;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class LocaleQuery {
 	private static Class<?> craftMagicNumbers = null;
@@ -39,13 +42,23 @@ public class LocaleQuery {
 		oldVersion = isBelow113(bukkitVersion);
 	}
 	
-	public void sendMessage(Player player, String message, Material material) {
+	/**
+	 * Send message with item name translated to the client's locale<p>
+	 * 
+	 * Durability arg is arbitrary for 1.13+
+	 * 
+	 * @param player The player for whom the message is to be sent
+	 * @param message The message to be sent to the player
+	 * @param material The item to be translated
+	 * @param durability Durability for the item being translated
+	 */
+	public void sendMessage(Player player, String message, Material material, short durability) {
 		if (plugin.translateItems) {
 			String key = queryByType(material);
 			if (key != null) {
 				if (oldVersion) {
 					if (key.startsWith("tile.") || key.startsWith("item.")) {
-						key = key + ".name";
+						key += getColorIfApplicable(material, durability) + ".name";
 					}
 				}
 				String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"");
@@ -56,14 +69,25 @@ public class LocaleQuery {
 		player.sendMessage(message.replace("<item>", Quester.prettyItemString(material.name())));
 	}
 	
+	/**
+	 * Send message with item name translated to the client's locale<p>
+	 * 
+	 * Durability arg is arbitrary for 1.13+
+	 * 
+	 * @param player The player for whom the message is to be sent
+	 * @param message The message to be sent to the player
+	 * @param material The item to be translated
+	 * @param durability Durability for the item being translated
+	 * @param enchantment The enchantment to be translated
+	 */
 	@SuppressWarnings("deprecation")
-	public void sendMessage(Player player, String message, Material material, Enchantment enchantment) {
+	public void sendMessage(Player player, String message, Material material, short durability, Enchantment enchantment) {
 		if (plugin.translateItems) {
 			String key = queryByType(material);
 			if (key != null) {
 				if (oldVersion) {
 					if (key.startsWith("tile.") || key.startsWith("item.")) {
-						key = key + ".name";
+						key += getColorIfApplicable(material, durability) + ".name";
 					}
 				}
 				String key2 = "";
@@ -164,4 +188,36 @@ public class LocaleQuery {
 		Bukkit.getLogger().severe("Quests received invalid Bukkit version " + bukkitVersion);
 		return false;
 	}
+	
+	
+    /**
+     * Appends a color to an item. Note that this will make item names invalid if the item is not eligible<p>
+     * 
+     * Method not useful for MC 1.13+
+     * 
+     * @param material The material to be processed
+     * @param durability The durability indicating variation
+     * @return color, or blank string if not applicable
+     */
+    @SuppressWarnings("deprecation")
+	public String getColorIfApplicable(Material material, short durability){
+    	String key = "";
+    	if (material.name().equals("INK_SACK")) {
+			DyeColor dye = DyeColor.getByDyeData((byte)durability);
+			key = "." + MiscUtil.fixUnderscore(dye.name().toLowerCase());
+		} else if ((material.name().equals("WOOL") || material.name().equals("CARPET")) && durability == 0) {
+			// White wool/carpet, do nothing
+		} else if (material.name().equals("WOOL") || material.name().equals("CARPET") || material.name().equals("STAINED_CLAY")
+				|| material.name().equals("STAINED_GLASS") || material.name().equals("STAINED_GLASS_PANE")) {
+			DyeColor dye = DyeColor.getByWoolData((byte)durability);
+			key = "." + MiscUtil.fixUnderscore(dye.name().toLowerCase());
+		} else if (material.name().equals("LEATHER_HELMET") || material.name().equals("LEATHER_CHESTPLATE")
+				|| material.name().equals("LEATHER_LEGGINGS") || material.name().equals("LEATHER_BOOTS")) {
+			ItemStack is = new ItemStack(material, 1, durability);
+			LeatherArmorMeta lam = (LeatherArmorMeta) is.getItemMeta();
+			DyeColor dye = DyeColor.getByColor(lam.getColor());
+			key = "." + MiscUtil.fixUnderscore(dye.name().toLowerCase());
+		}
+        return key;
+    }
 }

@@ -1255,7 +1255,8 @@ public class Quester {
 	 * @param co
 	 *            See CustomObjective class
 	 */
-	public void finishObjective(Quest quest, String objective, ItemStack material, ItemStack delivery, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
+	@SuppressWarnings("deprecation")
+	public void finishObjective(Quest quest, String objective, ItemStack itemStack, ItemStack delivery, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
 		Player p = getPlayer();
 		if (getCurrentStage(quest).objectiveOverride != null) {
 			if (testComplete(quest)) {
@@ -1276,7 +1277,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksBroken.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, material.getType());
+			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1285,7 +1286,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksDamaged.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, material.getType());
+			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1294,7 +1295,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksPlaced.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, material.getType());
+			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1303,7 +1304,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksUsed.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, material.getType());
+			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1312,7 +1313,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksCut.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, material.getType());
+			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1332,7 +1333,7 @@ public class Quester {
 					break;
 				}
 			}
-			plugin.query.sendMessage(p, message, material.getType(), enchantment);
+			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability(), enchantment);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1340,7 +1341,8 @@ public class Quester {
 			String obj = Lang.get(p, "deliver");
 			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
-			plugin.query.sendMessage(p, message, getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery)).getType());
+			ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery));
+			plugin.query.sendMessage(p, message, is.getType(), is.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
