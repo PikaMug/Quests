@@ -1912,7 +1912,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						EntityType type = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
 						query.sendMessage(quester.getPlayer(), s.replace(serial, "<mob>"), type);
 					} catch (IllegalArgumentException e) {
-						getLogger().severe("Entity type " + serial + " is not valid for Bukkit " + bukkitVersion + ", please report on Github.");
 						quester.getPlayer().sendMessage(s);
 					}
 				}
