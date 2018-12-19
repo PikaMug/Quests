@@ -65,7 +65,9 @@ public class StageTimer implements Runnable {
 					quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quest));
 				}
 			}
-			quester.getQuestData(quest).delayOver = true;
+			if (quester.getQuestData(quest) != null) {
+				quester.getQuestData(quest).delayOver = true;
+			}
 			quester.updateJournal();
 		}
 	}
