@@ -255,15 +255,15 @@ public class Quester {
 				int currentLines = 0;
 				String page = "";
 				for (Quest quest : currentQuests.keySet()) {
-					if ((currentLength + quest.name.length() > 240) || (currentLines + ((quest.name.length() % 19) == 0 ? (quest.name.length() / 19) : ((quest.name.length() / 19) + 1))) > 13) {
+					if ((currentLength + quest.getName().length() > 240) || (currentLines + ((quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19) : ((quest.getName().length() / 19) + 1))) > 13) {
 						book.addPage(page);
-						page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.name + "\n";
-						currentLength = quest.name.length();
-						currentLines = (quest.name.length() % 19) == 0 ? (quest.name.length() / 19) : (quest.name.length() + 1);
+						page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.getName() + "\n";
+						currentLength = quest.getName().length();
+						currentLines = (quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19) : (quest.getName().length() + 1);
 					} else {
-						page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.name + "\n";
-						currentLength += quest.name.length();
-						currentLines += (quest.name.length() / 19);
+						page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.getName() + "\n";
+						currentLength += quest.getName().length();
+						currentLines += (quest.getName().length() / 19);
 					}
 					if (getObjectives(quest, false) != null) {
 						for (String obj : getObjectives(quest, false)) {
@@ -280,7 +280,7 @@ public class Quester {
 							}
 						}
 					} else {
-						plugin.getLogger().severe("Quest Journal: objectives were null for " + quest.name);
+						plugin.getLogger().severe("Quest Journal: objectives were null for " + quest.getName());
 					}
 					if (currentLines < 13)
 						page += "\n";
@@ -340,7 +340,7 @@ public class Quester {
 				long nextEnd = nextStart + questLength;
 				if (System.currentTimeMillis() < nextStart) {
 					String early = Lang.get("plnTooEarly");
-					early = early.replace("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+					early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 					early = early.replace("<time>", ChatColor.DARK_PURPLE
 							+ Quests.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
 					player.sendMessage(ChatColor.YELLOW + early);
@@ -350,7 +350,7 @@ public class Quester {
 				if (System.currentTimeMillis() > nextEnd) {
 					if (System.currentTimeMillis() > end) {
 						String late = Lang.get("plnTooLate");
-						late = late.replace("<quest>", ChatColor.AQUA + q.name + ChatColor.RED);
+						late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
 						late = late.replace("<time>", ChatColor.DARK_PURPLE
 								+ Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
 						player.sendMessage(ChatColor.RED + late);
@@ -363,7 +363,7 @@ public class Quester {
 		if (q.startPlanner != null) {
 			if (System.currentTimeMillis() < start) {
 				String early = Lang.get("plnTooEarly");
-				early = early.replace("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+				early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 				early = early.replace("<time>", ChatColor.DARK_PURPLE
 						+ Quests.getTime(start - System.currentTimeMillis()) + ChatColor.YELLOW);
 				player.sendMessage(ChatColor.YELLOW + early);
@@ -374,7 +374,7 @@ public class Quester {
 		if (q.endPlanner != null) {
 			if (System.currentTimeMillis() > end) {
 				String late = Lang.get("plnTooLate");
-				late = late.replace("<quest>", ChatColor.AQUA + q.name + ChatColor.RED);
+				late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
 				late = late.replace("<time>", ChatColor.DARK_PURPLE
 						+ Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
 				player.sendMessage(ChatColor.RED + late);
@@ -386,7 +386,7 @@ public class Quester {
 			try {
 				currentQuests.put(q, 0);
 			} catch (NullPointerException npe) {
-				plugin.getLogger().severe("Unable to add quest" + q.name + " for player " + player.getName()
+				plugin.getLogger().severe("Unable to add quest" + q.getName() + " for player " + player.getName()
 						+ ". Consider resetting player data or report on Github");
 			}
 			Stage stage = q.getStage(0);
@@ -402,18 +402,18 @@ public class Quester {
 					}
 				}
 				String accepted = Lang.get(getPlayer(), "questAccepted");
-				accepted = accepted.replace("<quest>", q.name);
+				accepted = accepted.replace("<quest>", q.getName());
 				player.sendMessage(ChatColor.GREEN + accepted);
 				player.sendMessage("");
 				if (plugin.showQuestTitles) {
 					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
 							+ " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest") + " " + Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
 					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
-							+ " subtitle " + "{\"text\":\"" + q.name + "\",\"color\":\"yellow\"}");
+							+ " subtitle " + "{\"text\":\"" + q.getName() + "\",\"color\":\"yellow\"}");
 				}
 			}
 			String msg = Lang.get(getPlayer(), "questObjectivesTitle");
-			msg = msg.replace("<quest>", q.name);
+			msg = msg.replace("<quest>", q.getName());
 			getPlayer().sendMessage(ChatColor.GOLD + msg);
 			plugin.showObjectives(q, this, false);
 			String stageStartMessage = stage.startMessage;
@@ -717,7 +717,7 @@ public class Quester {
 						try {
 							display = display.replace("%" + key + "%", ((String) datamap.get(key)));
 						} catch (NullPointerException ne) {
-							plugin.getLogger().severe("Unable to fetch display for " + co.getName() + " on " + quest.name);
+							plugin.getLogger().severe("Unable to fetch display for " + co.getName() + " on " + quest.getName());
 							ne.printStackTrace();
 						}
 					}
@@ -741,14 +741,41 @@ public class Quester {
 		return objectives;
 	}
 
+	/**
+	 * Check if player's current stage has the specified objective<p>
+	 * 
+	 * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
+	 * cutBlock, catchFish, enchantItem, killMob, deliverItem, killPlayer,
+	 * talkToNPC, killNPC, tameMob, shearSheep, password, reachLocations
+	 * 
+	 * @deprecated Use containsObjective() instead
+	 * @param quest The quest to check objectives of
+	 * @param s The type of objective to check for
+	 * @return true if quest contains specified objective
+	 */
 	public boolean hasObjective(Quest quest, String s) {
+		return containsObjective(quest, s);
+	}
+	
+	/**
+	 * Check if player's current stage has the specified objective<p>
+	 * 
+	 * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
+	 * cutBlock, catchFish, enchantItem, killMob, deliverItem, killPlayer,
+	 * talkToNPC, killNPC, tameMob, shearSheep, password, reachLocations
+	 * 
+	 * @param quest The quest to check objectives of
+	 * @param s The type of objective to check for
+	 * @return true if quest contains specified objective
+	 */
+	public boolean containsObjective(Quest quest, String s) {
 		if (getCurrentStage(quest) == null) {
 			return false;
 		}
-		if (s.equalsIgnoreCase("damageBlock")) {
-			return !getCurrentStage(quest).blocksToDamage.isEmpty();
-		} else if (s.equalsIgnoreCase("breakBlock")) {
+		if (s.equalsIgnoreCase("breakBlock")) {
 			return !getCurrentStage(quest).blocksToBreak.isEmpty();
+		} else if (s.equalsIgnoreCase("damageBlock")) {
+			return !getCurrentStage(quest).blocksToDamage.isEmpty();
 		} else if (s.equalsIgnoreCase("placeBlock")) {
 			return !getCurrentStage(quest).blocksToPlace.isEmpty();
 		} else if (s.equalsIgnoreCase("useBlock")) {
@@ -773,12 +800,12 @@ public class Quester {
 			return !getCurrentStage(quest).mobsToTame.isEmpty();
 		} else if (s.equalsIgnoreCase("shearSheep")) {
 			return !getCurrentStage(quest).sheepToShear.isEmpty();
-		} else if (s.equalsIgnoreCase("craftItem")) {
-			return !getCurrentStage(quest).itemsToCraft.isEmpty();
 		} else if (s.equalsIgnoreCase("password")) {
 			return !getCurrentStage(quest).passwordPhrases.isEmpty();
-		} else {
+		} else if (s.equalsIgnoreCase("reachLocations")) {
 			return !getCurrentStage(quest).locationsToReach.isEmpty();
+		} else {
+			return false;
 		}
 	}
 
@@ -1179,7 +1206,7 @@ public class Quester {
 			int amount = getQuestData(quest).itemsDelivered.get(found);
 			if (getCurrentStage(quest).itemsToDeliver.indexOf(found) < 0) {
 				plugin.getLogger().severe("Index out of bounds while delivering " + found.getType() + " x " + found.getAmount() + " for quest " 
-						+ quest.name + " with " + i.getType() + " x " + i.getAmount() + " already delivered. Int -amount- reports value of " + 
+						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already delivered. Int -amount- reports value of " + 
 						+ amount + ". Please report this error on Github issue #448");
 				player.sendMessage("Quests had a problem delivering your item, please contact an administrator!");
 				return;
@@ -1696,11 +1723,11 @@ public class Quester {
 	public long getDifference(Quest q) {
 		long currentTime = System.currentTimeMillis();
 		long lastTime;
-		if (completedTimes.containsKey(q.name) == false) {
+		if (completedTimes.containsKey(q.getName()) == false) {
 			lastTime = System.currentTimeMillis();
-			completedTimes.put(q.name, System.currentTimeMillis());
+			completedTimes.put(q.getName(), System.currentTimeMillis());
 		} else {
-			lastTime = completedTimes.get(q.name);
+			lastTime = completedTimes.get(q.getName());
 		}
 		long comparator = q.cooldownPlanner;
 		long difference = (comparator - (currentTime - lastTime));
@@ -1714,7 +1741,7 @@ public class Quester {
 			ArrayList<String> questNames = new ArrayList<String>();
 			ArrayList<Integer> questStages = new ArrayList<Integer>();
 			for (Quest quest : currentQuests.keySet()) {
-				questNames.add(quest.name);
+				questNames.add(quest.getName());
 				questStages.add(currentQuests.get(quest));
 			}
 			data.set("currentQuests", questNames);
@@ -1722,11 +1749,11 @@ public class Quester {
 			data.set("quest-points", questPoints);
 			ConfigurationSection dataSec = data.createSection("questData");
 			for (Quest quest : currentQuests.keySet()) {
-				if (quest.name == null || quest.name.isEmpty()) {
+				if (quest.getName() == null || quest.getName().isEmpty()) {
 					plugin.getLogger().severe("Quest name was null or empty while loading data");
 					return null;
 				}
-				ConfigurationSection questSec = dataSec.createSection(quest.name);
+				ConfigurationSection questSec = dataSec.createSection(quest.getName());
 				QuestData questData = getQuestData(quest);
 				if (questData == null)
 					continue;
@@ -2033,8 +2060,8 @@ public class Quester {
 			List<Long> redoTimes = data.getLongList("completedQuestTimes");
 			for (String s : redoNames) {
 				for (Quest q : plugin.quests) {
-					if (q.name.equalsIgnoreCase(s)) {
-						completedTimes.put(q.name, redoTimes.get(redoNames.indexOf(s)));
+					if (q.getName().equalsIgnoreCase(s)) {
+						completedTimes.put(q.getName(), redoTimes.get(redoNames.indexOf(s)));
 						break;
 					}
 				}
@@ -2052,9 +2079,9 @@ public class Quester {
 		if (data.isList("completed-Quests")) {
 			for (String s : data.getStringList("completed-Quests")) {
 				for (Quest q : plugin.quests) {
-					if (q.name.equalsIgnoreCase(s)) {
-						if (!completedQuests.contains(q.name)) {
-							completedQuests.add(q.name);
+					if (q.getName().equalsIgnoreCase(s)) {
+						if (!completedQuests.contains(q.getName())) {
+							completedQuests.add(q.getName());
 						}
 						break;
 					}
@@ -2087,7 +2114,7 @@ public class Quester {
 				stage = getCurrentStage(quest);
 				if (stage == null) {
 					quest.completeQuest(this);
-					plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + id + "\" on Quest \"" + quest.name + "\". Quest ended.");
+					plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + id + "\" on Quest \"" + quest.getName() + "\". Quest ended.");
 					continue;
 				}
 				addEmptiesFor(quest, 0);
@@ -2505,7 +2532,7 @@ public class Quester {
 		if (quest != null) {
 			boolean exists = false;
 			for (Quest q : plugin.quests) {
-				if (q.name.equalsIgnoreCase(quest.name)) {
+				if (q.getName().equalsIgnoreCase(quest.getName())) {
 					Stage stage = getCurrentStage(quest);
 					quest.updateCompass(this, stage);
 					exists = true;
@@ -2516,7 +2543,7 @@ public class Quester {
 					 * hardQuit(quest);
 					 * 
 					 * if (plugin.getServer().getPlayer(id) != null) { String error = Lang.get("questModified"); error = error.replace("<quest>",
-					 * ChatColor.DARK_PURPLE + quest.name + ChatColor.RED); plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] "
+					 * ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED); plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] "
 					 * + ChatColor.RED + error); updateJournal(); }
 					 * 
 					 * }
@@ -2527,7 +2554,7 @@ public class Quester {
 			if (exists == false) {
 				if (plugin.getServer().getPlayer(id) != null) {
 					String error = Lang.get("questNotExist");
-					error = error.replace("<quest>", ChatColor.DARK_PURPLE + quest.name + ChatColor.RED);
+					error = error.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
 					plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
 				}
 			}
@@ -2628,7 +2655,7 @@ public class Quester {
 			if (quests.get(i).guiDisplay != null) {
 				ItemStack display = quests.get(i).guiDisplay;
 				ItemMeta meta = display.getItemMeta();
-				if (completedQuests.contains(quests.get(i).name)) {
+				if (completedQuests.contains(quests.get(i).getName())) {
 					meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName()
 							+ " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), npc));
 				} else {
@@ -2673,7 +2700,7 @@ public class Quester {
 
 	public void hardRemove(Quest quest) {
 		try {
-			completedQuests.remove(quest.name);
+			completedQuests.remove(quest.getName());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

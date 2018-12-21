@@ -114,7 +114,7 @@ public class Event {
 					Quests.addItem(player, is);
 				} catch (Exception e) {
 					plugin.getLogger().severe("Unable to add null item to inventory of " 
-							+ player.getName() + " during quest " + quest.name + " event " + name);
+							+ player.getName() + " during quest " + quest.getName() + " event " + name);
 					player.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
 							+ "Please contact an administrator.");
 				}

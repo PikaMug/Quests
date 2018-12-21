@@ -324,9 +324,9 @@ public class EventFactory implements ConversationAbandonedListener {
 				for (Event evt : quests.events) {
 					if (evt.name.equalsIgnoreCase(input)) {
 						for (Quest quest : quests.getQuests()) {
-							for (Stage stage : quest.orderedStages) {
+							for (Stage stage : quest.getStages()) {
 								if (stage.finishEvent != null && stage.finishEvent.name.equalsIgnoreCase(evt.name)) {
-									used.add(quest.name);
+									used.add(quest.getName());
 									break;
 								}
 							}
@@ -632,7 +632,7 @@ public class EventFactory implements ConversationAbandonedListener {
 			if (modifiedName != null) {
 				modName = modifiedName;
 				for (Quest q : quests.getQuests()) {
-					for (Stage s : q.orderedStages) {
+					for (Stage s : q.getStages()) {
 						if (s.finishEvent != null && s.finishEvent.name != null) {
 							if (s.finishEvent.name.equalsIgnoreCase(modifiedName)) {
 								modified.add(q.getName());

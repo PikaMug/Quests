@@ -51,7 +51,7 @@ public class Quest {
 	public String region = null;
 	public ItemStack guiDisplay = null;
 	public int parties = 0;
-	public LinkedList<Stage> orderedStages = new LinkedList<Stage>();
+	private LinkedList<Stage> orderedStages = new LinkedList<Stage>();
 	NPC npcStart;
 	Location blockStart;
 	Quests plugin;
@@ -89,12 +89,24 @@ public class Quest {
 	List<Double> heroesAmounts = new LinkedList<Double>();
 	List<String> phatLootRewards = new LinkedList<String>();
 
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public Stage getStage(int index) {
 		try {
 			return orderedStages.get(index);
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public LinkedList<Stage> getStages() {
+		return orderedStages;
 	}
 
 	public void nextStage(Quester q) {
@@ -190,10 +202,6 @@ public class Quest {
 			}
 		}
 		return targetLocation != null;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public boolean testRequirements(Quester quester) {

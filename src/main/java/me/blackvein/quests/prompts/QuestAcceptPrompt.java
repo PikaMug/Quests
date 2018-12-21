@@ -100,10 +100,10 @@ public class QuestAcceptPrompt extends StringPrompt {
 				return new QuestAcceptPrompt(plugin);
 			} else {
 				Player player = quester.getPlayer();
-				if (!quester.completedQuests.contains(q.name)) {
+				if (!quester.completedQuests.contains(q.getName())) {
 					if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
 						if (q.testRequirements(quester)) {
-							quester.questToTake = q.name;
+							quester.questToTake = q.getName();
 							String s = extracted(quester);
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
@@ -121,19 +121,19 @@ public class QuestAcceptPrompt extends StringPrompt {
 						msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 						player.sendMessage(ChatColor.YELLOW + msg);
 					}
-				} else if (quester.completedQuests.contains(q.name)) {
+				} else if (quester.completedQuests.contains(q.getName())) {
 					if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
 						if (quester.getDifference(q) > 0) {
 							String early = Lang.get("questTooEarly");
-							early = early.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+							early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 							early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + early);
 						} else if (q.cooldownPlanner < 0) {
 							String completed = Lang.get("questAlreadyCompleted");
-							completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.name + ChatColor.YELLOW);
+							completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + completed);
 						} else {
-							quester.questToTake = q.name;
+							quester.questToTake = q.getName();
 							String s = extracted(quester);
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);

@@ -296,7 +296,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
 						return new QuestListPrompt(isRequiredQuest);
 					}
-					questNames.add(quests.getQuest(s).name);
+					questNames.add(quests.getQuest(s).getName());
 				}
 				Collections.sort(questNames, new Comparator<String>() {
 

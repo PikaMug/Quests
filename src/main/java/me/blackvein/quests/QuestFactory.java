@@ -301,7 +301,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				for (Quest q : plugin.quests) {
-					if (q.name.equalsIgnoreCase(input)) {
+					if (q.getName().equalsIgnoreCase(input)) {
 						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
 						return new QuestNamePrompt();
 					}
@@ -403,7 +403,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				for (Quest q : plugin.quests) {
-					if (q.name.equalsIgnoreCase(input)) {
+					if (q.getName().equalsIgnoreCase(input)) {
 						String s = null;
 						if (context.getSessionData(CK.ED_QUEST_EDIT) != null) {
 							s = (String) context.getSessionData(CK.ED_QUEST_EDIT);
@@ -532,7 +532,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					if (quest.guiDisplay != null) {
 						if (ItemUtil.compareItems(stack, quest.guiDisplay, false) == 0) {
 							String error = Lang.get("questGUIError");
-							error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.name + ChatColor.RED);
+							error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
 							context.getForWhom().sendRawMessage(ChatColor.RED + error);
 							failed = true;
 							break;
@@ -1295,8 +1295,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 	@SuppressWarnings("deprecation")
 	public static void loadQuest(ConversationContext cc, Quest q) {
-		cc.setSessionData(CK.ED_QUEST_EDIT, q.name);
-		cc.setSessionData(CK.Q_NAME, q.name);
+		cc.setSessionData(CK.ED_QUEST_EDIT, q.getName());
+		cc.setSessionData(CK.Q_NAME, q.getName());
 		if (q.npcStart != null) {
 			cc.setSessionData(CK.Q_START_NPC, q.npcStart.getId());
 		}
@@ -1415,7 +1415,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		//
 		// Stages
 		int index = 1;
-		for (Stage stage : q.orderedStages) {
+		for (Stage stage : q.getStages()) {
 			final String pref = "stage" + index;
 			index++;
 			cc.setSessionData(pref, Boolean.TRUE);
@@ -1655,7 +1655,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + Lang.get("questDeleteTitle") + "\n";
 			for (Quest quest : plugin.quests) {
-				text += ChatColor.AQUA + quest.name + ChatColor.YELLOW + ",";
+				text += ChatColor.AQUA + quest.getName() + ChatColor.YELLOW + ",";
 			}
 			text = text.substring(0, text.length() - 1) + "\n";
 			text += ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
@@ -1669,12 +1669,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 				Quest found = plugin.findQuest(input);
 				if (found != null) {
 					for (Quest q : plugin.quests) {
-						if (q.neededQuests.contains(q.name) || q.blockQuests.contains(q.name)) {
-							used.add(q.name);
+						if (q.neededQuests.contains(q.getName()) || q.blockQuests.contains(q.getName())) {
+							used.add(q.getName());
 						}
 					}
 					if (used.isEmpty()) {
-						context.setSessionData(CK.ED_QUEST_DELETE, found.name);
+						context.setSessionData(CK.ED_QUEST_DELETE, found.getName());
 						return new DeletePrompt();
 					} else {
 						((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questEditorQuestAsRequirement1") + " \"" + ChatColor.DARK_PURPLE + context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\" " + Lang.get("questEditorQuestAsRequirement2"));

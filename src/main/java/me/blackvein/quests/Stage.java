@@ -35,11 +35,6 @@ public class Stage {
 	Integer fishToCatch;
 	Integer playersToKill;
 	Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
-	LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
-	LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
-	LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
-	LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-	LinkedList<String> areaNames = new LinkedList<String>();
 	LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
 	LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
 
@@ -100,19 +95,23 @@ public class Stage {
 		}
 	};
 	public LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
+	LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
+	LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
+	LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
+	LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
+	LinkedList<String> areaNames = new LinkedList<String>();
 	public LinkedList<Location> locationsToReach = new LinkedList<Location>();
 	public LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
 	public LinkedList<World> worldsToReachWithin = new LinkedList<World>();
 	public LinkedList<String> locationNames = new LinkedList<String>();
 	public Map<EntityType, Integer> mobsToTame = new EnumMap<EntityType, Integer>(EntityType.class);
 	public Map<DyeColor, Integer> sheepToShear = new EnumMap<DyeColor, Integer>(DyeColor.class);
-	public Map<EnumMap<Material, Integer>, Boolean> itemsToCraft = new HashMap<EnumMap<Material, Integer>, Boolean>();
+	public LinkedList<String> passwordDisplays = new LinkedList<String>();
+	public LinkedList<LinkedList<String>> passwordPhrases = new LinkedList<LinkedList<String>>();
 	public LinkedList<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
 	public LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
 	public LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
 	public LinkedList<Map<String, Object>> customObjectiveData = new LinkedList<Map<String, Object>>();
-	public LinkedList<String> passwordDisplays = new LinkedList<String>();
-	public LinkedList<LinkedList<String>> passwordPhrases = new LinkedList<LinkedList<String>>();
 	public String script;
 	public Event startEvent = null;
 	public Event deathEvent = null;
@@ -127,7 +126,9 @@ public class Stage {
 	public String objectiveOverride = null;
 	
 	/**
-	 * Check if stage has at least one objective EXCLUDING start/complete message
+	 * Check if stage has at least one objective<p>
+	 * 
+	 * Excludes start/complete message, delay, and objective-override
 	 * 
 	 * @return true if stage contains an objective
 	 */
@@ -139,6 +140,15 @@ public class Stage {
 		if (blocksToCut.isEmpty() == false) { return true; }
 		if (fishToCatch != null) { return true; }
 		if (playersToKill != null) { return true; }
+		if (itemsToEnchant.isEmpty() == false) { return true; }
+		if (itemsToDeliver.isEmpty() == false) { return true; }
+		if (citizensToInteract.isEmpty() == false) { return true; }
+		if (citizensToKill.isEmpty() == false) { return true; }
+		if (locationsToReach.isEmpty() == false) { return true; }
+		if (mobsToTame.isEmpty() == false) { return true; }
+		if (sheepToShear.isEmpty() == false) { return true; }
+		if (passwordDisplays.isEmpty() == false) { return true; }
+		if (customObjectives.isEmpty() == false) { return true; }
 		return false;
 	}
 }

@@ -33,7 +33,7 @@ public class StageTimer implements Runnable {
 	public void run() {
 		if (quester.getQuestData(quest).delayOver) {
 			Player player = quester.getPlayer();
-			if (quest.orderedStages.indexOf(quester.getCurrentStage(quest)) == (quest.orderedStages.size() - 1)) {
+			if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
 				if (quester.getCurrentStage(quest).script != null) {
 					plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(quest).script, player);
 				}
@@ -57,7 +57,7 @@ public class StageTimer implements Runnable {
 				quester.getQuestData(quest).delayStartTime = 0;
 				quester.getQuestData(quest).delayTimeLeft = -1;
 				String msg = Lang.get(player, "questObjectivesTitle");
-				msg = msg.replace("<quest>", quest.name);
+				msg = msg.replace("<quest>", quest.getName());
 				player.sendMessage(ChatColor.GOLD + msg);
 				plugin.showObjectives(quest, quester, false);
 				String stageStartMessage = quester.getCurrentStage(quest).startMessage;
