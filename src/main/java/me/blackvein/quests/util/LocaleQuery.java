@@ -62,7 +62,7 @@ public class LocaleQuery {
 					}
 				}
 				String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"");
-				player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
 				return;
 			}
 		}
@@ -100,7 +100,7 @@ public class LocaleQuery {
 				if (!key2.equals("")) {
 					String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"")
 							.replace("<enchantment>", "\",{\"translate\":\"" + key2 + "\"},\"");
-					player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
 					return;
 				}
 			}
@@ -120,7 +120,7 @@ public class LocaleQuery {
 			}
 			if (!key.equals("")) {
 				String msg = message.replace("<mob>", "\",{\"translate\":\"" + key + "\"},\"");
-				player.chat("/tellraw " + player.getName() + " [\"" + msg + "\"]");
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
 				return;
 			}
 		}

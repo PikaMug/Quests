@@ -1895,7 +1895,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
 				
 				Stage stage = quester.getCurrentStage(quest);
-				System.out.println("obj= " + obj);
 				if (obj.contains(Lang.get(quester.getPlayer(), "break"))) {
 					for (ItemStack is : stage.blocksToBreak) {
 						if (Material.matchMaterial(serial) != null) {
@@ -1944,14 +1943,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				//TODO find a better way to detect a deliver objective
 				else if (obj.contains(Lang.get(quester.getPlayer(), "deliver").split(" ")[0])) {
-					System.out.println("1");
 					for (ItemStack is : stage.itemsToDeliver) {
 						if (Material.matchMaterial(serial) != null) {
 							if (Material.matchMaterial(serial).equals(is.getType())) {
-								System.out.println("2");
 								String enchant = "";
 								if (!is.getEnchantments().isEmpty()) {
-									System.out.println("3");
 									//TODO parse multiple enchantments?
 									query.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>").replace(enchant, "<enchantment>"),
 											is.getType(), is.getDurability(), is.getEnchantments().entrySet().iterator().next().getKey());
