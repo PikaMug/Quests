@@ -57,6 +57,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -188,97 +189,101 @@ public class PlayerListener implements Listener {
 	@SuppressWarnings("deprecation") // since 1.13
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent evt) {
-		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
-			if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-				final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-				final Player player = evt.getPlayer();
-				boolean hasObjective = false;
-				for (Quest quest : quester.currentQuests.keySet()) {
-					if (quester.containsObjective(quest, "useBlock")) {
-						ItemStack i = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
-						quester.useBlock(quest, i);
-						hasObjective = true;
-					}
-				}
-				if (!hasObjective) {
-					if (plugin.questFactory.selectedBlockStarts.containsKey(evt.getPlayer().getUniqueId())) {
-						Block block = evt.getClickedBlock();
-						Location loc = block.getLocation();
-						plugin.questFactory.selectedBlockStarts.put(evt.getPlayer().getUniqueId(), block);
-						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-					} else if (plugin.eventFactory.selectedExplosionLocations.containsKey(evt.getPlayer().getUniqueId())) {
-						Block block = evt.getClickedBlock();
-						Location loc = block.getLocation();
-						plugin.eventFactory.selectedExplosionLocations.put(evt.getPlayer().getUniqueId(), block);
-						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-					} else if (plugin.eventFactory.selectedEffectLocations.containsKey(evt.getPlayer().getUniqueId())) {
-						Block block = evt.getClickedBlock();
-						Location loc = block.getLocation();
-						plugin.eventFactory.selectedEffectLocations.put(evt.getPlayer().getUniqueId(), block);
-						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-					} else if (plugin.eventFactory.selectedMobLocations.containsKey(evt.getPlayer().getUniqueId())) {
-						Block block = evt.getClickedBlock();
-						Location loc = block.getLocation();
-						plugin.eventFactory.selectedMobLocations.put(evt.getPlayer().getUniqueId(), block);
-						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType()))+ ChatColor.GOLD + ")");
-					} else if (plugin.eventFactory.selectedLightningLocations.containsKey(evt.getPlayer().getUniqueId())) {
-						Block block = evt.getClickedBlock();
-						Location loc = block.getLocation();
-						plugin.eventFactory.selectedLightningLocations.put(evt.getPlayer().getUniqueId(), block);
-						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-					} else if (plugin.eventFactory.selectedTeleportLocations.containsKey(evt.getPlayer().getUniqueId())) {
-						Block block = evt.getClickedBlock();
-						Location loc = block.getLocation();
-						plugin.eventFactory.selectedTeleportLocations.put(evt.getPlayer().getUniqueId(), block);
-						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-					} else if (plugin.questFactory.selectedKillLocations.containsKey(evt.getPlayer().getUniqueId())) {
-						Block block = evt.getClickedBlock();
-						Location loc = block.getLocation();
-						plugin.questFactory.selectedKillLocations.put(evt.getPlayer().getUniqueId(), block);
-						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-					} else if (plugin.questFactory.selectedReachLocations.containsKey(evt.getPlayer().getUniqueId())) {
-						Block block = evt.getClickedBlock();
-						Location loc = block.getLocation();
-						plugin.questFactory.selectedReachLocations.put(evt.getPlayer().getUniqueId(), block);
-						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-					} else if (player.isConversing() == false) {
-						for (final Quest q : plugin.quests) {
-							if (q.blockStart != null) {
-								if (q.blockStart.equals(evt.getClickedBlock().getLocation())) {
-									if (quester.currentQuests.size() >= plugin.maxQuests && plugin.maxQuests > 0) {
-										String msg = Lang.get(player, "questMaxAllowed");
-										msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
-										player.sendMessage(ChatColor.YELLOW + msg);
-									} else {
-										if (quester.completedQuests.contains(q.getName())) {
-											if (q.cooldownPlanner > -1 && (quester.getDifference(q)) > 0) {
-												String early = Lang.get(player, "questTooEarly");
-												early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-												early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
-												player.sendMessage(ChatColor.YELLOW + early);
-												return;
-											} else if (quester.completedQuests.contains(q.getName()) && q.cooldownPlanner < 0) {
-												String completed = Lang.get(player, "questAlreadyCompleted");
-												completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-												player.sendMessage(ChatColor.YELLOW + completed);
-												return;
-											}
-										}
-										quester.questToTake = q.getName();
-										String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
-										for (String msg : s.split("<br>")) {
-											player.sendMessage(msg);
-										}
-										plugin.conversationFactory.buildConversation(player).begin();
-									}
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		EquipmentSlot e = evt.getHand(); //Get the hand of the event and set it to 'e'.
+        if (e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
+        	if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+    			
+    			if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+    				final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+    				final Player player = evt.getPlayer();
+    				boolean hasObjective = false;
+    				for (Quest quest : quester.currentQuests.keySet()) {
+    					if (quester.containsObjective(quest, "useBlock")) {
+    						ItemStack i = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
+    						quester.useBlock(quest, i);
+    						hasObjective = true;
+    					}
+    				}
+    				if (!hasObjective) {
+    					if (plugin.questFactory.selectedBlockStarts.containsKey(evt.getPlayer().getUniqueId())) {
+    						Block block = evt.getClickedBlock();
+    						Location loc = block.getLocation();
+    						plugin.questFactory.selectedBlockStarts.put(evt.getPlayer().getUniqueId(), block);
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    					} else if (plugin.eventFactory.selectedExplosionLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    						Block block = evt.getClickedBlock();
+    						Location loc = block.getLocation();
+    						plugin.eventFactory.selectedExplosionLocations.put(evt.getPlayer().getUniqueId(), block);
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    					} else if (plugin.eventFactory.selectedEffectLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    						Block block = evt.getClickedBlock();
+    						Location loc = block.getLocation();
+    						plugin.eventFactory.selectedEffectLocations.put(evt.getPlayer().getUniqueId(), block);
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    					} else if (plugin.eventFactory.selectedMobLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    						Block block = evt.getClickedBlock();
+    						Location loc = block.getLocation();
+    						plugin.eventFactory.selectedMobLocations.put(evt.getPlayer().getUniqueId(), block);
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType()))+ ChatColor.GOLD + ")");
+    					} else if (plugin.eventFactory.selectedLightningLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    						Block block = evt.getClickedBlock();
+    						Location loc = block.getLocation();
+    						plugin.eventFactory.selectedLightningLocations.put(evt.getPlayer().getUniqueId(), block);
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    					} else if (plugin.eventFactory.selectedTeleportLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    						Block block = evt.getClickedBlock();
+    						Location loc = block.getLocation();
+    						plugin.eventFactory.selectedTeleportLocations.put(evt.getPlayer().getUniqueId(), block);
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    					} else if (plugin.questFactory.selectedKillLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    						Block block = evt.getClickedBlock();
+    						Location loc = block.getLocation();
+    						plugin.questFactory.selectedKillLocations.put(evt.getPlayer().getUniqueId(), block);
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    					} else if (plugin.questFactory.selectedReachLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    						Block block = evt.getClickedBlock();
+    						Location loc = block.getLocation();
+    						plugin.questFactory.selectedReachLocations.put(evt.getPlayer().getUniqueId(), block);
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    					} else if (player.isConversing() == false) {
+    						for (final Quest q : plugin.quests) {
+    							if (q.blockStart != null) {
+    								if (q.blockStart.equals(evt.getClickedBlock().getLocation())) {
+    									if (quester.currentQuests.size() >= plugin.maxQuests && plugin.maxQuests > 0) {
+    										String msg = Lang.get(player, "questMaxAllowed");
+    										msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
+    										player.sendMessage(ChatColor.YELLOW + msg);
+    									} else {
+    										if (quester.completedQuests.contains(q.getName())) {
+    											if (q.cooldownPlanner > -1 && (quester.getDifference(q)) > 0) {
+    												String early = Lang.get(player, "questTooEarly");
+    												early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+    												early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+    												player.sendMessage(ChatColor.YELLOW + early);
+    												return;
+    											} else if (quester.completedQuests.contains(q.getName()) && q.cooldownPlanner < 0) {
+    												String completed = Lang.get(player, "questAlreadyCompleted");
+    												completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+    												player.sendMessage(ChatColor.YELLOW + completed);
+    												return;
+    											}
+    										}
+    										quester.questToTake = q.getName();
+    										String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+    										for (String msg : s.split("<br>")) {
+    											player.sendMessage(msg);
+    										}
+    										plugin.conversationFactory.buildConversation(player).begin();
+    									}
+    									break;
+    								}
+    							}
+    						}
+    					}
+    				}
+    			}
+    		}
+        }
 	}
 
 	@SuppressWarnings("deprecation")

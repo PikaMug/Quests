@@ -437,6 +437,7 @@ public class Quester {
 				stage.startEvent.fire(this, q);
 			}
 			q.updateCompass(this, stage);
+			//q.updateGPS(this, stage);
 			saveData();
 		} else {
 			player.sendMessage(q.failRequirements);
@@ -746,7 +747,7 @@ public class Quester {
 	 * 
 	 * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
 	 * cutBlock, catchFish, enchantItem, killMob, deliverItem, killPlayer,
-	 * talkToNPC, killNPC, tameMob, shearSheep, password, reachLocations
+	 * talkToNPC, killNPC, tameMob, shearSheep, password, reachLocation
 	 * 
 	 * @deprecated Use containsObjective() instead
 	 * @param quest The quest to check objectives of
@@ -762,7 +763,7 @@ public class Quester {
 	 * 
 	 * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
 	 * cutBlock, catchFish, enchantItem, killMob, deliverItem, killPlayer,
-	 * talkToNPC, killNPC, tameMob, shearSheep, password, reachLocations
+	 * talkToNPC, killNPC, tameMob, shearSheep, password, reachLocation
 	 * 
 	 * @param quest The quest to check objectives of
 	 * @param s The type of objective to check for
@@ -802,7 +803,7 @@ public class Quester {
 			return !getCurrentStage(quest).sheepToShear.isEmpty();
 		} else if (s.equalsIgnoreCase("password")) {
 			return !getCurrentStage(quest).passwordPhrases.isEmpty();
-		} else if (s.equalsIgnoreCase("reachLocations")) {
+		} else if (s.equalsIgnoreCase("reachLocation")) {
 			return !getCurrentStage(quest).locationsToReach.isEmpty();
 		} else {
 			return false;
@@ -1148,6 +1149,12 @@ public class Quester {
 	}
 
 	public void reachLocation(Quest quest, Location l) {
+		if (getQuestData(quest).locationsReached == null) {
+			return;
+		}
+		if (getQuestData(quest).locationsReached.isEmpty()) {
+			return;
+		}
 		for (Location location : getQuestData(quest).locationsReached) {
 			try {
 				int index = getQuestData(quest).locationsReached.indexOf(location);
@@ -2693,6 +2700,11 @@ public class Quester {
 					}
 				}
 			}
+			/*if (Quests.gpsapi != null) {
+				if (Quests.gpsapi.gpsIsActive(this.getPlayer())) {
+					Quests.gpsapi.stopGPS(this.getPlayer());
+				}
+			}*/
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
