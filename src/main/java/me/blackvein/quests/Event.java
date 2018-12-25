@@ -93,7 +93,7 @@ public class Event {
 	public void fire(Quester quester, Quest quest) {
 		Player player = quester.getPlayer();
 		if (message != null) {
-			player.sendMessage(Quests.parseString(message, quest));
+			player.sendMessage(Quests.parseString(message, quest, player));
 		}
 		if (clearInv == true) {
 			player.getInventory().clear();

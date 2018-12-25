@@ -112,7 +112,7 @@ public class Quest {
 	public void nextStage(Quester q) {
 		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
 		if (stageCompleteMessage != null) {
-			String s = Quests.parseString(stageCompleteMessage, this);
+			String s = Quests.parseString(stageCompleteMessage, this, q.getPlayer());
 			if(Quests.placeholder != null) {
 				s = PlaceholderAPI.setPlaceholders(q.getPlayer(), s);
 			}
@@ -172,12 +172,12 @@ public class Quest {
 		}
 		updateCompass(quester, nextStage);
 		String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");
-		msg = msg.replaceAll("<quest>", name);
+		msg = msg.replace("<quest>", name);
 		quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
 		plugin.showObjectives(this, quester, false);
 		String stageStartMessage = quester.getCurrentStage(this).startMessage;
 		if (stageStartMessage != null) {
-			quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this));
+			quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this, quester.getPlayer()));
 		}
 		quester.updateJournal();
 	}
@@ -367,7 +367,7 @@ public class Quest {
 			q.completedQuests.add(name);
 		}
 		String none = ChatColor.GRAY + "- (" + Lang.get(player, "none") + ")";
-		final String ps = Quests.parseString(finished, this);
+		final String ps = Quests.parseString(finished, this, player);
 		for (Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
 			if (entry.getValue().getName().equals(getName())) {
 				plugin.getServer().getScheduler().cancelTask(entry.getKey());
@@ -407,7 +407,7 @@ public class Quest {
 			none = null;
 		}
 		for (String s : commands) {
-			final String command = s.replaceAll("<player>", player.getName());
+			final String command = s.replace("<player>", player.getName());
 			if (Bukkit.isPrimaryThread()) {
 				Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
 			} else {
@@ -477,7 +477,7 @@ public class Quest {
 			none = null;
 		}
 		String complete = Lang.get(player, "questCompleteTitle");
-		complete = complete.replaceAll("<quest>", ChatColor.YELLOW + name + ChatColor.GOLD);
+		complete = complete.replace("<quest>", ChatColor.YELLOW + name + ChatColor.GOLD);
 		player.sendMessage(ChatColor.GOLD + complete);
 		player.sendMessage(ChatColor.GREEN + Lang.get(player, "questRewardsTitle"));
 		if (plugin.showQuestTitles) {
@@ -598,7 +598,7 @@ public class Quest {
 				String message = found.getRewardName();
 				if (message != null) {
 					for (String key : datamap.keySet()) {
-						message = message.replaceAll("%" + ((String) key) + "%", ((String) datamap.get(key)));
+						message = message.replace("%" + ((String) key) + "%", ((String) datamap.get(key)));
 					}
 					player.sendMessage("- " + ChatColor.GOLD + message);
 				} else {
@@ -629,7 +629,7 @@ public class Quest {
 		if (plugin.getServer().getPlayer(q.id) != null) {
 			Player player = plugin.getServer().getPlayer(q.id);
 			String title = Lang.get(player, "questTitle");
-			title = title.replaceAll("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
+			title = title.replace("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
 			player.sendMessage(ChatColor.AQUA + title);
 			player.sendMessage(ChatColor.RED + Lang.get(player, "questFailed"));
 			q.hardQuit(this);

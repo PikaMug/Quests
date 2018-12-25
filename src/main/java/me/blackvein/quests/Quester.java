@@ -418,7 +418,7 @@ public class Quester {
 			plugin.showObjectives(q, this, false);
 			String stageStartMessage = stage.startMessage;
 			if (stageStartMessage != null) {
-				getPlayer().sendMessage(Quests.parseString(stageStartMessage, q));
+				getPlayer().sendMessage(Quests.parseString(stageStartMessage, q, getPlayer()));
 			}
 			if (stage.chatEvents.isEmpty() == false) {
 				for (String chatTrigger : stage.chatEvents.keySet()) {
@@ -2498,7 +2498,8 @@ public class Quester {
 		} else {
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getCurrentStage(quest).delay * 0.02));
 			if (getCurrentStage(quest).delayMessage != null) {
-				plugin.getServer().getPlayer(id).sendMessage(Quests.parseString((getCurrentStage(quest).delayMessage), quest));
+				Player p = plugin.getServer().getPlayer(id);
+				p.sendMessage(Quests.parseString((getCurrentStage(quest).delayMessage), quest, p));
 			}
 		}
 		getQuestData(quest).delayStartTime = System.currentTimeMillis();
