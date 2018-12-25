@@ -616,11 +616,11 @@ public class Quest {
 		q.saveData();
 		player.updateInventory();
 		q.updateJournal();
-		if (Quests.gpsapi != null) {
+		/*if (Quests.gpsapi != null) {
 			if (Quests.gpsapi.gpsIsActive(player)) {
 				Quests.gpsapi.stopGPS(player);
 			}
-		}
+		}*/
 		q.findCompassTarget();
 	}
 

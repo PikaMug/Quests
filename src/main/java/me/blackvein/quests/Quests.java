@@ -88,7 +88,6 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-import com.live.bemmamin.gps.api.GPSAPI;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -120,7 +119,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static Permission permission = null;
 	public static WorldGuardPlugin worldGuard = null;
 	public static mcMMO mcmmo = null;
-	public static GPSAPI gpsapi = null;
+	//public static GPSAPI gpsapi = null;
 	public static Heroes heroes = null;
 	public static PhatLoots phatLoots = null;
 	public static PlaceholderAPIPlugin placeholder = null;
@@ -430,9 +429,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (isPluginReady("mcMMO")) {
 			mcmmo = (mcMMO) getServer().getPluginManager().getPlugin("mcMMO");
 		}
-		if (isPluginReady("GPS")) {
+		/*if (isPluginReady("GPS")) {
 			gpsapi = new GPSAPI(this);
-		}
+		}*/
 		if (isPluginReady("Heroes")) {
 			heroes = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
 		}

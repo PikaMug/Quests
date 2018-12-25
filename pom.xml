@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>3.5.6</version>
+    <version>3.5.7</version>
     <name>quests</name>
     <url>https://github.com/FlyingPikachu/Quests/</url>
     <packaging>jar</packaging>
@@ -185,13 +185,6 @@
             <version>2.4.7</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/CitizensBooks-2.4.7.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.live.bemmamin</groupId>
-            <artifactId>GPS</artifactId>
-            <version>2.2.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/GPS.jar</systemPath>
         </dependency>
     </dependencies>
 
