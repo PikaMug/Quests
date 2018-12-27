@@ -247,6 +247,16 @@ public class ItemUtil {
 						}
 					}
 					extra.put(key, nested);
+				} else if (value.equals("true")) {
+					// For some NBT tags
+					try {
+				        if (key.equalsIgnoreCase("unbreakable")) {
+				        	meta.setUnbreakable(true);
+				        }
+				    } catch (Throwable tr) {
+				    	Bukkit.getLogger().info("You are running a version of CraftBukkit"
+				    			+ " for which Quests cannot set the NBT tag " + key);
+				    }
 				} else {
 					extra.put(key, value);
 				}
@@ -260,7 +270,11 @@ public class ItemUtil {
 		}
 		meta = stack.getItemMeta();
 		if (!extra.isEmpty()) {
-			meta = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) extra);
+			ItemMeta toLoad = null;
+			toLoad = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) extra);
+			if (toLoad != null) {
+				meta = toLoad;
+			}
 		}
 		if (!enchs.isEmpty()) {
 			for (Enchantment e : enchs.keySet()) {
