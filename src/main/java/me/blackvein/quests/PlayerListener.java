@@ -190,6 +190,9 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent evt) {
 		EquipmentSlot e = evt.getHand(); //Get the hand of the event and set it to 'e'.
+		if (e == null) {
+			return;
+		}
         if (e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
         	if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
     			
