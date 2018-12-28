@@ -91,7 +91,11 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		if (map != null) {
 			if (!map.isEmpty()) {
 				menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.DARK_GREEN + Lang.get("itemCreateSetClearMeta") + "\n";
+			} else {
+				menu += ChatColor.GRAY + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GRAY + Lang.get("itemCreateSetClearMeta") + "\n";
 			}
+		} else {
+			menu += ChatColor.GRAY + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GRAY + Lang.get("itemCreateSetClearMeta") + "\n";
 		}
 		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.RED + Lang.get("cancel") + "\n";
 		menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "9. " + ChatColor.RESET + "" + ChatColor.GREEN + Lang.get("done") + "\n";
@@ -158,7 +162,6 @@ public class ItemStackPrompt extends FixedSetPrompt {
 			}
 		} else if (input.equalsIgnoreCase("1")) {
 			cc.setSessionData("tempMeta", null);
-			
 			return new NamePrompt();
 		} else if (input.equalsIgnoreCase("2")) {
 			if (cc.getSessionData("tempName") != null) {
@@ -295,15 +298,6 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				} else {
 					cc.setSessionData("tempName", mat.name());
 					cc.setSessionData("tempAmount", 1);
-					if (s != null) {
-						try {
-							short data = Short.parseShort(s);
-							cc.setSessionData("tempData", data);
-						} catch (NumberFormatException e) {
-							cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidData"));
-							return new NamePrompt();
-						}
-					}
 					return new ItemStackPrompt(oldPrompt);
 				}
 			} else {
