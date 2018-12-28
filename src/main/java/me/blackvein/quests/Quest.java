@@ -182,37 +182,7 @@ public class Quest {
 		quester.updateJournal();
 	}
 	
-	/*protected boolean updateGPS(Quester quester, Stage nextStage) {
-		if (Quests.gpsapi == null) {
-			return false;
-		}
-		if (!plugin.useCompass) {
-			return false;
-		}
-		if (nextStage == null) {
-			return false;
-		}
-		Location targetLocation = null;
-		if (nextStage.citizensToInteract != null && nextStage.citizensToInteract.size() > 0) {
-			targetLocation = plugin.getNPCLocation(nextStage.citizensToInteract.getFirst());
-		} else if (nextStage.citizensToKill != null && nextStage.citizensToKill.size() > 0) {
-			targetLocation = plugin.getNPCLocation(nextStage.citizensToKill.getFirst());
-		} else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0) {
-			targetLocation = nextStage.locationsToReach.getFirst();
-		}
-		if (targetLocation != null) {
-			if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
-				Quests.gpsapi.addPoint("questsObjective-" + System.currentTimeMillis(), targetLocation);
-				if (!Quests.gpsapi.gpsIsActive(quester.getPlayer())) {
-					Quests.gpsapi.startGPS(quester.getPlayer(), "questsObjective-" + System.currentTimeMillis());
-				}
-				
-			}
-		}
-		return targetLocation != null;
-	}*/
-	
-	/*protected boolean startGPS(Quester quester) {
+	protected boolean updateGPS(Quester quester) {
 		if (Quests.gpsapi == null) {
 			return false;
 		}
@@ -230,30 +200,30 @@ public class Quest {
 				targetLocations.add(plugin.getNPCLocation(i));
 			}
 		} else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
-			targetLocations = stage.locationsToReach;
+			targetLocations.addAll(stage.locationsToReach);
 		}
 		if (targetLocations != null && !targetLocations.isEmpty()) {
 			int index = 1;
+			String pointName = "quests-" + quester.getPlayer().getUniqueId().toString();
 			for (Location l : targetLocations) {
 				if (l.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
 					if (!Quests.gpsapi.gpsIsActive(quester.getPlayer())) {
-						System.out.println("adding point " + index);
-						Quests.gpsapi.addPoint("target" + index, l);
+						Quests.gpsapi.addPoint(pointName + index, l);
 						index++;
 					}
 				}
 			}
 			for (int i = 1 ; i < targetLocations.size(); i++) {
 				if (!Quests.gpsapi.gpsIsActive(quester.getPlayer())) {
-					System.out.println("connecting point " + i + " and point " + (i + 1));
-					Quests.gpsapi.connect("target" + i, "target" + (i + 1), true);
+					Quests.gpsapi.connect(pointName + i, pointName + (i + 1), true);
 				}
 			}
-			System.out.println("destination set to " + "point " + (index - 1));
-			Quests.gpsapi.startGPS(quester.getPlayer(), "target1", "target" + (index - 1));
+			if (!Quests.gpsapi.gpsIsActive(quester.getPlayer())) {
+				Quests.gpsapi.startGPS(quester.getPlayer(), pointName + (index - 1));
+			}
 		}
 		return targetLocations != null && !targetLocations.isEmpty();
-	}*/
+	}
 
 	public boolean updateCompass(Quester quester, Stage nextStage) {
 		if (!plugin.useCompass) {
@@ -616,11 +586,11 @@ public class Quest {
 		q.saveData();
 		player.updateInventory();
 		q.updateJournal();
-		/*if (Quests.gpsapi != null) {
+		if (Quests.gpsapi != null) {
 			if (Quests.gpsapi.gpsIsActive(player)) {
 				Quests.gpsapi.stopGPS(player);
 			}
-		}*/
+		}
 		q.findCompassTarget();
 	}
 

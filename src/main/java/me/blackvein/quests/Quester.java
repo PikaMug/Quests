@@ -437,7 +437,7 @@ public class Quester {
 				stage.startEvent.fire(this, q);
 			}
 			q.updateCompass(this, stage);
-			//q.updateGPS(this, stage);
+			q.updateGPS(this);
 			saveData();
 		} else {
 			player.sendMessage(q.failRequirements);
@@ -2701,11 +2701,11 @@ public class Quester {
 					}
 				}
 			}
-			/*if (Quests.gpsapi != null) {
+			if (Quests.gpsapi != null) {
 				if (Quests.gpsapi.gpsIsActive(this.getPlayer())) {
 					Quests.gpsapi.stopGPS(this.getPlayer());
 				}
-			}*/
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
