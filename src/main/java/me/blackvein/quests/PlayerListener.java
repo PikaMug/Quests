@@ -189,11 +189,13 @@ public class PlayerListener implements Listener {
 	@SuppressWarnings("deprecation") // since 1.13
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent evt) {
-		EquipmentSlot e = evt.getHand(); //Get the hand of the event and set it to 'e'.
-		if (e == null) {
-			return;
+		EquipmentSlot e = null;
+		try {
+			e = evt.getHand();
+		} catch (NoSuchMethodError err) {
+			// Do nothing, getHand() not present pre-1.9
 		}
-        if (e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
+        if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
         	if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
     			
     			if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
