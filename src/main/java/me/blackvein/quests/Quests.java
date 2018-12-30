@@ -1977,7 +1977,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								query.sendMessage(quester.getPlayer(), obj.replace(serial, "<mob>"), type);
 							}
 						} catch (IllegalArgumentException iae) {
-							// Do nothing
+							// Could be Kill a Player objective
+							quester.getPlayer().sendMessage(obj);
 						}
 						break;
 					}
