@@ -1970,14 +1970,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						}
 					}
 				} else if (obj.contains(Lang.get(quester.getPlayer(), "kill"))) {
+					if (stage.mobsToKill == null || stage.mobsToKill.isEmpty()) {
+						// Could be Kill a Player objective
+						quester.getPlayer().sendMessage(obj);
+						return;
+					}
 					for (EntityType type : stage.mobsToKill) {
 						try {
 							EntityType et = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
 							if (et.equals(type)) {
 								query.sendMessage(quester.getPlayer(), obj.replace(serial, "<mob>"), type);
+								break;
 							}
 						} catch (IllegalArgumentException iae) {
-							// Could be Kill a Player objective
+							// Could be Kill a Player objective 
 							quester.getPlayer().sendMessage(obj);
 						}
 						break;
