@@ -2387,57 +2387,61 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				skipQuestProcess("quest-points: Reward in Quest " + quest.getName() + " is not a number!");
 			}
 		}
-		if (config.contains("quests." + questName + ".rewards.mcmmo-skills")) {
-			if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-skills"), String.class)) {
-				if (config.contains("quests." + questName + ".rewards.mcmmo-levels")) {
-					if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-levels"), Integer.class)) {
-						for (String skill : config.getStringList("quests." + questName + ".rewards.mcmmo-skills")) {
-							if (Quests.mcmmo == null) {
-								skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.getName() + " requires the mcMMO plugin!");
-							} else if (Quests.getMcMMOSkill(skill) == null) {
-								skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.getName() + " is not a valid mcMMO skill name!");
+		if (isPluginReady("mcMMO")) {
+			if (config.contains("quests." + questName + ".rewards.mcmmo-skills")) {
+				if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-skills"), String.class)) {
+					if (config.contains("quests." + questName + ".rewards.mcmmo-levels")) {
+						if (Quests.checkList(config.getList("quests." + questName + ".rewards.mcmmo-levels"), Integer.class)) {
+							for (String skill : config.getStringList("quests." + questName + ".rewards.mcmmo-skills")) {
+								if (Quests.mcmmo == null) {
+									skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.getName() + " requires the mcMMO plugin!");
+								} else if (Quests.getMcMMOSkill(skill) == null) {
+									skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.getName() + " is not a valid mcMMO skill name!");
+								}
 							}
+							quest.mcmmoSkills.clear();
+							quest.mcmmoAmounts.clear();
+							quest.mcmmoSkills.addAll(config.getStringList("quests." + questName + ".rewards.mcmmo-skills"));
+							quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
+						} else {
+							skipQuestProcess("mcmmo-levels: Reward in Quest " + quest.getName() + " is not a list of numbers!");
 						}
-						quest.mcmmoSkills.clear();
-						quest.mcmmoAmounts.clear();
-						quest.mcmmoSkills.addAll(config.getStringList("quests." + questName + ".rewards.mcmmo-skills"));
-						quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
 					} else {
-						skipQuestProcess("mcmmo-levels: Reward in Quest " + quest.getName() + " is not a list of numbers!");
+						skipQuestProcess("Rewards for Quest " + quest.getName() + " is missing mcmmo-levels:");
 					}
 				} else {
-					skipQuestProcess("Rewards for Quest " + quest.getName() + " is missing mcmmo-levels:");
+					skipQuestProcess("mcmmo-skills: Reward in Quest " + quest.getName() + " is not a list of mcMMO skill names!");
 				}
-			} else {
-				skipQuestProcess("mcmmo-skills: Reward in Quest " + quest.getName() + " is not a list of mcMMO skill names!");
 			}
 		}
-		if (config.contains("quests." + questName + ".rewards.heroes-exp-classes")) {
-			if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-classes"), String.class)) {
-				if (config.contains("quests." + questName + ".rewards.heroes-exp-amounts")) {
-					if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-amounts"), Double.class)) {
-						for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
-							if (Quests.mcmmo == null) {
-								skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.getName() + " requires the Heroes plugin!");
-							} else if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
-								skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.getName() + " is not a valid Heroes class name!");
+		if (isPluginReady("Heroes")) {
+			if (config.contains("quests." + questName + ".rewards.heroes-exp-classes")) {
+				if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-classes"), String.class)) {
+					if (config.contains("quests." + questName + ".rewards.heroes-exp-amounts")) {
+						if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-amounts"), Double.class)) {
+							for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
+								if (Quests.mcmmo == null) {
+									skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.getName() + " requires the Heroes plugin!");
+								} else if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
+									skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.getName() + " is not a valid Heroes class name!");
+								}
 							}
+							quest.heroesClasses.clear();
+							quest.heroesAmounts.clear();
+							quest.heroesClasses.addAll(config.getStringList("quests." + questName + ".rewards.heroes-exp-classes"));
+							quest.heroesAmounts.addAll(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
+						} else {
+							skipQuestProcess("heroes-exp-amounts: Reward in Quest " + quest.getName() + " is not a list of experience amounts (decimal numbers)!");
 						}
-						quest.heroesClasses.clear();
-						quest.heroesAmounts.clear();
-						quest.heroesClasses.addAll(config.getStringList("quests." + questName + ".rewards.heroes-exp-classes"));
-						quest.heroesAmounts.addAll(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
 					} else {
-						skipQuestProcess("heroes-exp-amounts: Reward in Quest " + quest.getName() + " is not a list of experience amounts (decimal numbers)!");
+						skipQuestProcess("Rewards for Quest " + quest.getName() + " is missing heroes-exp-amounts:");
 					}
 				} else {
-					skipQuestProcess("Rewards for Quest " + quest.getName() + " is missing heroes-exp-amounts:");
+					skipQuestProcess("heroes-exp-classes: Reward in Quest " + quest.getName() + " is not a list of Heroes classes!");
 				}
-			} else {
-				skipQuestProcess("heroes-exp-classes: Reward in Quest " + quest.getName() + " is not a list of Heroes classes!");
 			}
 		}
-		if (getServer().getPluginManager().getPlugin("PhatLoots") != null) {
+		if (isPluginReady("PhatLoots")) {
 			if (config.contains("quests." + questName + ".rewards.phat-loots")) {
 				if (Quests.checkList(config.getList("quests." + questName + ".rewards.phat-loots"), String.class)) {
 					for (String loot : config.getStringList("quests." + questName + ".rewards.phat-loots")) {
