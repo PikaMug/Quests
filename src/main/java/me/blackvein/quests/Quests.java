@@ -2420,7 +2420,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					if (config.contains("quests." + questName + ".rewards.heroes-exp-amounts")) {
 						if (Quests.checkList(config.getList("quests." + questName + ".rewards.heroes-exp-amounts"), Double.class)) {
 							for (String heroClass : config.getStringList("quests." + questName + ".rewards.heroes-exp-classes")) {
-								if (Quests.mcmmo == null) {
+								if (Quests.heroes == null) {
 									skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.getName() + " requires the Heroes plugin!");
 								} else if (Quests.heroes.getClassManager().getClass(heroClass) == null) {
 									skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.getName() + " is not a valid Heroes class name!");
