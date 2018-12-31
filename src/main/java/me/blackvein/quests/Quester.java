@@ -49,6 +49,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -838,8 +839,12 @@ public class Quester {
 		for (ItemStack is : getQuestData(quest).blocksBroken) {
 			if (m.getType() == is.getType()) {
 				if (m.getType().isSolid() && is.getType().isSolid()) {
+					
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
+						broken = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
 						broken = is;
 					}
 				} else {
@@ -851,8 +856,12 @@ public class Quester {
 		for (ItemStack is : getCurrentStage(quest).blocksToBreak) {
 			if (m.getType() == is.getType()) {
 				if (m.getType().isSolid() && is.getType().isSolid()) {
+					
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
+						toBreak = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
 						toBreak = is;
 					}
 				} else {
@@ -885,6 +894,9 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						damaged = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
+						damaged = is;
 					}
 				} else {
 					//Blocks are not solid so ignore durability
@@ -897,6 +909,9 @@ public class Quester {
 				if (m.getType().isSolid() && is.getType().isSolid()) {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
+						toDamage = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
 						toDamage = is;
 					}
 				} else {
@@ -929,6 +944,9 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						placed = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
+						placed = is;
 					}
 				} else {
 					//Blocks are not solid so ignore durability
@@ -941,6 +959,9 @@ public class Quester {
 				if (m.getType().isSolid() && is.getType().isSolid()) {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
+						toPlace = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
 						toPlace = is;
 					}
 				} else {
@@ -973,6 +994,9 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						used = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
+						used = is;
 					}
 				} else {
 					//Blocks are not solid so ignore durability
@@ -985,6 +1009,9 @@ public class Quester {
 				if (m.getType().isSolid() && is.getType().isSolid()) {
 					//Blocks are solid, so check durability
 					if (m.getDurability() == is.getDurability()) {
+						toUse = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
 						toUse = is;
 					}
 				} else {
@@ -1017,6 +1044,9 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						cut = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
+						cut = is;
 					}
 				} else {
 					//Blocks are not solid so ignore durability
@@ -1029,6 +1059,9 @@ public class Quester {
 				if (m.getType().isSolid() && is.getType().isSolid()) {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
+						toCut = is;
+					} else if (!LocaleQuery.oldVersion) {
+						//Ignore durability for 1.13+
 						toCut = is;
 					}
 				} else {

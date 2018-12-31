@@ -31,7 +31,7 @@ public class LocaleQuery {
 	private static Class<?> craftMagicNumbers = null;
 	private static Class<?> itemClazz = null;
 	private final Quests plugin;
-	private static boolean oldVersion = false;
+	public static boolean oldVersion = false;
 	
 	public LocaleQuery(Quests plugin){
 		this.plugin = plugin;
