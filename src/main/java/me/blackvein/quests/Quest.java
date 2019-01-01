@@ -171,6 +171,7 @@ public class Quest {
 			nextStage.startEvent.fire(quester, this);
 		}
 		updateCompass(quester, nextStage);
+		updateGPS(quester);
 		String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");
 		msg = msg.replace("<quest>", name);
 		quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
