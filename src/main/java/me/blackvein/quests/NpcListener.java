@@ -62,8 +62,10 @@ public class NpcListener implements Listener {
 				if (quester.containsObjective(quest, "deliverItem") && player.getItemInHand() != null) {
 					ItemStack hand = player.getItemInHand();
 					ItemStack found = null;
+					int reasonCode = 0;
 					for (ItemStack is : quester.getCurrentStage(quest).itemsToDeliver) {
-						if (ItemUtil.compareItems(is, hand, true) == 0) {
+						reasonCode = ItemUtil.compareItems(is, hand, true);
+						if (reasonCode == 0) {
 							found = is;
 							break;
 						}
@@ -90,7 +92,30 @@ public class NpcListener implements Listener {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-								plugin.query.sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability());
+								plugin.query.sendMessage(player, Lang.get(player, "difference").replace("<item>", text), hand.getType(), hand.getDurability());
+								switch(reasonCode) {
+									case 1:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "one item is null"));
+									case 0:
+										// Should never happen
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "ERROR"));
+									case -1:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "name"));
+									case -2:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "amount"));
+									case -3:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "durability"));
+									case -4:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "display name or lore"));
+									case -5:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "enchantments"));
+									case -6:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "stored enchants"));
+									case -7:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "item flags"));
+									default:
+										player.sendMessage(Lang.get(player, "difference").replace("<data>", "unknown"));
+								}
 								if (hand.hasItemMeta()) {
 									if (hand.getType().equals(Material.ENCHANTED_BOOK)) {
 										EnchantmentStorageMeta esmeta = (EnchantmentStorageMeta) hand.getItemMeta();

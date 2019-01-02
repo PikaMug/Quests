@@ -50,6 +50,7 @@ public class ItemUtil {
 	 * -4 if stack display name/lore is unequal<br>
 	 * -5 if stack enchantments are unequal<br>
 	 * -6 if stack stored enchants are unequal
+	 * -7 if stack item flags are unequal
 	 */
 	@SuppressWarnings("deprecation")
 	public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
@@ -83,7 +84,7 @@ public class ItemUtil {
 			}
 			for (ItemFlag flag : ItemFlag.values()) {
 				if (one.getItemMeta().hasItemFlag(flag) == false && two.getItemMeta().hasItemFlag(flag)) {
-					return -4;
+					return -7;
 				}
 			}
 		}
