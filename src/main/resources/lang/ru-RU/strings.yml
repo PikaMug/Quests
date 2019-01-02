@@ -856,3 +856,4 @@ timerStart: "%green%У вас есть%red% <time> секунд%green% чтоб�
 questErrorReadingFile: "Ошибка в файле quests."
 questSaveError: "Произошла ошибка про сохранении."
 noPermission: "У вас недостаточно прав для этого."
+difference: "The difference is '<data>'."
