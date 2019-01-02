@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Eklemek için özel nesnenin adını girin, <clear>, <
 stageEditorCustomAlreadyAdded: "Bu özel nesne zaten mevcut!"
 stageEditorCustomCleared: "Özel nesneler silindi."
 stageEditorCustomDataPrompt: "<data> için değer girin:"
-stageEditorEnterBlockNames: "Blok adlarını (ya da ID) girin, <space>, <cancel>"
+stageEditorEnterBlockNames: "Blok adlarını girin, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Darbe miktarını (sayı) girin, <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Darbe miktarını (sayı olarak) girin, <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Konum değerlerini (sayı olarak) girin, <space>, <cancel>"
