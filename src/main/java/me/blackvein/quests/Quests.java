@@ -683,8 +683,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_TOP") : "top"));
 		}
 		// player.sendMessage(GOLD + "/quests party - Quest Party commands");
+		if (player.hasPermission("quests.info")) {
 		player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_INFO_HELP")
 				.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_INFO") : "info"));
+		}
 		player.sendMessage(" ");
 		player.sendMessage(ChatColor.YELLOW + "/quest " + Lang.get(player, "COMMAND_QUEST_HELP"));
 		if (player.hasPermission("quests.questinfo")) {
@@ -1352,10 +1354,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	private boolean questsInfo(final CommandSender cs) {
-		cs.sendMessage(ChatColor.GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
-		cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.DARK_RED + "Blackvein"
-				+ ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.DARK_RED + "FlyingPikachu");
-		cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE + "https://www.spigotmc.org/resources/quests.3711/");
+		if (cs.hasPermission("quests.info")) {
+			cs.sendMessage(ChatColor.GOLD + Lang.get("quests") + " " + this.getDescription().getVersion());
+			cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.DARK_RED + "Blackvein"
+					+ ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.DARK_RED + "FlyingPikachu");
+			cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE + "https://www.spigotmc.org/resources/quests.3711/");
+		}
 		return true;
 	}
 
