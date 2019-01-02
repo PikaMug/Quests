@@ -856,3 +856,4 @@ timerStart: "%green%Du hat%red% <time> Sekunden%green% um diese Quest/Abschnitt 
 questErrorReadingFile: "Fehler beim Lesen der Questdatei."
 questSaveError: "Beim Speichern ist ein Fehler aufgetreten."
 noPermission: "Du hast keine Erlaubnis das zu tun."
+difference: "The difference is '<data>'."
