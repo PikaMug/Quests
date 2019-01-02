@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Entrez le nom d'un objectif customisé pour l'ajouter,
 stageEditorCustomAlreadyAdded: "Cet objectif customisé a déjà été ajouté !"
 stageEditorCustomCleared: "Objectifs personnalisés effacés."
 stageEditorCustomDataPrompt: "Entrez la valeur pour <data> :"
-stageEditorEnterBlockNames: "Entrez les noms de blocs (ou IDs), <space>, <cancel>"
+stageEditorEnterBlockNames: "Entrez les noms de blocs, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Entrez les montants de rupture (nombres), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Entrez les montants des dommages (nombres), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Entrez les montants à placer (nombres), <space>, <cancel>"
