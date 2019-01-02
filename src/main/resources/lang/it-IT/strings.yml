@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Inserisci il nome di un obiettivo personalizzato da ag
 stageEditorCustomAlreadyAdded: "Quell'obiettivo personalizzato è già stato aggiunto!"
 stageEditorCustomCleared: "Obiettivi personalizzati cancellato."
 stageEditorCustomDataPrompt: "Inserire el valore per<data>:"
-stageEditorEnterBlockNames: "Immettere blocco nomi (o ID), <space>, <cancel>"
+stageEditorEnterBlockNames: "Immettere blocco nomi, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Inserisci gli importi delle interruzioni (numeri), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Inserissci gli importi dei danni (numero), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Inserisci gli importi del luogo (numeri), <space>, <cancel>"
