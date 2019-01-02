@@ -856,3 +856,4 @@ timerStart: "%green%Bạn có%red% <time> giây%green% để hoàn thành nhiệ
 questErrorReadingFile: "Lỗi khi đang đọc file Nhiệm vụ."
 questSaveError: "Có lỗi xảy ra trong khi đang lưu."
 noPermission: "Bạn không có quyền để làm điều đó."
+difference: "The difference is '<data>'."
