@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Enter the name of a custom objective to add, <clear>, 
 stageEditorCustomAlreadyAdded: "That custom objective has already been added!"
 stageEditorCustomCleared: "Obiective personalizate șterse."
 stageEditorCustomDataPrompt: "Introdu valoarea pentru <data>:"
-stageEditorEnterBlockNames: "Introdu numele blocurilor (sau id-ul), <space>, <cancel>"
+stageEditorEnterBlockNames: "Introdu numele blocurilor, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Introdu sumele de spargere (numere), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Introdu sumele de lovire (numere), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Introdu sumele de punere (numere), <space>, <cancel>"
