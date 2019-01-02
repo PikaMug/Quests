@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Masukkan nama tujuan khusus untuk ditambahkan, <clear>
 stageEditorCustomAlreadyAdded: "Tujuan khusus itu telah ditambahkan!"
 stageEditorCustomCleared: "Tujuan khusus dihapus."
 stageEditorCustomDataPrompt: "Masukkan nilai untuk <data>:"
-stageEditorEnterBlockNames: "Masukkan nama blok (atau ID), <space>, <cancel>"
+stageEditorEnterBlockNames: "Masukkan nama blok, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Masukkan jumlah istirahat (angka), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Masukkan jumlah kerusakan (angka), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Masukkan jumlah tempat (angka), <space>, <cancel>"
