@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Ilagay ang pangalan ng mga kasuotan at layunin nito, <
 stageEditorCustomAlreadyAdded: "Ang kasuotan na may layunin ay nailagay na!"
 stageEditorCustomCleared: "Kasuotan na may layunin ay malinis na."
 stageEditorCustomDataPrompt: "Ilagay ang halaga ng <data>:"
-stageEditorEnterBlockNames: "Ilagay ang harang na pangalan (o IDs), <space>, <cancel>"
+stageEditorEnterBlockNames: "Ilagay ang harang na pangalan, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Pindutin at sirain ang halaga (numbers), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Pindutin at sirain ang halaga (numbers), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Pindutin at sirain ang halaga (numbers), <space>, <cancel>"
@@ -856,3 +856,4 @@ timerStart: "%green%Mayroon ka%red% <time> segundo%green% para taposin ang pagsu
 questErrorReadingFile: "Di mabasang file ng pagsusulit."
 questSaveError: "Mayroong error ang lumabas habang ikaw ay nagsisave."
 noPermission: "Wala kang pahintulot na gawin iyon."
+difference: "The difference is '<data>'."
