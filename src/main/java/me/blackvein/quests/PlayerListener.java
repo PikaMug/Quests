@@ -111,19 +111,19 @@ public class PlayerListener implements Listener {
 						if (ItemUtil.compareItems(clicked, quest.guiDisplay, false) == 0) {
 							if (quester.currentQuests.size() >= plugin.maxQuests && plugin.maxQuests > 0) {
 								String msg = Lang.get(player, "questMaxAllowed");
-								msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
+								msg = msg.replace("<number>", String.valueOf(plugin.maxQuests));
 								player.sendMessage(ChatColor.YELLOW + msg);
 							} else if (quester.completedQuests.contains(quest.getName()) && quest.cooldownPlanner < 0) {
 								String completed = Lang.get(player, "questAlreadyCompleted");
-								completed = completed.replaceAll("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
+								completed = completed.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
 								player.sendMessage(ChatColor.YELLOW + completed);
 							} else {
 								boolean takeable = true;
 								if (quester.completedQuests.contains(quest.getName())) {
 									if (quester.getDifference(quest) > 0) {
 										String early = Lang.get(player, "questTooEarly");
-										early = early.replaceAll("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-										early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
+										early = early.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
+										early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
 										player.sendMessage(ChatColor.YELLOW + early);
 										takeable = false;
 									}
@@ -142,7 +142,7 @@ public class PlayerListener implements Listener {
 									}
 									if (inRegion == false) {
 										String invalidLoc = Lang.get(player, "questInvalidLocation");
-										invalidLoc = invalidLoc.replaceAll("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
+										invalidLoc = invalidLoc.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
 										player.sendMessage(ChatColor.YELLOW + invalidLoc);
 										takeable = false;
 									}
@@ -256,19 +256,19 @@ public class PlayerListener implements Listener {
     								if (q.blockStart.equals(evt.getClickedBlock().getLocation())) {
     									if (quester.currentQuests.size() >= plugin.maxQuests && plugin.maxQuests > 0) {
     										String msg = Lang.get(player, "questMaxAllowed");
-    										msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
+    										msg = msg.replace("<number>", String.valueOf(plugin.maxQuests));
     										player.sendMessage(ChatColor.YELLOW + msg);
     									} else {
     										if (quester.completedQuests.contains(q.getName())) {
     											if (q.cooldownPlanner > -1 && (quester.getDifference(q)) > 0) {
     												String early = Lang.get(player, "questTooEarly");
-    												early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-    												early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+    												early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+    												early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
     												player.sendMessage(ChatColor.YELLOW + early);
     												return;
     											} else if (quester.completedQuests.contains(q.getName()) && q.cooldownPlanner < 0) {
     												String completed = Lang.get(player, "questAlreadyCompleted");
-    												completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+    												completed = completed.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
     												player.sendMessage(ChatColor.YELLOW + completed);
     												return;
     											}
@@ -500,9 +500,7 @@ public class PlayerListener implements Listener {
 	}
 	
 	/**
-	 * Checks if damager is blacklisted.
-	 * Ensures damager is Player and not NPC.
-	 * Kills target mob/NPC if objective exists
+	 * Checks if damager is blacklisted. Ensures damager is Player and not NPC. Kills target mob/NPC if objective exists
 	 * 
 	 * @param damager the attacking entity
 	 * @param target the entity being attacked
@@ -594,9 +592,7 @@ public class PlayerListener implements Listener {
 	}
 	
 	/**
-	 * Checks if damager is blacklisted
-	 * Ensures damager is Player and not NPC
-	 * Kills target Player if objective exists
+	 * Checks if damager is blacklisted. Ensures damager is Player and not NPC. Kills target Player if objective exists
 	 * 
 	 * @param damager the attacking entity
 	 * @param target the entity being attacked
