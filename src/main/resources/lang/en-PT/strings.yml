@@ -856,3 +856,4 @@ timerStart: "%green%Ye 'ave%red% <time> seconds%green% t' finish this quest/stag
 questErrorReadingFile: "Error readin' Quests file."
 questSaveError: "An error occurred while savin'."
 noPermission: "Ye do nah 'ave permission t' do that."
+difference: "The difference is '<data>'."
