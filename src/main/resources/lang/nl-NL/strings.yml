@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Vul de naam in van een aangepast objectief om hem toe 
 stageEditorCustomAlreadyAdded: "Die custom Quest is al geadd!"
 stageEditorCustomCleared: "Custom Quest cleared."
 stageEditorCustomDataPrompt: "Typ waarde voor <data>:"
-stageEditorEnterBlockNames: "Typ blok namen (of IDs), <space>, <cancel>"
+stageEditorEnterBlockNames: "Typ blok namen, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Typ aantal dat gebroken moet worden (nummers), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Typ aanvallen die moeten worden gedaan (nummers), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Typ aantal geplaatste (nummers), <space>, <cancel>"
