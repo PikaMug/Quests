@@ -856,3 +856,4 @@ timerStart: "%green%Kamu punya%red% <time> detik%green% untuk menyelesaikan penc
 questErrorReadingFile: "Kesalahan saat membaca berkas Pencarian."
 questSaveError: "Terjadi kesalahan saat menyimpan."
 noPermission: "Anda tidak memiliki izin untuk melakukan itu."
+difference: "The difference is '<data>'."
