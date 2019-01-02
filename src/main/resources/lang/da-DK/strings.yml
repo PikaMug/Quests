@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Skriv navnet på den håndlavede objektivet for at til
 stageEditorCustomAlreadyAdded: "Dette håndlavede objekt er allerede blevet tilføjet!"
 stageEditorCustomCleared: "Håndlavede objekt ryddet."
 stageEditorCustomDataPrompt: "Skriv værdien for <data>:"
-stageEditorEnterBlockNames: "Skriv blok navne (eller ID), <space>, <cancel>"
+stageEditorEnterBlockNames: "Skriv blok navne, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Skriv antal ødelæggelse af blokke (skal være tal), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Skriv antal skade (skal være tal), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Skriv antal blokke sat (I tal), <space>, <cancel>"
