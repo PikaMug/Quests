@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Add meg a hozzáadni kívánt egyéni cél nevét, <cl
 stageEditorCustomAlreadyAdded: "Ez az egyéni cél már hozzá van adva!"
 stageEditorCustomCleared: "Egyéni célok törölve."
 stageEditorCustomDataPrompt: "Adja meg a(z) <data> értéket:"
-stageEditorEnterBlockNames: "Add meg a blokkneveket (vagy azonosítókat), <space>, <cancel>"
+stageEditorEnterBlockNames: "Add meg a blokkneveket, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Add meg a szünetek számát (számok), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Add meg a sebzés összegeit (számok), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Add meg a helyek mennyiségét (számokat), <space>, <cancel>"
