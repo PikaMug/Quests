@@ -320,7 +320,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			commands.put(Lang.get("COMMAND_EDITOR"), 1); // editor
 			commands.put(Lang.get("COMMAND_EVENTS_EDITOR"), 1); // events
 			commands.put(Lang.get("COMMAND_STATS"), 1); // stats
-			commands.put(Lang.get("COMMAND_TOP"), 2); // top [number]
+			commands.put(Lang.get("COMMAND_TOP"), 2); // top {number}
 			commands.put(Lang.get("COMMAND_INFO"), 1); // info
 			commands.put(Lang.get("COMMAND_JOURNAL"), 1); // journal
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_STATS"), 2); // stats [player]
@@ -1378,15 +1378,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	private boolean questsTop(final CommandSender cs, String[] args) {
-		if (args.length == 1 || args.length > 2) {
+		if (args.length > 2) {
 			cs.sendMessage(ChatColor.YELLOW + Lang.get("COMMAND_TOP_USAGE"));
 		} else {
 			int topNumber;
-			try {
-				topNumber = Integer.parseInt(args[1]);
-			} catch (NumberFormatException e) {
-				cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
-				return true;
+			if (args.length == 1) {
+				topNumber = 5; // default
+			} else {
+				try {
+					topNumber = Integer.parseInt(args[1]);
+				} catch (NumberFormatException e) {
+					cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
+					return true;
+				}
 			}
 			if (topNumber < 1) {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("inputPosNum"));
