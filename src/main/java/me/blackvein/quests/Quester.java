@@ -315,28 +315,29 @@ public class Quester {
 			return;
 		}
 		Player player = getPlayer();
+		Planner pln = q.getPlanner();
 		long start = -1;
 		long end = -1;
-		if (q.startPlanner != null) {
+		if (pln.getStart() != null) {
 			Calendar cal = Calendar.getInstance();
-			String[] s = q.startPlanner.split(":");
+			String[] s = pln.getStart().split(":");
 			cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
 					Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
 			start = cal.getTimeInMillis();
 		}
-		if (q.endPlanner != null) {
+		if (pln.getEnd() != null) {
 			Calendar cal = Calendar.getInstance();
-			String[] s = q.endPlanner.split(":");
+			String[] s = pln.getEnd().split(":");
 			cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
 					Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
 			end = cal.getTimeInMillis();
 		}
 		if (start > -1 && end > -1) {
-			if (q.repeatPlanner > -1) {
+			if (pln.getRepeat() > -1) {
 				long questLength = end - start;
 				long nextStart = start;
 				while (System.currentTimeMillis() >= nextStart) {
-					nextStart += questLength + q.repeatPlanner;
+					nextStart += questLength + pln.getRepeat();
 				}
 				long nextEnd = nextStart + questLength;
 				if (System.currentTimeMillis() < nextStart) {
@@ -361,7 +362,7 @@ public class Quester {
 				}
 			}
 		}
-		if (q.startPlanner != null) {
+		if (pln.getStart() != null) {
 			if (System.currentTimeMillis() < start) {
 				String early = Lang.get("plnTooEarly");
 				early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
@@ -372,7 +373,7 @@ public class Quester {
 			}
 		}
 		//TODO - should this even be reported?
-		if (q.endPlanner != null) {
+		if (pln.getEnd() != null) {
 			if (System.currentTimeMillis() > end) {
 				String late = Lang.get("plnTooLate");
 				late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
@@ -1761,7 +1762,7 @@ public class Quester {
 		}
 	}
 
-	public long getDifference(Quest q) {
+	public long getCooldownDifference(Quest q) {
 		long currentTime = System.currentTimeMillis();
 		long lastTime;
 		if (completedTimes.containsKey(q.getName()) == false) {
@@ -1770,7 +1771,7 @@ public class Quester {
 		} else {
 			lastTime = completedTimes.get(q.getName());
 		}
-		long comparator = q.cooldownPlanner;
+		long comparator = q.getPlanner().getCooldown();
 		long difference = (comparator - (currentTime - lastTime));
 		return difference;
 	}

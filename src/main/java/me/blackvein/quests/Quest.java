@@ -12,10 +12,8 @@
 
 package me.blackvein.quests;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -56,29 +54,20 @@ public class Quest {
 	protected NPC npcStart;
 	protected Location blockStart;
 	protected Event initialEvent;
-	// Planner
-	public String startPlanner = null;
-	public String endPlanner = null;
-	public long repeatPlanner = -1;
-	public long cooldownPlanner = -1;
-	// Rewards
-	int moneyReward = 0;
-	int questPoints = 0;
-	int exp = 0;
-	List<String> commands = new LinkedList<String>();
-	List<String> permissions = new LinkedList<String>();
-	LinkedList<ItemStack> itemRewards = new LinkedList<ItemStack>();
-	List<String> mcmmoSkills = new LinkedList<String>();
-	List<Integer> mcmmoAmounts = new LinkedList<Integer>();
-	List<String> heroesClasses = new LinkedList<String>();
-	List<Double> heroesAmounts = new LinkedList<Double>();
-	List<String> phatLootRewards = new LinkedList<String>();
-	Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
-	
 	private Requirements reqs = new Requirements();
+	private Planner pln = new Planner();
+	private Rewards rews = new Rewards();
 	
 	public Requirements getRequirements() {
 		return reqs;
+	}
+	
+	public Planner getPlanner() {
+		return pln;
+	}
+	
+	public Rewards getRewards() {
+		return rews;
 	}
 	
 	public String getName() {
@@ -413,11 +402,11 @@ public class Quest {
 				}
 			}
 		}, 40);
-		if (moneyReward > 0 && Quests.economy != null) {
-			Quests.economy.depositPlayer(q.getOfflinePlayer(), moneyReward);
+		if (rews.getMoney() > 0 && Quests.economy != null) {
+			Quests.economy.depositPlayer(q.getOfflinePlayer(), rews.getMoney());
 			none = null;
 		}
-		if (cooldownPlanner > -1) {
+		if (pln.getCooldown() > -1) {
 			q.completedTimes.put(this.name, System.currentTimeMillis());
 			if (q.amountsCompleted.containsKey(this.name)) {
 				q.amountsCompleted.put(this.name, q.amountsCompleted.get(this.name) + 1);
@@ -425,7 +414,7 @@ public class Quest {
 				q.amountsCompleted.put(this.name, 1);
 			}
 		}
-		for (ItemStack i : itemRewards) {
+		for (ItemStack i : rews.getItems()) {
 			try {
 				Quests.addItem(player, i);
 			} catch (Exception e) {
@@ -436,7 +425,7 @@ public class Quest {
 			}
 			none = null;
 		}
-		for (String s : commands) {
+		for (String s : rews.getCommands()) {
 			final String command = s.replace("<player>", player.getName());
 			if (Bukkit.isPrimaryThread()) {
 				Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
@@ -451,25 +440,25 @@ public class Quest {
 			}
 			none = null;
 		}
-		for (String s : permissions) {
+		for (String s : rews.getPermissions()) {
 			if (Quests.permission != null) {
 				Quests.permission.playerAdd(player, s);
 			}
 			none = null;
 		}
-		for (String s : mcmmoSkills) {
-			UserManager.getPlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), mcmmoAmounts.get(mcmmoSkills.indexOf(s)));
+		for (String s : rews.getMcmmoSkills()) {
+			UserManager.getPlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)));
 			none = null;
 		}
-		for (String s : heroesClasses) {
+		for (String s : rews.getHeroesClasses()) {
 			Hero hero = plugin.getHero(player.getUniqueId());
-			hero.addExp(heroesAmounts.get(heroesClasses.indexOf(s)), Quests.heroes.getClassManager().getClass(s), player.getLocation());
+			hero.addExp(rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)), Quests.heroes.getClassManager().getClass(s), player.getLocation());
 			none = null;
 		}
 		LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
 		int phatLootExp = 0;
 		LinkedList<String> phatLootMessages = new LinkedList<String>();
-		for (String s : phatLootRewards) {
+		for (String s : rews.getPhatLoots()) {
 			LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
 			if (lb.getExp() > 0) {
 				phatLootExp += lb.getExp();
@@ -502,8 +491,8 @@ public class Quest {
 				phatLootMessages.addAll(lb.getMessageList());
 			}
 		}
-		if (exp > 0) {
-			player.giveExp(exp);
+		if (rews.getExp() > 0) {
+			player.giveExp(rews.getExp());
 			none = null;
 		}
 		String complete = Lang.get(player, "questCompleteTitle");
@@ -516,12 +505,12 @@ public class Quest {
 			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
 					+ " subtitle " + "{\"text\":\"" + name + "\",\"color\":\"yellow\"}");
 		}
-		if (questPoints > 0) {
-			player.sendMessage("- " + ChatColor.DARK_GREEN + questPoints + " " + Lang.get(player, "questPoints"));
-			q.questPoints += questPoints;
+		if (rews.getQuestPoints() > 0) {
+			player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getQuestPoints() + " " + Lang.get(player, "questPoints"));
+			q.questPoints += rews.getQuestPoints();
 			none = null;
 		}
-		for (ItemStack i : itemRewards) {
+		for (ItemStack i : rews.getItems()) {
 			String text = "error";
 			if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
 				if (i.getEnchantments().isEmpty()) {
@@ -585,27 +574,27 @@ public class Quest {
 			}
 			none = null;
 		}
-		if (moneyReward > 1) {
-			player.sendMessage("- " + ChatColor.DARK_GREEN + moneyReward + " " + ChatColor.DARK_PURPLE + Quests.getCurrency(true));
+		if (rews.getMoney() > 1) {
+			player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE + Quests.getCurrency(true));
 			none = null;
-		} else if (moneyReward == 1) {
-			player.sendMessage("- " + ChatColor.DARK_GREEN + moneyReward + " " + ChatColor.DARK_PURPLE + Quests.getCurrency(false));
+		} else if (rews.getMoney() == 1) {
+			player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE + Quests.getCurrency(false));
 			none = null;
 		}
-		if (exp > 0 || phatLootExp > 0) {
-			int tot = exp + phatLootExp;
+		if (rews.getExp() > 0 || phatLootExp > 0) {
+			int tot = rews.getExp() + phatLootExp;
 			player.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " " + Lang.get(player, "experience"));
 			none = null;
 		}
-		if (mcmmoSkills.isEmpty() == false) {
-			for (String s : mcmmoSkills) {
-				player.sendMessage("- " + ChatColor.DARK_GREEN + mcmmoAmounts.get(mcmmoSkills.indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " " + Lang.get(player, "experience"));
+		if (rews.getMcmmoSkills().isEmpty() == false) {
+			for (String s : rews.getMcmmoSkills()) {
+				player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " " + Lang.get(player, "experience"));
 			}
 			none = null;
 		}
-		if (heroesClasses.isEmpty() == false) {
-			for (String s : heroesClasses) {
-				player.sendMessage("- " + ChatColor.AQUA + heroesAmounts.get(heroesClasses.indexOf(s)) + " " + ChatColor.BLUE + s + " " + Lang.get(player, "experience"));
+		if (rews.getHeroesClasses().isEmpty() == false) {
+			for (String s : rews.getHeroesClasses()) {
+				player.sendMessage("- " + ChatColor.AQUA + rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE + s + " " + Lang.get(player, "experience"));
 			}
 			none = null;
 		}
@@ -615,7 +604,7 @@ public class Quest {
 			}
 			none = null;
 		}
-		for (String s : customRewards.keySet()) {
+		for (String s : rews.getCustomRewards().keySet()) {
 			CustomReward found = null;
 			for (CustomReward cr : plugin.customRewards) {
 				if (cr.getName().equalsIgnoreCase(s)) {
@@ -624,7 +613,7 @@ public class Quest {
 				}
 			}
 			if (found != null) {
-				Map<String, Object> datamap = customRewards.get(found.getName());
+				Map<String, Object> datamap = rews.getCustomRewards().get(found.getName());
 				String message = found.getRewardName();
 				if (message != null) {
 					for (String key : datamap.keySet()) {
@@ -634,7 +623,7 @@ public class Quest {
 				} else {
 					plugin.getLogger().warning("Failed to notify player: Custom Reward does not have an assigned name");
 				}
-				found.giveReward(player, customRewards.get(s));
+				found.giveReward(player, rews.getCustomRewards().get(s));
 			} else {
 				plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \"" + name + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
 			}

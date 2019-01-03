@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.listeners;
+package me.blackvein.quests.listeners;
 
 import java.io.File;
 import java.util.Iterator;
@@ -117,17 +117,17 @@ public class PlayerListener implements Listener {
 								String msg = Lang.get(player, "questMaxAllowed");
 								msg = msg.replace("<number>", String.valueOf(plugin.maxQuests));
 								player.sendMessage(ChatColor.YELLOW + msg);
-							} else if (quester.completedQuests.contains(quest.getName()) && quest.cooldownPlanner < 0) {
+							} else if (quester.completedQuests.contains(quest.getName()) && quest.getPlanner().getCooldown() < 0) {
 								String completed = Lang.get(player, "questAlreadyCompleted");
 								completed = completed.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
 								player.sendMessage(ChatColor.YELLOW + completed);
 							} else {
 								boolean takeable = true;
 								if (quester.completedQuests.contains(quest.getName())) {
-									if (quester.getDifference(quest) > 0) {
+									if (quester.getCooldownDifference(quest) > 0) {
 										String early = Lang.get(player, "questTooEarly");
 										early = early.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-										early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(quest)) + ChatColor.YELLOW);
+										early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(quest)) + ChatColor.YELLOW);
 										player.sendMessage(ChatColor.YELLOW + early);
 										takeable = false;
 									}
@@ -264,13 +264,13 @@ public class PlayerListener implements Listener {
     										player.sendMessage(ChatColor.YELLOW + msg);
     									} else {
     										if (quester.completedQuests.contains(q.getName())) {
-    											if (q.cooldownPlanner > -1 && (quester.getDifference(q)) > 0) {
+    											if (q.getPlanner().getCooldown() > -1 && (quester.getCooldownDifference(q)) > 0) {
     												String early = Lang.get(player, "questTooEarly");
     												early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-    												early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+    												early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
     												player.sendMessage(ChatColor.YELLOW + early);
     												return;
-    											} else if (quester.completedQuests.contains(q.getName()) && q.cooldownPlanner < 0) {
+    											} else if (quester.completedQuests.contains(q.getName()) && q.getPlanner().getCooldown() < 0) {
     												String completed = Lang.get(player, "questAlreadyCompleted");
     												completed = completed.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
     												player.sendMessage(ChatColor.YELLOW + completed);
@@ -674,7 +674,7 @@ public class PlayerListener implements Listener {
 			for (String s : quester.completedQuests) {
 				Quest q = plugin.getQuest(s);
 				if (q != null) {
-					if (quester.completedTimes.containsKey(q.getName()) == false && q.cooldownPlanner > -1) {
+					if (quester.completedTimes.containsKey(q.getName()) == false && q.getPlanner().getCooldown() > -1) {
 						quester.completedTimes.put(q.getName(), System.currentTimeMillis());
 					}
 				}

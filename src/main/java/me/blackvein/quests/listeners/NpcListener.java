@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.listeners;
+package me.blackvein.quests.listeners;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
@@ -162,11 +162,11 @@ public class NpcListener implements Listener {
 						if (quester.currentQuests.containsKey(q))
 							continue;
 						if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
-							if (plugin.ignoreLockedQuests && (quester.completedQuests.contains(q.getName()) == false || q.cooldownPlanner > -1)) {
+							if (plugin.ignoreLockedQuests && (quester.completedQuests.contains(q.getName()) == false || q.getPlanner().getCooldown() > -1)) {
 								if (q.testRequirements(quester)) {
 									npcQuests.add(q);
 								}
-							} else if (quester.completedQuests.contains(q.getName()) == false || q.cooldownPlanner > -1) {
+							} else if (quester.completedQuests.contains(q.getName()) == false || q.getPlanner().getCooldown() > -1) {
 								npcQuests.add(q);
 							}
 						}
@@ -196,12 +196,12 @@ public class NpcListener implements Listener {
 								player.sendMessage(ChatColor.YELLOW + msg);
 							}
 						} else if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
-							if (quester.getDifference(q) > 0) {
+							if (quester.getCooldownDifference(q) > 0) {
 								String early = Lang.get(player, "questTooEarly");
 								early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-								early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+								early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
 								player.sendMessage(ChatColor.YELLOW + early);
-							} else if (q.cooldownPlanner < 0) {
+							} else if (q.getPlanner().getCooldown() < 0) {
 								String completed = Lang.get(player, "questAlreadyCompleted");
 								completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 								player.sendMessage(ChatColor.YELLOW + completed);

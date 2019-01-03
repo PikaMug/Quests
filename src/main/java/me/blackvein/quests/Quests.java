@@ -93,9 +93,9 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
-import me.blackvein.listeners.NpcListener;
-import me.blackvein.listeners.PlayerListener;
 import me.blackvein.quests.exceptions.InvalidStageException;
+import me.blackvein.quests.listeners.NpcListener;
+import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -1617,7 +1617,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						} else if (quester.currentQuests.containsKey(q)) {
 							String msg = Lang.get(player, "questAlreadyOn");
 							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (quester.completedQuests.contains(q.getName()) && q.cooldownPlanner < 0) {
+						} else if (quester.completedQuests.contains(q.getName()) && q.getPlanner().getCooldown() < 0) {
 							String msg = Lang.get(player, "questAlreadyCompleted");
 							msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + q.getName() + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + msg);
@@ -1632,10 +1632,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						} else {
 							boolean takeable = true;
 							if (quester.completedQuests.contains(q.getName())) {
-								if (quester.getDifference(q) > 0) {
+								if (quester.getCooldownDifference(q) > 0) {
 									String early = Lang.get(player, "questTooEarly");
 									early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-									early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+									early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
 									player.sendMessage(ChatColor.YELLOW + early);
 									takeable = false;
 								}
@@ -2289,7 +2289,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					if (config.contains("quests." + questName + ".redo-delay")) {
 						//Legacy
 						if (config.getInt("quests." + questName + ".redo-delay", -999) != -999) {
-							quest.cooldownPlanner = config.getInt("quests." + questName + ".redo-delay") * 1000;
+							quest.getPlanner().setCooldown(config.getInt("quests." + questName + ".redo-delay") * 1000);
 						} else {
 							skipQuestProcess("redo-delay: for Quest " + quest.getName() + " is not a number!");
 						}
@@ -2320,7 +2320,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 					quest.plugin = this;
 					processStages(quest, config, questName); // needsSaving may be modified as a side-effect
-					loadRewards(config);
+					loadQuestRewards(config);
 					quests.add(quest);
 					if (needsSaving) {
 						try {
@@ -2344,56 +2344,57 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 	}
 
-	private void loadRewards(FileConfiguration config) throws SkipQuest {
+	private void loadQuestRewards(FileConfiguration config) throws SkipQuest {
+		Rewards rews = quest.getRewards();
 		if (config.contains("quests." + questName + ".rewards.items")) {
 			if (Quests.checkList(config.getList("quests." + questName + ".rewards.items"), String.class)) {
+				LinkedList<ItemStack> temp = new LinkedList<ItemStack>();
 				for (String item : config.getStringList("quests." + questName + ".rewards.items")) {
 					try {
 						ItemStack stack = ItemUtil.readItemStack(item);
 						if (stack != null) {
-							quest.itemRewards.add(stack);
+							temp.add(stack);
 						}
 					} catch (Exception e) {
 						skipQuestProcess("" + item + " in items: Reward in Quest " + quest.getName() + " is not properly formatted!");
 					}
 				}
+				rews.setItems(temp);
 			} else {
 				skipQuestProcess("items: Reward in Quest " + quest.getName() + " is not a list of strings!");
 			}
 		}
 		if (config.contains("quests." + questName + ".rewards.money")) {
 			if (config.getInt("quests." + questName + ".rewards.money", -999) != -999) {
-				quest.moneyReward = config.getInt("quests." + questName + ".rewards.money");
+				rews.setMoney(config.getInt("quests." + questName + ".rewards.money"));
 			} else {
 				skipQuestProcess("money: Reward in Quest " + quest.getName() + " is not a number!");
 			}
 		}
 		if (config.contains("quests." + questName + ".rewards.exp")) {
 			if (config.getInt("quests." + questName + ".rewards.exp", -999) != -999) {
-				quest.exp = config.getInt("quests." + questName + ".rewards.exp");
+				rews.setExp(config.getInt("quests." + questName + ".rewards.exp"));
 			} else {
 				skipQuestProcess("exp: Reward in Quest " + quest.getName() + " is not a number!");
 			}
 		}
 		if (config.contains("quests." + questName + ".rewards.commands")) {
 			if (Quests.checkList(config.getList("quests." + questName + ".rewards.commands"), String.class)) {
-				quest.commands.clear();
-				quest.commands.addAll(config.getStringList("quests." + questName + ".rewards.commands"));
+				rews.setCommands(config.getStringList("quests." + questName + ".rewards.commands"));
 			} else {
 				skipQuestProcess("commands: Reward in Quest " + quest.getName() + " is not a list of commands!");
 			}
 		}
 		if (config.contains("quests." + questName + ".rewards.permissions")) {
 			if (Quests.checkList(config.getList("quests." + questName + ".rewards.permissions"), String.class)) {
-				quest.permissions.clear();
-				quest.permissions.addAll(config.getStringList("quests." + questName + ".rewards.permissions"));
+				rews.setPermissions(config.getStringList("quests." + questName + ".rewards.permissions"));
 			} else {
 				skipQuestProcess("permissions: Reward in Quest " + quest.getName() + " is not a list of permissions!");
 			}
 		}
 		if (config.contains("quests." + questName + ".rewards.quest-points")) {
 			if (config.getInt("quests." + questName + ".rewards.quest-points", -999) != -999) {
-				quest.questPoints = config.getInt("quests." + questName + ".rewards.quest-points");
+				rews.setQuestPoints(config.getInt("quests." + questName + ".rewards.quest-points"));
 			} else {
 				skipQuestProcess("quest-points: Reward in Quest " + quest.getName() + " is not a number!");
 			}
@@ -2410,10 +2411,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 									skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.getName() + " is not a valid mcMMO skill name!");
 								}
 							}
-							quest.mcmmoSkills.clear();
-							quest.mcmmoAmounts.clear();
-							quest.mcmmoSkills.addAll(config.getStringList("quests." + questName + ".rewards.mcmmo-skills"));
-							quest.mcmmoAmounts.addAll(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
+							rews.setMcmmoSkills(config.getStringList("quests." + questName + ".rewards.mcmmo-skills"));
+							rews.setMcmmoAmounts(config.getIntegerList("quests." + questName + ".rewards.mcmmo-levels"));
 						} else {
 							skipQuestProcess("mcmmo-levels: Reward in Quest " + quest.getName() + " is not a list of numbers!");
 						}
@@ -2437,10 +2436,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 									skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.getName() + " is not a valid Heroes class name!");
 								}
 							}
-							quest.heroesClasses.clear();
-							quest.heroesAmounts.clear();
-							quest.heroesClasses.addAll(config.getStringList("quests." + questName + ".rewards.heroes-exp-classes"));
-							quest.heroesAmounts.addAll(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
+							rews.setHeroesClasses(config.getStringList("quests." + questName + ".rewards.heroes-exp-classes"));
+							rews.setHeroesAmounts(config.getDoubleList("quests." + questName + ".rewards.heroes-exp-amounts"));
 						} else {
 							skipQuestProcess("heroes-exp-amounts: Reward in Quest " + quest.getName() + " is not a list of experience amounts (decimal numbers)!");
 						}
@@ -2462,15 +2459,34 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							skipQuestProcess("" + loot + " in phat-loots: Reward in Quest " + quest.getName() + " is not a valid PhatLoot name!");
 						}
 					}
-					quest.phatLootRewards.clear();
-					quest.phatLootRewards.addAll(config.getStringList("quests." + questName + ".rewards.phat-loots"));
+					rews.setPhatLoots(config.getStringList("quests." + questName + ".rewards.phat-loots"));
 				} else {
 					skipQuestProcess("phat-loots: Reward in Quest " + quest.getName() + " is not a list of PhatLoots!");
 				}
 			}
 		}
 		if (config.contains("quests." + questName + ".rewards.custom-rewards")) {
-			populateCustomRewards(config);
+			ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".rewards.custom-rewards");
+			Map<String, Map<String, Object>> temp = new HashMap<String, Map<String, Object>>();
+			for (String path : sec.getKeys(false)) {
+				String name = sec.getString(path + ".name");
+				Optional<CustomReward>found = Optional.empty();
+				for (CustomReward cr : customRewards) {
+					if (cr.getName().equalsIgnoreCase(name)) {
+						found=Optional.of(cr);
+						break;
+					}
+				}
+				if (!found.isPresent()) {
+					getLogger().warning("Custom reward \"" + name + "\" for Quest \"" + quest.getName() + "\" could not be found!");
+					continue;
+				} else {
+					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+					temp.put(name, data);
+				}
+			}
+			rews.setCustomRewards(temp);
 		}
 	}
 
@@ -2651,7 +2667,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				if (!found.isPresent()) {
 					getLogger().warning("Custom requirement \"" + name + "\" for Quest \"" + quest.getName() + "\" could not be found!");
 					skipQuestProcess((String) null); // null bc we warn, not severe for this one
-				}else {
+				} else {
 					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
 					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
 					temp.put(name, data);
@@ -2662,26 +2678,27 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 	
 	private void loadQuestPlanner(FileConfiguration config, ConfigurationSection questsSection) throws SkipQuest {
+		Planner pln = quest.getPlanner();
 		if (config.contains("quests." + questName + ".planner.start")) {
-			quest.startPlanner = config.getString("quests." + questName + ".planner.start");
+			pln.setStart(config.getString("quests." + questName + ".planner.start"));
 		} /*else {
 			skipQuestProcess("Planner for Quest " + quest.getName() + " is missing start:");
 		}*/
 		if (config.contains("quests." + questName + ".planner.end")) {
-			quest.endPlanner = config.getString("quests." + questName + ".planner.end");
+			pln.setEnd(config.getString("quests." + questName + ".planner.end"));
 		} /*else {
 			skipQuestProcess("Planner for Quest " + quest.getName() + " is missing end:");
 		}*/
 		if (config.contains("quests." + questName + ".planner.repeat")) {
 			if (config.getInt("quests." + questName + ".planner.repeat", -999) != -999) {
-				quest.repeatPlanner = config.getInt("quests." + questName + ".planner.repeat") * 1000;
+				pln.setRepeat(config.getInt("quests." + questName + ".planner.repeat") * 1000);
 			} else {
 				skipQuestProcess("repeat: for Quest " + quest.getName() + " is not a number!");
 			}
 		}
 		if (config.contains("quests." + questName + ".planner.cooldown")) {
 			if (config.getInt("quests." + questName + ".planner.cooldown", -999) != -999) {
-				quest.cooldownPlanner = config.getInt("quests." + questName + ".planner.cooldown") * 1000;
+				pln.setCooldown(config.getInt("quests." + questName + ".planner.cooldown") * 1000);
 			} else {
 				skipQuestProcess("cooldown: for Quest " + quest.getName() + " is not a number!");
 			}
@@ -2701,27 +2718,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		skipQuestProcess(new String[] { msg });
 	}
 
-	private void populateCustomRewards(FileConfiguration config) {
-		ConfigurationSection sec = config.getConfigurationSection("quests." + questName + ".rewards.custom-rewards");
-		for (String path : sec.getKeys(false)) {
-			String name = sec.getString(path + ".name");
-			Optional<CustomReward>found = Optional.empty();
-			for (CustomReward cr : customRewards) {
-				if (cr.getName().equalsIgnoreCase(name)) {
-					found=Optional.of(cr);
-					break;
-				}
-			}
-			if (!found.isPresent()) {
-				getLogger().warning("Custom reward \"" + name + "\" for Quest \"" + quest.getName() + "\" could not be found!");
-				continue;
-			} else {
-				ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-				Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
-				quest.customRewards.put(name, data);
-			}
-		}
-	}
+
 
 	private boolean regionFound(Quest quest, String region) {
 		boolean exists = false;
@@ -4180,7 +4177,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	
 	public boolean hasCompletedRedoableQuest(NPC npc, Quester quester) {
 		for (Quest q : quests) {
-			if (q.npcStart != null && quester.completedQuests.contains(q.getName()) == true && q.cooldownPlanner > -1) {
+			if (q.npcStart != null && quester.completedQuests.contains(q.getName()) == true && q.getPlanner().getCooldown() > -1) {
 				if (q.npcStart.getId() == npc.getId()) {
 					if (ignoreLockedQuests == false || ignoreLockedQuests == true && q.testRequirements(quester) == true) {
 						return true;

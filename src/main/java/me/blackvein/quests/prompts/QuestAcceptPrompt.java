@@ -123,12 +123,12 @@ public class QuestAcceptPrompt extends StringPrompt {
 					}
 				} else if (quester.completedQuests.contains(q.getName())) {
 					if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
-						if (quester.getDifference(q) > 0) {
+						if (quester.getCooldownDifference(q) > 0) {
 							String early = Lang.get("questTooEarly");
 							early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-							early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getDifference(q)) + ChatColor.YELLOW);
+							early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + early);
-						} else if (q.cooldownPlanner < 0) {
+						} else if (q.getPlanner().getCooldown() < 0) {
 							String completed = Lang.get("questAlreadyCompleted");
 							completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + completed);

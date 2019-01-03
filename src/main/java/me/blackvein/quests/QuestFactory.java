@@ -1312,7 +1312,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 		if (q.guiDisplay != null) {
 			cc.setSessionData(CK.Q_GUIDISPLAY, q.guiDisplay);
 		}
-		// Requirements
 		Requirements reqs = q.getRequirements();
 		if (reqs.getMoney() != 0) {
 			cc.setSessionData(CK.REQ_MONEY, reqs.getMoney());
@@ -1356,58 +1355,52 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cc.setSessionData(CK.REQ_CUSTOM, list);
 			cc.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
 		}
-		//
-		// Rewards
-		if (q.moneyReward != 0) {
-			cc.setSessionData(CK.REW_MONEY, q.moneyReward);
+		Rewards rews = q.getRewards();
+		if (rews.getMoney() != 0) {
+			cc.setSessionData(CK.REW_MONEY, rews.getMoney());
 		}
-		if (q.questPoints != 0) {
-			cc.setSessionData(CK.REW_QUEST_POINTS, q.questPoints);
+		if (rews.getQuestPoints() != 0) {
+			cc.setSessionData(CK.REW_QUEST_POINTS, rews.getQuestPoints());
 		}
-		if (q.exp != 0) {
-			cc.setSessionData(CK.REW_EXP, q.exp);
+		if (rews.getExp() != 0) {
+			cc.setSessionData(CK.REW_EXP, rews.getExp());
 		}
-		if (q.itemRewards.isEmpty() == false) {
-			cc.setSessionData(CK.REW_ITEMS, q.itemRewards);
+		if (rews.getItems().isEmpty() == false) {
+			cc.setSessionData(CK.REW_ITEMS, reqs.getItems());
 		}
-		if (q.commands.isEmpty() == false) {
-			cc.setSessionData(CK.REW_COMMAND, q.commands);
+		if (rews.getCommands().isEmpty() == false) {
+			cc.setSessionData(CK.REW_COMMAND, rews.getCommands());
 		}
-		if (q.permissions.isEmpty() == false) {
-			cc.setSessionData(CK.REW_PERMISSION, q.permissions);
+		if (rews.getPermissions().isEmpty() == false) {
+			cc.setSessionData(CK.REW_PERMISSION, rews.getPermissions());
 		}
-		if (q.mcmmoSkills.isEmpty() == false) {
-			cc.setSessionData(CK.REW_MCMMO_SKILLS, q.mcmmoSkills);
-			cc.setSessionData(CK.REW_MCMMO_AMOUNTS, q.mcmmoAmounts);
+		if (rews.getMcmmoSkills().isEmpty() == false) {
+			cc.setSessionData(CK.REW_MCMMO_SKILLS, rews.getMcmmoSkills());
+			cc.setSessionData(CK.REW_MCMMO_AMOUNTS, rews.getMcmmoAmounts());
 		}
-		if (q.heroesClasses.isEmpty() == false) {
-			cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
-			cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
+		if (rews.getHeroesClasses().isEmpty() == false) {
+			cc.setSessionData(CK.REW_HEROES_CLASSES, rews.getHeroesClasses());
+			cc.setSessionData(CK.REW_HEROES_AMOUNTS, rews.getHeroesAmounts());
 		}
-		if (q.heroesClasses.isEmpty() == false) {
-			cc.setSessionData(CK.REW_HEROES_CLASSES, q.heroesClasses);
-			cc.setSessionData(CK.REW_HEROES_AMOUNTS, q.heroesAmounts);
+		if (rews.getPhatLoots().isEmpty() == false) {
+			cc.setSessionData(CK.REW_PHAT_LOOTS, rews.getPhatLoots());
 		}
-		if (q.phatLootRewards.isEmpty() == false) {
-			cc.setSessionData(CK.REW_PHAT_LOOTS, q.phatLootRewards);
+		if (rews.getCustomRewards().isEmpty() == false) {
+			cc.setSessionData(CK.REW_CUSTOM, new LinkedList<String>(rews.getCustomRewards().keySet()));
+			cc.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rews.getCustomRewards().values()));
 		}
-		if (q.customRewards.isEmpty() == false) {
-			cc.setSessionData(CK.REW_CUSTOM, new LinkedList<String>(q.customRewards.keySet()));
-			cc.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(q.customRewards.values()));
+		Planner pln = q.getPlanner();
+		if (pln.getStart() != null) {
+			cc.setSessionData(CK.PLN_START_DATE, pln.getStart());
 		}
-		//
-		//Planner
-		if (q.startPlanner != null) {
-			cc.setSessionData(CK.PLN_START_DATE, q.startPlanner);
+		if (pln.getEnd() != null) {
+			cc.setSessionData(CK.PLN_END_DATE, pln.getEnd());
 		}
-		if (q.endPlanner != null) {
-			cc.setSessionData(CK.PLN_END_DATE, q.endPlanner);
+		if (pln.getRepeat() != -1) {
+			cc.setSessionData(CK.PLN_REPEAT_CYCLE, pln.getRepeat());
 		}
-		if (q.repeatPlanner != -1) {
-			cc.setSessionData(CK.PLN_REPEAT_CYCLE, q.repeatPlanner);
-		}
-		if (q.cooldownPlanner != -1) {
-			cc.setSessionData(CK.PLN_COOLDOWN, q.cooldownPlanner);
+		if (pln.getCooldown() != -1) {
+			cc.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
 		}
 		//
 		// Stages
