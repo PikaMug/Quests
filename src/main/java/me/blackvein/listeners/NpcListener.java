@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.listeners;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
@@ -30,6 +30,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.RomanNumeral;
@@ -63,7 +66,7 @@ public class NpcListener implements Listener {
 					ItemStack hand = player.getItemInHand();
 					ItemStack found = null;
 					int reasonCode = 0;
-					for (ItemStack is : quester.getCurrentStage(quest).itemsToDeliver) {
+					for (ItemStack is : quester.getCurrentStage(quest).getItemsToDeliver()) {
 						reasonCode = ItemUtil.compareItems(is, hand, true);
 						if (reasonCode == 0) {
 							found = is;
@@ -72,7 +75,7 @@ public class NpcListener implements Listener {
 					}
 					NPC clicked = evt.getNPC();
 					if (found != null) {
-						for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
+						for (Integer n : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
 							if (n.equals(clicked.getId())) {
 								quester.deliverItem(quest, hand);
 								delivery = true;
@@ -81,7 +84,7 @@ public class NpcListener implements Listener {
 						}
 						break;
 					} else if (!hand.getType().equals(Material.AIR)) {
-						for (Integer n : quester.getCurrentStage(quest).itemDeliveryTargets) {
+						for (Integer n : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
 							if (n.equals(clicked.getId())) {
 								String text = "";
 								if (hand.hasItemMeta()) {
@@ -92,27 +95,36 @@ public class NpcListener implements Listener {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-								plugin.query.sendMessage(player, Lang.get(player, "difference").replace("<item>", text), hand.getType(), hand.getDurability());
+								plugin.query.sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability());
 								switch(reasonCode) {
 									case 1:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "one item is null"));
+										break;
 									case 0:
 										// Should never happen
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "ERROR"));
+										break;
 									case -1:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "name"));
+										break;
 									case -2:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "amount"));
+										break;
 									case -3:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "durability"));
+										break;
 									case -4:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "display name or lore"));
+										break;
 									case -5:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "enchantments"));
+										break;
 									case -6:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "stored enchants"));
+										break;
 									case -7:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "item flags"));
+										break;
 									default:
 										player.sendMessage(Lang.get(player, "difference").replace("<data>", "unknown"));
 								}
@@ -149,7 +161,7 @@ public class NpcListener implements Listener {
 					for (Quest q : plugin.getQuests()) {
 						if (quester.currentQuests.containsKey(q))
 							continue;
-						if (q.npcStart != null && q.npcStart.getId() == evt.getNPC().getId()) {
+						if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
 							if (plugin.ignoreLockedQuests && (quester.completedQuests.contains(q.getName()) == false || q.cooldownPlanner > -1)) {
 								if (q.testRequirements(quester)) {
 									npcQuests.add(q);
@@ -267,6 +279,6 @@ public class NpcListener implements Listener {
 	}
 
 	private String extracted(final Quester quester) {
-		return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, quester.questToTake, ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.questToTake).description);
+		return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, quester.questToTake, ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.questToTake).getDescription());
 	}
 }

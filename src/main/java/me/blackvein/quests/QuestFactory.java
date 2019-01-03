@@ -60,7 +60,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 	public final Quests plugin;
 	Map<UUID, Quest> editSessions = new HashMap<UUID, Quest>();
-	Map<UUID, Block> selectedBlockStarts = new HashMap<UUID, Block>();
+	public Map<UUID, Block> selectedBlockStarts = new HashMap<UUID, Block>();
 	public Map<UUID, Block> selectedKillLocations = new HashMap<UUID, Block>();
 	public Map<UUID, Block> selectedReachLocations = new HashMap<UUID, Block>();
 	public HashSet<Player> selectingNPCs = new HashSet<Player>();
@@ -1313,46 +1313,43 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cc.setSessionData(CK.Q_GUIDISPLAY, q.guiDisplay);
 		}
 		// Requirements
-		if (q.moneyReq != 0) {
-			cc.setSessionData(CK.REQ_MONEY, q.moneyReq);
+		Requirements reqs = q.getRequirements();
+		if (reqs.getMoney() != 0) {
+			cc.setSessionData(CK.REQ_MONEY, reqs.getMoney());
 		}
-		if (q.questPointsReq != 0) {
-			cc.setSessionData(CK.REQ_QUEST_POINTS, q.questPointsReq);
+		if (reqs.getQuestPoints() != 0) {
+			cc.setSessionData(CK.REQ_QUEST_POINTS, reqs.getQuestPoints());
 		}
-		if (q.items.isEmpty() == false) {
-			cc.setSessionData(CK.REQ_ITEMS, q.items);
-			cc.setSessionData(CK.REQ_ITEMS_REMOVE, q.removeItems);
+		if (reqs.getItems().isEmpty() == false) {
+			cc.setSessionData(CK.REQ_ITEMS, reqs.getItems());
+			cc.setSessionData(CK.REQ_ITEMS_REMOVE, reqs.getRemoveItems());
 		}
-		if (q.neededQuests.isEmpty() == false) {
-			cc.setSessionData(CK.REQ_QUEST, q.neededQuests);
+		if (reqs.getNeededQuests().isEmpty() == false) {
+			cc.setSessionData(CK.REQ_QUEST, reqs.getNeededQuests());
 		}
-		if (q.blockQuests.isEmpty() == false) {
-			cc.setSessionData(CK.REQ_QUEST_BLOCK, q.blockQuests);
+		if (reqs.getBlockQuests().isEmpty() == false) {
+			cc.setSessionData(CK.REQ_QUEST_BLOCK, reqs.getBlockQuests());
 		}
-		if (q.mcMMOSkillReqs.isEmpty() == false) {
-			cc.setSessionData(CK.REQ_MCMMO_SKILLS, q.mcMMOSkillReqs);
-			cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, q.mcMMOAmountReqs);
+		if (reqs.getMcmmoSkills().isEmpty() == false) {
+			cc.setSessionData(CK.REQ_MCMMO_SKILLS, reqs.getMcmmoAmounts());
+			cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, reqs.getMcmmoAmounts());
 		}
-		if (q.permissionReqs.isEmpty() == false) {
-			cc.setSessionData(CK.REQ_PERMISSION, q.permissionReqs);
+		if (reqs.getPermissions().isEmpty() == false) {
+			cc.setSessionData(CK.REQ_PERMISSION, reqs.getPermissions());
 		}
-		if (q.heroesPrimaryClassReq != null) {
-			cc.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, q.heroesPrimaryClassReq);
+		if (reqs.getHeroesPrimaryClass() != null) {
+			cc.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, reqs.getHeroesPrimaryClass());
 		}
-		if (q.heroesSecondaryClassReq != null) {
-			cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, q.heroesSecondaryClassReq);
+		if (reqs.getHeroesSecondaryClass() != null) {
+			cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, reqs.getHeroesSecondaryClass());
 		}
-		if (q.mcMMOSkillReqs.isEmpty() == false) {
-			cc.setSessionData(CK.REQ_MCMMO_SKILLS, q.mcMMOSkillReqs);
-			cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, q.mcMMOAmountReqs);
+		if (reqs.getFailRequirements() != null) {
+			cc.setSessionData(CK.Q_FAIL_MESSAGE, reqs.getFailRequirements());
 		}
-		if (q.failRequirements != null) {
-			cc.setSessionData(CK.Q_FAIL_MESSAGE, q.failRequirements);
-		}
-		if (q.customRequirements.isEmpty() == false) {
+		if (reqs.getCustomRequirements().isEmpty() == false) {
 			LinkedList<String> list = new LinkedList<String>();
 			LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
-			for (Entry<String, Map<String, Object>> entry : q.customRequirements.entrySet()) {
+			for (Entry<String, Map<String, Object>> entry : reqs.getCustomRequirements().entrySet()) {
 				list.add(entry.getKey());
 				datamapList.add(entry.getValue());
 			}
@@ -1505,13 +1502,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cc.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
 				cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
 			}
-			if (stage.itemsToDeliver.isEmpty() == false) {
+			if (stage.getItemsToDeliver().isEmpty() == false) {
 				LinkedList<ItemStack> items = new LinkedList<ItemStack>();
 				LinkedList<Integer> npcs = new LinkedList<Integer>();
-				for (ItemStack is : stage.itemsToDeliver) {
+				for (ItemStack is : stage.getItemsToDeliver()) {
 					items.add(is);
 				}
-				for (Integer n : stage.itemDeliveryTargets) {
+				for (Integer n : stage.getItemDeliveryTargets()) {
 					npcs.add(n);
 				}
 				cc.setSessionData(pref + CK.S_DELIVERY_ITEMS, items);
@@ -1669,7 +1666,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				Quest found = plugin.findQuest(input);
 				if (found != null) {
 					for (Quest q : plugin.quests) {
-						if (q.neededQuests.contains(q.getName()) || q.blockQuests.contains(q.getName())) {
+						if (q.getRequirements().getNeededQuests().contains(q.getName()) || q.getRequirements().getBlockQuests().contains(q.getName())) {
 							used.add(q.getName());
 						}
 					}

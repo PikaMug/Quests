@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.listeners;
 
 import java.io.File;
 import java.util.Iterator;
@@ -64,6 +64,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.Stage;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
@@ -107,8 +111,8 @@ public class PlayerListener implements Listener {
 			ItemStack clicked = evt.getCurrentItem();
 			if (clicked != null) {
 				for (Quest quest : plugin.quests) {
-					if (quest.guiDisplay != null) {
-						if (ItemUtil.compareItems(clicked, quest.guiDisplay, false) == 0) {
+					if (quest.getGUIDisplay() != null) {
+						if (ItemUtil.compareItems(clicked, quest.getGUIDisplay(), false) == 0) {
 							if (quester.currentQuests.size() >= plugin.maxQuests && plugin.maxQuests > 0) {
 								String msg = Lang.get(player, "questMaxAllowed");
 								msg = msg.replace("<number>", String.valueOf(plugin.maxQuests));
@@ -128,14 +132,14 @@ public class PlayerListener implements Listener {
 										takeable = false;
 									}
 								}
-								if (quest.region != null) {
+								if (quest.getRegion() != null) {
 									boolean inRegion = false;
 									Player p = quester.getPlayer();
 									RegionManager rm = Quests.worldGuard.getRegionManager(p.getWorld());
 									Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
 									while (it.hasNext()) {
 										ProtectedRegion pr = it.next();
-										if (pr.getId().equalsIgnoreCase(quest.region)) {
+										if (pr.getId().equalsIgnoreCase(quest.getRegion())) {
 											inRegion = true;
 											break;
 										}
@@ -252,8 +256,8 @@ public class PlayerListener implements Listener {
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
     					} else if (player.isConversing() == false) {
     						for (final Quest q : plugin.quests) {
-    							if (q.blockStart != null) {
-    								if (q.blockStart.equals(evt.getClickedBlock().getLocation())) {
+    							if (q.getBlockStart() != null) {
+    								if (q.getBlockStart().equals(evt.getClickedBlock().getLocation())) {
     									if (quester.currentQuests.size() >= plugin.maxQuests && plugin.maxQuests > 0) {
     										String msg = Lang.get(player, "questMaxAllowed");
     										msg = msg.replace("<number>", String.valueOf(plugin.maxQuests));
@@ -274,7 +278,7 @@ public class PlayerListener implements Listener {
     											}
     										}
     										quester.questToTake = q.getName();
-    										String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(quester.questToTake).description + "\n";
+    										String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.questToTake + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(quester.questToTake).getDescription() + "\n";
     										for (String msg : s.split("<br>")) {
     											player.sendMessage(msg);
     										}

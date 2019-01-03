@@ -35,8 +35,8 @@ public class Stage {
 	Integer fishToCatch;
 	Integer playersToKill;
 	Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
-	LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
-	LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
+	private LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
+	private LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
 
 		private static final long serialVersionUID = -2774443496142382127L;
 
@@ -141,7 +141,7 @@ public class Stage {
 		if (fishToCatch != null) { return true; }
 		if (playersToKill != null) { return true; }
 		if (itemsToEnchant.isEmpty() == false) { return true; }
-		if (itemsToDeliver.isEmpty() == false) { return true; }
+		if (getItemsToDeliver().isEmpty() == false) { return true; }
 		if (citizensToInteract.isEmpty() == false) { return true; }
 		if (citizensToKill.isEmpty() == false) { return true; }
 		if (locationsToReach.isEmpty() == false) { return true; }
@@ -150,5 +150,21 @@ public class Stage {
 		if (passwordDisplays.isEmpty() == false) { return true; }
 		if (customObjectives.isEmpty() == false) { return true; }
 		return false;
+	}
+
+	public LinkedList<ItemStack> getItemsToDeliver() {
+		return itemsToDeliver;
+	}
+
+	public void setItemsToDeliver(LinkedList<ItemStack> itemsToDeliver) {
+		this.itemsToDeliver = itemsToDeliver;
+	}
+
+	public LinkedList<Integer> getItemDeliveryTargets() {
+		return itemDeliveryTargets;
+	}
+
+	public void setItemDeliveryTargets(LinkedList<Integer> itemDeliveryTargets) {
+		this.itemDeliveryTargets = itemDeliveryTargets;
 	}
 }

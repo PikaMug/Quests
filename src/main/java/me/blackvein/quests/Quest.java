@@ -45,32 +45,17 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class Quest {
 
-	public String name;
-	public String description;
-	public String finished;
-	public String region = null;
-	public ItemStack guiDisplay = null;
-	public int parties = 0;
+	protected Quests plugin;
+	private String name;
+	protected String description;
+	protected String finished;
+	protected String region = null;
+	protected ItemStack guiDisplay = null;
+	//private int parties = 0;
 	private LinkedList<Stage> orderedStages = new LinkedList<Stage>();
-	NPC npcStart;
-	Location blockStart;
-	Quests plugin;
-	Event initialEvent;
-	// Requirements
-	int moneyReq = 0;
-	int questPointsReq = 0;
-	List<ItemStack> items = new LinkedList<ItemStack>();
-	List<Boolean> removeItems = new LinkedList<Boolean>();
-	List<String> neededQuests = new LinkedList<String>();
-	List<String> blockQuests = new LinkedList<String>();
-	List<String> permissionReqs = new LinkedList<String>();
-	List<String> mcMMOSkillReqs = new LinkedList<String>();
-	List<Integer> mcMMOAmountReqs = new LinkedList<Integer>();
-	String heroesPrimaryClassReq = null;
-	String heroesSecondaryClassReq = null;
-	Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
-	Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
-	public String failRequirements = null;
+	protected NPC npcStart;
+	protected Location blockStart;
+	protected Event initialEvent;
 	// Planner
 	public String startPlanner = null;
 	public String endPlanner = null;
@@ -88,13 +73,52 @@ public class Quest {
 	List<String> heroesClasses = new LinkedList<String>();
 	List<Double> heroesAmounts = new LinkedList<Double>();
 	List<String> phatLootRewards = new LinkedList<String>();
-
+	Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
+	
+	private Requirements reqs = new Requirements();
+	
+	public Requirements getRequirements() {
+		return reqs;
+	}
+	
 	public String getName() {
 		return name;
 	}
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	public String getFinished() {
+		return finished;
+	}
+	
+	public void setFinished(String finished) {
+		this.finished = finished;
+	}
+	
+	public String getRegion() {
+		return region;
+	}
+	
+	public void setRegion(String region) {
+		this.region = region;
+	}
+	
+	public ItemStack getGUIDisplay() {
+		return guiDisplay;
+	}
+	
+	public void setGUIDisplay(ItemStack guiDisplay) {
+		this.guiDisplay = guiDisplay;
 	}
 	
 	public Stage getStage(int index) {
@@ -108,7 +132,36 @@ public class Quest {
 	public LinkedList<Stage> getStages() {
 		return orderedStages;
 	}
+	
+	public NPC getNpcStart() {
+		return npcStart;
+	}
+	
+	public void setNpcStart(NPC npcStart) {
+		this.npcStart = npcStart;
+	}
+	
+	public Location getBlockStart() {
+		return blockStart;
+	}
+	
+	public void setBlockStart(Location blockStart) {
+		this.blockStart = blockStart;
+	}
+	
+	public Event getInitialEvent() {
+		return initialEvent;
+	}
+	
+	public void setInitialEvent(Event initialEvent) {
+		this.initialEvent = initialEvent;
+	}
 
+	/**
+	 * Force player to proceed to the next ordered stage
+	 * 
+	 * @param q Player to force
+	 */
 	public void nextStage(Quester q) {
 		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
 		if (stageCompleteMessage != null) {
@@ -152,6 +205,12 @@ public class Quest {
 		q.updateJournal();
 	}
 
+	/**
+	 * Force player to proceed to the specified stage
+	 * @param quester Player to force
+	 * @param stage Stage number to specify
+	 * @throws InvalidStageException if stage does not exist
+	 */
 	public void setStage(Quester quester, int stage) throws InvalidStageException {
 		if (orderedStages.size() - 1 < stage) {
 			throw new InvalidStageException(this, stage);
@@ -253,16 +312,16 @@ public class Quest {
 		return testRequirements(quester.getPlayer());
 	}
 
-	public boolean testRequirements(Player player) {
+	protected boolean testRequirements(Player player) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
-		if (moneyReq != 0 && Quests.economy != null) {
-			if (Quests.economy.getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) < moneyReq) {
+		if (reqs.getMoney() != 0 && Quests.economy != null) {
+			if (Quests.economy.getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) < reqs.getMoney()) {
 				return false;
 			}
 		}
 		PlayerInventory inventory = player.getInventory();
 		int num = 0;
-		for (ItemStack is : items) {
+		for (ItemStack is : reqs.getItems()) {
 			for (ItemStack stack : inventory.getContents()) {
 				if (stack != null) {
 					if (ItemUtil.compareItems(is, stack, true) == 0) {
@@ -275,29 +334,29 @@ public class Quest {
 			}
 			num = 0;
 		}
-		for (String s : permissionReqs) {
+		for (String s : reqs.getPermissions()) {
 			if (player.hasPermission(s) == false) {
 				return false;
 			}
 		}
-		for (String s : mcMMOSkillReqs) {
+		for (String s : reqs.getMcmmoSkills()) {
 			final SkillType st = Quests.getMcMMOSkill(s);
-			final int lvl = mcMMOAmountReqs.get(mcMMOSkillReqs.indexOf(s));
+			final int lvl = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(s));
 			if (UserManager.getPlayer(player).getProfile().getSkillLevel(st) < lvl) {
 				return false;
 			}
 		}
-		if (heroesPrimaryClassReq != null) {
-			if (plugin.testPrimaryHeroesClass(heroesPrimaryClassReq, player.getUniqueId()) == false) {
+		if (reqs.getHeroesPrimaryClass() != null) {
+			if (plugin.testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId()) == false) {
 				return false;
 			}
 		}
-		if (heroesSecondaryClassReq != null) {
-			if (plugin.testSecondaryHeroesClass(heroesSecondaryClassReq, player.getUniqueId()) == false) {
+		if (reqs.getHeroesSecondaryClass() != null) {
+			if (plugin.testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId()) == false) {
 				return false;
 			}
 		}
-		for (String s : customRequirements.keySet()) {
+		for (String s : reqs.getCustomRequirements().keySet()) {
 			CustomRequirement found = null;
 			for (CustomRequirement cr : plugin.customRequirements) {
 				if (cr.getName().equalsIgnoreCase(s)) {
@@ -306,7 +365,7 @@ public class Quest {
 				}
 			}
 			if (found != null) {
-				if (found.testRequirement(player, customRequirements.get(s)) == false) {
+				if (found.testRequirement(player, reqs.getCustomRequirements().get(s)) == false) {
 					return false;
 				}
 			} else {
@@ -314,13 +373,13 @@ public class Quest {
 						+ "\" could not be found. Does it still exist?");
 			}
 		}
-		if (quester.questPoints < questPointsReq) {
+		if (quester.questPoints < reqs.getQuestPoints()) {
 			return false;
 		}
-		if (quester.completedQuests.containsAll(neededQuests) == false) {
+		if (quester.completedQuests.containsAll(reqs.getNeededQuests()) == false) {
 			return false;
 		}
-		for (String q : blockQuests) {
+		for (String q : reqs.getBlockQuests()) {
 			Quest questObject = new Quest();
 			questObject.name = q;
 			if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(questObject)) {
@@ -612,8 +671,12 @@ public class Quest {
 		}
 		q.updateJournal();
 	}
+	
+	public boolean isInRegion(Quester quester) {
+		return isInRegion(quester.getPlayer());
+	}
 
-	public boolean isInRegion(Player player) {
+	private boolean isInRegion(Player player) {
 		if (region == null) {
 			return true;
 		} else {

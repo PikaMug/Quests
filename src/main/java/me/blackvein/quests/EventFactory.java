@@ -57,11 +57,11 @@ public class EventFactory implements ConversationAbandonedListener {
 
 	Quests quests;
 	Map<UUID, Quest> editSessions = new HashMap<UUID, Quest>();
-	Map<UUID, Block> selectedExplosionLocations = new HashMap<UUID, Block>();
-	Map<UUID, Block> selectedEffectLocations = new HashMap<UUID, Block>();
-	Map<UUID, Block> selectedMobLocations = new HashMap<UUID, Block>();
-	Map<UUID, Block> selectedLightningLocations = new HashMap<UUID, Block>();
-	Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
+	public Map<UUID, Block> selectedExplosionLocations = new HashMap<UUID, Block>();
+	public Map<UUID, Block> selectedEffectLocations = new HashMap<UUID, Block>();
+	public Map<UUID, Block> selectedMobLocations = new HashMap<UUID, Block>();
+	public Map<UUID, Block> selectedLightningLocations = new HashMap<UUID, Block>();
+	public Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
 	List<String> names = new LinkedList<String>();
 	ConversationFactory convoCreator;
 	File eventsFile;

@@ -114,7 +114,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 								plugin.conversationFactory.buildConversation((Conversable) player).begin();
 							}
 						} else {
-							player.sendMessage(q.failRequirements);
+							player.sendMessage(q.getRequirements().getFailRequirements());
 						}
 					} else if (quester.currentQuests.containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
@@ -156,6 +156,6 @@ public class QuestAcceptPrompt extends StringPrompt {
 	}
 
 	private String extracted(final Quester quester) {
-		return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, quester.questToTake, ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.questToTake).description);
+		return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, quester.questToTake, ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.questToTake).getDescription());
 	}
 }

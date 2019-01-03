@@ -55,9 +55,9 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class Quester {
 
-	UUID id;
+	public UUID id;
 	boolean editorMode = false;
-	boolean hasJournal = false;
+	public boolean hasJournal = false;
 	public String questToTake;
 	public ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<Integer, Quest>();
 	public ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
@@ -150,7 +150,7 @@ public class Quester {
 			return s;
 		}
 	};
-	Map<String, Long> completedTimes = new HashMap<String, Long>();
+	public Map<String, Long> completedTimes = new HashMap<String, Long>();
 	Map<String, Integer> amountsCompleted = new HashMap<String, Integer>() {
 
 		private static final long serialVersionUID = 5475202358792520975L;
@@ -391,14 +391,15 @@ public class Quester {
 						+ ". Consider resetting player data or report on Github");
 			}
 			Stage stage = q.getStage(0);
+			Requirements reqs = q.getRequirements();
 			if (!override) {
-				if (q.moneyReq > 0) {
+				if (reqs.getMoney() > 0) {
 					if (Quests.economy != null) {
-						Quests.economy.withdrawPlayer(getOfflinePlayer(), q.moneyReq);
+						Quests.economy.withdrawPlayer(getOfflinePlayer(), reqs.getMoney());
 					}
 				}
-				for (ItemStack is : q.items) {
-					if (q.removeItems.get(q.items.indexOf(is)) == true) {
+				for (ItemStack is : reqs.getItems()) {
+					if (reqs.getRemoveItems().get(reqs.getItems().indexOf(is)) == true) {
 						Quests.removeItem(player.getInventory(), is);
 					}
 				}
@@ -441,7 +442,7 @@ public class Quester {
 			q.updateGPS(this);
 			saveData();
 		} else {
-			player.sendMessage(q.failRequirements);
+			player.sendMessage(q.getRequirements().getFailRequirements());
 		}
 	}
 	
@@ -608,13 +609,13 @@ public class Quester {
 			}
 		}
 		int index2 = 0;
-		for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
+		for (ItemStack is : getCurrentStage(quest).getItemsToDeliver()) {
 			int delivered = 0;
 			if (getQuestData(quest).itemsDelivered.containsKey(is)) {
 				delivered = getQuestData(quest).itemsDelivered.get(is);
 			}
 			int amt = is.getAmount();
-			Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(index2);
+			Integer npc = getCurrentStage(quest).getItemDeliveryTargets().get(index2);
 			index2++;
 			if (delivered < amt) {
 				String obj = Lang.get(getPlayer(), "deliver");
@@ -791,7 +792,7 @@ public class Quester {
 		} else if (s.equalsIgnoreCase("killMob")) {
 			return !getCurrentStage(quest).mobsToKill.isEmpty();
 		} else if (s.equalsIgnoreCase("deliverItem")) {
-			return !getCurrentStage(quest).itemsToDeliver.isEmpty();
+			return !getCurrentStage(quest).getItemsToDeliver().isEmpty();
 		} else if (s.equalsIgnoreCase("killPlayer")) {
 			return getCurrentStage(quest).playersToKill != null;
 		} else if (s.equalsIgnoreCase("talkToNPC")) {
@@ -1244,14 +1245,14 @@ public class Quester {
 		}
 		if (found != null) {
 			int amount = getQuestData(quest).itemsDelivered.get(found);
-			if (getCurrentStage(quest).itemsToDeliver.indexOf(found) < 0) {
+			if (getCurrentStage(quest).getItemsToDeliver().indexOf(found) < 0) {
 				plugin.getLogger().severe("Index out of bounds while delivering " + found.getType() + " x " + found.getAmount() + " for quest " 
 						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already delivered. Int -amount- reports value of " + 
 						+ amount + ". Please report this error on Github issue #448");
 				player.sendMessage("Quests had a problem delivering your item, please contact an administrator!");
 				return;
 			}
-			int req = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(found)).getAmount();
+			int req = getCurrentStage(quest).getItemsToDeliver().get(getCurrentStage(quest).getItemsToDeliver().indexOf(found)).getAmount();
 			Material m = i.getType();
 			if (amount < req) {
 				if ((i.getAmount() + amount) > req) {
@@ -1270,7 +1271,7 @@ public class Quester {
 					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
 					player.getInventory().setItem(player.getInventory().first(i), null);
 					player.updateInventory();
-					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(random.nextInt(getCurrentStage(quest).deliverMessages.size())), Quests.citizens.getNPCRegistry().getById(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
+					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(random.nextInt(getCurrentStage(quest).deliverMessages.size())), Quests.citizens.getNPCRegistry().getById(getCurrentStage(quest).getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(found))));
 					player.sendMessage(message);
 				}
 			}
@@ -1409,9 +1410,9 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("deliverItem")) {
 			String obj = Lang.get(p, "deliver");
-			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
+			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(delivery))));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
-			ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery));
+			ItemStack is = getCurrentStage(quest).getItemsToDeliver().get(getCurrentStage(quest).getItemsToDeliver().indexOf(delivery));
 			plugin.query.sendMessage(p, message, is.getType(), is.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
@@ -1586,8 +1587,8 @@ public class Quester {
 			}
 		}
 		data.setPlayersKilled(0);
-		if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
-			for (ItemStack is : quest.getStage(stage).itemsToDeliver) {
+		if (quest.getStage(stage).getItemsToDeliver().isEmpty() == false) {
+			for (ItemStack is : quest.getStage(stage).getItemsToDeliver()) {
 				data.itemsDelivered.put(is, 0);
 			}
 		}
@@ -2289,8 +2290,8 @@ public class Quester {
 				if (questSec.contains("item-delivery-amounts")) {
 					List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
 					for (int i = 0; i < deliveryAmounts.size(); i++) {
-						if (i < getCurrentStage(quest).itemsToDeliver.size()) {
-							getQuestData(quest).itemsDelivered.put(getCurrentStage(quest).itemsToDeliver.get(i), deliveryAmounts.get(i));
+						if (i < getCurrentStage(quest).getItemsToDeliver().size()) {
+							getQuestData(quest).itemsDelivered.put(getCurrentStage(quest).getItemsToDeliver().get(i), deliveryAmounts.get(i));
 						}
 					}
 				}
