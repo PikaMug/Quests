@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Введите название новой польз�
 stageEditorCustomAlreadyAdded: "Эта пользовательская цель уже была добавлена!"
 stageEditorCustomCleared: "Пользовательские цели очищены."
 stageEditorCustomDataPrompt: "Введите значение для <data>:"
-stageEditorEnterBlockNames: "Введите названия блоков (или ID), <space>, <cancel>"
+stageEditorEnterBlockNames: "Введите названия блоков, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Введите количества (числа) для разрушения, <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Введите количества (числа) для разрушения, <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Введите количества (числа) для установки блоков, <space>, <cancel>"
@@ -856,3 +856,4 @@ timerStart: "%green%У вас есть%red% <time> секунд%green% чтоб�
 questErrorReadingFile: "Ошибка в файле quests."
 questSaveError: "Произошла ошибка про сохранении."
 noPermission: "У вас недостаточно прав для этого."
+difference: "The difference is '<data>'."

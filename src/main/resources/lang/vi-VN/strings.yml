@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Nhập tên của mục tiêu tùy chỉnh để thêm
 stageEditorCustomAlreadyAdded: "Mục tiêu tùy chỉnh này đã được thêm rồi!"
 stageEditorCustomCleared: "Mục tiêu tùy chỉnh đã được xóa."
 stageEditorCustomDataPrompt: "Nhập giá trị cho <data>:"
-stageEditorEnterBlockNames: "Nhập tên khối (hoặc ID), <space>, <cancel>"
+stageEditorEnterBlockNames: "Nhập tên khối, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Nhập lượng khối cần phá vỡ (số), <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Nhập lượng sát thương (số), <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Nhập lượng khối đặt ra (số), <space>, <cancel>"
@@ -856,3 +856,4 @@ timerStart: "%green%Bạn có%red% <time> giây%green% để hoàn thành nhiệ
 questErrorReadingFile: "Lỗi khi đang đọc file Nhiệm vụ."
 questSaveError: "Có lỗi xảy ra trong khi đang lưu."
 noPermission: "Bạn không có quyền để làm điều đó."
+difference: "The difference is '<data>'."

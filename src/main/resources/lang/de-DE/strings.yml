@@ -186,7 +186,7 @@ stageEditorCustomPrompt: "Du musst den Namen eines benutzerdefinierten Ziels ein
 stageEditorCustomAlreadyAdded: "Dieses benutzerdefinierte Ziel wurde bereits hinzugefügt!"
 stageEditorCustomCleared: "Benutzerdefinierte Ziele gelöscht."
 stageEditorCustomDataPrompt: "Geben Sie den Wert für <data> ein:"
-stageEditorEnterBlockNames: "Gib den Blocknamen (oder ID) ein, <space>, <cancel>"
+stageEditorEnterBlockNames: "Gib den Blocknamen ein, <space>, <cancel>"
 stageEditorBreakBlocksPrompt: "Gib die Abbaumengen (zahlen) ein, <space>, <cancel>"
 stageEditorDamageBlocksPrompt: "Gib die Schadensmenge (zahlen) ein, <space>, <cancel>"
 stageEditorPlaceBlocksPrompt: "Gib die Menge zum Platzieren (zahlen) ein, <space>, <cancel>"
@@ -856,3 +856,4 @@ timerStart: "%green%Du hat%red% <time> Sekunden%green% um diese Quest/Abschnitt 
 questErrorReadingFile: "Fehler beim Lesen der Questdatei."
 questSaveError: "Beim Speichern ist ein Fehler aufgetreten."
 noPermission: "Du hast keine Erlaubnis das zu tun."
+difference: "The difference is '<data>'."

@@ -856,3 +856,4 @@ timerStart: "%green%You have%red% <time> seconds%green% to finish this quest/sta
 questErrorReadingFile: "Error reading Quests file."
 questSaveError: "An error occurred while saving."
 noPermission: "You do not have permission to do that."
+difference: "The difference is '<data>'."
