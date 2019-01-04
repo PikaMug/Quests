@@ -47,6 +47,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import me.blackvein.quests.timers.StageTimer;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
@@ -55,12 +56,13 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class Quester {
 
-	public UUID id;
-	boolean editorMode = false;
+	private Quests plugin;
 	public boolean hasJournal = false;
-	public String questToTake;
-	public ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<Integer, Quest>();
-	public ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
+	private UUID id;
+	protected String questToTake;
+	protected int questPoints = 0;
+	protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<Integer, Quest>();
+	protected ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
 
 		private static final long serialVersionUID = 6361484975823846780L;
 
@@ -90,9 +92,7 @@ public class Quester {
 			updateJournal();
 		}
 	};
-	int questPoints = 0;
-	Quests plugin;
-	public LinkedList<String> completedQuests = new LinkedList<String>() {
+	protected LinkedList<String> completedQuests = new LinkedList<String>() {
 
 		private static final long serialVersionUID = -269110128568487000L;
 
@@ -150,14 +150,11 @@ public class Quester {
 			return s;
 		}
 	};
-	public Map<String, Long> completedTimes = new HashMap<String, Long>();
-	Map<String, Integer> amountsCompleted = new HashMap<String, Integer>() {
+	protected Map<String, Long> completedTimes = new HashMap<String, Long>();
+	protected Map<String, Integer> amountsCompleted = new HashMap<String, Integer>() {
 
 		private static final long serialVersionUID = 5475202358792520975L;
 
-		/*
-		 * @SuppressWarnings("unused") public void hardClear() { super.clear(); }
-		 */
 		@Override
 		public Integer put(String key, Integer val) {
 			Integer data = super.put(key, val);
@@ -184,7 +181,7 @@ public class Quester {
 			updateJournal();
 		}
 	};
-	Map<Quest, QuestData> questData = new HashMap<Quest, QuestData>() {
+	protected Map<Quest, QuestData> questData = new HashMap<Quest, QuestData>() {
 
 		private static final long serialVersionUID = -4607112433003926066L;
 
@@ -214,10 +211,85 @@ public class Quester {
 			updateJournal();
 		}
 	};
-	final Random random = new Random();
-
+	
 	public Quester(Quests newPlugin) {
 		plugin = newPlugin;
+	}
+
+	public UUID getUUID() {
+		return id;
+	}
+
+	public void setUUID(UUID id) {
+		this.id = id;
+	}
+
+	public String getQuestToTake() {
+		return questToTake;
+	}
+
+	public void setQuestToTake(String questToTake) {
+		this.questToTake = questToTake;
+	}
+
+	public int getQuestPoints() {
+		return questPoints;
+	}
+
+	public void setQuestPoints(int questPoints) {
+		this.questPoints = questPoints;
+	}
+
+	public ConcurrentHashMap<Integer, Quest> getTimers() {
+		return timers;
+	}
+
+	public void setTimers(ConcurrentHashMap<Integer, Quest> timers) {
+		this.timers = timers;
+	}
+	
+	public void removeTimer(Integer timerId) {
+		this.timers.remove(timerId);
+	}
+
+	public ConcurrentHashMap<Quest, Integer> getCurrentQuests() {
+		return currentQuests;
+	}
+
+	public void setCurrentQuests(ConcurrentHashMap<Quest, Integer> currentQuests) {
+		this.currentQuests = currentQuests;
+	}
+
+	public LinkedList<String> getCompletedQuests() {
+		return completedQuests;
+	}
+
+	public void setCompletedQuests(LinkedList<String> completedQuests) {
+		this.completedQuests = completedQuests;
+	}
+
+	public Map<String, Long> getCompletedTimes() {
+		return completedTimes;
+	}
+
+	public void setCompletedTimes(Map<String, Long> completedTimes) {
+		this.completedTimes = completedTimes;
+	}
+
+	public Map<String, Integer> getAmountsCompleted() {
+		return amountsCompleted;
+	}
+
+	public void setAmountsCompleted(Map<String, Integer> amountsCompleted) {
+		this.amountsCompleted = amountsCompleted;
+	}
+
+	public Map<Quest, QuestData> getQuestData() {
+		return questData;
+	}
+
+	public void setQuestData(Map<Quest, QuestData> questData) {
+		this.questData = questData;
 	}
 
 	public Player getPlayer() {
@@ -226,6 +298,20 @@ public class Quester {
 
 	public OfflinePlayer getOfflinePlayer() {
 		return Bukkit.getServer().getOfflinePlayer(id);
+	}
+	
+	public Stage getCurrentStage(Quest quest) {
+		if (currentQuests.containsKey(quest)) {
+			return quest.getStage(currentQuests.get(quest));
+		}
+		return null;
+	}
+
+	public QuestData getQuestData(Quest quest) {
+		if (questData.containsKey(quest)) {
+			return questData.get(quest);
+		}
+		return null;
 	}
 
 	public void updateJournal() {
@@ -296,20 +382,6 @@ public class Quester {
 		}
 	}
 
-	public Stage getCurrentStage(Quest quest) {
-		if (currentQuests.containsKey(quest)) {
-			return quest.getStage(currentQuests.get(quest));
-		}
-		return null;
-	}
-
-	public QuestData getQuestData(Quest quest) {
-		if (questData.containsKey(quest)) {
-			return questData.get(quest);
-		}
-		return null;
-	}
-
 	public void takeQuest(Quest q, boolean override) {
 		if (q == null) {
 			return;
@@ -348,7 +420,6 @@ public class Quester {
 					player.sendMessage(ChatColor.YELLOW + early);
 					return;
 				}
-				//TODO - can this ever happen?
 				if (System.currentTimeMillis() > nextEnd) {
 					if (System.currentTimeMillis() > end) {
 						String late = Lang.get("plnTooLate");
@@ -372,7 +443,6 @@ public class Quester {
 				return;
 			}
 		}
-		//TODO - should this even be reported?
 		if (pln.getEnd() != null) {
 			if (System.currentTimeMillis() > end) {
 				String late = Lang.get("plnTooLate");
@@ -610,13 +680,13 @@ public class Quester {
 			}
 		}
 		int index2 = 0;
-		for (ItemStack is : getCurrentStage(quest).getItemsToDeliver()) {
+		for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
 			int delivered = 0;
 			if (getQuestData(quest).itemsDelivered.containsKey(is)) {
 				delivered = getQuestData(quest).itemsDelivered.get(is);
 			}
 			int amt = is.getAmount();
-			Integer npc = getCurrentStage(quest).getItemDeliveryTargets().get(index2);
+			Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(index2);
 			index2++;
 			if (delivered < amt) {
 				String obj = Lang.get(getPlayer(), "deliver");
@@ -793,7 +863,7 @@ public class Quester {
 		} else if (s.equalsIgnoreCase("killMob")) {
 			return !getCurrentStage(quest).mobsToKill.isEmpty();
 		} else if (s.equalsIgnoreCase("deliverItem")) {
-			return !getCurrentStage(quest).getItemsToDeliver().isEmpty();
+			return !getCurrentStage(quest).itemsToDeliver.isEmpty();
 		} else if (s.equalsIgnoreCase("killPlayer")) {
 			return getCurrentStage(quest).playersToKill != null;
 		} else if (s.equalsIgnoreCase("talkToNPC")) {
@@ -1246,14 +1316,14 @@ public class Quester {
 		}
 		if (found != null) {
 			int amount = getQuestData(quest).itemsDelivered.get(found);
-			if (getCurrentStage(quest).getItemsToDeliver().indexOf(found) < 0) {
+			if (getCurrentStage(quest).itemsToDeliver.indexOf(found) < 0) {
 				plugin.getLogger().severe("Index out of bounds while delivering " + found.getType() + " x " + found.getAmount() + " for quest " 
 						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already delivered. Int -amount- reports value of " + 
-						+ amount + ". Please report this error on Github issue #448");
+						+ amount + ". Please report this error on Github!");
 				player.sendMessage("Quests had a problem delivering your item, please contact an administrator!");
 				return;
 			}
-			int req = getCurrentStage(quest).getItemsToDeliver().get(getCurrentStage(quest).getItemsToDeliver().indexOf(found)).getAmount();
+			int req = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(found)).getAmount();
 			Material m = i.getType();
 			if (amount < req) {
 				if ((i.getAmount() + amount) > req) {
@@ -1272,7 +1342,7 @@ public class Quester {
 					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
 					player.getInventory().setItem(player.getInventory().first(i), null);
 					player.updateInventory();
-					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(random.nextInt(getCurrentStage(quest).deliverMessages.size())), Quests.citizens.getNPCRegistry().getById(getCurrentStage(quest).getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(found))));
+					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(getCurrentStage(quest).deliverMessages.size())), Quests.citizens.getNPCRegistry().getById(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
 					player.sendMessage(message);
 				}
 			}
@@ -1411,9 +1481,9 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("deliverItem")) {
 			String obj = Lang.get(p, "deliver");
-			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(delivery))));
+			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
-			ItemStack is = getCurrentStage(quest).getItemsToDeliver().get(getCurrentStage(quest).getItemsToDeliver().indexOf(delivery));
+			ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery));
 			plugin.query.sendMessage(p, message, is.getType(), is.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
@@ -1588,8 +1658,8 @@ public class Quester {
 			}
 		}
 		data.setPlayersKilled(0);
-		if (quest.getStage(stage).getItemsToDeliver().isEmpty() == false) {
-			for (ItemStack is : quest.getStage(stage).getItemsToDeliver()) {
+		if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
+			for (ItemStack is : quest.getStage(stage).itemsToDeliver) {
 				data.itemsDelivered.put(is, 0);
 			}
 		}
@@ -2291,8 +2361,8 @@ public class Quester {
 				if (questSec.contains("item-delivery-amounts")) {
 					List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
 					for (int i = 0; i < deliveryAmounts.size(); i++) {
-						if (i < getCurrentStage(quest).getItemsToDeliver().size()) {
-							getQuestData(quest).itemsDelivered.put(getCurrentStage(quest).getItemsToDeliver().get(i), deliveryAmounts.get(i));
+						if (i < getCurrentStage(quest).itemsToDeliver.size()) {
+							getQuestData(quest).itemsDelivered.put(getCurrentStage(quest).itemsToDeliver.get(i), deliveryAmounts.get(i));
 						}
 					}
 				}
@@ -2527,6 +2597,10 @@ public class Quester {
 		return newData;
 	}
 
+	/**
+	 * Initiate the stage timer
+	 * @param quest The quest of which the timer is for
+	 */
 	public void startStageTimer(Quest quest) {
 		if (getQuestData(quest).delayTimeLeft > -1) {
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getQuestData(quest).delayTimeLeft * 0.02));

@@ -68,7 +68,7 @@ public class NpcEffectThread implements Runnable {
 	 * @param npc Target NPC to place the effect above
 	 * @param effectType Value of EnumParticle such as NOTE or SMOKE
 	 */
-	private void showEffect(Player player, NPC npc, String effectType) {
+	public void showEffect(Player player, NPC npc, String effectType) {
 		try {
 			if (Quests.bukkitVersion.contains("1.13.2")
 					|| Quests.bukkitVersion.contains("1.13.1")) {
@@ -108,7 +108,6 @@ public class NpcEffectThread implements Runnable {
 	}
 	
 	private void showEffect_1_13_R2(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -200,7 +199,6 @@ public class NpcEffectThread implements Runnable {
 	}
 	
 	private void showEffect_1_13_R1(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -292,7 +290,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_1_12_R1(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -384,7 +381,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_1_11_R1(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -476,7 +472,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_1_10_R1(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -568,7 +563,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_1_9_R2(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -660,7 +654,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_1_9_R1(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -752,7 +745,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_1_8_R3(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -844,7 +836,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_1_8_R2(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -936,7 +927,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_1_8_R1(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -1028,7 +1018,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_R4(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
@@ -1120,7 +1109,6 @@ public class NpcEffectThread implements Runnable {
 	}
 
 	private void showEffect_R3(Player player, NPC npc, String effectType) {
-		// Get and set eye location, because npc.getBukkitEntity() is deprecated.
 		Location eyeLoc = npc.getEntity().getLocation();
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {

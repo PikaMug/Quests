@@ -231,6 +231,14 @@ public class Quest {
 		quester.updateJournal();
 	}
 	
+	/**
+	 * Add location-objective points for GPS and begin navigation.<p>
+	 * 
+	 * Do not call this method multiple times.
+	 * 
+	 * @param quester The quester to have their GPS updated
+	 * @return true if successful
+	 */
 	protected boolean updateGPS(Quester quester) {
 		if (Quests.gpsapi == null) {
 			return false;
@@ -274,6 +282,15 @@ public class Quest {
 		return targetLocations != null && !targetLocations.isEmpty();
 	}
 
+	/**
+	 * Set location-objective target for compass.<p>
+	 * 
+	 * Method may be called as often as needed.
+	 * 
+	 * @param quester The quester to have their compass updated
+	 * @param nextStage The stage to process for targets
+	 * @return true if successful
+	 */
 	public boolean updateCompass(Quester quester, Stage nextStage) {
 		if (!plugin.useCompass) {
 			return false;
@@ -296,11 +313,23 @@ public class Quest {
 		}
 		return targetLocation != null;
 	}
-
+	
+	/**
+	 * Check that a quester has met all Requirements to accept this quest
+	 * 
+	 * @param quester The quester to check
+	 * @return true if all Requirements have been met
+	 */
 	public boolean testRequirements(Quester quester) {
 		return testRequirements(quester.getPlayer());
 	}
-
+	
+	/**
+	 * Check that a player has met all Requirements to accept this quest
+	 * 
+	 * @param player The player to check
+	 * @return true if all Requirements have been met
+	 */
 	protected boolean testRequirements(Player player) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
 		if (reqs.getMoney() != 0 && Quests.economy != null) {
@@ -377,10 +406,15 @@ public class Quest {
 		}
 		return true;
 	}
-
+	
+	/**
+	 * Proceed to finish this quest, issuing any rewards
+	 * 
+	 * @param q The quester finishing this quest
+	 */
 	@SuppressWarnings("deprecation")
 	public void completeQuest(Quester q) {
-		final Player player = plugin.getServer().getPlayer(q.id);
+		final Player player = plugin.getServer().getPlayer(q.getUUID());
 		q.hardQuit(this);
 		if (!q.completedQuests.contains(name)) {
 			q.completedQuests.add(name);
@@ -642,11 +676,16 @@ public class Quest {
 		}
 		q.findCompassTarget();
 	}
-
+	
+	/**
+	 * Force player to quit quest and inform them of their failure
+	 * 
+	 * @param q The player to ejected
+	 */
 	@SuppressWarnings("deprecation")
 	public void failQuest(Quester q) {
-		if (plugin.getServer().getPlayer(q.id) != null) {
-			Player player = plugin.getServer().getPlayer(q.id);
+		if (plugin.getServer().getPlayer(q.getUUID()) != null) {
+			Player player = plugin.getServer().getPlayer(q.getUUID());
 			String title = Lang.get(player, "questTitle");
 			title = title.replace("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
 			player.sendMessage(ChatColor.AQUA + title);
@@ -661,10 +700,22 @@ public class Quest {
 		q.updateJournal();
 	}
 	
+	/**
+	 * Checks if quester is in WorldGuard region
+	 * 
+	 * @param quester The quester to check
+	 * @return true if quester is in region
+	 */
 	public boolean isInRegion(Quester quester) {
 		return isInRegion(quester.getPlayer());
 	}
 
+	/**
+	 * Checks if player is in WorldGuard region
+	 * 
+	 * @param player The player to check
+	 * @return true if player is in region
+	 */
 	private boolean isInRegion(Player player) {
 		if (region == null) {
 			return true;

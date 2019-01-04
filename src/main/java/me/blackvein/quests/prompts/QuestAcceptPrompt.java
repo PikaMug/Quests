@@ -49,7 +49,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 		String menu = text + "\n";
 		for (int i = 1; i <= quests.size(); i++) {
 			Quest quest = quests.get(i - 1);
-			if (quester.completedQuests.contains(quest.getName())) {
+			if (quester.getCompletedQuests().contains(quest.getName())) {
 				menu += ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" + ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName() + ChatColor.RESET + "" + ChatColor.GREEN + " " + Lang.get("redoCompleted") + "\n";
 			} else {
 				menu += ChatColor.GOLD + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" + ChatColor.YELLOW + "" + ChatColor.ITALIC + quest.getName() + "\n";
@@ -100,29 +100,29 @@ public class QuestAcceptPrompt extends StringPrompt {
 				return new QuestAcceptPrompt(plugin);
 			} else {
 				Player player = quester.getPlayer();
-				if (!quester.completedQuests.contains(q.getName())) {
-					if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
+				if (!quester.getCompletedQuests().contains(q.getName())) {
+					if (quester.getCurrentQuests().size() < plugin.maxQuests || plugin.maxQuests < 1) {
 						if (q.testRequirements(quester)) {
-							quester.questToTake = q.getName();
+							quester.setQuestToTake(q.getName());
 							String s = extracted(quester);
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
 							}
 							if (!plugin.askConfirmation) {
-								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).questToTake), false);
+								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
 							} else {
 								plugin.conversationFactory.buildConversation((Conversable) player).begin();
 							}
 						} else {
 							player.sendMessage(q.getRequirements().getFailRequirements());
 						}
-					} else if (quester.currentQuests.containsKey(q) == false) {
+					} else if (quester.getCurrentQuests().containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
 						msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 						player.sendMessage(ChatColor.YELLOW + msg);
 					}
-				} else if (quester.completedQuests.contains(q.getName())) {
-					if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
+				} else if (quester.getCompletedQuests().contains(q.getName())) {
+					if (quester.getCurrentQuests().size() < plugin.maxQuests || plugin.maxQuests < 1) {
 						if (quester.getCooldownDifference(q) > 0) {
 							String early = Lang.get("questTooEarly");
 							early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
@@ -133,18 +133,18 @@ public class QuestAcceptPrompt extends StringPrompt {
 							completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + completed);
 						} else {
-							quester.questToTake = q.getName();
+							quester.setQuestToTake(q.getName());
 							String s = extracted(quester);
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
 							}
 							if (!plugin.askConfirmation) {
-								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).questToTake), false);
+								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
 							} else {
 								plugin.conversationFactory.buildConversation((Conversable) player).begin();
 							}
 						}
-					} else if (quester.currentQuests.containsKey(q) == false) {
+					} else if (quester.getCurrentQuests().containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
 						msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 						player.sendMessage(ChatColor.YELLOW + msg);
@@ -156,6 +156,6 @@ public class QuestAcceptPrompt extends StringPrompt {
 	}
 
 	private String extracted(final Quester quester) {
-		return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, quester.questToTake, ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.questToTake).getDescription());
+		return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, quester.getQuestToTake(), ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.getQuestToTake()).getDescription());
 	}
 }

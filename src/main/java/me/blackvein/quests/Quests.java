@@ -1253,7 +1253,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 				return;
 			}
-			UUID id = quester.id;
+			UUID id = quester.getUUID();
 			questers.remove(id);
 			try {
 				quester.hardClear();
@@ -1274,7 +1274,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				getLogger().info("Data file does not exist for " + id.toString());
 			}
 			quester = new Quester(this);
-			quester.id = id;
+			quester.setUUID(id);
 			quester.saveData();
 			questers.put(id, quester);
 		} else {
@@ -1303,14 +1303,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				return;
 			}
 			String msg = Lang.get("questRemoved");
-			if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
-				msg = msg.replace("<player>", ChatColor.GREEN + Bukkit.getOfflinePlayer(quester.id).getName() + ChatColor.GOLD);
+			if (Bukkit.getOfflinePlayer(quester.getUUID()).getName() != null) {
+				msg = msg.replace("<player>", ChatColor.GREEN + Bukkit.getOfflinePlayer(quester.getUUID()).getName() + ChatColor.GOLD);
 			} else {
 				msg = msg.replace("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
 			}
 			msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + toRemove.getName() + ChatColor.AQUA);
 			cs.sendMessage(ChatColor.GOLD + msg);
-			cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + quester.id.toString());
+			cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + quester.getUUID().toString());
 			quester.hardRemove(toRemove);
 			quester.saveData();
 			quester.updateJournal();
@@ -1453,8 +1453,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			if (quester == null) {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 				return;
-			} else if (Bukkit.getOfflinePlayer(quester.id).getName() != null) {
-				cs.sendMessage(ChatColor.GOLD + "- " + Bukkit.getOfflinePlayer(quester.id).getName() + " -");
+			} else if (Bukkit.getOfflinePlayer(quester.getUUID()).getName() != null) {
+				cs.sendMessage(ChatColor.GOLD + "- " + Bukkit.getOfflinePlayer(quester.getUUID()).getName() + " -");
 			} else {
 				cs.sendMessage(ChatColor.GOLD + "- " + args[1] + " -");
 			}
@@ -2176,7 +2176,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		if (quester == null) {
 			quester = new Quester(this);
-			quester.id = id;
+			quester.setUUID(id);
 			if (citizens != null) {
 				if (citizens.getNPCRegistry().getByUniqueId(id) != null) {
 					return quester;
@@ -2209,7 +2209,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		Map<UUID, Quester> qs = new HashMap<UUID, Quester>();
 		for (Player p : getServer().getOnlinePlayers()) {
 			Quester quester = new Quester(this);
-			quester.id = p.getUniqueId();
+			quester.setUUID(p.getUniqueId());
 			if (quester.loadData() == false) {
 				quester.saveData();
 			}
@@ -3997,7 +3997,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public Event getEvent(String s) {
 		for (Event e : events) {
-			if (e.name.equalsIgnoreCase(s)) {
+			if (e.getName().equalsIgnoreCase(s)) {
 				return e;
 			}
 		}

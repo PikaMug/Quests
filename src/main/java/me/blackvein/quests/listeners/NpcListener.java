@@ -61,7 +61,7 @@ public class NpcListener implements Listener {
 			final Player player = evt.getClicker();
 			final Quester quester = plugin.getQuester(player.getUniqueId());
 			boolean delivery = false;
-			for (Quest quest : quester.currentQuests.keySet()) {
+			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "deliverItem") && player.getItemInHand() != null) {
 					ItemStack hand = player.getItemInHand();
 					ItemStack found = null;
@@ -148,7 +148,7 @@ public class NpcListener implements Listener {
 			}
 			if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
 				boolean hasObjective = false;
-				for (Quest quest : quester.currentQuests.keySet()) {
+				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "talkToNPC")) {
 						if (quester.getQuestData(quest) != null && quester.getQuestData(quest).citizensInteracted.containsKey(evt.getNPC().getId()) && quester.getQuestData(quest).citizensInteracted.get(evt.getNPC().getId()) == false) {
 							hasObjective = true;
@@ -159,14 +159,14 @@ public class NpcListener implements Listener {
 				if (!hasObjective) {
 					LinkedList<Quest> npcQuests = new LinkedList<Quest>();
 					for (Quest q : plugin.getQuests()) {
-						if (quester.currentQuests.containsKey(q))
+						if (quester.getCurrentQuests().containsKey(q))
 							continue;
 						if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
-							if (plugin.ignoreLockedQuests && (quester.completedQuests.contains(q.getName()) == false || q.getPlanner().getCooldown() > -1)) {
+							if (plugin.ignoreLockedQuests && (quester.getCompletedQuests().contains(q.getName()) == false || q.getPlanner().getCooldown() > -1)) {
 								if (q.testRequirements(quester)) {
 									npcQuests.add(q);
 								}
-							} else if (quester.completedQuests.contains(q.getName()) == false || q.getPlanner().getCooldown() > -1) {
+							} else if (quester.getCompletedQuests().contains(q.getName()) == false || q.getPlanner().getCooldown() > -1) {
 								npcQuests.add(q);
 							}
 						}
@@ -182,20 +182,20 @@ public class NpcListener implements Listener {
 						c.begin();
 					} else if (npcQuests.size() == 1) {
 						Quest q = npcQuests.get(0);
-						if (!quester.completedQuests.contains(q.getName())) {
-							if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
-								quester.questToTake = q.getName();
+						if (!quester.getCompletedQuests().contains(q.getName())) {
+							if (quester.getCurrentQuests().size() < plugin.maxQuests || plugin.maxQuests < 1) {
+								quester.setQuestToTake(q.getName());
 								String s = extracted(quester);
 								for (String msg : s.split("<br>")) {
 									player.sendMessage(msg);
 								}
 								plugin.conversationFactory.buildConversation(player).begin();
-							} else if (quester.currentQuests.containsKey(q) == false) {
+							} else if (quester.getCurrentQuests().containsKey(q) == false) {
 								String msg = Lang.get(player, "questMaxAllowed");
 								msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 								player.sendMessage(ChatColor.YELLOW + msg);
 							}
-						} else if (quester.currentQuests.size() < plugin.maxQuests || plugin.maxQuests < 1) {
+						} else if (quester.getCurrentQuests().size() < plugin.maxQuests || plugin.maxQuests < 1) {
 							if (quester.getCooldownDifference(q) > 0) {
 								String early = Lang.get(player, "questTooEarly");
 								early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
@@ -206,14 +206,14 @@ public class NpcListener implements Listener {
 								completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 								player.sendMessage(ChatColor.YELLOW + completed);
 							} else {
-								quester.questToTake = q.getName();
+								quester.setQuestToTake(q.getName());
 								String s = extracted(quester);
 								for (String msg : s.split("<br>")) {
 									player.sendMessage(msg);
 								}
 								plugin.conversationFactory.buildConversation(player).begin();
 							}
-						} else if (quester.currentQuests.containsKey(q) == false) {
+						} else if (quester.getCurrentQuests().containsKey(q) == false) {
 							String msg = Lang.get(player, "questMaxAllowed");
 							msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
 							player.sendMessage(ChatColor.YELLOW + msg);
@@ -250,7 +250,7 @@ public class NpcListener implements Listener {
 						}
 						if (okay) {
 							Quester quester = plugin.getQuester(player.getUniqueId());
-							for (Quest quest : quester.currentQuests.keySet()) {
+							for (Quest quest : quester.getCurrentQuests().keySet()) {
 								if (quester.containsObjective(quest, "killNPC")) {
 									quester.killNPC(quest, evt.getNPC());
 								}
@@ -267,7 +267,7 @@ public class NpcListener implements Listener {
 					if (okay) {
 						Player player = (Player) damager;
 						Quester quester = plugin.getQuester(player.getUniqueId());
-						for (Quest quest : quester.currentQuests.keySet()) {
+						for (Quest quest : quester.getCurrentQuests().keySet()) {
 							if (quester.containsObjective(quest, "killNPC")) {
 								quester.killNPC(quest, evt.getNPC());
 							}
@@ -279,6 +279,6 @@ public class NpcListener implements Listener {
 	}
 
 	private String extracted(final Quester quester) {
-		return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, quester.questToTake, ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.questToTake).getDescription());
+		return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, quester.getQuestToTake(), ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.getQuestToTake()).getDescription());
 	}
 }

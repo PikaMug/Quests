@@ -10,18 +10,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.timers;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.Stage;
 import me.blackvein.quests.util.Lang;
 
 public class StageTimer implements Runnable {
 
-	Quester quester;
-	Quests plugin;
-	Quest quest;
+	private Quester quester;
+	private Quests plugin;
+	private Quest quest;
 
 	public StageTimer(Quests quests, Quester q, Quest qu) {
 		quester = q;
@@ -34,33 +38,33 @@ public class StageTimer implements Runnable {
 		if (quester.getQuestData(quest).delayOver) {
 			Player player = quester.getPlayer();
 			if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
-				if (quester.getCurrentStage(quest).script != null) {
-					plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(quest).script, player);
+				if (quester.getCurrentStage(quest).getScript() != null) {
+					plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(quest).getScript(), player);
 				}
-				if (quester.getCurrentStage(quest).finishEvent != null) {
-					quester.getCurrentStage(quest).finishEvent.fire(quester, quest);
+				if (quester.getCurrentStage(quest).getFinishEvent() != null) {
+					quester.getCurrentStage(quest).getFinishEvent().fire(quester, quest);
 				}
 				quest.completeQuest(quester);
 			} else {
 				Stage currentStage = quester.getCurrentStage(quest);
-				int stageNum = quester.currentQuests.get(quest) + 1;
+				int stageNum = quester.getCurrentQuests().get(quest) + 1;
 				quester.hardQuit(quest);
-				if (currentStage.script != null) {
-					plugin.trigger.parseQuestTaskTrigger(currentStage.script, player);
+				if (currentStage.getScript() != null) {
+					plugin.trigger.parseQuestTaskTrigger(currentStage.getScript(), player);
 				}
-				if (currentStage.finishEvent != null) {
-					currentStage.finishEvent.fire(quester, quest);
+				if (currentStage.getFinishEvent() != null) {
+					currentStage.getFinishEvent().fire(quester, quest);
 				}
 				quester.hardStagePut(quest, stageNum);
 				quester.addEmptiesFor(quest, stageNum);
-				quester.getCurrentStage(quest).delay = -1; // Line added to fix Github issue #505
+				quester.getCurrentStage(quest).setDelay(-1);
 				quester.getQuestData(quest).delayStartTime = 0;
 				quester.getQuestData(quest).delayTimeLeft = -1;
 				String msg = Lang.get(player, "questObjectivesTitle");
 				msg = msg.replace("<quest>", quest.getName());
 				player.sendMessage(ChatColor.GOLD + msg);
 				plugin.showObjectives(quest, quester, false);
-				String stageStartMessage = quester.getCurrentStage(quest).startMessage;
+				String stageStartMessage = quester.getCurrentStage(quest).getStartMessage();
 				if (stageStartMessage != null) {
 					quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quest));
 				}

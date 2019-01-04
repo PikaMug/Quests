@@ -32,27 +32,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
+import me.blackvein.quests.timers.EventTimer;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.QuestMob;
 
 public class Event {
 
-	Quests plugin;
-	String name = "";
-	String message = null;
-	boolean clearInv = false;
-	boolean failQuest = false;
-	LinkedList<Location> explosions = new LinkedList<Location>();
-	Map<Location, Effect> effects = new HashMap<Location, Effect>();
-	LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-	World stormWorld = null;
-	int stormDuration = 0;
-	World thunderWorld = null;
-	int thunderDuration = 0;
-	int timer = 0;
-	boolean cancelTimer = false;
-	public LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>() {
+	private Quests plugin;
+	private String name = "";
+	protected String message = null;
+	protected boolean clearInv = false;
+	protected boolean failQuest = false;
+	protected LinkedList<Location> explosions = new LinkedList<Location>();
+	protected Map<Location, Effect> effects = new HashMap<Location, Effect>();
+	protected LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+	protected World stormWorld = null;
+	protected int stormDuration = 0;
+	protected World thunderWorld = null;
+	protected int thunderDuration = 0;
+	protected int timer = 0;
+	protected boolean cancelTimer = false;
+	protected LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>() {
 
 		private static final long serialVersionUID = -761974607799449780L;
 
@@ -73,14 +74,14 @@ public class Event {
 			return false;
 		}
 	};
-	LinkedList<Location> lightningStrikes = new LinkedList<Location>();
-	LinkedList<String> commands = new LinkedList<String>();
-	LinkedList<PotionEffect> potionEffects = new LinkedList<PotionEffect>();
-	int hunger = -1;
-	int saturation = -1;
-	float health = -1;
-	Location teleport;
-	String book = "";
+	protected LinkedList<Location> lightningStrikes = new LinkedList<Location>();
+	protected LinkedList<String> commands = new LinkedList<String>();
+	protected LinkedList<PotionEffect> potionEffects = new LinkedList<PotionEffect>();
+	protected int hunger = -1;
+	protected int saturation = -1;
+	protected float health = -1;
+	protected Location teleport;
+	protected String book = "";
 
 	public Event(final Quests plugin) {
 		this.plugin = plugin;
@@ -88,6 +89,178 @@ public class Event {
 
 	public String getName() {
 		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public boolean isClearInv() {
+		return clearInv;
+	}
+
+	public void setClearInv(boolean clearInv) {
+		this.clearInv = clearInv;
+	}
+
+	public boolean isFailQuest() {
+		return failQuest;
+	}
+
+	public void setFailQuest(boolean failQuest) {
+		this.failQuest = failQuest;
+	}
+
+	public LinkedList<Location> getExplosions() {
+		return explosions;
+	}
+
+	public void setExplosions(LinkedList<Location> explosions) {
+		this.explosions = explosions;
+	}
+
+	public Map<Location, Effect> getEffects() {
+		return effects;
+	}
+
+	public void setEffects(Map<Location, Effect> effects) {
+		this.effects = effects;
+	}
+
+	public LinkedList<ItemStack> getItems() {
+		return items;
+	}
+
+	public void setItems(LinkedList<ItemStack> items) {
+		this.items = items;
+	}
+
+	public World getStormWorld() {
+		return stormWorld;
+	}
+
+	public void setStormWorld(World stormWorld) {
+		this.stormWorld = stormWorld;
+	}
+
+	public int getStormDuration() {
+		return stormDuration;
+	}
+
+	public void setStormDuration(int stormDuration) {
+		this.stormDuration = stormDuration;
+	}
+
+	public World getThunderWorld() {
+		return thunderWorld;
+	}
+
+	public void setThunderWorld(World thunderWorld) {
+		this.thunderWorld = thunderWorld;
+	}
+
+	public int getThunderDuration() {
+		return thunderDuration;
+	}
+
+	public void setThunderDuration(int thunderDuration) {
+		this.thunderDuration = thunderDuration;
+	}
+
+	public int getTimer() {
+		return timer;
+	}
+
+	public void setTimer(int timer) {
+		this.timer = timer;
+	}
+
+	public boolean isCancelTimer() {
+		return cancelTimer;
+	}
+
+	public void setCancelTimer(boolean cancelTimer) {
+		this.cancelTimer = cancelTimer;
+	}
+
+	public LinkedList<QuestMob> getMobSpawns() {
+		return mobSpawns;
+	}
+
+	public void setMobSpawns(LinkedList<QuestMob> mobSpawns) {
+		this.mobSpawns = mobSpawns;
+	}
+
+	public LinkedList<Location> getLightningStrikes() {
+		return lightningStrikes;
+	}
+
+	public void setLightningStrikes(LinkedList<Location> lightningStrikes) {
+		this.lightningStrikes = lightningStrikes;
+	}
+
+	public LinkedList<String> getCommands() {
+		return commands;
+	}
+
+	public void setCommands(LinkedList<String> commands) {
+		this.commands = commands;
+	}
+
+	public LinkedList<PotionEffect> getPotionEffects() {
+		return potionEffects;
+	}
+
+	public void setPotionEffects(LinkedList<PotionEffect> potionEffects) {
+		this.potionEffects = potionEffects;
+	}
+
+	public int getHunger() {
+		return hunger;
+	}
+
+	public void setHunger(int hunger) {
+		this.hunger = hunger;
+	}
+
+	public int getSaturation() {
+		return saturation;
+	}
+
+	public void setSaturation(int saturation) {
+		this.saturation = saturation;
+	}
+
+	public float getHealth() {
+		return health;
+	}
+
+	public void setHealth(float health) {
+		this.health = health;
+	}
+
+	public Location getTeleport() {
+		return teleport;
+	}
+
+	public void setTeleport(Location teleport) {
+		this.teleport = teleport;
+	}
+
+	public String getBook() {
+		return book;
+	}
+
+	public void setBook(String book) {
+		this.book = book;
 	}
 
 	public void fire(Quester quester, Quest quest) {
@@ -140,7 +313,7 @@ public class Event {
 		}
 		if (commands.isEmpty() == false) {
 			for (String s : commands) {
-				quester.plugin.getServer().dispatchCommand(quester.plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
+				plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), s.replaceAll("<player>", quester.getPlayer().getName()));
 			}
 		}
 		if (potionEffects.isEmpty() == false) {
@@ -175,38 +348,38 @@ public class Event {
 		if (timer > 0) {
 			player.sendMessage(Lang.get(player, "timerStart").replaceAll("<time>", String.valueOf(timer)));
 			if (timer > 60) {
-				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 60, false)
+				quester.timers.put(new EventTimer(quester, quest, 60, false)
 						.runTaskLaterAsynchronously(plugin, (timer-60)*20).getTaskId(), quest);
 			}
 			if (timer > 30) {
-				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 30, false)
+				quester.timers.put(new EventTimer(quester, quest, 30, false)
 						.runTaskLaterAsynchronously(plugin, (timer-30)*20).getTaskId(), quest);
 			}
 			if (timer > 10) {
-				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 10, false)
+				quester.timers.put(new EventTimer(quester, quest, 10, false)
 						.runTaskLaterAsynchronously(plugin, (timer-10)*20).getTaskId(), quest);
 			}
 			if (timer > 5) {
-				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 5, false)
+				quester.timers.put(new EventTimer(quester, quest, 5, false)
 						.runTaskLaterAsynchronously(plugin, (timer-5)*20).getTaskId(), quest);
 			}
 			if (timer > 4) {
-				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 4, false)
+				quester.timers.put(new EventTimer(quester, quest, 4, false)
 						.runTaskLaterAsynchronously(plugin, (timer-4)*20).getTaskId(), quest);
 			}
 			if (timer > 3) {
-				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 3, false)
+				quester.timers.put(new EventTimer(quester, quest, 3, false)
 						.runTaskLaterAsynchronously(plugin, (timer-3)*20).getTaskId(), quest);
 			}
 			if (timer > 2) {
-				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 2, false)
+				quester.timers.put(new EventTimer(quester, quest, 2, false)
 						.runTaskLaterAsynchronously(plugin, (timer-2)*20).getTaskId(), quest);
 			}
 			if (timer > 1) {
-				quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 1, false)
+				quester.timers.put(new EventTimer(quester, quest, 1, false)
 						.runTaskLaterAsynchronously(plugin, (timer-1)*20).getTaskId(), quest);
 			}
-			quester.timers.put(new ObjectiveTimer(plugin, quester, quest, 0, true)
+			quester.timers.put(new EventTimer(quester, quest, 0, true)
 					.runTaskLaterAsynchronously(plugin, timer*20).getTaskId(), quest);
 		}
 		if (cancelTimer) {

@@ -10,31 +10,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.timers;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.util.Lang;
 
-public class ObjectiveTimer extends BukkitRunnable {
+public class EventTimer extends BukkitRunnable {
 
-    Quester quester;
-    Quests plugin;
-    Quest quest;
+    private Quester quester;
+    private Quest quest;
     private int time;
     private boolean last;
 
-    public ObjectiveTimer(Quests plugin, Quester quester, Quest quest, int time, boolean last) {
+    public EventTimer(Quester quester, Quest quest, int time, boolean last) {
         this.quester = quester;
         this.quest = quest;
-        this.plugin = plugin;
         this.time = time;
         this.last = last;
     }
 
     @Override
     public void run() {
-        quester.timers.remove(getTaskId());
+        quester.removeTimer(getTaskId());
         if (last) {
             quest.failQuest(quester);
             quester.updateJournal();

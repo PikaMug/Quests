@@ -1,3 +1,15 @@
+/*******************************************************************************************************
+ * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
+
 package me.blackvein.quests;
 
 import java.util.HashMap;
@@ -8,17 +20,17 @@ import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 
 public class Rewards {
-	int money = 0;
-	int questPoints = 0;
-	int exp = 0;
-	List<String> commands = new LinkedList<String>();
-	List<String> permissions = new LinkedList<String>();
-	LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-	List<String> mcmmoSkills = new LinkedList<String>();
-	List<Integer> mcmmoAmounts = new LinkedList<Integer>();
-	List<String> heroesClasses = new LinkedList<String>();
-	List<Double> heroesAmounts = new LinkedList<Double>();
-	List<String> phatLoots = new LinkedList<String>();
+	private int money = 0;
+	private int questPoints = 0;
+	private int exp = 0;
+	private List<String> commands = new LinkedList<String>();
+	private List<String> permissions = new LinkedList<String>();
+	private LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+	private List<String> mcmmoSkills = new LinkedList<String>();
+	private List<Integer> mcmmoAmounts = new LinkedList<Integer>();
+	private List<String> heroesClasses = new LinkedList<String>();
+	private List<Double> heroesAmounts = new LinkedList<Double>();
+	private List<String> phatLoots = new LinkedList<String>();
 	private Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
 	
 	public int getMoney() {
