@@ -306,7 +306,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				loadEvents();
 				getLogger().log(Level.INFO, "" + quests.size() + " Quest(s) loaded.");
 				getLogger().log(Level.INFO, "" + events.size() + " Event(s) loaded.");
-				getLogger().log(Level.INFO, "" + Lang.getPhrases() + " Phrase(s) loaded.");
+				getLogger().log(Level.INFO, "" + Lang.size() + " Phrase(s) loaded.");
 				questers.putAll(getOnlineQuesters());
 			}
 		}, 5L);
@@ -537,9 +537,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		killDelay = config.getInt("kill-delay", 600);
 		if (config.getString("language").equalsIgnoreCase("en")) {
 			//Legacy
-			lang.iso = "en-US";
+			lang.setISO("en-US");
 		} else {
-			lang.iso = config.getString("language", "en-US");
+			lang.setISO(config.getString("language", "en-US"));
 		}
 		maxQuests = config.getInt("max-quests", maxQuests);
 		npcEffects = config.getBoolean("npc-effects.enabled", true);
@@ -2154,7 +2154,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		// Reload config from disc in-case a setting was changed
 		reloadConfig();
 		loadConfig();
-		Lang.clearPhrases();
+		Lang.clear();
 		try {
 			lang.loadLang();
 		} catch (InvalidConfigurationException e) {

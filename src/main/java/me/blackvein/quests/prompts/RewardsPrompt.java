@@ -40,8 +40,8 @@ import me.blackvein.quests.util.Lang;
 
 public class RewardsPrompt extends FixedSetPrompt {
 
-	final Quests quests;
-	final QuestFactory factory;
+	private final Quests quests;
+	private final QuestFactory factory;
 
 	public RewardsPrompt(Quests plugin, QuestFactory qf) {
 		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");

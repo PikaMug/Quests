@@ -51,7 +51,6 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
-import me.blackvein.quests.util.QuestMob;
 
 public class EventFactory implements ConversationAbandonedListener {
 
@@ -827,16 +826,16 @@ public class EventFactory implements ConversationAbandonedListener {
 					ss.set("spawn-location", Quests.getLocationInfo(questMob.getSpawnLocation()));
 					ss.set("mob-type", questMob.getType().name());
 					ss.set("spawn-amounts", questMob.getSpawnAmounts());
-					ss.set("held-item", ItemUtil.serializeItemStack(questMob.inventory[0]));
-					ss.set("held-item-drop-chance", questMob.dropChances[0]);
-					ss.set("boots", ItemUtil.serializeItemStack(questMob.inventory[1]));
-					ss.set("boots-drop-chance", questMob.dropChances[1]);
-					ss.set("leggings", ItemUtil.serializeItemStack(questMob.inventory[2]));
-					ss.set("leggings-drop-chance", questMob.dropChances[2]);
-					ss.set("chest-plate", ItemUtil.serializeItemStack(questMob.inventory[3]));
-					ss.set("chest-plate-drop-chance", questMob.dropChances[3]);
-					ss.set("helmet", ItemUtil.serializeItemStack(questMob.inventory[4]));
-					ss.set("helmet-drop-chance", questMob.dropChances[4]);
+					ss.set("held-item", ItemUtil.serializeItemStack(questMob.getInventory()[0]));
+					ss.set("held-item-drop-chance", questMob.getDropChances()[0]);
+					ss.set("boots", ItemUtil.serializeItemStack(questMob.getInventory()[1]));
+					ss.set("boots-drop-chance", questMob.getDropChances()[1]);
+					ss.set("leggings", ItemUtil.serializeItemStack(questMob.getInventory()[2]));
+					ss.set("leggings-drop-chance", questMob.getDropChances()[2]);
+					ss.set("chest-plate", ItemUtil.serializeItemStack(questMob.getInventory()[3]));
+					ss.set("chest-plate-drop-chance", questMob.getDropChances()[3]);
+					ss.set("helmet", ItemUtil.serializeItemStack(questMob.getInventory()[4]));
+					ss.set("helmet-drop-chance", questMob.getDropChances()[4]);
 					count++;
 				}
 			}
@@ -1540,7 +1539,7 @@ public class EventFactory implements ConversationAbandonedListener {
 			// Check/add newly made item
 			if (context.getSessionData("newItem") != null) {
 				if (itemIndex >= 0) {
-					questMob.inventory[itemIndex] = ((ItemStack) context.getSessionData("tempStack"));
+					questMob.getInventory()[itemIndex] = ((ItemStack) context.getSessionData("tempStack"));
 					itemIndex = -1;
 				}
 				context.setSessionData("newItem", null);
@@ -1550,16 +1549,16 @@ public class EventFactory implements ConversationAbandonedListener {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobType") + ChatColor.GRAY + " (" + ((questMob.getType() == null) ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getType().name()) + ChatColor.GRAY + ")\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorAddSpawnLocation") + ChatColor.GRAY + " (" + ((questMob.getSpawnLocation() == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + Quests.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobSpawnAmount") + ChatColor.GRAY + " (" + ((questMob.getSpawnAmounts() == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getSpawnAmounts()) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobItemInHand") + ChatColor.GRAY + " (" + ((questMob.inventory[0] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.inventory[0])) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobItemInHandDrop") + ChatColor.GRAY + " (" + ((questMob.dropChances[0] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.dropChances[0]) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobBoots") + ChatColor.GRAY + " (" + ((questMob.inventory[1] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.inventory[1])) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobBootsDrop") + ChatColor.GRAY + " (" + ((questMob.dropChances[1] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.dropChances[1]) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobLeggings") + ChatColor.GRAY + " (" + ((questMob.inventory[2] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.inventory[2])) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobLeggingsDrop") + ChatColor.GRAY + " (" + ((questMob.dropChances[2] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.dropChances[2]) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobChestPlate") + ChatColor.GRAY + " (" + ((questMob.inventory[3] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.inventory[3])) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobChestPlateDrop") + ChatColor.GRAY + " (" + ((questMob.dropChances[3] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.dropChances[3]) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobHelmet") + ChatColor.GRAY + " (" + ((questMob.inventory[4] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.inventory[4])) + ChatColor.GRAY + ")\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobHelmetDrop") + ChatColor.GRAY + " (" + ((questMob.dropChances[4] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.dropChances[4]) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobItemInHand") + ChatColor.GRAY + " (" + ((questMob.getInventory()[0] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[0])) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobItemInHandDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[0] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[0]) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobBoots") + ChatColor.GRAY + " (" + ((questMob.getInventory()[1] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[1])) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobBootsDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[1] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[1]) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobLeggings") + ChatColor.GRAY + " (" + ((questMob.getInventory()[2] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[2])) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobLeggingsDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[2] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[2]) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobChestPlate") + ChatColor.GRAY + " (" + ((questMob.getInventory()[3] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[3])) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobChestPlateDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[3] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[3]) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobHelmet") + ChatColor.GRAY + " (" + ((questMob.getInventory()[4] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[4])) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobHelmetDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[4] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[4]) + ChatColor.GRAY + ")\n";
 			text += ChatColor.GREEN + "" + ChatColor.BOLD + "15" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done") + "\n";
 			text += ChatColor.RED + "" + ChatColor.BOLD + "16" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("cancel");
 			return text;
@@ -1819,7 +1818,9 @@ public class EventFactory implements ConversationAbandonedListener {
 						.replace("<least>", "0.0").replace("<greatest>", "1.0"));
 				return new MobDropPrompt(invIndex, mobIndex, questMob);
 			}
-			questMob.dropChances[invIndex] = chance;
+			Float[] temp = questMob.getDropChances();
+			temp[invIndex] = chance;
+			questMob.setDropChances(temp);
 			return new QuestMobPrompt(mobIndex, questMob);
 		}
 	}

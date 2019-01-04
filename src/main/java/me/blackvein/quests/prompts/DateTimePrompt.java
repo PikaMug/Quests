@@ -18,9 +18,9 @@ import org.bukkit.conversations.StringPrompt;
 
 public class DateTimePrompt extends FixedSetPrompt {
 	
-	Quests quests;
-	final Prompt oldPrompt;
-	String source = "";
+	private Quests quests;
+	private final Prompt oldPrompt;
+	private String source = "";
 
 	public DateTimePrompt(Quests plugin, Prompt old, String origin) {
 		super("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
@@ -65,7 +65,7 @@ public class DateTimePrompt extends FixedSetPrompt {
 		}
 		TimeZone tz = TimeZone.getTimeZone((String) cc.getSessionData("tempZone"));
 		cal.setTimeZone(tz);
-		String[] iso = quests.lang.iso.split("-");
+		String[] iso = quests.lang.getISO().split("-");
 		Locale loc = new Locale(iso[0], iso[1]);
 		Double hour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
 		String[] sep = String.valueOf(hour).replace("-", "").split("\\.");

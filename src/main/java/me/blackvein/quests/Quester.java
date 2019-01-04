@@ -1349,7 +1349,7 @@ public class Quester {
 		}
 	}
 
-	public void sayPass(Quest quest, AsyncPlayerChatEvent evt) {
+	public void sayPassword(Quest quest, AsyncPlayerChatEvent evt) {
 		boolean done;
 		for (LinkedList<String> passes : getCurrentStage(quest).passwordPhrases) {
 			done = false;

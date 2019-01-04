@@ -30,9 +30,9 @@ import me.blackvein.quests.util.Lang;
 
 public class QuestAcceptPrompt extends StringPrompt {
 
-	final Quests plugin;
-	Quester quester;
-	LinkedList<Quest> quests;
+	private final Quests plugin;
+	private Quester quester;
+	private LinkedList<Quest> quests;
 
 	public QuestAcceptPrompt(Quests plugin) {
 		this.plugin = plugin;

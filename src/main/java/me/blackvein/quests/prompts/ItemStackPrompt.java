@@ -48,7 +48,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 	// Stores display name in "tempDisplay"
 	// Stores lore in "tempLore"
 	// Stores metadata in "tempMeta"
-	final Prompt oldPrompt;
+	private final Prompt oldPrompt;
 
 	public ItemStackPrompt(Prompt old) {
 		super("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");

@@ -35,7 +35,6 @@ import org.bukkit.potion.PotionEffect;
 import me.blackvein.quests.timers.EventTimer;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.QuestMob;
 
 public class Event {
 
@@ -563,8 +562,8 @@ public class Event {
 				inventory[4] = ItemUtil.readItemStack(section.getString(s + ".helmet"));
 				dropChances[4] = (float) section.getDouble(s + ".helmet-drop-chance");
 				QuestMob questMob = new QuestMob(type, spawnLocation, mobAmount);
-				questMob.inventory = inventory;
-				questMob.dropChances = dropChances;
+				questMob.setInventory(inventory);
+				questMob.setDropChances(dropChances);
 				questMob.setName(mobName);
 				event.mobSpawns.add(questMob);
 			}

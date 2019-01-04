@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.util;
+package me.blackvein.quests;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,7 +20,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
-import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.ItemUtil;
 
 public class QuestMob {
 
@@ -28,8 +28,11 @@ public class QuestMob {
 	private EntityType entityType = null;
 	private Location spawnLocation = null;
 	private Integer spawnAmounts = null;
-	public ItemStack[] inventory = new ItemStack[5];
-	public Float[] dropChances = new Float[5];
+	private ItemStack[] inventory = new ItemStack[5];
+	private Float[] dropChances = new Float[5];
+	
+	public QuestMob(){
+	}
 
 	public QuestMob(EntityType entityType, Location spawnLocation, int spawnAmounts) {
 		this.entityType = entityType;
@@ -37,39 +40,52 @@ public class QuestMob {
 		this.spawnAmounts = spawnAmounts;
 	}
 
-	public QuestMob() {
+	public String getName() {
+		return name;
 	}
-
-	public void setSpawnLocation(Location spawnLocation) {
-		this.spawnLocation = spawnLocation;
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public EntityType getType() {
+		return entityType;
+	}
+	
+	public void setType(EntityType entityType) {
+		this.entityType = entityType;
 	}
 
 	public Location getSpawnLocation() {
 		return spawnLocation;
 	}
-
-	public void setType(EntityType entityType) {
-		this.entityType = entityType;
-	}
-
-	public EntityType getType() {
-		return entityType;
-	}
-
-	public void setSpawnAmounts(int spawnAmounts) {
-		this.spawnAmounts = spawnAmounts;
+	
+	public void setSpawnLocation(Location spawnLocation) {
+		this.spawnLocation = spawnLocation;
 	}
 
 	public Integer getSpawnAmounts() {
 		return spawnAmounts;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setSpawnAmounts(int spawnAmounts) {
+		this.spawnAmounts = spawnAmounts;
 	}
 
-	public String getName() {
-		return name;
+	public ItemStack[] getInventory() {
+		return inventory;
+	}
+
+	public void setInventory(ItemStack[] inventory) {
+		this.inventory = inventory;
+	}
+
+	public Float[] getDropChances() {
+		return dropChances;
+	}
+
+	public void setDropChances(Float[] dropChances) {
+		this.dropChances = dropChances;
 	}
 
 	public void setHelmet(ItemStack helmet, float dropChance) {

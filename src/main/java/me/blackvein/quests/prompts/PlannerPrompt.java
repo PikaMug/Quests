@@ -31,8 +31,8 @@ import org.bukkit.conversations.StringPrompt;
 
 public class PlannerPrompt extends FixedSetPrompt {
 	
-	final Quests quests;
-	final QuestFactory factory;
+	private final Quests quests;
+	private final QuestFactory factory;
 
 	public PlannerPrompt(Quests plugin, QuestFactory qf) {
 		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
@@ -178,7 +178,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 		
 		TimeZone tz = TimeZone.getTimeZone(date[6]);
 		cal.setTimeZone(tz);
-		String[] iso = quests.lang.iso.split("-");
+		String[] iso = quests.lang.getISO().split("-");
 		Locale loc = new Locale(iso[0], iso[1]);
 		Double zhour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
 		String[] sep = String.valueOf(zhour).replace("-", "").split("\\.");

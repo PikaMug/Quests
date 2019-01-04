@@ -36,7 +36,7 @@ import me.blackvein.quests.Quester;
 public class ItemUtil {
 
 	/**
-	 * Compare two stacks by name, amount, durability, display name, lore, enchantments and stored enchants
+	 * Compare two stacks by name, amount, durability, display name, lore, enchantments, stored enchants and item flags
 	 *
 	 *
 	 * @param one first ItemStack to compare against second

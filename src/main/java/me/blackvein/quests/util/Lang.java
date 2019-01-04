@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,14 +33,26 @@ import me.clip.placeholderapi.PlaceholderAPI;
 
 public class Lang {
 
-	public String iso = "en-US";
+	private String iso = "en-US";
 	private static final LangToken tokens = new LangToken();
-	public static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
+	private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
 	private final Quests plugin;
 
 	public Lang(Quests plugin) {
 		tokens.initTokens();
 		this.plugin = plugin;
+	}
+	
+	public String getISO() {
+		return iso;
+	}
+	
+	public void setISO(String iso) {
+		this.iso = iso;
+	}
+	
+	public Collection<String> values() {
+		return langMap.values();
 	}
 	
 	/**
@@ -91,11 +104,11 @@ public class Lang {
 		return "NULL";
 	}
 
-	public static void clearPhrases() {
+	public static void clear() {
 		langMap.clear();
 	}
 
-	public static int getPhrases() {
+	public static int size() {
 		return langMap.size();
 	}
 

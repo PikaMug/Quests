@@ -1402,8 +1402,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		if (pln.getCooldown() != -1) {
 			cc.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
 		}
-		//
-		// Stages
+		// Stages (Objectives)
 		int index = 1;
 		for (Stage stage : q.getStages()) {
 			final String pref = "stage" + index;

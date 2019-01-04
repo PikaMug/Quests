@@ -154,5 +154,5 @@ public class CK {
 	public static final String E_TIMER = "evtTimer";
 	public static final String E_CANCEL_TIMER = "evtCancelTimer";
 	// Party
-	public static final String P_INVITER = "inviter";
+	//public static final String P_INVITER = "inviter";
 }

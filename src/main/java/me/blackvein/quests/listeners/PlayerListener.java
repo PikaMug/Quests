@@ -335,7 +335,7 @@ public class PlayerListener implements Listener {
 						}
 					}
 					if (quester.containsObjective(quest, "password")) {
-						quester.sayPass(quest, evt);
+						quester.sayPassword(quest, evt);
 					}
 				}
 			}
