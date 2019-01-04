@@ -258,6 +258,11 @@ public class Quest {
 			}
 		} else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
 			targetLocations.addAll(stage.locationsToReach);
+		} else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
+			for (Integer i : stage.itemDeliveryTargets) {
+				NPC npc = Quests.citizens.getNPCRegistry().getById(i);
+				targetLocations.add(npc.getStoredLocation());
+			}
 		}
 		if (targetLocations != null && !targetLocations.isEmpty()) {
 			int index = 1;
@@ -305,6 +310,9 @@ public class Quest {
 			targetLocation = plugin.getNPCLocation(nextStage.citizensToKill.getFirst());
 		} else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0) {
 			targetLocation = nextStage.locationsToReach.getFirst();
+		} else if (nextStage.itemDeliveryTargets != null && nextStage.itemDeliveryTargets.size() > 0) {
+			NPC npc = Quests.citizens.getNPCRegistry().getById(nextStage.itemDeliveryTargets.getFirst());
+			targetLocation = npc.getStoredLocation();
 		}
 		if (targetLocation != null) {
 			if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
