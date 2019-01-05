@@ -49,7 +49,7 @@ public class ItemUtil {
 	 * -3 if stack durability is unequal<br>
 	 * -4 if stack display name/lore is unequal<br>
 	 * -5 if stack enchantments are unequal<br>
-	 * -6 if stack stored enchants are unequal
+	 * -6 if stack stored enchants are unequal<br>
 	 * -7 if stack item flags are unequal
 	 */
 	@SuppressWarnings("deprecation")

@@ -37,6 +37,10 @@
             <id>Vault</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
     <dependencies>
             <dependency>
@@ -192,6 +196,12 @@
             <version>2.2.2</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/GPSAPI.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.github.AlessioDP.Parties</groupId>
+            <artifactId>parties-api</artifactId>
+            <version>2.4.6</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

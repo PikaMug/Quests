@@ -79,6 +79,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.alessiodp.parties.api.Parties;
+import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.codisimus.plugins.phatloots.PhatLoots;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.mcMMO;
@@ -130,6 +132,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static CitizensPlugin citizens;
 	public static Denizen denizen = null;
 	public static CitizensBooksAPI citizensBooks = null;
+	public static PartiesAPI parties = null;
 	// Config settings
 	public int acceptTimeout = 20;
 	public boolean allowCommands = true;
@@ -446,6 +449,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		if (isPluginReady("CitizensBooks")) {
 		    citizensBooks = ((CitizensBooksPlugin) getServer().getPluginManager().getPlugin("CitizensBooks")).getAPI();
+        }
+		if (isPluginReady("Parties")) {
+		    parties = Parties.getApi();
         }
 		if (isPluginReady("Vault")) {
 			if (!setupEconomy()) {

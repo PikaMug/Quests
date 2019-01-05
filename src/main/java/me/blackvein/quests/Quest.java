@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,6 +27,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import com.alessiodp.parties.api.interfaces.Party;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.codisimus.plugins.phatloots.loot.CommandLoot;
 import com.codisimus.plugins.phatloots.loot.LootBundle;
@@ -680,6 +682,14 @@ public class Quest {
 		if (Quests.gpsapi != null) {
 			if (Quests.gpsapi.gpsIsActive(player)) {
 				Quests.gpsapi.stopGPS(player);
+			}
+		}
+		if (Quests.parties != null) {
+			Party party = Quests.parties.getParty(Quests.parties.getPartyPlayer(q.getUUID()).getPartyName());
+			for (UUID id : party.getMembers()) {
+				if (q.getCurrentQuests().containsKey(this)) {
+					completeQuest(plugin.getQuester(id));
+				}
 			}
 		}
 		q.findCompassTarget();

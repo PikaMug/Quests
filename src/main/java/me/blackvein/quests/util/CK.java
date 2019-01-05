@@ -13,7 +13,8 @@
 package me.blackvein.quests.util;
 
 public class CK {
-
+	
+	// Temporary data storage for prompts and factories
 	public static final String ED_QUEST_EDIT = "edit";
 	public static final String ED_QUEST_DELETE = "delQuest";
 	public static final String ED_EVENT_DELETE = "delEvent";
