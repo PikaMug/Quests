@@ -153,6 +153,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public boolean translateItems = false;
 	public boolean translateSubCommands = false;
 	public boolean useCompass = true;
+	public boolean useGPS = true;
 	// Interfaces
 	public HashMap<String, Integer> commands = new HashMap<String, Integer>();
 	public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
@@ -194,6 +195,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		partiesListener = new PartiesListener();
 		questFactory = new QuestFactory(this);
 		eventFactory = new EventFactory(this);
+		
+		//Load main config before plugins because GPS is optional
+		loadConfig();
+		
+		// Link with soft-depends
 		linkOtherPlugins();
 		
 		// Save resources
@@ -201,8 +207,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		saveResourceAs("events.yml", "events.yml", false);
 		saveResourceAs("data.yml", "data.yml", false);
 		
-		// Load stuff
-		loadConfig();
+		// Load other configs and modules
 		loadModules();
 		try {
 			setupLang();
@@ -442,7 +447,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (isPluginReady("mcMMO")) {
 			mcmmo = (mcMMO) getServer().getPluginManager().getPlugin("mcMMO");
 		}
-		if (isPluginReady("GPS")) {
+		if (useGPS && isPluginReady("GPS")) {
 			gpsapi = new GPSAPI(this);
 		}
 		if (isPluginReady("Heroes")) {
@@ -564,6 +569,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		translateItems = config.getBoolean("translate-items", false);
 		translateSubCommands = config.getBoolean("translate-subcommands", false);
 		useCompass = config.getBoolean("use-compass", true);
+		useGPS = config.getBoolean("use-gps-plugin", true);
 		try {
 			config.save(new File(this.getDataFolder(), "config.yml"));
 		} catch (IOException e) {
