@@ -90,6 +90,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
+import com.live.bemmamin.gps.Vars;
 import com.live.bemmamin.gps.api.GPSAPI;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -458,6 +459,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
 		if (isPluginReady("Parties")) {
 		    parties = Parties.getApi();
+		    Vars.getInstance().setMaxDistanceToEntry(9999.0);
         }
 		if (isPluginReady("Vault")) {
 			if (!setupEconomy()) {
@@ -696,7 +698,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_TOP_HELP")
 					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_TOP") : "top"));
 		}
-		// player.sendMessage(GOLD + "/quests party - Quest Party commands");
 		if (player.hasPermission("quests.info")) {
 		player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_INFO_HELP")
 				.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_INFO") : "info"));
@@ -709,17 +710,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (player.hasPermission("quests.admin.*") || player.hasPermission("quests.admin")) {
 			player.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get(player, "COMMAND_QUESTADMIN_HELP"));
 		}
-	}
-
-	public void printPartyHelp(Player player) {
-		player.sendMessage(ChatColor.DARK_PURPLE + "- Quest Parties -");
-		player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party create - Create new party");
-		player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party leave - Leave your party");
-		player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party info - Info about your party");
-		player.sendMessage(ChatColor.DARK_PURPLE + "- (Leader only) -");
-		player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party invite <player> - Invite a player to your party");
-		player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party kick <player> - Kick a member from the party");
-		player.sendMessage(ChatColor.LIGHT_PURPLE + "/quests party setleader <player> - Set a party member as the new leader");
 	}
 
 	@Override
