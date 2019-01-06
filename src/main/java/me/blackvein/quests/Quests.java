@@ -97,6 +97,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.listeners.NpcListener;
+import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.prompts.QuestAcceptPrompt;
 import me.blackvein.quests.util.ItemUtil;
@@ -167,9 +168,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public ConversationFactory NPCConversationFactory;
 	public QuestFactory questFactory;
 	public EventFactory eventFactory;
-	public PlayerListener pListener;
+	public PlayerListener playerListener;
 	public NpcListener npcListener;
-	public NpcEffectThread effListener;
+	public NpcEffectThread effThread;
+	public PartiesListener partiesListener;
 	public QuestTaskTrigger trigger;
 	public Lang lang = new Lang(this);
 	public LocaleQuery query = new LocaleQuery(this);
@@ -185,9 +187,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public void onEnable() {
 		bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
 		query.setBukkitVersion(bukkitVersion);
-		pListener = new PlayerListener(this);
-		effListener = new NpcEffectThread(this);
+		playerListener = new PlayerListener(this);
+		effThread = new NpcEffectThread(this);
 		npcListener = new NpcListener(this);
+		partiesListener = new PartiesListener();
 		questFactory = new QuestFactory(this);
 		eventFactory = new EventFactory(this);
 		linkOtherPlugins();
@@ -218,9 +221,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix()).withFirstPrompt(new QuestPrompt()).withTimeout(acceptTimeout).thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
 		this.NPCConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestAcceptPrompt(this)).withTimeout(acceptTimeout).withLocalEcho(false).addConversationAbandonedListener(this);
 		
-		getServer().getPluginManager().registerEvents(pListener, this);
+		getServer().getPluginManager().registerEvents(playerListener, this);
 		if (npcEffects) {
-			getServer().getScheduler().scheduleSyncRepeatingTask(this, effListener, 20, 20);
+			getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
+		}
+		if (parties != null) {
+			getServer().getPluginManager().registerEvents(partiesListener, this);
 		}
 		delayLoadQuestInfo();
 	}

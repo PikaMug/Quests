@@ -175,6 +175,19 @@ public class Quest {
 				if (q.getCurrentStage(this).finishEvent != null) {
 					q.getCurrentStage(this).finishEvent.fire(q, this);
 				}
+				if (Quests.parties != null) {
+					Party party = Quests.parties.getParty(Quests.parties.getPartyPlayer(q.getUUID()).getPartyName());
+					if (party != null) {
+						for (UUID id : party.getMembers()) {
+							if (!id.equals(q.getUUID())) {
+								if (plugin.getQuester(id).getCurrentQuests().containsKey(this)) {
+									completeQuest(plugin.getQuester(id));
+								}
+							}
+						}
+						plugin.getLogger().info("Quest \'" + name + "\' was completed by party " + party.getName() + " (" + party.getMembers().size() + " members)");
+					}
+				}
 				completeQuest(q);
 			} else {
 				try {
@@ -682,14 +695,6 @@ public class Quest {
 		if (Quests.gpsapi != null) {
 			if (Quests.gpsapi.gpsIsActive(player)) {
 				Quests.gpsapi.stopGPS(player);
-			}
-		}
-		if (Quests.parties != null) {
-			Party party = Quests.parties.getParty(Quests.parties.getPartyPlayer(q.getUUID()).getPartyName());
-			for (UUID id : party.getMembers()) {
-				if (q.getCurrentQuests().containsKey(this)) {
-					completeQuest(plugin.getQuester(id));
-				}
 			}
 		}
 		q.findCompassTarget();
