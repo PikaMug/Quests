@@ -856,4 +856,4 @@ timerStart: "%green%Van%red% <time> másodperced%green% befejezni a küldetést/
 questErrorReadingFile: "Hiba történt a Quests fájl olvasása közben."
 questSaveError: "Hiba történt a mentés közben."
 noPermission: "Nincs jogod ehhez."
-difference: "The difference is '<data>'."
+difference: "A különbség '<data>'."
