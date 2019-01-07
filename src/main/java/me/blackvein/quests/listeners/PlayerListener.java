@@ -14,6 +14,7 @@ package me.blackvein.quests.listeners;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -110,7 +111,7 @@ public class PlayerListener implements Listener {
 		if (evt.getInventory().getTitle().contains(Lang.get(player, "quests"))) {
 			ItemStack clicked = evt.getCurrentItem();
 			if (clicked != null) {
-				for (Quest quest : plugin.quests) {
+				for (Quest quest : plugin.getQuests()) {
 					if (quest.getGUIDisplay() != null) {
 						if (ItemUtil.compareItems(clicked, quest.getGUIDisplay(), false) == 0) {
 							if (quester.getCurrentQuests().size() >= plugin.maxQuests && plugin.maxQuests > 0) {
@@ -255,7 +256,7 @@ public class PlayerListener implements Listener {
     						plugin.questFactory.selectedReachLocations.put(evt.getPlayer().getUniqueId(), block);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
     					} else if (player.isConversing() == false) {
-    						for (final Quest q : plugin.quests) {
+    						for (final Quest q : plugin.getQuests()) {
     							if (q.getBlockStart() != null) {
     								if (q.getBlockStart().equals(evt.getClickedBlock().getLocation())) {
     									if (quester.getCurrentQuests().size() >= plugin.maxQuests && plugin.maxQuests > 0) {
@@ -282,7 +283,7 @@ public class PlayerListener implements Listener {
     										for (String msg : s.split("<br>")) {
     											player.sendMessage(msg);
     										}
-    										plugin.conversationFactory.buildConversation(player).begin();
+    										plugin.getConversationFactory().buildConversation(player).begin();
     									}
     									break;
     								}
@@ -667,7 +668,9 @@ public class PlayerListener implements Listener {
 			} else if (plugin.genFilesOnJoin) {
 				quester.saveData();
 			}
-			plugin.questers.put(evt.getPlayer().getUniqueId(), quester);
+			LinkedList<Quester> temp = plugin.getQuesters();
+			temp.add(quester);
+			plugin.setQuesters(temp);
 			if (plugin.useCompass) {
 				quester.resetCompass();
 			}
@@ -723,7 +726,13 @@ public class PlayerListener implements Listener {
 			if (plugin.questFactory.selectingNPCs.contains(evt.getPlayer())) {
 				plugin.questFactory.selectingNPCs.remove(evt.getPlayer());
 			}
-			plugin.questers.remove(quester.getUUID());
+			LinkedList<Quester> temp = plugin.getQuesters();
+			for (Quester q : temp) {
+				if (q.getUUID().equals(quester.getUUID())) {
+					temp.remove(q);
+				}
+			}
+			plugin.setQuesters(temp);
 		}
 	}
 

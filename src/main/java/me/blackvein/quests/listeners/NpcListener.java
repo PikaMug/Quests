@@ -135,7 +135,7 @@ public class NpcListener implements Listener {
 											// TODO translate enchantment names
 											for (Entry<Enchantment, Integer> e : esmeta.getStoredEnchants().entrySet()) {
 												player.sendMessage(ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN 
-														+ Quester.prettyEnchantmentString(e.getKey()) + " " + RomanNumeral.toRoman(e.getValue()) + "\n");
+														+ Quester.prettyEnchantmentString(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n");
 											}
 										}
 									}
@@ -146,7 +146,7 @@ public class NpcListener implements Listener {
 					}
 				}
 			}
-			if (plugin.questNPCs.contains(evt.getNPC()) && delivery == false) {
+			if (plugin.getQuestNpcs().contains(evt.getNPC()) && delivery == false) {
 				boolean hasObjective = false;
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "talkToNPC")) {
@@ -172,11 +172,11 @@ public class NpcListener implements Listener {
 						}
 					}
 					if (npcQuests.isEmpty() == false && npcQuests.size() >= 1) {
-						if (plugin.questNPCGUIs.contains(evt.getNPC().getId())) {
+						if (plugin.getQuestNpcGuis().contains(evt.getNPC().getId())) {
 							quester.showGUIDisplay(evt.getNPC(), npcQuests);
 							return;
 						}
-						Conversation c = plugin.NPCConversationFactory.buildConversation(player);
+						Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
 						c.getContext().setSessionData("quests", npcQuests);
 						c.getContext().setSessionData("npc", evt.getNPC().getName());
 						c.begin();
@@ -189,7 +189,7 @@ public class NpcListener implements Listener {
 								for (String msg : s.split("<br>")) {
 									player.sendMessage(msg);
 								}
-								plugin.conversationFactory.buildConversation(player).begin();
+								plugin.getNpcConversationFactory().buildConversation(player).begin();
 							} else if (quester.getCurrentQuests().containsKey(q) == false) {
 								String msg = Lang.get(player, "questMaxAllowed");
 								msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
@@ -211,7 +211,7 @@ public class NpcListener implements Listener {
 								for (String msg : s.split("<br>")) {
 									player.sendMessage(msg);
 								}
-								plugin.conversationFactory.buildConversation(player).begin();
+								plugin.getConversationFactory().buildConversation(player).begin();
 							}
 						} else if (quester.getCurrentQuests().containsKey(q) == false) {
 							String msg = Lang.get(player, "questMaxAllowed");

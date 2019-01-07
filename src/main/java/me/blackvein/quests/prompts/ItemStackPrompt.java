@@ -37,6 +37,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import me.blackvein.quests.util.RomanNumeral;
 
 public class ItemStackPrompt extends FixedSetPrompt {
 
@@ -509,7 +510,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				@SuppressWarnings("unchecked")
 				Map<Enchantment, Integer> enchantments = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
 				for (Entry<Enchantment, Integer> e : enchantments.entrySet()) {
-					item += ChatColor.GRAY + "  - " + ChatColor.RED + Quester.prettyEnchantmentString(e.getKey()) + " " + Quests.getNumeral(e.getValue()) + "\n";
+					item += ChatColor.GRAY + "  - " + ChatColor.RED + Quester.prettyEnchantmentString(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n";
 				}
 			}
 			if (cc.getSessionData("tempLore") != null) {

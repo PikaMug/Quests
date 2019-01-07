@@ -24,9 +24,11 @@ import me.blackvein.quests.util.Lang;
 
 public class StagesPrompt extends StringPrompt {
 
+	private final Quests plugin;
 	private final QuestFactory questFactory;
 
-	public StagesPrompt(QuestFactory qf) {
+	public StagesPrompt(Quests plugin, QuestFactory qf) {
+		this.plugin = plugin;
 		questFactory = qf;
 	}
 
@@ -50,19 +52,19 @@ public class StagesPrompt extends StringPrompt {
 		try {
 			i = Integer.parseInt(string);
 		} catch (NumberFormatException e) {
-			return new StagesPrompt(questFactory);
+			return new StagesPrompt(plugin, questFactory);
 		}
 		int stages = getStages(cc);
 		if (i < 0) {
-			return new StagesPrompt(questFactory);
+			return new StagesPrompt(plugin, questFactory);
 		} else if (i < (stages + 1) && i > 0) {
-			return new CreateStagePrompt((i), questFactory, Quests.citizens);
+			return new CreateStagePrompt(plugin, (i), questFactory, Quests.citizens);
 		} else if (i == (stages + 1)) {
-			return new CreateStagePrompt((stages + 1), questFactory, Quests.citizens);
+			return new CreateStagePrompt(plugin, (stages + 1), questFactory, Quests.citizens);
 		} else if (i == (stages + 2)) {
 			return questFactory.returnToMenu();
 		} else {
-			return new StagesPrompt(questFactory);
+			return new StagesPrompt(plugin, questFactory);
 		}
 	}
 

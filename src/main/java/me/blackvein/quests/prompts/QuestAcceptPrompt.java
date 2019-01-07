@@ -111,7 +111,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 							if (!plugin.askConfirmation) {
 								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
 							} else {
-								plugin.conversationFactory.buildConversation((Conversable) player).begin();
+								plugin.getConversationFactory().buildConversation((Conversable) player).begin();
 							}
 						} else {
 							player.sendMessage(q.getRequirements().getFailRequirements());
@@ -141,7 +141,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 							if (!plugin.askConfirmation) {
 								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
 							} else {
-								plugin.conversationFactory.buildConversation((Conversable) player).begin();
+								plugin.getConversationFactory().buildConversation((Conversable) player).begin();
 							}
 						}
 					} else if (quester.getCurrentQuests().containsKey(q) == false) {

@@ -58,8 +58,7 @@ import net.citizensnpcs.api.CitizensAPI;
 
 public class QuestFactory implements ConversationAbandonedListener {
 
-	public final Quests plugin;
-	Map<UUID, Quest> editSessions = new HashMap<UUID, Quest>();
+	private final Quests plugin;
 	public Map<UUID, Block> selectedBlockStarts = new HashMap<UUID, Block>();
 	public Map<UUID, Block> selectedKillLocations = new HashMap<UUID, Block>();
 	public Map<UUID, Block> selectedReachLocations = new HashMap<UUID, Block>();
@@ -84,6 +83,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		selectedBlockStarts.remove(player.getUniqueId());
 		selectedKillLocations.remove(player.getUniqueId());
 		selectedReachLocations.remove(player.getUniqueId());
+	}
+	
+	public ConversationFactory getConversationFactory() {
+		return convoCreator;
 	}
 
 	private class MenuPrompt extends FixedSetPrompt {
@@ -236,7 +239,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			} else if (input.equalsIgnoreCase("10")) {
 				return new PlannerPrompt(plugin, QuestFactory.this);
 			} else if (input.equalsIgnoreCase("11")) {
-				return new StagesPrompt(QuestFactory.this);
+				return new StagesPrompt(plugin, QuestFactory.this);
 			} else if (input.equalsIgnoreCase("12")) {
 				return new RewardsPrompt(plugin, QuestFactory.this);
 			} else if (input.equalsIgnoreCase("13")) {
@@ -300,7 +303,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				for (Quest q : plugin.quests) {
+				for (Quest q : plugin.getQuests()) {
 					if (q.getName().equalsIgnoreCase(input)) {
 						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
 						return new QuestNamePrompt();
@@ -402,7 +405,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				for (Quest q : plugin.quests) {
+				for (Quest q : plugin.getQuests()) {
 					if (q.getName().equalsIgnoreCase(input)) {
 						String s = null;
 						if (context.getSessionData(CK.ED_QUEST_EDIT) != null) {
@@ -479,10 +482,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.DARK_GREEN + Lang.get("eventTitle") + "\n";
-			if (plugin.events.isEmpty()) {
+			if (plugin.getEvents().isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : plugin.events) {
+				for (Event e : plugin.getEvents()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -494,7 +497,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				Event found = null;
-				for (Event e : plugin.events) {
+				for (Event e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -528,7 +531,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (context.getSessionData("tempStack") != null) {
 				ItemStack stack = (ItemStack) context.getSessionData("tempStack");
 				boolean failed = false;
-				for (Quest quest : plugin.quests) {
+				for (Quest quest : plugin.getQuests()) {
 					if (quest.guiDisplay != null) {
 						if (ItemUtil.compareItems(stack, quest.guiDisplay, false) == 0) {
 							String error = Lang.get("questGUIError");
@@ -669,8 +672,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 					data.save(new File(plugin.getDataFolder(), "quests.yml"));
 					if (context.getSessionData(CK.Q_START_NPC) != null && context.getSessionData(CK.Q_GUIDISPLAY) != null) {
 						int i = (Integer) context.getSessionData(CK.Q_START_NPC);
-						if (!plugin.questNPCGUIs.contains(i)) {
-							plugin.questNPCGUIs.add(i);
+						if (!plugin.getQuestNpcGuis().contains(i)) {
+							LinkedList<Integer> temp = plugin.getQuestNpcGuis();
+							temp.add(i);
+							plugin.setQuestNpcGuis(temp);
 						}
 						plugin.updateData();
 					}
@@ -1643,7 +1648,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + Lang.get("questDeleteTitle") + "\n";
-			for (Quest quest : plugin.quests) {
+			for (Quest quest : plugin.getQuests()) {
 				text += ChatColor.AQUA + quest.getName() + ChatColor.YELLOW + ",";
 			}
 			text = text.substring(0, text.length() - 1) + "\n";
@@ -1655,9 +1660,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				LinkedList<String> used = new LinkedList<String>();
-				Quest found = plugin.findQuest(input);
+				Quest found = plugin.getQuest(input);
 				if (found != null) {
-					for (Quest q : plugin.quests) {
+					for (Quest q : plugin.getQuests()) {
 						if (q.getRequirements().getNeededQuests().contains(q.getName()) || q.getRequirements().getBlockQuests().contains(q.getName())) {
 							used.add(q.getName());
 						}

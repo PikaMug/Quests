@@ -2171,7 +2171,7 @@ public class Quester {
 			List<String> redoNames = data.getStringList("completedRedoableQuests");
 			List<Long> redoTimes = data.getLongList("completedQuestTimes");
 			for (String s : redoNames) {
-				for (Quest q : plugin.quests) {
+				for (Quest q : plugin.getQuests()) {
 					if (q.getName().equalsIgnoreCase(s)) {
 						completedTimes.put(q.getName(), redoTimes.get(redoNames.indexOf(s)));
 						break;
@@ -2190,7 +2190,7 @@ public class Quester {
 		hasJournal = data.getBoolean("hasJournal");
 		if (data.isList("completed-Quests")) {
 			for (String s : data.getStringList("completed-Quests")) {
-				for (Quest q : plugin.quests) {
+				for (Quest q : plugin.getQuests()) {
 					if (q.getName().equalsIgnoreCase(s)) {
 						if (!completedQuests.contains(q.getName())) {
 							completedQuests.add(q.getName());
@@ -2648,7 +2648,7 @@ public class Quester {
 	public void checkQuest(Quest quest) {
 		if (quest != null) {
 			boolean exists = false;
-			for (Quest q : plugin.quests) {
+			for (Quest q : plugin.getQuests()) {
 				if (q.getName().equalsIgnoreCase(quest.getName())) {
 					Stage stage = getCurrentStage(quest);
 					quest.updateCompass(this, stage);
@@ -2878,5 +2878,18 @@ public class Quester {
 			if (stage != null && quest.updateCompass(this, stage))
 				break;
 		}
+	}
+	
+	public boolean hasItem(ItemStack is) {
+		Inventory inv = getPlayer().getInventory();
+		int playerAmount = 0;
+		for (ItemStack stack : inv.getContents()) {
+			if (stack != null) {
+				if (ItemUtil.compareItems(is, stack, false) == 0) {
+					playerAmount += stack.getAmount();
+				}
+			}
+		}
+		return playerAmount >= is.getAmount();
 	}
 }
