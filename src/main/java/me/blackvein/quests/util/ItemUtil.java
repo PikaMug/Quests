@@ -62,7 +62,7 @@ public class ItemUtil {
 		} else if ((one.getAmount() != two.getAmount()) && ignoreAmount == false) {
 			return -2;
 		} else if (one.getDurability() != two.getDurability()) {
-			if (one.getDurability() >= 999 && two.getDurability() >= 999) { // wildcard value
+			if (one.getDurability() < 999 && two.getDurability() < 999) { // wildcard value
 				return -3;
 			}
 		}
