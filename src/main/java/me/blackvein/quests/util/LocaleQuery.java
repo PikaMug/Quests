@@ -31,7 +31,7 @@ public class LocaleQuery {
 	private static Class<?> craftMagicNumbers = null;
 	private static Class<?> itemClazz = null;
 	private final Quests plugin;
-	public static boolean oldVersion = false;
+	private static boolean oldVersion = false;
 	
 	public LocaleQuery(Quests plugin){
 		this.plugin = plugin;
@@ -158,6 +158,10 @@ public class LocaleQuery {
 	}
 	
 	public static boolean isBelow113(String bukkitVersion) {
+		return _isBelow113(bukkitVersion);
+	}
+	
+	private static boolean _isBelow113(String bukkitVersion) {
 		if (bukkitVersion.matches("^[0-9.]+$")) {
 			switch(bukkitVersion) {
 			case "1.12" :

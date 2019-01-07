@@ -82,10 +82,17 @@ public class ItemUtil {
 			} else if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore() && one.getItemMeta().getLore().equals(two.getItemMeta().getLore()) == false) {
 				return -4;
 			}
-			for (ItemFlag flag : ItemFlag.values()) {
-				if (one.getItemMeta().hasItemFlag(flag) == false && two.getItemMeta().hasItemFlag(flag)) {
-					return -7;
+			try {
+				ItemMeta test = one.getItemMeta();
+				test.setUnbreakable(true);
+				// We're on 1.11+ so check ItemFlags
+				for (ItemFlag flag : ItemFlag.values()) {
+					if (one.getItemMeta().hasItemFlag(flag) == false && two.getItemMeta().hasItemFlag(flag)) {
+						return -7;
+					}
 				}
+			} catch (Throwable tr) {
+				// We're below 1.11 so don't check ItemFlags
 			}
 		}
 		if (one.getEnchantments().equals(two.getEnchantments()) == false) {
@@ -153,7 +160,6 @@ public class ItemUtil {
 		String display = null;
 		LinkedList<String> lore = new LinkedList<String>();
 		String[] flags = new String[10];
-		//ItemFlag[] flags = new ItemFlag[ItemFlag.values().length];
 		LinkedHashMap<Enchantment, Integer> stored = new LinkedHashMap<Enchantment, Integer>();
 		LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
 		ItemMeta meta = null;
@@ -200,7 +206,6 @@ public class ItemUtil {
 				String[] mapping = value.replace("[", "").replace("]", "").split(", ");
 				int index = 0;
 				for (String s : mapping) {
-					//flags[index] = ItemFlag.valueOf(s);
 					flags[index] = s;
 					index++;
 				}
@@ -255,6 +260,8 @@ public class ItemUtil {
 				        	meta.setUnbreakable(true);
 				        }
 				    } catch (Throwable tr) {
+				    	// ItemMeta.setUnbrekable() not introduced until 1.11
+				    	// However, NBT tags could be set by Spigot-only methods, so show error
 				    	Bukkit.getLogger().info("You are running a version of CraftBukkit"
 				    			+ " for which Quests cannot set the NBT tag " + key);
 				    }
@@ -299,6 +306,10 @@ public class ItemUtil {
 						meta.addItemFlags(ItemFlag.valueOf(flag));
 					} catch (NullPointerException npe) {
 						Bukkit.getLogger().severe(flag + " is not a valid ItemFlag");
+					} catch (Throwable tr) {
+						// ItemMeta.addItemFlags() not introduced until 1.8.3
+						Bukkit.getLogger().info("You are running a version of CraftBukkit"
+				    			+ " for which Quests cannot add the item flag " + flag);
 					}
 				}
 			}

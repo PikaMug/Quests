@@ -915,7 +915,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						broken = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						broken = is;
 					}
@@ -932,7 +932,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						toBreak = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						toBreak = is;
 					}
@@ -966,7 +966,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						damaged = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						damaged = is;
 					}
@@ -982,7 +982,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						toDamage = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						toDamage = is;
 					}
@@ -1016,7 +1016,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						placed = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						placed = is;
 					}
@@ -1032,7 +1032,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						toPlace = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						toPlace = is;
 					}
@@ -1066,7 +1066,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						used = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						used = is;
 					}
@@ -1082,7 +1082,7 @@ public class Quester {
 					//Blocks are solid, so check durability
 					if (m.getDurability() == is.getDurability()) {
 						toUse = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						toUse = is;
 					}
@@ -1116,7 +1116,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						cut = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						cut = is;
 					}
@@ -1132,7 +1132,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						toCut = is;
-					} else if (!LocaleQuery.oldVersion) {
+					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
 						//Ignore durability for 1.13+
 						toCut = is;
 					}

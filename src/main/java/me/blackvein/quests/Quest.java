@@ -573,12 +573,16 @@ public class Quest {
 				if (i.getEnchantments().isEmpty()) {
 					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount();
 				} else {
-					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET;
-					if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
-						text +=  ChatColor.GRAY + " " + Lang.get(player, "with") + ChatColor.DARK_PURPLE;
-						for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-							text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+					text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() + ChatColor.RESET;			
+					try {
+						if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+							text +=  ChatColor.GRAY + " " + Lang.get(player, "with") + ChatColor.DARK_PURPLE;
+							for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+								text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+							}
 						}
+					} catch (Throwable tr) {
+						// Do nothing, hasItemFlag() not introduced until 1.8.6
 					}
 					text += ChatColor.GRAY + " x " + i.getAmount();
 				}
@@ -597,11 +601,15 @@ public class Quest {
 					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " + i.getAmount();
 				} else {
 					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i);
-					if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
-						text += ChatColor.GRAY + " " + Lang.get(player, "with");
-						for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-							text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+					try {
+						if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+							text += ChatColor.GRAY + " " + Lang.get(player, "with");
+							for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+								text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+							}
 						}
+					} catch (Throwable tr) {
+						// Do nothing, hasItemFlag() not introduced until 1.8.6
 					}
 					text += ChatColor.GRAY + " x " + i.getAmount();
 				}
