@@ -357,6 +357,10 @@ public class ItemStackPrompt extends FixedSetPrompt {
 						return new ItemStackPrompt(oldPrompt);
 					}
 				} catch (NumberFormatException e) {
+					if (input.equals("*")) {
+						cc.setSessionData("tempData", Short.parseShort("999")); // wildcard value
+						return new ItemStackPrompt(oldPrompt);
+					}
 					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
 					return new DataPrompt();
 				}
