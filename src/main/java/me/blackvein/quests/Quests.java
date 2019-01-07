@@ -911,7 +911,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public Quester getQuester(UUID id) {
 		Quester quester = null;
 		for (Quester q: questers) {
-			if (quester.getUUID().equals(id)) {
+			if (q.getUUID().equals(id)) {
 				quester = q;
 			}
 		}
