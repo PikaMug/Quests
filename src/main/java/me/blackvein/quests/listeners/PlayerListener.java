@@ -13,8 +13,11 @@
 package me.blackvein.quests.listeners;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -114,9 +117,9 @@ public class PlayerListener implements Listener {
 				for (Quest quest : plugin.getQuests()) {
 					if (quest.getGUIDisplay() != null) {
 						if (ItemUtil.compareItems(clicked, quest.getGUIDisplay(), false) == 0) {
-							if (quester.getCurrentQuests().size() >= plugin.maxQuests && plugin.maxQuests > 0) {
+							if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
 								String msg = Lang.get(player, "questMaxAllowed");
-								msg = msg.replace("<number>", String.valueOf(plugin.maxQuests));
+								msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
 								player.sendMessage(ChatColor.YELLOW + msg);
 							} else if (quester.getCompletedQuests().contains(quest.getName()) && quest.getPlanner().getCooldown() < 0) {
 								String completed = Lang.get(player, "questAlreadyCompleted");
@@ -136,7 +139,7 @@ public class PlayerListener implements Listener {
 								if (quest.getRegion() != null) {
 									boolean inRegion = false;
 									Player p = quester.getPlayer();
-									RegionManager rm = Quests.worldGuard.getRegionManager(p.getWorld());
+									RegionManager rm = plugin.getDependencies().getWorldGuard().getRegionManager(p.getWorld());
 									Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
 									while (it.hasNext()) {
 										ProtectedRegion pr = it.next();
@@ -215,53 +218,69 @@ public class PlayerListener implements Listener {
     					}
     				}
     				if (!hasObjective) {
-    					if (plugin.questFactory.selectedBlockStarts.containsKey(evt.getPlayer().getUniqueId())) {
+    					if (plugin.getQuestFactory().getSelectedBlockStarts().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
-    						plugin.questFactory.selectedBlockStarts.put(evt.getPlayer().getUniqueId(), block);
+    						Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedBlockStarts();
+    						temp.put(evt.getPlayer().getUniqueId(), block);
+    						plugin.getQuestFactory().setSelectedBlockStarts(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-    					} else if (plugin.eventFactory.selectedExplosionLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    					} else if (plugin.getEventFactory().getSelectedExplosionLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
-    						plugin.eventFactory.selectedExplosionLocations.put(evt.getPlayer().getUniqueId(), block);
+    						Map<UUID, Block> temp = plugin.getEventFactory().getSelectedExplosionLocations();
+    						temp.put(evt.getPlayer().getUniqueId(), block);
+    						plugin.getEventFactory().setSelectedExplosionLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-    					} else if (plugin.eventFactory.selectedEffectLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    					} else if (plugin.getEventFactory().getSelectedEffectLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
-    						plugin.eventFactory.selectedEffectLocations.put(evt.getPlayer().getUniqueId(), block);
+    						Map<UUID, Block> temp = plugin.getEventFactory().getSelectedEffectLocations();
+    						temp.put(evt.getPlayer().getUniqueId(), block);
+    						plugin.getEventFactory().setSelectedEffectLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-    					} else if (plugin.eventFactory.selectedMobLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    					} else if (plugin.getEventFactory().getSelectedMobLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
-    						plugin.eventFactory.selectedMobLocations.put(evt.getPlayer().getUniqueId(), block);
+    						Map<UUID, Block> temp = plugin.getEventFactory().getSelectedMobLocations();
+    						temp.put(evt.getPlayer().getUniqueId(), block);
+    						plugin.getEventFactory().setSelectedMobLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType()))+ ChatColor.GOLD + ")");
-    					} else if (plugin.eventFactory.selectedLightningLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    					} else if (plugin.getEventFactory().getSelectedLightningLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
-    						plugin.eventFactory.selectedLightningLocations.put(evt.getPlayer().getUniqueId(), block);
+    						Map<UUID, Block> temp = plugin.getEventFactory().getSelectedLightningLocations();
+    						temp.put(evt.getPlayer().getUniqueId(), block);
+    						plugin.getEventFactory().setSelectedLightningLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-    					} else if (plugin.eventFactory.selectedTeleportLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    					} else if (plugin.getEventFactory().getSelectedTeleportLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
-    						plugin.eventFactory.selectedTeleportLocations.put(evt.getPlayer().getUniqueId(), block);
+    						Map<UUID, Block> temp = plugin.getEventFactory().getSelectedTeleportLocations();
+    						temp.put(evt.getPlayer().getUniqueId(), block);
+    						plugin.getEventFactory().setSelectedTeleportLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-    					} else if (plugin.questFactory.selectedKillLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    					} else if (plugin.getQuestFactory().getSelectedKillLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
-    						plugin.questFactory.selectedKillLocations.put(evt.getPlayer().getUniqueId(), block);
+    						Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
+    						temp.put(evt.getPlayer().getUniqueId(), block);
+    						plugin.getQuestFactory().setSelectedKillLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
-    					} else if (plugin.questFactory.selectedReachLocations.containsKey(evt.getPlayer().getUniqueId())) {
+    					} else if (plugin.getQuestFactory().getSelectedReachLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
-    						plugin.questFactory.selectedReachLocations.put(evt.getPlayer().getUniqueId(), block);
+    						Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
+    						temp.put(evt.getPlayer().getUniqueId(), block);
+    						plugin.getQuestFactory().setSelectedReachLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
     					} else if (player.isConversing() == false) {
     						for (final Quest q : plugin.getQuests()) {
     							if (q.getBlockStart() != null) {
     								if (q.getBlockStart().equals(evt.getClickedBlock().getLocation())) {
-    									if (quester.getCurrentQuests().size() >= plugin.maxQuests && plugin.maxQuests > 0) {
+    									if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
     										String msg = Lang.get(player, "questMaxAllowed");
-    										msg = msg.replace("<number>", String.valueOf(plugin.maxQuests));
+    										msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
     										player.sendMessage(ChatColor.YELLOW + msg);
     									} else {
     										if (quester.getCompletedQuests().contains(q.getName())) {
@@ -516,7 +535,7 @@ public class PlayerListener implements Listener {
 			return;
 		}
 		if (damager instanceof Player) {
-			if (Quests.citizens != null) {
+			if (plugin.getDependencies().getCitizens() != null) {
 				if (CitizensAPI.getNPCRegistry().isNPC(target)) {
 					Quester quester = plugin.getQuester(damager.getUniqueId());
 					for (Quest quest : quester.getCurrentQuests().keySet()) {
@@ -665,13 +684,13 @@ public class PlayerListener implements Listener {
 			quester.setUUID(evt.getPlayer().getUniqueId());
 			if (new File(plugin.getDataFolder(), "data" + File.separator + quester.getUUID() + ".yml").exists()) {
 				quester.loadData();
-			} else if (plugin.genFilesOnJoin) {
+			} else if (plugin.getSettings().canGenFilesOnJoin()) {
 				quester.saveData();
 			}
 			LinkedList<Quester> temp = plugin.getQuesters();
 			temp.add(quester);
 			plugin.setQuesters(temp);
-			if (plugin.useCompass) {
+			if (plugin.getSettings().canUseCompass()) {
 				quester.resetCompass();
 			}
 			for (String s : quester.getCompletedQuests()) {
@@ -723,8 +742,10 @@ public class PlayerListener implements Listener {
 			if (quester.hasData()) {
 				quester.saveData();
 			}
-			if (plugin.questFactory.selectingNPCs.contains(evt.getPlayer())) {
-				plugin.questFactory.selectingNPCs.remove(evt.getPlayer());
+			if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getPlayer())) {
+				HashSet<Player> temp = plugin.getQuestFactory().getSelectingNpcs();
+				temp.remove(evt.getPlayer());
+				plugin.getQuestFactory().setSelectingNpcs(temp);
 			}
 			LinkedList<Quester> temp = plugin.getQuesters();
 			for (Quester q : temp) {
@@ -741,7 +762,7 @@ public class PlayerListener implements Listener {
 		if (evt.getFrom().getBlock().equals(evt.getTo().getBlock())) {
 			return;
 		}
-		if (Quests.citizens != null) {
+		if (plugin.getDependencies().getCitizens() != null) {
 			if (CitizensAPI.getNPCRegistry().isNPC(evt.getPlayer())) {
 				return;
 			}

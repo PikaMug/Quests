@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quests;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.PlaceholderAPIPlugin;
 
 public class Lang {
 
@@ -37,10 +38,12 @@ public class Lang {
 	private static final LangToken tokens = new LangToken();
 	private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
 	private final Quests plugin;
+	private static PlaceholderAPIPlugin placeholder;
 
 	public Lang(Quests plugin) {
 		tokens.initTokens();
 		this.plugin = plugin;
+		Lang.placeholder = plugin.getDependencies().getPlaceholderApi();
 	}
 	
 	public String getISO() {
@@ -237,7 +240,7 @@ public class Lang {
 			for (String token : tokenMap.keySet()) {
 				s = s.replace(token, tokenMap.get(token));
 				s = s.replace(token.toUpperCase(), tokenMap.get(token));
-				if (Quests.placeholder != null) {
+				if (placeholder != null) {
 					s = PlaceholderAPI.setPlaceholders(p, s);
 				}
 			}

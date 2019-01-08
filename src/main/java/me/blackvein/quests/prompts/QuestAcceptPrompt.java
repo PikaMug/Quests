@@ -101,14 +101,14 @@ public class QuestAcceptPrompt extends StringPrompt {
 			} else {
 				Player player = quester.getPlayer();
 				if (!quester.getCompletedQuests().contains(q.getName())) {
-					if (quester.getCurrentQuests().size() < plugin.maxQuests || plugin.maxQuests < 1) {
+					if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() || plugin.getSettings().getMaxQuests() < 1) {
 						if (q.testRequirements(quester)) {
 							quester.setQuestToTake(q.getName());
 							String s = extracted(quester);
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
 							}
-							if (!plugin.askConfirmation) {
+							if (!plugin.getSettings().canAskConfirmation()) {
 								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
 							} else {
 								plugin.getConversationFactory().buildConversation((Conversable) player).begin();
@@ -118,11 +118,11 @@ public class QuestAcceptPrompt extends StringPrompt {
 						}
 					} else if (quester.getCurrentQuests().containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
-						msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
+						msg = msg.replaceAll("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
 						player.sendMessage(ChatColor.YELLOW + msg);
 					}
 				} else if (quester.getCompletedQuests().contains(q.getName())) {
-					if (quester.getCurrentQuests().size() < plugin.maxQuests || plugin.maxQuests < 1) {
+					if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() || plugin.getSettings().getMaxQuests() < 1) {
 						if (quester.getCooldownDifference(q) > 0) {
 							String early = Lang.get("questTooEarly");
 							early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
@@ -138,7 +138,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 							for (String msg : s.split("<br>")) {
 								player.sendMessage(msg);
 							}
-							if (!plugin.askConfirmation) {
+							if (!plugin.getSettings().canAskConfirmation()) {
 								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
 							} else {
 								plugin.getConversationFactory().buildConversation((Conversable) player).begin();
@@ -146,7 +146,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 						}
 					} else if (quester.getCurrentQuests().containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
-						msg = msg.replaceAll("<number>", String.valueOf(plugin.maxQuests));
+						msg = msg.replaceAll("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
 						player.sendMessage(ChatColor.YELLOW + msg);
 					}
 				}

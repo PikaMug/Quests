@@ -40,12 +40,12 @@ import me.blackvein.quests.util.MiscUtil;
 
 public class RequirementsPrompt extends FixedSetPrompt {
 
-	private Quests quests;
+	private Quests plugin;
 	private final QuestFactory factory;
 
 	public RequirementsPrompt(Quests plugin, QuestFactory qf) {
 		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
-		quests = plugin;
+		this.plugin = plugin;
 		factory = qf;
 	}
 
@@ -60,7 +60,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		} else {
 			int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + " (" + moneyReq + " " + (moneyReq > 1 ? Quests.getCurrency(true) : Quests.getCurrency(false)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + " (" + moneyReq + " " + (moneyReq > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ")\n";
 		}
 		if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestPoints") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
@@ -95,7 +95,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
 			}
 		}
-		if (Quests.mcmmo != null) {
+		if (plugin.getDependencies().getMcmmo() != null) {
 			if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMcMMO") + " " + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
@@ -109,7 +109,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		} else {
 			text += ChatColor.GRAY + "7 - " + Lang.get("reqSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
 		}
-		if (Quests.heroes != null) {
+		if (plugin.getDependencies().getHeroes() != null) {
 			if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetHeroes") + " " + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
@@ -159,16 +159,16 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		} else if (input.equalsIgnoreCase("6")) {
 			return new QuestListPrompt(false);
 		} else if (input.equalsIgnoreCase("7")) {
-			if (Quests.mcmmo != null) {
+			if (plugin.getDependencies().getMcmmo() != null) {
 				return new mcMMOPrompt();
 			} else {
-				return new RequirementsPrompt(quests, factory);
+				return new RequirementsPrompt(plugin, factory);
 			}
 		} else if (input.equalsIgnoreCase("8")) {
-			if (Quests.heroes != null) {
+			if (plugin.getDependencies().getHeroes() != null) {
 				return new HeroesPrompt();
 			} else {
-				return new RequirementsPrompt(quests, factory);
+				return new RequirementsPrompt(plugin, factory);
 			}
 		} else if (input.equalsIgnoreCase("9")) {
 			return new CustomRequirementsPrompt();
@@ -178,7 +178,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			if (context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null || context.getSessionData(CK.REQ_ITEMS) != null || context.getSessionData(CK.REQ_PERMISSION) != null || context.getSessionData(CK.REQ_QUEST) != null || context.getSessionData(CK.REQ_QUEST_BLOCK) != null || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null || context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null || context.getSessionData(CK.REQ_CUSTOM) != null) {
 				if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNoMessage"));
-					return new RequirementsPrompt(quests, factory);
+					return new RequirementsPrompt(plugin, factory);
 				}
 			}
 			return factory.returnToMenu();
@@ -191,8 +191,8 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = Lang.get("reqMoneyPrompt");
-			if (Quests.economy != null) {
-				text = text.replaceAll("<money>", ChatColor.DARK_PURPLE + ((Quests.economy.currencyNamePlural().isEmpty() ? Lang.get("money") : Quests.economy.currencyNamePlural())) + ChatColor.YELLOW);
+			if (plugin.getDependencies().getVaultEconomy() != null) {
+				text = text.replaceAll("<money>", ChatColor.DARK_PURPLE + ((plugin.getDependencies().getVaultEconomy().currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy().currencyNamePlural())) + ChatColor.YELLOW);
 			} else {
 				text = text.replaceAll("<money>", ChatColor.DARK_PURPLE + Lang.get("money") + ChatColor.YELLOW);
 			}
@@ -217,9 +217,9 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REQ_MONEY, null);
-				return new RequirementsPrompt(quests, factory);
+				return new RequirementsPrompt(plugin, factory);
 			}
-			return new RequirementsPrompt(quests, factory);
+			return new RequirementsPrompt(plugin, factory);
 		}
 	}
 
@@ -248,9 +248,9 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REQ_QUEST_POINTS, null);
-				return new RequirementsPrompt(quests, factory);
+				return new RequirementsPrompt(plugin, factory);
 			}
-			return new RequirementsPrompt(quests, factory);
+			return new RequirementsPrompt(plugin, factory);
 		}
 	}
 
@@ -266,7 +266,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + Lang.get("reqQuestListTitle") + "\n" + ChatColor.DARK_PURPLE;
 			boolean none = true;
-			for (Quest q : quests.getQuests()) {
+			for (Quest q : plugin.getQuests()) {
 				text += q.getName() + ", ";
 				none = false;
 			}
@@ -286,7 +286,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				String[] args = input.split(Lang.get("charSemi"));
 				LinkedList<String> questNames = new LinkedList<String>();
 				for (String s : args) {
-					if (quests.getQuest(s) == null) {
+					if (plugin.getQuest(s) == null) {
 						String text = Lang.get("reqNotAQuestName");
 						text = text.replaceAll("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						context.getForWhom().sendRawMessage(text);
@@ -296,7 +296,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
 						return new QuestListPrompt(isRequiredQuest);
 					}
-					questNames.add(quests.getQuest(s).getName());
+					questNames.add(plugin.getQuest(s).getName());
 				}
 				Collections.sort(questNames, new Comparator<String>() {
 
@@ -317,7 +317,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					context.setSessionData(CK.REQ_QUEST_BLOCK, null);
 				}
 			}
-			return new RequirementsPrompt(quests, factory);
+			return new RequirementsPrompt(plugin, factory);
 		}
 	}
 
@@ -399,7 +399,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					two = 0;
 				}
 				if (one == two) {
-					return new RequirementsPrompt(quests, factory);
+					return new RequirementsPrompt(plugin, factory);
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqListsNotSameSize"));
 					return new ItemListPrompt();
@@ -466,7 +466,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REQ_PERMISSION, null);
 			}
-			return new RequirementsPrompt(quests, factory);
+			return new RequirementsPrompt(plugin, factory);
 		}
 	}
 
@@ -475,10 +475,10 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + Lang.get("customRequirementsTitle") + "\n";
-			if (quests.customRequirements.isEmpty()) {
+			if (plugin.getCustomRequirements().isEmpty()) {
 				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
 			} else {
-				for (CustomRequirement cr : quests.customRequirements) {
+				for (CustomRequirement cr : plugin.getCustomRequirements()) {
 					text += ChatColor.DARK_PURPLE + " - " + cr.getName() + "\n";
 				}
 			}
@@ -490,14 +490,14 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				CustomRequirement found = null;
-				for (CustomRequirement cr : quests.customRequirements) {
+				for (CustomRequirement cr : plugin.getCustomRequirements()) {
 					if (cr.getName().equalsIgnoreCase(input)) {
 						found = cr;
 						break;
 					}
 				}
 				if (found == null) {
-					for (CustomRequirement cr : quests.customRequirements) {
+					for (CustomRequirement cr : plugin.getCustomRequirements()) {
 						if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
 							found = cr;
 							break;
@@ -541,7 +541,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
 				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomCleared"));
 			}
-			return new RequirementsPrompt(quests, factory);
+			return new RequirementsPrompt(plugin, factory);
 		}
 	}
 
@@ -603,7 +603,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					return new RequirementCustomDataListPrompt();
 				} else {
 					context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, null);
-					return new RequirementsPrompt(quests, factory);
+					return new RequirementsPrompt(plugin, factory);
 				}
 			}
 		}
@@ -677,7 +677,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			} else if (input.equalsIgnoreCase("2")) {
 				return new mcMMOAmountsPrompt();
 			} else if (input.equalsIgnoreCase("3")) {
-				return new RequirementsPrompt(quests, factory);
+				return new RequirementsPrompt(plugin, factory);
 			}
 			return null;
 		}
@@ -795,7 +795,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			} else if (input.equalsIgnoreCase("2")) {
 				return new HeroesSecondaryPrompt();
 			} else if (input.equalsIgnoreCase("3")) {
-				return new RequirementsPrompt(quests, factory);
+				return new RequirementsPrompt(plugin, factory);
 			}
 			return null;
 		}
@@ -807,7 +807,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext cc) {
 			String text = ChatColor.DARK_PURPLE + Lang.get("heroesPrimaryTitle") + "\n";
 			LinkedList<String> list = new LinkedList<String>();
-			for (HeroClass hc : Quests.heroes.getClassManager().getClasses()) {
+			for (HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
 				if (hc.isPrimary()) {
 					list.add(hc.getName());
 				}
@@ -827,7 +827,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				HeroClass hc = Quests.heroes.getClassManager().getClass(input);
+				HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
 				if (hc != null) {
 					if (hc.isPrimary()) {
 						cc.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, hc.getName());
@@ -858,7 +858,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext cc) {
 			String text = ChatColor.DARK_PURPLE + Lang.get("heroesSecondaryTitle") + "\n";
 			LinkedList<String> list = new LinkedList<String>();
-			for (HeroClass hc : Quests.heroes.getClassManager().getClasses()) {
+			for (HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
 				if (hc.isSecondary()) {
 					list.add(hc.getName());
 				}
@@ -878,7 +878,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				HeroClass hc = Quests.heroes.getClassManager().getClass(input);
+				HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
 				if (hc != null) {
 					if (hc.isSecondary()) {
 						cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, hc.getName());
@@ -915,7 +915,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			if (input.equalsIgnoreCase(Lang.get(Lang.get("cancel"))) == false) {
 				context.setSessionData(CK.Q_FAIL_MESSAGE, input);
 			}
-			return new RequirementsPrompt(quests, factory);
+			return new RequirementsPrompt(plugin, factory);
 		}
 	}
 }

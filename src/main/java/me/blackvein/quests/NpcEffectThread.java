@@ -47,13 +47,13 @@ public class NpcEffectThread implements Runnable {
 			List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
 			if (nearby.isEmpty() == false) {
 				for (Entity e : nearby) {
-					if (Quests.citizens != null) {
-						if (Quests.citizens.getNPCRegistry().isNPC(e)) {
-							NPC npc = Quests.citizens.getNPCRegistry().getNPC(e);
+					if (plugin.getDependencies().getCitizens() != null) {
+						if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(e)) {
+							NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(e);
 							if (plugin.hasQuest(npc, quester)) {
-								showEffect(player, npc, plugin.effect);
+								showEffect(player, npc, plugin.getSettings().getEffect());
 							} else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
-								showEffect(player, npc, plugin.redoEffect);
+								showEffect(player, npc, plugin.getSettings().getRedoEffect());
 							}
 						}
 					}
@@ -70,39 +70,39 @@ public class NpcEffectThread implements Runnable {
 	 */
 	public void showEffect(Player player, NPC npc, String effectType) {
 		try {
-			if (Quests.bukkitVersion.contains("1.13.2")
-					|| Quests.bukkitVersion.contains("1.13.1")) {
+			if (plugin.getDetectedBukkitVersion().contains("1.13.2")
+					|| plugin.getDetectedBukkitVersion().contains("1.13.1")) {
 				showEffect_1_13_R2(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.13")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.13")) {
 				showEffect_1_13_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.12")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.12")) {
 				showEffect_1_12_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.11")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.11")) {
 				showEffect_1_11_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.10")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.10")) {
 				showEffect_1_10_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.9.4")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.9.4")) {
 				showEffect_1_9_R2(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.9")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.9")) {
 				showEffect_1_9_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.8.9")
-					|| Quests.bukkitVersion.contains("1.8.8")
-					|| Quests.bukkitVersion.contains("1.8.7")
-					|| Quests.bukkitVersion.contains("1.8.6")
-					|| Quests.bukkitVersion.contains("1.8.5")
-					|| Quests.bukkitVersion.contains("1.8.4")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.8.9")
+					|| plugin.getDetectedBukkitVersion().contains("1.8.8")
+					|| plugin.getDetectedBukkitVersion().contains("1.8.7")
+					|| plugin.getDetectedBukkitVersion().contains("1.8.6")
+					|| plugin.getDetectedBukkitVersion().contains("1.8.5")
+					|| plugin.getDetectedBukkitVersion().contains("1.8.4")) {
 				showEffect_1_8_R3(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.8.3")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.8.3")) {
 				showEffect_1_8_R2(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.8")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.8")) {
 				showEffect_1_8_R1(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.7.10")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.7.10")) {
 				showEffect_R4(player, npc, effectType);
-			} else if (Quests.bukkitVersion.contains("1.7.9")) {
+			} else if (plugin.getDetectedBukkitVersion().contains("1.7.9")) {
 				showEffect_R3(player, npc, effectType);
 			}
 		} catch (Exception e) {
-			plugin.getLogger().severe("Bukkit version detected as " + Quests.bukkitVersion);
+			plugin.getLogger().severe("Bukkit version detected as " + plugin.getDetectedBukkitVersion());
 			e.printStackTrace();
 		}
 	}

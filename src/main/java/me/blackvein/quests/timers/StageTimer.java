@@ -36,10 +36,9 @@ public class StageTimer implements Runnable {
 	@Override
 	public void run() {
 		if (quester.getQuestData(quest).delayOver) {
-			Player player = quester.getPlayer();
 			if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
 				if (quester.getCurrentStage(quest).getScript() != null) {
-					plugin.trigger.parseQuestTaskTrigger(quester.getCurrentStage(quest).getScript(), player);
+					plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
 				}
 				if (quester.getCurrentStage(quest).getFinishEvent() != null) {
 					quester.getCurrentStage(quest).getFinishEvent().fire(quester, quest);
@@ -50,7 +49,7 @@ public class StageTimer implements Runnable {
 				int stageNum = quester.getCurrentQuests().get(quest) + 1;
 				quester.hardQuit(quest);
 				if (currentStage.getScript() != null) {
-					plugin.trigger.parseQuestTaskTrigger(currentStage.getScript(), player);
+					plugin.getDependencies().runDenizenScript(currentStage.getScript(), quester);
 				}
 				if (currentStage.getFinishEvent() != null) {
 					currentStage.getFinishEvent().fire(quester, quest);
@@ -60,6 +59,7 @@ public class StageTimer implements Runnable {
 				quester.getCurrentStage(quest).setDelay(-1);
 				quester.getQuestData(quest).delayStartTime = 0;
 				quester.getQuestData(quest).delayTimeLeft = -1;
+				Player player = quester.getPlayer();
 				String msg = Lang.get(player, "questObjectivesTitle");
 				msg = msg.replace("<quest>", quest.getName());
 				player.sendMessage(ChatColor.GOLD + msg);

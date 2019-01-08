@@ -56,19 +56,67 @@ import me.blackvein.quests.util.RomanNumeral;
 public class EventFactory implements ConversationAbandonedListener {
 
 	private Quests plugin;
-	public Map<UUID, Block> selectedExplosionLocations = new HashMap<UUID, Block>();
-	public Map<UUID, Block> selectedEffectLocations = new HashMap<UUID, Block>();
-	public Map<UUID, Block> selectedMobLocations = new HashMap<UUID, Block>();
-	public Map<UUID, Block> selectedLightningLocations = new HashMap<UUID, Block>();
-	public Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
-	List<String> names = new LinkedList<String>();
+	private Map<UUID, Block> selectedExplosionLocations = new HashMap<UUID, Block>();
+	private Map<UUID, Block> selectedEffectLocations = new HashMap<UUID, Block>();
+	private Map<UUID, Block> selectedMobLocations = new HashMap<UUID, Block>();
+	private Map<UUID, Block> selectedLightningLocations = new HashMap<UUID, Block>();
+	private Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
+	private List<String> names = new LinkedList<String>();
 	private ConversationFactory convoCreator;
-	File eventsFile;
+	private File eventsFile;
 
 	public EventFactory(Quests plugin) {
 		this.plugin = plugin;
-		// Ensure to initialize convoCreator last, to ensure that 'this' is fully initialized before it is passed
+		eventsFile = new File(plugin.getDataFolder(), "events.yml");
+		// Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
 		this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false).withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new MenuPrompt()).withTimeout(3600).thatExcludesNonPlayersWithMessage("Console may not perform this operation!").addConversationAbandonedListener(this);
+	}
+	
+	public Map<UUID, Block> getSelectedExplosionLocations() {
+		return selectedExplosionLocations;
+	}
+
+	public void setSelectedExplosionLocations(
+			Map<UUID, Block> selectedExplosionLocations) {
+		this.selectedExplosionLocations = selectedExplosionLocations;
+	}
+
+	public Map<UUID, Block> getSelectedEffectLocations() {
+		return selectedEffectLocations;
+	}
+
+	public void setSelectedEffectLocations(Map<UUID, Block> selectedEffectLocations) {
+		this.selectedEffectLocations = selectedEffectLocations;
+	}
+
+	public Map<UUID, Block> getSelectedMobLocations() {
+		return selectedMobLocations;
+	}
+
+	public void setSelectedMobLocations(Map<UUID, Block> selectedMobLocations) {
+		this.selectedMobLocations = selectedMobLocations;
+	}
+
+	public Map<UUID, Block> getSelectedLightningLocations() {
+		return selectedLightningLocations;
+	}
+
+	public void setSelectedLightningLocations(
+			Map<UUID, Block> selectedLightningLocations) {
+		this.selectedLightningLocations = selectedLightningLocations;
+	}
+
+	public Map<UUID, Block> getSelectedTeleportLocations() {
+		return selectedTeleportLocations;
+	}
+
+	public void setSelectedTeleportLocations(
+			Map<UUID, Block> selectedTeleportLocations) {
+		this.selectedTeleportLocations = selectedTeleportLocations;
+	}
+
+	public ConversationFactory getConversationFactory() {
+		return convoCreator;
 	}
 
 	@Override
@@ -79,10 +127,6 @@ public class EventFactory implements ConversationAbandonedListener {
 		selectedMobLocations.remove(player.getUniqueId());
 		selectedLightningLocations.remove(player.getUniqueId());
 		selectedTeleportLocations.remove(player.getUniqueId());
-	}
-	
-	public ConversationFactory getConversationFactory() {
-		return convoCreator;
 	}
 
 	private class QuestCreatorPrefix implements ConversationPrefix {

@@ -53,7 +53,7 @@ public class LocaleQuery {
 	 * @param durability Durability for the item being translated
 	 */
 	public void sendMessage(Player player, String message, Material material, short durability) {
-		if (plugin.translateItems) {
+		if (plugin.getSettings().canTranslateItems()) {
 			String key = queryByType(material);
 			if (key != null) {
 				if (oldVersion) {
@@ -82,7 +82,7 @@ public class LocaleQuery {
 	 */
 	@SuppressWarnings("deprecation")
 	public void sendMessage(Player player, String message, Material material, short durability, Enchantment enchantment) {
-		if (plugin.translateItems) {
+		if (plugin.getSettings().canTranslateItems()) {
 			String key = queryByType(material);
 			if (key != null) {
 				if (oldVersion) {
@@ -111,7 +111,7 @@ public class LocaleQuery {
 	
 	@SuppressWarnings("deprecation")
 	public void sendMessage(Player player, String message, EntityType type) {
-		if (plugin.translateItems) {
+		if (plugin.getSettings().canTranslateItems()) {
 			String key = "";
 			if (oldVersion) {
 				key = "entity." + type.getName() + ".name";

@@ -465,8 +465,8 @@ public class Quester {
 			Requirements reqs = q.getRequirements();
 			if (!override) {
 				if (reqs.getMoney() > 0) {
-					if (Quests.economy != null) {
-						Quests.economy.withdrawPlayer(getOfflinePlayer(), reqs.getMoney());
+					if (plugin.getDependencies().getVaultEconomy() != null) {
+						plugin.getDependencies().getVaultEconomy().withdrawPlayer(getOfflinePlayer(), reqs.getMoney());
 					}
 				}
 				for (ItemStack is : reqs.getItems()) {
@@ -478,7 +478,7 @@ public class Quester {
 				accepted = accepted.replace("<quest>", q.getName());
 				player.sendMessage(ChatColor.GREEN + accepted);
 				player.sendMessage("");
-				if (plugin.showQuestTitles) {
+				if (plugin.getSettings().canShowQuestTitles()) {
 					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
 							+ " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest") + " " + Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
 					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
@@ -491,7 +491,7 @@ public class Quester {
 			plugin.showObjectives(q, this, false);
 			String stageStartMessage = stage.startMessage;
 			if (stageStartMessage != null) {
-				getPlayer().sendMessage(Quests.parseString(stageStartMessage, q, getPlayer()));
+				getPlayer().sendMessage(plugin.parseString(stageStartMessage, q, getPlayer()));
 			}
 			if (stage.chatEvents.isEmpty() == false) {
 				for (String chatTrigger : stage.chatEvents.keySet()) {
@@ -915,7 +915,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						broken = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						broken = is;
 					}
@@ -932,7 +932,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						toBreak = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						toBreak = is;
 					}
@@ -966,7 +966,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						damaged = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						damaged = is;
 					}
@@ -982,7 +982,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						toDamage = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						toDamage = is;
 					}
@@ -1016,7 +1016,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						placed = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						placed = is;
 					}
@@ -1032,7 +1032,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						toPlace = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						toPlace = is;
 					}
@@ -1066,7 +1066,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						used = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						used = is;
 					}
@@ -1082,7 +1082,7 @@ public class Quester {
 					//Blocks are solid, so check durability
 					if (m.getDurability() == is.getDurability()) {
 						toUse = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						toUse = is;
 					}
@@ -1116,7 +1116,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						cut = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						cut = is;
 					}
@@ -1132,7 +1132,7 @@ public class Quester {
 					//Blocks are solid so check for durability
 					if (m.getDurability() == is.getDurability()) {
 						toCut = is;
-					} else if (!LocaleQuery.isBelow113(Quests.bukkitVersion)) {
+					} else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
 						//Ignore durability for 1.13+
 						toCut = is;
 					}
@@ -1342,7 +1342,7 @@ public class Quester {
 					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
 					player.getInventory().setItem(player.getInventory().first(i), null);
 					player.updateInventory();
-					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(getCurrentStage(quest).deliverMessages.size())), Quests.citizens.getNPCRegistry().getById(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
+					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(getCurrentStage(quest).deliverMessages.size())), plugin.getDependencies().getCitizens().getNPCRegistry().getById(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
 					player.sendMessage(message);
 				}
 			}
@@ -1419,7 +1419,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksBroken.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1428,7 +1428,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksDamaged.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1437,7 +1437,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksPlaced.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1446,7 +1446,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksUsed.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1455,7 +1455,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksCut.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1475,7 +1475,7 @@ public class Quester {
 					break;
 				}
 			}
-			plugin.query.sendMessage(p, message, itemStack.getType(), itemStack.getDurability(), enchantment);
+			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability(), enchantment);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1484,14 +1484,14 @@ public class Quester {
 			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery));
-			plugin.query.sendMessage(p, message, is.getType(), is.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("killMob")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill") + " <mob>";
 			message = message + " " + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob)) + "/" + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob));
-			plugin.query.sendMessage(p, message, mob);
+			plugin.getLocaleQuery().sendMessage(p, message, mob);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1520,7 +1520,7 @@ public class Quester {
 		} else if (objective.equalsIgnoreCase("tameMob")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame") + " <mob>";
 			message = message + " " + getCurrentStage(quest).mobsToTame.get(mob) + "/" + getCurrentStage(quest).mobsToTame.get(mob);
-			plugin.query.sendMessage(p, message, mob);
+			plugin.getLocaleQuery().sendMessage(p, message, mob);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -2608,7 +2608,7 @@ public class Quester {
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getCurrentStage(quest).delay * 0.02));
 			if (getCurrentStage(quest).delayMessage != null) {
 				Player p = plugin.getServer().getPlayer(id);
-				p.sendMessage(Quests.parseString((getCurrentStage(quest).delayMessage), quest, p));
+				p.sendMessage(plugin.parseString((getCurrentStage(quest).delayMessage), quest, p));
 			}
 		}
 		getQuestData(quest).delayStartTime = System.currentTimeMillis();
@@ -2810,9 +2810,9 @@ public class Quester {
 					}
 				}
 			}
-			if (Quests.gpsapi != null) {
-				if (Quests.gpsapi.gpsIsActive(this.getPlayer())) {
-					Quests.gpsapi.stopGPS(this.getPlayer());
+			if (plugin.getDependencies().getGpsApi() != null) {
+				if (plugin.getDependencies().getGpsApi().gpsIsActive(this.getPlayer())) {
+					plugin.getDependencies().getGpsApi().stopGPS(this.getPlayer());
 				}
 			}
 		} catch (Exception ex) {
@@ -2855,7 +2855,7 @@ public class Quester {
 	}
 
 	public void resetCompass() {
-		if (!plugin.useCompass)
+		if (!plugin.getSettings().canUseCompass())
 			return;
 		Player player = getPlayer();
 		if (player == null)
@@ -2868,7 +2868,7 @@ public class Quester {
 	}
 
 	public void findCompassTarget() {
-		if (!plugin.useCompass)
+		if (!plugin.getSettings().canUseCompass())
 			return;
 		Player player = getPlayer();
 		if (player == null)

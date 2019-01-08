@@ -51,7 +51,6 @@ public class Quest {
 	protected String finished;
 	protected String region = null;
 	protected ItemStack guiDisplay = null;
-	//private int parties = 0;
 	private LinkedList<Stage> orderedStages = new LinkedList<Stage>();
 	protected NPC npcStart;
 	protected Location blockStart;
@@ -156,27 +155,26 @@ public class Quest {
 	public void nextStage(Quester q) {
 		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
 		if (stageCompleteMessage != null) {
-			String s = Quests.parseString(stageCompleteMessage, this, q.getPlayer());
-			if(Quests.placeholder != null) {
+			String s = plugin.parseString(stageCompleteMessage, this, q.getPlayer());
+			if(plugin.getDependencies().getPlaceholderApi() != null) {
 				s = PlaceholderAPI.setPlaceholders(q.getPlayer(), s);
 			}
 			q.getPlayer().sendMessage(s);
 		}
-		if (plugin.useCompass) {
+		if (plugin.getSettings().canUseCompass()) {
 			q.resetCompass();
 			q.findCompassTarget();
 		}
 		if (q.getCurrentStage(this).delay < 0) {
-			Player player = q.getPlayer();
 			if (q.currentQuests.get(this) == (orderedStages.size() - 1)) {
 				if (q.getCurrentStage(this).script != null) {
-					plugin.trigger.parseQuestTaskTrigger(q.getCurrentStage(this).script, player);
+					plugin.getDependencies().runDenizenScript(q.getCurrentStage(this).script, q);
 				}
 				if (q.getCurrentStage(this).finishEvent != null) {
 					q.getCurrentStage(this).finishEvent.fire(q, this);
 				}
-				if (Quests.parties != null) {
-					Party party = Quests.parties.getParty(Quests.parties.getPartyPlayer(q.getUUID()).getPartyName());
+				if (plugin.getDependencies().getPartiesApi() != null) {
+					Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(q.getUUID()).getPartyName());
 					if (party != null) {
 						for (UUID id : party.getMembers()) {
 							if (!id.equals(q.getUUID())) {
@@ -224,7 +222,7 @@ public class Quest {
 		quester.hardStagePut(this, stage);
 		quester.addEmptiesFor(this, stage);
 		if (currentStage.script != null) {
-			plugin.trigger.parseQuestTaskTrigger(currentStage.script, quester.getPlayer());
+			plugin.getDependencies().runDenizenScript(quester.getCurrentStage(this).script, quester);
 		}
 		/*
 		 * if (quester.getCurrentStage(this).finishEvent != null) { quester.getCurrentStage(this).finishEvent.fire(quester); }
@@ -241,7 +239,7 @@ public class Quest {
 		plugin.showObjectives(this, quester, false);
 		String stageStartMessage = quester.getCurrentStage(this).startMessage;
 		if (stageStartMessage != null) {
-			quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, this, quester.getPlayer()));
+			quester.getPlayer().sendMessage(plugin.parseString(stageStartMessage, this, quester.getPlayer()));
 		}
 		quester.updateJournal();
 	}
@@ -255,7 +253,7 @@ public class Quest {
 	 * @return true if successful
 	 */
 	protected boolean updateGPS(Quester quester) {
-		if (Quests.gpsapi == null) {
+		if (plugin.getDependencies().getGpsApi() == null) {
 			return false;
 		}
 		Stage stage = quester.getCurrentStage(this);
@@ -275,7 +273,7 @@ public class Quest {
 			targetLocations.addAll(stage.locationsToReach);
 		} else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
 			for (Integer i : stage.itemDeliveryTargets) {
-				NPC npc = Quests.citizens.getNPCRegistry().getById(i);
+				NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(i);
 				targetLocations.add(npc.getStoredLocation());
 			}
 		}
@@ -284,19 +282,19 @@ public class Quest {
 			String pointName = "quests-" + quester.getPlayer().getUniqueId().toString();
 			for (Location l : targetLocations) {
 				if (l.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
-					if (!Quests.gpsapi.gpsIsActive(quester.getPlayer())) {
-						Quests.gpsapi.addPoint(pointName + index, l);
+					if (!plugin.getDependencies().getGpsApi().gpsIsActive(quester.getPlayer())) {
+						plugin.getDependencies().getGpsApi().addPoint(pointName + index, l);
 						index++;
 					}
 				}
 			}
 			for (int i = 1 ; i < targetLocations.size(); i++) {
-				if (!Quests.gpsapi.gpsIsActive(quester.getPlayer())) {
-					Quests.gpsapi.connect(pointName + i, pointName + (i + 1), true);
+				if (!plugin.getDependencies().getGpsApi().gpsIsActive(quester.getPlayer())) {
+					plugin.getDependencies().getGpsApi().connect(pointName + i, pointName + (i + 1), true);
 				}
 			}
-			if (!Quests.gpsapi.gpsIsActive(quester.getPlayer())) {
-				Quests.gpsapi.startGPS(quester.getPlayer(), pointName + (index - 1));
+			if (!plugin.getDependencies().getGpsApi().gpsIsActive(quester.getPlayer())) {
+				plugin.getDependencies().getGpsApi().startGPS(quester.getPlayer(), pointName + (index - 1));
 			}
 		}
 		return targetLocations != null && !targetLocations.isEmpty();
@@ -312,7 +310,7 @@ public class Quest {
 	 * @return true if successful
 	 */
 	public boolean updateCompass(Quester quester, Stage nextStage) {
-		if (!plugin.useCompass) {
+		if (!plugin.getSettings().canUseCompass()) {
 			return false;
 		}
 		if (nextStage == null) {
@@ -326,7 +324,7 @@ public class Quest {
 		} else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0) {
 			targetLocation = nextStage.locationsToReach.getFirst();
 		} else if (nextStage.itemDeliveryTargets != null && nextStage.itemDeliveryTargets.size() > 0) {
-			NPC npc = Quests.citizens.getNPCRegistry().getById(nextStage.itemDeliveryTargets.getFirst());
+			NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(nextStage.itemDeliveryTargets.getFirst());
 			targetLocation = npc.getStoredLocation();
 		}
 		if (targetLocation != null) {
@@ -355,8 +353,8 @@ public class Quest {
 	 */
 	protected boolean testRequirements(Player player) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
-		if (reqs.getMoney() != 0 && Quests.economy != null) {
-			if (Quests.economy.getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) < reqs.getMoney()) {
+		if (reqs.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
+			if (plugin.getDependencies().getVaultEconomy().getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) < reqs.getMoney()) {
 				return false;
 			}
 		}
@@ -399,7 +397,7 @@ public class Quest {
 		}
 		for (String s : reqs.getCustomRequirements().keySet()) {
 			CustomRequirement found = null;
-			for (CustomRequirement cr : plugin.customRequirements) {
+			for (CustomRequirement cr : plugin.getCustomRequirements()) {
 				if (cr.getName().equalsIgnoreCase(s)) {
 					found = cr;
 					break;
@@ -443,7 +441,7 @@ public class Quest {
 			q.completedQuests.add(name);
 		}
 		String none = ChatColor.GRAY + "- (" + Lang.get(player, "none") + ")";
-		final String ps = Quests.parseString(finished, this, player);
+		final String ps = plugin.parseString(finished, this, player);
 		for (Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
 			if (entry.getValue().getName().equals(getName())) {
 				plugin.getServer().getScheduler().cancelTask(entry.getKey());
@@ -459,8 +457,8 @@ public class Quest {
 				}
 			}
 		}, 40);
-		if (rews.getMoney() > 0 && Quests.economy != null) {
-			Quests.economy.depositPlayer(q.getOfflinePlayer(), rews.getMoney());
+		if (rews.getMoney() > 0 && plugin.getDependencies().getVaultEconomy() != null) {
+			plugin.getDependencies().getVaultEconomy().depositPlayer(q.getOfflinePlayer(), rews.getMoney());
 			none = null;
 		}
 		if (pln.getCooldown() > -1) {
@@ -498,8 +496,8 @@ public class Quest {
 			none = null;
 		}
 		for (String s : rews.getPermissions()) {
-			if (Quests.permission != null) {
-				Quests.permission.playerAdd(player, s);
+			if (plugin.getDependencies().getVaultPermission() != null) {
+				plugin.getDependencies().getVaultPermission().playerAdd(player, s);
 			}
 			none = null;
 		}
@@ -509,7 +507,7 @@ public class Quest {
 		}
 		for (String s : rews.getHeroesClasses()) {
 			Hero hero = plugin.getHero(player.getUniqueId());
-			hero.addExp(rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)), Quests.heroes.getClassManager().getClass(s), player.getLocation());
+			hero.addExp(rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)), plugin.getDependencies().getHeroes().getClassManager().getClass(s), player.getLocation());
 			none = null;
 		}
 		LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
@@ -522,8 +520,8 @@ public class Quest {
 				player.giveExp(lb.getExp());
 			}
 			if (lb.getMoney() > 0) {
-				if (Quests.economy != null) {
-					Quests.economy.depositPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), lb.getMoney());
+				if (plugin.getDependencies().getVaultEconomy() != null) {
+					plugin.getDependencies().getVaultEconomy().depositPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), lb.getMoney());
 				}
 			}
 			if (lb.getItemList().isEmpty() == false) {
@@ -556,7 +554,7 @@ public class Quest {
 		complete = complete.replace("<quest>", ChatColor.YELLOW + name + ChatColor.GOLD);
 		player.sendMessage(ChatColor.GOLD + complete);
 		player.sendMessage(ChatColor.GREEN + Lang.get(player, "questRewardsTitle"));
-		if (plugin.showQuestTitles) {
+		if (plugin.getSettings().canShowQuestTitles()) {
 			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
 					+ " title " + "{\"text\":\"" + Lang.get(player, "quest") + " " + Lang.get(player, "complete") +  "\",\"color\":\"gold\"}");
 			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
@@ -640,10 +638,10 @@ public class Quest {
 			none = null;
 		}
 		if (rews.getMoney() > 1) {
-			player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE + Quests.getCurrency(true));
+			player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE + plugin.getCurrency(true));
 			none = null;
 		} else if (rews.getMoney() == 1) {
-			player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE + Quests.getCurrency(false));
+			player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE + plugin.getCurrency(false));
 			none = null;
 		}
 		if (rews.getExp() > 0 || phatLootExp > 0) {
@@ -671,7 +669,7 @@ public class Quest {
 		}
 		for (String s : rews.getCustomRewards().keySet()) {
 			CustomReward found = null;
-			for (CustomReward cr : plugin.customRewards) {
+			for (CustomReward cr : plugin.getCustomRewards()) {
 				if (cr.getName().equalsIgnoreCase(s)) {
 					found = cr;
 					break;
@@ -700,9 +698,9 @@ public class Quest {
 		q.saveData();
 		player.updateInventory();
 		q.updateJournal();
-		if (Quests.gpsapi != null) {
-			if (Quests.gpsapi.gpsIsActive(player)) {
-				Quests.gpsapi.stopGPS(player);
+		if (plugin.getDependencies().getGpsApi() != null) {
+			if (plugin.getDependencies().getGpsApi().gpsIsActive(player)) {
+				plugin.getDependencies().getGpsApi().stopGPS(player);
 			}
 		}
 		q.findCompassTarget();
@@ -751,7 +749,7 @@ public class Quest {
 		if (region == null) {
 			return true;
 		} else {
-			ApplicableRegionSet ars = Quests.worldGuard.getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
+			ApplicableRegionSet ars = plugin.getDependencies().getWorldGuard().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
 			Iterator<ProtectedRegion> i = ars.iterator();
 			while (i.hasNext()) {
 				ProtectedRegion pr = i.next();

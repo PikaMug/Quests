@@ -31,12 +31,12 @@ import org.bukkit.conversations.StringPrompt;
 
 public class PlannerPrompt extends FixedSetPrompt {
 	
-	private final Quests quests;
+	private final Quests plugin;
 	private final QuestFactory factory;
 
 	public PlannerPrompt(Quests plugin, QuestFactory qf) {
 		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
-		quests = plugin;
+		this.plugin = plugin;
 		factory = qf;
 	}
 
@@ -81,9 +81,9 @@ public class PlannerPrompt extends FixedSetPrompt {
 	@Override
 	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 		if (input.equalsIgnoreCase("1")) {
-			return new DateTimePrompt(quests, PlannerPrompt.this, "start");
+			return new DateTimePrompt(plugin, PlannerPrompt.this, "start");
 		} else if (input.equalsIgnoreCase("2")) {
-			return new DateTimePrompt(quests, PlannerPrompt.this, "end");
+			return new DateTimePrompt(plugin, PlannerPrompt.this, "end");
 		} else if (input.equalsIgnoreCase("3")) {
 			return new RepeatPrompt();
 		} else if (input.equalsIgnoreCase("4")) {
@@ -104,7 +104,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-				return new PlannerPrompt(quests, factory);
+				return new PlannerPrompt(plugin, factory);
 			}
 			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.PLN_REPEAT_CYCLE, null);
@@ -123,7 +123,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 						+ Lang.get("stageEditorInvalidNumber"));
 				return new RepeatPrompt();
 			}
-			return new PlannerPrompt(quests, factory);
+			return new PlannerPrompt(plugin, factory);
 		}
 	}
 	
@@ -137,7 +137,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-				return new PlannerPrompt(quests, factory);
+				return new PlannerPrompt(plugin, factory);
 			}
 			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.PLN_COOLDOWN, null);
@@ -156,7 +156,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 						+ Lang.get("stageEditorInvalidNumber"));
 				return new CooldownPrompt();
 			}
-			return new PlannerPrompt(quests, factory);
+			return new PlannerPrompt(plugin, factory);
 		}
 	}
 	
@@ -178,7 +178,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 		
 		TimeZone tz = TimeZone.getTimeZone(date[6]);
 		cal.setTimeZone(tz);
-		String[] iso = quests.lang.getISO().split("-");
+		String[] iso = plugin.getLang().getISO().split("-");
 		Locale loc = new Locale(iso[0], iso[1]);
 		Double zhour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
 		String[] sep = String.valueOf(zhour).replace("-", "").split("\\.");

@@ -265,7 +265,7 @@ public class Event {
 	public void fire(Quester quester, Quest quest) {
 		Player player = quester.getPlayer();
 		if (message != null) {
-			player.sendMessage(Quests.parseString(message, quest, player));
+			player.sendMessage(plugin.parseString(message, quest, player));
 		}
 		if (clearInv == true) {
 			player.getInventory().clear();
@@ -334,9 +334,9 @@ public class Event {
 		}
 		if (book != null) {
 			if (!book.isEmpty()) {
-				if (Quests.citizensBooks != null) {
-					if (Quests.citizensBooks.hasFilter(book)) {
-		                Quests.citizensBooks.openBook(player, Quests.citizensBooks.getFilter(book));
+				if (plugin.getDependencies().getCitizensBooksApi() != null) {
+					if (plugin.getDependencies().getCitizensBooksApi().hasFilter(book)) {
+		                plugin.getDependencies().getCitizensBooksApi().openBook(player, plugin.getDependencies().getCitizensBooksApi().getFilter(book));
 		            }
 				}
 			}
