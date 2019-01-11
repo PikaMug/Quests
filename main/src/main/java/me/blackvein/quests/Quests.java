@@ -114,7 +114,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private EventFactory eventFactory;
 	private PlayerListener playerListener;
 	private NpcListener npcListener;
-	private NpcEffectThread effThread;
+	//private NpcEffectThread effThread;
 	private PartiesListener partiesListener;
 	private Lang lang = new Lang(this);
 	private LocaleQuery localeQuery = new LocaleQuery(this);
@@ -132,7 +132,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
 		localeQuery.setBukkitVersion(bukkitVersion);
 		playerListener = new PlayerListener(this);
-		effThread = new NpcEffectThread(this);
+		//effThread = new NpcEffectThread(this);
 		npcListener = new NpcListener(this);
 		partiesListener = new PartiesListener();
 		questFactory = new QuestFactory(this);
@@ -183,7 +183,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (depends.getCitizens() != null) {
 			getServer().getPluginManager().registerEvents(npcListener, this);
 			if (settings.canNpcEffects()) {
-				getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
+				//getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
 			}
 		}
 		if (depends.getPartiesApi() != null) {
@@ -2640,7 +2640,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return hero.getHeroClass().getName().equalsIgnoreCase(primaryClass);
 	}
 
-	@SuppressWarnings("deprecation")
 	public boolean testSecondaryHeroesClass(String secondaryClass, UUID uuid) {
 		Hero hero = getHero(uuid);
 		return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);

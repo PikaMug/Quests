@@ -4,12 +4,13 @@
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests-parent</artifactId>
     <version>3.6.0</version>
-    <url>https://github.com/FlyingPikachu/Quests/</url>
     <packaging>pom</packaging>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <build>
+        <defaultGoal>clean package install</defaultGoal>
+    </build>
     <modules>
         <module>main</module>
         <module>v1_8_R1</module>
@@ -24,8 +25,4 @@
         <module>v1_13_R2</module>
         <module>dist</module>
     </modules>
-    <build>
-        <finalName>Quests-${project.version}</finalName>
-        <defaultGoal>clean package install</defaultGoal>
-    </build>
 </project>
