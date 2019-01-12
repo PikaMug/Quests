@@ -18,6 +18,7 @@ nbdist/
 
 # Maven files
 */target
+*dependency-reduced-pom.xml
 
 # Java files
 *.class
