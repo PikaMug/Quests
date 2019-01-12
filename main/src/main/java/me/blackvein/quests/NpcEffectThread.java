@@ -561,31 +561,31 @@ public class NpcEffectThread implements Runnable {
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		if (effectType.equalsIgnoreCase("enchant")) {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
+				Eff_1_9_R2.ENCHANTMENT_TABLE.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 10, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (effectType.equalsIgnoreCase("crit")) {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
+				Eff_1_9_R2.CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (effectType.equalsIgnoreCase("spell")) {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_9_R2.INSTANT_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (effectType.equalsIgnoreCase("magiccrit")) {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
+				Eff_1_9_R2.MAGIC_CRIT.sendToPlayer(player, eyeLoc, 0, 0, 0, (float) 0.35, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (effectType.equalsIgnoreCase("mobspell")) {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_9_R2.MOB_SPELL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -593,26 +593,26 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.NOTE.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
+				Eff_1_9_R2.NOTE.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (effectType.equalsIgnoreCase("portal")) {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
+				Eff_1_9_R2.PORTAL.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 5, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (effectType.equalsIgnoreCase("dust")) {
 			try {
 				Location newLoc = new Location(player.getWorld(), eyeLoc.getX(), eyeLoc.getY() + (float) 0.5, eyeLoc.getZ());
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
+				Eff_1_9_R2.RED_DUST.sendToPlayer(player, newLoc, 0, 0, 0, 1, 1, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (effectType.equalsIgnoreCase("witch")) {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_9_R2.WITCH_MAGIC.sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -620,7 +620,7 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.SNOWBALL_POOF.sendToPlayer(player, newLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_9_R2.SNOWBALL_POOF.sendToPlayer(player, newLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -628,19 +628,19 @@ public class NpcEffectThread implements Runnable {
 			try {
 				Location old = eyeLoc;
 				Location newLoc = new Location(player.getWorld(), old.getX(), old.getY() + (float) 0.5, old.getZ());
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.SPLASH.sendToPlayer(player, newLoc, 0, 0, 0, 1, 4, null);
+				Eff_1_9_R2.SPLASH.sendToPlayer(player, newLoc, 0, 0, 0, 1, 4, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (effectType.equalsIgnoreCase("smoke")) {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
+				Eff_1_9_R2.TOWN_AURA.sendToPlayer(player, eyeLoc, 0, 1, 0, 1, 20, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				me.blackvein.quests.nms.v1_9_R2.particle.Eff_1_9_R2.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
+				Eff_1_9_R2.valueOf(effectType.toUpperCase()).sendToPlayer(player, eyeLoc, 0, 0, 0, 1, 3, null);
 			} catch (Exception e) {
 				plugin.getLogger().info(effectType + " is not a valid effect name!");
 			}
