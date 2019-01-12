@@ -298,7 +298,7 @@ stageEditorConfirmStageNote: "Any Stages after will be shifted back one spot"
 stageEditorDeleteSucces: "Stage deleted successfully."
 stageEditorEnchantments: "Enchantments"
 stageEditorNPCNote: 'Note: You may specify the name of the NPC with <npc>'
-stageEditorOptional: "Optional"
+stageEditorOptional: "选项"
 stageEditorColors: "Sheep Colors"
 allListsNotSameSize: "All of your lists are not the same size!"
 eventEditorCreate: "Create new Event"
