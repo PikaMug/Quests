@@ -13,12 +13,11 @@
 nbproject/private/
 build/
 nbbuild/
-dist/
 nbdist/
 .nb-gradle/
 
 # Maven files
-/target
+*/target
 
 # Java files
 *.class
