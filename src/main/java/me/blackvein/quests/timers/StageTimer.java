@@ -38,7 +38,7 @@ public class StageTimer implements Runnable {
 		if (quester.getQuestData(quest).delayOver) {
 			if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
 				if (quester.getCurrentStage(quest).getScript() != null) {
-					plugin.runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
+					plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
 				}
 				if (quester.getCurrentStage(quest).getFinishEvent() != null) {
 					quester.getCurrentStage(quest).getFinishEvent().fire(quester, quest);
@@ -49,7 +49,7 @@ public class StageTimer implements Runnable {
 				int stageNum = quester.getCurrentQuests().get(quest) + 1;
 				quester.hardQuit(quest);
 				if (currentStage.getScript() != null) {
-					plugin.runDenizenScript(currentStage.getScript(), quester);
+					plugin.getDependencies().runDenizenScript(currentStage.getScript(), quester);
 				}
 				if (currentStage.getFinishEvent() != null) {
 					currentStage.getFinishEvent().fire(quester, quest);

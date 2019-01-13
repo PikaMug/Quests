@@ -90,10 +90,7 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.aufdemrand.denizen.BukkitScriptEntryData;
-import net.aufdemrand.denizen.objects.dPlayer;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
-import net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -119,6 +116,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private NpcListener npcListener;
 	private NpcEffectThread effThread;
 	private PartiesListener partiesListener;
+	private DenizenTrigger trigger;
 	private Lang lang;
 	private LocaleQuery localeQuery;
 
@@ -288,6 +286,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	
 	public EventFactory getEventFactory() {
 		return eventFactory;
+	}
+	
+	public DenizenTrigger getDenizenTrigger() {
+		return trigger;
 	}
 	
 	public Lang getLang() {
@@ -1303,6 +1305,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			// Denizen script load
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run")) {
 				if (ScriptRegistry.containsScript(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run"))) {
+					trigger = new DenizenTrigger();
 					oStage.script = config.getString("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run");
 				} else {
 					stageFailed("script-to-run: in Stage " + s2 + " of Quest " + quest.getName() + " is not a Denizen script!");
@@ -2640,21 +2643,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			return null;
 		}
 		return depends.getHeroes().getCharacterManager().getHero(p);
-	}
-	
-	public boolean runDenizenScript(String scriptName, Quester quester) {
-		if (scriptName == null) {
-			return false;
-		}
-		if (depends.getDenizen() == null) {
-			return false;
-		}
-		if (ScriptRegistry.containsScript(scriptName)) {
-			TaskScriptContainer task_script = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
-			BukkitScriptEntryData entryData = new BukkitScriptEntryData(dPlayer.mirrorBukkitPlayer(quester.getPlayer()), null);
-			task_script.runTaskScript(entryData, null);
-		}
-		return true;
 	}
 
 	public boolean testPrimaryHeroesClass(String primaryClass, UUID uuid) {
