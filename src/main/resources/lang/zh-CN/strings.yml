@@ -382,7 +382,7 @@ eventEditorEnterThunderWorld: "Enter a world name for the thunder to occur in, <
 eventEditorEffects: "Event Effects"
 eventEditorAddEffect: "添加特效"
 eventEditorAddEffectLocation: "添加特效发生位置"
-eventEditorNoEffects: "不能设置特效"
+eventEditorNoEffects: "没有设置特效"
 eventEditorMustAddEffects: "You must add effects first!"
 eventEditorInvalidEffect: "is not a valid effect name!"
 eventEditorEffectsCleared: "Event effects cleared."
