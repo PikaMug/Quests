@@ -301,18 +301,16 @@ public class ItemUtil {
 		if (!lore.isEmpty()) {
 			meta.setLore(lore);
 		}
-		if (flags[0] != null && flags[0].toString().equals("")) {
-			for (String flag : flags) {
-				if (flag != null) {
-					try {
-						meta.addItemFlags(ItemFlag.valueOf(flag));
-					} catch (NullPointerException npe) {
-						Bukkit.getLogger().severe(flag + " is not a valid ItemFlag");
-					} catch (Throwable tr) {
-						// ItemMeta.addItemFlags() not introduced until 1.8.3
-						Bukkit.getLogger().info("You are running a version of CraftBukkit"
-				    			+ " for which Quests cannot add the item flag " + flag);
-					}
+		for (String flag : flags) {
+			if (flag != null && !flag.equals("")) {
+				try {
+					meta.addItemFlags(ItemFlag.valueOf(flag));
+				} catch (NullPointerException npe) {
+					Bukkit.getLogger().severe(flag + " is not a valid ItemFlag");
+				} catch (Throwable tr) {
+					// ItemMeta.addItemFlags() not introduced until 1.8.3
+					Bukkit.getLogger().info("You are running a version of CraftBukkit"
+				    		+ " for which Quests cannot add the item flag " + flag);
 				}
 			}
 		}
