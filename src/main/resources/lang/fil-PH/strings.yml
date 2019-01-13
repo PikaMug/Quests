@@ -856,4 +856,4 @@ timerStart: "%green%Mayroon ka%red% <time> segundo%green% para taposin ang pagsu
 questErrorReadingFile: "Di mabasang file ng pagsusulit."
 questSaveError: "Mayroong error ang lumabas habang ikaw ay nagsisave."
 noPermission: "Wala kang pahintulot na gawin iyon."
-difference: "The difference is '<data>'."
+difference: "Ang pagkakaiba ay '<data> '."

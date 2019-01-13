@@ -856,4 +856,4 @@ timerStart: "%green%Tu hai%red% <time> ssecondi%green% per finire questa ricerca
 questErrorReadingFile: "Errore durante la lettura del file missione."
 questSaveError: "Si è verificato un errore durante il salvataggio."
 noPermission: "Non hai il permesso di farlo."
-difference: "The difference is '<data>'."
+difference: "La differenza è '<data>'."

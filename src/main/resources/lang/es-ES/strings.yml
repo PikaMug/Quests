@@ -856,4 +856,4 @@ timerStart: "%green%Usted tiene%red% <time> segundos%green% para terminar la bú
 questErrorReadingFile: "Error en la lectura de la carpeta de la Búsqueda."
 questSaveError: "A ocurrido un error al guardar."
 noPermission: "No tienes permiso para hacer eso."
-difference: "The difference is '<data>'."
+difference: "La diferencia es '<data>'."

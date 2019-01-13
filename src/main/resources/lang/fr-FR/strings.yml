@@ -856,4 +856,4 @@ timerStart: "%green%Vous avez%red% <time> secondes%green% pour terminer cette qu
 questErrorReadingFile: "Erreur lors de la lecture du fichier de quêtes."
 questSaveError: "Une erreur s’est produite lors de la sauvegarde."
 noPermission: "Vous n'avez pas les droits nécessaires pour effectuer cette action."
-difference: "The difference is '<data>'."
+difference: "La différence est '<data> '."
