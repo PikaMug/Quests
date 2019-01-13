@@ -168,7 +168,7 @@ public class Quest {
 		if (q.getCurrentStage(this).delay < 0) {
 			if (q.currentQuests.get(this) == (orderedStages.size() - 1)) {
 				if (q.getCurrentStage(this).script != null) {
-					plugin.getDependencies().runDenizenScript(q.getCurrentStage(this).script, q);
+					plugin.runDenizenScript(q.getCurrentStage(this).script, q);
 				}
 				if (q.getCurrentStage(this).finishEvent != null) {
 					q.getCurrentStage(this).finishEvent.fire(q, this);
@@ -222,7 +222,7 @@ public class Quest {
 		quester.hardStagePut(this, stage);
 		quester.addEmptiesFor(this, stage);
 		if (currentStage.script != null) {
-			plugin.getDependencies().runDenizenScript(quester.getCurrentStage(this).script, quester);
+			plugin.runDenizenScript(quester.getCurrentStage(this).script, quester);
 		}
 		/*
 		 * if (quester.getCurrentStage(this).finishEvent != null) { quester.getCurrentStage(this).finishEvent.fire(quester); }

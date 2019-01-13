@@ -90,7 +90,10 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.aufdemrand.denizen.BukkitScriptEntryData;
+import net.aufdemrand.denizen.objects.dPlayer;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
+import net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -116,8 +119,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private NpcListener npcListener;
 	private NpcEffectThread effThread;
 	private PartiesListener partiesListener;
-	private Lang lang = new Lang(this);
-	private LocaleQuery localeQuery = new LocaleQuery(this);
+	private Lang lang;
+	private LocaleQuery localeQuery;
 
 	@SuppressWarnings("serial")
 	class StageFailedException extends Exception {
@@ -130,6 +133,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public void onEnable() {
 		// ORDER MATTERS
 		bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
+		settings = new Settings(this);
+		localeQuery = new LocaleQuery(this);
 		localeQuery.setBukkitVersion(bukkitVersion);
 		playerListener = new PlayerListener(this);
 		effThread = new NpcEffectThread(this);
@@ -137,6 +142,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		partiesListener = new PartiesListener();
 		questFactory = new QuestFactory(this);
 		eventFactory = new EventFactory(this);
+		depends = new Dependencies(this);
+		lang = new Lang(this);
 
 		// 1 - Load main config
 		settings.init();
@@ -2633,6 +2640,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			return null;
 		}
 		return depends.getHeroes().getCharacterManager().getHero(p);
+	}
+	
+	public boolean runDenizenScript(String scriptName, Quester quester) {
+		if (scriptName == null) {
+			return false;
+		}
+		if (depends.getDenizen() == null) {
+			return false;
+		}
+		if (ScriptRegistry.containsScript(scriptName)) {
+			TaskScriptContainer task_script = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
+			BukkitScriptEntryData entryData = new BukkitScriptEntryData(dPlayer.mirrorBukkitPlayer(quester.getPlayer()), null);
+			task_script.runTaskScript(entryData, null);
+		}
+		return true;
 	}
 
 	public boolean testPrimaryHeroesClass(String primaryClass, UUID uuid) {
