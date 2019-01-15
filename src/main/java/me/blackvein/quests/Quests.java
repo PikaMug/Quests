@@ -157,8 +157,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		saveResourceAs("events.yml", "events.yml", false);
 		saveResourceAs("data.yml", "data.yml", false);
 		
-		// 5 - Load other configs and modules
-		loadModules();
+		// 5 - Load other configs
 		try {
 			setupLang();
 		} catch (IOException e) {
@@ -184,6 +183,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		this.npcConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestAcceptPrompt(this))
 				.withTimeout(settings.getAcceptTimeout()).withLocalEcho(false).addConversationAbandonedListener(this);
 		
+		// 9 - Register listeners
 		getServer().getPluginManager().registerEvents(playerListener, this);
 		if (depends.getCitizens() != null) {
 			getServer().getPluginManager().registerEvents(npcListener, this);
@@ -194,6 +194,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (depends.getPartiesApi() != null) {
 			getServer().getPluginManager().registerEvents(partiesListener, this);
 		}
+		
+		// 10 - Delay loading of Quests, Events and modules
 		delayLoadQuestInfo();
 	}
 	
@@ -434,6 +436,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				getLogger().log(Level.INFO, "" + events.size() + " Event(s) loaded.");
 				getLogger().log(Level.INFO, "" + Lang.size() + " Phrase(s) loaded.");
 				questers.addAll(getOnlineQuesters());
+				loadModules();
 			}
 		}, 5L);
 	}
