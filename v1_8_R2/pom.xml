@@ -1,11 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>me.blackvein.quests</groupId>
     <artifactId>quests-v1_8_R2</artifactId>
-    <version>3.6.0</version>
-    <url>https://github.com/FlyingPikachu/Quests/</url>
-    <packaging>jar</packaging>
     <parent>
        <groupId>me.blackvein.quests</groupId>
        <artifactId>quests-parent</artifactId>
@@ -22,6 +18,12 @@
             <artifactId>craftbukkit</artifactId>
             <version>1.8.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.blackvein.quests</groupId>
+            <artifactId>quests-main</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     

@@ -38,6 +38,7 @@
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
         <repository>
+        	<!-- For Parties -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
