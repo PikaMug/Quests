@@ -3,11 +3,7 @@ package me.blackvein.quests;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
-import net.aufdemrand.denizen.BukkitScriptEntryData;
 import net.aufdemrand.denizen.Denizen;
-import net.aufdemrand.denizen.objects.dPlayer;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
-import net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
