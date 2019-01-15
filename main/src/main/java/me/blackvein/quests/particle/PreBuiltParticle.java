@@ -11,8 +11,10 @@
  ****************************************************************************************************** */
 package me.blackvein.quests.particle;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+
 import org.bukkit.util.Vector;
 
 public enum PreBuiltParticle {
@@ -30,10 +32,10 @@ public enum PreBuiltParticle {
     SPLASH("splash", 0, 0, 0, 1, 4, new Vector(0, .5, 0)),
     SMOKE("smoke", 0, 1, 0, 1, 20);
 
-    private static Map<String, PreBuiltParticle> FROM_IDENTIFIER;
+    private static Map<String, PreBuiltParticle> FROM_IDENTIFIER = new HashMap<>();
 
     static {
-        Stream.of(values()).forEach(p -> FROM_IDENTIFIER.put(p.identifier, p));
+    	Stream.of(values()).forEach(p -> FROM_IDENTIFIER.put(p.identifier, p));
     }
 
     private String identifier;
