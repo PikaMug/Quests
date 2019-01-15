@@ -1877,7 +1877,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						continue;
 					} else {
 						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-						Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+						Map<String, Object> data = populateCustoms(sec2, found.get().getData()); // Added in Github PR #554
 						
 						oStage.customObjectives.add(found.get());
 						oStage.customObjectiveCounts.add(count);

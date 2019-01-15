@@ -3869,7 +3869,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						LinkedList<Integer> countList = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
 						if (list.contains(found.getName()) == false) {
 							list.add(found.getName());
-							datamapList.add(found.datamap);
+							datamapList.add(found.getData());
 							countList.add(-999);
 							context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
 							context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
@@ -3880,7 +3880,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					} else {
 						LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
 						LinkedList<Integer> countList = new LinkedList<Integer>();
-						datamapList.add(found.datamap);
+						datamapList.add(found.getData());
 						countList.add(-999);
 						LinkedList<String> list = new LinkedList<String>();
 						list.add(found.getName());
@@ -3892,8 +3892,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					if (found.isEnableCount()) {
 						return new CustomObjectiveCountPrompt();
 					}
-					if (found.datamap.isEmpty() == false) {
-						context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.descriptions);
+					if (found.getData().isEmpty() == false) {
+						context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.getDescriptions());
 						return new ObjectiveCustomDataListPrompt();
 					}
 					//
@@ -3949,8 +3949,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						break;
 					}
 				}
-				if (found != null && found.datamap.isEmpty() == false) {
-					context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.descriptions);
+				if (found != null && found.getData().isEmpty() == false) {
+					context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.getDescriptions());
 					return new ObjectiveCustomDataListPrompt();
 				} else {
 					return new CreateStagePrompt(plugin, stageNum, questFactory, citizens);

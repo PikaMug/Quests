@@ -787,7 +787,7 @@ public class Quester {
 				if (co.getName().equals(entry.getKey())) {
 					String display = co.getDisplay();
 					Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
-					for (String key : co.datamap.keySet()) {
+					for (String key : co.getData().keySet()) {
 						try {
 							display = display.replace("%" + key + "%", ((String) datamap.get(key)));
 						} catch (NullPointerException ne) {
@@ -1551,7 +1551,7 @@ public class Quester {
 				}
 			}
 			Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
-			for (String key : co.datamap.keySet()) {
+			for (String key : co.getData().keySet()) {
 				message = message.replace("%" + ((String) key) + "%", (String) datamap.get(key));
 			}
 			if (co.isCountShown() && co.isEnableCount()) {
