@@ -52,7 +52,7 @@ public abstract class CustomObjective implements Listener {
 	}
 	
 	/**
-	 * Add a piece of datum to the data map
+	 * Add a detailed piece of datum to the data map
 	 * @param name
 	 * @param o
 	 */
@@ -63,6 +63,13 @@ public abstract class CustomObjective implements Listener {
 			data.put(name, null);
 		}
 	}
+	/**
+	 * Add a blank piece of datum to the data map
+	 * @param name
+	 */
+	public void addDatum(String name) {
+		data.put(name, null);
+	}
 
 	/**
 	 * Add null data for name
@@ -71,7 +78,7 @@ public abstract class CustomObjective implements Listener {
 	 * @deprecated use addDatum()
 	 */
 	public void addData(String name) {
-		addDatum(name, null);
+		addDatum(name);
 	}
 	
 	public Map<String, String> getDescriptions() {
