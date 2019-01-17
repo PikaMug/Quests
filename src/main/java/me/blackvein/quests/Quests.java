@@ -432,9 +432,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			public void run() {
 				loadQuests();
 				loadEvents();
-				getLogger().log(Level.INFO, "" + quests.size() + " Quest(s) loaded.");
-				getLogger().log(Level.INFO, "" + events.size() + " Event(s) loaded.");
-				getLogger().log(Level.INFO, "" + Lang.size() + " Phrase(s) loaded.");
+				getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s)"
+						+ ", " + events.size() + " Event(s)"
+						+ ", " + Lang.size() + " Phrase(s)");
 				questers.addAll(getOnlineQuesters());
 				loadModules();
 			}
@@ -469,6 +469,41 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 		} else {
 			f.mkdir();
+		}
+		boolean failedToLoad;
+		FileConfiguration config = null;
+		File file = new File(this.getDataFolder(), "quests.yml");
+		try {
+			config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (config != null) {
+			ConfigurationSection questsSection;
+			if (config.contains("quests")) {
+				questsSection = config.getConfigurationSection("quests");
+				for (String questKey : questsSection.getKeys(false)) {
+					try { // main "skip quest" try/catch block
+						Quest quest = new Quest();
+						failedToLoad = false;
+						if (config.contains("quests." + questKey + ".name")) {
+							quest.setName(parseString(config.getString("quests." + questKey + ".name"), quest));
+							loadCustomSections(quest, config, questKey);
+						} else {
+							skipQuestProcess("Quest block \'" + questKey + "\' is missing " + ChatColor.RED + "name:");
+						}
+						if (failedToLoad == true) {
+							getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questKey + "\". Skipping.");
+						}
+					} catch (SkipQuest ex) {
+						continue;
+					} catch (StageFailedException ex) {
+						continue;
+					}
+				}
+			}
+		} else {
+			getLogger().severe("Unable to load module data from quests.yml");
 		}
 	}
 
@@ -861,7 +896,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						loadQuestPlanner(config, questsSection, quest, questKey);
 					}
 					quest.plugin = this;
-					processStages(quest, config, questKey); // needsSaving may be modified as a side-effect
+					processStages(quest, config, questKey);
 					loadQuestRewards(config, quest, questKey);
 					quests.add(quest);
 					if (needsSaving) {
@@ -1007,29 +1042,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					skipQuestProcess("phat-loots: Reward in Quest " + quest.getName() + " is not a list of PhatLoots!");
 				}
 			}
-		}
-		if (config.contains("quests." + questKey + ".rewards.custom-rewards")) {
-			ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".rewards.custom-rewards");
-			Map<String, Map<String, Object>> temp = new HashMap<String, Map<String, Object>>();
-			for (String path : sec.getKeys(false)) {
-				String name = sec.getString(path + ".name");
-				Optional<CustomReward>found = Optional.empty();
-				for (CustomReward cr : customRewards) {
-					if (cr.getName().equalsIgnoreCase(name)) {
-						found=Optional.of(cr);
-						break;
-					}
-				}
-				if (!found.isPresent()) {
-					getLogger().warning("Custom reward \"" + name + "\" for Quest \"" + quest.getName() + "\" could not be found!");
-					continue;
-				} else {
-					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
-					temp.put(name, data);
-				}
-			}
-			rews.setCustomRewards(temp);
 		}
 	}
 
@@ -1194,29 +1206,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			} else {
 				skipQuestProcess("heroes-secondary-class: Requirement for Quest " + quest.getName() + " is not a valid Heroes class!");
 			}
-		}
-		if (config.contains("quests." + questKey + ".requirements.custom-requirements")) {
-			ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".requirements.custom-requirements");
-			Map<String, Map<String, Object>> temp = new HashMap<String, Map<String, Object>>();
-			for (String path : sec.getKeys(false)) {
-				String name = sec.getString(path + ".name");
-				Optional<CustomRequirement>found=Optional.empty();
-				for (CustomRequirement cr : customRequirements) {
-					if (cr.getName().equalsIgnoreCase(name)) {
-						found=Optional.of(cr);
-						break;
-					}
-				}
-				if (!found.isPresent()) {
-					getLogger().warning("Custom requirement \"" + name + "\" for Quest \"" + quest.getName() + "\" could not be found!");
-					skipQuestProcess((String) null); // null bc we warn, not severe for this one
-				} else {
-					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
-					temp.put(name, data);
-				}
-			}
-			reqs.setCustomRequirements(temp);
 		}
 	}
 	
@@ -1861,31 +1850,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing password-phrases!");
 				}
 			}
-			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives")) {
-				ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives");
-				for (String path : sec.getKeys(false)) {
-					String name = sec.getString(path + ".name");
-					int count = sec.getInt(path + ".count");
-					Optional<CustomObjective> found = Optional.empty();
-					for (CustomObjective cr : customObjectives) {
-						if (cr.getName().equalsIgnoreCase(name)) {
-							found = Optional.of(cr);
-							break;
-						}
-					}
-					if (!found.isPresent()) {
-						getLogger().warning("Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.getName() + "\" could not be found!");
-						continue;
-					} else {
-						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-						Map<String, Object> data = populateCustoms(sec2, found.get().getData()); // Added in Github PR #554
-						
-						oStage.customObjectives.add(found.get());
-						oStage.customObjectiveCounts.add(count);
-						oStage.customObjectiveData.add(data);
-					}
-				}
-			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".objective-override")) {
 				oStage.objectiveOverride = config.getString("quests." + questKey + ".stages.ordered." + s2 + ".objective-override");
 			}
@@ -2001,6 +1965,86 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 			oStage.citizensToInteract = ids;
 			quest.getStages().add(oStage);
+		}
+	}
+	
+	private void loadCustomSections(Quest quest, FileConfiguration config, String questKey) throws StageFailedException, SkipQuest {
+		ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
+		for (String s2 : questStages.getKeys(false)) {
+			Stage oStage = new Stage();
+			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives")) {
+				ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives");
+				for (String path : sec.getKeys(false)) {
+					String name = sec.getString(path + ".name");
+					int count = sec.getInt(path + ".count");
+					Optional<CustomObjective> found = Optional.empty();
+					for (CustomObjective cr : customObjectives) {
+						if (cr.getName().equalsIgnoreCase(name)) {
+							found = Optional.of(cr);
+							break;
+						}
+					}
+					if (!found.isPresent()) {
+						getLogger().warning("Custom objective \"" + name + "\" for Stage " + s2 + " of Quest \"" + quest.getName() + "\" could not be found!");
+						continue;
+					} else {
+						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+						Map<String, Object> data = populateCustoms(sec2, found.get().getData()); // Added in Github PR #554
+						
+						oStage.customObjectives.add(found.get());
+						oStage.customObjectiveCounts.add(count);
+						oStage.customObjectiveData.add(data);
+					}
+				}
+			}
+		}
+		Rewards rews = quest.getRewards();
+		if (config.contains("quests." + questKey + ".rewards.custom-rewards")) {
+			ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".rewards.custom-rewards");
+			Map<String, Map<String, Object>> temp = new HashMap<String, Map<String, Object>>();
+			for (String path : sec.getKeys(false)) {
+				String name = sec.getString(path + ".name");
+				Optional<CustomReward>found = Optional.empty();
+				for (CustomReward cr : customRewards) {
+					if (cr.getName().equalsIgnoreCase(name)) {
+						found=Optional.of(cr);
+						break;
+					}
+				}
+				if (!found.isPresent()) {
+					getLogger().warning("Custom reward \"" + name + "\" for Quest \"" + quest.getName() + "\" could not be found!");
+					continue;
+				} else {
+					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+					temp.put(name, data);
+				}
+			}
+			rews.setCustomRewards(temp);
+		}
+		Requirements reqs = quest.getRequirements();
+		if (config.contains("quests." + questKey + ".requirements.custom-requirements")) {
+			ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".requirements.custom-requirements");
+			Map<String, Map<String, Object>> temp = new HashMap<String, Map<String, Object>>();
+			for (String path : sec.getKeys(false)) {
+				String name = sec.getString(path + ".name");
+				Optional<CustomRequirement>found=Optional.empty();
+				for (CustomRequirement cr : customRequirements) {
+					if (cr.getName().equalsIgnoreCase(name)) {
+						found=Optional.of(cr);
+						break;
+					}
+				}
+				if (!found.isPresent()) {
+					getLogger().warning("Custom requirement \"" + name + "\" for Quest \"" + quest.getName() + "\" could not be found!");
+					skipQuestProcess((String) null); // null bc we warn, not severe for this one
+				} else {
+					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
+					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+					temp.put(name, data);
+				}
+			}
+			reqs.setCustomRequirements(temp);
 		}
 	}
 	
