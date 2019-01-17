@@ -14,6 +14,7 @@ package me.blackvein.quests;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -131,6 +132,23 @@ public abstract class CustomObjective implements Listener {
 	
 	public Map<String, Object> getDataForPlayer(Player player, CustomObjective customObj, Quest quest) {
 		return getDatamap(player, customObj, quest);
+	}
+
+	/**
+	 * Provide a copy of the data map with the values reset.
+	 *
+	 * @return The copy of the data map
+	 */
+	public Map<String, Object> copyDataMap()
+	{
+		Map<String, Object> newMap = new HashMap<>();
+		if (data != null && !data.isEmpty())
+		{
+			for (String key : data.keySet())
+				newMap.put(key, null);
+			return newMap;
+		}
+		return null;
 	}
 
 	/**

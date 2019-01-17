@@ -3869,7 +3869,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						LinkedList<Integer> countList = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
 						if (list.contains(found.getName()) == false) {
 							list.add(found.getName());
-							datamapList.add(found.getData());
+							datamapList.add(found.copyDataMap());
 							countList.add(-999);
 							context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
 							context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
@@ -3880,7 +3880,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					} else {
 						LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
 						LinkedList<Integer> countList = new LinkedList<Integer>();
-						datamapList.add(found.getData());
+						datamapList.add(found.copyDataMap());
 						countList.add(-999);
 						LinkedList<String> list = new LinkedList<String>();
 						list.add(found.getName());
