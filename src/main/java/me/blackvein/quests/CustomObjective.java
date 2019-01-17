@@ -23,8 +23,8 @@ public abstract class CustomObjective implements Listener {
 	private Quests plugin = Quests.getPlugin(Quests.class);
 	private String name = null;
 	private String author = null;
-	public final Map<String, Object> datamap = new HashMap<String, Object>();
-	public final Map<String, String> descriptions = new HashMap<String, String>();
+	private Map<String, Object> data = new HashMap<String, Object>();
+	private Map<String, String> descriptions = new HashMap<String, String>();
 	private String countPrompt = "null";
 	private String display = "null";
 	private boolean enableCount = true;
@@ -46,9 +46,43 @@ public abstract class CustomObjective implements Listener {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+		
+	public Map<String, Object> getData() {
+		return data;
+	}
+	
+	/**
+	 * Add a detailed piece of datum to the data map
+	 * @param name
+	 * @param o
+	 */
+	public void addDatum(String name, Object o) {
+		if (o == null) {
+			data.put(name, o);
+		} else {
+			data.put(name, null);
+		}
+	}
+	/**
+	 * Add a blank piece of datum to the data map
+	 * @param name
+	 */
+	public void addDatum(String name) {
+		data.put(name, null);
+	}
 
+	/**
+	 * Add null data for name
+	 * 
+	 * @param name
+	 * @deprecated use addDatum()
+	 */
 	public void addData(String name) {
-		datamap.put(name, null);
+		addDatum(name);
+	}
+	
+	public Map<String, String> getDescriptions() {
+		return descriptions;
 	}
 
 	public void addDescription(String data, String description) {
@@ -94,7 +128,20 @@ public abstract class CustomObjective implements Listener {
 	public void setEnableCount(boolean enableCount) {
 		this.enableCount = enableCount;
 	}
+	
+	public Map<String, Object> getDataForPlayer(Player player, CustomObjective customObj, Quest quest) {
+		return getDatamap(player, customObj, quest);
+	}
 
+	/**
+	 * Get data for specified player's current stage
+	 * 
+	 * @param player The player to get data for
+	 * @param obj The CustomObjective to get data for
+	 * @param quest Quest to get player's current stage. Returns null if player is not on quest
+	 * @return data map if everything matches, otherwise null
+	 * @deprecated use getDataForPlayer()
+	 */
 	public Map<String, Object> getDatamap(Player player, CustomObjective obj, Quest quest) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
 		if (quester != null) {
@@ -161,13 +208,13 @@ public abstract class CustomObjective implements Listener {
 			if (other.author.equals(name) == false) {
 				return false;
 			}
-			for (String s : other.datamap.keySet()) {
-				if (datamap.containsKey(s) == false) {
+			for (String s : other.getData().keySet()) {
+				if (getData().containsKey(s) == false) {
 					return false;
 				}
 			}
-			for (Object val : other.datamap.values()) {
-				if (datamap.containsValue(val) == false) {
+			for (Object val : other.getData().values()) {
+				if (getData().containsValue(val) == false) {
 					return false;
 				}
 			}

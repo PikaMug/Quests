@@ -922,14 +922,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		if (config.contains("quests." + questKey + ".rewards.commands")) {
 			if (Quests.checkList(config.getList("quests." + questKey + ".rewards.commands"), String.class)) {
-				rews.setCommands(config.getStringList("quests." + questKey + ".rewards.commands"));
+				
+				rews.setCommands((LinkedList<String>) config.getStringList("quests." + questKey + ".rewards.commands"));
 			} else {
 				skipQuestProcess("commands: Reward in Quest " + quest.getName() + " is not a list of commands!");
 			}
 		}
 		if (config.contains("quests." + questKey + ".rewards.permissions")) {
 			if (Quests.checkList(config.getList("quests." + questKey + ".rewards.permissions"), String.class)) {
-				rews.setPermissions(config.getStringList("quests." + questKey + ".rewards.permissions"));
+				rews.setPermissions((LinkedList<String>) config.getStringList("quests." + questKey + ".rewards.permissions"));
 			} else {
 				skipQuestProcess("permissions: Reward in Quest " + quest.getName() + " is not a list of permissions!");
 			}
@@ -953,8 +954,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 									skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.getName() + " is not a valid mcMMO skill name!");
 								}
 							}
-							rews.setMcmmoSkills(config.getStringList("quests." + questKey + ".rewards.mcmmo-skills"));
-							rews.setMcmmoAmounts(config.getIntegerList("quests." + questKey + ".rewards.mcmmo-levels"));
+							rews.setMcmmoSkills((LinkedList<String>) config.getStringList("quests." + questKey + ".rewards.mcmmo-skills"));
+							rews.setMcmmoAmounts((LinkedList<Integer>) config.getIntegerList("quests." + questKey + ".rewards.mcmmo-levels"));
 						} else {
 							skipQuestProcess("mcmmo-levels: Reward in Quest " + quest.getName() + " is not a list of numbers!");
 						}
@@ -978,8 +979,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 									skipQuestProcess("" + heroClass + " in heroes-exp-classes: Reward in Quest " + quest.getName() + " is not a valid Heroes class name!");
 								}
 							}
-							rews.setHeroesClasses(config.getStringList("quests." + questKey + ".rewards.heroes-exp-classes"));
-							rews.setHeroesAmounts(config.getDoubleList("quests." + questKey + ".rewards.heroes-exp-amounts"));
+							rews.setHeroesClasses((LinkedList<String>) config.getStringList("quests." + questKey + ".rewards.heroes-exp-classes"));
+							rews.setHeroesAmounts((LinkedList<Double>) config.getDoubleList("quests." + questKey + ".rewards.heroes-exp-amounts"));
 						} else {
 							skipQuestProcess("heroes-exp-amounts: Reward in Quest " + quest.getName() + " is not a list of experience amounts (decimal numbers)!");
 						}
@@ -1001,7 +1002,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							skipQuestProcess("" + loot + " in phat-loots: Reward in Quest " + quest.getName() + " is not a valid PhatLoot name!");
 						}
 					}
-					rews.setPhatLoots(config.getStringList("quests." + questKey + ".rewards.phat-loots"));
+					rews.setPhatLoots((LinkedList<String>) config.getStringList("quests." + questKey + ".rewards.phat-loots"));
 				} else {
 					skipQuestProcess("phat-loots: Reward in Quest " + quest.getName() + " is not a list of PhatLoots!");
 				}
@@ -1877,7 +1878,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						continue;
 					} else {
 						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-						Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+						Map<String, Object> data = populateCustoms(sec2, found.get().getData()); // Added in Github PR #554
 						
 						oStage.customObjectives.add(found.get());
 						oStage.customObjectiveCounts.add(count);
@@ -2653,7 +2654,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return hero.getHeroClass().getName().equalsIgnoreCase(primaryClass);
 	}
 
-	@SuppressWarnings("deprecation")
 	public boolean testSecondaryHeroesClass(String secondaryClass, UUID uuid) {
 		Hero hero = getHero(uuid);
 		return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);
