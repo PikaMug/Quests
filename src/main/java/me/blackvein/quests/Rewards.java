@@ -23,14 +23,14 @@ public class Rewards {
 	private int money = 0;
 	private int questPoints = 0;
 	private int exp = 0;
-	private LinkedList<String> commands = new LinkedList<String>();
-	private LinkedList<String> permissions = new LinkedList<String>();
-	private LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-	private LinkedList<String> mcmmoSkills = new LinkedList<String>();
-	private LinkedList<Integer> mcmmoAmounts = new LinkedList<Integer>();
-	private LinkedList<String> heroesClasses = new LinkedList<String>();
-	private LinkedList<Double> heroesAmounts = new LinkedList<Double>();
-	private LinkedList<String> phatLoots = new LinkedList<String>();
+	private List<String> commands = new LinkedList<String>();
+	private List<String> permissions = new LinkedList<String>();
+	private List<ItemStack> items = new LinkedList<ItemStack>();
+	private List<String> mcmmoSkills = new LinkedList<String>();
+	private List<Integer> mcmmoAmounts = new LinkedList<Integer>();
+	private List<String> heroesClasses = new LinkedList<String>();
+	private List<Double> heroesAmounts = new LinkedList<Double>();
+	private List<String> phatLoots = new LinkedList<String>();
 	private Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
 	
 	public int getMoney() {
@@ -54,49 +54,49 @@ public class Rewards {
 	public List<String> getCommands() {
 		return commands;
 	}
-	public void setCommands(LinkedList<String> commands) {
+	public void setCommands(List<String> commands) {
 		this.commands = commands;
 	}
 	public List<String> getPermissions() {
 		return permissions;
 	}
-	public void setPermissions(LinkedList<String> permissions) {
+	public void setPermissions(List<String> permissions) {
 		this.permissions = permissions;
 	}
-	public LinkedList<ItemStack> getItems() {
+	public List<ItemStack> getItems() {
 		return items;
 	}
-	public void setItems(LinkedList<ItemStack> items) {
+	public void setItems(List<ItemStack> items) {
 		this.items = items;
 	}
 	public List<String> getMcmmoSkills() {
 		return mcmmoSkills;
 	}
-	public void setMcmmoSkills(LinkedList<String> mcmmoSkills) {
+	public void setMcmmoSkills(List<String> mcmmoSkills) {
 		this.mcmmoSkills = mcmmoSkills;
 	}
 	public List<Integer> getMcmmoAmounts() {
 		return mcmmoAmounts;
 	}
-	public void setMcmmoAmounts(LinkedList<Integer> mcmmoAmounts) {
+	public void setMcmmoAmounts(List<Integer> mcmmoAmounts) {
 		this.mcmmoAmounts = mcmmoAmounts;
 	}
 	public List<String> getHeroesClasses() {
 		return heroesClasses;
 	}
-	public void setHeroesClasses(LinkedList<String> heroesClasses) {
+	public void setHeroesClasses(List<String> heroesClasses) {
 		this.heroesClasses = heroesClasses;
 	}
 	public List<Double> getHeroesAmounts() {
 		return heroesAmounts;
 	}
-	public void setHeroesAmounts(LinkedList<Double> heroesAmounts) {
+	public void setHeroesAmounts(List<Double> heroesAmounts) {
 		this.heroesAmounts = heroesAmounts;
 	}
 	public List<String> getPhatLoots() {
 		return phatLoots;
 	}
-	public void setPhatLoots(LinkedList<String> phatLoots) {
+	public void setPhatLoots(List<String> phatLoots) {
 		this.phatLoots = phatLoots;
 	}
 	public Map<String, Map<String, Object>> getCustomRewards() {
