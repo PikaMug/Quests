@@ -3848,6 +3848,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				CustomObjective found = null;
+				// Check if we have a custom objective with the specified name
 				for (CustomObjective co : plugin.getCustomObjectives()) {
 					if (co.getName().equalsIgnoreCase(input)) {
 						found = co;
@@ -3855,6 +3856,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					}
 				}
 				if (found == null) {
+					// No? Check again, but with locale sensitivity
 					for (CustomObjective co : plugin.getCustomObjectives()) {
 						if (co.getName().toLowerCase().contains(input.toLowerCase())) {
 							found = co;
@@ -3864,20 +3866,24 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				}
 				if (found != null) {
 					if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
+						// The custom objective may already have been added, so let's check that
 						LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
 						LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
 						LinkedList<Integer> countList = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
 						if (list.contains(found.getName()) == false) {
+							// Hasn't been added yet, so let's do it
 							list.add(found.getName());
 							datamapList.add(found.getData());
 							countList.add(-999);
 							context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
 							context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
 						} else {
+							// Already added, so inform user
 							context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorCustomAlreadyAdded"));
 							return new CustomObjectivesPrompt();
 						}
 					} else {
+						// The custom objective hasn't been added yet, so let's do it
 						LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
 						LinkedList<Integer> countList = new LinkedList<Integer>();
 						datamapList.add(found.getData());
@@ -3896,7 +3902,6 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.getDescriptions());
 						return new ObjectiveCustomDataListPrompt();
 					}
-					//
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
 					return new CustomObjectivesPrompt();

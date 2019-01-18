@@ -142,7 +142,7 @@ public class StagesPrompt extends StringPrompt {
 				cc.setSessionData(newPref + CK.S_CHAT_EVENT_TRIGGERS, cc.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS));
 				cc.setSessionData(newPref + CK.S_FINISH_EVENT, cc.getSessionData(pref + CK.S_FINISH_EVENT));
 				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES));
-				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT));
+				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA));
 				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_COUNT, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT));
 				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS));
 				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP));
