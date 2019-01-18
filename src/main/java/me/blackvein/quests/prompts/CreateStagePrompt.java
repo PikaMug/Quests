@@ -3895,7 +3895,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
 					}
 					// Send user to the count prompt / custom data prompt if there is any needed
-					if (found.isEnableCount()) {
+					if (found.canShowCount()) {
 						return new CustomObjectiveCountPrompt();
 					}
 					if (found.getData().isEmpty() == false) {

@@ -796,12 +796,12 @@ public class Quester {
 						}
 					}
 					if (entry.getValue() < getCurrentStage(quest).customObjectiveCounts.get(index)) {
-						if (co.isCountShown() && co.isEnableCount()) {
+						if (co.canShowCount()) {
 							display = display.replace("%count%", entry.getValue() + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 						}
 						unfinishedObjectives.add(ChatColor.GREEN + display);
 					} else {
-						if (co.isCountShown() && co.isEnableCount()) {
+						if (co.canShowCount()) {
 							display = display.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 						}
 						finishedObjectives.add(ChatColor.GRAY + display);
@@ -1554,7 +1554,7 @@ public class Quester {
 			for (String key : co.getData().keySet()) {
 				message = message.replace("%" + ((String) key) + "%", (String) datamap.get(key));
 			}
-			if (co.isCountShown() && co.isEnableCount()) {
+			if (co.canShowCount()) {
 				message = message.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 			}
 			p.sendMessage(message);

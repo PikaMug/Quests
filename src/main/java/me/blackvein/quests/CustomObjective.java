@@ -27,7 +27,6 @@ public abstract class CustomObjective implements Listener {
 	private Map<String, String> descriptions = new HashMap<String, String>();
 	private String countPrompt = "null";
 	private String display = "null";
-	private boolean enableCount = true;
 	private boolean showCount = true;
 	private int count = 1;
 
@@ -116,13 +115,33 @@ public abstract class CustomObjective implements Listener {
 	public void setCountPrompt(String countPrompt) {
 		this.countPrompt = countPrompt;
 	}
-
-	public boolean isCountShown() {
+	
+	/**
+	 * Check whether to let user set required amount for objective
+	 * 
+	 * @param enableCount
+	 */
+	public boolean canShowCount() {
 		return showCount;
 	}
 
+	/**
+	 * Set whether to let user set required amount for objective
+	 * 
+	 * @param enableCount
+	 */
 	public void setShowCount(boolean showCount) {
 		this.showCount = showCount;
+	}
+
+	/**
+	 * Check whether to let user set required amount for objective
+	 * 
+	 * @param enableCount
+	 * @deprecated use setShowCount(boolean)
+	 */
+	public void setEnableCount(boolean enableCount) {
+		setShowCount(enableCount);
 	}
 
 	public String getDisplay() {
@@ -131,14 +150,6 @@ public abstract class CustomObjective implements Listener {
 
 	public void setDisplay(String display) {
 		this.display = display;
-	}
-
-	public boolean isEnableCount() {
-		return enableCount;
-	}
-
-	public void setEnableCount(boolean enableCount) {
-		this.enableCount = enableCount;
 	}
 	
 	public Map<String, Object> getDataForPlayer(Player player, CustomObjective customObj, Quest quest) {
@@ -244,9 +255,6 @@ public abstract class CustomObjective implements Listener {
 				return false;
 			}
 			if (other.display.equals(display) == false) {
-				return false;
-			}
-			if (other.enableCount != enableCount) {
 				return false;
 			}
 			if (other.showCount != showCount) {
