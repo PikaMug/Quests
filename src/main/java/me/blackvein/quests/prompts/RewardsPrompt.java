@@ -769,6 +769,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				CustomReward found = null;
+				// Check if we have a custom reward with the specified name
 				for (CustomReward cr : plugin.getCustomRewards()) {
 					if (cr.getName().equalsIgnoreCase(input)) {
 						found = cr;
@@ -776,6 +777,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					}
 				}
 				if (found == null) {
+					// No? Check again, but with locale sensitivity
 					for (CustomReward cr : plugin.getCustomRewards()) {
 						if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
 							found = cr;
@@ -785,31 +787,34 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 				if (found != null) {
 					if (context.getSessionData(CK.REW_CUSTOM) != null) {
+						// The custom reward may already have been added, so let's check that
 						LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
 						LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
 						if (list.contains(found.getName()) == false) {
+							// Hasn't been added yet, so let's do it
 							list.add(found.getName());
-							datamapList.add(found.datamap);
+							datamapList.add(found.getData());
 							context.setSessionData(CK.REW_CUSTOM, list);
 							context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
 						} else {
+							// Already added, so inform user
 							context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomAlreadyAdded"));
 							return new CustomRewardsPrompt();
 						}
 					} else {
+						// The custom reward hasn't been added yet, so let's do it
 						LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
-						datamapList.add(found.datamap);
+						datamapList.add(found.getData());
 						LinkedList<String> list = new LinkedList<String>();
 						list.add(found.getName());
 						context.setSessionData(CK.REW_CUSTOM, list);
 						context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
 					}
 					// Send user to the custom data prompt if there is any needed
-					if (found.datamap.isEmpty() == false) {
-						context.setSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS, found.descriptions);
+					if (found.getData().isEmpty() == false) {
+						context.setSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
 						return new RewardCustomDataListPrompt();
 					}
-					//
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomNotFound"));
 					return new CustomRewardsPrompt();

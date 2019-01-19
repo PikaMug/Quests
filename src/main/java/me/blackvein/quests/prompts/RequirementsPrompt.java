@@ -490,6 +490,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				CustomRequirement found = null;
+				// Check if we have a custom requirement with the specified name
 				for (CustomRequirement cr : plugin.getCustomRequirements()) {
 					if (cr.getName().equalsIgnoreCase(input)) {
 						found = cr;
@@ -497,6 +498,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					}
 				}
 				if (found == null) {
+					// No? Check again, but with locale sensitivity
 					for (CustomRequirement cr : plugin.getCustomRequirements()) {
 						if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
 							found = cr;
@@ -506,31 +508,34 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				}
 				if (found != null) {
 					if (context.getSessionData(CK.REQ_CUSTOM) != null) {
+						// The custom requirement may already have been added, so let's check that
 						LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
 						LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
 						if (list.contains(found.getName()) == false) {
+							// Hasn't been added yet, so let's do it
 							list.add(found.getName());
-							datamapList.add(found.datamap);
+							datamapList.add(found.getData());
 							context.setSessionData(CK.REQ_CUSTOM, list);
 							context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
 						} else {
+							// Already added, so inform user
 							context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomAlreadyAdded"));
 							return new CustomRequirementsPrompt();
 						}
 					} else {
+						// The custom requirement hasn't been added yet, so let's do it
 						LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
-						datamapList.add(found.datamap);
+						datamapList.add(found.getData());
 						LinkedList<String> list = new LinkedList<String>();
 						list.add(found.getName());
 						context.setSessionData(CK.REQ_CUSTOM, list);
 						context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
 					}
 					// Send user to the custom data prompt if there is any needed
-					if (found.datamap.isEmpty() == false) {
-						context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.descriptions);
+					if (found.getData().isEmpty() == false) {
+						context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
 						return new RequirementCustomDataListPrompt();
 					}
-					//
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomNotFound"));
 					return new CustomRequirementsPrompt();

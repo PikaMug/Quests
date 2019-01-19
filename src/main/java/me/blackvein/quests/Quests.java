@@ -2016,7 +2016,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					continue;
 				} else {
 					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+					Map<String, Object> data = populateCustoms(sec2, found.get().getData());
 					temp.put(name, data);
 				}
 			}
@@ -2040,7 +2040,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					skipQuestProcess((String) null); // null bc we warn, not severe for this one
 				} else {
 					ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-					Map<String, Object> data=populateCustoms(sec2,found.get().datamap);
+					Map<String, Object> data = populateCustoms(sec2,found.get().getData());
 					temp.put(name, data);
 				}
 			}
@@ -2054,10 +2054,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 */
 
 	static Map<String, Object> populateCustoms(ConfigurationSection sec2,Map<String, Object> datamap) {
-		Map<String,Object>data=new HashMap<String,Object>();
-		if(sec2!=null) {
-			for(String key:datamap.keySet()) {
-				data.put(key,sec2.contains(key)?sec2.get(key):datamap.get(key)!=null?datamap.get(key):new String());
+		Map<String,Object> data = new HashMap<String,Object>();
+		if(sec2 != null) {
+			for(String key : datamap.keySet()) {
+				data.put(key, sec2.contains(key) ? sec2.get(key):datamap.get(key) != null ? datamap.get(key) : new String());
 			}
 		}
 		return data;

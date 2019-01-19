@@ -25,8 +25,8 @@ public abstract class CustomObjective implements Listener {
 	private String author = null;
 	private Map<String, Object> data = new HashMap<String, Object>();
 	private Map<String, String> descriptions = new HashMap<String, String>();
-	private String countPrompt = "null";
-	private String display = "null";
+	private String countPrompt = "Enter number";
+	private String display = "%data%: %count%";
 	private boolean showCount = true;
 	private int count = 1;
 
@@ -48,56 +48,45 @@ public abstract class CustomObjective implements Listener {
 		
 	public Map<String, Object> getData() {
 		return data;
+	} 
+	
+	/**
+	 * Add a new prompt<p>
+	 * 
+	 * Note that the "defaultValue" Object will be cast to a String internally
+	 * 
+	 * @param title Prompt name
+	 * @param description Description of expected input
+	 * @param defaultValue Value to be used if input is not received
+	 */
+	public void addStringPrompt(String title, String description, Object defaultValue) {
+		data.put(name, defaultValue);
+		descriptions.put(name, description);
 	}
 	
 	/**
-	 * Add a detailed piece of datum to the data map
+	 * Set the title of a prompt
 	 * 
-	 * @param name
-	 * @param o
-	 */
-	public void addDatum(String name, Object o) {
-		if (o == null) {
-			data.put(name, o);
-		} else {
-			data.put(name, null);
-		}
-	}
-	/**
-	 * Add a blank piece of datum to the data map
-	 * 
-	 * @param name
-	 */
-	public void addDatum(String name) {
-		data.put(name, null);
-	}
-	
-	/**
-	 * Add a detailed piece of datum to the data map
-	 * 
-	 * @param name
-	 * @deprecated use addDatum(name, o)
-	 */
-	public void addData(String name, Object o) {
-		addDatum(name, o);
-	}
-
-	/**
-	 * Add a blank piece of datum to the data map
-	 * 
-	 * @param name
-	 * @deprecated use addDatum(name)
+	 * @param name Prompt title
+	 * @deprecated use addPrompt(name, description)
 	 */
 	public void addData(String name) {
-		addDatum(name);
+		data.put(name, null);
 	}
 	
 	public Map<String, String> getDescriptions() {
 		return descriptions;
 	}
 
-	public void addDescription(String data, String description) {
-		descriptions.put(data, description);
+	/**
+	 * Set the description for the specified prompt
+	 * 
+	 * @param name Prompt title
+	 * @param description Description of expected input
+	 * @deprecated use addTaskPrompt(name, description)
+	 */
+	public void addDescription(String name, String description) {
+		descriptions.put(name, description);
 	}
 
 	public int getCount() {
@@ -108,7 +97,7 @@ public abstract class CustomObjective implements Listener {
 		this.count = count;
 	}
 
-	public String getCountPrompt() {
+    public String getCountPrompt() {
 		return countPrompt;
 	}
 
