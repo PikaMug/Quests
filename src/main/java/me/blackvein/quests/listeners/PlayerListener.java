@@ -748,9 +748,10 @@ public class PlayerListener implements Listener {
 				plugin.getQuestFactory().setSelectingNpcs(temp);
 			}
 			LinkedList<Quester> temp = plugin.getQuesters();
-			for (Quester q : temp) {
+			for (Iterator<Quester> iterator = temp.iterator(); iterator.hasNext();) {
+				Quester q = iterator.next();
 				if (q.getUUID().equals(quester.getUUID())) {
-					temp.remove(q);
+					iterator.remove();
 				}
 			}
 			plugin.setQuesters(temp);
