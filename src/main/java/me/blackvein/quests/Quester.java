@@ -783,9 +783,11 @@ public class Quester {
 		}
 		int index = 0;
 		for (CustomObjective co : getCurrentStage(quest).customObjectives) {
+			String display = co.getDisplay();
+			boolean addUnfinished = false;
+			boolean addFinished = false;
 			for (Entry<String, Integer> entry : getQuestData(quest).customObjectiveCounts.entrySet()) {
 				if (co.getName().equals(entry.getKey())) {
-					String display = co.getDisplay();
 					Entry<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
 					for (Entry<String,Object> prompt : co.getData()) {
 						try {
@@ -799,14 +801,20 @@ public class Quester {
 						if (co.canShowCount()) {
 							display = display.replace("%count%", entry.getValue() + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 						}
-						unfinishedObjectives.add(ChatColor.GREEN + display);
+						addUnfinished = true;
 					} else {
 						if (co.canShowCount()) {
 							display = display.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 						}
-						finishedObjectives.add(ChatColor.GRAY + display);
+						addFinished = true;
 					}
 				}
+			}
+			if (addUnfinished) {
+				unfinishedObjectives.add(ChatColor.GREEN + display);
+			}
+			if (addFinished) {
+				finishedObjectives.add(ChatColor.GRAY + display);
 			}
 			index++;
 		}
