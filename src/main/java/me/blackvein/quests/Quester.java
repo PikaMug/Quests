@@ -2400,6 +2400,11 @@ public class Quester {
 				if (questSec.contains("locations-to-reach")) {
 					LinkedList<Location> locations = new LinkedList<Location>();
 					List<Boolean> has = questSec.getBooleanList("has-reached-location");
+					while (has.size() < locations.size()) {
+						// TODO - find proper cause of Github issue #646
+						plugin.getLogger().info("Added missing has-reached-location data for Quester " + id);
+						has.add(false);
+					}
 					List<Integer> radii = questSec.getIntegerList("radii-to-reach-within");
 					for (String loc : questSec.getStringList("locations-to-reach")) {
 						if (Quests.getLocation(loc) != null) {
