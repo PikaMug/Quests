@@ -230,7 +230,7 @@ stageEditorPasswordPhraseHint: "(This is the text that a player must enter to co
 stageEditorObjectiveOverridePrompt: "Enter objective display override, <clear>, <cancel>"
 stageEditorObjectiveOverrideHint: "(This override will display your own text as the objective)"
 stageEditorObjectiveOverrideCleared: "Objective display override cleared."
-stageEditorDeliveryAddItem: "Add item"
+stageEditorDeliveryAddItem: "新增項目"
 stageEditorDeliveryNPCs: "Set NPC IDs"
 stageEditorDeliveryMessages: "Set delivery messages"
 stageEditorContainsDuplicates: "List contains duplicates!"
