@@ -12,12 +12,14 @@
 
 package me.blackvein.quests.prompts;
 
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -3868,12 +3870,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
 						// The custom objective may already have been added, so let's check that
 						LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-						LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+						LinkedList<Entry<String, Object>> datamapList = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
 						LinkedList<Integer> countList = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
 						if (list.contains(found.getName()) == false) {
 							// Hasn't been added yet, so let's do it
 							list.add(found.getName());
-							datamapList.add(found.getData());
+							datamapList.addAll(found.getData());
 							countList.add(-999);
 							context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
 							context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
@@ -3884,9 +3886,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						}
 					} else {
 						// The custom objective hasn't been added yet, so let's do it
-						LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+						LinkedList<Entry<String, Object>> datamapList = new LinkedList<Entry<String, Object>>();
 						LinkedList<Integer> countList = new LinkedList<Integer>();
-						datamapList.add(found.getData());
+						datamapList.addAll(found.getData());
 						countList.add(-999);
 						LinkedList<String> list = new LinkedList<String>();
 						list.add(found.getName());
@@ -3974,25 +3976,23 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.BOLD + "" + ChatColor.AQUA + "- ";
 			LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+			LinkedList<Entry<String, Object>> datamapList = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+			
 			String objName = list.getLast();
-			Map<String, Object> datamap = datamapList.getLast();
 			text += objName + " -\n";
 			int index = 1;
-			LinkedList<String> datamapKeys = new LinkedList<String>();
-			for (String key : datamap.keySet()) {
-				datamapKeys.add(key);
-			}
-			Collections.sort(datamapKeys);
-			for (String dataKey : datamapKeys) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + dataKey;
-				if (datamap.get(dataKey) != null) {
-					text += ChatColor.GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+			
+			for (Entry<String, Object> datamap : datamapList) {
+				text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + datamap.getKey();
+				if (datamap.getValue() != null) {
+					text += ChatColor.GREEN + " (" + (String) datamap.getValue() + ")\n";
 				} else {
 					text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
 				}
 				index++;
+				
 			}
+			
 			text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("finish");
 			return text;
 		}
@@ -4000,33 +4000,34 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			@SuppressWarnings("unchecked")
-			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
-			Map<String, Object> datamap = datamapList.getLast();
+			LinkedList<Entry<String, Object>> datamapList = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+			
 			int numInput;
 			try {
 				numInput = Integer.parseInt(input);
 			} catch (NumberFormatException nfe) {
 				return new ObjectiveCustomDataListPrompt();
 			}
-			if (numInput < 1 || numInput > datamap.size() + 1) {
+			if (numInput < 1 || numInput > datamapList.size() + 1) {
 				return new ObjectiveCustomDataListPrompt();
 			}
-			if (numInput < datamap.size() + 1) {
+			if (numInput < datamapList.size() + 1) {
 				LinkedList<String> datamapKeys = new LinkedList<String>();
-				for (String key : datamap.keySet()) {
-					datamapKeys.add(key);
+				for (Entry<String, Object> datamap : datamapList) {
+					datamapKeys.add(datamap.getKey());
 				}
 				Collections.sort(datamapKeys);
 				String selectedKey = datamapKeys.get(numInput - 1);
 				context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, selectedKey);
 				return new ObjectiveCustomDataPrompt();
 			} else {
-				if (datamap.containsValue(null)) {
-					return new ObjectiveCustomDataListPrompt();
-				} else {
-					context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, null);
-					return new CreateStagePrompt(plugin, stageNum, questFactory, citizens);
+				for (Entry<String, Object> datamap : datamapList) {
+					if (datamap.getValue() == null) {
+						return new ObjectiveCustomDataListPrompt();
+					}
 				}
+				context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, null);
+				return new CreateStagePrompt(plugin, stageNum, questFactory, citizens);
 			}
 		}
 	}
@@ -4051,9 +4052,19 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			@SuppressWarnings("unchecked")
-			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
-			Map<String, Object> datamap = datamapList.getLast();
-			datamap.put((String) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP), input);
+			LinkedList<Entry<String, Object>> datamapList = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+			LinkedList<Entry<String, Object>> promptList = new LinkedList<Entry<String, Object>>();
+			String temp = (String) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP);
+			
+			for (Entry<String, Object> datamap : datamapList) {
+					if (datamap.getKey().equals(temp)) {
+						promptList.add(new AbstractMap.SimpleEntry<String, Object>(datamap.getKey(), input));
+					} else {
+						promptList.add(new AbstractMap.SimpleEntry<String, Object>(datamap.getKey(), datamap.getValue()));
+					}
+				
+			}
+			context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, promptList);
 			context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
 			return new ObjectiveCustomDataListPrompt();
 		}

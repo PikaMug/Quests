@@ -999,7 +999,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		LinkedList<LinkedList<String>> passPhrases;
 		LinkedList<String> customObjs;
 		LinkedList<Integer> customObjCounts;
-		LinkedList<Map<String, Object>> customObjsData;
+		LinkedList<Entry<String, Object>> customObjsData;
 		String script;
 		String startEvent;
 		String finishEvent;
@@ -1151,7 +1151,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
 				customObjs = (LinkedList<String>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
 				customObjCounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
-				customObjsData = (LinkedList<Map<String, Object>>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+				customObjsData = (LinkedList<Entry<String, Object>>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
 			}
 			if (cc.getSessionData(pref + CK.S_START_EVENT) != null) {
 				startEvent = (String) cc.getSessionData(pref + CK.S_START_EVENT);
@@ -1267,8 +1267,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 					ConfigurationSection sec2 = sec.createSection("custom" + (index + 1));
 					sec2.set("name", customObjs.get(index));
 					sec2.set("count", customObjCounts.get(index));
-					if (customObjsData.get(index).isEmpty() == false) {
-						sec2.set("data", customObjsData.get(index));
+					ConfigurationSection sec3 = sec2.createSection("data");
+					for (Entry<String, Object> e : customObjsData) {
+						sec3.set(e.getKey(), e.getValue()); // if anything goes wrong it's probably here
 					}
 				}
 			}
@@ -1620,7 +1621,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (stage.customObjectives.isEmpty() == false) {
 				LinkedList<String> list = new LinkedList<String>();
 				LinkedList<Integer> countList = new LinkedList<Integer>();
-				LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+				LinkedList<Entry<String, Object>> datamapList = new LinkedList<Entry<String, Object>>();
 				for (int i = 0; i < stage.customObjectives.size(); i++) {
 					list.add(stage.customObjectives.get(i).getName());
 					countList.add(stage.customObjectiveCounts.get(i));

@@ -23,6 +23,7 @@ import java.lang.reflect.Constructor;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Enumeration;
@@ -487,7 +488,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						Quest quest = new Quest();
 						failedToLoad = false;
 						if (config.contains("quests." + questKey + ".name")) {
-							quest.setName(parseString(config.getString("quests." + questKey + ".name"), quest));
+							quest = getQuest(parseString(config.getString("quests." + questKey + ".name"), quest));
 							loadCustomSections(quest, config, questKey);
 						} else {
 							skipQuestProcess("Quest block \'" + questKey + "\' is missing " + ChatColor.RED + "name:");
@@ -1971,7 +1972,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private void loadCustomSections(Quest quest, FileConfiguration config, String questKey) throws StageFailedException, SkipQuest {
 		ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
 		for (String s2 : questStages.getKeys(false)) {
-			Stage oStage = new Stage();
+			Stage oStage = quest.getStage(Integer.valueOf(s2) - 1);
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives")) {
 				ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives");
 				for (String path : sec.getKeys(false)) {
@@ -1989,11 +1990,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						continue;
 					} else {
 						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-						Map<String, Object> data = populateCustoms(sec2, found.get().getData()); // Added in Github PR #554
-						
-						oStage.customObjectives.add(found.get());
-						oStage.customObjectiveCounts.add(count);
-						oStage.customObjectiveData.add(data);
+						for (Entry<String,Object> prompt : found.get().getData()) {
+							Entry<String, Object> data = populateCustoms(sec2, prompt);
+							oStage.customObjectives.add(found.get());
+							if (count <= 0) {
+								oStage.customObjectiveCounts.add(0);
+							} else {
+								oStage.customObjectiveCounts.add(count);
+							}
+							oStage.customObjectiveData.add(data);
+						}
 					}
 				}
 			}
@@ -2049,18 +2055,31 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 	
 	/**
-	 * Add possibilty to use fallbacks for customs.
+	 * Add possibilty to use fallbacks for customs maps
 	 * Avoid null objects in datamap by initialize the entry value with empty string if no fallback present.
 	 */
-
-	static Map<String, Object> populateCustoms(ConfigurationSection sec2,Map<String, Object> datamap) {
+	static Map<String, Object> populateCustoms(ConfigurationSection sec2, Map<String, Object> datamap) {
 		Map<String,Object> data = new HashMap<String,Object>();
-		if(sec2 != null) {
-			for(String key : datamap.keySet()) {
-				data.put(key, sec2.contains(key) ? sec2.get(key):datamap.get(key) != null ? datamap.get(key) : new String());
+		if (sec2 != null) {
+			for (String key : datamap.keySet()) {
+				data.put(key, sec2.contains(key) ? sec2.get(key) : datamap.get(key) != null ? datamap.get(key) : new String());
 			}
 		}
 		return data;
+	}
+	
+	/**
+	 * Add possibilty to use fallbacks for customs entries
+	 * Avoid null objects in datamap by initialize the entry value with empty string if no fallback present.
+	 */
+	static Entry<String, Object> populateCustoms(ConfigurationSection sec2, Entry<String, Object> datamap) {
+		String key = null;;
+		Object value = null;;
+		if (sec2 != null) {
+			key = datamap.getKey();
+			value = datamap.getValue();
+		}
+		return new AbstractMap.SimpleEntry<String, Object>(key, sec2.contains(key) ? sec2.get(key) : value != null ? value : new String());
 	}
 
 	private void stageFailed(String msg) throws StageFailedException {

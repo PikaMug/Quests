@@ -57,8 +57,8 @@ public abstract class CustomReward {
 	 * @param defaultValue Value to be used if input is not received
 	 */
 	public void addStringPrompt(String title, String description, Object defaultValue) {
-		data.put(name, defaultValue);
-		descriptions.put(name, description);
+		data.put(title, defaultValue);
+		descriptions.put(title, description);
 	}
 	
 	/**

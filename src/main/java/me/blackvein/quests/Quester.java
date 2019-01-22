@@ -786,10 +786,10 @@ public class Quester {
 			for (Entry<String, Integer> entry : getQuestData(quest).customObjectiveCounts.entrySet()) {
 				if (co.getName().equals(entry.getKey())) {
 					String display = co.getDisplay();
-					Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
-					for (String key : co.getData().keySet()) {
+					Entry<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
+					for (Entry<String,Object> prompt : co.getData()) {
 						try {
-							display = display.replace("%" + key + "%", ((String) datamap.get(key)));
+							display = display.replace("%" + prompt.getKey() + "%", ((String) datamap.getValue()));
 						} catch (NullPointerException ne) {
 							plugin.getLogger().severe("Unable to fetch display for " + co.getName() + " on " + quest.getName());
 							ne.printStackTrace();
@@ -885,20 +885,27 @@ public class Quester {
 
 	public boolean hasCustomObjective(Quest quest, String s) {
 		if (getQuestData(quest) == null) {
+			System.out.println("bing");
 			return false;
 		}
 		if (getQuestData(quest).customObjectiveCounts.containsKey(s)) {
+			System.out.println("bang");
 			int count = getQuestData(quest).customObjectiveCounts.get(s);
 			int index = -1;
 			for (int i = 0; i < getCurrentStage(quest).customObjectives.size(); i++) {
+				System.out.println("bong");
 				if (getCurrentStage(quest).customObjectives.get(i).getName().equals(s)) {
+					System.out.println("bung");
 					index = i;
 					break;
 				}
 			}
 			int count2 = getCurrentStage(quest).customObjectiveCounts.get(index);
+			System.out.println("count= " + count);
+			System.out.println("count2= " + count2);
 			return count <= count2;
 		}
+		System.out.println("byng");
 		return false;
 	}
 	
@@ -1550,10 +1557,9 @@ public class Quester {
 					break;
 				}
 			}
-			Map<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
-			for (String key : co.getData().keySet()) {
-				message = message.replace("%" + ((String) key) + "%", (String) datamap.get(key));
-			}
+			Entry<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
+			message = message.replace("%" + ((String) datamap.getKey()) + "%", (String) datamap.getValue());
+			
 			if (co.canShowCount()) {
 				message = message.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 			}

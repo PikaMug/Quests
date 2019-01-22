@@ -103,8 +103,7 @@ public class Requirements {
 	public Map<String, Map<String, Object>> getCustomRequirements() {
 		return customRequirements;
 	}
-	protected void setCustomRequirements(
-			Map<String, Map<String, Object>> customRequirements) {
+	protected void setCustomRequirements(Map<String, Map<String, Object>> customRequirements) {
 		this.customRequirements = customRequirements;
 	}
 	public String getFailRequirements() {

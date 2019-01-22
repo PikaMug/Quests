@@ -44,7 +44,7 @@ public abstract class CustomRequirement {
 
 	public Map<String, Object> getData() {
 		return data;
-	} 
+	}
 	
 	/**
 	 * Add a new prompt<p>
@@ -56,8 +56,8 @@ public abstract class CustomRequirement {
 	 * @param defaultValue Value to be used if input is not received
 	 */
 	public void addStringPrompt(String title, String description, Object defaultValue) {
-		data.put(name, defaultValue);
-		descriptions.put(name, description);
+		data.put(title, defaultValue);
+		descriptions.put(title, description);
 	}
 	
 	/**

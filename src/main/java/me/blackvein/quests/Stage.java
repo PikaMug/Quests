@@ -16,6 +16,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -123,7 +124,7 @@ public class Stage {
 	protected LinkedList<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
 	protected LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
 	protected LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
-	protected LinkedList<Map<String, Object>> customObjectiveData = new LinkedList<Map<String, Object>>();
+	protected LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<Entry<String, Object>>();
 	
 	public LinkedList<ItemStack> getBlocksToBreak() {
 		return blocksToBreak;
@@ -450,7 +451,7 @@ public class Stage {
 		return customObjectiveDisplays;
 	}
 
-	public LinkedList<Map<String, Object>> getCustomObjectiveData() {
+	public LinkedList<Entry<String, Object>> getCustomObjectiveData() {
 		return customObjectiveData;
 	}
 
