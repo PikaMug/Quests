@@ -176,9 +176,11 @@ public abstract class CustomObjective implements Listener {
 				tempIndex++;
 			}
 			if (index > -1) {
-				Entry<String, Object> e = currentStage.customObjectiveData.get(index);
 				Map<String, Object> m = new HashMap<String, Object>();
-				m.put(e.getKey(), e.getValue());
+				for (int i = index; i < index + data.size(); i++) {
+					Entry<String, Object> e = currentStage.customObjectiveData.get(index);
+					m.put(e.getKey(), e.getValue());
+				}
 				return m;
 			}
 		}
