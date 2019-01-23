@@ -1990,14 +1990,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						continue;
 					} else {
 						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-						for (Entry<String,Object> prompt : found.get().getData()) {
-							Entry<String, Object> data = populateCustoms(sec2, prompt);
-							oStage.customObjectives.add(found.get());
+						oStage.customObjectives.add(found.get());
 							if (count <= 0) {
 								oStage.customObjectiveCounts.add(0);
 							} else {
 								oStage.customObjectiveCounts.add(count);
 							}
+						for (Entry<String,Object> prompt : found.get().getData()) {
+							Entry<String, Object> data = populateCustoms(sec2, prompt);
 							oStage.customObjectiveData.add(data);
 						}
 					}

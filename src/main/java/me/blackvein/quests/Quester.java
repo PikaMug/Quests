@@ -781,11 +781,9 @@ public class Quester {
 				}
 			}
 		}
-		int index = 0;
 		for (CustomObjective co : getCurrentStage(quest).customObjectives) {
+			int index = 0;
 			String display = co.getDisplay();
-			boolean addUnfinished = false;
-			boolean addFinished = false;
 			for (Entry<String, Integer> entry : getQuestData(quest).customObjectiveCounts.entrySet()) {
 				if (co.getName().equals(entry.getKey())) {
 					Entry<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
@@ -801,22 +799,16 @@ public class Quester {
 						if (co.canShowCount()) {
 							display = display.replace("%count%", entry.getValue() + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 						}
-						addUnfinished = true;
+						unfinishedObjectives.add(ChatColor.GREEN + display);
 					} else {
 						if (co.canShowCount()) {
 							display = display.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 						}
-						addFinished = true;
+						finishedObjectives.add(ChatColor.GRAY + display);
 					}
 				}
+				index++;
 			}
-			if (addUnfinished) {
-				unfinishedObjectives.add(ChatColor.GREEN + display);
-			}
-			if (addFinished) {
-				finishedObjectives.add(ChatColor.GRAY + display);
-			}
-			index++;
 		}
 		objectives.addAll(unfinishedObjectives);
 		objectives.addAll(finishedObjectives);
@@ -893,27 +885,20 @@ public class Quester {
 
 	public boolean hasCustomObjective(Quest quest, String s) {
 		if (getQuestData(quest) == null) {
-			System.out.println("bing");
 			return false;
 		}
 		if (getQuestData(quest).customObjectiveCounts.containsKey(s)) {
-			System.out.println("bang");
 			int count = getQuestData(quest).customObjectiveCounts.get(s);
 			int index = -1;
 			for (int i = 0; i < getCurrentStage(quest).customObjectives.size(); i++) {
-				System.out.println("bong");
 				if (getCurrentStage(quest).customObjectives.get(i).getName().equals(s)) {
-					System.out.println("bung");
 					index = i;
 					break;
 				}
 			}
 			int count2 = getCurrentStage(quest).customObjectiveCounts.get(index);
-			System.out.println("count= " + count);
-			System.out.println("count2= " + count2);
 			return count <= count2;
 		}
-		System.out.println("byng");
 		return false;
 	}
 	
