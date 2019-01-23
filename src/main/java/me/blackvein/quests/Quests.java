@@ -743,6 +743,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		loadModules();
 		for (Quester quester : questers) {
 			for (Quest q : quester.currentQuests.keySet()) {
 				quester.checkQuest(q);
