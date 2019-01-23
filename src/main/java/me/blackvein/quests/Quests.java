@@ -528,6 +528,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
 					Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
 					CustomRequirement requirement = cstrctr.newInstance();
+					if (customRequirements.contains(requirement)) {
+						customRequirements.remove(requirement);
+					}
 					customRequirements.add(requirement);
 					String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
 					String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
@@ -537,6 +540,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
 					Constructor<? extends CustomReward> cstrctr = rewardClass.getConstructor();
 					CustomReward reward = cstrctr.newInstance();
+					if (customRewards.contains(reward)) {
+						customRewards.remove(reward);
+					}
 					customRewards.add(reward);
 					String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
 					String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
@@ -546,6 +552,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
 					Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
 					CustomObjective objective = cstrctr.newInstance();
+					if (customObjectives.contains(objective)) {
+						customObjectives.remove(objective);
+					}
 					customObjectives.add(objective);
 					String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
 					String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
