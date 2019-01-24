@@ -782,35 +782,38 @@ public class Quester {
 			}
 		}
 		for (CustomObjective co : getCurrentStage(quest).customObjectives) {
-			int index = 0;
+			int countsIndex = 0;
 			String display = co.getDisplay();
 			boolean addUnfinished = false;
 			boolean addFinished = false;
 			for (Entry<String, Integer> entry : getQuestData(quest).customObjectiveCounts.entrySet()) {
 				if (co.getName().equals(entry.getKey())) {
+					int dataIndex = 0;
 					for (Entry<String,Object> prompt : co.getData()) {
 						String replacement = "%" + prompt.getKey() + "%";
 						try {
 							if (display.contains(replacement))
-								display = display.replace(replacement, ((String) getCurrentStage(quest).customObjectiveData.get(index).getValue()));
+								display = display.replace(replacement, ((String) getCurrentStage(quest).customObjectiveData.get(dataIndex).getValue()));
 						} catch (NullPointerException ne) {
 							plugin.getLogger().severe("Unable to fetch display for " + co.getName() + " on " + quest.getName());
 							ne.printStackTrace();
 						}
+						dataIndex++;
 					}
-					if (entry.getValue() < getCurrentStage(quest).customObjectiveCounts.get(index)) {
+					if (entry.getValue() < getCurrentStage(quest).customObjectiveCounts.get(countsIndex)) {
 						if (co.canShowCount()) {
-							display = display.replace("%count%", entry.getValue() + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
+							display = display.replace("%count%", entry.getValue() + "/" + getCurrentStage(quest).customObjectiveCounts.get(countsIndex));
 						}
 						addUnfinished = true;
 					} else {
 						if (co.canShowCount()) {
-							display = display.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
+							display = display.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(countsIndex) 
+									+ "/" + getCurrentStage(quest).customObjectiveCounts.get(countsIndex));
 						}
 						addFinished = true;
 					}
 				}
-				index++;
+				countsIndex++;
 			}
 			if (addUnfinished) {
 				unfinishedObjectives.add(ChatColor.GREEN + display);
