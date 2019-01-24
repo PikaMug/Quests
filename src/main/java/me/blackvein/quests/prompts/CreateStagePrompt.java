@@ -14,7 +14,6 @@ package me.blackvein.quests.prompts;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -3985,7 +3984,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			for (Entry<String, Object> datamap : datamapList) {
 				text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + datamap.getKey();
 				if (datamap.getValue() != null) {
-					text += ChatColor.GREEN + " (" + (String) datamap.getValue() + ")\n";
+					text += ChatColor.GREEN + " (" + datamap.getValue().toString() + ")\n";
 				} else {
 					text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
 				}
@@ -4016,7 +4015,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				for (Entry<String, Object> datamap : datamapList) {
 					datamapKeys.add(datamap.getKey());
 				}
-				Collections.sort(datamapKeys);
+//				Collections.sort(datamapKeys);
 				String selectedKey = datamapKeys.get(numInput - 1);
 				context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, selectedKey);
 				return new ObjectiveCustomDataPrompt();
