@@ -342,7 +342,8 @@ public class Quester {
 				int currentLines = 0;
 				String page = "";
 				for (Quest quest : currentQuests.keySet()) {
-					if ((currentLength + quest.getName().length() > 240) || (currentLines + ((quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19) : ((quest.getName().length() / 19) + 1))) > 13) {
+					if ((currentLength + quest.getName().length() > 240) || (currentLines + ((quest.getName().length() % 19) 
+							== 0 ? (quest.getName().length() / 19) : ((quest.getName().length() / 19) + 1))) > 13) {
 						book.addPage(page);
 						page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.getName() + "\n";
 						currentLength = quest.getName().length();
@@ -355,7 +356,8 @@ public class Quester {
 					if (getObjectives(quest, false) != null) {
 						for (String obj : getObjectives(quest, false)) {
 							// Length/Line check
-							if ((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
+							if ((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) 
+									== 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
 								book.addPage(page);
 								page = obj + "\n";
 								currentLength = obj.length();
@@ -480,7 +482,8 @@ public class Quester {
 				player.sendMessage("");
 				if (plugin.getSettings().canShowQuestTitles()) {
 					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
-							+ " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest") + " " + Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
+							+ " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest") + " " 
+							+ Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
 					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
 							+ " subtitle " + "{\"text\":\"" + q.getName() + "\",\"color\":\"yellow\"}");
 				}
@@ -544,9 +547,11 @@ public class Quester {
 			for (ItemStack e2 : getQuestData(quest).blocksBroken) {
 				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 					if (e2.getAmount() < e.getAmount()) {
-						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "break") + " " + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "break") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
 					} else {
-						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "break") + " " + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "break") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
 					}
 				}
 			}
@@ -555,9 +560,11 @@ public class Quester {
 			for (ItemStack e2 : getQuestData(quest).blocksDamaged) {
 				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 					if (e2.getAmount() < e.getAmount()) {
-						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "damage") + " " + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "damage") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
 					} else {
-						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "damage") + " " + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "damage") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
 					}
 				}
 			}
@@ -566,9 +573,11 @@ public class Quester {
 			for (ItemStack e2 : getQuestData(quest).blocksPlaced) {
 				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 					if (e2.getAmount() < e.getAmount()) {
-						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "place") + " " + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "place") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
 					} else {
-						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "place") + " " + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "place") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
 					}
 				}
 			}
@@ -577,9 +586,11 @@ public class Quester {
 			for (ItemStack e2 : getQuestData(quest).blocksUsed) {
 				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 					if (e2.getAmount() < e.getAmount()) {
-						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "use") + " " + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "use") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
 					} else {
-						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "use") + " " + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "use") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
 					}
 				}
 			}
@@ -588,18 +599,22 @@ public class Quester {
 			for (ItemStack e2 : getQuestData(quest).blocksCut) {
 				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
 					if (e2.getAmount() < e.getAmount()) {
-						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "cut") + " " + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "cut") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
 					} else {
-						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "cut") + " " + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "cut") + " " + ItemUtil.getName(e2) 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
 					}
 				}
 			}
 		}
 		if (getCurrentStage(quest).fishToCatch != null) {
 			if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
-				unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "catchFish") + ChatColor.GREEN + ": " + getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
+				unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "catchFish") + ChatColor.GREEN + ": " 
+			+ getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
 			} else {
-				finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "catchFish") + ChatColor.GRAY + ": " + getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
+				finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "catchFish") + ChatColor.GRAY + ": " 
+			+ getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
 			}
 		}
 		Map<Enchantment, Material> set;
@@ -648,24 +663,36 @@ public class Quester {
 		for (EntityType e : getCurrentStage(quest).mobsToKill) {
 			for (EntityType e2 : getQuestData(quest).mobsKilled) {
 				if (e == e2) {
-					if (getQuestData(quest).mobNumKilled.size() > getQuestData(quest).mobsKilled.indexOf(e2) && getCurrentStage(quest).mobNumToKill.size() > getCurrentStage(quest).mobsToKill.indexOf(e)) {
-						if (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2)) < getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))) {
+					if (getQuestData(quest).mobNumKilled.size() > getQuestData(quest).mobsKilled.indexOf(e2) 
+							&& getCurrentStage(quest).mobNumToKill.size() > getCurrentStage(quest).mobsToKill.indexOf(e)) {
+						if (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2)) 
+								< getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))) {
 							if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
-								unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " + ChatColor.AQUA + Quester.prettyMobString(e) + ChatColor.GREEN + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+								unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " 
+										+ ChatColor.AQUA + Quester.prettyMobString(e) + ChatColor.GREEN + ": " 
+										+ (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) 
+										+ "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							} else {
 								String obj = Lang.get(getPlayer(), "killAtLocation");
 								obj = obj.replace("<mob>", ChatColor.LIGHT_PURPLE + Quester.prettyMobString(e));
 								obj = obj.replace("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
-								unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+								unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " 
+										+ (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) 
+										+ "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							}
 						} else {
 							if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
-								finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " + ChatColor.AQUA + Quester.prettyMobString(e) + ChatColor.GRAY + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+								finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " 
+										+ ChatColor.AQUA + Quester.prettyMobString(e) + ChatColor.GRAY + ": " 
+										+ (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) 
+										+ "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							} else {
 								String obj = Lang.get(getPlayer(), "killAtLocation");
 								obj = obj.replace("<mob>", ChatColor.LIGHT_PURPLE + Quester.prettyMobString(e));
 								obj = obj.replace("<location>", getCurrentStage(quest).areaNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
-								finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+								finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " 
+										+ (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) 
+										+ "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							}
 						}
 					}
@@ -674,9 +701,11 @@ public class Quester {
 		}
 		if (getCurrentStage(quest).playersToKill != null) {
 			if (getQuestData(quest).getPlayersKilled() < getCurrentStage(quest).playersToKill) {
-				unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "killPlayer") + ChatColor.GREEN + ": " + getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
+				unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "killPlayer") + ChatColor.GREEN + ": " 
+			+ getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
 			} else {
-				finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "killPlayer") + ChatColor.GRAY + ": " + getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
+				finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "killPlayer") + ChatColor.GRAY + ": " 
+			+ getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
 			}
 		}
 		int index2 = 0;
@@ -718,11 +747,17 @@ public class Quester {
 		for (Integer n : getCurrentStage(quest).citizensToKill) {
 			for (Integer n2 : getQuestData(quest).citizensKilled) {
 				if (n.equals(n2)) {
-					if (getQuestData(quest).citizenNumKilled.size() > getQuestData(quest).citizensKilled.indexOf(n2) && getCurrentStage(quest).citizenNumToKill.size() > getCurrentStage(quest).citizensToKill.indexOf(n)) {
-						if (getQuestData(quest).citizenNumKilled.get(getQuestData(quest).citizensKilled.indexOf(n2)) < getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n))) {
-							unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " + plugin.getNPCName(n) + ChatColor.GREEN + " " + getQuestData(quest).citizenNumKilled.get(getCurrentStage(quest).citizensToKill.indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
+					if (getQuestData(quest).citizenNumKilled.size() > getQuestData(quest).citizensKilled.indexOf(n2) 
+							&& getCurrentStage(quest).citizenNumToKill.size() > getCurrentStage(quest).citizensToKill.indexOf(n)) {
+						if (getQuestData(quest).citizenNumKilled.get(getQuestData(quest).citizensKilled.indexOf(n2)) 
+								< getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n))) {
+							unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " + plugin.getNPCName(n) 
+									+ ChatColor.GREEN + " " + getQuestData(quest).citizenNumKilled.get(getCurrentStage(quest).citizensToKill.indexOf(n)) 
+									+ "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
 						} else {
-							finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " + plugin.getNPCName(n) + ChatColor.GRAY + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
+							finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " + plugin.getNPCName(n) 
+									+ ChatColor.GRAY + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)) 
+									+ "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(n)));
 						}
 					}
 				}
@@ -732,9 +767,11 @@ public class Quester {
 			for (Entry<EntityType, Integer> e2 : getQuestData(quest).mobsTamed.entrySet()) {
 				if (e.getKey().equals(e2.getKey())) {
 					if (e2.getValue() < e.getValue()) {
-						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "tame") + " " + getCapitalized(e.getKey().name()) + ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue());
+						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "tame") + " " + getCapitalized(e.getKey().name()) 
+								+ ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue());
 					} else {
-						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "tame") + " " + getCapitalized(e.getKey().name()) + ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue());
+						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "tame") + " " + getCapitalized(e.getKey().name()) 
+								+ ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue());
 					}
 				}
 			}
@@ -1354,7 +1391,9 @@ public class Quester {
 					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
 					player.getInventory().setItem(player.getInventory().first(i), null);
 					player.updateInventory();
-					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(getCurrentStage(quest).deliverMessages.size())), plugin.getDependencies().getCitizens().getNPCRegistry().getById(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
+					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(
+							getCurrentStage(quest).deliverMessages.size())), plugin.getDependencies().getCitizens().getNPCRegistry().getById(
+									getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
 					player.sendMessage(message);
 				}
 			}
@@ -1410,7 +1449,8 @@ public class Quester {
 	 *            See CustomObjective class
 	 */
 	@SuppressWarnings("deprecation")
-	public void finishObjective(Quest quest, String objective, ItemStack itemStack, ItemStack delivery, Enchantment enchantment, EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
+	public void finishObjective(Quest quest, String objective, ItemStack itemStack, ItemStack delivery, Enchantment enchantment, 
+			EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
 		Player p = getPlayer();
 		if (getCurrentStage(quest).objectiveOverride != null) {
 			if (testComplete(quest)) {
@@ -1795,7 +1835,8 @@ public class Quester {
 		try {
 			return (Lang.get("ENCHANTMENT_" + e.getName()));
 		} catch (NullPointerException ne) {
-			Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to " + "update the file or simply add an entry for the enchantment");
+			Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to " 
+					+ "update the file or simply add an entry for the enchantment");
 			return e.getName().toLowerCase().replace("_", " ");
 		}
 	}
@@ -2619,9 +2660,11 @@ public class Quester {
 	 */
 	public void startStageTimer(Quest quest) {
 		if (getQuestData(quest).delayTimeLeft > -1) {
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getQuestData(quest).delayTimeLeft * 0.02));
+			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), 
+					(long) (getQuestData(quest).delayTimeLeft * 0.02));
 		} else {
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), (long) (getCurrentStage(quest).delay * 0.02));
+			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), 
+					(long) (getCurrentStage(quest).delay * 0.02));
 			if (getCurrentStage(quest).delayMessage != null) {
 				Player p = plugin.getServer().getPlayer(id);
 				p.sendMessage(plugin.parseString((getCurrentStage(quest).delayMessage), quest, p));
