@@ -64,6 +64,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -230,13 +231,42 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public List<CustomRequirement> getCustomRequirements() {
 		return customRequirements;
 	}
+
+	public Optional<CustomRequirement> getCustomRequirement(String class_name) {
+		int size=customRequirements.size();
+		for(int i1=0;i1<size;i1++) {
+			CustomRequirement o1=customRequirements.get(i1);
+			if(o1.getClass().getName().equals(class_name)) return Optional.of(o1);
+		}
+		return Optional.empty();
+	}
+	
+	
 	
 	public List<CustomReward> getCustomRewards() {
 		return customRewards;
 	}
 	
+	public Optional<CustomReward> getCustomReward(String class_name) {
+		int size=customRewards.size();
+		for(int i1=0;i1<size;i1++) {
+			CustomReward o1=customRewards.get(i1);
+			if(o1.getClass().getName().equals(class_name)) return Optional.of(o1);
+		}
+		return Optional.empty();
+	}
+	
 	public List<CustomObjective> getCustomObjectives() {
 		return customObjectives;
+	}
+	
+	public Optional<CustomObjective> getCustomObjective(String class_name) {
+		int size=customObjectives.size();
+		for(int i1=0;i1<size;i1++) {
+			CustomObjective o1=customObjectives.get(i1);
+			if(o1.getClass().getName().equals(class_name)) return Optional.of(o1);
+		}
+		return Optional.empty();
 	}
 	
 	public LinkedList<Quest> getQuests() {
@@ -528,9 +558,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
 					Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
 					CustomRequirement requirement = cstrctr.newInstance();
-					if (customRequirements.contains(requirement)) {
-						customRequirements.remove(requirement);
-					}
+					Optional<CustomRequirement>oo=getCustomRequirement(requirement.getClass().getName());
+					if (oo.isPresent()) customRequirements.remove(oo.get());
 					customRequirements.add(requirement);
 					String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
 					String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
@@ -540,9 +569,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
 					Constructor<? extends CustomReward> cstrctr = rewardClass.getConstructor();
 					CustomReward reward = cstrctr.newInstance();
-					if (customRewards.contains(reward)) {
-						customRewards.remove(reward);
-					}
+					Optional<CustomReward>oo=getCustomReward(reward.getClass().getName());
+					if (oo.isPresent()) customRewards.remove(oo.get());
 					customRewards.add(reward);
 					String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
 					String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
@@ -552,8 +580,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
 					Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
 					CustomObjective objective = cstrctr.newInstance();
-					if (customObjectives.contains(objective)) {
-						customObjectives.remove(objective);
+					Optional<CustomObjective>oo=getCustomObjective(objective.getClass().getName());
+					if (oo.isPresent()) {
+						HandlerList.unregisterAll(oo.get());
+						customObjectives.remove(oo.get());
 					}
 					customObjectives.add(objective);
 					String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
@@ -738,6 +768,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public void reloadQuests() {
 		quests.clear();
 		events.clear();
+		
 		loadQuests();
 		loadData();
 		loadEvents();
