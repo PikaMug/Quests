@@ -883,7 +883,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 			expRew = (Integer) cc.getSessionData(CK.REW_EXP);
 		}
 		if (cc.getSessionData(CK.REW_COMMAND) != null) {
-			commandRews = (LinkedList<String>) cc.getSessionData(CK.REW_COMMAND);
+			if(cc.getSessionData(CK.REW_COMMAND) instanceof LinkedList<?>) {
+				commandRews = (LinkedList<String>) cc.getSessionData(CK.REW_COMMAND);
+			} else {
+				commandRews=new LinkedList<>();
+				commandRews.addAll((List<String>)cc.getSessionData(CK.REW_COMMAND));
+			}
 		}
 		if (cc.getSessionData(CK.REW_PERMISSION) != null) {
 			permRews = (LinkedList<String>) cc.getSessionData(CK.REW_PERMISSION);
