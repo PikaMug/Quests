@@ -2014,6 +2014,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
 		for (String s2 : questStages.getKeys(false)) {
 			Stage oStage = quest.getStage(Integer.valueOf(s2) - 1);
+			oStage.customObjectives=new LinkedList<>();
+			oStage.customObjectiveCounts=new LinkedList<>();
+			oStage.customObjectiveData=new LinkedList<>();
+			oStage.customObjectiveDisplays=new LinkedList<>();
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives")) {
 				ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives");
 				for (String path : sec.getKeys(false)) {
