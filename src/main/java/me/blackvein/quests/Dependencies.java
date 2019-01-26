@@ -115,8 +115,9 @@ public class Dependencies {
 		if (isPluginAvailable("mcMMO")) {
 			mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
 		}
-		if (plugin.getSettings().canUseGPS() && isPluginAvailable("GPS")) {
+		if (isPluginAvailable("GPS") && plugin.getSettings().canUseGPS()) {
 			gpsapi = new GPSAPI(plugin);
+			Vars.getInstance().setMaxDistanceToEntry(9999.0);
 		}
 		if (isPluginAvailable("Heroes")) {
 			heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
@@ -132,7 +133,6 @@ public class Dependencies {
         }
 		if (isPluginAvailable("Parties")) {
 		    parties = Parties.getApi();
-		    Vars.getInstance().setMaxDistanceToEntry(9999.0);
         }
 		if (isPluginAvailable("Vault")) {
 			if (!setupEconomy()) {
