@@ -172,6 +172,9 @@ public class ItemUtil {
 		EnchantmentStorageMeta esmeta = null;
 		for (String targ : args) {
 			String arg = targ.replace("minecraft|", "minecraft:");
+			if (arg.equals("")) {
+				continue;
+			}
 			if (arg.startsWith("name-")) {
 				name = arg.substring(5).toUpperCase();
 			} else if (arg.startsWith("amount-")) {
