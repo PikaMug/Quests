@@ -299,7 +299,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					itemRews.add((ItemStack) context.getSessionData("tempStack"));
 					context.setSessionData(CK.REW_ITEMS, itemRews);
 				} else {
-					LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
+					List<ItemStack> itemRews = new LinkedList<ItemStack>();
 					itemRews.add((ItemStack) context.getSessionData("tempStack"));
 					context.setSessionData(CK.REW_ITEMS, itemRews);
 				}
@@ -357,7 +357,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				String[] args = input.split(Lang.get("charSemi"));
-				LinkedList<String> commands = new LinkedList<String>();
+				List<String> commands = new LinkedList<String>();
 				for (String s : args) {
 					if (s.startsWith("/")) {
 						s = s.substring(1);
@@ -383,7 +383,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<String> permissions = new LinkedList<String>();
+				List<String> permissions = new LinkedList<String>();
 				permissions.addAll(Arrays.asList(args));
 				context.setSessionData(CK.REW_PERMISSION, permissions);
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -498,7 +498,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<String> skills = new LinkedList<String>();
+				List<String> skills = new LinkedList<String>();
 				for (String s : args) {
 					if (Quests.getMcMMOSkill(s) != null) {
 						if (skills.contains(s) == false) {
@@ -531,7 +531,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<Integer> amounts = new LinkedList<Integer>();
+				List<Integer> amounts = new LinkedList<Integer>();
 				for (String s : args) {
 					try {
 						amounts.add(Integer.parseInt(s));
@@ -637,7 +637,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext cc) {
 			String text = ChatColor.DARK_PURPLE + Lang.get("heroesClassesTitle") + "\n";
-			LinkedList<String> list = new LinkedList<String>();
+			List<String> list = new LinkedList<String>();
 			for (HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
 				list.add(hc.getName());
 			}
@@ -658,7 +658,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] arr = input.split(" ");
-				LinkedList<String> classes = new LinkedList<String>();
+				List<String> classes = new LinkedList<String>();
 				for (String s : arr) {
 					HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(s);
 					if (hc == null) {
@@ -691,7 +691,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] arr = input.split(" ");
-				LinkedList<Double> amounts = new LinkedList<Double>();
+				List<Double> amounts = new LinkedList<Double>();
 				for (String s : arr) {
 					try {
 						double d = Double.parseDouble(s);
@@ -727,7 +727,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				String[] arr = input.split(" ");
-				LinkedList<String> loots = new LinkedList<String>();
+				List<String> loots = new LinkedList<String>();
 				for (String s : arr) {
 					if (PhatLootsAPI.getPhatLoot(s) == null) {
 						String text = Lang.get("rewPhatLootsInvalid");
