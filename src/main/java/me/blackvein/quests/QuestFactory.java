@@ -828,21 +828,28 @@ public class QuestFactory implements ConversationAbandonedListener {
 			questPointsReq = (Integer) cc.getSessionData(CK.REQ_QUEST_POINTS);
 		}
 		if (cc.getSessionData(CK.REQ_ITEMS) != null) {
-			itemReqs = (LinkedList<ItemStack>) cc.getSessionData(CK.REQ_ITEMS);
-			removeItemReqs = (LinkedList<Boolean>) cc.getSessionData(CK.REQ_ITEMS_REMOVE);
+			itemReqs = new LinkedList<ItemStack>();
+			removeItemReqs = new LinkedList<Boolean>();
+			itemReqs.addAll((List<ItemStack>) cc.getSessionData(CK.REQ_ITEMS));
+			removeItemReqs.addAll((List<Boolean>) cc.getSessionData(CK.REQ_ITEMS_REMOVE));
 		}
 		if (cc.getSessionData(CK.REQ_PERMISSION) != null) {
-			permReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_PERMISSION);
+			permReqs = new LinkedList<String>();
+			permReqs.addAll((List<String>) cc.getSessionData(CK.REQ_PERMISSION));
 		}
 		if (cc.getSessionData(CK.REQ_QUEST) != null) {
-			questReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_QUEST);
+			questReqs = new LinkedList<String>();
+			questReqs.addAll((List<String>) cc.getSessionData(CK.REQ_QUEST));
 		}
 		if (cc.getSessionData(CK.REQ_QUEST_BLOCK) != null) {
-			questBlocks = (LinkedList<String>) cc.getSessionData(CK.REQ_QUEST_BLOCK);
+			questBlocks = new LinkedList<String>();
+			questBlocks.addAll((List<String>) cc.getSessionData(CK.REQ_QUEST_BLOCK));
 		}
 		if (cc.getSessionData(CK.REQ_MCMMO_SKILLS) != null) {
-			mcMMOSkillReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
-			mcMMOAmountReqs = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
+			mcMMOSkillReqs = new LinkedList<String>();
+			mcMMOAmountReqs = new LinkedList<Integer>();
+			mcMMOSkillReqs.addAll((List<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS));
+			mcMMOAmountReqs.addAll((List<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS));
 		}
 		if (cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
 			heroesPrimaryReq = (String) cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
@@ -875,7 +882,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		if (cc.getSessionData(CK.REW_ITEMS) != null) {
 			itemRews = new LinkedList<String>();
-			for (ItemStack is : (LinkedList<ItemStack>) cc.getSessionData(CK.REW_ITEMS)) {
+			for (ItemStack is : (List<ItemStack>) cc.getSessionData(CK.REW_ITEMS)) {
 				itemRews.add(ItemUtil.serializeItemStack(is));
 			}
 		}
@@ -883,26 +890,28 @@ public class QuestFactory implements ConversationAbandonedListener {
 			expRew = (Integer) cc.getSessionData(CK.REW_EXP);
 		}
 		if (cc.getSessionData(CK.REW_COMMAND) != null) {
-			if(cc.getSessionData(CK.REW_COMMAND) instanceof LinkedList<?>) {
-				commandRews = (LinkedList<String>) cc.getSessionData(CK.REW_COMMAND);
-			} else {
-				commandRews=new LinkedList<>();
-				commandRews.addAll((List<String>)cc.getSessionData(CK.REW_COMMAND));
-			}
+			commandRews = new LinkedList<String>();
+			commandRews.addAll((List<String>)cc.getSessionData(CK.REW_COMMAND));
 		}
 		if (cc.getSessionData(CK.REW_PERMISSION) != null) {
-			permRews = (LinkedList<String>) cc.getSessionData(CK.REW_PERMISSION);
+			permRews = new LinkedList<String>();
+			permRews.addAll((List<String>) cc.getSessionData(CK.REW_PERMISSION));
 		}
 		if (cc.getSessionData(CK.REW_MCMMO_SKILLS) != null) {
-			mcMMOSkillRews = (LinkedList<String>) cc.getSessionData(CK.REW_MCMMO_SKILLS);
-			mcMMOSkillAmounts = (LinkedList<Integer>) cc.getSessionData(CK.REW_MCMMO_AMOUNTS);
+			mcMMOSkillRews = new LinkedList<String>();
+			mcMMOSkillAmounts = new LinkedList<Integer>();
+			mcMMOSkillRews.addAll((List<String>) cc.getSessionData(CK.REW_MCMMO_SKILLS));
+			mcMMOSkillAmounts.addAll((List<Integer>) cc.getSessionData(CK.REW_MCMMO_AMOUNTS));
 		}
 		if (cc.getSessionData(CK.REW_HEROES_CLASSES) != null) {
-			heroesClassRews = (LinkedList<String>) cc.getSessionData(CK.REW_HEROES_CLASSES);
-			heroesExpRews = (LinkedList<Double>) cc.getSessionData(CK.REW_HEROES_AMOUNTS);
+			heroesClassRews = new LinkedList<String>();
+			heroesExpRews = new LinkedList<Double>();
+			heroesClassRews.addAll((List<String>) cc.getSessionData(CK.REW_HEROES_CLASSES));
+			heroesExpRews.addAll((List<Double>) cc.getSessionData(CK.REW_HEROES_AMOUNTS));
 		}
 		if (cc.getSessionData(CK.REW_PHAT_LOOTS) != null) {
-			phatLootRews = (LinkedList<String>) cc.getSessionData(CK.REW_PHAT_LOOTS);
+			phatLootRews = new LinkedList<String>();
+			phatLootRews.addAll((List<String>) cc.getSessionData(CK.REW_PHAT_LOOTS));
 		}
 		if (cc.getSessionData(CK.REW_CUSTOM) != null) {
 			customRews = (LinkedList<String>) cc.getSessionData(CK.REW_CUSTOM);
