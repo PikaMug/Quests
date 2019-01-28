@@ -1587,7 +1587,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					}
 					cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
 					cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.radiiToKillWithin);
-					cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.areaNames);
+					cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.killNames);
 				}
 			}
 			if (stage.locationsToReach.isEmpty() == false) {

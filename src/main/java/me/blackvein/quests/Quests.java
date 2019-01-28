@@ -1750,7 +1750,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			oStage.mobNumToKill = mobNumToKill;
 			oStage.locationsToKillWithin = locationsToKillWithin;
 			oStage.radiiToKillWithin = radiiToKillWithin;
-			oStage.areaNames = areaNames;
+			oStage.killNames = areaNames;
 			Map<Map<Enchantment, Material>, Integer> enchants = new HashMap<Map<Enchantment, Material>, Integer>();
 			for (Enchantment e : enchantments) {
 				Map<Enchantment, Material> map = new HashMap<Enchantment, Material>();

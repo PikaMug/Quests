@@ -100,7 +100,7 @@ public class Stage {
 	protected LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
 	protected LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
 	protected LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-	protected LinkedList<String> areaNames = new LinkedList<String>();
+	protected LinkedList<String> killNames = new LinkedList<String>();
 	protected LinkedList<Location> locationsToReach = new LinkedList<Location>();
 	protected LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
 	protected LinkedList<World> worldsToReachWithin = new LinkedList<World>();
@@ -270,13 +270,27 @@ public class Stage {
 	public void setRadiiToKillWithin(LinkedList<Integer> radiiToKillWithin) {
 		this.radiiToKillWithin = radiiToKillWithin;
 	}
-
-	public LinkedList<String> getAreaNames() {
-		return areaNames;
+	
+	public LinkedList<String> getKillNames() {
+		return killNames;
 	}
 
-	public void setAreaNames(LinkedList<String> areaNames) {
-		this.areaNames = areaNames;
+	public void setKillNames(LinkedList<String> killNames) {
+		this.killNames = killNames;
+	}
+
+	/**
+	 * @deprecated use getKillNames()
+	 */
+	public LinkedList<String> getAreaNames() {
+		return killNames;
+	}
+
+	/**
+	 * @deprecated use setKillNames()
+	 */
+	public void setAreaNames(LinkedList<String> killNames) {
+		this.killNames = killNames;
 	}
 
 	public LinkedList<Location> getLocationsToReach() {
