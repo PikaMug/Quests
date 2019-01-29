@@ -54,6 +54,7 @@ import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.WorldGuardAPI;
 import net.citizensnpcs.api.CitizensAPI;
 
 public class QuestFactory implements ConversationAbandonedListener {
@@ -210,7 +211,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
 			}
-			if (plugin.getDependencies().getWorldGuard() != null) {
+			if (plugin.getDependencies().getWorldGuardApi().isEnabled()) {
 				if (context.getSessionData(CK.Q_REGION) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
@@ -261,7 +262,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
 				return new BlockStartPrompt();
 			} else if (input.equalsIgnoreCase("6")) {
-				if (plugin.getDependencies().getWorldGuard() != null) {
+				if (plugin.getDependencies().getWorldGuardApi().isEnabled()) {
 					return new RegionPrompt();
 				} else {
 					return new CreateMenuPrompt();
@@ -621,16 +622,11 @@ public class QuestFactory implements ConversationAbandonedListener {
 			String text = ChatColor.DARK_GREEN + Lang.get("questRegionTitle") + "\n";
 			boolean any = false;
 			for (World world : plugin.getServer().getWorlds()) {
-				try {
-					RegionManager rm = plugin.getDependencies().getWorldGuard().getRegionManager(world);
-					for (String region : rm.getRegions().keySet()) {
-						any = true;
-						text += ChatColor.GREEN + region + ", ";
-					}
-				} catch (NoSuchMethodError e) {
-					String version = plugin.getServer().getPluginManager().getPlugin("WorldGuard").getDescription().getVersion();
-					plugin.getLogger().severe("Quests does not currently support regions for WorldGuard " + version);
-					return ChatColor.RED + Lang.get("questWGNotInstalled");
+				WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+				RegionManager rm = api.getRegionManager(world);
+				for (String region : rm.getRegions().keySet()) {
+					any = true;
+					text += ChatColor.GREEN + region + ", ";
 				}
 			}
 			if (any) {
@@ -649,7 +645,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 				String found = null;
 				boolean done = false;
 				for (World world : plugin.getServer().getWorlds()) {
-					RegionManager rm = plugin.getDependencies().getWorldGuard().getRegionManager(world);
+					WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+					RegionManager rm = api.getRegionManager(world);
 					for (String region : rm.getRegions().keySet()) {
 						if (region.equalsIgnoreCase(input)) {
 							found = region;
@@ -664,7 +661,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				if (found == null) {
 					String error = Lang.get("questWGInvalidRegion");
 					error = error.replaceAll("<region>", ChatColor.RED + input + ChatColor.YELLOW);
-					player.sendMessage(ChatColor.RED + error);
+					player.sendMessage(ChatColor.YELLOW + error);
 					return new RegionPrompt();
 				} else {
 					context.setSessionData(CK.Q_REGION, found);

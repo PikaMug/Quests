@@ -749,7 +749,7 @@ public class Quest {
 		if (region == null) {
 			return true;
 		} else {
-			ApplicableRegionSet ars = plugin.getDependencies().getWorldGuard().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
+			ApplicableRegionSet ars = plugin.getDependencies().getWorldGuardApi().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
 			Iterator<ProtectedRegion> i = ars.iterator();
 			while (i.hasNext()) {
 				ProtectedRegion pr = i.next();

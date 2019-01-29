@@ -1297,7 +1297,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private boolean regionFound(Quest quest, String region) {
 		boolean exists = false;
 		for (World world : getServer().getWorlds()) {
-			RegionManager rm = depends.getWorldGuard().getRegionManager(world);
+			RegionManager rm = depends.getWorldGuardApi().getRegionManager(world);
 			if (rm != null) {
 				ProtectedRegion pr = rm.getRegion(region);
 				if (pr != null) {
