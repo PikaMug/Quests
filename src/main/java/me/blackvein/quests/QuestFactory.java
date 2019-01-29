@@ -628,7 +628,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 						text += ChatColor.GREEN + region + ", ";
 					}
 				} catch (NoSuchMethodError e) {
-					String version = plugin.getServer().getPluginManager().getPlugin("").getDescription().getVersion();
+					String version = plugin.getServer().getPluginManager().getPlugin("WorldGuard").getDescription().getVersion();
 					plugin.getLogger().severe("Quests does not currently support regions for WorldGuard " + version);
 					return ChatColor.RED + Lang.get("questWGNotInstalled");
 				}
