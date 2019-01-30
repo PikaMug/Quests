@@ -58,9 +58,9 @@ public class StagesPrompt extends StringPrompt {
 		if (i < 0) {
 			return new StagesPrompt(plugin, questFactory);
 		} else if (i < (stages + 1) && i > 0) {
-			return new CreateStagePrompt(plugin, (i), questFactory, plugin.getDependencies().getCitizens());
+			return new CreateStagePrompt(plugin, (i), questFactory);
 		} else if (i == (stages + 1)) {
-			return new CreateStagePrompt(plugin, (stages + 1), questFactory, plugin.getDependencies().getCitizens());
+			return new CreateStagePrompt(plugin, (stages + 1), questFactory);
 		} else if (i == (stages + 2)) {
 			return questFactory.returnToMenu();
 		} else {
