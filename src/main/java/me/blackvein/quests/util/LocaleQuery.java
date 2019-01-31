@@ -164,19 +164,51 @@ public class LocaleQuery {
 	private static boolean _isBelow113(String bukkitVersion) {
 		if (bukkitVersion.matches("^[0-9.]+$")) {
 			switch(bukkitVersion) {
+			case "1.12.2" :
+				return true;
+			case "1.12.1" :
+				return true;
 			case "1.12" :
 				return true;
+			case "1.11.2" :
+				return true;
+			case "1.11.1" :
+				return true;
 			case "1.11" :
+				return true;
+			case "1.10.2" :
+				return true;
+			case "1.10.1" :
 				return true;
 			case "1.10" :
 				return true;
 			case "1.9.4" :
 				return true;
+			case "1.9.3" :
+				return true;
+			case "1.9.2" :
+				return true;
+			case "1.9.1" :
+				return true;
 			case "1.9" :
+				return true;
+			case "1.8.9" :
+				return true;
+			case "1.8.8" :
+				return true;
+			case "1.8.7" :
+				return true;
+			case "1.8.6" :
+				return true;
+			case "1.8.5" :
 				return true;
 			case "1.8.4" :
 				return true;
 			case "1.8.3" :
+				return true;
+			case "1.8.2" :
+				return true;
+			case "1.8.1" :
 				return true;
 			case "1.8" :
 				return true;
@@ -185,7 +217,7 @@ public class LocaleQuery {
 			case "1.7.9" :
 				return true;
 			default:
-				// Bukkit version is 1.13+
+				// Bukkit version is 1.13+ or unsupported
 				return false;
 			}
 		}
