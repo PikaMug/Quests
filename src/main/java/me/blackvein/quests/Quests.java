@@ -808,7 +808,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 			questers.add(quester);
 			if (!quester.loadData()) {
-				questers.remove(id);
+				questers.remove(quester);
 			}
 		}
 		return quester;
