@@ -2013,6 +2013,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private void loadCustomSections(Quest quest, FileConfiguration config, String questKey) throws StageFailedException, SkipQuest {
 		ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
 		for (String s2 : questStages.getKeys(false)) {
+			if (quest == null) {
+				getLogger().severe("Unable to load custom objectives because quest for " + questKey + " was null");
+				return;
+			}
 			if (quest.getStage(Integer.valueOf(s2) - 1) == null) {
 				getLogger().severe("Unable to load custom objectives because stage" + (Integer.valueOf(s2) - 1) + " for " + quest.getName() + " was null");
 				return;
