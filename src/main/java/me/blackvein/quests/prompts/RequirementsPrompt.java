@@ -570,7 +570,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			for (String dataKey : datamapKeys) {
 				text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + dataKey;
 				if (datamap.get(dataKey) != null) {
-					text += ChatColor.GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+					text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
 				} else {
 					text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
 				}
