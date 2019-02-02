@@ -211,7 +211,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
 			}
-			if (plugin.getDependencies().getWorldGuardApi().isEnabled()) {
+			if (plugin.getDependencies().getWorldGuardApi() != null) {
 				if (context.getSessionData(CK.Q_REGION) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
@@ -262,7 +262,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
 				return new BlockStartPrompt();
 			} else if (input.equalsIgnoreCase("6")) {
-				if (plugin.getDependencies().getWorldGuardApi().isEnabled()) {
+				if (plugin.getDependencies().getWorldGuardApi() != null) {
 					return new RegionPrompt();
 				} else {
 					return new CreateMenuPrompt();
