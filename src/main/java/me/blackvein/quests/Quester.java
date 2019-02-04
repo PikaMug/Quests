@@ -1203,15 +1203,6 @@ public class Quester {
 		}
 	}
 
-	public void catchFish(Quest quest) {
-		if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
-			getQuestData(quest).setFishCaught(getQuestData(quest).getFishCaught() + 1);
-			if (((Integer) getQuestData(quest).getFishCaught()).equals(getCurrentStage(quest).fishToCatch)) {
-				finishObjective(quest, "catchFish", null, null, null, null, null, null, null, null, null, null);
-			}
-		}
-	}
-
 	public void enchantItem(Quest quest, Enchantment e, Material m) {
 		for (Entry<Map<Enchantment, Material>, Integer> entry : getQuestData(quest).itemsEnchanted.entrySet()) {
 			if (entry.getKey().containsKey(e) && entry.getKey().containsValue(m)) {
@@ -1228,6 +1219,15 @@ public class Quester {
 					}
 				}
 				break;
+			}
+		}
+	}
+	
+	public void catchFish(Quest quest) {
+		if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
+			getQuestData(quest).setFishCaught(getQuestData(quest).getFishCaught() + 1);
+			if (((Integer) getQuestData(quest).getFishCaught()).equals(getCurrentStage(quest).fishToCatch)) {
+				finishObjective(quest, "catchFish", null, null, null, null, null, null, null, null, null, null);
 			}
 		}
 	}

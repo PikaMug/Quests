@@ -479,7 +479,7 @@ public class PlayerListener implements Listener {
 			}
 		}
 	}
-
+	
 	@EventHandler
 	public void onEnchantItem(EnchantItemEvent evt) {
 		if (plugin.checkQuester(evt.getEnchanter().getUniqueId()) == false) {
