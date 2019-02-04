@@ -862,6 +862,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				questsSection = config.createSection("quests");
 				needsSaving = true;
 			}
+			if (questsSection == null) {
+				getLogger().severe("Missing \'quests\' section marker within quests.yml, canceled loading");
+				return;
+			}
 			for (String questKey : questsSection.getKeys(false)) {
 				try { // main "skip quest" try/catch block
 					Quest quest = new Quest();
