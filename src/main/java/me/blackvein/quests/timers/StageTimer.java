@@ -35,6 +35,12 @@ public class StageTimer implements Runnable {
 
 	@Override
 	public void run() {
+		if (quester == null) {
+			return;
+		}
+		if (quester.getQuestData(quest) == null) {
+			return;
+		}
 		if (quester.getQuestData(quest).delayOver) {
 			if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
 				if (quester.getCurrentStage(quest).getScript() != null) {
