@@ -627,7 +627,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				// TODO ensure all applicable strings are translated
 				String sbegin = obj.substring(obj.indexOf(ChatColor.AQUA.toString()) + 2);
 				String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
-				System.out.println("0");
 				Stage stage = quester.getCurrentStage(quest);
 				if (obj.contains(Lang.get(quester.getPlayer(), "break"))) {
 					for (ItemStack is : stage.blocksToBreak) {
@@ -675,13 +674,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						}
 					}
 				} else if (obj.contains(Lang.get(quester.getPlayer(), "craft"))) {
-					System.out.println("1");
 					for (ItemStack is : stage.getItemsToCraft()) {
-						System.out.println("2");
 						if (Material.matchMaterial(serial) != null) {
-							System.out.println("3");
 							if (Material.matchMaterial(serial).equals(is.getType())) {
-								System.out.println("4");
 								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
 								break;
 							}
