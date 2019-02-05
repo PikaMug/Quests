@@ -238,7 +238,6 @@ stageEditorObjectiveOverrideCleared: "Override di visualizzazione obiettive dese
 stageEditorDeliveryAddItem: "Aggiungi articolo"
 stageEditorDeliveryNPCs: "Imposta NPC IDs"
 stageEditorDeliveryMessages: "Imposta consegna messaggi"
-stageEditorContainsDuplicates: "Elenco contiene i duplicati!"
 stageEditorInvalidBlockName: "non è un nome di blocco valido!"
 stageEditorInvalidEnchantment: "non è un nome valido di incanto!"
 stageEditorInvalidNPC: "non è un ID valido NPC!"
