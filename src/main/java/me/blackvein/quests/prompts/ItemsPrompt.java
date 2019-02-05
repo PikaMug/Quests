@@ -19,6 +19,7 @@ import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 
 import org.bukkit.ChatColor;
@@ -28,6 +29,7 @@ import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 
 public class ItemsPrompt extends FixedSetPrompt {
 	private final Quests plugin;
@@ -36,7 +38,7 @@ public class ItemsPrompt extends FixedSetPrompt {
 	private final QuestFactory questFactory;
 
 	public ItemsPrompt(Quests plugin, int stageNum, QuestFactory qf) {
-		super("1", "2");
+		super("1", "2", "3");
 		this.plugin = plugin;
 		this.stageNum = stageNum;
 		this.pref = "stage" + stageNum;
@@ -46,12 +48,35 @@ public class ItemsPrompt extends FixedSetPrompt {
 	@SuppressWarnings("unchecked")
 	@Override
 	public String getPromptText(ConversationContext context) {
+		// Check/add newly made item
+		if (context.getSessionData("newItem") != null) {
+			if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
+				List<ItemStack> itemRews = getItems(context);
+				itemRews.add((ItemStack) context.getSessionData("tempStack"));
+				context.setSessionData(pref + CK.S_CRAFT_ITEMS, itemRews);
+			} else {
+				LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
+				itemRews.add((ItemStack) context.getSessionData("tempStack"));
+				context.setSessionData(pref + CK.S_CRAFT_ITEMS, itemRews);
+			}
+			context.setSessionData("newItem", null);
+			context.setSessionData("tempStack", null);
+		}
 		context.setSessionData(pref, Boolean.TRUE);
 		String text = ChatColor.AQUA + "- " + Lang.get("stageEditorItems") + " -\n";
-		if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
-			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorEnchantItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+		if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null) {
+			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorCraftItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorEnchantItems") + "\n";
+			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorCraftItems") + "\n";
+			LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
+			for (int i = 0; i < items.size(); i++) {
+				text += ChatColor.GRAY + "    - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+			}
+		}
+		if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
+			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorEnchantItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+		} else {
+			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorEnchantItems") + "\n";
 			LinkedList<String> enchants = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES);
 			LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES);
 			LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
@@ -59,14 +84,15 @@ public class ItemsPrompt extends FixedSetPrompt {
 				text += ChatColor.GRAY + "    - " + ChatColor.BLUE + Quester.prettyItemString(names.get(i)) + ChatColor.GRAY + " " + Lang.get("with") + " " + ChatColor.AQUA + Quester.prettyEnchantmentString(Quests.getEnchantment(enchants.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
 			}
 		}
-
-		text += ChatColor.GREEN + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("done") + "\n";
+		text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("done") + "\n";
 		return text;
 	}
 
 	@Override
 	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 		if (input.equalsIgnoreCase("1")) {
+			return new ItemStackPrompt(this);
+		} else if (input.equalsIgnoreCase("2")) {
 			return new EnchantmentListPrompt();
 		}
 		try {
@@ -75,6 +101,11 @@ public class ItemsPrompt extends FixedSetPrompt {
 			context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
 			return Prompt.END_OF_CONVERSATION;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ItemStack> getItems(ConversationContext context) {
+		return (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
 	}
 
 	private class EnchantmentListPrompt extends FixedSetPrompt {

@@ -989,12 +989,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 		LinkedList<Integer> cutIds;
 		LinkedList<Integer> cutAmounts;
 		LinkedList<Short> cutDurability;
-		Integer fish;
-		Integer players;
+		LinkedList<ItemStack> deliveryItems;
 		LinkedList<String> enchantments;
 		LinkedList<Integer> enchantmentIds;
 		LinkedList<Integer> enchantmentAmounts;
-		LinkedList<ItemStack> deliveryItems;
+		Integer fish;
+		Integer players;
+		LinkedList<ItemStack> craftItems;
 		LinkedList<Integer> deliveryNPCIds;
 		LinkedList<String> deliveryMessages;
 		LinkedList<Integer> npcTalkIds;
@@ -1049,11 +1050,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cutIds = null;
 			cutAmounts = null;
 			cutDurability = null;
-			fish = null;
-			players = null;
+			craftItems = null;
 			enchantments = null;
 			enchantmentIds = null;
 			enchantmentAmounts = null;
+			fish = null;
+			players = null;
 			deliveryItems = null;
 			deliveryNPCIds = null;
 			deliveryMessages = null;
@@ -1116,16 +1118,19 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cutAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_AMOUNTS);
 				cutDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_CUT_DURABILITY);
 			}
-			if (cc.getSessionData(pref + CK.S_FISH) != null) {
-				fish = (Integer) cc.getSessionData(pref + CK.S_FISH);
-			}
-			if (cc.getSessionData(pref + CK.S_PLAYER_KILL) != null) {
-				players = (Integer) cc.getSessionData(pref + CK.S_PLAYER_KILL);
+			if (cc.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
+				craftItems = (LinkedList<ItemStack>) cc.getSessionData(pref + CK.S_CRAFT_ITEMS);
 			}
 			if (cc.getSessionData(pref + CK.S_ENCHANT_TYPES) != null) {
 				enchantments = (LinkedList<String>) cc.getSessionData(pref + CK.S_ENCHANT_TYPES);
 				enchantmentIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_ENCHANT_NAMES);
 				enchantmentAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
+			}
+			if (cc.getSessionData(pref + CK.S_FISH) != null) {
+				fish = (Integer) cc.getSessionData(pref + CK.S_FISH);
+			}
+			if (cc.getSessionData(pref + CK.S_PLAYER_KILL) != null) {
+				players = (Integer) cc.getSessionData(pref + CK.S_PLAYER_KILL);
 			}
 			if (cc.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null) {
 				deliveryItems = (LinkedList<ItemStack>) cc.getSessionData(pref + CK.S_DELIVERY_ITEMS);
@@ -1231,11 +1236,20 @@ public class QuestFactory implements ConversationAbandonedListener {
 				stage.set("cut-block-amounts", cutAmounts);
 				stage.set("cut-block-durability", cutDurability);
 			}
-			stage.set("fish-to-catch", fish);
-			stage.set("players-to-kill", players);
+			if (craftItems != null && craftItems.isEmpty() == false) {
+				LinkedList<String> items = new LinkedList<String>();
+				for (ItemStack is : craftItems) {
+					items.add(ItemUtil.serializeItemStack(is));
+				}
+				stage.set("items-to-craft", items);
+			} else {
+				stage.set("items-to-craft", null);
+			}
 			stage.set("enchantments", enchantments);
 			stage.set("enchantment-item-names", enchantmentIds);
 			stage.set("enchantment-amounts", enchantmentAmounts);
+			stage.set("fish-to-catch", fish);
+			stage.set("players-to-kill", players);
 			if (deliveryItems != null && deliveryItems.isEmpty() == false) {
 				LinkedList<String> items = new LinkedList<String>();
 				for (ItemStack is : deliveryItems) {
@@ -1536,11 +1550,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cc.setSessionData(pref + CK.S_CUT_AMOUNTS, amnts);
 				cc.setSessionData(pref + CK.S_CUT_DURABILITY, durab);
 			}
-			if (stage.fishToCatch != null) {
-				cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
-			}
-			if (stage.playersToKill != null) {
-				cc.setSessionData(pref + CK.S_PLAYER_KILL, stage.playersToKill);
+			if (stage.getItemsToCraft().isEmpty() == false) {
+				LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+				for (ItemStack is : stage.getItemsToCraft()) {
+					items.add(is);
+				}
+				cc.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
 			}
 			if (stage.itemsToEnchant.isEmpty() == false) {
 				LinkedList<String> enchants = new LinkedList<String>();
@@ -1556,6 +1571,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cc.setSessionData(pref + CK.S_ENCHANT_TYPES, enchants);
 				cc.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
 				cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
+			}
+			if (stage.fishToCatch != null) {
+				cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
+			}
+			if (stage.playersToKill != null) {
+				cc.setSessionData(pref + CK.S_PLAYER_KILL, stage.playersToKill);
 			}
 			if (stage.getItemsToDeliver().isEmpty() == false) {
 				LinkedList<ItemStack> items = new LinkedList<ItemStack>();

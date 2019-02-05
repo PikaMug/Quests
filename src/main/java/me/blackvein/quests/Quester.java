@@ -608,13 +608,18 @@ public class Quester {
 				}
 			}
 		}
-		if (getCurrentStage(quest).fishToCatch != null) {
-			if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
-				unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "catchFish") + ChatColor.GREEN + ": " 
-			+ getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
+		for (ItemStack is : getCurrentStage(quest).itemsToCraft) {
+			int crafted = 0;
+			if (getQuestData(quest).itemsCrafted.containsKey(is)) {
+				crafted = getQuestData(quest).itemsCrafted.get(is);
+			}
+			int amt = is.getAmount();
+			if (crafted < amt) {
+				String obj = Lang.get(getPlayer(), "craft") + " " + ItemUtil.getName(is);
+				unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + crafted + "/" + amt);
 			} else {
-				finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "catchFish") + ChatColor.GRAY + ": " 
-			+ getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
+				String obj = Lang.get(getPlayer(), "craft") + " " + ItemUtil.getName(is);
+				finishedObjectives.add(ChatColor.GRAY + obj + ": " + crafted + "/" + amt);
 			}
 		}
 		Map<Enchantment, Material> set;
@@ -658,6 +663,15 @@ public class Quester {
 						finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + num1 + "/" + num2);
 					}
 				}
+			}
+		}
+		if (getCurrentStage(quest).fishToCatch != null) {
+			if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
+				unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "catchFish") + ChatColor.GREEN + ": " 
+			+ getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
+			} else {
+				finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "catchFish") + ChatColor.GRAY + ": " 
+			+ getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
 			}
 		}
 		for (EntityType e : getCurrentStage(quest).mobsToKill) {
@@ -905,10 +919,12 @@ public class Quester {
 			return !getCurrentStage(quest).blocksToUse.isEmpty();
 		} else if (s.equalsIgnoreCase("cutBlock")) {
 			return !getCurrentStage(quest).blocksToCut.isEmpty();
-		} else if (s.equalsIgnoreCase("catchFish")) {
-			return getCurrentStage(quest).fishToCatch != null;
+		} else if (s.equalsIgnoreCase("craftItem")) {
+			return !getCurrentStage(quest).itemsToCraft.isEmpty();
 		} else if (s.equalsIgnoreCase("enchantItem")) {
 			return !getCurrentStage(quest).itemsToEnchant.isEmpty();
+		} else if (s.equalsIgnoreCase("catchFish")) {
+			return getCurrentStage(quest).fishToCatch != null;
 		} else if (s.equalsIgnoreCase("killMob")) {
 			return !getCurrentStage(quest).mobsToKill.isEmpty();
 		} else if (s.equalsIgnoreCase("deliverItem")) {
@@ -1202,6 +1218,37 @@ public class Quester {
 			}
 		}
 	}
+	
+	public void craftItem(Quest quest, ItemStack i) {
+		Player player = getPlayer();
+		ItemStack found = null;
+		for (ItemStack is : getQuestData(quest).itemsCrafted.keySet()) {
+			if (ItemUtil.compareItems(i, is, true) == 0) {
+				found = is;
+				break;
+			}
+		}
+		if (found != null) {
+			int amount = getQuestData(quest).itemsCrafted.get(found);
+			if (getCurrentStage(quest).itemsToCraft.indexOf(found) < 0) {
+				plugin.getLogger().severe("Index out of bounds while crafting " + found.getType() + " x " + found.getAmount() + " for quest " 
+						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already crafted. Int -amount- reports value of " + 
+						+ amount + ". Please report this error on Github!");
+				player.sendMessage("Quests had a problem crafting your item, please contact an administrator!");
+				return;
+			}
+			int req = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(found)).getAmount();
+			Material m = i.getType();
+			if (amount < req) {
+				if ((i.getAmount() + amount) >= req) {
+					getQuestData(quest).itemsCrafted.put(found, req);
+					finishObjective(quest, "craftItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+				} else {
+					getQuestData(quest).itemsCrafted.put(found, (amount + i.getAmount()));
+				}
+			}
+		}
+	}
 
 	public void enchantItem(Quest quest, Enchantment e, Material m) {
 		for (Entry<Map<Enchantment, Material>, Integer> entry : getQuestData(quest).itemsEnchanted.entrySet()) {
@@ -1279,6 +1326,54 @@ public class Quester {
 			}
 		}
 	}
+	
+
+	@SuppressWarnings("deprecation")
+	public void deliverItem(Quest quest, ItemStack i) {
+		Player player = getPlayer();
+		ItemStack found = null;
+		for (ItemStack is : getQuestData(quest).itemsDelivered.keySet()) {
+			if (ItemUtil.compareItems(i, is, true) == 0) {
+				found = is;
+				break;
+			}
+		}
+		if (found != null) {
+			int amount = getQuestData(quest).itemsDelivered.get(found);
+			if (getCurrentStage(quest).itemsToDeliver.indexOf(found) < 0) {
+				plugin.getLogger().severe("Index out of bounds while delivering " + found.getType() + " x " + found.getAmount() + " for quest " 
+						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already delivered. Int -amount- reports value of " + 
+						+ amount + ". Please report this error on Github!");
+				player.sendMessage("Quests had a problem delivering your item, please contact an administrator!");
+				return;
+			}
+			int req = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(found)).getAmount();
+			Material m = i.getType();
+			if (amount < req) {
+				if ((i.getAmount() + amount) > req) {
+					getQuestData(quest).itemsDelivered.put(found, req);
+					int index = player.getInventory().first(i);
+					i.setAmount(i.getAmount() - (req - amount)); // Take away the remaining amount needed to be delivered
+					player.getInventory().setItem(index, i);
+					player.updateInventory();
+					finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+				} else if ((i.getAmount() + amount) == req) {
+					getQuestData(quest).itemsDelivered.put(found, req);
+					player.getInventory().setItem(player.getInventory().first(i), null);
+					player.updateInventory();
+					finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+				} else {
+					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
+					player.getInventory().setItem(player.getInventory().first(i), null);
+					player.updateInventory();
+					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(
+							getCurrentStage(quest).deliverMessages.size())), plugin.getDependencies().getCitizens().getNPCRegistry().getById(
+									getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
+					player.sendMessage(message);
+				}
+			}
+		}
+	}
 
 	public void interactWithNPC(Quest quest, NPC n) {
 			if (getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
@@ -1353,53 +1448,6 @@ public class Quester {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	public void deliverItem(Quest quest, ItemStack i) {
-		Player player = getPlayer();
-		ItemStack found = null;
-		for (ItemStack is : getQuestData(quest).itemsDelivered.keySet()) {
-			if (ItemUtil.compareItems(i, is, true) == 0) {
-				found = is;
-				break;
-			}
-		}
-		if (found != null) {
-			int amount = getQuestData(quest).itemsDelivered.get(found);
-			if (getCurrentStage(quest).itemsToDeliver.indexOf(found) < 0) {
-				plugin.getLogger().severe("Index out of bounds while delivering " + found.getType() + " x " + found.getAmount() + " for quest " 
-						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already delivered. Int -amount- reports value of " + 
-						+ amount + ". Please report this error on Github!");
-				player.sendMessage("Quests had a problem delivering your item, please contact an administrator!");
-				return;
-			}
-			int req = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(found)).getAmount();
-			Material m = i.getType();
-			if (amount < req) {
-				if ((i.getAmount() + amount) > req) {
-					getQuestData(quest).itemsDelivered.put(found, req);
-					int index = player.getInventory().first(i);
-					i.setAmount(i.getAmount() - (req - amount)); // Take away the remaining amount needed to be delivered from the item stack
-					player.getInventory().setItem(index, i);
-					player.updateInventory();
-					finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
-				} else if ((i.getAmount() + amount) == req) {
-					getQuestData(quest).itemsDelivered.put(found, req);
-					player.getInventory().setItem(player.getInventory().first(i), null);
-					player.updateInventory();
-					finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
-				} else {
-					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
-					player.getInventory().setItem(player.getInventory().first(i), null);
-					player.updateInventory();
-					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(
-							getCurrentStage(quest).deliverMessages.size())), plugin.getDependencies().getCitizens().getNPCRegistry().getById(
-									getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
-					player.sendMessage(message);
-				}
-			}
-		}
-	}
-
 	public void sayPassword(Quest quest, AsyncPlayerChatEvent evt) {
 		boolean done;
 		for (LinkedList<String> passes : getCurrentStage(quest).passwordPhrases) {
@@ -1449,7 +1497,7 @@ public class Quester {
 	 *            See CustomObjective class
 	 */
 	@SuppressWarnings("deprecation")
-	public void finishObjective(Quest quest, String objective, ItemStack itemStack, ItemStack delivery, Enchantment enchantment, 
+	public void finishObjective(Quest quest, String objective, ItemStack increment, ItemStack goal, Enchantment enchantment, 
 			EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
 		Player p = getPlayer();
 		if (getCurrentStage(quest).objectiveOverride != null) {
@@ -1471,7 +1519,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksBroken.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1480,7 +1528,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksDamaged.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1489,7 +1537,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksPlaced.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1498,7 +1546,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksUsed.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1507,14 +1555,15 @@ public class Quester {
 			String stack = getQuestData(quest).blocksCut.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
-		} else if (objective.equalsIgnoreCase("catchFish")) {
-			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "catchFish") + " ";
-			message = message + " " + getCurrentStage(quest).fishToCatch + "/" + getCurrentStage(quest).fishToCatch;
-			p.sendMessage(message);
+		} else if (objective.equalsIgnoreCase("craftItem")) {
+			ItemStack is = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(goal));
+			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craft") + " <item> "
+					+ is.getAmount() + "/" + is.getAmount();
+			plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability());
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1527,16 +1576,23 @@ public class Quester {
 					break;
 				}
 			}
-			plugin.getLocaleQuery().sendMessage(p, message, itemStack.getType(), itemStack.getDurability(), enchantment);
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), enchantment);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("deliverItem")) {
 			String obj = Lang.get(p, "deliver");
-			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery))));
+			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(goal))));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
-			ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(delivery));
+			ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(goal));
 			plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability());
+			if (testComplete(quest)) {
+				quest.nextStage(this);
+			}
+		} else if (objective.equalsIgnoreCase("catchFish")) {
+			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "catchFish") + " ";
+			message = message + " " + getCurrentStage(quest).fishToCatch + "/" + getCurrentStage(quest).fishToCatch;
+			p.sendMessage(message);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1689,7 +1745,11 @@ public class Quester {
 				}
 			}
 		}
-		data.setFishCaught(0);
+		if (quest.getStage(stage).itemsToCraft.isEmpty() == false) {
+			for (ItemStack is : quest.getStage(stage).itemsToCraft) {
+				data.itemsCrafted.put(is, 0);
+			}
+		}
 		if (quest.getStage(stage).itemsToEnchant.isEmpty() == false) {
 			for (Entry<Map<Enchantment, Material>, Integer> e : quest.getStage(stage).itemsToEnchant.entrySet()) {
 				Map<Enchantment, Material> map = (Map<Enchantment, Material>) e.getKey();
@@ -1708,6 +1768,7 @@ public class Quester {
 				}
 			}
 		}
+		data.setFishCaught(0);
 		data.setPlayersKilled(0);
 		if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
 			for (ItemStack is : quest.getStage(stage).itemsToDeliver) {
@@ -1986,11 +2047,12 @@ public class Quester {
 					questSec.set("blocks-cut-amounts", blockAmounts);
 					questSec.set("blocks-cut-durability", blockDurability);
 				}
-				if (getCurrentStage(quest).fishToCatch != null) {
-					questSec.set("fish-caught", questData.getFishCaught());
-				}
-				if (getCurrentStage(quest).playersToKill != null) {
-					questSec.set("players-killed", questData.getPlayersKilled());
+				if (questData.itemsCrafted.isEmpty() == false) {
+					LinkedList<Integer> craftAmounts = new LinkedList<Integer>();
+					for (Entry<ItemStack, Integer> e : questData.itemsCrafted.entrySet()) {
+						craftAmounts.add(e.getValue());
+					}
+					questSec.set("item-craft-amounts", craftAmounts);
 				}
 				if (questData.itemsEnchanted.isEmpty() == false) {
 					LinkedList<String> enchantments = new LinkedList<String>();
@@ -2007,6 +2069,12 @@ public class Quester {
 					questSec.set("enchantments", enchantments);
 					questSec.set("enchantment-item-names", itemNames);
 					questSec.set("times-enchanted", enchAmounts);
+				}
+				if (getCurrentStage(quest).fishToCatch != null) {
+					questSec.set("fish-caught", questData.getFishCaught());
+				}
+				if (getCurrentStage(quest).playersToKill != null) {
+					questSec.set("players-killed", questData.getPlayersKilled());
 				}
 				if (questData.mobsKilled.isEmpty() == false) {
 					LinkedList<String> mobNames = new LinkedList<String>();
@@ -2359,8 +2427,13 @@ public class Quester {
 						getQuestData(quest).blocksCut.set(names.indexOf(s), is);
 					}
 				}
-				if (questSec.contains("fish-caught")) {
-					getQuestData(quest).setFishCaught(questSec.getInt("fish-caught"));
+				if (questSec.contains("item-craft-amounts")) {
+					List<Integer> craftAmounts = questSec.getIntegerList("item-craft-amounts");
+					for (int i = 0; i < craftAmounts.size(); i++) {
+						if (i < getCurrentStage(quest).itemsToCraft.size()) {
+							getQuestData(quest).itemsCrafted.put(getCurrentStage(quest).itemsToCraft.get(i), craftAmounts.get(i));
+						}
+					}
 				}
 				if (questSec.contains("enchantments")) {
 					LinkedList<Enchantment> enchantments = new LinkedList<Enchantment>();
@@ -2379,6 +2452,9 @@ public class Quester {
 						map.put(e, materials.get(enchantments.indexOf(e)));
 						getQuestData(quest).itemsEnchanted.put(map, amounts.get(enchantments.indexOf(e)));
 					}
+				}
+				if (questSec.contains("fish-caught")) {
+					getQuestData(quest).setFishCaught(questSec.getInt("fish-caught"));
 				}
 				if (questSec.contains("mobs-killed")) {
 					LinkedList<EntityType> mobs = new LinkedList<EntityType>();

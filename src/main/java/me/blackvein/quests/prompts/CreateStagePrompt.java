@@ -66,13 +66,13 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				hasObjective = true;
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorBlocks") + "\n";
 			}
-			if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null && context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null) {
+			if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null && context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
 				hasObjective = true;
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorItems") + "\n";
 			}
-			if (context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null && context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
+			if (context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null && context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null && context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorNPCs") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
 				hasObjective = true;

@@ -627,7 +627,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				// TODO ensure all applicable strings are translated
 				String sbegin = obj.substring(obj.indexOf(ChatColor.AQUA.toString()) + 2);
 				String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
-				
+				System.out.println("0");
 				Stage stage = quester.getCurrentStage(quest);
 				if (obj.contains(Lang.get(quester.getPlayer(), "break"))) {
 					for (ItemStack is : stage.blocksToBreak) {
@@ -669,6 +669,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					for (ItemStack is : stage.blocksToCut) {
 						if (Material.matchMaterial(serial) != null) {
 							if (Material.matchMaterial(serial).equals(is.getType())) {
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
+								break;
+							}
+						}
+					}
+				} else if (obj.contains(Lang.get(quester.getPlayer(), "craft"))) {
+					System.out.println("1");
+					for (ItemStack is : stage.getItemsToCraft()) {
+						System.out.println("2");
+						if (Material.matchMaterial(serial) != null) {
+							System.out.println("3");
+							if (Material.matchMaterial(serial).equals(is.getType())) {
+								System.out.println("4");
 								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
 								break;
 							}
@@ -1318,14 +1331,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
 		for (String s2 : questStages.getKeys(false)) {
 			Stage oStage = new Stage();
-			LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
-			LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
-			LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
-			LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-			LinkedList<String> areaNames = new LinkedList<String>();
-			LinkedList<Enchantment> enchantments = new LinkedList<Enchantment>();
-			LinkedList<Material> itemsToEnchant = new LinkedList<Material>();
-			List<Integer> amountsToEnchant = new LinkedList<Integer>();
 			List<String> breaknames = new LinkedList<String>();
 			List<Integer> breakamounts = new LinkedList<Integer>();
 			List<Short> breakdurability = new LinkedList<Short>();
@@ -1341,6 +1346,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			List<String> cutnames = new LinkedList<String>();
 			List<Integer> cutamounts = new LinkedList<Integer>();
 			List<Short> cutdurability = new LinkedList<Short>();
+			List<EntityType> mobsToKill = new LinkedList<EntityType>();
+			List<Integer> mobNumToKill = new LinkedList<Integer>();
+			List<Location> locationsToKillWithin = new LinkedList<Location>();
+			List<Integer> radiiToKillWithin = new LinkedList<Integer>();
+			List<String> areaNames = new LinkedList<String>();
+			List<String> itemsToCraft = new LinkedList<String>();
+			List<Enchantment> enchantments = new LinkedList<Enchantment>();
+			List<Material> itemsToEnchant = new LinkedList<Material>();
+			List<Integer> amountsToEnchant = new LinkedList<Integer>();
+			List<Integer> npcIdsToTalkTo = new LinkedList<Integer>();
+			List<String> itemsToDeliver= new LinkedList<String>();
+			List<Integer> itemDeliveryTargetIds = new LinkedList<Integer>();
+			List<String> deliveryMessages = new LinkedList<String>();
+			List<Integer> npcIdsToKill = new LinkedList<Integer>();
+			List<Integer> npcAmountsToKill = new LinkedList<Integer>();
 			// Denizen script load
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run")) {
 				if (ScriptRegistry.containsScript(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run"))) {
@@ -1545,18 +1565,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("" + s + " inside cut-block-names: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid item name!");
 				}
 			}
-			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".fish-to-catch")) {
-				if (config.getInt("quests." + questKey + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
-					oStage.fishToCatch = config.getInt("quests." + questKey + ".stages.ordered." + s2 + ".fish-to-catch");
+			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft")) {
+				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft"), String.class)) {
+					itemsToCraft = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft");
+					for (String item : itemsToCraft) {
+						ItemStack is = ItemUtil.readItemStack("" + item);
+						if (is != null) {
+							oStage.getItemsToCraft().add(is);
+						} else {
+							stageFailed("" + item + " inside items-to-craft: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+						}
+					}
 				} else {
-					stageFailed("fish-to-catch: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a number!");
-				}
-			}
-			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".players-to-kill")) {
-				if (config.getInt("quests." + questKey + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
-					oStage.playersToKill = config.getInt("quests." + questKey + ".stages.ordered." + s2 + ".players-to-kill");
-				} else {
-					stageFailed("players-to-kill: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a number!");
+					stageFailed("items-to-craft: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".enchantments")) {
@@ -1597,7 +1618,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing enchantment-amounts:");
 				}
 			}
-			List<Integer> npcIdsToTalkTo = null;
+			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".fish-to-catch")) {
+				if (config.getInt("quests." + questKey + ".stages.ordered." + s2 + ".fish-to-catch", -999) != -999) {
+					oStage.fishToCatch = config.getInt("quests." + questKey + ".stages.ordered." + s2 + ".fish-to-catch");
+				} else {
+					stageFailed("fish-to-catch: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a number!");
+				}
+			}
+			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".players-to-kill")) {
+				if (config.getInt("quests." + questKey + ".stages.ordered." + s2 + ".players-to-kill", -999) != -999) {
+					oStage.playersToKill = config.getInt("quests." + questKey + ".stages.ordered." + s2 + ".players-to-kill");
+				} else {
+					stageFailed("players-to-kill: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a number!");
+				}
+			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-talk-to")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-talk-to"), Integer.class)) {
 					npcIdsToTalkTo = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
@@ -1612,9 +1646,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 				}
 			}
-			List<String> itemsToDeliver;
-			List<Integer> itemDeliveryTargetIds;
-			LinkedList<String> deliveryMessages = new LinkedList<String>();
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-deliver")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-deliver"), String.class)) {
 					if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".npc-delivery-ids")) {
@@ -1633,7 +1664,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 										if (npc != null) {
 											oStage.getItemsToDeliver().add(is);
 											oStage.getItemDeliveryTargets().add(npcId);
-											oStage.deliverMessages = deliveryMessages;
+											oStage.deliverMessages.addAll(deliveryMessages);
 										} else {
 											stageFailed("" + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid NPC id!");
 										}
@@ -1654,22 +1685,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("items-to-deliver: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 				}
 			}
-			List<Integer> npcIds;
-			List<Integer> npcAmounts;
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-kill")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-kill"), Integer.class)) {
 					if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".npc-kill-amounts")) {
 						if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".npc-kill-amounts"), Integer.class)) {
-							npcIds = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-kill");
-							npcAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".npc-kill-amounts");
-							for (int i : npcIds) {
+							npcIdsToKill = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-kill");
+							npcAmountsToKill = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".npc-kill-amounts");
+							for (int i : npcIdsToKill) {
 								if (CitizensAPI.getNPCRegistry().getById(i) != null) {
-									if (npcAmounts.get(npcIds.indexOf(i)) > 0) {
+									if (npcAmountsToKill.get(npcIdsToKill.indexOf(i)) > 0) {
 										oStage.citizensToKill.add(i);
-										oStage.citizenNumToKill.add(npcAmounts.get(npcIds.indexOf(i)));
+										oStage.citizenNumToKill.add(npcAmountsToKill.get(npcIdsToKill.indexOf(i)));
 										questNpcs.add(CitizensAPI.getNPCRegistry().getById(i));
 									} else {
-										stageFailed("" + npcAmounts.get(npcIds.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a positive number!");
+										stageFailed("" + npcAmountsToKill.get(npcIdsToKill.indexOf(i)) + " inside npc-kill-amounts: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a positive number!");
 									}
 								} else {
 									stageFailed("" + i + " inside npc-ids-to-kill: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid NPC id!");
@@ -1750,11 +1779,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing kill-location-names:");
 				}
 			}
-			oStage.mobsToKill = mobsToKill;
-			oStage.mobNumToKill = mobNumToKill;
-			oStage.locationsToKillWithin = locationsToKillWithin;
-			oStage.radiiToKillWithin = radiiToKillWithin;
-			oStage.killNames = areaNames;
+			oStage.mobsToKill.addAll(mobsToKill);
+			oStage.mobNumToKill.addAll(mobNumToKill);
+			oStage.locationsToKillWithin.addAll(locationsToKillWithin);
+			oStage.radiiToKillWithin.addAll(radiiToKillWithin);
+			oStage.killNames.addAll(areaNames);
 			Map<Map<Enchantment, Material>, Integer> enchants = new HashMap<Map<Enchantment, Material>, Integer>();
 			for (Enchantment e : enchantments) {
 				Map<Enchantment, Material> map = new HashMap<Enchantment, Material>();

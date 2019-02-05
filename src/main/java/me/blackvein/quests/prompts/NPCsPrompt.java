@@ -215,7 +215,7 @@ public class NPCsPrompt extends FixedSetPrompt {
 						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDeliveryMessage"));
 						return new DeliveryListPrompt();
 					} else {
-						return new ItemsPrompt(plugin, stageNum, questFactory);
+						return new NPCsPrompt(plugin, stageNum, questFactory);
 					}
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorDeliveriesNotSameSize"));

@@ -44,6 +44,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -474,6 +475,21 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "tameMob")) {
 						quester.tameMob(quest, evt.getEntityType());
+					}
+				}
+			}
+		}
+	}
+	
+
+	@EventHandler
+	public void onCraftItem(CraftItemEvent evt) {
+		if (evt.getWhoClicked() instanceof Player) {
+			if (plugin.checkQuester(evt.getWhoClicked().getUniqueId()) == false) {
+				Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+				for (Quest quest : quester.getCurrentQuests().keySet()) {
+					if (quester.containsObjective(quest, "craftItem")) {
+						quester.craftItem(quest, evt.getCurrentItem());
 					}
 				}
 			}

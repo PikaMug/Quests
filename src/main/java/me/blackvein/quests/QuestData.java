@@ -292,9 +292,9 @@ public class QuestData {
 		}
 	};
 	
-	public LinkedHashMap<ItemStack, Integer> itemsDelivered = new LinkedHashMap<ItemStack, Integer>() {
+	public LinkedHashMap<ItemStack, Integer> itemsCrafted = new LinkedHashMap<ItemStack, Integer>() {
 
-		private static final long serialVersionUID = 2712497347022734646L;
+		private static final long serialVersionUID = 2774356294049526105L;
 
 		@Override
 		public Integer put(ItemStack key, Integer val) {
@@ -356,6 +356,41 @@ public class QuestData {
 
 		@Override
 		public void putAll(Map<? extends Map<Enchantment, Material>, ? extends Integer> m) {
+			super.putAll(m);
+			if (doJournalUpdate)
+				quester.updateJournal();
+		}
+	};
+	
+	public LinkedHashMap<ItemStack, Integer> itemsDelivered = new LinkedHashMap<ItemStack, Integer>() {
+
+		private static final long serialVersionUID = 2712497347022734646L;
+
+		@Override
+		public Integer put(ItemStack key, Integer val) {
+			Integer data = super.put(key, val);
+			if (doJournalUpdate)
+				quester.updateJournal();
+			return data;
+		}
+
+		@Override
+		public Integer remove(Object key) {
+			Integer i = super.remove(key);
+			if (doJournalUpdate)
+				quester.updateJournal();
+			return i;
+		}
+
+		@Override
+		public void clear() {
+			super.clear();
+			if (doJournalUpdate)
+				quester.updateJournal();
+		}
+
+		@Override
+		public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
 			super.putAll(m);
 			if (doJournalUpdate)
 				quester.updateJournal();
@@ -1000,7 +1035,6 @@ public class QuestData {
 		}
 	};
 	
-	//public Map<EntityType, Integer> mobsTamed = new EnumMap<EntityType, Integer>(EntityType.class) {
 	public LinkedHashMap<EntityType, Integer> mobsTamed = new LinkedHashMap<EntityType, Integer>() {
 
 		private static final long serialVersionUID = 3851959471748032699L;
@@ -1036,7 +1070,6 @@ public class QuestData {
 		}
 	};
 	
-	//public Map<DyeColor, Integer> sheepSheared = new EnumMap<DyeColor, Integer>(DyeColor.class) {
 	public LinkedHashMap<DyeColor, Integer> sheepSheared = new LinkedHashMap<DyeColor, Integer>() {
 
 		private static final long serialVersionUID = -6016463677133534885L;
