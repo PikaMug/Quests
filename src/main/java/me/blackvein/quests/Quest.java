@@ -680,7 +680,7 @@ public class Quest {
 				String message = found.getRewardName();
 				if (message != null) {
 					for (String key : datamap.keySet()) {
-						message = message.replace("%" + ((String) key) + "%", ((String) datamap.get(key)));
+						message = message.replace("%" + key + "%", datamap.get(key).toString());
 					}
 					player.sendMessage("- " + ChatColor.GOLD + message);
 				} else {
