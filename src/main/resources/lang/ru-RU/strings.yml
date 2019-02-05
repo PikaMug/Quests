@@ -238,7 +238,6 @@ stageEditorObjectiveOverrideCleared: "Переопределение отобр�
 stageEditorDeliveryAddItem: "Добавить предмет"
 stageEditorDeliveryNPCs: "Установить NPC ID"
 stageEditorDeliveryMessages: "Установить сообщения доставки"
-stageEditorContainsDuplicates: "Список содержит дубликаты!"
 stageEditorInvalidBlockName: "некорректное название блока!"
 stageEditorInvalidEnchantment: "некорректное название зачарования!"
 stageEditorInvalidNPC: "неправильное ID Нпс!"
