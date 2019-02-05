@@ -21,6 +21,7 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.TreeSpecies;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -58,7 +59,7 @@ public class LocaleQuery {
 			if (key != null) {
 				if (oldVersion) {
 					if (key.startsWith("tile.") || key.startsWith("item.")) {
-						key += getColorIfApplicable(material, durability) + ".name";
+						key += getColorIfApplicable(material, durability) + getWoodTypeIfApplicable(material, durability) + ".name";
 					}
 				}
 				String msg = message.replace("<item>", "\",{\"translate\":\"" + key + "\"},\"");
@@ -87,7 +88,7 @@ public class LocaleQuery {
 			if (key != null) {
 				if (oldVersion) {
 					if (key.startsWith("tile.") || key.startsWith("item.")) {
-						key += getColorIfApplicable(material, durability) + ".name";
+						key += getColorIfApplicable(material, durability) + getWoodTypeIfApplicable(material, durability) + ".name";
 					}
 				}
 				String key2 = "";
@@ -225,6 +226,53 @@ public class LocaleQuery {
 		return false;
 	}
 	
+	@SuppressWarnings("deprecation")
+	public String getWoodTypeIfApplicable(Material material, short durability) {
+		String key = "";
+		if (material.name().equals("WOOD") || material.name().equals("SAPLING") || material.name().equals("LOG")
+				|| material.name().equals("LEAVES") || material.name().equals("STEP") || material.name().equals("STAIRS")
+				|| material.name().equals("FENCE") || material.name().equals("DOOR") || material.name().equals("BOAT")) {
+			TreeSpecies ts = TreeSpecies.getByData((byte)durability);
+			if (ts.equals(TreeSpecies.REDWOOD)) {
+				key = ".spruce";
+			} else {
+				key = ts.name().toLowerCase();
+			}
+		}
+		return key;
+	}
+	
+	public String getStoneTypeIfApplicable(Material material, short durability) {
+		String key = "";
+		if (material.name().equals("STONE")) {
+			switch(durability) {
+			case 0 :
+				key = ".stone";
+			case 1 :
+				key = ".granite";
+			case 2 :
+				key = ".graniteSmooth";
+			case 3 :
+				key = ".diorite";
+			case 4 :
+				key = ".dioriteSmooth";
+			case 5 :
+				key = ".andesite";
+			case 6 : 
+				key = ".andesiteSmooth";
+			}
+		} else if (material.name().contains("SANDSTONE")) {
+			switch(durability) {
+			case 1 :
+				key = ".default";
+			case 2 :
+				key = ".chiseled";
+			case 3 :
+				key = ".smooth";
+			}
+		}
+		return key;
+	}
 	
     /**
      * Appends a color to an item. Note that this will make item names invalid if the item is not eligible<p>
