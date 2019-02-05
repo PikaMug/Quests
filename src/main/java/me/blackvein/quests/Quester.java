@@ -1475,10 +1475,10 @@ public class Quester {
 	 *            Quest containing the objective
 	 * @param objective
 	 *            Type of objective, e.g. "password" or "damageBlock"
-	 * @param material
-	 *            Block being damaged, broken, etc.
-	 * @param delivery
-	 *            Item being delivered
+	 * @param increment
+	 *            Material being damaged, broken, etc. (amount usually = 1)
+	 * @param goal
+	 *            Material being delivered (amount usually = required number of item)
 	 * @param enchantment
 	 *            Enchantment being applied by user
 	 * @param mob
@@ -1490,7 +1490,7 @@ public class Quester {
 	 * @param location
 	 *            Location for user to reach
 	 * @param color
-	 *            shear color
+	 *            Shear color
 	 * @param pass
 	 *            Password
 	 * @param co
