@@ -256,12 +256,12 @@ public class BlocksPrompt extends FixedSetPrompt {
 				for (String s : args) {
 					try {
 						if (Material.matchMaterial(s) != null) {
-							if (names.contains(s) == false) {
+							//if (names.contains(s) == false) {
 								names.add(s);
-							} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorContainsDuplicates"));
+							/*} else {
+								context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListContainsDuplicates"));
 								return new BreakBlockNamesPrompt();
-							}
+							}*/
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidBlockName"));
 							return new BreakBlockNamesPrompt();
@@ -473,12 +473,12 @@ public class BlocksPrompt extends FixedSetPrompt {
 				for (String s : args) {
 					try {
 						if (Material.matchMaterial(s) != null) {
-							if (names.contains(s) == false) {
+							//if (names.contains(s) == false) {
 								names.add(s);
-							} else {
+							/*} else {
 								context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListContainsDuplicates"));
 								return new DamageBlockNamesPrompt();
-							}
+							}*/
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidBlockName"));
 							return new DamageBlockNamesPrompt();
@@ -690,12 +690,12 @@ public class BlocksPrompt extends FixedSetPrompt {
 				for (String s : args) {
 					try {
 						if (Material.matchMaterial(s) != null) {
-							if (names.contains(s) == false) {
+							//if (names.contains(s) == false) {
 								names.add(s);
-							} else {
+							/*} else {
 								context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorListContainsDuplicates"));
 								return new PlaceBlockNamesPrompt();
-							}
+							}*/
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorInvalidBlockName"));
 							return new PlaceBlockNamesPrompt();
@@ -907,12 +907,12 @@ public class BlocksPrompt extends FixedSetPrompt {
 				for (String s : args) {
 					try {
 						if (Material.matchMaterial(s) != null) {
-							if (names.contains(s) == false) {
+							//if (names.contains(s) == false) {
 								names.add(s);
-							} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("stageEditorContainsDuplicates"));
+							/*} else {
+								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("stageEditorListContainsDuplicates"));
 								return new UseBlockNamesPrompt();
-							}
+							}*/
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidBlockName"));
 							return new UseBlockNamesPrompt();
@@ -1124,12 +1124,12 @@ public class BlocksPrompt extends FixedSetPrompt {
 				for (String s : args) {
 					try {
 						if (Material.matchMaterial(s) != null) {
-							if (names.contains(s) == false) {
+							//if (names.contains(s) == false) {
 								names.add(s);
-							} else {
+							/*} else {
 								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("stageEditorListContainsDuplicates"));
 								return new CutBlockNamesPrompt();
-							}
+							}*/
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidBlockName"));
 							return new CutBlockNamesPrompt();

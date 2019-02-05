@@ -283,12 +283,12 @@ public class ItemsPrompt extends FixedSetPrompt {
 				for (String s : args) {
 					try {
 						if (Material.matchMaterial(s) != null) {
-							if (names.contains(s) == false) {
+							//if (names.contains(s) == false) {
 								names.add(s);
-							} else {
+							/*} else {
 								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("stageEditorListContainsDuplicates"));
 								return new EnchantItemsPrompt();
-							}
+							}*/
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidItemName"));
 							return new EnchantItemsPrompt();
