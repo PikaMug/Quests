@@ -238,7 +238,6 @@ stageEditorObjectiveOverrideCleared: "Az objektív megjelenítés felülírása 
 stageEditorDeliveryAddItem: "Elem hozzáadása"
 stageEditorDeliveryNPCs: "NPC azonosítók beállítása"
 stageEditorDeliveryMessages: "Szállítási üzenetek beállítása"
-stageEditorContainsDuplicates: "A lista duplikátumokat tartalmaz!"
 stageEditorInvalidBlockName: "nem érvényes blokknév!"
 stageEditorInvalidEnchantment: "nem érvényes varázslat név!"
 stageEditorInvalidNPC: "nem érvényes NPC azonosító!"
