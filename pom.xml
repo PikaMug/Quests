@@ -3,7 +3,7 @@
 
     <groupId>me.blackvein.quests</groupId>
     <artifactId>quests</artifactId>
-    <version>3.6.2</version>
+    <version>3.6.3</version>
     <name>quests</name>
     <url>https://github.com/FlyingPikachu/Quests/</url>
     <packaging>jar</packaging>
