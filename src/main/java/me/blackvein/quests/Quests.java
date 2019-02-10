@@ -434,7 +434,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         
         if (!outDir.exists()) {
             if (!outDir.mkdirs()) {
-            	getLogger().log(Level.SEVERE, "Failed to make directories for " + outFile.getName() + " (canWrite= " + outFile.canWrite() + ")");
+            	getLogger().log(Level.SEVERE, "Failed to make directories for " + outFile.getName() + " (canWrite= " + outDir.canWrite() + ")");
             }
         }
 
@@ -448,9 +448,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
                 out.close();
                 in.close();
-            } /*else {
-                getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
-            }*/
+                if (!outFile.exists()) {
+                	getLogger().severe("Unable to copy " + outFile.getName() + " (canWrite= " + outFile.canWrite() + ")");
+                }
+            }
         } catch (IOException ex) {
             getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
         }
@@ -632,7 +633,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					for (ItemStack is : stage.blocksToBreak) {
 						if (Material.matchMaterial(serial) != null) {
 							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
 								break;
 							}
 						}
@@ -641,7 +642,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					for (ItemStack is : stage.blocksToDamage) {
 						if (Material.matchMaterial(serial) != null) {
 							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
 								break;
 							}
 						}
@@ -650,7 +651,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					for (ItemStack is : stage.blocksToPlace) {
 						if (Material.matchMaterial(serial) != null) {
 							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
 								break;
 							}
 						}
@@ -659,7 +660,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					for (ItemStack is : stage.blocksToUse) {
 						if (Material.matchMaterial(serial) != null) {
 							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
 								break;
 							}
 						}
@@ -668,7 +669,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					for (ItemStack is : stage.blocksToCut) {
 						if (Material.matchMaterial(serial) != null) {
 							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
 								break;
 							}
 						}
@@ -677,7 +678,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					for (ItemStack is : stage.getItemsToCraft()) {
 						if (Material.matchMaterial(serial) != null) {
 							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
 								break;
 							}
 						}
@@ -692,10 +693,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								if (!is.getEnchantments().isEmpty()) {
 									//TODO parse multiple enchantments?
 									localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>").replace(enchant, "<enchantment>"),
-											is.getType(), is.getDurability(), is.getEnchantments().entrySet().iterator().next().getKey());
+											is.getType(), is.getDurability(), is.getEnchantments());
 									break;
 								} else {
-									localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability());
+									localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
 									break;
 								}
 							}

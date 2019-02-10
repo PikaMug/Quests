@@ -1519,7 +1519,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksBroken.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1528,7 +1528,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksDamaged.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1537,7 +1537,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksPlaced.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1546,7 +1546,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksUsed.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1555,7 +1555,7 @@ public class Quester {
 			String stack = getQuestData(quest).blocksCut.toString();
 			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
 			message = message + " " + amount + "/" + amount;
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1563,20 +1563,22 @@ public class Quester {
 			ItemStack is = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(goal));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craft") + " <item> "
 					+ is.getAmount() + "/" + is.getAmount();
-			plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("enchantItem")) {
 			String obj = Lang.get(p, "enchantItem");
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
+			Map<Enchantment, Integer> ench = new HashMap<Enchantment, Integer>();
+			ench.put(enchantment, enchantment.getStartLevel());
 			for (Map<Enchantment, Material> map : getCurrentStage(quest).itemsToEnchant.keySet()) {
 				if (map.containsKey(enchantment)) {
 					message = message + " " + getCurrentStage(quest).itemsToEnchant.get(map) + "/" + getCurrentStage(quest).itemsToEnchant.get(map);
 					break;
 				}
 			}
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), enchantment);
+			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), ench);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1585,7 +1587,7 @@ public class Quester {
 			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(goal))));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(goal));
-			plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability());
+			plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}

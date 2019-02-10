@@ -95,7 +95,7 @@ public class NpcListener implements Listener {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-								plugin.getLocaleQuery().sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability());
+								plugin.getLocaleQuery().sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability(), null);
 								switch(reasonCode) {
 									case 1:
 										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "one item is null"));

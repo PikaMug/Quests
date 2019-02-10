@@ -702,6 +702,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 				try {
 					data.load(new File(plugin.getDataFolder(), "quests.yml"));
 					ConfigurationSection questSection = data.getConfigurationSection("quests");
+					if (questSection == null) {
+						questSection = data.createSection("quests");
+					}
 					int customNum = 1;
 					while (true) {
 						if (questSection.contains("custom" + customNum)) {
