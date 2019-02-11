@@ -182,7 +182,6 @@ stageEditorSetShearAmounts: "ตั้งค่าจำนวนเฉือน
 stageEditorPassword: "วัตถุประสงค์ของรหัสผ่าน"
 stageEditorAddPasswordDisplay: "เพิ่มรหัสผ่านจอแสดงผล"
 stageEditorAddPasswordPhrases: "เพิ่มรหัสผ่าน phrase(s)"
-stageEditorNoPasswordDisplays: "ไม่มีรหัสผ่านแสดงการตั้งค่า"
 stageEditorObjectiveOverride: "การแทนที่การแสดงเป้าหมาย"
 stageEditorCustom: "วัตถุประสงค์ที่กำหนดเอง"
 stageEditorNoModules: "ไม่มีโมดูลที่โหลด"
