@@ -1458,7 +1458,13 @@ public class Quester {
 					String display = getCurrentStage(quest).passwordDisplays.get(getCurrentStage(quest).passwordPhrases.indexOf(passes));
 					getQuestData(quest).passwordsSaid.put(display, true);
 					done = true;
-					finishObjective(quest, "password", null, null, null, null, null, null, null, null, display, null);
+					plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+						@Override
+						public void run() {
+							finishObjective(quest, "password", null, null, null, null, null, null, null, null, display, null);
+						}
+					});
 					break;
 				}
 			}
