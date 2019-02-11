@@ -100,7 +100,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<Integer> radii = (LinkedList<Integer>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
 				LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
 				for (int i = 0; i < locations.size(); i++) {
-					text += ChatColor.GRAY + "    - " + Lang.get("stageEditorReachRadii1") + " " + ChatColor.BLUE + radii.get(i) + ChatColor.GRAY + " " + Lang.get("stageEditorReachRadii2") + " " + ChatColor.AQUA + names.get(i) + ChatColor.GRAY + " (" + ChatColor.DARK_AQUA + locations.get(i) + ChatColor.GRAY + ")\n";
+					text += ChatColor.GRAY + "     - " + Lang.get("stageEditorReachRadii1") + " " + ChatColor.BLUE + radii.get(i) + ChatColor.GRAY + " " + Lang.get("stageEditorReachRadii2") + " " + ChatColor.AQUA + names.get(i) + ChatColor.GRAY + " (" + ChatColor.DARK_AQUA + locations.get(i) + ChatColor.GRAY + ")\n";
 				}
 			}
 			if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
@@ -111,7 +111,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<String> passDisplays = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "7 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorPassword") + "\n";
 				for (int i = 0; i < passPhrases.size(); i++) {
-					text += ChatColor.AQUA + "    - \"" + passDisplays.get(i) + "\"\n";
+					text += ChatColor.AQUA + "     - \"" + passDisplays.get(i) + "\"\n";
 					LinkedList<String> phrases = passPhrases.get(i);
 					for (String phrase : phrases) {
 						text += ChatColor.DARK_AQUA + "      - " + phrase + "\n";
@@ -125,7 +125,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<String> customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "8 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorCustom") + "\n";
 				for (String s : customObjs) {
-					text += ChatColor.LIGHT_PURPLE + "    - " + ChatColor.GOLD + s + "\n";
+					text += ChatColor.LIGHT_PURPLE + "     - " + ChatColor.GOLD + s + "\n";
 				}
 			}
 			if (!hasObjective) {
@@ -283,20 +283,20 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorPassword") + "-\n";
 			if (context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorAddPasswordDisplay") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("stageEditorAddPasswordPhrases") + " (" + Lang.get("stageEditorNoPasswordDisplays") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.BLUE + Lang.get("stageEditorAddPasswordPhrases") + " (" + Lang.get("noneSet") + ")\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorAddPasswordDisplay") + "\n";
 				for (String display : getPasswordDisplays(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + display + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + display + "\n";
 				}
 				if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
-					text += ChatColor.YELLOW + "2 - " + Lang.get("stageEditorAddPasswordPhrases") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "2 - " + Lang.get("stageEditorAddPasswordPhrases") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.YELLOW + "2 - " + Lang.get("stageEditorAddPasswordPhrases") + "\n";
 					for (LinkedList<String> phraseList : getPasswordPhrases(context)) {
-						text += ChatColor.GRAY + "    - ";
+						text += ChatColor.GRAY + "     - ";
 						for (String s : phraseList) {
 							if (phraseList.getLast().equals(s) == false) {
 								text += ChatColor.DARK_AQUA + s + ChatColor.GRAY + "|";
@@ -490,14 +490,14 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocations") + "\n";
 				for (String s : getLocations(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.DARK_AQUA + s + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.DARK_AQUA + s + "\n";
 				}
 				if (context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocationRadii") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocationRadii") + "\n";
 					for (Integer i : getLocationRadii(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 					}
 				}
 				if (context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES) == null) {
@@ -505,7 +505,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocationNames") + "\n";
 					for (String s : getLocationNames(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -716,7 +716,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<String> chatEvents = (LinkedList<String>) context.getSessionData(pref + CK.S_CHAT_EVENTS);
 				LinkedList<String> chatEventTriggers = (LinkedList<String>) context.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS);
 				for (String event : chatEvents) {
-					text += ChatColor.AQUA + "    - " + event + ChatColor.BLUE + " (" + Lang.get("stageEditorTriggeredBy") + ": \"" + chatEventTriggers.get(chatEvents.indexOf(event)) + "\")\n";
+					text += ChatColor.AQUA + "     - " + event + ChatColor.BLUE + " (" + Lang.get("stageEditorTriggeredBy") + ": \"" + chatEventTriggers.get(chatEvents.indexOf(event)) + "\")\n";
 				}
 			}
 			if (context.getSessionData(pref + CK.S_COMMAND_EVENTS) == null) {
@@ -726,7 +726,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				LinkedList<String> commandEvents = (LinkedList<String>) context.getSessionData(pref + CK.S_COMMAND_EVENTS);
 				LinkedList<String> commandEventTriggers = (LinkedList<String>) context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS);
 				for (String event : commandEvents) {
-					text += ChatColor.AQUA + "    - " + event + ChatColor.BLUE + " (" + Lang.get("stageEditorTriggeredBy") + ": \"" + commandEventTriggers.get(commandEvents.indexOf(event)) + "\")\n";
+					text += ChatColor.AQUA + "     - " + event + ChatColor.BLUE + " (" + Lang.get("stageEditorTriggeredBy") + ": \"" + commandEventTriggers.get(commandEvents.indexOf(event)) + "\")\n";
 				}
 			}
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("back");

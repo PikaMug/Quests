@@ -79,7 +79,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
 			List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
 			for (String cmd : commands) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + cmd + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd + "\n";
 			}
 		}
 		if (context.getSessionData(CK.REW_PERMISSION) == null) {
@@ -88,7 +88,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPermission") + "\n";
 			List<String> permissions = (List<String>) context.getSessionData(CK.REW_PERMISSION);
 			for (String perm : permissions) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + perm + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + perm + "\n";
 			}
 		}
 		if (plugin.getDependencies().getMcmmo() != null) {
@@ -99,7 +99,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
 				List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
 				for (String skill : skills) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + skill + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amounts.get(skills.indexOf(skill)) + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + skill + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amounts.get(skills.indexOf(skill)) + "\n";
 				}
 			}
 		} else {
@@ -113,7 +113,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				List<String> heroClasses = (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
 				List<Double> amounts = (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
 				for (String heroClass : heroClasses) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + ChatColor.DARK_AQUA + heroClass + " " + Lang.get("experience") + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + ChatColor.DARK_AQUA + heroClass + " " + Lang.get("experience") + "\n";
 				}
 			}
 		} else {
@@ -126,7 +126,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPhat") + "\n";
 				List<String> phatLoots = (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS);
 				for (String phatLoot : phatLoots) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + phatLoot + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + phatLoot + "\n";
 				}
 			}
 		} else {
@@ -411,14 +411,14 @@ public class RewardsPrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkills") + "\n";
 				for (String s : getSkills(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 				}
 				if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkillAmounts") + "\n";
 					for (Integer i : getSkillAmounts(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -565,14 +565,14 @@ public class RewardsPrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesClasses") + "\n";
 				for (String s : getClasses(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 				}
 				if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + "\n";
 					for (Double d : getClassAmounts(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + d + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + d + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";

@@ -52,7 +52,7 @@ public class MobsPrompt extends FixedSetPrompt {
 			LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
 			if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
 				for (int i = 0; i < mobs.size(); i++) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + Quester.prettyMobString(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + Quester.prettyMobString(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
 				}
 			} else {
 				LinkedList<String> locs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS);
@@ -61,7 +61,7 @@ public class MobsPrompt extends FixedSetPrompt {
 				for (int i = 0; i < mobs.size(); i++) {
 					String msg = Lang.get("blocksWithin");
 					msg = msg.replaceAll("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
-					text += ChatColor.GRAY + "    - " + ChatColor.BLUE + Quester.prettyMobString(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW + names.get(i) + " (" + locs.get(i) + ")\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.BLUE + Quester.prettyMobString(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW + names.get(i) + " (" + locs.get(i) + ")\n";
 				}
 			}
 		}
@@ -78,7 +78,7 @@ public class MobsPrompt extends FixedSetPrompt {
 			LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES);
 			LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
 			for (int i = 0; i < mobs.size(); i++) {
-				text += ChatColor.GRAY + "    - " + ChatColor.BLUE + mobs.get(i) + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.BLUE + mobs.get(i) + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
 			}
 		}
 		if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
@@ -88,7 +88,7 @@ public class MobsPrompt extends FixedSetPrompt {
 			LinkedList<String> colors = (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS);
 			LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
 			for (int i = 0; i < colors.size(); i++) {
-				text += ChatColor.GRAY + "    - " + ChatColor.BLUE + colors.get(i) + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.BLUE + colors.get(i) + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
 			}
 		}
 		text += ChatColor.GREEN + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("done") + "\n";
@@ -126,53 +126,49 @@ public class MobsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorKillMobs") + " -\n";
 			if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetMobTypes") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("stageEditorSetMobAmounts") + " (" + Lang.get("stageEditorNoMobTypesSet") + ")\n";
-				text += ChatColor.DARK_GRAY + "|---------" + Lang.get("stageEditorOptional") + "---------|\n";
-				text += ChatColor.GRAY + "3 - " + Lang.get("stageEditorSetKillLocations") + " (" + Lang.get("stageEditorNoMobTypesSet") + ")\n";
-				text += ChatColor.GRAY + "4 - " + Lang.get("stageEditorSetKillLocationRadii") + " (" + Lang.get("stageEditorNoMobTypesSet") + ")\n";
-				text += ChatColor.GRAY + "5 - " + Lang.get("stageEditorSetKillLocationNames") + " (" + Lang.get("stageEditorNoMobTypesSet") + ")\n";
-				text += ChatColor.DARK_GRAY + "|--------------------------|\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetMobAmounts") + " (" + Lang.get("stageEditorNoMobTypesSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorSetKillLocations") + " (" + Lang.get("stageEditorNoMobTypesSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorSetKillLocationRadii") + " (" + Lang.get("stageEditorNoMobTypesSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorSetKillLocationNames") + " (" + Lang.get("stageEditorNoMobTypesSet") + ")\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetMobTypes") + "\n";
 				for (String s : getMobTypes(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 				}
 				if (context.getSessionData(pref + CK.S_MOB_AMOUNTS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetMobAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetMobAmounts") + "\n";
 					for (Integer i : getMobAmounts(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 					}
 				}
-				text += ChatColor.DARK_GRAY + "|---------" + Lang.get("stageEditorOptional") + "---------|\n";
 				if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetKillLocations") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetKillLocations") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetKillLocations") + "\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetKillLocations") + "\n";
 					for (String s : getKillLocations(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 					}
 				}
 				if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS) == null) {
-					text += ChatColor.BLUE + "4 - " + Lang.get("stageEditorSetKillLocationRadii") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD  + "4" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetKillLocationRadii") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					text += ChatColor.BLUE + "4 - " + Lang.get("stageEditorSetKillLocationRadii") + "\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD  + "4" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetKillLocationRadii") + "\n";
 					for (int i : getKillRadii(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 					}
 				}
 				if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES) == null) {
-					text += ChatColor.BLUE + "5 - " + Lang.get("stageEditorSetKillLocationNames") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD  + "5" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetKillLocationNames") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
-					text += ChatColor.BLUE + "5 - " + Lang.get("stageEditorSetKillLocationNames") + "\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD  + "5" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetKillLocationNames") + "\n";
 					for (String s : getKillLocationNames(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 					}
 				}
-				text += ChatColor.DARK_GRAY + "|--------------------------|\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			}
@@ -511,14 +507,14 @@ public class MobsPrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetMobTypes") + "\n";
 				for (String s : getTameTypes(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 				}
 				if (context.getSessionData(pref + CK.S_TAME_AMOUNTS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetTameAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetTameAmounts") + "\n";
 					for (Integer i : getTameAmounts(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -668,14 +664,14 @@ public class MobsPrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetShearColors") + "\n";
 				for (String s : getShearColors(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 				}
 				if (context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetShearAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetShearAmounts") + "\n";
 					for (Integer i : getShearAmounts(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";

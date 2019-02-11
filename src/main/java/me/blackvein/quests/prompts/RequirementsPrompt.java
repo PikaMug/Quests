@@ -74,7 +74,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetPerms") + "\n";
 			List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
 			for (String s : perms) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 			}
 		}
 		if (context.getSessionData(CK.REQ_QUEST) == null) {
@@ -83,7 +83,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuest") + "\n";
 			List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
 			for (String s : qs) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 			}
 		}
 		if (context.getSessionData(CK.REQ_QUEST_BLOCK) == null) {
@@ -92,7 +92,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestBlocks") + "\n";
 			List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
 			for (String s : qs) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 			}
 		}
 		if (plugin.getDependencies().getMcmmo() != null) {
@@ -103,7 +103,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
 				List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
 				for (String s : skills) {
-					text += ChatColor.GRAY + "    - " + ChatColor.DARK_GREEN + s + ChatColor.RESET + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN + amounts.get(skills.indexOf(s)) + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN + amounts.get(skills.indexOf(s)) + "\n";
 				}
 			}
 		} else {
@@ -351,7 +351,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
 				for (ItemStack is : getItems(context)) {
-					text += ChatColor.GRAY + "    - " + ItemUtil.getDisplayString(is) + "\n";
+					text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqAddItem") + "\n";
 				if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
@@ -359,7 +359,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetRemoveItems") + "\n";
 					for (Boolean b : getRemoveItems(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -658,7 +658,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				@SuppressWarnings("unchecked")
 				LinkedList<String> skills = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
 				for (String skill : skills) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + skill + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + skill + "\n";
 				}
 			}
 			if (cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) == null) {
@@ -668,7 +668,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				@SuppressWarnings("unchecked")
 				LinkedList<Integer> amounts = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
 				for (int i : amounts) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 				}
 			}
 			text += ChatColor.BOLD + "" + ChatColor.GREEN + "3" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("done");
