@@ -45,7 +45,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 	private boolean hasObjective = false;
 
 	public CreateStagePrompt(Quests plugin, int stageNum, QuestFactory qf) {
-		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22");
+		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17");
 		this.plugin = plugin;
 		this.stageNum = stageNum;
 		this.pref = "stage" + stageNum;
@@ -209,7 +209,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		} else if (input.equalsIgnoreCase("5")) {
 			return new KillPlayerPrompt();
 		} else if (input.equalsIgnoreCase("6")) {
-			return new ReachLocationPrompt();
+			return new ReachListPrompt();
 		} else if (input.equalsIgnoreCase("7")) {
 			return new PasswordListPrompt();
 		} else if (input.equalsIgnoreCase("8")) {
@@ -483,8 +483,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorReachLocs") + " -\n";
 			if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocations") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("stageEditorSetLocationRadii") + " (" + Lang.get("stageEditorNoLocationsSet") + ")\n";
-				text += ChatColor.GRAY + "3 - " + Lang.get("stageEditorSetLocationNames") + " (" + Lang.get("stageEditorNoLocationsSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorSetLocationRadii") + " (" + Lang.get("stageEditorNoLocationsSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorSetLocationNames") + " (" + Lang.get("stageEditorNoLocationsSet") + ")\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -493,7 +493,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					text += ChatColor.GRAY + "     - " + ChatColor.DARK_AQUA + s + "\n";
 				}
 				if (context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS) == null) {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocationRadii") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetLocationRadii") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocationRadii") + "\n";
 					for (Integer i : getLocationRadii(context)) {
@@ -501,7 +501,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					}
 				}
 				if (context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES) == null) {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocationNames") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetLocationNames") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetLocationNames") + "\n";
 					for (String s : getLocationNames(context)) {
