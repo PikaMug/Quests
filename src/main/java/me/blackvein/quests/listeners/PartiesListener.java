@@ -2,6 +2,7 @@ package me.blackvein.quests.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -10,32 +11,37 @@ import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyPostDelet
 import com.alessiodp.parties.api.events.bukkit.player.BukkitPartiesPlayerPostJoinEvent;
 import com.alessiodp.parties.api.events.bukkit.player.BukkitPartiesPlayerPostLeaveEvent;
 
+import me.blackvein.quests.util.Lang;
+
 public class PartiesListener implements Listener {
-	//TODO add configurable strings
 	
 	@EventHandler
 	public void onPartyCreate(BukkitPartiesPartyPostCreateEvent event) {
-		Bukkit.getServer().getPlayer(event.getCreator().getPlayerUUID()).sendMessage(ChatColor.YELLOW + "Players added to this party may perform quests together!");
+		Bukkit.getServer().getPlayer(event.getCreator().getPlayerUUID()).sendMessage(ChatColor.YELLOW + Lang.get("questPartiesCreate"));
 	}
 	
 	@EventHandler
 	public void onPartyDeleteEvent(BukkitPartiesPartyPostDeleteEvent event) {
-		Bukkit.getServer().getPlayer(event.getCommandSender().getPlayerUUID()).sendMessage(ChatColor.RED + "The quest party was disbanded.");
+		Bukkit.getServer().getPlayer(event.getCommandSender().getPlayerUUID()).sendMessage(ChatColor.RED + Lang.get("questPartiesDelete"));
 	}
 	
 	@EventHandler
 	public void onPlayerJoinEvent(BukkitPartiesPlayerPostJoinEvent event) {
 		if (event.isInvited()) {
-			Bukkit.getServer().getPlayer(event.getInviter()).sendMessage(ChatColor.GREEN + event.getPartyPlayer().getName() + " can now perform quests with you!");
+			Player i = Bukkit.getServer().getPlayer(event.getInviter());
+			i.sendMessage(ChatColor.GREEN + Lang.get(i, "questPartiesInvite").replace("<player>", i.getName()));
 		}
-		Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID()).sendMessage(ChatColor.GREEN + "You can now perform quests with " + event.getParty().getName() + ".");
+		Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
+		p.sendMessage(ChatColor.GREEN + Lang.get(p, "questPartiesJoin").replace("<player>", p.getName()));
 	}
 	
 	@EventHandler
 	public void onPlayerLeaveEvent(BukkitPartiesPlayerPostLeaveEvent event) {
 		if (event.isKicked()) {
-			Bukkit.getServer().getPlayer(event.getKicker().getPlayerUUID()).sendMessage(ChatColor.RED + event.getPartyPlayer().getName() + " can no longer perform quests with you.");
+			Player k = Bukkit.getServer().getPlayer(event.getKicker().getPlayerUUID());
+			k.sendMessage(ChatColor.RED + Lang.get(k, "questPartiesKicked").replace("<player>", k.getName()));
 		}
-		Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID()).sendMessage(ChatColor.RED + "You can no longer perform quests with " + event.getParty().getName() + ".");
+		Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
+		p.sendMessage(ChatColor.RED + Lang.get(p, "questPartiesLeave").replace("<player>", p.getName()));
 	}
 }
