@@ -403,7 +403,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.RED + Lang.get("eventEditorDeletePrompt") + " \"" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + "\"?\n";
+			String text = ChatColor.RED + Lang.get("eventEditorDeletePrompt") + "(" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")";
 			text += ChatColor.YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
 			return text;
 		}
@@ -693,7 +693,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.RED + Lang.get("eventEditorFinishAndSave") + " \"" + ChatColor.GOLD + (String) context.getSessionData(CK.E_NAME) + ChatColor.RED + "\"?\n";
+			String text = ChatColor.RED + Lang.get("eventEditorFinishAndSave") + "(" + ChatColor.GOLD + (String) context.getSessionData(CK.E_NAME) + ChatColor.RED + ")";
 			if (modified.isEmpty() == false) {
 				text += ChatColor.RED + Lang.get("eventEditorModifiedNote") + "\n";
 				for (String s : modified) {
