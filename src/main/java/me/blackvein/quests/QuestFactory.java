@@ -1773,7 +1773,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.RED + Lang.get("questEditorDeleted") + " \"" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\"?\n";
+			String text = ChatColor.RED + Lang.get("questEditorDeleted") + " (" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + ")";
 			text += ChatColor.YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
 			return text;
 		}
