@@ -2209,7 +2209,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static String parseString(String s, Quest quest) {
 		String parsed = parseString(s);
 		if (parsed.contains("<npc>")) {
-			parsed = parsed.replace("<npc>", quest.npcStart.getName());
+			if (quest.npcStart != null) {
+				parsed = parsed.replace("<npc>", quest.npcStart.getName());
+			} else {
+				Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
+			}
 		}
 		return parsed;
 	}
