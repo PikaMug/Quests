@@ -24,7 +24,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Villager.Career;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 
@@ -39,6 +42,7 @@ public class LocaleQuery {
 	private Map<String, String> oldPotions = createPotionKeys();
 	private Map<String, String> oldLingeringPotions = createLingeringPotionKeys();
 	private Map<String, String> oldSplashPotions = createSplashPotionKeys();
+	private Map<String, String> oldEntities = createEntityKeys();
 	
 	public LocaleQuery(Quests plugin) {
 		this.plugin = plugin;
@@ -148,16 +152,24 @@ public class LocaleQuery {
 	 * @param player The player for whom the message is to be sent
 	 * @param message The message to be sent to the player
 	 * @param type The entity type to be translated
+	 * @param career Villager career if applicable, or null
 	 */
-	@SuppressWarnings("deprecation")
-	public void sendMessage(Player player, String message, EntityType type) {
+	public void sendMessage(Player player, String message, EntityType type, String extra) {
 		if (type == null ) {
 			return;
 		}
 		if (plugin.getSettings().canTranslateItems()) {
 			String key = "";
 			if (oldVersion) {
-				key = "entity." + type.getName() + ".name";
+				if (type.name().equals("VILLAGER") && Career.valueOf(extra) != null) {
+					key = oldEntities.get(type.name() + "." + Career.valueOf(extra).name());
+				} else if (type.name().equals("OCELOT") && Ocelot.Type.valueOf(extra) != null){
+					key =  oldEntities.get(type.name() + "." + Ocelot.Type.valueOf(extra).name());
+				} else if (type.name().equals("RABBIT") && Rabbit.Type.valueOf(extra).equals(Rabbit.Type.THE_KILLER_BUNNY)) {
+					key = oldEntities.get(type.name() + "." + Rabbit.Type.valueOf(extra).name());
+				} else {
+					key = oldEntities.get(type.name());
+				}
 			} else {
 				key = "entity.minecraft." + type.toString().toLowerCase();
 			}
@@ -1100,6 +1112,107 @@ public class LocaleQuery {
     	keys.put("WEAKNESS", "lingering_potion.effect.weakness");
     	keys.put("SLOW_FALLING", "lingering_potion.effect.levitation");
     	keys.put("LUCK", "lingering_potion.effect.luck");
+		return keys;
+    }
+    
+    public Map<String, String> createEntityKeys() {
+    	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+    	keys.put("DROPPED_ITEM", "entity.Item.name=Item");
+    	keys.put("EXPERIENCE_ORB", "entity.XPOrb.name=Experience Orb");
+    	keys.put("SMALL_FIREBALL", "entity.SmallFireball.name=Small Fireball");
+    	keys.put("FIREBALL", "entity.Fireball.name=Fireball");
+    	keys.put("DRAGON_FIREBALL", "entity.DragonFireball.name=Dragon Fireball");
+    	keys.put("SPLASH_POTION", "item.splash_potion.name"); // added
+    	keys.put("LINGERING_POTION", "item.lingering_potion.name"); // added
+    	keys.put("ARROW", "entity.Arrow.name=Arrow");
+    	keys.put("SNOWBALL", "entity.Snowball.name=Snowball");
+    	keys.put("PAINTING", "entity.Painting.name=Painting");
+    	keys.put("ARMOR_STAND", "entity.ArmorStand.name=Armor Stand");
+    	keys.put("CREEPER", "entity.Creeper.name=Creeper");
+    	keys.put("SKELETON", "entity.Skeleton.name=Skeleton");
+    	keys.put("SPIDER", "entity.Spider.name=Spider");
+    	keys.put("GIANT", "entity.Giant.name=Giant");
+    	keys.put("ZOMBIE", "entity.Zombie.name=Zombie");
+    	keys.put("SLIME", "entity.Slime.name=Slime");
+    	keys.put("GHAST", "entity.Ghast.name=Ghast");
+    	keys.put("PIG_ZOMBIE", "entity.PigZombie.name=Zombie Pigman");
+    	keys.put("ENDERMAN", "entity.Enderman.name=Enderman");
+    	keys.put("ENDERMITE", "entity.Endermite.name=Endermite");
+    	keys.put("SILVERFISH", "entity.Silverfish.name=Silverfish");
+    	keys.put("CAVE_SPIDER", "entity.CaveSpider.name=Cave Spider");
+    	keys.put("BLAZE", "entity.Blaze.name=Blaze");
+    	keys.put("MAGMA_CUBE", "entity.LavaSlime.name=Magma Cube");
+    	keys.put("MUSHROOM_COW", "entity.MushroomCow.name=Mooshroom");
+    	keys.put("VILLAGER", "entity.Villager.name=Villager");
+    	keys.put("ZOMBIE_VILLAGER", "entity.Villager.name=Villager"); // added
+    	keys.put("IRON_GOLEM", "entity.VillagerGolem.name=Iron Golem");
+    	keys.put("SNOWMAN", "entity.SnowMan.name=Snow Golem");
+    	keys.put("ENDER_DRAGON", "entity.EnderDragon.name=Ender Dragon");
+    	keys.put("WITHER", "entity.WitherBoss.name=Wither");
+    	keys.put("WITCH", "entity.Witch.name=Witch");
+    	keys.put("GUARDIAN", "entity.Guardian.name=Guardian");
+    	keys.put("SHULKER", "entity.Shulker.name=Shulker");
+    	keys.put("POLAR_BEAR", "entity.PolarBear.name=Polar Bear");
+    	keys.put("EVOKER", "entity.EvocationIllager.name=Evoker");
+    	keys.put("EVOKER_FANGS", "entity.EvocationIllager.name=Evoker");
+    	keys.put("VEX", "entity.Vex.name=Vex");
+    	keys.put("VINDICATOR", "entity.VindicationIllager.name=Vindicator");
+    	keys.put("PARROT", "entity.Parrot.name=Parrot");
+    	keys.put("ILLUSIONER", "entity.IllusionIllager.name=Illusioner");
+    	keys.put("VILLAGER.FARMER", "entity.Villager.farmer=Farmer");
+    	keys.put("VILLAGER.FISHERMAN", "entity.Villager.fisherman=Fisherman");
+    	keys.put("VILLAGER.SHEPHERD", "entity.Villager.shepherd=Shepherd");
+    	keys.put("VILLAGER.FLETCHER", "entity.Villager.fletcher=Fletcher");
+    	keys.put("VILLAGER.LIBRARIAN", "entity.Villager.librarian=Librarian");
+    	keys.put("VILLAGER.CLERIC", "entity.Villager.cleric=Cleric");
+    	keys.put("VILLAGER.ARMORER", "entity.Villager.armor=Armorer");
+    	keys.put("VILLAGER.WEAPON_SMITH", "entity.Villager.weapon=Weapon Smith");
+    	keys.put("VILLAGER.TOOL_SMITH", "entity.Villager.tool=Tool Smith");
+    	keys.put("VILLAGER.BUTCHER", "entity.Villager.butcher=Butcher");
+    	keys.put("VILLAGER.LEATHERWORKER", "entity.Villager.leather=Leatherworker");
+    	keys.put("VILLAGER.NITWIT", "entity.Villager.nitwit=Nitwit");
+    	keys.put("VILLAGER.CARTOGRAPHER", "entity.Villager.cartographer=Cartographer");
+    	keys.put("PIG", "entity.Pig.name=Pig");
+    	keys.put("SHEEP", "entity.Sheep.name=Sheep");
+    	keys.put("COW", "entity.Cow.name=Cow");
+    	keys.put("CHICKEN", "entity.Chicken.name=Chicken");
+    	keys.put("SQUID", "entity.Squid.name=Squid");
+    	keys.put("WOLF", "entity.Wolf.name=Wolf");
+    	keys.put("OCELOT", "entity.Ozelot.name=Ocelot");
+    	keys.put("BLACK_CAT", "entity.Cat.name=Cat");
+    	keys.put("RED_CAT", "entity.Cat.name=Cat"); // added
+    	keys.put("SIAMESE_CAT", "entity.Cat.name=Cat"); // added
+    	keys.put("BAT", "entity.Bat.name=Bat");
+    	keys.put("HORSE", "entity.horse.name=Horse");
+    	keys.put("DONKEY", "entity.donkey.name=Donkey");
+    	keys.put("MULE", "entity.mule.name=Mule");
+    	keys.put("SKELETON_HORSE", "entity.skeletonhorse.name=Skeleton Horse");
+    	keys.put("ZOMBIE_HORSE", "entity.zombiehorse.name=Zombie Horse");
+    	keys.put("RABBIT", "entity.Rabbit.name=Rabbit");
+    	keys.put("RABBIT.THE_KILLER_BUNNY", "entity.KillerBunny.name=The Killer Bunny");
+    	keys.put("LLAMA", "entity.Llama.name=Llama");
+    	keys.put("LLAMA_SPIT", "entity.Llama.name=Llama"); // added
+    	keys.put("PRIMED_TNT", "entity.PrimedTnt.name=Block of TNT");
+    	keys.put("FALLING_BLOCK", "entity.FallingSand.name=Falling Block");
+    	keys.put("MINECART", "entity.Minecart.name=Minecart");
+    	keys.put("MINECART_HOPPER", "entity.MinecartHopper.name=Minecart with Hopper");
+    	keys.put("MINECART_CHEST", "entity.MinecartChest.name=Minecart with Chest");
+    	keys.put("MINECART_COMMAND", "item.minecartCommandBlock.name"); // added
+    	keys.put("MINECART_FURNACE", "item.minecartFurnace.name"); // added
+    	keys.put("MINECART_HOPPER", "item.minecartHopper.name"); // added
+    	keys.put("MINECART_MOB_SPAWNER", "entity.Minecart.name=Minecart"); // added
+    	keys.put("MINECART_TNT", "item.minecartTnt.name"); // added
+    	keys.put("BOAT", "entity.Boat.name=Boat");
+    	keys.put("UNKNOWN", "entity.generic.name=unknown");
+    	keys.put("SPECTRAL_ARROW", "item.spectral_arrow.name"); // added
+    	keys.put("TIPPED_ARROW", "item.tipped_arrow.name"); // added
+    	keys.put("ENDER_CRYSTAL", "item.end_crystal.name"); // added 
+    	keys.put("ENDER_PEARL", "item.enderPearl.name"); // added
+    	keys.put("ENDER_SIGNAL", "item.end_crystal.name"); // added
+    	keys.put("LEASH_HITCH", "item.leash.name"); // added
+    	keys.put("ITEM_FRAME", "item.frame.name"); // added
+    	keys.put("FISHING_HOOK", "item.fishingRod.name"); // added
+    	keys.put("COMPLEX_PART", "entity.EnderDragon.name=Ender Dragon"); // added
 		return keys;
     }
 }

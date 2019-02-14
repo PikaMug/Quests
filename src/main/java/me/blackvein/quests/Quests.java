@@ -712,7 +712,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						try {
 							EntityType et = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
 							if (et.equals(type)) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<mob>"), type);
+								//TODO account for extra data like Villager career
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<mob>"), type, null);
 								break;
 							}
 						} catch (IllegalArgumentException iae) {
@@ -727,7 +728,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							EntityType type = e.getKey();
 							EntityType et = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
 							if (et.equals(type)) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<mob>"), type);
+								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<mob>"), type, null);
 								break;
 							}
 						} catch (IllegalArgumentException iae) {

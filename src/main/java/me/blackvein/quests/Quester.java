@@ -1489,8 +1489,8 @@ public class Quester {
 	 *            Enchantment being applied by user
 	 * @param mob
 	 *            Mob to be killed or tamed
-	 * @param player
-	 *            Currently unused
+	 * @param extra
+	 *            Extra mob enum like career or ocelot type
 	 * @param npc
 	 *            NPC to talk to or kill
 	 * @param location
@@ -1504,7 +1504,7 @@ public class Quester {
 	 */
 	@SuppressWarnings("deprecation")
 	public void finishObjective(Quest quest, String objective, ItemStack increment, ItemStack goal, Enchantment enchantment, 
-			EntityType mob, String player, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
+			EntityType mob, String extra, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
 		Player p = getPlayer();
 		if (getCurrentStage(quest).objectiveOverride != null) {
 			if (testComplete(quest)) {
@@ -1607,7 +1607,7 @@ public class Quester {
 		} else if (objective.equalsIgnoreCase("killMob")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill") + " <mob>";
 			message = message + " " + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob)) + "/" + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob));
-			plugin.getLocaleQuery().sendMessage(p, message, mob);
+			plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1636,7 +1636,7 @@ public class Quester {
 		} else if (objective.equalsIgnoreCase("tameMob")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame") + " <mob>";
 			message = message + " " + getCurrentStage(quest).mobsToTame.get(mob) + "/" + getCurrentStage(quest).mobsToTame.get(mob);
-			plugin.getLocaleQuery().sendMessage(p, message, mob);
+			plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
