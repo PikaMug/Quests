@@ -751,7 +751,7 @@ public class LocaleQuery {
     	keys.put("WOOD_PICKAXE", "item.pickaxeWood.name");
     	keys.put("WOOD_AXE", "item.hatchetWood.name");
     	keys.put("STONE_SWORD", "item.swordStone.name");
-    	keys.put("STONE_SWORD", "item.shovelStone.name");
+    	keys.put("STONE_SPADE", "item.shovelStone.name");
     	keys.put("STONE_PICKAXE", "item.pickaxeStone.name");
     	keys.put("STONE_AXE", "item.hatchetStone.name");
     	keys.put("DIAMOND_SWORD", "item.swordDiamond.name");
