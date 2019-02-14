@@ -152,7 +152,7 @@ public class LocaleQuery {
 	 * @param player The player for whom the message is to be sent
 	 * @param message The message to be sent to the player
 	 * @param type The entity type to be translated
-	 * @param extra Carreer, Ocelot, or Rabbit type if applicable
+	 * @param extra Carrer, Ocelot, or Rabbit type if applicable
 	 */
 	public void sendMessage(Player player, String message, EntityType type, String extra) {
 		if (type == null ) {
