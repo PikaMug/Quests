@@ -198,7 +198,7 @@ public class PlayerListener implements Listener {
 	}
 
 	@SuppressWarnings("deprecation") // since 1.13
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent evt) {
 		EquipmentSlot e = null;
 		try {
@@ -212,12 +212,14 @@ public class PlayerListener implements Listener {
     				final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
     				final Player player = evt.getPlayer();
     				boolean hasObjective = false;
-    				for (Quest quest : quester.getCurrentQuests().keySet()) {
-    					if (quester.containsObjective(quest, "useBlock")) {
-    						ItemStack i = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
-    						quester.useBlock(quest, i);
-    						hasObjective = true;
-    					}
+    				if (evt.isCancelled() == false) {
+    					for (Quest quest : quester.getCurrentQuests().keySet()) {
+        					if (quester.containsObjective(quest, "useBlock")) {
+        						ItemStack i = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
+        						quester.useBlock(quest, i);
+        						hasObjective = true;
+        					}
+        				}
     				}
     				if (!hasObjective) {
     					if (plugin.getQuestFactory().getSelectedBlockStarts().containsKey(evt.getPlayer().getUniqueId())) {
