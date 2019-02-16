@@ -437,26 +437,28 @@ public class PlayerListener implements Listener {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.containsObjective(quest, "breakBlock")) {
-					if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false && evt.isCancelled() == false) {
-						ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
-						quester.breakBlock(quest, i);
+				if (evt.isCancelled() == false) {
+					if (quester.containsObjective(quest, "breakBlock")) {
+						if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false) {
+							ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
+							quester.breakBlock(quest, i);
+						}
 					}
-				}
-				if (quester.containsObjective(quest, "placeBlock")) {
-					for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
-						if (is.getAmount() > 0) {
-							if (evt.isCancelled() == false) {
+					if (quester.containsObjective(quest, "placeBlock")) {
+						for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
+							if (is.getAmount() > 0) {
 								int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
 								is.setAmount(is.getAmount() - 1);
 								quester.getQuestData(quest).blocksPlaced.set(index, is);
 							}
 						}
 					}
-				}
-				if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS) && quester.containsObjective(quest, "cutBlock")) {
-					ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
-					quester.cutBlock(quest, i);
+					if (quester.containsObjective(quest, "cutBlock")) {
+						if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
+							ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
+							quester.cutBlock(quest, i);
+						}
+					}
 				}
 			}
 		}

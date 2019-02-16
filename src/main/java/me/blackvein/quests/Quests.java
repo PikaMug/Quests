@@ -627,7 +627,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			try {
 				// TODO ensure all applicable strings are translated
 				String sbegin = obj.substring(obj.indexOf(ChatColor.AQUA.toString()) + 2);
-				String serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
+				String serial = "";
+				if (sbegin.contains(ChatColor.GREEN.toString())) {
+					serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
+				} else if (sbegin.contains(ChatColor.GRAY.toString())) {
+					serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GRAY.toString()));
+				}
 				Stage stage = quester.getCurrentStage(quest);
 				if (obj.contains(Lang.get(quester.getPlayer(), "break"))) {
 					for (ItemStack is : stage.blocksToBreak) {
@@ -1392,19 +1397,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing break-block-durability:");
 				}
 			}
+			int breakIndex = 0;
 			for (String s : breaknames) {
 				ItemStack is;
-				if (breakdurability.get(breaknames.indexOf(s)) != -1) {
-					is = ItemUtil.processItemStack(s, breakamounts.get(breaknames.indexOf(s)), breakdurability.get(breaknames.indexOf(s)));
+				if (breakdurability.get(breakIndex) != -1) {
+					is = ItemUtil.processItemStack(s, breakamounts.get(breakIndex), breakdurability.get(breakIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, breakamounts.get(breaknames.indexOf(s)), (short) 0);
+					is = ItemUtil.processItemStack(s, breakamounts.get(breakIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToBreak.add(is);
 				} else {
 					stageFailed("" + s + " inside break-block-names: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid item name!");
 				}
+				breakIndex++;
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-names"), String.class)) {
@@ -1431,19 +1438,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing damage-block-durability:");
 				}
 			}
+			int damageIndex = 0;
 			for (String s : damagenames) {
 				ItemStack is;
-				if (damagedurability.get(damagenames.indexOf(s)) != -1) {
-					is = ItemUtil.processItemStack(s, damageamounts.get(damagenames.indexOf(s)), damagedurability.get(damagenames.indexOf(s)));
+				if (damagedurability.get(damageIndex) != -1) {
+					is = ItemUtil.processItemStack(s, damageamounts.get(damageIndex), damagedurability.get(damageIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, damageamounts.get(damagenames.indexOf(s)), (short) 0);
+					is = ItemUtil.processItemStack(s, damageamounts.get(damageIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToDamage.add(is);
 				} else {
 					stageFailed("" + s + " inside damage-block-names: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid item name!");
 				}
+				damageIndex++;
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".place-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-names"), String.class)) {
@@ -1470,19 +1479,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing place-block-durability:");
 				}
 			}
+			int placeIndex = 0;
 			for (String s : placenames) {
 				ItemStack is;
-				if (placedurability.get(placenames.indexOf(s)) != -1) {
-					is = ItemUtil.processItemStack(s, placeamounts.get(placenames.indexOf(s)), placedurability.get(placenames.indexOf(s)));
+				if (placedurability.get(placeIndex) != -1) {
+					is = ItemUtil.processItemStack(s, placeamounts.get(placeIndex), placedurability.get(placeIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, placeamounts.get(placenames.indexOf(s)), (short) 0);
+					is = ItemUtil.processItemStack(s, placeamounts.get(placeIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToPlace.add(is);
 				} else {
 					stageFailed("" + s + " inside place-block-names: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid item name!");
 				}
+				placeIndex++;
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".use-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-names"), String.class)) {
@@ -1509,19 +1520,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing use-block-durability:");
 				}
 			}
+			int useIndex = 0;
 			for (String s : usenames) {
 				ItemStack is;
-				if (usedurability.get(usenames.indexOf(s)) != -1) {
-					is = ItemUtil.processItemStack(s, useamounts.get(usenames.indexOf(s)), usedurability.get(usenames.indexOf(s)));
+				if (usedurability.get(useIndex) != -1) {
+					is = ItemUtil.processItemStack(s, useamounts.get(useIndex), usedurability.get(useIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, useamounts.get(usenames.indexOf(s)), (short) 0);
+					is = ItemUtil.processItemStack(s, useamounts.get(useIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToUse.add(is);
 				} else {
 					stageFailed("" + s + " inside use-block-names: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid item name!");
 				}
+				useIndex++;
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-names"), String.class)) {
@@ -1548,19 +1561,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing cut-block-durability:");
 				}
 			}
+			int cutIndex = 0;
 			for (String s : cutnames) {
 				ItemStack is;
-				if (cutdurability.get(cutnames.indexOf(s)) != -1) {
-					is = ItemUtil.processItemStack(s, cutamounts.get(cutnames.indexOf(s)), cutdurability.get(cutnames.indexOf(s)));
+				if (cutdurability.get(cutIndex) != -1) {
+					is = ItemUtil.processItemStack(s, cutamounts.get(cutIndex), cutdurability.get(cutIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, cutamounts.get(cutnames.indexOf(s)), (short) 0);
+					is = ItemUtil.processItemStack(s, cutamounts.get(cutIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToCut.add(is);
 				} else {
 					stageFailed("" + s + " inside cut-block-names: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid item name!");
 				}
+				cutIndex++;
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft"), String.class)) {

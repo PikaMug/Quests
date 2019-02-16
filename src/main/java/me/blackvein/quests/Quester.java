@@ -1013,7 +1013,7 @@ public class Quester {
 			if (getQuestData(quest).blocksBroken.contains(broken)) {
 				getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
 				if (broken.getAmount() == toBreak.getAmount()) {
-					finishObjective(quest, "breakBlock", m, null, null, null, null, null, null, null, null, null);
+					finishObjective(quest, "breakBlock", m, toBreak, null, null, null, null, null, null, null, null);
 				}
 			}
 		}
@@ -1063,7 +1063,7 @@ public class Quester {
 			if (getQuestData(quest).blocksDamaged.contains(damaged)) {
 				getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
 				if (damaged.getAmount() == toDamage.getAmount()) {
-					finishObjective(quest, "damageBlock", m, null, null, null, null, null, null, null, null, null);
+					finishObjective(quest, "damageBlock", m, toDamage, null, null, null, null, null, null, null, null);
 				}
 			}
 		}
@@ -1113,7 +1113,7 @@ public class Quester {
 			if (getQuestData(quest).blocksPlaced.contains(placed)) {
 				getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newplaced);
 				if (placed.getAmount() == toPlace.getAmount()) {
-					finishObjective(quest, "placeBlock", m, null, null, null, null, null, null, null, null, null);
+					finishObjective(quest, "placeBlock", m, toPlace, null, null, null, null, null, null, null, null);
 				}
 			}
 		}
@@ -1163,7 +1163,7 @@ public class Quester {
 			if (getQuestData(quest).blocksUsed.contains(used)) {
 				getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
 				if (used.getAmount() == toUse.getAmount()) {
-					finishObjective(quest, "useBlock", m, null, null, null, null, null, null, null, null, null);
+					finishObjective(quest, "useBlock", m, toUse, null, null, null, null, null, null, null, null);
 				}
 			}
 		}
@@ -1213,7 +1213,7 @@ public class Quester {
 			if (getQuestData(quest).blocksCut.contains(cut)) {
 				getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
 				if (cut.getAmount() == toCut.getAmount()) {
-					finishObjective(quest, "cutBlock", m, null, null, null, null, null, null, null, null, null);
+					finishObjective(quest, "cutBlock", m, toCut, null, null, null, null, null, null, null, null);
 				}
 			}
 		}
@@ -1482,17 +1482,17 @@ public class Quester {
 	 * @param objective
 	 *            Type of objective, e.g. "password" or "damageBlock"
 	 * @param increment
-	 *            Material being damaged, broken, etc. (amount usually = 1)
+	 *            Final amount material being applied
 	 * @param goal
-	 *            Material being delivered (amount usually = required number of item)
+	 *            Total required amount of material
 	 * @param enchantment
 	 *            Enchantment being applied by user
 	 * @param mob
-	 *            Mob to be killed or tamed
+	 *            Mob being killed or tamed
 	 * @param extra
 	 *            Extra mob enum like career or ocelot type
 	 * @param npc
-	 *            NPC to talk to or kill
+	 *            NPC being talked to or killed
 	 * @param location
 	 *            Location for user to reach
 	 * @param color
@@ -1522,45 +1522,35 @@ public class Quester {
 			}
 		} else if (objective.equalsIgnoreCase("breakBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break") + " <item>";
-			String stack = getQuestData(quest).blocksBroken.toString();
-			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
-			message = message + " " + amount + "/" + amount;
+			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
 			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("damageBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "damage") + " <item>";
-			String stack = getQuestData(quest).blocksDamaged.toString();
-			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
-			message = message + " " + amount + "/" + amount;
+			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
 			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("placeBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "place") + " <item>";
-			String stack = getQuestData(quest).blocksPlaced.toString();
-			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
-			message = message + " " + amount + "/" + amount;
+			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
 			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("useBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "use") + " <item>";
-			String stack = getQuestData(quest).blocksUsed.toString();
-			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
-			message = message + " " + amount + "/" + amount;
+			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
 			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("cutBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "cut") + " <item>";
-			String stack = getQuestData(quest).blocksCut.toString();
-			String amount = stack.substring(stack.lastIndexOf(" x ") + 3).replace("}]", "");
-			message = message + " " + amount + "/" + amount;
+			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
 			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			if (testComplete(quest)) {
 				quest.nextStage(this);
