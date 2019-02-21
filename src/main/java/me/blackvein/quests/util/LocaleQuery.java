@@ -91,7 +91,7 @@ public class LocaleQuery {
 					}
 				} else {
 					ItemStack i = new ItemStack(material, 1, durability);
-					if (durability >= 0 && i.getItemMeta() instanceof PotionMeta ) {
+					if (durability >= 0 && i.getItemMeta() instanceof PotionMeta) {
 						if (hasBasePotionData) {
 							if (material.equals(Material.POTION)) {
 								matKey = oldPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
@@ -152,7 +152,7 @@ public class LocaleQuery {
 	 * @param player The player for whom the message is to be sent
 	 * @param message The message to be sent to the player
 	 * @param type The entity type to be translated
-	 * @param extra Carrer, Ocelot, or Rabbit type if applicable
+	 * @param extra Career, Ocelot, or Rabbit type if applicable
 	 */
 	public void sendMessage(Player player, String message, EntityType type, String extra) {
 		if (type == null ) {

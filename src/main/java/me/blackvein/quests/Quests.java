@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -620,131 +621,450 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 */
 	@SuppressWarnings("deprecation")
 	public void showObjectives(Quest quest, Quester quester, boolean ignoreOverrides) {
-		for (String obj : quester.getObjectives(quest, false)) {
-			if (depends.getPlaceholderApi() != null) {
-				obj = PlaceholderAPI.setPlaceholders(quester.getPlayer(), obj);
+		if (quester.getQuestData(quest) == null) {
+			getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
+			return;
+		}
+		QuestData data = quester.getQuestData(quest);
+		Stage stage = quester.getCurrentStage(quest);
+		for (ItemStack e : stage.blocksToBreak) {
+			for (ItemStack e2 : data.blocksBroken) {
+				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
+					if (e2.getAmount() < e.getAmount()) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "break") + " <item>" 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "break") + " <item>" 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					}
+				}
 			}
-			try {
-				// TODO ensure all applicable strings are translated
-				String sbegin = obj.substring(obj.indexOf(ChatColor.AQUA.toString()) + 2);
-				String serial = "";
-				if (sbegin.contains(ChatColor.GREEN.toString())) {
-					serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GREEN.toString()));
-				} else if (sbegin.contains(ChatColor.GRAY.toString())) {
-					serial = sbegin.substring(0, sbegin.indexOf(ChatColor.GRAY.toString()));
-				}
-				Stage stage = quester.getCurrentStage(quest);
-				if (obj.contains(Lang.get(quester.getPlayer(), "break"))) {
-					for (ItemStack is : stage.blocksToBreak) {
-						if (Material.matchMaterial(serial) != null) {
-							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
-								break;
-							}
+		}
+		for (ItemStack e : stage.blocksToDamage) {
+			for (ItemStack e2 : data.blocksDamaged) {
+				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
+					if (e2.getAmount() < e.getAmount()) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "damage") + " <item>" 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-					}
-				} else if (obj.contains(Lang.get(quester.getPlayer(), "damage"))) {
-					for (ItemStack is : stage.blocksToDamage) {
-						if (Material.matchMaterial(serial) != null) {
-							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
-								break;
-							}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "damage") + " <item>" 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-					}
-				} else if (obj.contains(Lang.get(quester.getPlayer(), "place"))) {
-					for (ItemStack is : stage.blocksToPlace) {
-						if (Material.matchMaterial(serial) != null) {
-							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
-								break;
-							}
-						}
-					}
-				} else if (obj.contains(Lang.get(quester.getPlayer(), "use"))) {
-					for (ItemStack is : stage.blocksToUse) {
-						if (Material.matchMaterial(serial) != null) {
-							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
-								break;
-							}
-						}
-					}
-				} else if (obj.contains(Lang.get(quester.getPlayer(), "cut"))) {
-					for (ItemStack is : stage.blocksToCut) {
-						if (Material.matchMaterial(serial) != null) {
-							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
-								break;
-							}
-						}
-					}
-				} else if (obj.contains(Lang.get(quester.getPlayer(), "craft"))) {
-					for (ItemStack is : stage.getItemsToCraft()) {
-						if (Material.matchMaterial(serial) != null) {
-							if (Material.matchMaterial(serial).equals(is.getType())) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
-								break;
-							}
-						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
 					}
 				}
-				//TODO find a better way to detect a deliver objective
-				else if (obj.contains(Lang.get(quester.getPlayer(), "deliver").split(" ")[0])) {
-					for (ItemStack is : stage.getItemsToDeliver()) {
-						if (Material.matchMaterial(serial) != null) {
-							if (Material.matchMaterial(serial).equals(is.getType())) {
-								String enchant = "";
-								if (!is.getEnchantments().isEmpty()) {
-									//TODO parse multiple enchantments?
-									localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>").replace(enchant, "<enchantment>"),
-											is.getType(), is.getDurability(), is.getEnchantments());
-									break;
-								} else {
-									localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<item>"), is.getType(), is.getDurability(), null);
-									break;
+			}
+		}
+		for (ItemStack e : stage.blocksToPlace) {
+			for (ItemStack e2 : data.blocksPlaced) {
+				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
+					if (e2.getAmount() < e.getAmount()) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "place") + " <item>" 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "place") + " <item>" 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					}
+				}
+			}
+		}
+		for (ItemStack e : stage.blocksToUse) {
+			for (ItemStack e2 : data.blocksUsed) {
+				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
+					if (e2.getAmount() < e.getAmount()) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "use") + " <item>" 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "use") + " <item>" 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					}
+				}
+			}
+		}
+		for (ItemStack e : stage.blocksToCut) {
+			for (ItemStack e2 : data.blocksCut) {
+				if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
+					if (e2.getAmount() < e.getAmount()) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "cut") + " <item>" 
+								+ ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "cut") + " <item>" 
+								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+					}
+				}
+			}
+		}
+		for (ItemStack is : stage.itemsToCraft) {
+			int crafted = 0;
+			if (data.itemsCrafted.containsKey(is)) {
+				crafted = data.itemsCrafted.get(is);
+			}
+			int amt = is.getAmount();
+			if (crafted < amt) {
+				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "craft") + " <item>" 
+						+ ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+			} else {
+				String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "craft") + " <item>" 
+						+ ChatColor.GRAY + ": " + is.getAmount() + "/" + is.getAmount();
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+			}
+		}
+		Map<Enchantment, Material> set;
+		Map<Enchantment, Material> set2;
+		Set<Enchantment> enchantSet;
+		Set<Enchantment> enchantSet2;
+		Collection<Material> matSet;
+		Enchantment enchantment = null;
+		Enchantment enchantment2 = null;
+		Material mat = null;
+		int num1;
+		int num2;
+		for (Entry<Map<Enchantment, Material>, Integer> e : stage.itemsToEnchant.entrySet()) {
+			for (Entry<Map<Enchantment, Material>, Integer> e2 : data.itemsEnchanted.entrySet()) {
+				set = e2.getKey();
+				set2 = e.getKey();
+				enchantSet = set.keySet();
+				enchantSet2 = set2.keySet();
+				for (Object o : enchantSet.toArray()) {
+					enchantment = (Enchantment) o;
+				}
+				for (Object o : enchantSet2.toArray()) {
+					enchantment2 = (Enchantment) o;
+				}
+				num1 = e2.getValue();
+				num2 = e.getValue();
+				matSet = set.values();
+				for (Object o : matSet.toArray()) {
+					mat = (Material) o;
+				}
+				if (enchantment2 == enchantment) {
+					if (num1 < num2) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "enchantItem")
+								+ ChatColor.GREEN + ": " + num1 + "/" + num2;
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
+						enchs.put(enchantment, 1);
+						localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "enchantItem")
+								+ ChatColor.GRAY + ": " + num1 + "/" + num2;
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
+						enchs.put(enchantment, 1);
+						localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
+					}
+				}
+			}
+		}
+		if (stage.fishToCatch != null) {
+			if (data.getFishCaught() < stage.fishToCatch) {
+				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "catchFish")
+						+ ChatColor.GREEN + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				quester.getPlayer().sendMessage(message);
+			} else {
+				String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "catchFish")
+						+ ChatColor.GRAY + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				quester.getPlayer().sendMessage(message);
+			}
+		}
+		for (EntityType e : stage.mobsToKill) {
+			for (EntityType e2 : data.mobsKilled) {
+				if (e == e2) {
+					if (data.mobNumKilled.size() > data.mobsKilled.indexOf(e2) 
+							&& stage.mobNumToKill.size() > stage.mobsToKill.indexOf(e)) {
+						if (data.mobNumKilled.get(data.mobsKilled.indexOf(e2)) 
+								< stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))) {
+							if (stage.locationsToKillWithin.isEmpty()) {
+								String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "kill") + " " 
+										+ ChatColor.AQUA + "<mob>" + ChatColor.GREEN + ": " 
+										+ (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
+										+ "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+								if (depends.getPlaceholderApi() != null) {
+									message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 								}
+								localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+							} else {
+								String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "killAtLocation") + " " 
+										+ ChatColor.AQUA + "<mob>" + ChatColor.GREEN + ": " 
+										+ (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
+										+ "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+								message = message.replace("<location>", stage.killNames.get(stage.mobsToKill.indexOf(e)));
+								if (depends.getPlaceholderApi() != null) {
+									message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+								}
+								localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+							}
+						} else {
+							if (stage.locationsToKillWithin.isEmpty()) {
+								String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "kill") + " " 
+										+ ChatColor.AQUA + "<mob>" + ChatColor.GRAY + ": " 
+										+ (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
+										+ "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+								if (depends.getPlaceholderApi() != null) {
+									message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+								}
+								localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+							} else {
+								String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "killAtLocation") + " " 
+										+ ChatColor.AQUA + "<mob>" + ChatColor.GRAY + ": " 
+										+ (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
+										+ "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+								message = message.replace("<location>", stage.killNames.get(stage.mobsToKill.indexOf(e)));
+								if (depends.getPlaceholderApi() != null) {
+									message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+								}
+								localeQuery.sendMessage(quester.getPlayer(), message, e, null);
 							}
 						}
 					}
-				} else if (obj.contains(Lang.get(quester.getPlayer(), "kill"))) {
-					if (stage.mobsToKill == null || stage.mobsToKill.isEmpty()) {
-						// Could be Kill a Player objective
-						quester.getPlayer().sendMessage(obj);
-						return;
-					}
-					for (EntityType type : stage.mobsToKill) {
-						try {
-							EntityType et = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
-							if (et.equals(type)) {
-								//TODO account for extra data like Villager career
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<mob>"), type, null);
-								break;
-							}
-						} catch (IllegalArgumentException iae) {
-							// Could be Kill a Player objective 
-							quester.getPlayer().sendMessage(obj);
-						}
-						break;
-					}
-				} else if (obj.contains(Lang.get(quester.getPlayer(), "tame"))) {
-					for (Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
-						try {
-							EntityType type = e.getKey();
-							EntityType et = EntityType.valueOf(serial.toUpperCase().replace(" ", "_"));
-							if (et.equals(type)) {
-								localeQuery.sendMessage(quester.getPlayer(), obj.replace(serial, "<mob>"), type, null);
-								break;
-							}
-						} catch (IllegalArgumentException iae) {
-							// Do nothing
-						}
-					}
-				} else {
-					quester.getPlayer().sendMessage(obj);
 				}
-			} catch (IndexOutOfBoundsException e) {
-				quester.getPlayer().sendMessage(obj);
+			}
+		}
+		if (stage.playersToKill != null) {
+			if (data.getPlayersKilled() < stage.playersToKill) {
+				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "killPlayer")
+						+ ChatColor.GREEN + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				quester.getPlayer().sendMessage(message);
+			} else {
+				String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "killPlayer")
+						+ ChatColor.GRAY + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				quester.getPlayer().sendMessage(message);
+			}
+		}
+		int index = 0;
+		for (ItemStack is : stage.itemsToDeliver) {
+			int delivered = 0;
+			if (data.itemsDelivered.containsKey(is)) {
+				delivered = data.itemsDelivered.get(is);
+			}
+			int amt = is.getAmount();
+			Integer npc = stage.itemDeliveryTargets.get(index);
+			index++;
+			if (delivered < amt) {
+				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "deliver")
+						+ ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+				message = message.replace("<npc>", getNPCName(npc));
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+			} else {
+				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "deliver")
+						+ ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+				message = message.replace("<npc>", getNPCName(npc));
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+			}
+		}
+		for (Integer n : stage.citizensToInteract) {
+			for (Entry<Integer, Boolean> e : data.citizensInteracted.entrySet()) {
+				if (e.getKey().equals(n)) {
+					if (e.getValue() == false) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "talkTo");
+						message = message.replace("<npc>", getNPCName(n));
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						quester.getPlayer().sendMessage(message);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "talkTo");
+						message = message.replace("<npc>", getNPCName(n));
+						if (depends.getPlaceholderApi() != null) {
+							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+						}
+						quester.getPlayer().sendMessage(message);
+					}
+				}
+			}
+		}
+		for (Integer n : stage.citizensToKill) {
+			for (Integer n2 : data.citizensKilled) {
+				if (n.equals(n2)) {
+					if (data.citizenNumKilled.size() > data.citizensKilled.indexOf(n2) 
+							&& stage.citizenNumToKill.size() > stage.citizensToKill.indexOf(n)) {
+						if (data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
+								< stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n))) {
+							String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "kill") + " " + getNPCName(n) 
+									+ ChatColor.GREEN + " " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) 
+									+ "/" + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
+							if (depends.getPlaceholderApi() != null) {
+								message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+							}
+							quester.getPlayer().sendMessage(message);
+						} else {
+							String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "kill") + " " + getNPCName(n) 
+									+ ChatColor.GRAY + " " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) 
+									+ "/" + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
+							if (depends.getPlaceholderApi() != null) {
+								message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+							}
+							quester.getPlayer().sendMessage(message);
+						}
+					}
+				}
+			}
+		}
+		for (Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
+			for (Entry<EntityType, Integer> e2 : data.mobsTamed.entrySet()) {
+				if (e.getKey().equals(e2.getKey())) {
+					if (e2.getValue() < e.getValue()) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>" 
+								+ ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue();
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>" 
+								+ ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue();
+						localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
+					}
+				}
+			}
+		}
+		for (Entry<DyeColor, Integer> e : stage.sheepToShear.entrySet()) {
+			for (Entry<DyeColor, Integer> e2 : data.sheepSheared.entrySet()) {
+				if (e.getKey().equals(e2.getKey())) {
+					if (e2.getValue() < e.getValue()) {
+						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "shearSheep") 
+								+ ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue();
+						message = message.replace("<color>", e.getKey().name().toLowerCase());
+						quester.getPlayer().sendMessage(message);
+					} else {
+						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "shearSheep") 
+								+ ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue();
+						message = message.replace("<color>", e.getKey().name().toLowerCase());
+						quester.getPlayer().sendMessage(message);
+					}
+				}
+			}
+		}
+		for (Location l : stage.locationsToReach) {
+			for (Location l2 : data.locationsReached) {
+				if (l.equals(l2)) {
+					if (!data.hasReached.isEmpty()) {
+						if (data.hasReached.get(data.locationsReached.indexOf(l2)) == false) {
+							String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "goTo");
+							message = message.replace("<location>", stage.locationNames.get(stage.locationsToReach.indexOf(l)));
+							quester.getPlayer().sendMessage(message);
+						} else {
+							String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "goTo");
+							message = message.replace("<location>", stage.locationNames.get(stage.locationsToReach.indexOf(l)));
+							quester.getPlayer().sendMessage(message);
+						}
+					}
+				}
+			}
+		}
+		for (String s : stage.passwordDisplays) {
+			if (data.passwordsSaid.containsKey(s)) {
+				Boolean b = data.passwordsSaid.get(s);
+				if (b != null && !b) {
+					quester.getPlayer().sendMessage(ChatColor.GREEN + s);
+				} else {
+					quester.getPlayer().sendMessage(ChatColor.GRAY + s);
+				}
+			}
+		}
+		for (CustomObjective co : stage.customObjectives) {
+			int countsIndex = 0;
+			String display = co.getDisplay();
+			boolean addUnfinished = false;
+			boolean addFinished = false;
+			for (Entry<String, Integer> entry : data.customObjectiveCounts.entrySet()) {
+				if (co.getName().equals(entry.getKey())) {
+					int dataIndex = 0;
+					for (Entry<String,Object> prompt : co.getData()) {
+						String replacement = "%" + prompt.getKey() + "%";
+						try {
+							if (display.contains(replacement))
+								display = display.replace(replacement, ((String) stage.customObjectiveData.get(dataIndex).getValue()));
+						} catch (NullPointerException ne) {
+							getLogger().severe("Unable to fetch display for " + co.getName() + " on " + quest.getName());
+							ne.printStackTrace();
+						}
+						dataIndex++;
+					}
+					if (entry.getValue() < stage.customObjectiveCounts.get(countsIndex)) {
+						if (co.canShowCount()) {
+							display = display.replace("%count%", entry.getValue() + "/" + stage.customObjectiveCounts.get(countsIndex));
+						}
+						addUnfinished = true;
+					} else {
+						if (co.canShowCount()) {
+							display = display.replace("%count%", stage.customObjectiveCounts.get(countsIndex) 
+									+ "/" + stage.customObjectiveCounts.get(countsIndex));
+						}
+						addFinished = true;
+					}
+				}
+				countsIndex++;
+			}
+			if (addUnfinished) {
+				quester.getPlayer().sendMessage(ChatColor.GREEN + display);
+			}
+			if (addFinished) {
+				quester.getPlayer().sendMessage(ChatColor.GRAY + display);
 			}
 		}
 	}

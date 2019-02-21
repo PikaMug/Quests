@@ -524,7 +524,7 @@ public class Quester {
 	 * Get all objectives for a quest.
 	 * 
 	 * @param quest The quest to get objectives of
-	 * @param ignoreOverrides Whether to ignore OP-specified objectives-overrides
+	 * @param ignoreOverrides Whether to ignore objective-overrides
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
@@ -538,8 +538,9 @@ public class Quester {
 				}
 			}
 		}
-		if (getQuestData(quest) == null)
+		if (getQuestData(quest) == null) {
 			return new LinkedList<String>();
+		}
 		LinkedList<String> unfinishedObjectives = new LinkedList<String>();
 		LinkedList<String> finishedObjectives = new LinkedList<String>();
 		LinkedList<String> objectives = new LinkedList<String>();
@@ -722,15 +723,15 @@ public class Quester {
 			+ getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
 			}
 		}
-		int index2 = 0;
+		int index = 0;
 		for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
 			int delivered = 0;
 			if (getQuestData(quest).itemsDelivered.containsKey(is)) {
 				delivered = getQuestData(quest).itemsDelivered.get(is);
 			}
 			int amt = is.getAmount();
-			Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(index2);
-			index2++;
+			Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(index);
+			index++;
 			if (delivered < amt) {
 				String obj = Lang.get(getPlayer(), "deliver");
 				obj = obj.replace("<item>", ItemUtil.getName(is) + ChatColor.GREEN);
