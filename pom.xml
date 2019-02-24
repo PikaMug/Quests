@@ -5,7 +5,7 @@
     <packaging>pom</packaging>
     <groupId>me.blackvein.quests</groupId>
 
-    <artifactId>quests</artifactId>
+    <artifactId>quests-parent</artifactId>
     <version>3.6.4</version>
     <name>quests</name>
     <url>https://github.com/FlyingPikachu/Quests/</url>
