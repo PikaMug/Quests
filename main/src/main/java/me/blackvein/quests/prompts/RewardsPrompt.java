@@ -79,7 +79,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
 			List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
 			for (String cmd : commands) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + cmd + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd + "\n";
 			}
 		}
 		if (context.getSessionData(CK.REW_PERMISSION) == null) {
@@ -88,7 +88,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPermission") + "\n";
 			List<String> permissions = (List<String>) context.getSessionData(CK.REW_PERMISSION);
 			for (String perm : permissions) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + perm + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + perm + "\n";
 			}
 		}
 		if (plugin.getDependencies().getMcmmo() != null) {
@@ -99,7 +99,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
 				List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
 				for (String skill : skills) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + skill + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amounts.get(skills.indexOf(skill)) + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + skill + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amounts.get(skills.indexOf(skill)) + "\n";
 				}
 			}
 		} else {
@@ -113,7 +113,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				List<String> heroClasses = (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
 				List<Double> amounts = (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
 				for (String heroClass : heroClasses) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + ChatColor.DARK_AQUA + heroClass + " " + Lang.get("experience") + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + ChatColor.DARK_AQUA + heroClass + " " + Lang.get("experience") + "\n";
 				}
 			}
 		} else {
@@ -126,7 +126,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPhat") + "\n";
 				List<String> phatLoots = (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS);
 				for (String phatLoot : phatLoots) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + phatLoot + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + phatLoot + "\n";
 				}
 			}
 		} else {
@@ -299,7 +299,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					itemRews.add((ItemStack) context.getSessionData("tempStack"));
 					context.setSessionData(CK.REW_ITEMS, itemRews);
 				} else {
-					LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
+					List<ItemStack> itemRews = new LinkedList<ItemStack>();
 					itemRews.add((ItemStack) context.getSessionData("tempStack"));
 					context.setSessionData(CK.REW_ITEMS, itemRews);
 				}
@@ -357,7 +357,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				String[] args = input.split(Lang.get("charSemi"));
-				LinkedList<String> commands = new LinkedList<String>();
+				List<String> commands = new LinkedList<String>();
 				for (String s : args) {
 					if (s.startsWith("/")) {
 						s = s.substring(1);
@@ -383,7 +383,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<String> permissions = new LinkedList<String>();
+				List<String> permissions = new LinkedList<String>();
 				permissions.addAll(Arrays.asList(args));
 				context.setSessionData(CK.REW_PERMISSION, permissions);
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -411,14 +411,14 @@ public class RewardsPrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkills") + "\n";
 				for (String s : getSkills(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 				}
 				if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkillAmounts") + "\n";
 					for (Integer i : getSkillAmounts(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -498,7 +498,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<String> skills = new LinkedList<String>();
+				List<String> skills = new LinkedList<String>();
 				for (String s : args) {
 					if (Quests.getMcMMOSkill(s) != null) {
 						if (skills.contains(s) == false) {
@@ -531,7 +531,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] args = input.split(" ");
-				LinkedList<Integer> amounts = new LinkedList<Integer>();
+				List<Integer> amounts = new LinkedList<Integer>();
 				for (String s : args) {
 					try {
 						amounts.add(Integer.parseInt(s));
@@ -565,14 +565,14 @@ public class RewardsPrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesClasses") + "\n";
 				for (String s : getClasses(context)) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 				}
 				if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + "\n";
 					for (Double d : getClassAmounts(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + d + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + d + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -637,7 +637,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext cc) {
 			String text = ChatColor.DARK_PURPLE + Lang.get("heroesClassesTitle") + "\n";
-			LinkedList<String> list = new LinkedList<String>();
+			List<String> list = new LinkedList<String>();
 			for (HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
 				list.add(hc.getName());
 			}
@@ -658,7 +658,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] arr = input.split(" ");
-				LinkedList<String> classes = new LinkedList<String>();
+				List<String> classes = new LinkedList<String>();
 				for (String s : arr) {
 					HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(s);
 					if (hc == null) {
@@ -691,7 +691,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				String[] arr = input.split(" ");
-				LinkedList<Double> amounts = new LinkedList<Double>();
+				List<Double> amounts = new LinkedList<Double>();
 				for (String s : arr) {
 					try {
 						double d = Double.parseDouble(s);
@@ -727,7 +727,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				String[] arr = input.split(" ");
-				LinkedList<String> loots = new LinkedList<String>();
+				List<String> loots = new LinkedList<String>();
 				for (String s : arr) {
 					if (PhatLootsAPI.getPhatLoot(s) == null) {
 						String text = Lang.get("rewPhatLootsInvalid");
@@ -769,6 +769,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				CustomReward found = null;
+				// Check if we have a custom reward with the specified name
 				for (CustomReward cr : plugin.getCustomRewards()) {
 					if (cr.getName().equalsIgnoreCase(input)) {
 						found = cr;
@@ -776,6 +777,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					}
 				}
 				if (found == null) {
+					// No? Check again, but with locale sensitivity
 					for (CustomReward cr : plugin.getCustomRewards()) {
 						if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
 							found = cr;
@@ -785,31 +787,34 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 				if (found != null) {
 					if (context.getSessionData(CK.REW_CUSTOM) != null) {
+						// The custom reward may already have been added, so let's check that
 						LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
 						LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
 						if (list.contains(found.getName()) == false) {
+							// Hasn't been added yet, so let's do it
 							list.add(found.getName());
-							datamapList.add(found.datamap);
+							datamapList.add(found.getData());
 							context.setSessionData(CK.REW_CUSTOM, list);
 							context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
 						} else {
+							// Already added, so inform user
 							context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomAlreadyAdded"));
 							return new CustomRewardsPrompt();
 						}
 					} else {
+						// The custom reward hasn't been added yet, so let's do it
 						LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
-						datamapList.add(found.datamap);
+						datamapList.add(found.getData());
 						LinkedList<String> list = new LinkedList<String>();
 						list.add(found.getName());
 						context.setSessionData(CK.REW_CUSTOM, list);
 						context.setSessionData(CK.REW_CUSTOM_DATA, datamapList);
 					}
 					// Send user to the custom data prompt if there is any needed
-					if (found.datamap.isEmpty() == false) {
-						context.setSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS, found.descriptions);
+					if (found.getData().isEmpty() == false) {
+						context.setSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
 						return new RewardCustomDataListPrompt();
 					}
-					//
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomNotFound"));
 					return new CustomRewardsPrompt();
@@ -844,7 +849,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			for (String dataKey : datamapKeys) {
 				text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + dataKey;
 				if (datamap.get(dataKey) != null) {
-					text += ChatColor.GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+					text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
 				} else {
 					text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
 				}

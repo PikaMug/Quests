@@ -1,8 +1,8 @@
-# Quests
+# Quests [![Build Status](http://ci.ac3-servers.eu/buildStatus/icon?job=Quests)](http://ci.ac3-servers.eu/job/Quests/)
 
 Quests plugin for Spigot. This work depends on contributions from coders like you!
 
-## Download [![Build Status](http://ci.ac3-servers.eu/buildStatus/icon?job=Quests)](http://ci.ac3-servers.eu/job/Quests/)
+## Download
 
 Distributed exclusively through Spigot: https://www.spigotmc.org/resources/quests.3711/
 
@@ -12,8 +12,7 @@ Documentation can be found in the Wiki: https://github.com/FlyingPikachu/Quests/
 
 ## Compile
 
-Building requires Java 8 and Maven: 
-https://github.com/FlyingPikachu/Quests/wiki/Master-%E2%80%90-Plugin-Compilation
+Requires Java 8 and Maven: https://github.com/FlyingPikachu/Quests/wiki/Master-%E2%80%90-Plugin-Compilation
 
 ## Localization [![Crowdin](https://d322cqt584bo4o.cloudfront.net/translate-quests/localized.svg)](https://crowdin.com/project/translate-quests)
 

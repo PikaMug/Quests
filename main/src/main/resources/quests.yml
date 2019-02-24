@@ -30,7 +30,7 @@ quests:
     requirements:
       quests:
         - Iron Miner
-      fail-requirement-message: '<red>Complete <pink>Stone Miner<red> first.'
+      fail-requirement-message: '<red>Complete <pink>Iron Miner<red> first.'
     stages:
       ordered:
         1:
@@ -65,7 +65,7 @@ quests:
     requirements:
       quests:
         - Iron Miner
-      fail-requirement-message: '<red>Complete <pink>Stone Miner<red> first.'
+      fail-requirement-message: '<red>Complete <pink>Iron Miner<red> first.'
     stages:
       ordered:
         1:

@@ -680,7 +680,7 @@ public class Quest {
 				String message = found.getRewardName();
 				if (message != null) {
 					for (String key : datamap.keySet()) {
-						message = message.replace("%" + ((String) key) + "%", ((String) datamap.get(key)));
+						message = message.replace("%" + key + "%", datamap.get(key).toString());
 					}
 					player.sendMessage("- " + ChatColor.GOLD + message);
 				} else {
@@ -749,7 +749,7 @@ public class Quest {
 		if (region == null) {
 			return true;
 		} else {
-			ApplicableRegionSet ars = plugin.getDependencies().getWorldGuard().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
+			ApplicableRegionSet ars = plugin.getDependencies().getWorldGuardApi().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
 			Iterator<ProtectedRegion> i = ars.iterator();
 			while (i.hasNext()) {
 				ProtectedRegion pr = i.next();

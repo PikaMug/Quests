@@ -95,38 +95,38 @@ public class NpcListener implements Listener {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-								plugin.getLocaleQuery().sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability());
+								plugin.getLocaleQuery().sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability(), null);
 								switch(reasonCode) {
 									case 1:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "one item is null"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "one item is null"));
 										break;
 									case 0:
 										// Should never happen
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "ERROR"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "ERROR"));
 										break;
 									case -1:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "name"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "name"));
 										break;
 									case -2:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "amount"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "amount"));
 										break;
 									case -3:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "durability"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "durability"));
 										break;
 									case -4:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "display name or lore"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "display name or lore"));
 										break;
 									case -5:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "enchantments"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "enchantments"));
 										break;
 									case -6:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "stored enchants"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "stored enchants"));
 										break;
 									case -7:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "item flags"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "item flags"));
 										break;
 									default:
-										player.sendMessage(Lang.get(player, "difference").replace("<data>", "unknown"));
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "unknown"));
 								}
 								if (hand.hasItemMeta()) {
 									if (hand.getType().equals(Material.ENCHANTED_BOOK)) {

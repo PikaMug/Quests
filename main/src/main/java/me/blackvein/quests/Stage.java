@@ -16,6 +16,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -34,6 +35,7 @@ public class Stage {
 	protected LinkedList<ItemStack> blocksToCut = new LinkedList<ItemStack>();
 	protected Integer fishToCatch;
 	protected Integer playersToKill;
+	protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
 	protected Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
 	protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
 	protected LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
@@ -99,7 +101,7 @@ public class Stage {
 	protected LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
 	protected LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
 	protected LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-	protected LinkedList<String> areaNames = new LinkedList<String>();
+	protected LinkedList<String> killNames = new LinkedList<String>();
 	protected LinkedList<Location> locationsToReach = new LinkedList<Location>();
 	protected LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
 	protected LinkedList<World> worldsToReachWithin = new LinkedList<World>();
@@ -123,7 +125,7 @@ public class Stage {
 	protected LinkedList<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
 	protected LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
 	protected LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
-	protected LinkedList<Map<String, Object>> customObjectiveData = new LinkedList<Map<String, Object>>();
+	protected LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<Entry<String, Object>>();
 	
 	public LinkedList<ItemStack> getBlocksToBreak() {
 		return blocksToBreak;
@@ -179,6 +181,14 @@ public class Stage {
 
 	public void setPlayersToKill(Integer playersToKill) {
 		this.playersToKill = playersToKill;
+	}
+	
+	public LinkedList<ItemStack> getItemsToCraft() {
+		return itemsToCraft;
+	}
+
+	public void setItemsToCraft(LinkedList<ItemStack> itemsToCraft) {
+		this.itemsToCraft = itemsToCraft;
 	}
 
 	public Map<Map<Enchantment, Material>, Integer> getItemsToEnchant() {
@@ -269,13 +279,27 @@ public class Stage {
 	public void setRadiiToKillWithin(LinkedList<Integer> radiiToKillWithin) {
 		this.radiiToKillWithin = radiiToKillWithin;
 	}
-
-	public LinkedList<String> getAreaNames() {
-		return areaNames;
+	
+	public LinkedList<String> getKillNames() {
+		return killNames;
 	}
 
-	public void setAreaNames(LinkedList<String> areaNames) {
-		this.areaNames = areaNames;
+	public void setKillNames(LinkedList<String> killNames) {
+		this.killNames = killNames;
+	}
+
+	/**
+	 * @deprecated use getKillNames()
+	 */
+	public LinkedList<String> getAreaNames() {
+		return killNames;
+	}
+
+	/**
+	 * @deprecated use setKillNames()
+	 */
+	public void setAreaNames(LinkedList<String> killNames) {
+		this.killNames = killNames;
 	}
 
 	public LinkedList<Location> getLocationsToReach() {
@@ -450,7 +474,7 @@ public class Stage {
 		return customObjectiveDisplays;
 	}
 
-	public LinkedList<Map<String, Object>> getCustomObjectiveData() {
+	public LinkedList<Entry<String, Object>> getCustomObjectiveData() {
 		return customObjectiveData;
 	}
 
@@ -469,6 +493,7 @@ public class Stage {
 		if (blocksToCut.isEmpty() == false) { return true; }
 		if (fishToCatch != null) { return true; }
 		if (playersToKill != null) { return true; }
+		if (itemsToCraft.isEmpty() == false) { return true; }
 		if (itemsToEnchant.isEmpty() == false) { return true; }
 		if (itemsToDeliver.isEmpty() == false) { return true; }
 		if (citizensToInteract.isEmpty() == false) { return true; }

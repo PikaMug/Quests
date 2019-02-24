@@ -22,6 +22,7 @@ import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import me.blackvein.quests.util.WorldGuardAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -692,7 +693,8 @@ public class CmdExecutor implements CommandExecutor{
 							if (q.getRegion() != null) {
 								boolean inRegion = false;
 								Player p = quester.getPlayer();
-								RegionManager rm = plugin.getDependencies().getWorldGuard().getRegionManager(p.getWorld());
+								WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+								RegionManager rm = api.getRegionManager(p.getWorld());
 								Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
 								while (it.hasNext()) {
 									ProtectedRegion pr = it.next();

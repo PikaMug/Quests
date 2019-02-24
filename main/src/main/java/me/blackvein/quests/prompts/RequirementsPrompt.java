@@ -74,7 +74,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetPerms") + "\n";
 			List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
 			for (String s : perms) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 			}
 		}
 		if (context.getSessionData(CK.REQ_QUEST) == null) {
@@ -83,7 +83,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuest") + "\n";
 			List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
 			for (String s : qs) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 			}
 		}
 		if (context.getSessionData(CK.REQ_QUEST_BLOCK) == null) {
@@ -92,7 +92,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestBlocks") + "\n";
 			List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
 			for (String s : qs) {
-				text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 			}
 		}
 		if (plugin.getDependencies().getMcmmo() != null) {
@@ -103,7 +103,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
 				List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
 				for (String s : skills) {
-					text += ChatColor.GRAY + "    - " + ChatColor.DARK_GREEN + s + ChatColor.RESET + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN + amounts.get(skills.indexOf(s)) + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN + amounts.get(skills.indexOf(s)) + "\n";
 				}
 			}
 		} else {
@@ -351,7 +351,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
 				for (ItemStack is : getItems(context)) {
-					text += ChatColor.GRAY + "    - " + ItemUtil.getDisplayString(is) + "\n";
+					text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqAddItem") + "\n";
 				if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
@@ -359,7 +359,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetRemoveItems") + "\n";
 					for (Boolean b : getRemoveItems(context)) {
-						text += ChatColor.GRAY + "    - " + ChatColor.AQUA + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
 					}
 				}
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
@@ -490,6 +490,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				CustomRequirement found = null;
+				// Check if we have a custom requirement with the specified name
 				for (CustomRequirement cr : plugin.getCustomRequirements()) {
 					if (cr.getName().equalsIgnoreCase(input)) {
 						found = cr;
@@ -497,6 +498,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 					}
 				}
 				if (found == null) {
+					// No? Check again, but with locale sensitivity
 					for (CustomRequirement cr : plugin.getCustomRequirements()) {
 						if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
 							found = cr;
@@ -506,31 +508,34 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				}
 				if (found != null) {
 					if (context.getSessionData(CK.REQ_CUSTOM) != null) {
+						// The custom requirement may already have been added, so let's check that
 						LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
 						LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
 						if (list.contains(found.getName()) == false) {
+							// Hasn't been added yet, so let's do it
 							list.add(found.getName());
-							datamapList.add(found.datamap);
+							datamapList.add(found.getData());
 							context.setSessionData(CK.REQ_CUSTOM, list);
 							context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
 						} else {
+							// Already added, so inform user
 							context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomAlreadyAdded"));
 							return new CustomRequirementsPrompt();
 						}
 					} else {
+						// The custom requirement hasn't been added yet, so let's do it
 						LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
-						datamapList.add(found.datamap);
+						datamapList.add(found.getData());
 						LinkedList<String> list = new LinkedList<String>();
 						list.add(found.getName());
 						context.setSessionData(CK.REQ_CUSTOM, list);
 						context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
 					}
 					// Send user to the custom data prompt if there is any needed
-					if (found.datamap.isEmpty() == false) {
-						context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.descriptions);
+					if (found.getData().isEmpty() == false) {
+						context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
 						return new RequirementCustomDataListPrompt();
 					}
-					//
 				} else {
 					context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomNotFound"));
 					return new CustomRequirementsPrompt();
@@ -565,7 +570,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			for (String dataKey : datamapKeys) {
 				text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + dataKey;
 				if (datamap.get(dataKey) != null) {
-					text += ChatColor.GREEN + " (" + (String) datamap.get(dataKey) + ")\n";
+					text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
 				} else {
 					text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
 				}
@@ -653,7 +658,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				@SuppressWarnings("unchecked")
 				LinkedList<String> skills = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
 				for (String skill : skills) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + skill + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + skill + "\n";
 				}
 			}
 			if (cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) == null) {
@@ -663,7 +668,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				@SuppressWarnings("unchecked")
 				LinkedList<Integer> amounts = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
 				for (int i : amounts) {
-					text += ChatColor.GRAY + "    - " + ChatColor.AQUA + i + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
 				}
 			}
 			text += ChatColor.BOLD + "" + ChatColor.GREEN + "3" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("done");

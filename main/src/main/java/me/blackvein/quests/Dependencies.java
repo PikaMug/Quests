@@ -2,6 +2,7 @@ package me.blackvein.quests;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import me.blackvein.quests.util.WorldGuardAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.aufdemrand.denizen.Denizen;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -17,14 +18,13 @@ import com.gmail.nossr50.mcMMO;
 import com.herocraftonline.heroes.Heroes;
 import com.live.bemmamin.gps.Vars;
 import com.live.bemmamin.gps.api.GPSAPI;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class Dependencies {
 	
 	private Quests plugin;
 	private static Economy economy = null;
 	private static Permission permission = null;
-	private static WorldGuardPlugin worldGuard = null;
+	private static WorldGuardAPI worldGuardApi = null;
 	private static mcMMO mcmmo = null;
 	private static GPSAPI gpsapi = null;
 	private static Heroes heroes = null;
@@ -47,8 +47,8 @@ public class Dependencies {
 		return permission;
 	}
 	
-	public WorldGuardPlugin getWorldGuard() {
-		return worldGuard;
+	public WorldGuardAPI getWorldGuardApi() {
+		return worldGuardApi;
 	}
 	
 	public mcMMO getMcmmo() {
@@ -107,7 +107,7 @@ public class Dependencies {
 			plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
 		}
 		if (isPluginAvailable("WorldGuard")) {
-			worldGuard = (WorldGuardPlugin) plugin.getServer().getPluginManager().getPlugin("WorldGuard");
+			worldGuardApi = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
 		}
 		if (isPluginAvailable("Denizen")) {
 			denizen = (Denizen) plugin.getServer().getPluginManager().getPlugin("Denizen");
@@ -115,8 +115,9 @@ public class Dependencies {
 		if (isPluginAvailable("mcMMO")) {
 			mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
 		}
-		if (plugin.getSettings().canUseGPS() && isPluginAvailable("GPS")) {
+		if (isPluginAvailable("GPS") && plugin.getSettings().canUseGPS()) {
 			gpsapi = new GPSAPI(plugin);
+			Vars.getInstance().setMaxDistanceToEntry(9999.0);
 		}
 		if (isPluginAvailable("Heroes")) {
 			heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
@@ -132,7 +133,6 @@ public class Dependencies {
         }
 		if (isPluginAvailable("Parties")) {
 		    parties = Parties.getApi();
-		    Vars.getInstance().setMaxDistanceToEntry(9999.0);
         }
 		if (isPluginAvailable("Vault")) {
 			if (!setupEconomy()) {

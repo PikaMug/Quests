@@ -33,8 +33,10 @@ public class MiscUtil {
 	public static String getProperMobName(EntityType type) {
 		String name = type.name().toLowerCase();
 		name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-		while (fixUnderscore(name) != null) {
-			name = fixUnderscore(name);
+		int index = name.indexOf('_');
+		if (index != -1) {
+			name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) + name.substring(index + 2);
+			name = name.replaceFirst("_", "");
 		}
 		return name;
 	}
@@ -47,16 +49,6 @@ public class MiscUtil {
 			}
 		}
 		return null;
-	}
-
-	public static String fixUnderscore(String s) {
-		int index = s.indexOf('_');
-		if (index == -1) {
-			return null;
-		}
-		s = s.substring(0, (index + 1)) + Character.toUpperCase(s.charAt(index + 1)) + s.substring(index + 2);
-		s = s.replaceFirst("_", "");
-		return s;
 	}
 
 	public static String concatArgArray(String[] args, int startingIndex, int endingIndex, char delimiter) {

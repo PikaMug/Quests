@@ -25,7 +25,7 @@ public class Rewards {
 	private int exp = 0;
 	private List<String> commands = new LinkedList<String>();
 	private List<String> permissions = new LinkedList<String>();
-	private LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+	private List<ItemStack> items = new LinkedList<ItemStack>();
 	private List<String> mcmmoSkills = new LinkedList<String>();
 	private List<Integer> mcmmoAmounts = new LinkedList<Integer>();
 	private List<String> heroesClasses = new LinkedList<String>();
@@ -63,10 +63,10 @@ public class Rewards {
 	public void setPermissions(List<String> permissions) {
 		this.permissions = permissions;
 	}
-	public LinkedList<ItemStack> getItems() {
+	public List<ItemStack> getItems() {
 		return items;
 	}
-	public void setItems(LinkedList<ItemStack> items) {
+	public void setItems(List<ItemStack> items) {
 		this.items = items;
 	}
 	public List<String> getMcmmoSkills() {

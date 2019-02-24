@@ -44,6 +44,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -74,6 +75,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.WorldGuardAPI;
 import net.citizensnpcs.api.CitizensAPI;
 
 public class PlayerListener implements Listener {
@@ -139,7 +141,8 @@ public class PlayerListener implements Listener {
 								if (quest.getRegion() != null) {
 									boolean inRegion = false;
 									Player p = quester.getPlayer();
-									RegionManager rm = plugin.getDependencies().getWorldGuard().getRegionManager(p.getWorld());
+									WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+									RegionManager rm = api.getRegionManager(p.getWorld());
 									Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
 									while (it.hasNext()) {
 										ProtectedRegion pr = it.next();
@@ -205,17 +208,18 @@ public class PlayerListener implements Listener {
 		}
         if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
         	if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
-    			
     			if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
     				final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
     				final Player player = evt.getPlayer();
     				boolean hasObjective = false;
-    				for (Quest quest : quester.getCurrentQuests().keySet()) {
-    					if (quester.containsObjective(quest, "useBlock")) {
-    						ItemStack i = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
-    						quester.useBlock(quest, i);
-    						hasObjective = true;
-    					}
+    				if (evt.isCancelled() == false) {
+    					for (Quest quest : quester.getCurrentQuests().keySet()) {
+        					if (quester.containsObjective(quest, "useBlock")) {
+        						ItemStack i = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
+        						quester.useBlock(quest, i);
+        						hasObjective = true;
+        					}
+        				}
     				}
     				if (!hasObjective) {
     					if (plugin.getQuestFactory().getSelectedBlockStarts().containsKey(evt.getPlayer().getUniqueId())) {
@@ -225,6 +229,7 @@ public class PlayerListener implements Listener {
     						temp.put(evt.getPlayer().getUniqueId(), block);
     						plugin.getQuestFactory().setSelectedBlockStarts(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    						evt.setCancelled(true);
     					} else if (plugin.getEventFactory().getSelectedExplosionLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
@@ -232,6 +237,7 @@ public class PlayerListener implements Listener {
     						temp.put(evt.getPlayer().getUniqueId(), block);
     						plugin.getEventFactory().setSelectedExplosionLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    						evt.setCancelled(true);
     					} else if (plugin.getEventFactory().getSelectedEffectLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
@@ -239,13 +245,15 @@ public class PlayerListener implements Listener {
     						temp.put(evt.getPlayer().getUniqueId(), block);
     						plugin.getEventFactory().setSelectedEffectLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    						evt.setCancelled(true);
     					} else if (plugin.getEventFactory().getSelectedMobLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
     						Map<UUID, Block> temp = plugin.getEventFactory().getSelectedMobLocations();
     						temp.put(evt.getPlayer().getUniqueId(), block);
     						plugin.getEventFactory().setSelectedMobLocations(temp);
-    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType()))+ ChatColor.GOLD + ")");
+    						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    						evt.setCancelled(true);
     					} else if (plugin.getEventFactory().getSelectedLightningLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
@@ -253,6 +261,7 @@ public class PlayerListener implements Listener {
     						temp.put(evt.getPlayer().getUniqueId(), block);
     						plugin.getEventFactory().setSelectedLightningLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    						evt.setCancelled(true);
     					} else if (plugin.getEventFactory().getSelectedTeleportLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
@@ -260,6 +269,7 @@ public class PlayerListener implements Listener {
     						temp.put(evt.getPlayer().getUniqueId(), block);
     						plugin.getEventFactory().setSelectedTeleportLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    						evt.setCancelled(true);
     					} else if (plugin.getQuestFactory().getSelectedKillLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
@@ -267,6 +277,7 @@ public class PlayerListener implements Listener {
     						temp.put(evt.getPlayer().getUniqueId(), block);
     						plugin.getQuestFactory().setSelectedKillLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    						evt.setCancelled(true);
     					} else if (plugin.getQuestFactory().getSelectedReachLocations().containsKey(evt.getPlayer().getUniqueId())) {
     						Block block = evt.getClickedBlock();
     						Location loc = block.getLocation();
@@ -274,6 +285,7 @@ public class PlayerListener implements Listener {
     						temp.put(evt.getPlayer().getUniqueId(), block);
     						plugin.getQuestFactory().setSelectedReachLocations(temp);
     						evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
+    						evt.setCancelled(true);
     					} else if (player.isConversing() == false) {
     						for (final Quest q : plugin.getQuests()) {
     							if (q.getBlockStart() != null) {
@@ -425,26 +437,28 @@ public class PlayerListener implements Listener {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.containsObjective(quest, "breakBlock")) {
-					if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false && evt.isCancelled() == false) {
-						ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
-						quester.breakBlock(quest, i);
+				if (evt.isCancelled() == false) {
+					if (quester.containsObjective(quest, "breakBlock")) {
+						if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false) {
+							ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
+							quester.breakBlock(quest, i);
+						}
 					}
-				}
-				if (quester.containsObjective(quest, "placeBlock")) {
-					for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
-						if (is.getAmount() > 0) {
-							if (evt.isCancelled() == false) {
+					if (quester.containsObjective(quest, "placeBlock")) {
+						for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
+							if (is.getAmount() > 0) {
 								int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
 								is.setAmount(is.getAmount() - 1);
 								quester.getQuestData(quest).blocksPlaced.set(index, is);
 							}
 						}
 					}
-				}
-				if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS) && quester.containsObjective(quest, "cutBlock")) {
-					ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
-					quester.cutBlock(quest, i);
+					if (quester.containsObjective(quest, "cutBlock")) {
+						if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
+							ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
+							quester.cutBlock(quest, i);
+						}
+					}
 				}
 			}
 		}
@@ -477,7 +491,22 @@ public class PlayerListener implements Listener {
 			}
 		}
 	}
+	
 
+	@EventHandler
+	public void onCraftItem(CraftItemEvent evt) {
+		if (evt.getWhoClicked() instanceof Player) {
+			if (plugin.checkQuester(evt.getWhoClicked().getUniqueId()) == false) {
+				Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+				for (Quest quest : quester.getCurrentQuests().keySet()) {
+					if (quester.containsObjective(quest, "craftItem")) {
+						quester.craftItem(quest, evt.getCurrentItem());
+					}
+				}
+			}
+		}
+	}
+	
 	@EventHandler
 	public void onEnchantItem(EnchantItemEvent evt) {
 		if (plugin.checkQuester(evt.getEnchanter().getUniqueId()) == false) {
@@ -748,9 +777,10 @@ public class PlayerListener implements Listener {
 				plugin.getQuestFactory().setSelectingNpcs(temp);
 			}
 			LinkedList<Quester> temp = plugin.getQuesters();
-			for (Quester q : temp) {
+			for (Iterator<Quester> iterator = temp.iterator(); iterator.hasNext();) {
+				Quester q = iterator.next();
 				if (q.getUUID().equals(quester.getUUID())) {
-					temp.remove(q);
+					iterator.remove();
 				}
 			}
 			plugin.setQuesters(temp);

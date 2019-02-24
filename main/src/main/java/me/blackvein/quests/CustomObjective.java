@@ -12,8 +12,11 @@
 
 package me.blackvein.quests;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -23,11 +26,10 @@ public abstract class CustomObjective implements Listener {
 	private Quests plugin = Quests.getPlugin(Quests.class);
 	private String name = null;
 	private String author = null;
-	public final Map<String, Object> datamap = new HashMap<String, Object>();
-	public final Map<String, String> descriptions = new HashMap<String, String>();
-	private String countPrompt = "null";
-	private String display = "null";
-	private boolean enableCount = true;
+	private LinkedList<Entry<String, Object>> data = new LinkedList<Entry<String, Object>>();
+	private Map<String, String> descriptions = new HashMap<String, String>();
+	private String countPrompt = "Enter number";
+	private String display = "Progress: %count%";
 	private boolean showCount = true;
 	private int count = 1;
 
@@ -46,13 +48,50 @@ public abstract class CustomObjective implements Listener {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-
+		
+	public LinkedList<Entry<String, Object>> getData() {
+		return data;
+	}
+	
+	/**
+	 * Add a new prompt<p>
+	 * 
+	 * Note that the "defaultValue" Object will be cast to a String internally
+	 * 
+	 * @param title Prompt name
+	 * @param description Description of expected input
+	 * @param defaultValue Value to be used if input is not received
+	 */
+	public void addStringPrompt(String title, String description, Object defaultValue) {
+		Entry<String, Object> prompt = new AbstractMap.SimpleEntry<String, Object>(title, defaultValue);
+		data.add(prompt);
+		descriptions.put(title, description);
+	}
+	
+	/**
+	 * Set the title of a prompt
+	 * 
+	 * @param name Prompt title
+	 * @deprecated use addPrompt(name, description)
+	 */
 	public void addData(String name) {
-		datamap.put(name, null);
+		Entry<String, Object> prompt = new AbstractMap.SimpleEntry<String, Object>(name, null);
+		data.add(prompt);
+	}
+	
+	public Map<String, String> getDescriptions() {
+		return descriptions;
 	}
 
-	public void addDescription(String data, String description) {
-		descriptions.put(data, description);
+	/**
+	 * Set the description for the specified prompt
+	 * 
+	 * @param name Prompt title
+	 * @param description Description of expected input
+	 * @deprecated use addTaskPrompt(name, description)
+	 */
+	public void addDescription(String name, String description) {
+		descriptions.put(name, description);
 	}
 
 	public int getCount() {
@@ -63,20 +102,40 @@ public abstract class CustomObjective implements Listener {
 		this.count = count;
 	}
 
-	public String getCountPrompt() {
+    public String getCountPrompt() {
 		return countPrompt;
 	}
 
 	public void setCountPrompt(String countPrompt) {
 		this.countPrompt = countPrompt;
 	}
-
-	public boolean isCountShown() {
+	
+	/**
+	 * Check whether to let user set required amount for objective
+	 * 
+	 * @param enableCount
+	 */
+	public boolean canShowCount() {
 		return showCount;
 	}
 
+	/**
+	 * Set whether to let user set required amount for objective
+	 * 
+	 * @param enableCount
+	 */
 	public void setShowCount(boolean showCount) {
 		this.showCount = showCount;
+	}
+
+	/**
+	 * Check whether to let user set required amount for objective
+	 * 
+	 * @param enableCount
+	 * @deprecated use setShowCount(boolean)
+	 */
+	public void setEnableCount(boolean enableCount) {
+		setShowCount(enableCount);
 	}
 
 	public String getDisplay() {
@@ -86,21 +145,27 @@ public abstract class CustomObjective implements Listener {
 	public void setDisplay(String display) {
 		this.display = display;
 	}
-
-	public boolean isEnableCount() {
-		return enableCount;
+	
+	public Map<String, Object> getDataForPlayer(Player player, CustomObjective customObj, Quest quest) {
+		return getDatamap(player, customObj, quest);
 	}
 
-	public void setEnableCount(boolean enableCount) {
-		this.enableCount = enableCount;
-	}
-
+	/**
+	 * Get data for specified player's current stage
+	 * 
+	 * @param player The player to get data for
+	 * @param obj The CustomObjective to get data for
+	 * @param quest Quest to get player's current stage. Returns null if player is not on quest
+	 * @return data map if everything matches, otherwise null
+	 * @deprecated use getDataForPlayer()
+	 */
 	public Map<String, Object> getDatamap(Player player, CustomObjective obj, Quest quest) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
 		if (quester != null) {
 			Stage currentStage = quester.getCurrentStage(quest);
-			if (currentStage == null)
+			if (currentStage == null) {
 				return null;
+			}
 			int index = -1;
 			int tempIndex = 0;
 			for (me.blackvein.quests.CustomObjective co : currentStage.customObjectives) {
@@ -111,7 +176,12 @@ public abstract class CustomObjective implements Listener {
 				tempIndex++;
 			}
 			if (index > -1) {
-				return currentStage.customObjectiveData.get(index);
+				Map<String, Object> m = new HashMap<String, Object>();
+				for (int i = index; i < index + data.size(); i++) {
+					Entry<String, Object> e = currentStage.customObjectiveData.get(i);
+					m.put(e.getKey(), e.getValue());
+				}
+				return m;
 			}
 		}
 		return null;
@@ -149,55 +219,5 @@ public abstract class CustomObjective implements Listener {
 				}
 			}
 		}
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof CustomObjective) {
-			CustomObjective other = (CustomObjective) o;
-			if (other.name.equals(name) == false) {
-				return false;
-			}
-			if (other.author.equals(name) == false) {
-				return false;
-			}
-			for (String s : other.datamap.keySet()) {
-				if (datamap.containsKey(s) == false) {
-					return false;
-				}
-			}
-			for (Object val : other.datamap.values()) {
-				if (datamap.containsValue(val) == false) {
-					return false;
-				}
-			}
-			for (String s : other.descriptions.keySet()) {
-				if (descriptions.containsKey(s) == false) {
-					return false;
-				}
-			}
-			for (String s : other.descriptions.values()) {
-				if (descriptions.containsValue(s) == false) {
-					return false;
-				}
-			}
-			if (other.countPrompt.equals(countPrompt) == false) {
-				return false;
-			}
-			if (other.display.equals(display) == false) {
-				return false;
-			}
-			if (other.enableCount != enableCount) {
-				return false;
-			}
-			if (other.showCount != showCount) {
-				return false;
-			}
-			if (other.count != count) {
-				return false;
-			}
-			return true;
-		}
-		return false;
 	}
 }

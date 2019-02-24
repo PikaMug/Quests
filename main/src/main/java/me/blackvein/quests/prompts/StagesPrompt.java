@@ -58,9 +58,9 @@ public class StagesPrompt extends StringPrompt {
 		if (i < 0) {
 			return new StagesPrompt(plugin, questFactory);
 		} else if (i < (stages + 1) && i > 0) {
-			return new CreateStagePrompt(plugin, (i), questFactory, plugin.getDependencies().getCitizens());
+			return new CreateStagePrompt(plugin, (i), questFactory);
 		} else if (i == (stages + 1)) {
-			return new CreateStagePrompt(plugin, (stages + 1), questFactory, plugin.getDependencies().getCitizens());
+			return new CreateStagePrompt(plugin, (stages + 1), questFactory);
 		} else if (i == (stages + 2)) {
 			return questFactory.returnToMenu();
 		} else {
@@ -112,11 +112,12 @@ public class StagesPrompt extends StringPrompt {
 				cc.setSessionData(newPref + CK.S_CUT_NAMES, cc.getSessionData(pref + CK.S_CUT_NAMES));
 				cc.setSessionData(newPref + CK.S_CUT_AMOUNTS, cc.getSessionData(pref + CK.S_CUT_AMOUNTS));
 				cc.setSessionData(newPref + CK.S_CUT_DURABILITY, cc.getSessionData(pref + CK.S_CUT_DURABILITY));
-				cc.setSessionData(newPref + CK.S_FISH, cc.getSessionData(pref + CK.S_FISH));
-				cc.setSessionData(newPref + CK.S_PLAYER_KILL, cc.getSessionData(pref + CK.S_PLAYER_KILL));
+				cc.setSessionData(newPref + CK.S_CRAFT_ITEMS, cc.getSessionData(pref + CK.S_CRAFT_ITEMS));
 				cc.setSessionData(newPref + CK.S_ENCHANT_TYPES, cc.getSessionData(pref + CK.S_ENCHANT_TYPES));
 				cc.setSessionData(newPref + CK.S_ENCHANT_NAMES, cc.getSessionData(pref + CK.S_ENCHANT_NAMES));
 				cc.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS));
+				cc.setSessionData(newPref + CK.S_FISH, cc.getSessionData(pref + CK.S_FISH));
+				cc.setSessionData(newPref + CK.S_PLAYER_KILL, cc.getSessionData(pref + CK.S_PLAYER_KILL));
 				cc.setSessionData(newPref + CK.S_DELIVERY_ITEMS, cc.getSessionData(pref + CK.S_DELIVERY_ITEMS));
 				cc.setSessionData(newPref + CK.S_DELIVERY_NPCS, cc.getSessionData(pref + CK.S_DELIVERY_NPCS));
 				cc.setSessionData(newPref + CK.S_DELIVERY_MESSAGES, cc.getSessionData(pref + CK.S_DELIVERY_MESSAGES));
@@ -142,7 +143,7 @@ public class StagesPrompt extends StringPrompt {
 				cc.setSessionData(newPref + CK.S_CHAT_EVENT_TRIGGERS, cc.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS));
 				cc.setSessionData(newPref + CK.S_FINISH_EVENT, cc.getSessionData(pref + CK.S_FINISH_EVENT));
 				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES));
-				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT));
+				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA));
 				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_COUNT, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT));
 				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS));
 				cc.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP));
@@ -170,10 +171,11 @@ public class StagesPrompt extends StringPrompt {
 			cc.setSessionData(pref + CK.S_CUT_NAMES, null);
 			cc.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
 			cc.setSessionData(pref + CK.S_CUT_DURABILITY, null);
-			cc.setSessionData(pref + CK.S_FISH, null);
-			cc.setSessionData(pref + CK.S_PLAYER_KILL, null);
+			cc.setSessionData(pref + CK.S_CRAFT_ITEMS, null);
 			cc.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
 			cc.setSessionData(pref + CK.S_ENCHANT_NAMES, null);
+			cc.setSessionData(pref + CK.S_FISH, null);
+			cc.setSessionData(pref + CK.S_PLAYER_KILL, null);
 			cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, null);
 			cc.setSessionData(pref + CK.S_DELIVERY_ITEMS, null);
 			cc.setSessionData(pref + CK.S_DELIVERY_NPCS, null);

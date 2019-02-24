@@ -54,6 +54,7 @@ import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.WorldGuardAPI;
 import net.citizensnpcs.api.CitizensAPI;
 
 public class QuestFactory implements ConversationAbandonedListener {
@@ -210,7 +211,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
 			}
-			if (plugin.getDependencies().getWorldGuard() != null) {
+			if (plugin.getDependencies().getWorldGuardApi() != null) {
 				if (context.getSessionData(CK.Q_REGION) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("noneSet") + ")\n";
 				} else {
@@ -261,7 +262,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
 				return new BlockStartPrompt();
 			} else if (input.equalsIgnoreCase("6")) {
-				if (plugin.getDependencies().getWorldGuard() != null) {
+				if (plugin.getDependencies().getWorldGuardApi() != null) {
 					return new RegionPrompt();
 				} else {
 					return new CreateMenuPrompt();
@@ -621,7 +622,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 			String text = ChatColor.DARK_GREEN + Lang.get("questRegionTitle") + "\n";
 			boolean any = false;
 			for (World world : plugin.getServer().getWorlds()) {
-				RegionManager rm = plugin.getDependencies().getWorldGuard().getRegionManager(world);
+				WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+				RegionManager rm = api.getRegionManager(world);
 				for (String region : rm.getRegions().keySet()) {
 					any = true;
 					text += ChatColor.GREEN + region + ", ";
@@ -643,7 +645,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 				String found = null;
 				boolean done = false;
 				for (World world : plugin.getServer().getWorlds()) {
-					RegionManager rm = plugin.getDependencies().getWorldGuard().getRegionManager(world);
+					WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+					RegionManager rm = api.getRegionManager(world);
 					for (String region : rm.getRegions().keySet()) {
 						if (region.equalsIgnoreCase(input)) {
 							found = region;
@@ -658,7 +661,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				if (found == null) {
 					String error = Lang.get("questWGInvalidRegion");
 					error = error.replaceAll("<region>", ChatColor.RED + input + ChatColor.YELLOW);
-					player.sendMessage(ChatColor.RED + error);
+					player.sendMessage(ChatColor.YELLOW + error);
 					return new RegionPrompt();
 				} else {
 					context.setSessionData(CK.Q_REGION, found);
@@ -699,6 +702,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 				try {
 					data.load(new File(plugin.getDataFolder(), "quests.yml"));
 					ConfigurationSection questSection = data.getConfigurationSection("quests");
+					if (questSection == null) {
+						questSection = data.createSection("quests");
+					}
 					int customNum = 1;
 					while (true) {
 						if (questSection.contains("custom" + customNum)) {
@@ -784,13 +790,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 		ItemStack guiDisplay = null;
 		Integer moneyReq = null;
 		Integer questPointsReq = null;
-		LinkedList<ItemStack> itemReqs = null;
-		LinkedList<Boolean> removeItemReqs = null;
-		LinkedList<String> permReqs = null;
-		LinkedList<String> questReqs = null;
-		LinkedList<String> questBlocks = null;
-		LinkedList<String> mcMMOSkillReqs = null;
-		LinkedList<Integer> mcMMOAmountReqs = null;
+		List<ItemStack> itemReqs = null;
+		List<Boolean> removeItemReqs = null;
+		List<String> permReqs = null;
+		List<String> questReqs = null;
+		List<String> questBlocks = null;
+		List<String> mcMMOSkillReqs = null;
+		List<Integer> mcMMOAmountReqs = null;
 		String heroesPrimaryReq = null;
 		String heroesSecondaryReq = null;
 		LinkedList<String> customReqs = null;
@@ -798,17 +804,17 @@ public class QuestFactory implements ConversationAbandonedListener {
 		String failMessage = null;
 		Integer moneyRew = null;
 		Integer questPointsRew = null;
-		LinkedList<String> itemRews = null;
-		LinkedList<Integer> RPGItemRews = null;
-		LinkedList<Integer> RPGItemAmounts = null;
+		List<String> itemRews = null;
+		List<Integer> RPGItemRews = null;
+		List<Integer> RPGItemAmounts = null;
 		Integer expRew = null;
-		LinkedList<String> commandRews = null;
-		LinkedList<String> permRews = null;
-		LinkedList<String> mcMMOSkillRews = null;
-		LinkedList<Integer> mcMMOSkillAmounts = null;
-		LinkedList<String> heroesClassRews = null;
-		LinkedList<Double> heroesExpRews = null;
-		LinkedList<String> phatLootRews = null;
+		List<String> commandRews = null;
+		List<String> permRews = null;
+		List<String> mcMMOSkillRews = null;
+		List<Integer> mcMMOSkillAmounts = null;
+		List<String> heroesClassRews = null;
+		List<Double> heroesExpRews = null;
+		List<String> phatLootRews = null;
 		LinkedList<String> customRews = null;
 		LinkedList<Map<String, Object>> customRewsData = null;
 		String startDatePln = null;
@@ -828,21 +834,28 @@ public class QuestFactory implements ConversationAbandonedListener {
 			questPointsReq = (Integer) cc.getSessionData(CK.REQ_QUEST_POINTS);
 		}
 		if (cc.getSessionData(CK.REQ_ITEMS) != null) {
-			itemReqs = (LinkedList<ItemStack>) cc.getSessionData(CK.REQ_ITEMS);
-			removeItemReqs = (LinkedList<Boolean>) cc.getSessionData(CK.REQ_ITEMS_REMOVE);
+			itemReqs = new LinkedList<ItemStack>();
+			removeItemReqs = new LinkedList<Boolean>();
+			itemReqs.addAll((List<ItemStack>) cc.getSessionData(CK.REQ_ITEMS));
+			removeItemReqs.addAll((List<Boolean>) cc.getSessionData(CK.REQ_ITEMS_REMOVE));
 		}
 		if (cc.getSessionData(CK.REQ_PERMISSION) != null) {
-			permReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_PERMISSION);
+			permReqs = new LinkedList<String>();
+			permReqs.addAll((List<String>) cc.getSessionData(CK.REQ_PERMISSION));
 		}
 		if (cc.getSessionData(CK.REQ_QUEST) != null) {
-			questReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_QUEST);
+			questReqs = new LinkedList<String>();
+			questReqs.addAll((List<String>) cc.getSessionData(CK.REQ_QUEST));
 		}
 		if (cc.getSessionData(CK.REQ_QUEST_BLOCK) != null) {
-			questBlocks = (LinkedList<String>) cc.getSessionData(CK.REQ_QUEST_BLOCK);
+			questBlocks = new LinkedList<String>();
+			questBlocks.addAll((List<String>) cc.getSessionData(CK.REQ_QUEST_BLOCK));
 		}
 		if (cc.getSessionData(CK.REQ_MCMMO_SKILLS) != null) {
-			mcMMOSkillReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS);
-			mcMMOAmountReqs = (LinkedList<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
+			mcMMOSkillReqs = new LinkedList<String>();
+			mcMMOAmountReqs = new LinkedList<Integer>();
+			mcMMOSkillReqs.addAll((List<String>) cc.getSessionData(CK.REQ_MCMMO_SKILLS));
+			mcMMOAmountReqs.addAll((List<Integer>) cc.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS));
 		}
 		if (cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
 			heroesPrimaryReq = (String) cc.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
@@ -875,7 +888,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		if (cc.getSessionData(CK.REW_ITEMS) != null) {
 			itemRews = new LinkedList<String>();
-			for (ItemStack is : (LinkedList<ItemStack>) cc.getSessionData(CK.REW_ITEMS)) {
+			for (ItemStack is : (List<ItemStack>) cc.getSessionData(CK.REW_ITEMS)) {
 				itemRews.add(ItemUtil.serializeItemStack(is));
 			}
 		}
@@ -883,21 +896,28 @@ public class QuestFactory implements ConversationAbandonedListener {
 			expRew = (Integer) cc.getSessionData(CK.REW_EXP);
 		}
 		if (cc.getSessionData(CK.REW_COMMAND) != null) {
-			commandRews = (LinkedList<String>) cc.getSessionData(CK.REW_COMMAND);
+			commandRews = new LinkedList<String>();
+			commandRews.addAll((List<String>)cc.getSessionData(CK.REW_COMMAND));
 		}
 		if (cc.getSessionData(CK.REW_PERMISSION) != null) {
-			permRews = (LinkedList<String>) cc.getSessionData(CK.REW_PERMISSION);
+			permRews = new LinkedList<String>();
+			permRews.addAll((List<String>) cc.getSessionData(CK.REW_PERMISSION));
 		}
 		if (cc.getSessionData(CK.REW_MCMMO_SKILLS) != null) {
-			mcMMOSkillRews = (LinkedList<String>) cc.getSessionData(CK.REW_MCMMO_SKILLS);
-			mcMMOSkillAmounts = (LinkedList<Integer>) cc.getSessionData(CK.REW_MCMMO_AMOUNTS);
+			mcMMOSkillRews = new LinkedList<String>();
+			mcMMOSkillAmounts = new LinkedList<Integer>();
+			mcMMOSkillRews.addAll((List<String>) cc.getSessionData(CK.REW_MCMMO_SKILLS));
+			mcMMOSkillAmounts.addAll((List<Integer>) cc.getSessionData(CK.REW_MCMMO_AMOUNTS));
 		}
 		if (cc.getSessionData(CK.REW_HEROES_CLASSES) != null) {
-			heroesClassRews = (LinkedList<String>) cc.getSessionData(CK.REW_HEROES_CLASSES);
-			heroesExpRews = (LinkedList<Double>) cc.getSessionData(CK.REW_HEROES_AMOUNTS);
+			heroesClassRews = new LinkedList<String>();
+			heroesExpRews = new LinkedList<Double>();
+			heroesClassRews.addAll((List<String>) cc.getSessionData(CK.REW_HEROES_CLASSES));
+			heroesExpRews.addAll((List<Double>) cc.getSessionData(CK.REW_HEROES_AMOUNTS));
 		}
 		if (cc.getSessionData(CK.REW_PHAT_LOOTS) != null) {
-			phatLootRews = (LinkedList<String>) cc.getSessionData(CK.REW_PHAT_LOOTS);
+			phatLootRews = new LinkedList<String>();
+			phatLootRews.addAll((List<String>) cc.getSessionData(CK.REW_PHAT_LOOTS));
 		}
 		if (cc.getSessionData(CK.REW_CUSTOM) != null) {
 			customRews = (LinkedList<String>) cc.getSessionData(CK.REW_CUSTOM);
@@ -972,12 +992,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 		LinkedList<Integer> cutIds;
 		LinkedList<Integer> cutAmounts;
 		LinkedList<Short> cutDurability;
-		Integer fish;
-		Integer players;
+		LinkedList<ItemStack> deliveryItems;
 		LinkedList<String> enchantments;
 		LinkedList<Integer> enchantmentIds;
 		LinkedList<Integer> enchantmentAmounts;
-		LinkedList<ItemStack> deliveryItems;
+		Integer fish;
+		Integer players;
+		LinkedList<ItemStack> craftItems;
 		LinkedList<Integer> deliveryNPCIds;
 		LinkedList<String> deliveryMessages;
 		LinkedList<Integer> npcTalkIds;
@@ -999,7 +1020,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		LinkedList<LinkedList<String>> passPhrases;
 		LinkedList<String> customObjs;
 		LinkedList<Integer> customObjCounts;
-		LinkedList<Map<String, Object>> customObjsData;
+		LinkedList<Entry<String, Object>> customObjsData;
 		String script;
 		String startEvent;
 		String finishEvent;
@@ -1032,11 +1053,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cutIds = null;
 			cutAmounts = null;
 			cutDurability = null;
-			fish = null;
-			players = null;
+			craftItems = null;
 			enchantments = null;
 			enchantmentIds = null;
 			enchantmentAmounts = null;
+			fish = null;
+			players = null;
 			deliveryItems = null;
 			deliveryNPCIds = null;
 			deliveryMessages = null;
@@ -1099,16 +1121,19 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cutAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_AMOUNTS);
 				cutDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_CUT_DURABILITY);
 			}
-			if (cc.getSessionData(pref + CK.S_FISH) != null) {
-				fish = (Integer) cc.getSessionData(pref + CK.S_FISH);
-			}
-			if (cc.getSessionData(pref + CK.S_PLAYER_KILL) != null) {
-				players = (Integer) cc.getSessionData(pref + CK.S_PLAYER_KILL);
+			if (cc.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
+				craftItems = (LinkedList<ItemStack>) cc.getSessionData(pref + CK.S_CRAFT_ITEMS);
 			}
 			if (cc.getSessionData(pref + CK.S_ENCHANT_TYPES) != null) {
 				enchantments = (LinkedList<String>) cc.getSessionData(pref + CK.S_ENCHANT_TYPES);
 				enchantmentIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_ENCHANT_NAMES);
 				enchantmentAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
+			}
+			if (cc.getSessionData(pref + CK.S_FISH) != null) {
+				fish = (Integer) cc.getSessionData(pref + CK.S_FISH);
+			}
+			if (cc.getSessionData(pref + CK.S_PLAYER_KILL) != null) {
+				players = (Integer) cc.getSessionData(pref + CK.S_PLAYER_KILL);
 			}
 			if (cc.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null) {
 				deliveryItems = (LinkedList<ItemStack>) cc.getSessionData(pref + CK.S_DELIVERY_ITEMS);
@@ -1151,7 +1176,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
 				customObjs = (LinkedList<String>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
 				customObjCounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
-				customObjsData = (LinkedList<Map<String, Object>>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+				customObjsData = (LinkedList<Entry<String, Object>>) cc.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
 			}
 			if (cc.getSessionData(pref + CK.S_START_EVENT) != null) {
 				startEvent = (String) cc.getSessionData(pref + CK.S_START_EVENT);
@@ -1214,11 +1239,20 @@ public class QuestFactory implements ConversationAbandonedListener {
 				stage.set("cut-block-amounts", cutAmounts);
 				stage.set("cut-block-durability", cutDurability);
 			}
-			stage.set("fish-to-catch", fish);
-			stage.set("players-to-kill", players);
+			if (craftItems != null && craftItems.isEmpty() == false) {
+				LinkedList<String> items = new LinkedList<String>();
+				for (ItemStack is : craftItems) {
+					items.add(ItemUtil.serializeItemStack(is));
+				}
+				stage.set("items-to-craft", items);
+			} else {
+				stage.set("items-to-craft", null);
+			}
 			stage.set("enchantments", enchantments);
 			stage.set("enchantment-item-names", enchantmentIds);
 			stage.set("enchantment-amounts", enchantmentAmounts);
+			stage.set("fish-to-catch", fish);
+			stage.set("players-to-kill", players);
 			if (deliveryItems != null && deliveryItems.isEmpty() == false) {
 				LinkedList<String> items = new LinkedList<String>();
 				for (ItemStack is : deliveryItems) {
@@ -1267,8 +1301,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 					ConfigurationSection sec2 = sec.createSection("custom" + (index + 1));
 					sec2.set("name", customObjs.get(index));
 					sec2.set("count", customObjCounts.get(index));
-					if (customObjsData.get(index).isEmpty() == false) {
-						sec2.set("data", customObjsData.get(index));
+					ConfigurationSection sec3 = sec2.createSection("data");
+					for (Entry<String, Object> e : customObjsData) {
+						sec3.set(e.getKey(), e.getValue()); // if anything goes wrong it's probably here
 					}
 				}
 			}
@@ -1518,11 +1553,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cc.setSessionData(pref + CK.S_CUT_AMOUNTS, amnts);
 				cc.setSessionData(pref + CK.S_CUT_DURABILITY, durab);
 			}
-			if (stage.fishToCatch != null) {
-				cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
-			}
-			if (stage.playersToKill != null) {
-				cc.setSessionData(pref + CK.S_PLAYER_KILL, stage.playersToKill);
+			if (stage.getItemsToCraft().isEmpty() == false) {
+				LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+				for (ItemStack is : stage.getItemsToCraft()) {
+					items.add(is);
+				}
+				cc.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
 			}
 			if (stage.itemsToEnchant.isEmpty() == false) {
 				LinkedList<String> enchants = new LinkedList<String>();
@@ -1538,6 +1574,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cc.setSessionData(pref + CK.S_ENCHANT_TYPES, enchants);
 				cc.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
 				cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
+			}
+			if (stage.fishToCatch != null) {
+				cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
+			}
+			if (stage.playersToKill != null) {
+				cc.setSessionData(pref + CK.S_PLAYER_KILL, stage.playersToKill);
 			}
 			if (stage.getItemsToDeliver().isEmpty() == false) {
 				LinkedList<ItemStack> items = new LinkedList<ItemStack>();
@@ -1581,7 +1623,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					}
 					cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
 					cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.radiiToKillWithin);
-					cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.areaNames);
+					cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.killNames);
 				}
 			}
 			if (stage.locationsToReach.isEmpty() == false) {
@@ -1620,7 +1662,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (stage.customObjectives.isEmpty() == false) {
 				LinkedList<String> list = new LinkedList<String>();
 				LinkedList<Integer> countList = new LinkedList<Integer>();
-				LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+				LinkedList<Entry<String, Object>> datamapList = new LinkedList<Entry<String, Object>>();
 				for (int i = 0; i < stage.customObjectives.size(); i++) {
 					list.add(stage.customObjectives.get(i).getName());
 					countList.add(stage.customObjectiveCounts.get(i));
@@ -1731,7 +1773,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.RED + Lang.get("questEditorDeleted") + " \"" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\"?\n";
+			String text = ChatColor.RED + Lang.get("questEditorDeleted") + " (" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + ")";
 			text += ChatColor.YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
 			return text;
 		}

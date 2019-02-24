@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -30,6 +31,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 
 import me.blackvein.quests.Quester;
 
@@ -163,11 +165,16 @@ public class ItemUtil {
 		LinkedList<String> lore = new LinkedList<String>();
 		String[] flags = new String[10];
 		LinkedHashMap<Enchantment, Integer> stored = new LinkedHashMap<Enchantment, Integer>();
+		int potionColor = -1;
 		LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
 		ItemMeta meta = null;
+		PotionMeta pmeta = null;
 		EnchantmentStorageMeta esmeta = null;
 		for (String targ : args) {
 			String arg = targ.replace("minecraft|", "minecraft:");
+			if (arg.equals("")) {
+				continue;
+			}
 			if (arg.startsWith("name-")) {
 				name = arg.substring(5).toUpperCase();
 			} else if (arg.startsWith("amount-")) {
@@ -267,10 +274,21 @@ public class ItemUtil {
 				    	Bukkit.getLogger().info("You are running a version of CraftBukkit"
 				    			+ " for which Quests cannot set the NBT tag " + key);
 				    }
-				} else {
+				} else if (!key.contains("custom-color")){
 					extra.put(key, value);
 				}
+			} else if (arg.startsWith("[") && arg.endsWith("]")) {
+				if (arg.contains("rgb")) {
+					// Custom potion color
+					String[] mapping = arg.replace("[", "").replace("]", "").split("x");
+					potionColor = Integer.valueOf(mapping[1]);
+				} else {
+					Bukkit.getLogger().severe("Quests does not know how to handle "
+							+ arg + " so please contact the developer on Github");
+					return null;
+				}
 			} else {
+				Bukkit.getLogger().severe("Quests was unable to read item argument: " + arg);
 				return null;
 			}
 		}
@@ -312,6 +330,16 @@ public class ItemUtil {
 					Bukkit.getLogger().info("You are running a version of CraftBukkit"
 				    		+ " for which Quests cannot add the item flag " + flag);
 				}
+			}
+		}
+		if (potionColor != -1) {
+			pmeta = (PotionMeta) meta;
+			try {
+				pmeta.setColor(Color.fromRGB(potionColor));
+			} catch (Throwable tr) {
+				// PotionMeta.setColor() not introduced until 1.11 (?)
+				Bukkit.getLogger().info("You are running a version of CraftBukkit"
+			    		+ " for which Quests cannot set the potion color " + potionColor);
 			}
 		}
 		if (stack.getType().equals(Material.ENCHANTED_BOOK)) {
