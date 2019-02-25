@@ -32,10 +32,24 @@
         <repository>
             <id>heroes-stripped</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
+            <!-- Dead repo -->
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>Vault</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
+            <!-- Dead repo -->
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
         	<!-- For Parties -->
