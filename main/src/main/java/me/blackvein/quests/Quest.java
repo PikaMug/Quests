@@ -313,6 +313,9 @@ public class Quest {
 		if (!plugin.getSettings().canUseCompass()) {
 			return false;
 		}
+		if (quester == null) {
+			return false;
+		}
 		if (nextStage == null) {
 			return false;
 		}
@@ -327,7 +330,7 @@ public class Quest {
 			NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(nextStage.itemDeliveryTargets.getFirst());
 			targetLocation = npc.getStoredLocation();
 		}
-		if (targetLocation != null) {
+		if (targetLocation != null && targetLocation.getWorld() != null) {
 			if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
 				quester.getPlayer().setCompassTarget(targetLocation);
 			}
