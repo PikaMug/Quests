@@ -14,6 +14,11 @@
     
     <repositories>
         <repository>
+        	<!-- Parties, GPS, PhatLoots, CitizensBooks, mcMMO Classic -->
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -51,11 +56,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
-        	<!-- For Parties -->
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
     </repositories>
     
     <dependencies>
@@ -84,24 +84,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.gmail.nossr50.mcMMO</groupId>
-            <artifactId>mcMMO</artifactId>
-            <version>1.5.00</version>
-            <scope>system</scope>
-            <systemPath>${user.dir}/lib/mcMMO.jar</systemPath>
+	        <groupId>com.github.mcMMO-Dev</groupId>
+	        <artifactId>mcMMO-Classic</artifactId>
+	        <version>master-82f97cbe04-1</version>
         </dependency>
         <dependency>
             <groupId>com.herocraftonline.heroes</groupId>
             <artifactId>heroes-stripped</artifactId>
             <version>4dd3dd85</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.codisimus</groupId>
-            <artifactId>PhatLoots</artifactId>
-            <version>3.8.1</version>
-            <scope>system</scope>
-            <systemPath>${user.dir}/lib/PhatLoots.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
@@ -122,18 +113,20 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ro.nicuch</groupId>
-            <artifactId>CitizensBooks</artifactId>
-            <version>2.4.7</version>
-            <scope>system</scope>
-            <systemPath>${user.dir}/lib/CitizensBooks-2.4.7.jar</systemPath>
-        </dependency>
+	        <groupId>com.github.FlyingPikachu</groupId>
+	        <artifactId>CitizensBooks</artifactId>
+	        <version>master-SNAPSHOT</version>
+	    </dependency>
         <dependency>
-            <groupId>com.live.bemmamin</groupId>
+	        <groupId>com.github.FlyingPikachu</groupId>
+	        <artifactId>PhatLoots</artifactId>
+	        <version>master-SNAPSHOT</version>
+	    </dependency>
+        <dependency>
+            <groupId>com.github.FlyingPikachu</groupId>
             <artifactId>GPS</artifactId>
-            <version>2.2.2</version>
-            <scope>system</scope>
-            <systemPath>${user.dir}/lib/GPSAPI.jar</systemPath>
+            <version>master-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.AlessioDP.Parties</groupId>
