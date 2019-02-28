@@ -1,45 +1,168 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>me.blackvein.quests</groupId>
+        <artifactId>quests-parent</artifactId>
+        <version>3.6.4</version>
+    </parent>
+    <artifactId>quests-main</artifactId>
     
-    <packaging>pom</packaging>
-    <groupId>me.blackvein.quests</groupId>
-
-    <artifactId>quests-parent</artifactId>
-    <version>3.6.4</version>
-    <name>quests</name>
-    <url>https://github.com/FlyingPikachu/Quests/</url>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.release>8</maven.compiler.release>
     </properties>
-    <build>
-        <defaultGoal>clean package install</defaultGoal>
-    </build>
-
-    <modules>
-        <module>main</module>
-        <module>v1_8_R1</module>
-        <module>v1_8_R2</module>
-        <module>v1_8_R3</module>
-        <module>dist</module>
-    </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+    
     <repositories>
         <repository>
-            <id>dre-repo</id>
-            <url>http://erethon.de/repo/</url>
+        	<!-- Parties, GPS, PhatLoots, CitizensBooks, mcMMO Classic -->
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>citizens</id>
+            <url>http://repo.citizensnpcs.co/</url>
+        </repository>
+        <repository>
+			<id>sk89q-repo</id>
+			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
+		<repository>
+            <id>placeholderapi</id>
+            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>heroes-stripped</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
+            <!-- Dead repo -->
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>Vault</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
+            <!-- Dead repo -->
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.citizensnpcs</groupId>
+            <artifactId>citizens</artifactId>
+            <version>2.0.21-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.aufdemrand</groupId>
+            <artifactId>denizen</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <version>1.6.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+	        <groupId>com.github.mcMMO-Dev</groupId>
+	        <artifactId>mcMMO-Classic</artifactId>
+	        <version>master-82f97cbe04-1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.herocraftonline.heroes</groupId>
+            <artifactId>heroes-stripped</artifactId>
+            <version>4dd3dd85</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldedit</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldguard</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.8.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+	        <groupId>com.github.FlyingPikachu</groupId>
+	        <artifactId>CitizensBooks</artifactId>
+	        <version>master-SNAPSHOT</version>
+	    </dependency>
+        <dependency>
+	        <groupId>com.github.FlyingPikachu</groupId>
+	        <artifactId>PhatLoots</artifactId>
+	        <version>master-SNAPSHOT</version>
+	    </dependency>
+        <dependency>
+            <groupId>com.github.FlyingPikachu</groupId>
+            <artifactId>GPS</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.AlessioDP.Parties</groupId>
+            <artifactId>parties-api</artifactId>
+            <version>2.4.6</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <defaultGoal>clean package install</defaultGoal>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+        
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <directory>${basedir}/src/main/resources/</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>lang/**/*.*</include>
+                    <include>config.yml</include>
+                    <include>plugin.yml</include>
+                    <include>events.yml</include>
+                    <include>quests.yml</include>
+                    <include>data.yml</include>
+                    <include>strings.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <targetPath>.</targetPath>
+                <directory>${basedir}/</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>README.md</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 </project>
