@@ -121,14 +121,12 @@
         <dependency>
 	        <groupId>com.github.FlyingPikachu</groupId>
 	        <artifactId>PhatLoots</artifactId>
-	        <version>master-SNAPSHOT</version>
-	        <scope>provided</scope>
+	        <version>-SNAPSHOT</version>
 	    </dependency>
         <dependency>
             <groupId>com.github.FlyingPikachu</groupId>
             <artifactId>GPS</artifactId>
-            <version>master-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>2.3.6</version>
         </dependency>
         <dependency>
             <groupId>com.github.AlessioDP.Parties</groupId>
