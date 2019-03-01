@@ -28,7 +28,7 @@
     </dependencies>
     
     <build>
-		<defaultGoal>clean package install</defaultGoal>
+		<defaultGoal>clean install</defaultGoal>
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
 		<plugins>
@@ -60,6 +60,26 @@
 						</goals> 
 					</execution>
 				</executions>
+				
+				<configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+
+                    <artifactSet>
+                        <excludes>
+                            <exclude>com.*</exclude>
+                            <exclude>net.*</exclude>
+                            <exclude>org.*</exclude>
+                            <exclude>io.*</exclude>
+                        </excludes>
+                    </artifactSet>
+                </configuration>
 			</plugin>
 		</plugins>
 	</build>
