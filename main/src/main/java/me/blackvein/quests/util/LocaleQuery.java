@@ -13,13 +13,13 @@
 package me.blackvein.quests.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -190,10 +190,13 @@ public class LocaleQuery {
 	 */
 	public String queryByType(Material material) throws IllegalArgumentException{
 	    try {
-	    	Object item = MethodUtils.invokeExactStaticMethod(craftMagicNumbers,"getItem", material);
+	    	Object item = null;
+	    	Method m = craftMagicNumbers.getDeclaredMethod("getItem", material.getClass());
+	    	m.setAccessible(true);
+	    	item = m.invoke(craftMagicNumbers, material);
 	    	if (item == null) {
 	    		throw new IllegalArgumentException(material.name() + " material could not be queried!");
-	    	}
+	    	}                          
 	    	String name = (String) itemClazz.getMethod("getName").invoke(item);
 	    	return name;
 	    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
