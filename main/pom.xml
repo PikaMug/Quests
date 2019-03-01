@@ -113,10 +113,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-	        <groupId>com.github.FlyingPikachu</groupId>
+	        <groupId>com.github.nicuch</groupId>
 	        <artifactId>CitizensBooks</artifactId>
 	        <version>master-SNAPSHOT</version>
-	        <scope>provided</scope>
 	    </dependency>
         <dependency>
 	        <groupId>com.github.FlyingPikachu</groupId>
