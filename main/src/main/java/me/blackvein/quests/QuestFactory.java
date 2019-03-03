@@ -233,7 +233,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + ItemUtil.getDisplayString(stack) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 			} else {
-				text += ChatColor.GRAY + "8 - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("questCitNotInstalled") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("questCitNotInstalled") + ")\n";
 			}
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.DARK_AQUA + " - " + Lang.get("questEditorReqs") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.AQUA + " - " + Lang.get("questEditorPln") + "\n";
