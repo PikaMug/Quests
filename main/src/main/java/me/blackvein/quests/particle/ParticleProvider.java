@@ -27,7 +27,7 @@ public abstract class ParticleProvider {
             String packageName = ParticleProvider.class.getPackage().getName();
             String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             if (internalsName.startsWith("v1_8_R")) {
-                loaded = (ParticleProvider) Class.forName(packageName + "." + internalsName).newInstance();
+                loaded = (ParticleProvider) Class.forName(packageName + ".ParticleProvider_" + internalsName).newInstance();
             } else {
                 loaded = new ParticleProvider_Bukkit();
             }
@@ -121,7 +121,8 @@ public abstract class ParticleProvider {
         if (particle.getVector() != null) {
             pos.add(particle.getVector());
         }
-        loaded.spawnParticle(player, pos, loaded.getParticleMap().get(particle), particle.getOffsetX(), particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(), particle.getCount(), null);
+        loaded.spawnParticle(player, pos, 
+        		loaded.getParticleMap().get(particle), 
+        		particle.getOffsetX(), particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(), particle.getCount(), null);
     }
-
 }
