@@ -219,7 +219,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + ChatColor.GREEN + s + ChatColor.YELLOW + ")\n";
 				}
 			} else {
-				text += ChatColor.GRAY + "6 - " + Lang.get("questWGSetRegion") + " (" + Lang.get("questWGNotInstalled") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("questWGNotInstalled") + ")\n";
 			}
 			if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + Lang.get("noneSet") + ")\n";
