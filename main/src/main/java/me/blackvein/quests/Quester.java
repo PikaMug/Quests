@@ -864,8 +864,8 @@ public class Quester {
 						}
 						addFinished = true;
 					}
+					countsIndex++;
 				}
-				countsIndex++;
 			}
 			if (addUnfinished) {
 				unfinishedObjectives.add(ChatColor.GREEN + display);
