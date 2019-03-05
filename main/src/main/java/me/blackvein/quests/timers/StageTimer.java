@@ -15,6 +15,7 @@ package me.blackvein.quests.timers;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import me.blackvein.quests.Event;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
@@ -65,6 +66,10 @@ public class StageTimer implements Runnable {
 				quester.getCurrentStage(quest).setDelay(-1);
 				quester.getQuestData(quest).delayStartTime = 0;
 				quester.getQuestData(quest).delayTimeLeft = -1;
+				Event stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
+				if (stageStartEvent != null) {
+					stageStartEvent.fire(quester, quest);
+				}
 				Player player = quester.getPlayer();
 				String msg = Lang.get(player, "questObjectivesTitle");
 				msg = msg.replace("<quest>", quest.getName());
@@ -74,6 +79,7 @@ public class StageTimer implements Runnable {
 				if (stageStartMessage != null) {
 					quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quest));
 				}
+				
 			}
 			if (quester.getQuestData(quest) != null) {
 				quester.getQuestData(quest).delayOver = true;
