@@ -718,9 +718,7 @@ public class Quest {
 	public void failQuest(Quester q) {
 		if (plugin.getServer().getPlayer(q.getUUID()) != null) {
 			Player player = plugin.getServer().getPlayer(q.getUUID());
-			String title = Lang.get(player, "questTitle");
-			title = title.replace("<quest>", ChatColor.DARK_PURPLE + name + ChatColor.AQUA);
-			player.sendMessage(ChatColor.AQUA + title);
+			player.sendMessage(Lang.get(player, "questObjectivesTitle").replace("<quest>", name));
 			player.sendMessage(ChatColor.RED + Lang.get(player, "questFailed"));
 			q.hardQuit(this);
 			q.saveData();
