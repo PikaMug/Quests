@@ -119,7 +119,7 @@ public class ItemUtil {
 	 * Returns an ItemStack based on given values. Checks for legacy pre-1.13 names. Other traits such as
 	 * enchantments and lore cannot be added via this method and must be done separately.
 	 * 
-	 * @param material Item name suitable for Material.matchMaterial()
+	 * @param material Item name suitable for Material.getMaterial()
 	 * @param amount The number of items in the stack
 	 * @param durability The data value of the item, default of 0
 	 * @return ItemStack, or null if invalid format
@@ -127,7 +127,7 @@ public class ItemUtil {
 	@SuppressWarnings("deprecation")
 	public static ItemStack processItemStack(String material, int amount, short durability) {
 		try {
-			return new ItemStack(Material.matchMaterial(material), amount, durability);
+			return new ItemStack(Material.getMaterial(material.toUpperCase()), amount, durability);
 		} catch (Exception e) {
 			try {
 				Bukkit.getLogger().warning(material + " is invalid! You may need to update your quests.yml or events.yml "
