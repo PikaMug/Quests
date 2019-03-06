@@ -1524,35 +1524,55 @@ public class Quester {
 		} else if (objective.equalsIgnoreCase("breakBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break") + " <item>";
 			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("damageBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "damage") + " <item>";
 			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("placeBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "place") + " <item>";
 			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("useBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "use") + " <item>";
 			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("cutBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "cut") + " <item>";
 			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1560,7 +1580,11 @@ public class Quester {
 			ItemStack is = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(goal));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craft") + " <item> "
 					+ is.getAmount() + "/" + is.getAmount();
-			plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1575,7 +1599,12 @@ public class Quester {
 					break;
 				}
 			}
-			plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), ench);
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), ench);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment))
+						.replace("<enchantment>", enchantment.getName()));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1584,7 +1613,11 @@ public class Quester {
 			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(goal))));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(goal));
-			plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability(), null);
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1598,7 +1631,11 @@ public class Quester {
 		} else if (objective.equalsIgnoreCase("killMob")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill") + " <mob>";
 			message = message + " " + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob)) + "/" + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob));
-			plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
+			if (plugin.getSettings().canTranslateItems()) {
+				plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
+			} else {
+				p.sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(mob)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
@@ -1627,7 +1664,11 @@ public class Quester {
 		} else if (objective.equalsIgnoreCase("tameMob")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame") + " <mob>";
 			message = message + " " + getCurrentStage(quest).mobsToTame.get(mob) + "/" + getCurrentStage(quest).mobsToTame.get(mob);
-			plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
+			if (plugin.getSettings().canTranslateItems()) {
+				plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
+			} else {
+				p.sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(mob)));
+			}
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}

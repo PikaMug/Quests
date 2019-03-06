@@ -22,7 +22,7 @@ public class Settings {
 	private String redoEffect = "angry_villager";
 	private boolean showQuestReqs = true;
 	private boolean showQuestTitles = true;
-	private boolean translateItems = false;
+	private boolean translateNames = false;
 	private boolean translateSubCommands = false;
 	private boolean useCompass = true;
 	private boolean useGPS = true;
@@ -115,11 +115,23 @@ public class Settings {
 	public void setShowQuestTitles(boolean showQuestTitles) {
 		this.showQuestTitles = showQuestTitles;
 	}
+	/**
+	 * @deprecated As of release 2.6.4, use {@link #canTranslateNames()}
+	 */
 	public boolean canTranslateItems() {
-		return translateItems;
+		return translateNames;
 	}
+	/**
+	 * @deprecated As of release 2.6.4, use {@link #setTranslateNames()}
+	 */
 	public void setTranslateItems(boolean translateItems) {
-		this.translateItems = translateItems;
+		this.translateNames = translateItems;
+	}
+	public boolean canTranslateNames() {
+		return translateNames;
+	}
+	public void setTranslateNames(boolean translateItems) {
+		this.translateNames = translateItems;
 	}
 	public boolean canTranslateSubCommands() {
 		return translateSubCommands;
@@ -162,7 +174,7 @@ public class Settings {
 		redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
 		showQuestReqs = config.getBoolean("show-requirements", true);
 		showQuestTitles = config.getBoolean("show-titles", true);
-		translateItems = config.getBoolean("translate-items", false);
+		translateNames = config.getBoolean("translate-names", true);
 		translateSubCommands = config.getBoolean("translate-subcommands", false);
 		useCompass = config.getBoolean("use-compass", true);
 		useGPS = config.getBoolean("use-gps-plugin", true);

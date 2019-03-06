@@ -15,7 +15,7 @@ npc-effects:
   redo-quest: angry_villager
 show-requirements: true
 show-titles: true
-translate-items: false
+translate-names: true
 translate-subcommands: false
 use-compass: true
 use-gps-plugin: true

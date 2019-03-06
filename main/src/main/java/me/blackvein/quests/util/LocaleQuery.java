@@ -72,77 +72,74 @@ public class LocaleQuery {
 	 * @param enchantments Enchantments for the item being translated
 	 */
 	@SuppressWarnings("deprecation")
-	public void sendMessage(Player player, String message, Material material, short durability, Map<Enchantment, Integer> enchantments) {
+	public boolean sendMessage(Player player, String message, Material material, short durability, Map<Enchantment, Integer> enchantments) {
 		if (material == null) {
-			return;
+			return false;
 		}
-		if (plugin.getSettings().canTranslateItems()) {
-			String matKey = "";
-			String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
-			if (oldVersion) {
-				if (material.isBlock()) {
-					if (durability >= 0 && oldBlocks.containsKey(material.name() + "." + durability)) {
-						matKey = oldBlocks.get(material.name() + "." + durability);
-					} else if (oldBlocks.containsKey(material.name())) {
-						matKey = oldBlocks.get(material.name());
-					} else {
-						plugin.getLogger().severe("Block not found: " + material.name() + "." + durability);
-						return;
-					}
+		String matKey = "";
+		String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
+		if (oldVersion) {
+			if (material.isBlock()) {
+				if (durability >= 0 && oldBlocks.containsKey(material.name() + "." + durability)) {
+					matKey = oldBlocks.get(material.name() + "." + durability);
+				} else if (oldBlocks.containsKey(material.name())) {
+					matKey = oldBlocks.get(material.name());
 				} else {
-					ItemStack i = new ItemStack(material, 1, durability);
-					if (durability >= 0 && i.getItemMeta() instanceof PotionMeta) {
-						if (hasBasePotionData) {
-							if (material.equals(Material.POTION)) {
-								matKey = oldPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
-							} else if (material.equals(Material.LINGERING_POTION)) {
-								matKey = oldLingeringPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
-							} else if (material.equals(Material.SPLASH_POTION)) {
-								matKey = oldSplashPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
-							}
-						}
-					} else if (durability >= 0 && oldItems.containsKey(material.name() + "." + durability)) {
-						matKey = oldItems.get(material.name() + "." + durability);
-					} else if (oldItems.containsKey(material.name())) {
-						matKey = oldItems.get(material.name());
-					} else {
-						plugin.getLogger().severe("Item not found: " + material.name() + "." + durability);
-						return;
-					}
-				}
-				if (enchantments != null && !enchantments.isEmpty()) {
-					int count = 0;
-					for (Enchantment e : enchantments.keySet()) {
-						enchKeys[count] = "enchantment." + e.getName().toLowerCase().replace("_", ".")
-							.replace("environmental", "all").replace("protection", "protect");
-						count++;
-					}
+					plugin.getLogger().severe("Block not found: " + material.name() + "." + durability);
+					return false;
 				}
 			} else {
-				try {
-					matKey = queryByType(material);
-				} catch (Exception ex) {
-					plugin.getLogger().severe("Unable to query Material: " + material.name());
-					return;
-				}
-				if (enchantments != null && !enchantments.isEmpty()) {
-					int count = 0;
-					for (Enchantment e : enchantments.keySet()) {
-						enchKeys[count] = "enchantment.minecraft." + e.toString().toLowerCase();
-						count++;
+				ItemStack i = new ItemStack(material, 1, durability);
+				if (durability >= 0 && i.getItemMeta() instanceof PotionMeta) {
+					if (hasBasePotionData) {
+						if (material.equals(Material.POTION)) {
+							matKey = oldPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
+						} else if (material.equals(Material.LINGERING_POTION)) {
+							matKey = oldLingeringPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
+						} else if (material.equals(Material.SPLASH_POTION)) {
+							matKey = oldSplashPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
+						}
 					}
+				} else if (durability >= 0 && oldItems.containsKey(material.name() + "." + durability)) {
+					matKey = oldItems.get(material.name() + "." + durability);
+				} else if (oldItems.containsKey(material.name())) {
+					matKey = oldItems.get(material.name());
+				} else {
+					plugin.getLogger().severe("Item not found: " + material.name() + "." + durability);
+					return false;
 				}
 			}
-			String msg = message.replace("<item>", "\",{\"translate\":\"" + matKey + "\"},\"");
-			if (enchKeys != null && enchKeys.length > 0) {
-				for (String ek : enchKeys) {
-					msg.replaceFirst("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
+			if (enchantments != null && !enchantments.isEmpty()) {
+				int count = 0;
+				for (Enchantment e : enchantments.keySet()) {
+					enchKeys[count] = "enchantment." + e.getName().toLowerCase().replace("_", ".")
+						.replace("environmental", "all").replace("protection", "protect");
+					count++;
 				}
 			}
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
-			return;
+		} else {
+			try {
+				matKey = queryByType(material);
+			} catch (Exception ex) {
+				plugin.getLogger().severe("Unable to query Material: " + material.name());
+				return false;
+			}
+			if (enchantments != null && !enchantments.isEmpty()) {
+				int count = 0;
+				for (Enchantment e : enchantments.keySet()) {
+					enchKeys[count] = "enchantment.minecraft." + e.toString().toLowerCase();
+					count++;
+				}
+			}
 		}
-		player.sendMessage(message.replace("<item>", Quester.prettyItemString(material.name())));
+		String msg = message.replace("<item>", "\",{\"translate\":\"" + matKey + "\"},\"");
+		if (enchKeys != null && enchKeys.length > 0) {
+			for (String ek : enchKeys) {
+				msg.replaceFirst("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
+			}
+		}
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
+		return true;
 	}
 	
 	/**
@@ -154,32 +151,27 @@ public class LocaleQuery {
 	 * @param type The entity type to be translated
 	 * @param extra Career, Ocelot, or Rabbit type if applicable
 	 */
-	public void sendMessage(Player player, String message, EntityType type, String extra) {
+	public boolean sendMessage(Player player, String message, EntityType type, String extra) {
 		if (type == null ) {
-			return;
+			return false;
 		}
-		if (plugin.getSettings().canTranslateItems()) {
-			String key = "";
-			if (oldVersion) {
-				if (type.name().equals("VILLAGER") && Career.valueOf(extra) != null) {
-					key = oldEntities.get(type.name() + "." + Career.valueOf(extra).name());
-				} else if (type.name().equals("OCELOT") && Ocelot.Type.valueOf(extra) != null){
-					key = oldEntities.get(type.name() + "." + Ocelot.Type.valueOf(extra).name());
-				} else if (type.name().equals("RABBIT") && Rabbit.Type.valueOf(extra).equals(Rabbit.Type.THE_KILLER_BUNNY)) {
-					key = oldEntities.get(type.name() + "." + Rabbit.Type.valueOf(extra).name());
-				} else {
-					key = oldEntities.get(type.name());
-				}
+		String key = "";
+		if (oldVersion) {
+			if (type.name().equals("VILLAGER") && Career.valueOf(extra) != null) {
+				key = oldEntities.get(type.name() + "." + Career.valueOf(extra).name());
+			} else if (type.name().equals("OCELOT") && Ocelot.Type.valueOf(extra) != null){
+				key = oldEntities.get(type.name() + "." + Ocelot.Type.valueOf(extra).name());
+			} else if (type.name().equals("RABBIT") && Rabbit.Type.valueOf(extra).equals(Rabbit.Type.THE_KILLER_BUNNY)) {
+				key = oldEntities.get(type.name() + "." + Rabbit.Type.valueOf(extra).name());
 			} else {
-				key = "entity.minecraft." + type.toString().toLowerCase();
+				key = oldEntities.get(type.name());
 			}
-			if (!key.equals("")) {
-				String msg = message.replace("<mob>", "\",{\"translate\":\"" + key + "\"},\"");
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
-				return;
-			}
+		} else {
+			key = "entity.minecraft." + type.toString().toLowerCase();
 		}
-		player.sendMessage(message.replace("<mob>", Quester.prettyMobString(type)));
+		String msg = message.replace("<mob>", "\",{\"translate\":\"" + key + "\"},\"");
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
+		return true;
 	}
 	
 	/**

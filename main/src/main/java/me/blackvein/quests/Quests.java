@@ -636,14 +636,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					} else {
 						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "break") + " <item>" 
 								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					}
 				}
 			}
@@ -657,14 +665,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					} else {
 						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "damage") + " <item>" 
 								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					}
 				}
 			}
@@ -678,14 +694,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					} else {
 						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "place") + " <item>" 
 								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					}
 				}
 			}
@@ -699,14 +723,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					} else {
 						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "use") + " <item>" 
 								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					}
 				}
 			}
@@ -720,14 +752,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					} else {
 						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "cut") + " <item>" 
 								+ ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
 						if (depends.getPlaceholderApi() != null) {
 							message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 						}
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
+						}
 					}
 				}
 			}
@@ -744,14 +784,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				if (depends.getPlaceholderApi() != null) {
 					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 				}
-				localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+					localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				} else {
+					quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+				}
 			} else {
 				String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "craft") + " <item>" 
 						+ ChatColor.GRAY + ": " + is.getAmount() + "/" + is.getAmount();
 				if (depends.getPlaceholderApi() != null) {
 					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 				}
-				localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+					localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				} else {
+					quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+				}
 			}
 		}
 		Map<Enchantment, Material> set;
@@ -791,7 +839,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						}
 						Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
 						enchs.put(enchantment, 1);
-						localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
+						if (getSettings().canTranslateItems()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(new ItemStack(mat)))
+									.replace("<enchantment>", enchantment.getName()));
+						}
 					} else {
 						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "enchantItem")
 								+ ChatColor.GRAY + ": " + num1 + "/" + num2;
@@ -800,7 +853,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						}
 						Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
 						enchs.put(enchantment, 1);
-						localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
+						if (getSettings().canTranslateItems()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(new ItemStack(mat)))
+									.replace("<enchantment>", enchantment.getName()));
+						}
 					}
 				}
 			}
@@ -837,7 +895,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								if (depends.getPlaceholderApi() != null) {
 									message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 								}
-								localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+								if (getSettings().canTranslateItems()) {
+									localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+								} else {
+									quester.getPlayer().sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(e)));
+								}
 							} else {
 								String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "killAtLocation") + " " 
 										+ ChatColor.AQUA + "<mob>" + ChatColor.GREEN + ": " 
@@ -847,7 +909,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								if (depends.getPlaceholderApi() != null) {
 									message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 								}
-								localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+								if (getSettings().canTranslateItems()) {
+									localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+								} else {
+									quester.getPlayer().sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(e)));
+								}
 							}
 						} else {
 							if (stage.locationsToKillWithin.isEmpty()) {
@@ -858,7 +924,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								if (depends.getPlaceholderApi() != null) {
 									message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 								}
-								localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+								if (getSettings().canTranslateItems()) {
+									localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+								} else {
+									quester.getPlayer().sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(e)));
+								}
 							} else {
 								String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "killAtLocation") + " " 
 										+ ChatColor.AQUA + "<mob>" + ChatColor.GRAY + ": " 
@@ -868,7 +938,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 								if (depends.getPlaceholderApi() != null) {
 									message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 								}
-								localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+								if (getSettings().canTranslateItems()) {
+									localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+								} else {
+									quester.getPlayer().sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(e)));
+								}
 							}
 						}
 					}
@@ -903,20 +977,28 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			index++;
 			if (delivered < amt) {
 				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "deliver")
-						+ ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+						+ ChatColor.GREEN + ": " + delivered + "/" + is.getAmount();
 				message = message.replace("<npc>", getNPCName(npc));
 				if (depends.getPlaceholderApi() != null) {
 					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 				}
-				localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+					localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				} else {
+					quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+				}
 			} else {
 				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "deliver")
-						+ ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+						+ ChatColor.GREEN + ": " + delivered + "/" + is.getAmount();
 				message = message.replace("<npc>", getNPCName(npc));
 				if (depends.getPlaceholderApi() != null) {
 					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 				}
-				localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+					localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				} else {
+					quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+				}
 			}
 		}
 		for (Integer n : stage.citizensToInteract) {
@@ -973,11 +1055,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					if (e2.getValue() < e.getValue()) {
 						String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>" 
 								+ ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue();
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
+						if (getSettings().canTranslateItems()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(e.getKey())));
+						}
 					} else {
 						String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>" 
 								+ ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue();
-						localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
+						if (getSettings().canTranslateItems()) {
+							localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
+						} else {
+							quester.getPlayer().sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(e.getKey())));
+						}
 					}
 				}
 			}
@@ -3139,6 +3229,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return hero.getHeroClass().getName().equalsIgnoreCase(primaryClass);
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean testSecondaryHeroesClass(String secondaryClass, UUID uuid) {
 		Hero hero = getHero(uuid);
 		return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);

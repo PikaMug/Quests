@@ -87,15 +87,20 @@ public class NpcListener implements Listener {
 						for (Integer n : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
 							if (n.equals(clicked.getId())) {
 								String text = "";
-								if (hand.hasItemMeta()) {
+								boolean hasMeta = hand.hasItemMeta();
+								if (hasMeta) {
 									text += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName() + ChatColor.GRAY + " (" : "");
 								}
 								text += ChatColor.AQUA + "<item>" + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE + hand.getDurability()) : "") + ChatColor.GRAY;
-								if (hand.hasItemMeta()) {
+								if (hasMeta) {
 									text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
 								}
 								text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-								plugin.getLocaleQuery().sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability(), null);
+								if (plugin.getSettings().canTranslateItems() && !hasMeta && !hand.getItemMeta().hasDisplayName()) {
+									plugin.getLocaleQuery().sendMessage(player, Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text), hand.getType(), hand.getDurability(), null);
+								} else {
+									player.sendMessage(Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text).replace("<item>", ItemUtil.getName(hand)));
+								}
 								switch(reasonCode) {
 									case 1:
 										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "one item is null"));
@@ -128,7 +133,7 @@ public class NpcListener implements Listener {
 									default:
 										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "unknown"));
 								}
-								if (hand.hasItemMeta()) {
+								if (hasMeta) {
 									if (hand.getType().equals(Material.ENCHANTED_BOOK)) {
 										EnchantmentStorageMeta esmeta = (EnchantmentStorageMeta) hand.getItemMeta();
 										if (esmeta.hasStoredEnchants()) {
