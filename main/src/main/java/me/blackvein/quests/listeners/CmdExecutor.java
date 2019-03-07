@@ -799,7 +799,7 @@ public class CmdExecutor implements CommandExecutor{
 		}
 		if (player.hasPermission("quests.events.*") || player.hasPermission("quests.events.editor")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EVENTS_EDITOR_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_EVENTS") : "events"));
+					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_EVENTS_EDITOR") : "events"));
 		}
 		if (player.hasPermission("quests.stats")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_STATS_HELP")
