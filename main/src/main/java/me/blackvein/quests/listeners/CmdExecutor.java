@@ -136,19 +136,21 @@ public class CmdExecutor implements CommandExecutor{
 		if (cmd.equalsIgnoreCase("quests")) {
 			if (commands.containsKey(args[0].toLowerCase())) {
 				int min = commands.get(args[0].toLowerCase());
-				if (args.length < min)
+				if (args.length < min) {
 					return getQuestsCommandUsage(args[0]);
-				else
+				} else {
 					return null;
+				}
 			}
 			return ChatColor.YELLOW + Lang.get("questsUnknownCommand");
 		} else if (cmd.equalsIgnoreCase("questsadmin") || cmd.equalsIgnoreCase("questadmin")) {
 			if (adminCommands.containsKey(args[0].toLowerCase())) {
 				int min = adminCommands.get(args[0].toLowerCase());
-				if (args.length < min)
+				if (args.length < min) {
 					return getQuestadminCommandUsage(args[0]);
-				else
+				} else {
 					return null;
+				}
 			}
 			return ChatColor.YELLOW + Lang.get("questsUnknownAdminCommand");
 		}

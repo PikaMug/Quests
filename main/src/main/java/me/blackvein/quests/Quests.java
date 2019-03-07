@@ -149,18 +149,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		// 1 - Load main config
 		settings.init();
 		
-		// 2 - Load command executor
-		cmdExecutor = new CmdExecutor(this);
-		
-		// 3 - Load soft-depends
-		depends.init();
-		
-		// 4 - Save resources from jar
-		saveResourceAs("quests.yml", "quests.yml", false);
-		saveResourceAs("events.yml", "events.yml", false);
-		saveResourceAs("data.yml", "data.yml", false);
-		
-		// 5 - Load other configs
+		// 2 - Setup language files
 		try {
 			setupLang();
 		} catch (IOException e) {
@@ -168,6 +157,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
+		
+		// 3 - Load command executor
+		cmdExecutor = new CmdExecutor(this);
+		
+		// 4 - Load soft-depends
+		depends.init();
+		
+		// 5 - Save resources from jar
+		saveResourceAs("quests.yml", "quests.yml", false);
+		saveResourceAs("events.yml", "events.yml", false);
+		saveResourceAs("data.yml", "data.yml", false);
+		
+		// 6 - Load player data
 		loadData();
 		
 		// 6 - Save config with any new options
