@@ -108,6 +108,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 			}
 			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.PLN_REPEAT_CYCLE, null);
+				return new PlannerPrompt(plugin, factory);
 			}
 			long delay;
 			try {
@@ -141,6 +142,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 			}
 			if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.PLN_COOLDOWN, null);
+				return new PlannerPrompt(plugin, factory);
 			}
 			long delay;
 			try {
