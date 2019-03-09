@@ -60,12 +60,17 @@ public class PlannerPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + "\n";
 			text += "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE)) + "\n";
 		}
-		if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " "
-					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+		if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("plnRepeat") + " "
+					+ ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " ("
-					+ Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
+			if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " "
+						+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			} else {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " ("
+						+ Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
+			}
 		}
 		if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " "
@@ -85,7 +90,12 @@ public class PlannerPrompt extends FixedSetPrompt {
 		} else if (input.equalsIgnoreCase("2")) {
 			return new DateTimePrompt(plugin, PlannerPrompt.this, "end");
 		} else if (input.equalsIgnoreCase("3")) {
-			return new RepeatPrompt();
+			if (context.getSessionData(CK.PLN_START_DATE) != null && context.getSessionData(CK.PLN_END_DATE) != null) {
+				return new RepeatPrompt();
+			} else {
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+				return new PlannerPrompt(plugin, factory);
+			}
 		} else if (input.equalsIgnoreCase("4")) {
 			return new CooldownPrompt();
 		} else if (input.equalsIgnoreCase("5")) {
