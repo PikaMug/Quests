@@ -15,7 +15,6 @@ package me.blackvein.quests;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -392,19 +391,11 @@ public class Quester {
 		Planner pln = q.getPlanner();
 		long start = -1;
 		long end = -1;
-		if (pln.getStart() != null) {
-			Calendar cal = Calendar.getInstance();
-			String[] s = pln.getStart().split(":");
-			cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
-					Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
-			start = cal.getTimeInMillis();
+		if (pln.hasStart()) {
+			start = pln.getStartInMillis();
 		}
-		if (pln.getEnd() != null) {
-			Calendar cal = Calendar.getInstance();
-			String[] s = pln.getEnd().split(":");
-			cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
-					Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
-			end = cal.getTimeInMillis();
+		if (pln.hasEnd()) {
+			end = pln.getEndInMillis();
 		}
 		if (start > -1 && end > -1) {
 			if (pln.getRepeat() > -1) {

@@ -12,6 +12,8 @@
 
 package me.blackvein.quests;
 
+import java.util.Calendar;
+
 public class Planner {
 	public String start = null;
 	public String end = null;
@@ -21,11 +23,37 @@ public class Planner {
 	public String getStart() {
 		return start;
 	}
+	public long getStartInMillis() {
+		if (start == null) {
+			return -1;
+		}
+		Calendar cal = Calendar.getInstance();
+		String[] s = start.split(":");
+		cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
+				Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+		return cal.getTimeInMillis();
+	}
+	public boolean hasStart() {
+		return start != null;
+	}
 	public void setStart(String start) {
 		this.start = start;
 	}
 	public String getEnd() {
 		return end;
+	}
+	public long getEndInMillis() {
+		if (end == null) {
+			return -1;
+		}
+		Calendar cal = Calendar.getInstance();
+		String[] s = end.split(":");
+		cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
+				Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+		return cal.getTimeInMillis();
+	}
+	public boolean hasEnd() {
+		return end != null;
 	}
 	public void setEnd(String end) {
 		this.end = end;
@@ -33,11 +61,17 @@ public class Planner {
 	public long getRepeat() {
 		return repeat;
 	}
+	public boolean hasRepeat() {
+		return repeat != -1;
+	}
 	public void setRepeat(long repeat) {
 		this.repeat = repeat;
 	}
 	public long getCooldown() {
 		return cooldown;
+	}
+	public boolean hasCooldown() {
+		return cooldown != -1;
 	}
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;

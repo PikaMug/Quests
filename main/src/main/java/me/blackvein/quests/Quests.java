@@ -3166,9 +3166,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public static String getDyeString(DyeColor dc) {
 		return Lang.get("COLOR_" + dc.name());
 	}
-
+	
+	/**
+	 * Checks whether an NPC has a quest that the player may accept
+	 * @param npc The giver NPC to check
+	 * @param quester The player to check
+	 * @return true if at least one quest is available
+	 */
 	public boolean hasQuest(NPC npc, Quester quester) {
 		for (Quest q : quests) {
+			// Return false for expired quests
+
+			// Return true if not yet completed
 			if (q.npcStart != null && quester.completedQuests.contains(q.getName()) == false) {
 				if (q.npcStart.getId() == npc.getId()) {
 					boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
