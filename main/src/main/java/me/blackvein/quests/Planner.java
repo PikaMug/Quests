@@ -13,6 +13,7 @@
 package me.blackvein.quests;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class Planner {
 	public String start = null;
@@ -31,6 +32,8 @@ public class Planner {
 		String[] s = start.split(":");
 		cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
 				Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+		TimeZone tz = TimeZone.getTimeZone(s[6]);
+		cal.setTimeZone(tz);
 		return cal.getTimeInMillis();
 	}
 	public boolean hasStart() {
@@ -50,6 +53,8 @@ public class Planner {
 		String[] s = end.split(":");
 		cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
 				Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+		TimeZone tz = TimeZone.getTimeZone(s[6]);
+		cal.setTimeZone(tz);
 		return cal.getTimeInMillis();
 	}
 	public boolean hasEnd() {
