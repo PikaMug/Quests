@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -389,44 +390,11 @@ public class Quester {
 		}
 		Player player = getPlayer();
 		Planner pln = q.getPlanner();
-		long start = -1;
-		long end = -1;
-		if (pln.hasStart()) {
-			start = pln.getStartInMillis();
-		}
-		if (pln.hasEnd()) {
-			end = pln.getEndInMillis();
-		}
-		if (start > -1 && end > -1) {
-			if (pln.getRepeat() > -1) {
-				long questLength = end - start;
-				long nextStart = start;
-				while (System.currentTimeMillis() >= nextStart) {
-					nextStart += questLength + pln.getRepeat();
-				}
-				long nextEnd = nextStart + questLength;
-				if (System.currentTimeMillis() < nextStart) {
-					String early = Lang.get("plnTooEarly");
-					early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-					early = early.replace("<time>", ChatColor.DARK_PURPLE
-							+ Quests.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
-					player.sendMessage(ChatColor.YELLOW + early);
-					return;
-				}
-				if (System.currentTimeMillis() > nextEnd) {
-					if (System.currentTimeMillis() > end) {
-						String late = Lang.get("plnTooLate");
-						late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
-						late = late.replace("<time>", ChatColor.DARK_PURPLE
-								+ Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
-						player.sendMessage(ChatColor.RED + late);
-						return;
-					}
-					return;
-				}
-			}
-		}
-		if (pln.getStart() != null) {
+		long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
+		long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
+		long duration = end - start; // How long the quest can be active for
+		long repeat = pln.getRepeat(); // Length to wait in-between start times
+		if (start != -1) {
 			if (System.currentTimeMillis() < start) {
 				String early = Lang.get("plnTooEarly");
 				early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
@@ -436,7 +404,7 @@ public class Quester {
 				return;
 			}
 		}
-		if (pln.getEnd() != null) {
+		if (end != -1 && repeat == -1) {
 			if (System.currentTimeMillis() > end) {
 				String late = Lang.get("plnTooLate");
 				late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
@@ -444,6 +412,47 @@ public class Quester {
 						+ Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
 				player.sendMessage(ChatColor.RED + late);
 				return;
+			}
+		}
+		if (repeat != -1 && start != -1 && end != -1) {
+			// Ensure that we're past the initial duration
+			if (System.currentTimeMillis() > end) {
+				final int maxSize = 2;
+				final LinkedHashMap<Long, Long> cache = new LinkedHashMap<Long, Long>() {
+					private static final long serialVersionUID = 1L;
+					
+					@Override
+				    protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
+				        return size() > maxSize;
+				    }
+				};
+				
+				// Store both the upcoming and most recent period of activity
+				long nextStart = start;
+				long nextEnd = end;
+				while (System.currentTimeMillis() >= nextStart) {
+					nextStart += repeat;
+					nextEnd = nextStart + duration;
+					cache.put(nextStart, nextEnd);
+				}
+				
+				// Check whether the quest is currently active
+				boolean active = false;
+				for (Entry<Long, Long> startEnd : cache.entrySet()) {
+					if (startEnd.getKey() <= System.currentTimeMillis() && System.currentTimeMillis() < startEnd.getValue()) {
+						active = true;
+					}
+				}
+				
+				// If quest is not active, inform user of wait time
+				if (!active) {
+					String early = Lang.get("plnTooEarly");
+					early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+					early = early.replace("<time>", ChatColor.DARK_PURPLE
+							+ Quests.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
+					player.sendMessage(ChatColor.YELLOW + early);
+					return;
+				}
 			}
 		}
 		if (q.testRequirements(player) == true || override) {
