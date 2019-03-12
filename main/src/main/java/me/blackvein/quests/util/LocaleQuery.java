@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 
 import org.bukkit.Bukkit;
@@ -47,6 +46,17 @@ public class LocaleQuery {
 	public LocaleQuery(Quests plugin) {
 		this.plugin = plugin;
 		setup();
+	}
+	
+	public void setup() {
+		
+		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+	    try {
+	        craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers".replace("{v}", version));
+	        itemClazz = Class.forName("net.minecraft.server.{v}.Item".replace("{v}", version));
+	    } catch (ClassNotFoundException e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	public void setBukkitVersion(String bukkitVersion) {
@@ -195,17 +205,6 @@ public class LocaleQuery {
 	    	e.printStackTrace();
 	    }
 	    return null;
-	}
-	
-	public void setup() {
-		
-		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-	    try {
-	        craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers".replace("{v}", version));
-	        itemClazz = Class.forName("net.minecraft.server.{v}.Item".replace("{v}", version));
-	    } catch (ClassNotFoundException e) {
-	        e.printStackTrace();
-	    }
 	}
 	
 	public static boolean isBelow113(String bukkitVersion) {

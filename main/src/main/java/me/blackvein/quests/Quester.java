@@ -1377,13 +1377,13 @@ public class Quester {
 	}
 
 	public void interactWithNPC(Quest quest, NPC n) {
-			if (getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
-				Boolean b = getQuestData(quest).citizensInteracted.get(n.getId());
-				if (b != null && !b) {
-					getQuestData(quest).citizensInteracted.put(n.getId(), true);
-					finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
-				}
+		if (getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
+			Boolean b = getQuestData(quest).citizensInteracted.get(n.getId());
+			if (b != null && !b) {
+				getQuestData(quest).citizensInteracted.put(n.getId(), true);
+				finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
 			}
+		}
 	}
 
 	public void killNPC(Quest quest, NPC n) {
