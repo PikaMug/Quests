@@ -45,11 +45,6 @@ public class LocaleQuery {
 	
 	public LocaleQuery(Quests plugin) {
 		this.plugin = plugin;
-		setup();
-	}
-	
-	public void setup() {
-		
 		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 	    try {
 	        craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers".replace("{v}", version));
@@ -73,9 +68,12 @@ public class LocaleQuery {
 	 * Send message with item name translated to the client's locale.
 	 * Material is required. Durability arg is arbitrary for 1.13+
 	 * and can be ignored by setting to a value less than 0.
-	 * Enchantments are optional and may be left null or empty.
+	 * Enchantments are optional and may be left null or empty.<p>
 	 * 
-	 * @param player The player for whom the message is to be sent
+	 * Message should contain {@code <item>} string for replacement by
+	 * this method (along with applicable {@code <enchantment>} strings).
+	 * 
+	 * @param player The player whom the message is to be sent to
 	 * @param message The message to be sent to the player
 	 * @param material The item to be translated
 	 * @param durability Durability for the item being translated
@@ -129,7 +127,7 @@ public class LocaleQuery {
 			}
 		} else {
 			try {
-				matKey = queryByType(material);
+				matKey = queryMaterial(material);
 			} catch (Exception ex) {
 				plugin.getLogger().severe("Unable to query Material: " + material.name());
 				return false;
@@ -153,10 +151,58 @@ public class LocaleQuery {
 	}
 	
 	/**
-	 * Send message with entity name translated to the client's locale.
-	 * EntityType is required.
+	 * Send message with enchantments translated to the client's locale.
+	 * Map of Enchantment+level is required.
 	 * 
-	 * @param player The player for whom the message is to be sent
+	 * Message should contain one {@code <enchantment>} string for each
+	 * replacement by this method.
+	 * 
+	 * @param player The player whom the message is to be sent to
+	 * @param message The message to be sent to the player
+	 * @param enchantments Enchantments for the item being translated
+	 */
+	@SuppressWarnings("deprecation")
+	public boolean sendMessage(Player player, String message, Map<Enchantment, Integer> enchantments) {
+		if (enchantments == null) {
+			return false;
+		}
+		String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
+		if (oldVersion) {
+			if (enchantments != null && !enchantments.isEmpty()) {
+				int count = 0;
+				for (Enchantment e : enchantments.keySet()) {
+					enchKeys[count] = "enchantment." + e.getName().toLowerCase().replace("_", ".")
+						.replace("environmental", "all").replace("protection", "protect");
+					count++;
+				}
+			}
+		} else {
+			if (enchantments != null && !enchantments.isEmpty()) {
+				int count = 0;
+				for (Enchantment e : enchantments.keySet()) {
+					enchKeys[count] = "enchantment.minecraft." + e.toString().toLowerCase();
+					count++;
+				}
+			}
+		}
+		String msg = message;
+		if (enchKeys != null && enchKeys.length > 0) {
+			for (String ek : enchKeys) {
+				msg.replaceFirst("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
+			}
+		}
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
+		return true;
+	}
+	
+	/**
+	 * Send message with entity name translated to the client's locale.
+	 * EntityType is required.<p>
+	 * 
+	 * Message should contain {@code <mob>}
+	 * string for replacement by this method.
+	 * 
+	 * @param player The player whom the message is to be sent to
 	 * @param message The message to be sent to the player
 	 * @param type The entity type to be translated
 	 * @param extra Career, Ocelot, or Rabbit type if applicable
@@ -185,12 +231,13 @@ public class LocaleQuery {
 	}
 	
 	/**
-	 * Gets the key name of the specified material as seen in MC lang file
+	 * Gets the key name of the specified material as it would appear in a Minecraft lang file.
+	 * 
 	 * @param material the material to check
 	 * @return the raw key
 	 * @throws IllegalArgumentException if an item with that material could not be found
 	 */
-	public String queryByType(Material material) throws IllegalArgumentException{
+	public String queryMaterial(Material material) throws IllegalArgumentException{
 	    try {
 	    	Object item = null;
 	    	Method m = craftMagicNumbers.getDeclaredMethod("getItem", material.getClass());
@@ -207,6 +254,20 @@ public class LocaleQuery {
 	    return null;
 	}
 	
+	/**
+	 * Checks whether the server's Bukkit version supports use of the ItemMeta#getBasePotionData method.
+	 * 
+	 * @return true if Bukkit version is at 1.9 or above
+	 */
+	public boolean hasBasePotionData() {
+		return hasBasePotionData;
+	}
+	
+	/**
+	 * Checks whether the server's Bukkit version is below 1.13.
+	 * 
+	 * @return true if Bukkit version is at 1.12.2 or below
+	 */
 	public static boolean isBelow113(String bukkitVersion) {
 		return _isBelow113(bukkitVersion);
 	}
@@ -265,6 +326,8 @@ public class LocaleQuery {
 			case "1.7.10" :
 				return true;
 			case "1.7.9" :
+				return true;
+			case "1.7.2" :
 				return true;
 			default:
 				// Bukkit version is 1.13+ or unsupported
