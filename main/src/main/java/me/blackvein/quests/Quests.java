@@ -782,7 +782,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			int amt = is.getAmount();
 			if (crafted < amt) {
 				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "craft") + " <item>" 
-						+ ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+						+ ChatColor.GREEN + ": " + crafted + "/" + is.getAmount();
 				if (depends.getPlaceholderApi() != null) {
 					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 				}
@@ -793,7 +793,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			} else {
 				String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "craft") + " <item>" 
-						+ ChatColor.GRAY + ": " + is.getAmount() + "/" + is.getAmount();
+						+ ChatColor.GRAY + ": " + crafted + "/" + is.getAmount();
 				if (depends.getPlaceholderApi() != null) {
 					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
 				}

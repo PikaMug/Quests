@@ -36,12 +36,12 @@ public class LocaleQuery {
 	private final Quests plugin;
 	private static boolean oldVersion = false;
 	private static boolean hasBasePotionData = false;
-	private Map<String, String> oldBlocks = createBlockKeys();
-	private Map<String, String> oldItems = createItemKeys();
-	private Map<String, String> oldPotions = createPotionKeys();
-	private Map<String, String> oldLingeringPotions = createLingeringPotionKeys();
-	private Map<String, String> oldSplashPotions = createSplashPotionKeys();
-	private Map<String, String> oldEntities = createEntityKeys();
+	private Map<String, String> oldBlocks = getBlockKeys();
+	private Map<String, String> oldItems = getItemKeys();
+	private Map<String, String> oldPotions = getPotionKeys();
+	private Map<String, String> oldLingeringPotions = getLingeringPotionKeys();
+	private Map<String, String> oldSplashPotions = getSplashPotionKeys();
+	private Map<String, String> oldEntities = getEntityKeys();
 	
 	public LocaleQuery(Quests plugin) {
 		this.plugin = plugin;
@@ -56,11 +56,9 @@ public class LocaleQuery {
 	
 	public void setBukkitVersion(String bukkitVersion) {
 		oldVersion = isBelow113(bukkitVersion);
-		for (Material test : Material.values()) {
-			if (test.name().equals("LINGERING_POTION")) {
-				// We're on 1.9+
-				hasBasePotionData = true;
-			}
+		if (Material.getMaterial("LINGERING_POTION") != null) {
+			// Bukkit version is 1.9+
+			hasBasePotionData = true;
 		}
 	}
 	
@@ -276,57 +274,31 @@ public class LocaleQuery {
 		if (bukkitVersion.matches("^[0-9.]+$")) {
 			switch(bukkitVersion) {
 			case "1.12.2" :
-				return true;
 			case "1.12.1" :
-				return true;
 			case "1.12" :
-				return true;
 			case "1.11.2" :
-				return true;
 			case "1.11.1" :
-				return true;
 			case "1.11" :
-				return true;
 			case "1.10.2" :
-				return true;
 			case "1.10.1" :
-				return true;
 			case "1.10" :
-				return true;
 			case "1.9.4" :
-				return true;
 			case "1.9.3" :
-				return true;
 			case "1.9.2" :
-				return true;
 			case "1.9.1" :
-				return true;
 			case "1.9" :
-				return true;
 			case "1.8.9" :
-				return true;
 			case "1.8.8" :
-				return true;
 			case "1.8.7" :
-				return true;
 			case "1.8.6" :
-				return true;
 			case "1.8.5" :
-				return true;
 			case "1.8.4" :
-				return true;
 			case "1.8.3" :
-				return true;
 			case "1.8.2" :
-				return true;
 			case "1.8.1" :
-				return true;
 			case "1.8" :
-				return true;
 			case "1.7.10" :
-				return true;
 			case "1.7.9" :
-				return true;
 			case "1.7.2" :
 				return true;
 			default:
@@ -338,7 +310,7 @@ public class LocaleQuery {
 		return false;
 	}
     
-    private LinkedHashMap<String, String> createBlockKeys() {
+    private LinkedHashMap<String, String> getBlockKeys() {
     	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
     	keys.put("AIR", "tile.air.name");
     	keys.put("BARRIER", "tile.barrier.name");
@@ -794,7 +766,7 @@ public class LocaleQuery {
     	return keys;
     }
     
-    private LinkedHashMap<String, String> createItemKeys() {
+    private LinkedHashMap<String, String> getItemKeys() {
     	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
     	keys.put("NAME_TAG", "item.nameTag.name");
     	keys.put("LEASH", "item.leash.name");
@@ -1097,7 +1069,7 @@ public class LocaleQuery {
     	keys.put("WALL_BANNER.0", "item.WALL_BANNER.white.name"); // added
     	return keys;
     }
-    public Map<String, String> createPotionKeys() {
+    public Map<String, String> getPotionKeys() {
     	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
     	keys.put("UNCRAFTABLE", "potion.effect.empty");
     	keys.put("WATER", "potion.effect.water");
@@ -1122,7 +1094,7 @@ public class LocaleQuery {
     	return keys;
     }
     
-    public Map<String, String> createSplashPotionKeys() {
+    public Map<String, String> getSplashPotionKeys() {
     	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
     	keys.put("UNCRAFTABLE", "splash_potion.effect.empty");
     	keys.put("WATER", "splash_potion.effect.water");
@@ -1147,7 +1119,7 @@ public class LocaleQuery {
     	return keys;
     }
     
-    public Map<String, String> createLingeringPotionKeys() {
+    public Map<String, String> getLingeringPotionKeys() {
     	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
     	keys.put("UNCRAFTABLE", "lingering_potion.effect.empty");
     	keys.put("WATER", "lingering_potion.effect.water");
@@ -1172,7 +1144,7 @@ public class LocaleQuery {
 		return keys;
     }
     
-    public Map<String, String> createEntityKeys() {
+    public Map<String, String> getEntityKeys() {
     	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
     	keys.put("DROPPED_ITEM", "entity.Item.name");
     	keys.put("EXPERIENCE_ORB", "entity.XPOrb.name");
