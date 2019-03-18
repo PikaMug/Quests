@@ -37,24 +37,10 @@
         <repository>
             <id>heroes-stripped</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
-            <!-- Dead repo -->
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
         <repository>
             <id>Vault</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
-            <!-- Dead repo -->
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
     </repositories>
     
@@ -80,7 +66,7 @@
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
-            <version>1.6.7</version>
+            <version>1.7.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
