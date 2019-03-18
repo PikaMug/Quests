@@ -3009,6 +3009,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		for (Quest q : quests) {
 			if (q.getName().equalsIgnoreCase(name)) {
 				return q;
+			} else if (q.getName().toLowerCase().startsWith(name.toLowerCase())) {
+				return q;
 			}
 		}
 		return null;
@@ -3016,7 +3018,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public Event getEvent(String name) {
 		for (Event e : events) {
-			if (e.getName().equalsIgnoreCase(name)) {
+			if (e.getName().equals(name)){
+				return e;
+			} else if (e.getName().toLowerCase().startsWith(name.toLowerCase())) {
 				return e;
 			}
 		}
