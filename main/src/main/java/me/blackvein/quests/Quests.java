@@ -3018,7 +3018,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public Event getEvent(String name) {
 		for (Event e : events) {
-			if (e.getName().equals(name)){
+			if (e.getName().equalsIgnoreCase(name)){
 				return e;
 			} else if (e.getName().toLowerCase().startsWith(name.toLowerCase())) {
 				return e;
