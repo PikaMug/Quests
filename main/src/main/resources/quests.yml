@@ -2,7 +2,7 @@
 quests:
   Miner:
     name: 'Iron Miner'
-    ask-message: '<yellow>Mine <pink>2<yellow> blocks of <pink>Iron Ore<yellow> and gather the <pink>2 pieces of <pink>Iron Ore<yellow>.'
+    ask-message: '<yellow>Mine <pink>2<yellow> blocks of <pink>Iron Ore<yellow> and <yellow>gather the <pink>2 pieces of <pink>Iron Ore<yellow>.'
     finish-message: '<yellow>Well done. Here is your reward.'
     redo-delay: 1800
     requirements:
