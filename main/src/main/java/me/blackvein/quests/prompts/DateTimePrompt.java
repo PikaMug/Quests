@@ -35,7 +35,7 @@ public class DateTimePrompt extends FixedSetPrompt {
 		String dateData = "";
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 		if (cc.getSessionData("tempDay") == null) {
 			cc.setSessionData("tempDay", cal.get(Calendar.DAY_OF_MONTH));
 		}
