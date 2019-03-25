@@ -8,7 +8,7 @@
     <artifactId>quests-parent</artifactId>
     <version>${revision}</version>
     <name>quests</name>
-    <url>https://github.com/FlyingPikachu/Quests/</url>
+    <url>https://github.com/PikaMug/Quests/</url>
 
     <properties>
     	<revision>3.6.5</revision>
