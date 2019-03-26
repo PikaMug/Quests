@@ -104,12 +104,12 @@
 	        <version>master-SNAPSHOT</version>
 	    </dependency>
         <dependency>
-	        <groupId>com.github.FlyingPikachu</groupId>
+	        <groupId>com.github.PikaMug</groupId>
 	        <artifactId>PhatLoots</artifactId>
 	        <version>-SNAPSHOT</version>
 	    </dependency>
         <dependency>
-            <groupId>com.github.FlyingPikachu</groupId>
+            <groupId>com.github.PikaMug</groupId>
             <artifactId>GPS</artifactId>
             <version>-SNAPSHOT</version>
         </dependency>
