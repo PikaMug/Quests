@@ -575,7 +575,6 @@ dateCreateEnterSecond: "Immettere un secondo (massimo 59), <cancel>"
 dateCreateEnterOffset: "Immettere uno scostamento orario UTC (massimo 14), <cancel>"
 dateCreateEnterZone: "Inserisci un fuso orario UTC, <cancel>"
 dateCreateNoYearAmount: "È necessario impostare un anno prima!"
-questTitle: "--<quest>--"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**RICERCA COMPLETA: <quest>**'
 questRewardsTitle: "Premi:"

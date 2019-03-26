@@ -575,7 +575,6 @@ dateCreateEnterSecond: "Nhập một giây (tối đa 59), <cancel>"
 dateCreateEnterOffset: "Nhập khoảng thời gian UTC (tối đa 14), <cancel>"
 dateCreateEnterZone: "Nhập múi giờ UTC, <cancel>"
 dateCreateNoYearAmount: "Bạn phải đặt một năm trước!"
-questTitle: "-- <quest> --"
 questObjectivesTitle: "--(<quest>)--"
 questCompleteTitle: '**Nhiệm Vụ Hoàn Thành: <quest>**'
 questRewardsTitle: "Phần thưởng:"
