@@ -575,7 +575,6 @@ dateCreateEnterSecond: "Masukkan detik (maks. 59), <cancel>"
 dateCreateEnterOffset: "Masukkan offset waktu UTC (maks. 14), <cancel>"
 dateCreateEnterZone: "Masukkan zona waktu UTC, <cancel>"
 dateCreateNoYearAmount: "Anda harus menetapkan tahun pertama!"
-questTitle: "-- <quest> --"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**PENCARIAN LENGKAP: <quest>**'
 questRewardsTitle: "Penghargaan:"
