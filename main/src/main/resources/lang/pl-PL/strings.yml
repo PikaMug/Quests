@@ -575,7 +575,6 @@ dateCreateEnterSecond: "Wprowadź sekundę (maksymalnie 59), <cancel>"
 dateCreateEnterOffset: "Wprowadź przesunięcie czasowe UTC (maks. 14), <cancel>"
 dateCreateEnterZone: "Wprowadź strefę czasową UTC, <cancel>"
 dateCreateNoYearAmount: "Najpierw musisz ustawić rok!"
-questTitle: "-- <quest> --"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**QUEST COMPLETE: <quest>**'
 questRewardsTitle: "Nagrody:"
