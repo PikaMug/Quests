@@ -575,7 +575,6 @@ dateCreateEnterSecond: "Zadejte druhou (max. 59), <cancel>"
 dateCreateEnterOffset: "Zadejte časový posun UTC (max. 14), <cancel>"
 dateCreateEnterZone: "Zadejte časové pásmo UTC, <cancel>"
 dateCreateNoYearAmount: "Nejprve musíte nastavit rok!"
-questTitle: "-- <quest> --"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**ÚKOL DOKONČEN: <quest>**'
 questRewardsTitle: "Odměny:"
