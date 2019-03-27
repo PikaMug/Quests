@@ -22,7 +22,7 @@
         <dependency>
             <groupId>me.blackvein.quests</groupId>
             <artifactId>quests-main</artifactId>
-            <version>3.6.5</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
