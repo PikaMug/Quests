@@ -265,7 +265,7 @@ public class Event {
 	public void fire(Quester quester, Quest quest) {
 		Player player = quester.getPlayer();
 		if (message != null) {
-			player.sendMessage(plugin.parseString(message, quest, player));
+			player.sendMessage(plugin.parseStringWithPossibleLineBreaks(message, quest, player));
 		}
 		if (clearInv == true) {
 			player.getInventory().clear();

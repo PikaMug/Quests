@@ -77,7 +77,7 @@ public class StageTimer implements Runnable {
 				plugin.showObjectives(quest, quester, false);
 				String stageStartMessage = quester.getCurrentStage(quest).getStartMessage();
 				if (stageStartMessage != null) {
-					quester.getPlayer().sendMessage(Quests.parseString(stageStartMessage, quest));
+					quester.getPlayer().sendMessage(Quests.parseStringWithPossibleLineBreaks(stageStartMessage, quest));
 				}
 				
 			}

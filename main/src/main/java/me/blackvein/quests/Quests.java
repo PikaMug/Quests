@@ -2633,7 +2633,42 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			getLogger().log(Level.WARNING, "Empty file events.yml was not loaded.");
 		}
 	}
+	
+	public String[] parseStringWithPossibleLineBreaks(String s, Quest quest, Player player) {
+		String parsed = parseString(s);
+		if (parsed.contains("<npc>")) {
+			if (quest.npcStart != null) {
+				parsed = parsed.replace("<npc>", quest.npcStart.getName());
+			} else {
+				Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
+			}
+		}
+		if (depends.getPlaceholderApi() != null && player != null) {
+			parsed = PlaceholderAPI.setPlaceholders(player, parsed);
+		}
+		return parsed.split("\n");
+	}
+	
+	public static String[] parseStringWithPossibleLineBreaks(String s, Quest quest) {
+		String parsed = parseString(s);
+		if (parsed.contains("<npc>")) {
+			if (quest.npcStart != null) {
+				parsed = parsed.replace("<npc>", quest.npcStart.getName());
+			} else {
+				Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
+			}
+		}
+		return parsed.split("\n");
+	}
 
+	public static String[] parseStringWithPossibleLineBreaks(String s, NPC npc) {
+		String parsed = parseString(s);
+		if (parsed.contains("<npc>")) {
+			parsed = parsed.replace("<npc>", npc.getName());
+		}
+		return parsed.split("\n");
+	}
+	
 	public static String parseString(String s, Quest quest) {
 		String parsed = parseString(s);
 		if (parsed.contains("<npc>")) {

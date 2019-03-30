@@ -494,7 +494,7 @@ public class Quester {
 			plugin.showObjectives(q, this, false);
 			String stageStartMessage = stage.startMessage;
 			if (stageStartMessage != null) {
-				getPlayer().sendMessage(plugin.parseString(stageStartMessage, q, getPlayer()));
+				getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
 			}
 			if (stage.chatEvents.isEmpty() == false) {
 				for (String chatTrigger : stage.chatEvents.keySet()) {
@@ -1367,7 +1367,7 @@ public class Quester {
 					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
 					player.getInventory().setItem(player.getInventory().first(i), null);
 					player.updateInventory();
-					String message = Quests.parseString(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(
+					String[] message = Quests.parseStringWithPossibleLineBreaks(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(
 							getCurrentStage(quest).deliverMessages.size())), plugin.getDependencies().getCitizens().getNPCRegistry().getById(
 									getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
 					player.sendMessage(message);
@@ -2793,7 +2793,7 @@ public class Quester {
 					(long) (getCurrentStage(quest).delay * 0.02));
 			if (getCurrentStage(quest).delayMessage != null) {
 				Player p = plugin.getServer().getPlayer(id);
-				p.sendMessage(plugin.parseString((getCurrentStage(quest).delayMessage), quest, p));
+				p.sendMessage(plugin.parseStringWithPossibleLineBreaks((getCurrentStage(quest).delayMessage), quest, p));
 			}
 		}
 		getQuestData(quest).delayStartTime = System.currentTimeMillis();

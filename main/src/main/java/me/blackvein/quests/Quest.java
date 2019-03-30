@@ -40,7 +40,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 public class Quest {
@@ -155,11 +154,7 @@ public class Quest {
 	public void nextStage(Quester q) {
 		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
 		if (stageCompleteMessage != null) {
-			String s = plugin.parseString(stageCompleteMessage, this, q.getPlayer());
-			if(plugin.getDependencies().getPlaceholderApi() != null) {
-				s = PlaceholderAPI.setPlaceholders(q.getPlayer(), s);
-			}
-			q.getPlayer().sendMessage(s);
+			q.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageCompleteMessage, this, q.getPlayer()));
 		}
 		if (plugin.getSettings().canUseCompass()) {
 			q.resetCompass();
@@ -239,7 +234,7 @@ public class Quest {
 		plugin.showObjectives(this, quester, false);
 		String stageStartMessage = quester.getCurrentStage(this).startMessage;
 		if (stageStartMessage != null) {
-			quester.getPlayer().sendMessage(plugin.parseString(stageStartMessage, this, quester.getPlayer()));
+			quester.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageStartMessage, this, quester.getPlayer()));
 		}
 		quester.updateJournal();
 	}
@@ -444,7 +439,7 @@ public class Quest {
 			q.completedQuests.add(name);
 		}
 		String none = ChatColor.GRAY + "- (" + Lang.get(player, "none") + ")";
-		final String ps = plugin.parseString(finished, this, player);
+		final String[] ps = plugin.parseStringWithPossibleLineBreaks(ChatColor.AQUA + finished, this, player);
 		for (Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
 			if (entry.getValue().getName().equals(getName())) {
 				plugin.getServer().getScheduler().cancelTask(entry.getKey());
@@ -455,9 +450,7 @@ public class Quest {
 
 			@Override
 			public void run() {
-				for (String msg : ps.split("<br>")) {
-					player.sendMessage(ChatColor.AQUA + msg);
-				}
+				player.sendMessage(ps);
 			}
 		}, 40);
 		if (rews.getMoney() > 0 && plugin.getDependencies().getVaultEconomy() != null) {
