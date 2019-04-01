@@ -623,6 +623,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 */
 	@SuppressWarnings("deprecation")
 	public void showObjectives(Quest quest, Quester quester, boolean ignoreOverrides) {
+		if (!ignoreOverrides) {
+			if (quester.getCurrentStage(quest) != null) {
+				if (quester.getCurrentStage(quest).objectiveOverride != null) {
+					quester.getPlayer().sendMessage(ChatColor.GREEN + quester.getCurrentStage(quest).objectiveOverride);
+					return;
+				}
+			}
+		}
 		if (quester.getQuestData(quest) == null) {
 			getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
 			return;
