@@ -1,5 +1,5 @@
 ---
-COMMAND_LIST: "list"
+COMMAND_LIST: "seznam"
 COMMAND_LIST_HELP: "<command> [stránka] - Zobrazí dostupné úkoly"
 COMMAND_TAKE: "take"
 COMMAND_TAKE_HELP: "<command> [název úkolu] - Přijme úkol"
