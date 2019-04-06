@@ -1780,10 +1780,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("yesWord"))) {
+			if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
 				deleteQuest(context);
 				return Prompt.END_OF_CONVERSATION;
-			} else if (input.equalsIgnoreCase(Lang.get("noWord"))) {
+			} else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
 				return new MenuPrompt();
 			} else {
 				return new DeletePrompt();

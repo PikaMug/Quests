@@ -320,7 +320,6 @@ eventEditorSaved: "Event saved, Quests and Events reloaded."
 eventEditorEnterEventName: "Enter an Event name, <cancel>"
 eventEditorDeletePrompt: "Are you sure you want to delete the Event?"
 eventEditorQuitWithoutSaving: "Are you sure you want to quit without saving?"
-eventEditorFinishAndSave: "Are you sure you want to finish and save the Event?"
 eventEditorModifiedNote: 'Note: You have modified an Event that the following Quests use:'
 eventEditorForcedToQuit: "If you save the Event, anyone who is actively doing any of these Quests will be forced to quit them."
 eventEditorEventInUse: "The following Quests use the Event"

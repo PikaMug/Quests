@@ -403,17 +403,17 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.RED + Lang.get("eventEditorDeletePrompt") + "(" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")";
+			String text = ChatColor.RED + Lang.get("eventEditorDeletePrompt") + " (" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")";
 			text += ChatColor.YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
 			return text;
 		}
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("yesWord"))) {
+			if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
 				deleteEvent(context);
 				return new MenuPrompt();
-			} else if (input.equalsIgnoreCase(Lang.get("noWord"))) {
+			} else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
 				return new MenuPrompt();
 			} else {
 				return new DeletePrompt();
@@ -658,10 +658,10 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("yesWord"))) {
+			if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
 				clearData(context);
 				return new MenuPrompt();
-			} else if (input.equalsIgnoreCase(Lang.get("noWord"))) {
+			} else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
 				return new CreateMenuPrompt();
 			} else {
 				((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidOption"));
@@ -693,7 +693,7 @@ public class EventFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.RED + Lang.get("eventEditorFinishAndSave") + "(" + ChatColor.GOLD + (String) context.getSessionData(CK.E_NAME) + ChatColor.RED + ")";
+			String text = ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA + context.getSessionData(CK.E_NAME) + ChatColor.YELLOW + "\"?\n";
 			if (modified.isEmpty() == false) {
 				text += ChatColor.RED + Lang.get("eventEditorModifiedNote") + "\n";
 				for (String s : modified) {
@@ -701,16 +701,15 @@ public class EventFactory implements ConversationAbandonedListener {
 				}
 				text += ChatColor.RED + Lang.get("eventEditorForcedToQuit") + "\n";
 			}
-			text += ChatColor.YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
-			return text;
+			return text + ChatColor.GREEN + "1 - " + Lang.get("yesWord") + "\n" + "2 - " + Lang.get("noWord");
 		}
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("yesWord"))) {
+			if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
 				saveEvent(context);
 				return new MenuPrompt();
-			} else if (input.equalsIgnoreCase(Lang.get("noWord"))) {
+			} else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
 				return new CreateMenuPrompt();
 			} else {
 				((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidOption"));
