@@ -19,6 +19,8 @@ import com.herocraftonline.heroes.Heroes;
 import com.live.bemmamin.gps.Vars;
 import com.live.bemmamin.gps.api.GPSAPI;
 
+import de.erethon.dungeonsxl.DungeonsXL;
+
 public class Dependencies {
 	
 	private Quests plugin;
@@ -33,6 +35,7 @@ public class Dependencies {
 	private static CitizensPlugin citizens;
 	private static Denizen denizen = null;
 	private static CitizensBooksAPI citizensBooks = null;
+	private static DungeonsXL dungeons = null;
 	private static PartiesAPI parties = null;
 	
 	public Dependencies(Quests plugin) {
@@ -83,6 +86,10 @@ public class Dependencies {
 		return citizensBooks;
 	}
 	
+	public DungeonsXL getDungeonsApi() {
+		return dungeons;
+	}
+	
 	public PartiesAPI getPartiesApi() {
 		return parties;
 	}
@@ -130,6 +137,9 @@ public class Dependencies {
 		}
 		if (isPluginAvailable("CitizensBooks")) {
 		    citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks")).getAPI();
+        }
+		if (isPluginAvailable("DungeonsXL")) {
+		    dungeons = DungeonsXL.getInstance();
         }
 		if (isPluginAvailable("Parties")) {
 		    parties = Parties.getApi();

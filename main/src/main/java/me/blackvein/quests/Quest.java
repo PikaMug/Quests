@@ -37,6 +37,7 @@ import com.herocraftonline.heroes.characters.Hero;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
+import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -179,6 +180,19 @@ public class Quest {
 							}
 						}
 						plugin.getLogger().info("Quest \'" + name + "\' was completed by party " + party.getName() + " (" + party.getMembers().size() + " members)");
+					}
+				}
+				if (plugin.getDependencies().getDungeonsApi() != null) {
+					DGroup group = DGroup.getByPlayer(q.getPlayer());
+					if (group != null) {
+						for (UUID id : group.getPlayers().getUniqueIds()) {
+							if (!id.equals(q.getUUID())) {
+								if (plugin.getQuester(id).getCurrentQuests().containsKey(this)) {
+									completeQuest(plugin.getQuester(id));
+								}
+							}
+						}
+						plugin.getLogger().info("Quest \'" + name + "\' was completed by group " + group.getName() + " (" + group.getPlayers().size() + " players)");
 					}
 				}
 				completeQuest(q);

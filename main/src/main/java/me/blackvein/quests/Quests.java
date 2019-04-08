@@ -84,6 +84,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import me.blackvein.quests.listeners.CmdExecutor;
+import me.blackvein.quests.listeners.DungeonsListener;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
@@ -118,6 +119,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private PlayerListener playerListener;
 	private NpcListener npcListener;
 	private NpcEffectThread effThread;
+	private DungeonsListener dungeonsListener;
 	private PartiesListener partiesListener;
 	private DenizenTrigger trigger;
 	private Lang lang;
@@ -140,6 +142,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		playerListener = new PlayerListener(this);
 		effThread = new NpcEffectThread(this);
 		npcListener = new NpcListener(this);
+		dungeonsListener = new DungeonsListener();
 		partiesListener = new PartiesListener();
 		questFactory = new QuestFactory(this);
 		eventFactory = new EventFactory(this);
@@ -195,6 +198,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			if (settings.canNpcEffects()) {
 				getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
 			}
+		}
+		if (depends.getDungeonsApi() != null) {
+			getServer().getPluginManager().registerEvents(dungeonsListener, this);
 		}
 		if (depends.getPartiesApi() != null) {
 			getServer().getPluginManager().registerEvents(partiesListener, this);

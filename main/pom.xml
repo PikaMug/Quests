@@ -114,6 +114,11 @@
             <version>-SNAPSHOT</version>
         </dependency>
         <dependency>
+	        <groupId>com.github.DRE2N</groupId>
+	        <artifactId>DungeonsXL</artifactId>
+	        <version>-6523caa908-1</version>
+	    </dependency>
+        <dependency>
             <groupId>com.github.AlessioDP.Parties</groupId>
             <artifactId>parties-api</artifactId>
             <version>2.4.6</version>
