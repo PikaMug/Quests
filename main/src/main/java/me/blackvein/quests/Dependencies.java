@@ -32,7 +32,7 @@ public class Dependencies {
 	private static Heroes heroes = null;
 	private static PhatLoots phatLoots = null;
 	private static PlaceholderAPIPlugin placeholder = null;
-	private static CitizensPlugin citizens;
+	private static CitizensPlugin citizens = null;
 	private static Denizen denizen = null;
 	private static CitizensBooksAPI citizensBooks = null;
 	private static DungeonsXL dungeons = null;
@@ -109,6 +109,9 @@ public class Dependencies {
 		try {
 			if (isPluginAvailable("Citizens")) {
 				citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+				if (citizens.getNPCRegistry() == null) {
+					citizens = null;
+				}
 			}
 		} catch (Exception e) {
 			plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
