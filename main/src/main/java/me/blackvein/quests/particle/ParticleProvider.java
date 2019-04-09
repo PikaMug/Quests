@@ -18,6 +18,8 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.plugin.Plugin;
+
 public abstract class ParticleProvider {
 
     private static ParticleProvider loaded;
@@ -100,6 +102,8 @@ public abstract class ParticleProvider {
         } else {
             try {
                 loaded.spawnParticle(player, location, Particle.valueOf(particleId), 0, 0, 0, 1, 3, null);
+            } catch (NoClassDefFoundError e1) {
+            	Bukkit.getLogger().severe("[Quests] This protocol does not support npc-effect: " + particleId);
             } catch (IllegalArgumentException exception) {
                 // Fail silently
             }

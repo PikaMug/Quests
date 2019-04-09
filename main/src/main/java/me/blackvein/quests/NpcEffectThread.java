@@ -19,7 +19,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import me.blackvein.quests.particle.ParticleProvider;
-
+import me.blackvein.quests.particle.PreBuiltParticle;
 import net.citizensnpcs.api.npc.NPC;
 
 public class NpcEffectThread implements Runnable {
@@ -63,5 +63,4 @@ public class NpcEffectThread implements Runnable {
 		eyeLoc.setY(eyeLoc.getY() + 1.5);
 		ParticleProvider.sendToPlayer(player, eyeLoc, effectType);
 	}
-
 }
