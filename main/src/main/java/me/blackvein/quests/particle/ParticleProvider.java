@@ -18,8 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
-import net.md_5.bungee.api.plugin.Plugin;
-
 public abstract class ParticleProvider {
 
     private static ParticleProvider loaded;
@@ -74,7 +72,7 @@ public abstract class ParticleProvider {
         } else {
             try {
                 particle = Particle.valueOf(particleId);
-            } catch (IllegalArgumentException exception) {
+            } catch (IllegalArgumentException e2) {
                 return; // Fail silently
             }
         }
