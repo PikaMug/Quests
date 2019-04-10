@@ -133,7 +133,11 @@ public class Dependencies {
 			heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
 		}
 		if (isPluginAvailable("PhatLoots")) {
-			phatLoots = (PhatLoots) plugin.getServer().getPluginManager().getPlugin("PhatLoots");
+			try {
+				phatLoots = (PhatLoots) plugin.getServer().getPluginManager().getPlugin("PhatLoots");
+			} catch (NoClassDefFoundError e) {
+				plugin.getLogger().warning("Unofficial version of PhatLoots found. PhatLoots in Quests not enabled.");
+			}
 		}
 		if (isPluginAvailable("PlaceholderAPI")) {
 			placeholder = (PlaceholderAPIPlugin) plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI");
