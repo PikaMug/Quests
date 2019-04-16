@@ -1165,7 +1165,7 @@ public class LocaleQuery {
     	keys.put("SLIME", "entity.Slime.name");
     	keys.put("GHAST", "entity.Ghast.name");
     	keys.put("PIG_ZOMBIE", "entity.PigZombie.name");
-    	keys.put("ENDERMAN", "entity.Enderman.namen");
+    	keys.put("ENDERMAN", "entity.Enderman.name");
     	keys.put("ENDERMITE", "entity.Endermite.name");
     	keys.put("SILVERFISH", "entity.Silverfish.name");
     	keys.put("CAVE_SPIDER", "entity.CaveSpider.name");
