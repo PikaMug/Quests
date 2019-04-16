@@ -844,8 +844,11 @@ public class Quester {
 					for (Entry<String,Object> prompt : co.getData()) {
 						String replacement = "%" + prompt.getKey() + "%";
 						try {
-							if (display.contains(replacement))
-								display = display.replace(replacement, ((String) getCurrentStage(quest).customObjectiveData.get(dataIndex).getValue()));
+							if (display.contains(replacement)) {
+								if (dataIndex < getCurrentStage(quest).customObjectiveData.size()) {
+									display = display.replace(replacement, ((String) getCurrentStage(quest).customObjectiveData.get(dataIndex).getValue()));
+								}
+							}
 						} catch (NullPointerException ne) {
 							plugin.getLogger().severe("Unable to fetch display for " + co.getName() + " on " + quest.getName());
 							ne.printStackTrace();
@@ -1698,8 +1701,12 @@ public class Quester {
 					break;
 				}
 			}
-			Entry<String, Object> datamap = getCurrentStage(quest).customObjectiveData.get(index);
-			message = message.replace("%" + ((String) datamap.getKey()) + "%", (String) datamap.getValue());
+			List<Entry<String, Object>> sub = getCurrentStage(quest).customObjectiveData.subList(index, getCurrentStage(quest).customObjectiveData.size());
+			List<Entry<String, Object>> end = new LinkedList<Entry<String, Object>>(sub);
+			sub.clear(); // since sub is backed by end, this removes all sub-list items from end
+			for (Entry<String, Object> datamap : end) {
+				message = message.replace("%" + ((String) datamap.getKey()) + "%", (String) datamap.getValue());
+			}
 			
 			if (co.canShowCount()) {
 				message = message.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
