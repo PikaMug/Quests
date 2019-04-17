@@ -27,15 +27,19 @@ public class DungeonsListener implements Listener {
 	public void onPlayerJoinEvent(DPlayerJoinDGroupEvent event) {
 		Player i = event.getDGroup().getCaptain();
 		Player p = event.getDPlayer().getPlayer();
-		i.sendMessage(ChatColor.GREEN + Lang.get(i, "questDungeonsInvite").replace("<player>", p.getName()));
-		p.sendMessage(ChatColor.GREEN + Lang.get(p, "questDungeonsJoin").replace("<player>", i.getName()));
+		if (i != null && p != null) {
+			i.sendMessage(ChatColor.GREEN + Lang.get(i, "questDungeonsInvite").replace("<player>", p.getName()));
+			p.sendMessage(ChatColor.GREEN + Lang.get(p, "questDungeonsJoin").replace("<player>", i.getName()));
+		}
 	}
 	
 	@EventHandler
 	public void onPlayerLeaveEvent(DPlayerLeaveDGroupEvent event) {
 		Player k = event.getDGroup().getCaptain();
 		Player p = event.getDPlayer().getPlayer();
-		k.sendMessage(ChatColor.RED + Lang.get(k, "questDungeonsKicked").replace("<player>", k.getName()));
-		p.sendMessage(ChatColor.RED + Lang.get(p, "questDungeonsLeave").replace("<player>", p.getName()));
+		if (k != null && p != null) {
+			k.sendMessage(ChatColor.RED + Lang.get(k, "questDungeonsKicked").replace("<player>", k.getName()));
+			p.sendMessage(ChatColor.RED + Lang.get(p, "questDungeonsLeave").replace("<player>", p.getName()));
+		}
 	}
 }
