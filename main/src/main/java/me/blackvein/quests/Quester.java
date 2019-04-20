@@ -1701,7 +1701,8 @@ public class Quester {
 					break;
 				}
 			}
-			List<Entry<String, Object>> sub = getCurrentStage(quest).customObjectiveData.subList(index, getCurrentStage(quest).customObjectiveData.size());
+			List<Entry<String, Object>> sub = new LinkedList<>();
+			sub.addAll(getCurrentStage(quest).customObjectiveData.subList(index, getCurrentStage(quest).customObjectiveData.size()));
 			List<Entry<String, Object>> end = new LinkedList<Entry<String, Object>>(sub);
 			sub.clear(); // since sub is backed by end, this removes all sub-list items from end
 			for (Entry<String, Object> datamap : end) {

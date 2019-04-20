@@ -1135,42 +1135,45 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		for (CustomObjective co : stage.customObjectives) {
 			int countsIndex = 0;
 			String display = co.getDisplay();
-			boolean addUnfinished = false;
-			boolean addFinished = false;
+			List<String> unfinished = new LinkedList<String>();
+			List<String> finished = new LinkedList<String>();
 			for (Entry<String, Integer> entry : data.customObjectiveCounts.entrySet()) {
 				if (co.getName().equals(entry.getKey())) {
-					int dataIndex = 0;
 					for (Entry<String,Object> prompt : co.getData()) {
 						String replacement = "%" + prompt.getKey() + "%";
 						try {
-							if (display.contains(replacement))
-								display = display.replace(replacement, ((String) stage.customObjectiveData.get(dataIndex).getValue()));
+							for (Entry<String, Object> e : stage.customObjectiveData) {
+								if (e.getKey().equals(prompt.getKey())) {
+									if (display.contains(replacement)) {
+										display = display.replace(replacement, ((String) e.getValue()));
+									}
+								}
+							}
 						} catch (NullPointerException ne) {
 							getLogger().severe("Unable to fetch display for " + co.getName() + " on " + quest.getName());
 							ne.printStackTrace();
 						}
-						dataIndex++;
 					}
 					if (entry.getValue() < stage.customObjectiveCounts.get(countsIndex)) {
 						if (co.canShowCount()) {
 							display = display.replace("%count%", entry.getValue() + "/" + stage.customObjectiveCounts.get(countsIndex));
 						}
-						addUnfinished = true;
+						unfinished.add(display);
 					} else {
 						if (co.canShowCount()) {
 							display = display.replace("%count%", stage.customObjectiveCounts.get(countsIndex) 
 									+ "/" + stage.customObjectiveCounts.get(countsIndex));
 						}
-						addFinished = true;
+						finished.add(display);
 					}
 				}
 				countsIndex++;
 			}
-			if (addUnfinished) {
-				quester.getPlayer().sendMessage(ChatColor.GREEN + display);
+			for (String s : unfinished) {
+				quester.getPlayer().sendMessage(ChatColor.GREEN + s);
 			}
-			if (addFinished) {
-				quester.getPlayer().sendMessage(ChatColor.GRAY + display);
+			for (String s : finished) {
+				quester.getPlayer().sendMessage(ChatColor.GRAY + s);
 			}
 		}
 	}
@@ -2493,10 +2496,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				return;
 			}
 			Stage oStage = quest.getStage(Integer.valueOf(s2) - 1);
-			oStage.customObjectives=new LinkedList<>();
-			oStage.customObjectiveCounts=new LinkedList<>();
-			oStage.customObjectiveData=new LinkedList<>();
-			oStage.customObjectiveDisplays=new LinkedList<>();
+			oStage.customObjectives = new LinkedList<>();
+			oStage.customObjectiveCounts = new LinkedList<>();
+			oStage.customObjectiveData = new LinkedList<>();
+			oStage.customObjectiveDisplays = new LinkedList<>();
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives")) {
 				ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".stages.ordered." + s2 + ".custom-objectives");
 				for (String path : sec.getKeys(false)) {
@@ -2515,11 +2518,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					} else {
 						ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
 						oStage.customObjectives.add(found.get());
-							if (count <= 0) {
-								oStage.customObjectiveCounts.add(0);
-							} else {
-								oStage.customObjectiveCounts.add(count);
-							}
+						if (count <= 0) {
+							oStage.customObjectiveCounts.add(0);
+						} else {
+							oStage.customObjectiveCounts.add(count);
+						}
 						for (Entry<String,Object> prompt : found.get().getData()) {
 							Entry<String, Object> data = populateCustoms(sec2, prompt);
 							oStage.customObjectiveData.add(data);

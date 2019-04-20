@@ -763,7 +763,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void saveQuest(ConversationContext cc, ConfigurationSection cs) {
+	public void saveQuest(ConversationContext cc, ConfigurationSection cs) {
 		String edit = null;
 		if (cc.getSessionData(CK.ED_QUEST_EDIT) != null) {
 			edit = (String) cc.getSessionData(CK.ED_QUEST_EDIT);
@@ -1301,9 +1301,20 @@ public class QuestFactory implements ConversationAbandonedListener {
 					ConfigurationSection sec2 = sec.createSection("custom" + (index + 1));
 					sec2.set("name", customObjs.get(index));
 					sec2.set("count", customObjCounts.get(index));
+					CustomObjective found = null;
+					for (CustomObjective co : plugin.getCustomObjectives()) {
+						if (co.getName().equals(customObjs.get(index))) {
+							found = co;
+							break;
+						}
+					}
 					ConfigurationSection sec3 = sec2.createSection("data");
-					for (Entry<String, Object> e : customObjsData) {
-						sec3.set(e.getKey(), e.getValue()); // if anything goes wrong it's probably here
+					for (Entry<String, Object> datamap : found.getData()) {
+						for (Entry<String, Object> e : customObjsData) {
+							if (e.getKey().equals(datamap.getKey())) {
+								sec3.set(e.getKey(), e.getValue()); // if anything goes wrong it's probably here
+							}
+						}
 					}
 				}
 			}
@@ -1666,8 +1677,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 				for (int i = 0; i < stage.customObjectives.size(); i++) {
 					list.add(stage.customObjectives.get(i).getName());
 					countList.add(stage.customObjectiveCounts.get(i));
-					datamapList.add(stage.customObjectiveData.get(i));
 				}
+				datamapList.addAll(stage.customObjectiveData);
 				cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
 				cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
 				cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);

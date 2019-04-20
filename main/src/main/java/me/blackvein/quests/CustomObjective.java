@@ -166,22 +166,23 @@ public abstract class CustomObjective implements Listener {
 			if (currentStage == null) {
 				return null;
 			}
-			int index = -1;
-			int tempIndex = 0;
+			CustomObjective found = null;
 			for (me.blackvein.quests.CustomObjective co : currentStage.customObjectives) {
 				if (co.getName().equals(obj.getName())) {
-					index = tempIndex;
+					found = co;
 					break;
 				}
-				tempIndex++;
 			}
-			if (index > -1) {
+			if (found != null) {
 				Map<String, Object> m = new HashMap<String, Object>();
-				for (int i = index; i < index + data.size(); i++) {
-					Entry<String, Object> e = currentStage.customObjectiveData.get(i);
-					m.put(e.getKey(), e.getValue());
+				for (Entry<String, Object> datamap : found.getData()) {
+					for (Entry<String, Object> e : currentStage.customObjectiveData) {
+						if (e.getKey().equals(datamap.getKey())) {
+							m.put(e.getKey(), e.getValue());
+							return m;
+						}
+					}
 				}
-				return m;
 			}
 		}
 		return null;
