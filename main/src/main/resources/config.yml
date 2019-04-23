@@ -1,0 +1,21 @@
+# See https://github.com/FlyingPikachu/Quests/wiki/2-%E2%80%90-Configuration
+accept-timeout: 20
+allow-command-questing: true
+allow-command-quests-with-npcs: false
+allow-quitting: true
+ask-confirmation: true
+generate-files-on-join: true
+ignore-locked-quests: false
+kill-delay: 600
+language: en-US
+max-quests: 0
+npc-effects:
+  enabled: true
+  new-quest: note
+  redo-quest: angry_villager
+show-requirements: true
+show-titles: true
+translate-names: true
+translate-subcommands: false
+use-compass: true
+use-gps-plugin: true
