@@ -477,6 +477,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						+ ", " + events.size() + " Event(s)"
 						+ ", " + Lang.size() + " Phrase(s)");
 				questers.addAll(getOnlineQuesters());
+				if (depends.getCitizens() != null) {
+					if (depends.getCitizens().getNPCRegistry() == null) {
+						getLogger().log(Level.SEVERE, "Citizens was enabled but NPCRegistry was null. Disabling linkage.");
+						depends.disableCitizens();
+					}
+				}
 				loadModules();
 			}
 		}, 5L);
