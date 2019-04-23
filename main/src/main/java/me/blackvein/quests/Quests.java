@@ -1385,6 +1385,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					if (config.contains("quests." + questKey + ".planner")) {
 						loadQuestPlanner(config, questsSection, quest, questKey);
 					}
+					if (config.contains("quests." + questKey + ".options")) {
+						loadQuestOptions(config, questsSection, quest, questKey);
+					}
 					quest.plugin = this;
 					processStages(quest, config, questKey);
 					loadQuestRewards(config, quest, questKey);
@@ -1724,6 +1727,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			} else {
 				skipQuestProcess("cooldown: for Quest " + quest.getName() + " is not a number!");
 			}
+		}
+	}
+	
+	private void loadQuestOptions(FileConfiguration config, ConfigurationSection questsSection, Quest quest, String questKey) throws SkipQuest {
+		Options opts = quest.getOptions();
+		if (config.contains("quests." + questKey + ".options.use-dungeonsxl-plugin")) {
+			opts.setUseDungeonsXLPlugin(config.getBoolean("quests." + questKey + ".options.use-dungeonsxl-plugin"));
+		}
+		if (config.contains("quests." + questKey + ".options.use-parties-plugin")) {
+			opts.setUsePartiesPlugin(config.getBoolean("quests." + questKey + ".options.use-parties-plugin"));
 		}
 	}
 

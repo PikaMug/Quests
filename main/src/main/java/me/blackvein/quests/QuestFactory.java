@@ -47,6 +47,7 @@ import org.bukkit.inventory.ItemStack;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
 import me.blackvein.quests.prompts.ItemStackPrompt;
+import me.blackvein.quests.prompts.OptionsPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.PlannerPrompt;
@@ -239,8 +240,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.AQUA + " - " + Lang.get("questEditorPln") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + " - " + Lang.get("questEditorStages") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("questEditorRews") + "\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("save") + "\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("exit") + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.DARK_GREEN + " - " + Lang.get("questEditorOpts") + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("save") + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "15" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("exit") + "\n";
 			return text;
 		}
 
@@ -284,8 +286,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 			} else if (input.equalsIgnoreCase("12")) {
 				return new RewardsPrompt(plugin, QuestFactory.this);
 			} else if (input.equalsIgnoreCase("13")) {
-				return new SavePrompt();
+				return new OptionsPrompt(plugin, QuestFactory.this);
 			} else if (input.equalsIgnoreCase("14")) {
+				return new SavePrompt();
+			} else if (input.equalsIgnoreCase("15")) {
 				return new ExitPrompt();
 			}
 			return null;
@@ -821,6 +825,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 		String endDatePln = null;
 		Long repeatCyclePln = null;
 		Long cooldownPln = null;
+		boolean useDungeonsXLPluginOpt = false;
+		boolean usePartiesPluginOpt = true;
 		if (cc.getSessionData(CK.Q_START_NPC) != null) {
 			npcStart = (Integer) cc.getSessionData(CK.Q_START_NPC);
 		}
@@ -934,6 +940,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		if (cc.getSessionData(CK.PLN_COOLDOWN) != null) {
 			cooldownPln = (Long) cc.getSessionData(CK.PLN_COOLDOWN);
+		}
+		if (cc.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) != null) {
+			useDungeonsXLPluginOpt = (Boolean) cc.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN);
+		}
+		if (cc.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null) {
+			usePartiesPluginOpt = (Boolean) cc.getSessionData(CK.OPT_USE_PARTIES_PLUGIN);
 		}
 		cs.set("name", name);
 		cs.set("npc-giver-id", npcStart);
@@ -1382,6 +1394,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 		} else {
 			cs.set("planner", null);
 		}
+		ConfigurationSection sch = cs.createSection("options");
+		sch.set("use-dungeonsxl-plugin", useDungeonsXLPluginOpt);
+		sch.set("use-parties-plugin", usePartiesPluginOpt);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1493,6 +1508,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 		if (pln.getCooldown() != -1) {
 			cc.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
 		}
+		Options opt = q.getOptions();
+		cc.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.getUseDungeonsXLPlugin());
+		cc.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.getUsePartiesPlugin());
 		// Stages (Objectives)
 		int index = 1;
 		for (Stage stage : q.getStages()) {

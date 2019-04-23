@@ -58,6 +58,7 @@ public class Quest {
 	private Requirements reqs = new Requirements();
 	private Planner pln = new Planner();
 	private Rewards rews = new Rewards();
+	private Options opts = new Options();
 	
 	public Requirements getRequirements() {
 		return reqs;
@@ -69,6 +70,10 @@ public class Quest {
 	
 	public Rewards getRewards() {
 		return rews;
+	}
+	
+	public Options getOptions() {
+		return opts;
 	}
 	
 	public String getName() {
@@ -170,29 +175,33 @@ public class Quest {
 					q.getCurrentStage(this).finishEvent.fire(q, this);
 				}
 				if (plugin.getDependencies().getPartiesApi() != null) {
-					Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(q.getUUID()).getPartyName());
-					if (party != null) {
-						for (UUID id : party.getMembers()) {
-							if (!id.equals(q.getUUID())) {
-								if (plugin.getQuester(id).getCurrentQuests().containsKey(this)) {
-									completeQuest(plugin.getQuester(id));
+					if (opts.getUsePartiesPlugin()) {
+						Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(q.getUUID()).getPartyName());
+						if (party != null) {
+							for (UUID id : party.getMembers()) {
+								if (!id.equals(q.getUUID())) {
+									if (plugin.getQuester(id).getCurrentQuests().containsKey(this)) {
+										completeQuest(plugin.getQuester(id));
+									}
 								}
 							}
+							plugin.getLogger().info("Quest \'" + name + "\' was completed by party " + party.getName() + " (" + party.getMembers().size() + " members)");
 						}
-						plugin.getLogger().info("Quest \'" + name + "\' was completed by party " + party.getName() + " (" + party.getMembers().size() + " members)");
 					}
 				}
 				if (plugin.getDependencies().getDungeonsApi() != null) {
-					DGroup group = DGroup.getByPlayer(q.getPlayer());
-					if (group != null) {
-						for (UUID id : group.getPlayers().getUniqueIds()) {
-							if (!id.equals(q.getUUID())) {
-								if (plugin.getQuester(id).getCurrentQuests().containsKey(this)) {
-									completeQuest(plugin.getQuester(id));
+					if (opts.getUseDungeonsXLPlugin()) {
+						DGroup group = DGroup.getByPlayer(q.getPlayer());
+						if (group != null) {
+							for (UUID id : group.getPlayers().getUniqueIds()) {
+								if (!id.equals(q.getUUID())) {
+									if (plugin.getQuester(id).getCurrentQuests().containsKey(this)) {
+										completeQuest(plugin.getQuester(id));
+									}
 								}
 							}
+							plugin.getLogger().info("Quest \'" + name + "\' was completed by group " + group.getName() + " (" + group.getPlayers().size() + " players)");
 						}
-						plugin.getLogger().info("Quest \'" + name + "\' was completed by group " + group.getName() + " (" + group.getPlayers().size() + " players)");
 					}
 				}
 				completeQuest(q);
