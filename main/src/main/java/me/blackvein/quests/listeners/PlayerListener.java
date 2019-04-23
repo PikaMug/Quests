@@ -160,7 +160,12 @@ public class PlayerListener implements Listener {
 									}
 								}
 								if (takeable == true) {
-									quester.takeQuest(quest, false);
+									try { 
+										quester.takeQuest(quest, false);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+									
 								}
 								evt.getWhoClicked().closeInventory();
 							}
