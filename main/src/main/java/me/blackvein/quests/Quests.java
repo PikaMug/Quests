@@ -1738,6 +1738,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	
 	private void loadQuestOptions(FileConfiguration config, ConfigurationSection questsSection, Quest quest, String questKey) throws SkipQuest {
 		Options opts = quest.getOptions();
+		if (config.contains("quests." + questKey + ".options.allow-commands")) {
+			opts.setAllowCommands(config.getBoolean("quests." + questKey + ".options.allow-commands"));
+		}
 		if (config.contains("quests." + questKey + ".options.use-dungeonsxl-plugin")) {
 			opts.setUseDungeonsXLPlugin(config.getBoolean("quests." + questKey + ".options.use-dungeonsxl-plugin"));
 		}

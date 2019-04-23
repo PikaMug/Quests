@@ -129,6 +129,7 @@ public class CK {
 	public static final String PLN_REPEAT_CYCLE = "repeatCyclePln";
 	public static final String PLN_COOLDOWN = "cooldownPln";
 	// Options
+	public static final String OPT_ALLOW_COMMANDS = "allowCommandsOpt";
 	public static final String OPT_USE_DUNGEONSXL_PLUGIN = "useDungeonsXLPluginOpt";
 	public static final String OPT_USE_PARTIES_PLUGIN = "usePartiesPluginOpt";
 	// Events

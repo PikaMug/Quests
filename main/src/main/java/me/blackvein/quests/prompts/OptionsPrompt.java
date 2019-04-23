@@ -89,14 +89,26 @@ public class OptionsPrompt extends FixedSetPrompt {
 			String lang = Lang.get("questEditorOpts") + ": " + Lang.get("optGeneral");
 			lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
 			text = ChatColor.DARK_AQUA + lang + "\n";
-			text += ChatColor.RED + "WIP" + "\n";
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			if (context.getSessionData(CK.OPT_ALLOW_COMMANDS) == null) {
+				boolean defaultOpt = new Options().getAllowCommands();
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowCommands") + " (" 
+						+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")\n";
+			} else {
+				boolean commandsOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_COMMANDS);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowCommands") + " (" 
+						+ (commandsOpt ? ChatColor.GREEN + String.valueOf(commandsOpt) : ChatColor.RED + String.valueOf(commandsOpt)) + ChatColor.YELLOW + ")\n";
+			}
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			return text;
 		}
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase("1")) {
+				tempKey = CK.OPT_ALLOW_COMMANDS;
+				tempPrompt = new GeneralPrompt();
+				return new TrueFalsePrompt();
+			} else if (input.equalsIgnoreCase("2")) {
 				tempKey = null;
 				tempPrompt = null;
 				return factory.returnToMenu();

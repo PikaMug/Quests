@@ -825,6 +825,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		String endDatePln = null;
 		Long repeatCyclePln = null;
 		Long cooldownPln = null;
+		boolean allowCommandsOpt = true;
 		boolean useDungeonsXLPluginOpt = false;
 		boolean usePartiesPluginOpt = true;
 		if (cc.getSessionData(CK.Q_START_NPC) != null) {
@@ -940,6 +941,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		if (cc.getSessionData(CK.PLN_COOLDOWN) != null) {
 			cooldownPln = (Long) cc.getSessionData(CK.PLN_COOLDOWN);
+		}
+		if (cc.getSessionData(CK.OPT_ALLOW_COMMANDS) != null) {
+			allowCommandsOpt = (Boolean) cc.getSessionData(CK.OPT_ALLOW_COMMANDS);
 		}
 		if (cc.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) != null) {
 			useDungeonsXLPluginOpt = (Boolean) cc.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN);
@@ -1395,6 +1399,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cs.set("planner", null);
 		}
 		ConfigurationSection sch = cs.createSection("options");
+		sch.set("allow-commands", allowCommandsOpt);
 		sch.set("use-dungeonsxl-plugin", useDungeonsXLPluginOpt);
 		sch.set("use-parties-plugin", usePartiesPluginOpt);
 	}
@@ -1509,6 +1514,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cc.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
 		}
 		Options opt = q.getOptions();
+		cc.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.getAllowCommands());
 		cc.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.getUseDungeonsXLPlugin());
 		cc.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.getUsePartiesPlugin());
 		// Stages (Objectives)

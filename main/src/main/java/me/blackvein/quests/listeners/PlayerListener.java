@@ -386,6 +386,15 @@ public class PlayerListener implements Listener {
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			if (quester.getCurrentQuests().isEmpty() == false) {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
+					if (!quest.getOptions().getAllowCommands()) {
+						if (!evt.getMessage().startsWith("/quest")) {
+							evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "optCommandsDenied").replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED));
+							evt.setCancelled(true);
+							plugin.getLogger().info("Player " + evt.getPlayer().getName() + " tried to use command " + evt.getMessage()
+								+ " but was denied because they are currently on quest " + quest.getName());
+							return;
+						}
+					}
 					Stage currentStage = quester.getCurrentStage(quest);
 					if (currentStage == null) {
 						plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() + " on command for quest " + quest.getName());
