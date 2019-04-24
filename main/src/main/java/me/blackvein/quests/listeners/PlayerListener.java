@@ -86,7 +86,6 @@ public class PlayerListener implements Listener {
 		plugin = newPlugin;
 	}
 
-	@SuppressWarnings("deprecation") // since 1.13
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClickEvent(InventoryClickEvent evt) {
 		InventoryAction ac = evt.getAction();
@@ -114,7 +113,7 @@ public class PlayerListener implements Listener {
 		}
 		Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
 		Player player = (Player) evt.getWhoClicked();
-		if (evt.getInventory().getTitle().contains(Lang.get(player, "quests"))) {
+		if (evt.getView().getTitle().contains(Lang.get(player, "quests"))) {
 			ItemStack clicked = evt.getCurrentItem();
 			if (clicked != null) {
 				for (Quest quest : plugin.getQuests()) {
