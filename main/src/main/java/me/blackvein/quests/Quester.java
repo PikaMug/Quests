@@ -1706,7 +1706,7 @@ public class Quester {
 			List<Entry<String, Object>> end = new LinkedList<Entry<String, Object>>(sub);
 			sub.clear(); // since sub is backed by end, this removes all sub-list items from end
 			for (Entry<String, Object> datamap : end) {
-				message = message.replace("%" + ((String) datamap.getKey()) + "%", (String) datamap.getValue());
+				message = message.replace("%" + (String.valueOf(datamap.getKey())) + "%", String.valueOf(datamap.getValue()));
 			}
 			
 			if (co.canShowCount()) {
