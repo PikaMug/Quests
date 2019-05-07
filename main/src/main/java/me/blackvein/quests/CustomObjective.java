@@ -179,9 +179,12 @@ public abstract class CustomObjective implements Listener {
 					for (Entry<String, Object> e : currentStage.customObjectiveData) {
 						if (e.getKey().equals(datamap.getKey())) {
 							m.put(e.getKey(), e.getValue());
-							return m;
 						}
 					}
+					
+				}
+				if (m != null && !m.isEmpty()) {
+					return m;
 				}
 			}
 		}
