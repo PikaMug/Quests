@@ -184,7 +184,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 					return new BreakBlockDurabilityPrompt();
 				}
 			} else if (input.equalsIgnoreCase("4")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorBreakBlocksCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_BREAK_NAMES, null);
 				context.setSessionData(pref + CK.S_BREAK_AMOUNTS, null);
 				context.setSessionData(pref + CK.S_BREAK_DURABILITY, null);
@@ -401,7 +401,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 					return new DamageBlockDurabilityPrompt();
 				}
 			} else if (input.equalsIgnoreCase("4")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorDamageBlocksCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_DAMAGE_NAMES, null);
 				context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, null);
 				context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, null);
@@ -618,7 +618,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 					return new PlaceBlockDurabilityPrompt();
 				}
 			} else if (input.equalsIgnoreCase("4")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorPlaceBlocksCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_PLACE_NAMES, null);
 				context.setSessionData(pref + CK.S_PLACE_AMOUNTS, null);
 				context.setSessionData(pref + CK.S_PLACE_DURABILITY, null);
@@ -835,7 +835,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 					return new UseBlockDurabilityPrompt();
 				}
 			} else if (input.equalsIgnoreCase("4")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorUseBlocksCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_USE_NAMES, null);
 				context.setSessionData(pref + CK.S_USE_AMOUNTS, null);
 				context.setSessionData(pref + CK.S_USE_DURABILITY, null);
@@ -1052,7 +1052,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 					return new CutBlockDurabilityPrompt();
 				}
 			} else if (input.equalsIgnoreCase("4")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorCutBlocksCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_CUT_NAMES, null);
 				context.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
 				context.setSessionData(pref + CK.S_CUT_DURABILITY, null);

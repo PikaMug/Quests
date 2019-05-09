@@ -397,7 +397,7 @@ public class NPCsPrompt extends FixedSetPrompt {
 					return new NpcAmountsToKillPrompt();
 				}
 			} else if (input.equalsIgnoreCase("3")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorKillNPCsCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_NPCS_TO_KILL, null);
 				context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, null);
 				return new NPCKillListPrompt();

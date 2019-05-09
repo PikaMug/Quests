@@ -824,6 +824,36 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 		}
+		for (ItemStack is : stage.itemsToSmelt) {
+			int smelted = 0;
+			if (data.itemsSmelted.containsKey(is)) {
+				smelted = data.itemsSmelted.get(is);
+			}
+			int amt = is.getAmount();
+			if (smelted < amt) {
+				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "smelt") + " <item>" 
+						+ ChatColor.GREEN + ": " + smelted + "/" + is.getAmount();
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+					localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				} else {
+					quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+				}
+			} else {
+				String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "smelt") + " <item>" 
+						+ ChatColor.GRAY + ": " + smelted + "/" + is.getAmount();
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+					localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+				} else {
+					quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+				}
+			}
+		}
 		Map<Enchantment, Material> set;
 		Map<Enchantment, Material> set2;
 		Set<Enchantment> enchantSet;
@@ -1805,6 +1835,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			List<Integer> radiiToKillWithin = new LinkedList<Integer>();
 			List<String> areaNames = new LinkedList<String>();
 			List<String> itemsToCraft = new LinkedList<String>();
+			List<String> itemsToSmelt = new LinkedList<String>();
 			List<Enchantment> enchantments = new LinkedList<Enchantment>();
 			List<Material> itemsToEnchant = new LinkedList<Material>();
 			List<Integer> amountsToEnchant = new LinkedList<Integer>();
@@ -2041,6 +2072,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 				} else {
 					stageFailed("items-to-craft: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+				}
+			}
+			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-smelt")) {
+				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-smelt"), String.class)) {
+					itemsToSmelt = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-smelt");
+					for (String item : itemsToSmelt) {
+						ItemStack is = ItemUtil.readItemStack("" + item);
+						if (is != null) {
+							oStage.getItemsToSmelt().add(is);
+						} else {
+							stageFailed("" + item + " inside items-to-smelt: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+						}
+					}
+				} else {
+					stageFailed("items-to-smelt: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".enchantments")) {

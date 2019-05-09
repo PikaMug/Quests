@@ -113,6 +113,7 @@ public class StagesPrompt extends StringPrompt {
 				cc.setSessionData(newPref + CK.S_CUT_AMOUNTS, cc.getSessionData(pref + CK.S_CUT_AMOUNTS));
 				cc.setSessionData(newPref + CK.S_CUT_DURABILITY, cc.getSessionData(pref + CK.S_CUT_DURABILITY));
 				cc.setSessionData(newPref + CK.S_CRAFT_ITEMS, cc.getSessionData(pref + CK.S_CRAFT_ITEMS));
+				cc.setSessionData(newPref + CK.S_SMELT_ITEMS, cc.getSessionData(pref + CK.S_SMELT_ITEMS));
 				cc.setSessionData(newPref + CK.S_ENCHANT_TYPES, cc.getSessionData(pref + CK.S_ENCHANT_TYPES));
 				cc.setSessionData(newPref + CK.S_ENCHANT_NAMES, cc.getSessionData(pref + CK.S_ENCHANT_NAMES));
 				cc.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS));
@@ -172,6 +173,7 @@ public class StagesPrompt extends StringPrompt {
 			cc.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
 			cc.setSessionData(pref + CK.S_CUT_DURABILITY, null);
 			cc.setSessionData(pref + CK.S_CRAFT_ITEMS, null);
+			cc.setSessionData(pref + CK.S_SMELT_ITEMS, null);
 			cc.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
 			cc.setSessionData(pref + CK.S_ENCHANT_NAMES, null);
 			cc.setSessionData(pref + CK.S_FISH, null);

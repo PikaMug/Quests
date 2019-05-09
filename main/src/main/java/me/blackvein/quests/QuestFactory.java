@@ -1015,6 +1015,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		Integer fish;
 		Integer players;
 		LinkedList<ItemStack> craftItems;
+		LinkedList<ItemStack> smeltItems;
 		LinkedList<Integer> deliveryNPCIds;
 		LinkedList<String> deliveryMessages;
 		LinkedList<Integer> npcTalkIds;
@@ -1070,6 +1071,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cutAmounts = null;
 			cutDurability = null;
 			craftItems = null;
+			smeltItems = null;
 			enchantments = null;
 			enchantmentIds = null;
 			enchantmentAmounts = null;
@@ -1139,6 +1141,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 			}
 			if (cc.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
 				craftItems = (LinkedList<ItemStack>) cc.getSessionData(pref + CK.S_CRAFT_ITEMS);
+			}
+			if (cc.getSessionData(pref + CK.S_SMELT_ITEMS) != null) {
+				smeltItems = (LinkedList<ItemStack>) cc.getSessionData(pref + CK.S_SMELT_ITEMS);
 			}
 			if (cc.getSessionData(pref + CK.S_ENCHANT_TYPES) != null) {
 				enchantments = (LinkedList<String>) cc.getSessionData(pref + CK.S_ENCHANT_TYPES);
@@ -1263,6 +1268,15 @@ public class QuestFactory implements ConversationAbandonedListener {
 				stage.set("items-to-craft", items);
 			} else {
 				stage.set("items-to-craft", null);
+			}
+			if (smeltItems != null && smeltItems.isEmpty() == false) {
+				LinkedList<String> items = new LinkedList<String>();
+				for (ItemStack is : smeltItems) {
+					items.add(ItemUtil.serializeItemStack(is));
+				}
+				stage.set("items-to-smelt", items);
+			} else {
+				stage.set("items-to-smelt", null);
 			}
 			stage.set("enchantments", enchantments);
 			stage.set("enchantment-item-names", enchantmentIds);
@@ -1594,6 +1608,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 					items.add(is);
 				}
 				cc.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
+			}
+			if (stage.getItemsToSmelt().isEmpty() == false) {
+				LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+				for (ItemStack is : stage.getItemsToSmelt()) {
+					items.add(is);
+				}
+				cc.setSessionData(pref + CK.S_SMELT_ITEMS, items);
 			}
 			if (stage.itemsToEnchant.isEmpty() == false) {
 				LinkedList<String> enchants = new LinkedList<String>();

@@ -63,6 +63,7 @@ public class CK {
 	public static final String S_FISH = "fish";
 	public static final String S_PLAYER_KILL = "playerKill";
 	public static final String S_CRAFT_ITEMS = "craftItems";
+	public static final String S_SMELT_ITEMS = "smeltItems";
 	public static final String S_ENCHANT_TYPES = "enchantTypes";
 	public static final String S_ENCHANT_NAMES = "enchantNames";
 	public static final String S_ENCHANT_AMOUNTS = "enchantAmounts";

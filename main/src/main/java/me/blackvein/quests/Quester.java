@@ -623,6 +623,20 @@ public class Quester {
 				finishedObjectives.add(ChatColor.GRAY + obj + ": " + crafted + "/" + amt);
 			}
 		}
+		for (ItemStack is : getCurrentStage(quest).itemsToSmelt) {
+			int smelted = 0;
+			if (getQuestData(quest).itemsSmelted.containsKey(is)) {
+				smelted = getQuestData(quest).itemsSmelted.get(is);
+			}
+			int amt = is.getAmount();
+			if (smelted < amt) {
+				String obj = Lang.get(getPlayer(), "smelt") + " " + ItemUtil.getName(is);
+				unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + smelted + "/" + amt);
+			} else {
+				String obj = Lang.get(getPlayer(), "smelt") + " " + ItemUtil.getName(is);
+				finishedObjectives.add(ChatColor.GRAY + obj + ": " + smelted + "/" + amt);
+			}
+		}
 		Map<Enchantment, Material> set;
 		Map<Enchantment, Material> set2;
 		Set<Enchantment> enchantSet;
@@ -925,6 +939,8 @@ public class Quester {
 			return !getCurrentStage(quest).blocksToCut.isEmpty();
 		} else if (s.equalsIgnoreCase("craftItem")) {
 			return !getCurrentStage(quest).itemsToCraft.isEmpty();
+		} else if (s.equalsIgnoreCase("smeltItem")) {
+			return !getCurrentStage(quest).itemsToSmelt.isEmpty();
 		} else if (s.equalsIgnoreCase("enchantItem")) {
 			return !getCurrentStage(quest).itemsToEnchant.isEmpty();
 		} else if (s.equalsIgnoreCase("catchFish")) {
@@ -1249,6 +1265,37 @@ public class Quester {
 					finishObjective(quest, "craftItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
 				} else {
 					getQuestData(quest).itemsCrafted.put(found, (amount + i.getAmount()));
+				}
+			}
+		}
+	}
+	
+	public void smeltItem(Quest quest, ItemStack i) {
+		Player player = getPlayer();
+		ItemStack found = null;
+		for (ItemStack is : getQuestData(quest).itemsSmelted.keySet()) {
+			if (ItemUtil.compareItems(i, is, true) == 0) {
+				found = is;
+				break;
+			}
+		}
+		if (found != null) {
+			int amount = getQuestData(quest).itemsSmelted.get(found);
+			if (getCurrentStage(quest).itemsToSmelt.indexOf(found) < 0) {
+				plugin.getLogger().severe("Index out of bounds while smelting " + found.getType() + " x " + found.getAmount() + " for quest " 
+						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already smelted. Int -amount- reports value of " + 
+						+ amount + ". Please report this error on Github!");
+				player.sendMessage("Quests had a problem smelting your item, please contact an administrator!");
+				return;
+			}
+			int req = getCurrentStage(quest).itemsToSmelt.get(getCurrentStage(quest).itemsToSmelt.indexOf(found)).getAmount();
+			Material m = i.getType();
+			if (amount < req) {
+				if ((i.getAmount() + amount) >= req) {
+					getQuestData(quest).itemsSmelted.put(found, req);
+					finishObjective(quest, "smeltItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+				} else {
+					getQuestData(quest).itemsSmelted.put(found, (amount + i.getAmount()));
 				}
 			}
 		}
@@ -1591,6 +1638,18 @@ public class Quester {
 			if (testComplete(quest)) {
 				quest.nextStage(this);
 			}
+		} else if (objective.equalsIgnoreCase("smeltItem")) {
+			ItemStack is = getCurrentStage(quest).itemsToSmelt.get(getCurrentStage(quest).itemsToSmelt.indexOf(goal));
+			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "smelt") + " <item> "
+					+ is.getAmount() + "/" + is.getAmount();
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+			}
+			if (testComplete(quest)) {
+				quest.nextStage(this);
+			}
 		} else if (objective.equalsIgnoreCase("enchantItem")) {
 			String obj = Lang.get(p, "enchantItem");
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
@@ -1796,6 +1855,11 @@ public class Quester {
 		if (quest.getStage(stage).itemsToCraft.isEmpty() == false) {
 			for (ItemStack is : quest.getStage(stage).itemsToCraft) {
 				data.itemsCrafted.put(is, 0);
+			}
+		}
+		if (quest.getStage(stage).itemsToSmelt.isEmpty() == false) {
+			for (ItemStack is : quest.getStage(stage).itemsToSmelt) {
+				data.itemsSmelted.put(is, 0);
 			}
 		}
 		if (quest.getStage(stage).itemsToEnchant.isEmpty() == false) {
@@ -2095,12 +2159,12 @@ public class Quester {
 					questSec.set("blocks-cut-amounts", blockAmounts);
 					questSec.set("blocks-cut-durability", blockDurability);
 				}
-				if (questData.itemsCrafted.isEmpty() == false) {
-					LinkedList<Integer> craftAmounts = new LinkedList<Integer>();
-					for (Entry<ItemStack, Integer> e : questData.itemsCrafted.entrySet()) {
-						craftAmounts.add(e.getValue());
+				if (questData.itemsSmelted.isEmpty() == false) {
+					LinkedList<Integer> smeltAmounts = new LinkedList<Integer>();
+					for (Entry<ItemStack, Integer> e : questData.itemsSmelted.entrySet()) {
+						smeltAmounts.add(e.getValue());
 					}
-					questSec.set("item-craft-amounts", craftAmounts);
+					questSec.set("item-smelt-amounts", smeltAmounts);
 				}
 				if (questData.itemsEnchanted.isEmpty() == false) {
 					LinkedList<String> enchantments = new LinkedList<String>();
@@ -2490,6 +2554,14 @@ public class Quester {
 					for (int i = 0; i < craftAmounts.size(); i++) {
 						if (i < getCurrentStage(quest).itemsToCraft.size()) {
 							getQuestData(quest).itemsCrafted.put(getCurrentStage(quest).itemsToCraft.get(i), craftAmounts.get(i));
+						}
+					}
+				}
+				if (questSec.contains("item-smelt-amounts")) {
+					List<Integer> smeltAmounts = questSec.getIntegerList("item-smelt-amounts");
+					for (int i = 0; i < smeltAmounts.size(); i++) {
+						if (i < getCurrentStage(quest).itemsToSmelt.size()) {
+							getQuestData(quest).itemsSmelted.put(getCurrentStage(quest).itemsToSmelt.get(i), smeltAmounts.get(i));
 						}
 					}
 				}

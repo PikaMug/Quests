@@ -36,6 +36,7 @@ public class Stage {
 	protected Integer fishToCatch;
 	protected Integer playersToKill;
 	protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
+	protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
 	protected Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
 	protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
 	protected LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
@@ -189,6 +190,14 @@ public class Stage {
 
 	public void setItemsToCraft(LinkedList<ItemStack> itemsToCraft) {
 		this.itemsToCraft = itemsToCraft;
+	}
+	
+	public LinkedList<ItemStack> getItemsToSmelt() {
+		return itemsToSmelt;
+	}
+
+	public void setItemsToSmelt(LinkedList<ItemStack> itemsToSmelt) {
+		this.itemsToSmelt = itemsToSmelt;
 	}
 
 	public Map<Map<Enchantment, Material>, Integer> getItemsToEnchant() {
@@ -494,6 +503,7 @@ public class Stage {
 		if (fishToCatch != null) { return true; }
 		if (playersToKill != null) { return true; }
 		if (itemsToCraft.isEmpty() == false) { return true; }
+		if (itemsToSmelt.isEmpty() == false) { return true; }
 		if (itemsToEnchant.isEmpty() == false) { return true; }
 		if (itemsToDeliver.isEmpty() == false) { return true; }
 		if (citizensToInteract.isEmpty() == false) { return true; }

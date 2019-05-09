@@ -327,6 +327,41 @@ public class QuestData {
 		}
 	};
 	
+	public LinkedHashMap<ItemStack, Integer> itemsSmelted = new LinkedHashMap<ItemStack, Integer>() {
+
+		private static final long serialVersionUID = 2774356235274526105L;
+
+		@Override
+		public Integer put(ItemStack key, Integer val) {
+			Integer data = super.put(key, val);
+			if (doJournalUpdate)
+				quester.updateJournal();
+			return data;
+		}
+
+		@Override
+		public Integer remove(Object key) {
+			Integer i = super.remove(key);
+			if (doJournalUpdate)
+				quester.updateJournal();
+			return i;
+		}
+
+		@Override
+		public void clear() {
+			super.clear();
+			if (doJournalUpdate)
+				quester.updateJournal();
+		}
+
+		@Override
+		public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
+			super.putAll(m);
+			if (doJournalUpdate)
+				quester.updateJournal();
+		}
+	};
+	
 	public LinkedHashMap<Map<Enchantment, Material>, Integer> itemsEnchanted = new LinkedHashMap<Map<Enchantment, Material>, Integer>() {
 
 		private static final long serialVersionUID = 416869352279205852L;

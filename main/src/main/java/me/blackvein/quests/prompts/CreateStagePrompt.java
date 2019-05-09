@@ -66,7 +66,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				hasObjective = true;
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorBlocks") + "\n";
 			}
-			if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null && context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
+			if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null && context.getSessionData(pref + CK.S_SMELT_ITEMS) == null && context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
 				text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("stageEditorItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
 				hasObjective = true;
@@ -325,7 +325,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					return new PasswordPhrasePrompt();
 				}
 			} else if (input.equalsIgnoreCase("3")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorAddPasswordCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, null);
 				context.setSessionData(pref + CK.S_PASSWORD_PHRASES, null);
 				return new PasswordListPrompt();
@@ -537,7 +537,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					return new ReachNamesPrompt();
 				}
 			} else if (input.equalsIgnoreCase("4")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorReachLocationsCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_REACH_LOCATIONS, null);
 				context.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, null);
 				context.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, null);
@@ -1160,7 +1160,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(pref + CK.S_DELAY_MESSAGE, null);
-				player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDelayMessageCleared"));
+				player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorMessageCleared"));
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
 			} else {
 				return new DelayMessagePrompt();
@@ -1240,7 +1240,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(pref + CK.S_START_MESSAGE, null);
-				player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorStartMessageCleared"));
+				player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorMessageCleared"));
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
 			} else {
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
@@ -1263,7 +1263,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, null);
-				player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorCompleteMessageCleared"));
+				player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorMessageCleared"));
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
 			} else {
 				return new CreateStagePrompt(plugin, stageNum, questFactory);

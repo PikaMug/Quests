@@ -49,6 +49,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -515,6 +516,22 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "craftItem")) {
 						quester.craftItem(quest, evt.getCurrentItem());
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onSmeltItem(InventoryClickEvent evt) {
+		if (evt.getWhoClicked() instanceof Player) {
+			if (evt.getInventory().getType() == InventoryType.FURNACE) {
+				if (evt.getSlotType() == SlotType.RESULT) {
+					Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+					for (Quest quest : quester.getCurrentQuests().keySet()) {
+						if (quester.containsObjective(quest, "smeltItem")) {
+							quester.smeltItem(quest, evt.getCurrentItem());
+						}
 					}
 				}
 			}

@@ -224,7 +224,7 @@ public class MobsPrompt extends FixedSetPrompt {
 					return new MobLocationNamesPrompt();
 				}
 			} else if (input.equalsIgnoreCase("6")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorKillMobsCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_MOB_TYPES, null);
 				context.setSessionData(pref + CK.S_MOB_AMOUNTS, null);
 				context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, null);
@@ -548,7 +548,7 @@ public class MobsPrompt extends FixedSetPrompt {
 					return new TameAmountsPrompt();
 				}
 			} else if (input.equalsIgnoreCase("3")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorTameCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_TAME_TYPES, null);
 				context.setSessionData(pref + CK.S_TAME_AMOUNTS, null);
 				return new TameListPrompt();
@@ -705,7 +705,7 @@ public class MobsPrompt extends FixedSetPrompt {
 					return new ShearAmountsPrompt();
 				}
 			} else if (input.equalsIgnoreCase("3")) {
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorShearCleared"));
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
 				context.setSessionData(pref + CK.S_SHEAR_COLORS, null);
 				context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, null);
 				return new ShearListPrompt();

@@ -181,7 +181,6 @@ public abstract class CustomObjective implements Listener {
 							m.put(e.getKey(), e.getValue());
 						}
 					}
-					
 				}
 				if (m != null && !m.isEmpty()) {
 					return m;
