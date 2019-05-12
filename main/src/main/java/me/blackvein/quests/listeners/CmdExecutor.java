@@ -42,7 +42,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
-public class CmdExecutor implements CommandExecutor{
+public class CmdExecutor implements CommandExecutor {
 	private final Quests plugin;
 	public HashMap<String, Integer> commands = new HashMap<String, Integer>();
 	public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
@@ -520,7 +520,14 @@ public class CmdExecutor implements CommandExecutor{
 		} else {
 			cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest"));
 			for (Quest q : quester.getCurrentQuests().keySet()) {
-				cs.sendMessage(ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName());
+				String msg = ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName();
+				LinkedList<Stage> stages = q.getStages();
+				for (Stage s : stages) {
+					if (s.equals(quester.getCurrentStage(q))) {
+						msg += ChatColor.LIGHT_PURPLE + " (" + Lang.get("stageEditorStage") + " " +  (stages.indexOf(s) + 1) + ")";
+					}
+				}
+				cs.sendMessage(msg);
 			}
 		}
 		String completed;
