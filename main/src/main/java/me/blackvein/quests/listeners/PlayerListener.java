@@ -508,6 +508,7 @@ public class PlayerListener implements Listener {
 	}
 	
 
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onCraftItem(CraftItemEvent evt) {
 		if (evt.getWhoClicked() instanceof Player) {
@@ -515,7 +516,24 @@ public class PlayerListener implements Listener {
 				Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "craftItem")) {
-						quester.craftItem(quest, evt.getCurrentItem());
+						ItemStack result = evt.getRecipe().getResult();
+						int numberOfItems = result.getAmount();
+						if (evt.isShiftClick()) {
+							int itemsChecked = 0;
+							for (ItemStack item : evt.getInventory().getMatrix()) {
+								if (item != null && !item.getType().equals(Material.AIR)) {
+									if (itemsChecked == 0) {
+										numberOfItems = item.getAmount();
+									} else {
+										numberOfItems = Math.min(numberOfItems, item.getAmount());
+										itemsChecked++;
+									}
+								}
+							}	
+							quester.craftItem(quest, new ItemStack(result.getType(), numberOfItems, result.getDurability()));
+						} else {
+							quester.craftItem(quest, evt.getCurrentItem());
+						}
 					}
 				}
 			}
