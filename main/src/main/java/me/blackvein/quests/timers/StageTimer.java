@@ -63,7 +63,8 @@ public class StageTimer implements Runnable {
 				}
 				quester.hardStagePut(quest, stageNum);
 				quester.addEmptiesFor(quest, stageNum);
-				quester.getCurrentStage(quest).setDelay(-1);
+				// Added this line at some point, not sure why. Commented out to fix Github #726
+				//quester.getCurrentStage(quest).setDelay(-1);
 				quester.getQuestData(quest).delayStartTime = 0;
 				quester.getQuestData(quest).delayTimeLeft = -1;
 				Event stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
@@ -79,7 +80,6 @@ public class StageTimer implements Runnable {
 				if (stageStartMessage != null) {
 					quester.getPlayer().sendMessage(Quests.parseStringWithPossibleLineBreaks(stageStartMessage, quest));
 				}
-				
 			}
 			if (quester.getQuestData(quest) != null) {
 				quester.getQuestData(quest).delayOver = true;
