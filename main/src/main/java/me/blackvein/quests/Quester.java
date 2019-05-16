@@ -2596,6 +2596,9 @@ public class Quester {
 				if (questSec.contains("fish-caught")) {
 					getQuestData(quest).setFishCaught(questSec.getInt("fish-caught"));
 				}
+				if (questSec.contains("players-killed")) {
+                    getQuestData(quest).setPlayersKilled(questSec.getInt("players-killed"));
+                }
 				if (questSec.contains("mobs-killed")) {
 					LinkedList<EntityType> mobs = new LinkedList<EntityType>();
 					List<Integer> amounts = questSec.getIntegerList("mobs-killed-amounts");
@@ -2776,11 +2779,7 @@ public class Quester {
 			newData.set(questName + ".fish-caught", questSec.getInt("fish-caught"));
 		}
 		if (questSec.contains("players-killed")) {
-			List<String> playerNames = questSec.getStringList("player-killed-names");
-			List<Long> killTimes = questSec.getLongList("kill-times");
 			newData.set(questName + ".players-killed", questSec.getInt("players-killed"));
-			newData.set(questName + ".player-killed-names", playerNames);
-			newData.set(questName + ".kill-times", killTimes);
 		}
 		if (questSec.contains("enchantments")) {
 			List<String> enchantNames = questSec.getStringList("enchantments");
