@@ -297,7 +297,7 @@ public class Quest {
 		}
 		if (targetLocations != null && !targetLocations.isEmpty()) {
 			int index = 1;
-			String pointName = "quests-" + quester.getPlayer().getUniqueId().toString();
+			String pointName = "quests-" + quester.getPlayer().getUniqueId().toString() + "-" + stage.toString() + "-";
 			for (Location l : targetLocations) {
 				if (l.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
 					if (!plugin.getDependencies().getGpsApi().gpsIsActive(quester.getPlayer())) {
