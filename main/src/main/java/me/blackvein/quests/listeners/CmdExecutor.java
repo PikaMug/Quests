@@ -424,8 +424,8 @@ public class CmdExecutor implements CommandExecutor {
 	private boolean questsInfo(final CommandSender cs) {
 		if (cs.hasPermission("quests.info")) {
 			cs.sendMessage(ChatColor.YELLOW + Lang.get("quests") + " " + ChatColor.GOLD + plugin.getDescription().getVersion());
-			cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.DARK_RED + "Blackvein"
-					+ ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.DARK_RED + "PikaMug");
+			cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.RED + "Blackvein"
+					+ ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug");
 			cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE + "https://www.spigotmc.org/resources/quests.3711/");
 		}
 		return true;
@@ -838,13 +838,12 @@ public class CmdExecutor implements CommandExecutor {
 		player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_INFO_HELP")
 				.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_INFO") : "info") + ChatColor.YELLOW));
 		}
-		player.sendMessage(" ");
-		player.sendMessage(ChatColor.YELLOW + "/quest " + Lang.get(player, "COMMAND_QUEST_HELP"));
+		player.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + Lang.get(player, "COMMAND_QUEST_HELP"));
 		if (player.hasPermission("quests.questinfo")) {
-			player.sendMessage(ChatColor.YELLOW + "/quest " + Lang.get(player, "COMMAND_QUESTINFO_HELP"));
+			player.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + Lang.get(player, "COMMAND_QUESTINFO_HELP"));
 		}
 		if (player.hasPermission("quests.admin.*") || player.hasPermission("quests.admin")) {
-			player.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get(player, "COMMAND_QUESTADMIN_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get(player, "COMMAND_QUESTADMIN_HELP"));
 		}
 	}
 	
