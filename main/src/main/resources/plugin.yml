@@ -119,7 +119,7 @@ permissions:
     quests.actions.edit:
         description: Ability to edit existing actions
         default: op
-    quests.acitons.delete:
+    quests.actions.delete:
         description: Ability to delete existing actions
         default: op
     quests.party.create:
@@ -132,10 +132,12 @@ commands:
     quests:
         description: Quests command
         permission: quests.quests
+        aliases: qs
     questadmin:
         description: Quests admin command
         permission: quests.admin
-        aliases: [questsadmin]
+        aliases: [questsadmin, qa]
     quest:
         description: Quest command
         permission: quests.quest
+        aliases: q
