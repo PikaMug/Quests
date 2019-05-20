@@ -1,4 +1,4 @@
-events:
+actions:
   ApplyPotion:
     message: "<blue>You received potion effects!"
     potion-effect-types:

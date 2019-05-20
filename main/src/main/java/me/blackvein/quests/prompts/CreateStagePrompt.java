@@ -28,10 +28,11 @@ import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+
 import me.blackvein.quests.CustomObjective;
-import me.blackvein.quests.Event;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
@@ -763,7 +764,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			if (plugin.getEvents().isEmpty()) {
 				text += ChatColor.RED + "- None";
 			} else {
-				for (Event e : plugin.getEvents()) {
+				for (Action e : plugin.getEvents()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -774,8 +775,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Event found = null;
-				for (Event e : plugin.getEvents()) {
+				Action found = null;
+				for (Action e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -808,7 +809,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			if (plugin.getEvents().isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : plugin.getEvents()) {
+				for (Action e : plugin.getEvents()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -819,8 +820,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Event found = null;
-				for (Event e : plugin.getEvents()) {
+				Action found = null;
+				for (Action e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -853,7 +854,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			if (plugin.getEvents().isEmpty()) {
 				text += ChatColor.RED + "- None";
 			} else {
-				for (Event e : plugin.getEvents()) {
+				for (Action e : plugin.getEvents()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -864,8 +865,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Event found = null;
-				for (Event e : plugin.getEvents()) {
+				Action found = null;
+				for (Action e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -898,7 +899,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			if (plugin.getEvents().isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : plugin.getEvents()) {
+				for (Action e : plugin.getEvents()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -909,8 +910,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Event found = null;
-				for (Event e : plugin.getEvents()) {
+				Action found = null;
+				for (Action e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -943,7 +944,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			if (plugin.getEvents().isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : plugin.getEvents()) {
+				for (Action e : plugin.getEvents()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -954,8 +955,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Event found = null;
-				for (Event e : plugin.getEvents()) {
+				Action found = null;
+				for (Action e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -1030,7 +1031,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			if (plugin.getEvents().isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : plugin.getEvents()) {
+				for (Action e : plugin.getEvents()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -1041,8 +1042,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Event found = null;
-				for (Event e : plugin.getEvents()) {
+				Action found = null;
+				for (Action e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;

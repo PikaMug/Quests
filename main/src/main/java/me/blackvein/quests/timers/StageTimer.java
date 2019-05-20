@@ -15,11 +15,11 @@ package me.blackvein.quests.timers;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.blackvein.quests.Event;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
+import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.util.Lang;
 
 public class StageTimer implements Runnable {
@@ -67,7 +67,7 @@ public class StageTimer implements Runnable {
 				//quester.getCurrentStage(quest).setDelay(-1);
 				quester.getQuestData(quest).delayStartTime = 0;
 				quester.getQuestData(quest).delayTimeLeft = -1;
-				Event stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
+				Action stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
 				if (stageStartEvent != null) {
 					stageStartEvent.fire(quester, quest);
 				}

@@ -46,6 +46,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
+import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.prompts.OptionsPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
@@ -530,7 +531,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (plugin.getEvents().isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Event e : plugin.getEvents()) {
+				for (Action e : plugin.getEvents()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -541,8 +542,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Event found = null;
-				for (Event e : plugin.getEvents()) {
+				Action found = null;
+				for (Action e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						found = e;
 						break;
@@ -1428,8 +1429,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 		cc.setSessionData(CK.Q_START_BLOCK, q.blockStart);
 		cc.setSessionData(CK.Q_ASK_MESSAGE, q.description);
 		cc.setSessionData(CK.Q_FINISH_MESSAGE, q.finished);
-		if (q.initialEvent != null) {
-			cc.setSessionData(CK.Q_INITIAL_EVENT, q.initialEvent.getName());
+		if (q.initialAction != null) {
+			cc.setSessionData(CK.Q_INITIAL_EVENT, q.initialAction.getName());
 		}
 		if (q.region != null) {
 			cc.setSessionData(CK.Q_REGION, q.region);

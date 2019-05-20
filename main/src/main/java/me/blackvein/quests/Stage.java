@@ -26,6 +26,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
+import me.blackvein.quests.actions.Action;
+
 public class Stage {
 
 	protected LinkedList<ItemStack> blocksToBreak = new LinkedList<ItemStack>();
@@ -112,12 +114,12 @@ public class Stage {
 	protected LinkedList<String> passwordDisplays = new LinkedList<String>();
 	protected LinkedList<LinkedList<String>> passwordPhrases = new LinkedList<LinkedList<String>>();
 	protected String script;
-	protected Event startEvent = null;
-	protected Event deathEvent = null;
-	protected Map<String, Event> chatEvents = new HashMap<String, Event>();
-	protected Map<String, Event> commandEvents = new HashMap<String, Event>();
-	protected Event disconnectEvent = null;
-	protected Event finishEvent = null;
+	protected Action startEvent = null;
+	protected Action deathEvent = null;
+	protected Map<String, Action> chatEvents = new HashMap<String, Action>();
+	protected Map<String, Action> commandEvents = new HashMap<String, Action>();
+	protected Action disconnectEvent = null;
+	protected Action finishEvent = null;
 	protected long delay = -1;
 	protected String delayMessage = null;
 	protected String completeMessage = null;
@@ -383,51 +385,51 @@ public class Stage {
 		this.script = script;
 	}
 
-	public Event getStartEvent() {
+	public Action getStartEvent() {
 		return startEvent;
 	}
 
-	public void setStartEvent(Event startEvent) {
+	public void setStartEvent(Action startEvent) {
 		this.startEvent = startEvent;
 	}
 
-	public Event getDeathEvent() {
+	public Action getDeathEvent() {
 		return deathEvent;
 	}
 
-	public void setDeathEvent(Event deathEvent) {
+	public void setDeathEvent(Action deathEvent) {
 		this.deathEvent = deathEvent;
 	}
 
-	public Map<String, Event> getChatEvents() {
+	public Map<String, Action> getChatEvents() {
 		return chatEvents;
 	}
 
-	public void setChatEvents(Map<String, Event> chatEvents) {
+	public void setChatEvents(Map<String, Action> chatEvents) {
 		this.chatEvents = chatEvents;
 	}
 
-	public Map<String, Event> getCommandEvents() {
+	public Map<String, Action> getCommandEvents() {
 		return commandEvents;
 	}
 
-	public void setCommandEvents(Map<String, Event> commandEvents) {
+	public void setCommandEvents(Map<String, Action> commandEvents) {
 		this.commandEvents = commandEvents;
 	}
 
-	public Event getDisconnectEvent() {
+	public Action getDisconnectEvent() {
 		return disconnectEvent;
 	}
 
-	public void setDisconnectEvent(Event disconnectEvent) {
+	public void setDisconnectEvent(Action disconnectEvent) {
 		this.disconnectEvent = disconnectEvent;
 	}
 
-	public Event getFinishEvent() {
+	public Action getFinishEvent() {
 		return finishEvent;
 	}
 
-	public void setFinishEvent(Event finishEvent) {
+	public void setFinishEvent(Action finishEvent) {
 		this.finishEvent = finishEvent;
 	}
 

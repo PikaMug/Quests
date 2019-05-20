@@ -38,6 +38,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import de.erethon.dungeonsxl.player.DGroup;
+import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -54,7 +55,7 @@ public class Quest {
 	private LinkedList<Stage> orderedStages = new LinkedList<Stage>();
 	protected NPC npcStart;
 	protected Location blockStart;
-	protected Event initialEvent;
+	protected Action initialAction;
 	private Requirements reqs = new Requirements();
 	private Planner pln = new Planner();
 	private Rewards rews = new Rewards();
@@ -144,12 +145,12 @@ public class Quest {
 		this.blockStart = blockStart;
 	}
 	
-	public Event getInitialEvent() {
-		return initialEvent;
+	public Action getInitialAction() {
+		return initialAction;
 	}
 	
-	public void setInitialEvent(Event initialEvent) {
-		this.initialEvent = initialEvent;
+	public void setInitialActino(Action initialAction) {
+		this.initialAction = initialAction;
 	}
 
 	/**

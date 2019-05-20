@@ -18,14 +18,14 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.util.Lang;
 
-public class EventTimer extends BukkitRunnable {
+public class ActionTimer extends BukkitRunnable {
 
     private Quester quester;
     private Quest quest;
     private int time;
     private boolean last;
 
-    public EventTimer(Quester quester, Quest quest, int time, boolean last) {
+    public ActionTimer(Quester quester, Quest quest, int time, boolean last) {
         this.quester = quester;
         this.quest = quest;
         this.time = time;

@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.actions;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,11 +32,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import me.blackvein.quests.timers.EventTimer;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.QuestMob;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.timers.ActionTimer;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 
-public class Event {
+public class Action {
 
 	private Quests plugin;
 	private String name = "";
@@ -82,7 +86,7 @@ public class Event {
 	protected Location teleport;
 	protected String book = "";
 
-	public Event(final Quests plugin) {
+	public Action(final Quests plugin) {
 		this.plugin = plugin;
 	}
 
@@ -347,193 +351,203 @@ public class Event {
 		if (timer > 0) {
 			player.sendMessage(Lang.get(player, "timerStart").replaceAll("<time>", String.valueOf(timer)));
 			if (timer > 60) {
-				quester.timers.put(new EventTimer(quester, quest, 60, false)
+				quester.getTimers().put(new ActionTimer(quester, quest, 60, false)
 						.runTaskLaterAsynchronously(plugin, (timer-60)*20).getTaskId(), quest);
 			}
 			if (timer > 30) {
-				quester.timers.put(new EventTimer(quester, quest, 30, false)
+				quester.getTimers().put(new ActionTimer(quester, quest, 30, false)
 						.runTaskLaterAsynchronously(plugin, (timer-30)*20).getTaskId(), quest);
 			}
 			if (timer > 10) {
-				quester.timers.put(new EventTimer(quester, quest, 10, false)
+				quester.getTimers().put(new ActionTimer(quester, quest, 10, false)
 						.runTaskLaterAsynchronously(plugin, (timer-10)*20).getTaskId(), quest);
 			}
 			if (timer > 5) {
-				quester.timers.put(new EventTimer(quester, quest, 5, false)
+				quester.getTimers().put(new ActionTimer(quester, quest, 5, false)
 						.runTaskLaterAsynchronously(plugin, (timer-5)*20).getTaskId(), quest);
 			}
 			if (timer > 4) {
-				quester.timers.put(new EventTimer(quester, quest, 4, false)
+				quester.getTimers().put(new ActionTimer(quester, quest, 4, false)
 						.runTaskLaterAsynchronously(plugin, (timer-4)*20).getTaskId(), quest);
 			}
 			if (timer > 3) {
-				quester.timers.put(new EventTimer(quester, quest, 3, false)
+				quester.getTimers().put(new ActionTimer(quester, quest, 3, false)
 						.runTaskLaterAsynchronously(plugin, (timer-3)*20).getTaskId(), quest);
 			}
 			if (timer > 2) {
-				quester.timers.put(new EventTimer(quester, quest, 2, false)
+				quester.getTimers().put(new ActionTimer(quester, quest, 2, false)
 						.runTaskLaterAsynchronously(plugin, (timer-2)*20).getTaskId(), quest);
 			}
 			if (timer > 1) {
-				quester.timers.put(new EventTimer(quester, quest, 1, false)
+				quester.getTimers().put(new ActionTimer(quester, quest, 1, false)
 						.runTaskLaterAsynchronously(plugin, (timer-1)*20).getTaskId(), quest);
 			}
-			quester.timers.put(new EventTimer(quester, quest, 0, true)
+			quester.getTimers().put(new ActionTimer(quester, quest, 0, true)
 					.runTaskLaterAsynchronously(plugin, timer*20).getTaskId(), quest);
 		}
 		if (cancelTimer) {
-			for (Map.Entry<Integer, Quest> entry : quester.timers.entrySet()) {
+			for (Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
 				if (entry.getValue().getName().equals(quest.getName())) {
 					plugin.getServer().getScheduler().cancelTask(entry.getKey());
-					quester.timers.remove(entry.getKey());
+					quester.getTimers().remove(entry.getKey());
 				}
 			}
 		}
 	}
 
-	public static Event loadEvent(String name, Quests plugin) {
+	public static Action loadAction(String name, Quests plugin) {
 		if (name == null || plugin == null) {
 			return null;
 		}
-		Event event = new Event(plugin);
+		File legacy = new File(plugin.getDataFolder(), "events.yml");
+		File actions = new File(plugin.getDataFolder(), "actions.yml");
+		if (legacy.exists()) {
+			plugin.getLogger().info("Renaming legacy \"events.yml\" to \"actions.yml\" before loading data for " + name);
+			legacy.renameTo(actions);
+		}
 		FileConfiguration data = new YamlConfiguration();
 		try {
-			data.load(new File(plugin.getDataFolder(), "events.yml"));
+			data.load(actions);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-		String eventKey = "events." + name + ".";
-		event.name = name;
-		if (data.contains(eventKey + "message")) {
-			event.message = Quests.parseString(data.getString(eventKey + "message"));
+		String legacyName = "events." + name;
+		String actionKey = "actions." + name + ".";
+		if (data.contains(legacyName)) {
+			actionKey = legacyName + ".";
 		}
-		if (data.contains(eventKey + "open-book")) {
-		    event.book = data.getString(eventKey + "open-book");
+		Action action = new Action(plugin);
+		action.name = name;
+		if (data.contains(actionKey + "message")) {
+			action.message = Quests.parseString(data.getString(actionKey + "message"));
+		}
+		if (data.contains(actionKey + "open-book")) {
+			action.book = data.getString(actionKey + "open-book");
         }
-		if (data.contains(eventKey + "clear-inventory")) {
-			if (data.isBoolean(eventKey + "clear-inventory")) {
-				event.clearInv = data.getBoolean(eventKey + "clear-inventory");
+		if (data.contains(actionKey + "clear-inventory")) {
+			if (data.isBoolean(actionKey + "clear-inventory")) {
+				action.clearInv = data.getBoolean(actionKey + "clear-inventory");
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "clear-inventory: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a true/false value!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "clear-inventory: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a true/false value!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "fail-quest")) {
-			if (data.isBoolean(eventKey + "fail-quest")) {
-				event.failQuest = data.getBoolean(eventKey + "fail-quest");
+		if (data.contains(actionKey + "fail-quest")) {
+			if (data.isBoolean(actionKey + "fail-quest")) {
+				action.failQuest = data.getBoolean(actionKey + "fail-quest");
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "fail-quest: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a true/false value!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "fail-quest: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a true/false value!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "explosions")) {
-			if (Quests.checkList(data.getList(eventKey + "explosions"), String.class)) {
-				for (String s : data.getStringList(eventKey + "explosions")) {
+		if (data.contains(actionKey + "explosions")) {
+			if (Quests.checkList(data.getList(actionKey + "explosions"), String.class)) {
+				for (String s : data.getStringList(actionKey + "explosions")) {
 					Location loc = Quests.getLocation(s);
 					if (loc == null) {
-						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "explosions: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
+						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD + " inside " + ChatColor.GREEN + "explosions: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
 						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
 						return null;
 					}
-					event.explosions.add(loc);
+					action.explosions.add(loc);
 				}
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "explosions: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of locations!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "explosions: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of locations!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "effects")) {
-			if (Quests.checkList(data.getList(eventKey + "effects"), String.class)) {
-				if (data.contains(eventKey + "effect-locations")) {
-					if (Quests.checkList(data.getList(eventKey + "effect-locations"), String.class)) {
-						List<String> effectList = data.getStringList(eventKey + "effects");
-						List<String> effectLocs = data.getStringList(eventKey + "effect-locations");
+		if (data.contains(actionKey + "effects")) {
+			if (Quests.checkList(data.getList(actionKey + "effects"), String.class)) {
+				if (data.contains(actionKey + "effect-locations")) {
+					if (Quests.checkList(data.getList(actionKey + "effect-locations"), String.class)) {
+						List<String> effectList = data.getStringList(actionKey + "effects");
+						List<String> effectLocs = data.getStringList(actionKey + "effect-locations");
 						for (String s : effectList) {
 							Effect effect = Quests.getEffect(s);
 							Location l = Quests.getLocation(effectLocs.get(effectList.indexOf(s)));
 							if (effect == null) {
-								plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + "effects: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid effect name!");
+								plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + "effects: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid effect name!");
 								return null;
 							}
 							if (l == null) {
-								plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + effectLocs.get(effectList.indexOf(s)) + ChatColor.GOLD + " inside " + ChatColor.GREEN + "effect-locations: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
+								plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + effectLocs.get(effectList.indexOf(s)) + ChatColor.GOLD + " inside " + ChatColor.GREEN + "effect-locations: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
 								plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
 								return null;
 							}
-							event.effects.put(l, effect);
+							action.effects.put(l, effect);
 						}
 					} else {
-						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "effect-locations: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of locations!");
+						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "effect-locations: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of locations!");
 						return null;
 					}
 				} else {
-					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "effect-locations:");
+					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "effect-locations:");
 					return null;
 				}
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "effects: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of effects!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "effects: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of effects!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "items")) {
-			if (Quests.checkList(data.getList(eventKey + "items"), String.class)) {
+		if (data.contains(actionKey + "items")) {
+			if (Quests.checkList(data.getList(actionKey + "items"), String.class)) {
 				List<ItemStack> eventItems = new LinkedList<ItemStack>();
-				for (String s : data.getStringList(eventKey + "items")) {
+				for (String s : data.getStringList(actionKey + "items")) {
 					try {
 						eventItems.add(ItemUtil.readItemStack(s));
 					} catch (Exception e) {
-						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] \"" + ChatColor.RED + s + ChatColor.GOLD + "\" inside " + ChatColor.GREEN + " items: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not formatted properly!");
+						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] \"" + ChatColor.RED + s + ChatColor.GOLD + "\" inside " + ChatColor.GREEN + " items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not formatted properly!");
 						return null;
 					}
 				}
-				event.items.addAll(eventItems);
+				action.items.addAll(eventItems);
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "items: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of items!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of items!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "storm-world")) {
-			World w = plugin.getServer().getWorld(data.getString(eventKey + "storm-world"));
+		if (data.contains(actionKey + "storm-world")) {
+			World w = plugin.getServer().getWorld(data.getString(actionKey + "storm-world"));
 			if (w == null) {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "storm-world: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid World name!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "storm-world: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid World name!");
 				return null;
 			}
-			if (data.contains(eventKey + "storm-duration")) {
-				if (data.getInt(eventKey + "storm-duration", -999) != -999) {
-					event.stormDuration = data.getInt(eventKey + "storm-duration") * 1000;
+			if (data.contains(actionKey + "storm-duration")) {
+				if (data.getInt(actionKey + "storm-duration", -999) != -999) {
+					action.stormDuration = data.getInt(actionKey + "storm-duration") * 1000;
 				} else {
-					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "storm-duration: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
+					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "storm-duration: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
 					return null;
 				}
-				event.stormWorld = w;
+				action.stormWorld = w;
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "storm-duration:");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "storm-duration:");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "thunder-world")) {
-			World w = plugin.getServer().getWorld(data.getString(eventKey + "thunder-world"));
+		if (data.contains(actionKey + "thunder-world")) {
+			World w = plugin.getServer().getWorld(data.getString(actionKey + "thunder-world"));
 			if (w == null) {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "thunder-world: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid World name!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "thunder-world: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid World name!");
 				return null;
 			}
-			if (data.contains(eventKey + "thunder-duration")) {
-				if (data.getInt(eventKey + "thunder-duration", -999) != -999) {
-					event.thunderDuration = data.getInt(eventKey + "thunder-duration");
+			if (data.contains(actionKey + "thunder-duration")) {
+				if (data.getInt(actionKey + "thunder-duration", -999) != -999) {
+					action.thunderDuration = data.getInt(actionKey + "thunder-duration");
 				} else {
-					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "thunder-duration: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
+					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "thunder-duration: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
 					return null;
 				}
-				event.thunderWorld = w;
+				action.thunderWorld = w;
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "thunder-duration:");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "thunder-duration:");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "mob-spawns")) {
-			ConfigurationSection section = data.getConfigurationSection(eventKey + "mob-spawns");
+		if (data.contains(actionKey + "mob-spawns")) {
+			ConfigurationSection section = data.getConfigurationSection(actionKey + "mob-spawns");
 			// is a mob, the keys are just a number or something.
 			for (String s : section.getKeys(false)) {
 				String mobName = section.getString(s + ".name");
@@ -541,12 +555,12 @@ public class Event {
 				EntityType type = Quests.getMobType(section.getString(s + ".mob-type"));
 				Integer mobAmount = section.getInt(s + ".spawn-amounts");
 				if (spawnLocation == null) {
-					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-locations: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
+					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-locations: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
 					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
 					return null;
 				}
 				if (type == null) {
-					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + section.getString(s + ".mob-type") + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-types: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid mob name!");
+					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + section.getString(s + ".mob-type") + ChatColor.GOLD + " inside " + ChatColor.GREEN + " mob-spawn-types: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid mob name!");
 					return null;
 				}
 				ItemStack[] inventory = new ItemStack[5];
@@ -565,130 +579,130 @@ public class Event {
 				questMob.setInventory(inventory);
 				questMob.setDropChances(dropChances);
 				questMob.setName(mobName);
-				event.mobSpawns.add(questMob);
+				action.mobSpawns.add(questMob);
 			}
 		}
-		if (data.contains(eventKey + "lightning-strikes")) {
-			if (Quests.checkList(data.getList(eventKey + "lightning-strikes"), String.class)) {
-				for (String s : data.getStringList(eventKey + "lightning-strikes")) {
+		if (data.contains(actionKey + "lightning-strikes")) {
+			if (Quests.checkList(data.getList(actionKey + "lightning-strikes"), String.class)) {
+				for (String s : data.getStringList(actionKey + "lightning-strikes")) {
 					Location loc = Quests.getLocation(s);
 					if (loc == null) {
-						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " lightning-strikes: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
+						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " lightning-strikes: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
 						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
 						return null;
 					}
-					event.lightningStrikes.add(loc);
+					action.lightningStrikes.add(loc);
 				}
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "lightning-strikes: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of locations!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "lightning-strikes: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of locations!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "commands")) {
-			if (Quests.checkList(data.getList(eventKey + "commands"), String.class)) {
-				for (String s : data.getStringList(eventKey + "commands")) {
+		if (data.contains(actionKey + "commands")) {
+			if (Quests.checkList(data.getList(actionKey + "commands"), String.class)) {
+				for (String s : data.getStringList(actionKey + "commands")) {
 					if (s.startsWith("/")) {
 						s = s.replaceFirst("/", "");
 					}
-					event.commands.add(s);
+					action.commands.add(s);
 				}
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "commands: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of commands!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "commands: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of commands!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "potion-effect-types")) {
-			if (Quests.checkList(data.getList(eventKey + "potion-effect-types"), String.class)) {
-				if (data.contains(eventKey + "potion-effect-durations")) {
-					if (Quests.checkList(data.getList(eventKey + "potion-effect-durations"), Integer.class)) {
-						if (data.contains(eventKey + "potion-effect-amplifiers")) {
-							if (Quests.checkList(data.getList(eventKey + "potion-effect-amplifiers"), Integer.class)) {
-								List<String> types = data.getStringList(eventKey + "potion-effect-types");
-								List<Integer> durations = data.getIntegerList(eventKey + "potion-effect-durations");
-								List<Integer> amplifiers = data.getIntegerList(eventKey + "potion-effect-amplifiers");
+		if (data.contains(actionKey + "potion-effect-types")) {
+			if (Quests.checkList(data.getList(actionKey + "potion-effect-types"), String.class)) {
+				if (data.contains(actionKey + "potion-effect-durations")) {
+					if (Quests.checkList(data.getList(actionKey + "potion-effect-durations"), Integer.class)) {
+						if (data.contains(actionKey + "potion-effect-amplifiers")) {
+							if (Quests.checkList(data.getList(actionKey + "potion-effect-amplifiers"), Integer.class)) {
+								List<String> types = data.getStringList(actionKey + "potion-effect-types");
+								List<Integer> durations = data.getIntegerList(actionKey + "potion-effect-durations");
+								List<Integer> amplifiers = data.getIntegerList(actionKey + "potion-effect-amplifiers");
 								for (String s : types) {
 									PotionEffect effect = Quests.getPotionEffect(s, durations.get(types.indexOf(s)), amplifiers.get(types.indexOf(s)));
 									if (effect == null) {
-										plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " lightning-strikes: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid potion effect name!");
+										plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " lightning-strikes: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid potion effect name!");
 										return null;
 									}
-									event.potionEffects.add(effect);
+									action.potionEffects.add(effect);
 								}
 							} else {
-								plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "potion-effect-amplifiers: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of numbers!");
+								plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "potion-effect-amplifiers: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of numbers!");
 								return null;
 							}
 						} else {
-							plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "potion-effect-amplifiers:");
+							plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "potion-effect-amplifiers:");
 							return null;
 						}
 					} else {
-						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "potion-effect-durations: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of numbers!");
+						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "potion-effect-durations: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of numbers!");
 						return null;
 					}
 				} else {
-					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "potion-effect-durations:");
+					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is missing " + ChatColor.RED + "potion-effect-durations:");
 					return null;
 				}
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "potion-effect-types: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of potion effects!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "potion-effect-types: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of potion effects!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "hunger")) {
-			if (data.getInt(eventKey + "hunger", -999) != -999) {
-				event.hunger = data.getInt(eventKey + "hunger");
+		if (data.contains(actionKey + "hunger")) {
+			if (data.getInt(actionKey + "hunger", -999) != -999) {
+				action.hunger = data.getInt(actionKey + "hunger");
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "hunger: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "hunger: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "saturation")) {
-			if (data.getInt(eventKey + "saturation", -999) != -999) {
-				event.saturation = data.getInt(eventKey + "saturation");
+		if (data.contains(actionKey + "saturation")) {
+			if (data.getInt(actionKey + "saturation", -999) != -999) {
+				action.saturation = data.getInt(actionKey + "saturation");
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "saturation: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "saturation: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "health")) {
-			if (data.getInt(eventKey + "health", -999) != -999) {
-				event.health = data.getInt(eventKey + "health");
+		if (data.contains(actionKey + "health")) {
+			if (data.getInt(actionKey + "health", -999) != -999) {
+				action.health = data.getInt(actionKey + "health");
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "health: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "health: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "teleport-location")) {
-			if (data.isString(eventKey + "teleport-location")) {
-				Location l = Quests.getLocation(data.getString(eventKey + "teleport-location"));
+		if (data.contains(actionKey + "teleport-location")) {
+			if (data.isString(actionKey + "teleport-location")) {
+				Location l = Quests.getLocation(data.getString(actionKey + "teleport-location"));
 				if (l == null) {
-					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + data.getString(eventKey + "teleport-location") + ChatColor.GOLD + "for " + ChatColor.GREEN + " teleport-location: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
+					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + data.getString(actionKey + "teleport-location") + ChatColor.GOLD + "for " + ChatColor.GREEN + " teleport-location: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not in proper location format!");
 					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] Proper location format is: \"WorldName x y z\"");
 					return null;
 				}
-				event.teleport = l;
+				action.teleport = l;
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "teleport-location: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a location!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "teleport-location: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a location!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "timer")) {
-			if (data.isInt(eventKey + "timer")) {
-				event.timer = data.getInt(eventKey + "timer");
+		if (data.contains(actionKey + "timer")) {
+			if (data.isInt(actionKey + "timer")) {
+				action.timer = data.getInt(actionKey + "timer");
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "timer: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "timer: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a number!");
 				return null;
 			}
 		}
-		if (data.contains(eventKey + "cancel-timer")) {
-			if (data.isBoolean(eventKey + "cancel-timer")) {
-				event.cancelTimer = data.getBoolean(eventKey + "cancel-timer");
+		if (data.contains(actionKey + "cancel-timer")) {
+			if (data.isBoolean(actionKey + "cancel-timer")) {
+				action.cancelTimer = data.getBoolean(actionKey + "cancel-timer");
 			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cancel-timer: " + ChatColor.GOLD + "inside Event " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a boolean!");
+				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "cancel-timer: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a boolean!");
 				return null;
 			}
 		}
-		return event;
+		return action;
 	}
 }

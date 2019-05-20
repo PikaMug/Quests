@@ -506,8 +506,8 @@ public class Quester {
 					questData.get(q).eventFired.put(commandTrigger, false);
 				}
 			}
-			if (q.initialEvent != null) {
-				q.initialEvent.fire(this, q);
+			if (q.initialAction != null) {
+				q.initialAction.fire(this, q);
 			}
 			if (stage.startEvent != null) {
 				stage.startEvent.fire(this, q);

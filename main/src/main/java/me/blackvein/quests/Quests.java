@@ -83,6 +83,8 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
+import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.listeners.CmdExecutor;
 import me.blackvein.quests.listeners.DungeonsListener;
 import me.blackvein.quests.listeners.NpcListener;
@@ -108,14 +110,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private final List<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
 	private LinkedList<Quester> questers = new LinkedList<Quester>();
 	private LinkedList<Quest> quests = new LinkedList<Quest>();
-	private LinkedList<Event> events = new LinkedList<Event>();
+	private LinkedList<Action> events = new LinkedList<Action>();
 	private LinkedList<NPC> questNpcs = new LinkedList<NPC>();
 	private LinkedList<Integer> questNpcGuis = new LinkedList<Integer>();
 	private CommandExecutor cmdExecutor;
 	private ConversationFactory conversationFactory;
 	private ConversationFactory npcConversationFactory;
 	private QuestFactory questFactory;
-	private EventFactory eventFactory;
+	private ActionFactory eventFactory;
 	private PlayerListener playerListener;
 	private NpcListener npcListener;
 	private NpcEffectThread effThread;
@@ -145,7 +147,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		dungeonsListener = new DungeonsListener();
 		partiesListener = new PartiesListener();
 		questFactory = new QuestFactory(this);
-		eventFactory = new EventFactory(this);
+		eventFactory = new ActionFactory(this);
 		depends = new Dependencies(this);
 		lang = new Lang(this);
 
@@ -169,7 +171,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		
 		// 5 - Save resources from jar
 		saveResourceAs("quests.yml", "quests.yml", false);
-		saveResourceAs("events.yml", "events.yml", false);
+		saveResourceAs("actions.yml", "actions.yml", false);
 		saveResourceAs("data.yml", "data.yml", false);
 		
 		// 6 - Load player data
@@ -282,11 +284,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return quests;
 	}
 	
-	public LinkedList<Event> getEvents() {
+	public LinkedList<Action> getEvents() {
 		return events;
 	}
 	
-	public void setEvents(LinkedList<Event> events) {
+	public void setEvents(LinkedList<Action> events) {
 		this.events = events;
 	}
 	
@@ -326,7 +328,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return questFactory;
 	}
 	
-	public EventFactory getEventFactory() {
+	public ActionFactory getEventFactory() {
 		return eventFactory;
 	}
 	
@@ -1407,12 +1409,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					} else {
 						skipQuestProcess("Quest " + quest.getName() + " is missing ask-message:");
 					}
-					if (config.contains("quests." + questKey + ".event")) {
-						Event evt = Event.loadEvent(config.getString("quests." + questKey + ".event"), this);
-						if (evt != null) {
-							quest.initialEvent = evt;
+					if (config.contains("quests." + questKey + ".action")) {
+						Action act = Action.loadAction(config.getString("quests." + questKey + ".action"), this);
+						if (act != null) {
+							quest.initialAction = act;
 						} else {
-							skipQuestProcess("Initial Event in Quest " + quest.getName() + " failed to load.");
+							skipQuestProcess("Initial Action in Quest " + quest.getName() + " failed to load.");
+						}
+					} else if (config.contains("quests." + questKey + ".event")) {
+						Action evt = Action.loadAction(config.getString("quests." + questKey + ".event"), this);
+						if (evt != null) {
+							quest.initialAction = evt;
+						} else {
+							skipQuestProcess("Initial Action in Quest " + quest.getName() + " failed to load.");
 						}
 					}
 					if (config.contains("quests." + questKey + ".requirements")) {
@@ -2438,7 +2447,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				oStage.objectiveOverride = config.getString("quests." + questKey + ".stages.ordered." + s2 + ".objective-override");
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".start-event")) {
-				Event evt = Event.loadEvent(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".start-event"), this);
+				Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".start-event"), this);
 				if (evt != null) {
 					oStage.startEvent = evt;
 				} else {
@@ -2446,7 +2455,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".finish-event")) {
-				Event evt = Event.loadEvent(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".finish-event"), this);
+				Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".finish-event"), this);
 				if (evt != null) {
 					oStage.finishEvent = evt;
 				} else {
@@ -2454,7 +2463,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".death-event")) {
-				Event evt = Event.loadEvent(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".death-event"), this);
+				Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".death-event"), this);
 				if (evt != null) {
 					oStage.deathEvent = evt;
 				} else {
@@ -2462,7 +2471,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".disconnect-event")) {
-				Event evt = Event.loadEvent(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".disconnect-event"), this);
+				Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".disconnect-event"), this);
 				if (evt != null) {
 					oStage.disconnectEvent = evt;
 				} else {
@@ -2477,7 +2486,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							List<String> chatEventTriggers = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".chat-event-triggers");
 							boolean loadEventFailed = false;
 							for (int i = 0; i < chatEvents.size(); i++) {
-								Event evt = Event.loadEvent(chatEvents.get(i), this);
+								Action evt = Action.loadAction(chatEvents.get(i), this);
 								if (evt != null) {
 									oStage.chatEvents.put(chatEventTriggers.get(i), evt);
 								} else {
@@ -2506,7 +2515,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 							List<String> commandEventTriggers = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".command-event-triggers");
 							boolean loadEventFailed = false;
 							for (int i = 0; i < commandEvents.size(); i++) {
-								Event evt = Event.loadEvent(commandEvents.get(i), this);
+								Action evt = Action.loadAction(commandEvents.get(i), this);
 								if (evt != null) {
 									oStage.commandEvents.put(commandEventTriggers.get(i), evt);
 								} else {
@@ -2692,30 +2701,48 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	public void loadEvents() {
 		YamlConfiguration config = new YamlConfiguration();
-		File eventsFile = new File(this.getDataFolder(), "events.yml");
-		if (eventsFile.length() != 0) {
+		File legacyFile = new File(this.getDataFolder(), "events.yml");
+		File actionsFile = new File(this.getDataFolder(), "actions.yml");
+		if (legacyFile.exists()) {
+			getLogger().log(Level.INFO, "Renaming legacy \"events.yml\" to \"actions.yml\"");
 			try {
-				config.load(eventsFile);
+				legacyFile.renameTo(actionsFile);
+				if (legacyFile.exists()) {
+					getLogger().log(Level.INFO, "Deleting legacy \"events.yml\" ... done!");
+					legacyFile.delete();
+				}
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Unable to rename \"events.yml\" to \"actions.yml\"");
+				e.printStackTrace();
+			}
+		}
+		if (actionsFile.length() != 0) {
+			try {
+				config.load(actionsFile);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (InvalidConfigurationException e) {
 				e.printStackTrace();
 			}
-			ConfigurationSection sec = config.getConfigurationSection("events");
+			ConfigurationSection sec = config.getConfigurationSection("actions");
+			if (sec == null) {
+				getLogger().log(Level.INFO, "Could not find section \"actions\" from actions.yml. Trying legacy \"events\"...");
+				sec = config.getConfigurationSection("events");
+			}
 			if (sec != null) {
 				for (String s : sec.getKeys(false)) {
-					Event event = Event.loadEvent(s, this);
+					Action event = Action.loadAction(s, this);
 					if (event != null) {
 						events.add(event);
 					} else {
-						getLogger().log(Level.SEVERE, "Failed to load Event \"" + s + "\". Skipping.");
+						getLogger().log(Level.SEVERE, "Failed to load Action \"" + s + "\". Skipping.");
 					}
 				}
 			} else {
-				getLogger().log(Level.SEVERE, "Could not find section \"events\" from events.yml. Skipping.");
+				getLogger().log(Level.SEVERE, "Could not find beginning section from actions.yml. Skipping.");
 			}
 		} else {
-			getLogger().log(Level.WARNING, "Empty file events.yml was not loaded.");
+			getLogger().log(Level.WARNING, "Empty file actions.yml was not loaded.");
 		}
 	}
 	
@@ -3136,8 +3163,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return null;
 	}
 
-	public Event getEvent(String name) {
-		for (Event e : events) {
+	public Action getEvent(String name) {
+		for (Action e : events) {
 			if (e.getName().equalsIgnoreCase(name)){
 				return e;
 			} else if (e.getName().toLowerCase().startsWith(name.toLowerCase())) {
