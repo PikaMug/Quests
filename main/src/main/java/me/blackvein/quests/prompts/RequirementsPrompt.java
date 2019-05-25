@@ -57,19 +57,19 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		lang = lang.replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
 		text = ChatColor.DARK_AQUA + lang + "\n";
 		if (context.getSessionData(CK.REQ_MONEY) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + " (" + moneyReq + " " + (moneyReq > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ")\n";
 		}
 		if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestPoints") + " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestPoints") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestPoints") + " " + ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REQ_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestPoints") + ChatColor.GRAY + " (" + ChatColor.AQUA + context.getSessionData(CK.REQ_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")\n";
 		}
 		text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetItem") + "\n";
 		if (context.getSessionData(CK.REQ_PERMISSION) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetPerms") + " " + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetPerms") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetPerms") + "\n";
 			List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
@@ -78,7 +78,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			}
 		}
 		if (context.getSessionData(CK.REQ_QUEST) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuest") + " " + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuest") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuest") + "\n";
 			List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
@@ -107,7 +107,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "7 - " + Lang.get("reqSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("reqSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
 		}
 		if (plugin.getDependencies().getHeroes() != null) {
 			if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
@@ -122,7 +122,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "8 - " + Lang.get("reqSetHeroes") + " (" + Lang.get("reqNoHeroes") + ")\n";
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("reqSetHeroes") + " (" + Lang.get("reqNoHeroes") + ")\n";
 		}
 		if (context.getSessionData(CK.REQ_CUSTOM) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9 - " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.DARK_PURPLE + Lang.get("reqSetCustom") + " (" + Lang.get("noneSet") + ")\n";
@@ -576,7 +576,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				}
 				index++;
 			}
-			text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("finish");
+			text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("done");
 			return text;
 		}
 

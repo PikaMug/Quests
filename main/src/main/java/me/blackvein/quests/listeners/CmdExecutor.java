@@ -226,7 +226,7 @@ public class CmdExecutor implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EDITOR") : "editor")) {
 					questsEditor(cs);
 				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EVENTS_EDITOR") : "actions")
-						|| args[0].equalsIgnoreCase("events")) {
+						|| args[0].equalsIgnoreCase("action") || args[0].equalsIgnoreCase("events")) {
 					questsActions(cs);
 				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_INFO") : "info")) {
 					questsInfo(cs);

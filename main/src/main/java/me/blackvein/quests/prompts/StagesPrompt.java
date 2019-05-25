@@ -37,12 +37,12 @@ public class StagesPrompt extends StringPrompt {
 		String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + Lang.get("stageEditorStages") + ChatColor.LIGHT_PURPLE + " -\n";
 		int stages = getStages(cc);
 		for (int i = 1; i <= stages; i++) {
-			text += ChatColor.BOLD + "" + ChatColor.GREEN + i + ". " + ChatColor.RESET + ChatColor.GOLD + Lang.get("stageEditorEditStage") + " " + i + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + i + " - " + ChatColor.RESET + ChatColor.GOLD + Lang.get("stageEditorEditStage") + " " + i + "\n";
 		}
 		stages++;
-		text += "\n" + ChatColor.BOLD + "" + ChatColor.GREEN + stages + ". " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("stageEditorNewStage");
+		text += "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + stages + " - " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("stageEditorNewStage");
 		stages++;
-		text += "\n" + ChatColor.BOLD + "" + ChatColor.BLUE + stages + ". " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("done");
+		text += "\n" + ChatColor.GREEN + "" + ChatColor.BOLD + stages + " - " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("done");
 		return text;
 	}
 

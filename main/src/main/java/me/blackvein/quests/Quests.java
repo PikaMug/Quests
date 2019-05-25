@@ -2154,11 +2154,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-talk-to"), Integer.class)) {
 					npcIdsToTalkTo = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-talk-to");
 					for (int i : npcIdsToTalkTo) {
-						if (CitizensAPI.getNPCRegistry().getById(i) != null) {
-							questNpcs.add(CitizensAPI.getNPCRegistry().getById(i));
+						if (getDependencies().getCitizens() != null) {
+							if (CitizensAPI.getNPCRegistry().getById(i) != null) {
+								questNpcs.add(CitizensAPI.getNPCRegistry().getById(i));
+							} else {
+								stageFailed("" + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid NPC id!");
+							}
 						} else {
-							stageFailed("" + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid NPC id!");
+							stageFailed("Citizens not installed while getting ID " + i + " inside npc-ids-to-talk-to: inside Stage " + s2 + " of Quest " + quest.getName());
 						}
+						
 					}
 				} else {
 					stageFailed("npc-ids-to-talk-to: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
@@ -2178,13 +2183,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 									int npcId = itemDeliveryTargetIds.get(index);
 									index++;
 									if (is != null) {
-										NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
-										if (npc != null) {
-											oStage.getItemsToDeliver().add(is);
-											oStage.getItemDeliveryTargets().add(npcId);
-											oStage.deliverMessages.addAll(deliveryMessages);
+										if (getDependencies().getCitizens() != null) {
+											NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
+											if (npc != null) {
+												oStage.getItemsToDeliver().add(is);
+												oStage.getItemDeliveryTargets().add(npcId);
+												oStage.deliverMessages.addAll(deliveryMessages);
+											} else {
+												stageFailed("" + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid NPC id!");
+											}
 										} else {
-											stageFailed("" + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid NPC id!");
+											stageFailed("Citizens was not installed for ID " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName());
 										}
 									} else {
 										stageFailed("" + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");

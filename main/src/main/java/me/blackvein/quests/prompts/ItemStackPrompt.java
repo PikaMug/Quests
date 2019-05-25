@@ -265,7 +265,6 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				}
 				
 				stack.setItemMeta(meta);
-				System.out.println("DONE - setting stack");
 				cc.setSessionData("tempStack", stack);
 				cc.setSessionData("newItem", Boolean.TRUE);
 			} else {

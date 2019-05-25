@@ -103,7 +103,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "7 - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
 		}
 		if (plugin.getDependencies().getHeroes() != null) {
 			if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
@@ -117,7 +117,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "8 - " + Lang.get("rewSetHeroes") + " (" + Lang.get("reqNoHeroes") + ")\n";
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetHeroes") + " (" + Lang.get("reqNoHeroes") + ")\n";
 		}
 		if (plugin.getDependencies().getPhatLoots() != null) {
 			if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
@@ -130,7 +130,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "9 - " + Lang.get("rewSetPhat") + " (" + Lang.get("rewNoPhat") + ")\n";
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetPhat") + " (" + Lang.get("rewNoPhat") + ")\n";
 		}
 		if (context.getSessionData(CK.REW_CUSTOM) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.DARK_PURPLE + Lang.get("rewSetCustom") + " (" + Lang.get("noneSet") + ")\n";
@@ -855,7 +855,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 				index++;
 			}
-			text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("finish");
+			text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("done");
 			return text;
 		}
 

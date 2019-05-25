@@ -140,7 +140,11 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.GOLD + Lang.get("questEditorTitle") + "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorCreate") + "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorEdit") + "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorDelete") + "\n" + ChatColor.GOLD + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("exit");
+			String text = ChatColor.GOLD + Lang.get("questEditorTitle") + "\n" 
+					+ ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorCreate") + "\n" 
+					+ ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorEdit") + "\n" 
+					+ ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorDelete") + "\n" 
+					+ ChatColor.GOLD + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("exit");
 			return text;
 		}
 
@@ -201,21 +205,21 @@ public class QuestFactory implements ConversationAbandonedListener {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorFinishMessage") + " (" + context.getSessionData(CK.Q_FINISH_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 			}
 			if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else if (plugin.getDependencies().getCitizens() != null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData(CK.Q_START_NPC)).getName() + ")\n";
 			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("questCitNotInstalled") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("questCitNotInstalled") + ")\n";
 			}
 			if (context.getSessionData(CK.Q_START_BLOCK) == null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
 				Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + " (" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")\n";
 			}
 			if (plugin.getDependencies().getWorldGuardApi() != null) {
 				if (context.getSessionData(CK.Q_REGION) == null) {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("noneSet") + ")\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					String s = (String) context.getSessionData(CK.Q_REGION);
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + ChatColor.GREEN + s + ChatColor.YELLOW + ")\n";
@@ -224,13 +228,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 				text += ChatColor.GRAY + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("questWGNotInstalled") + ")\n";
 			}
 			if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
 				String s = (String) context.getSessionData(CK.Q_INITIAL_EVENT);
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + " (" + s + ")\n";
 			}
 			if (context.getSessionData(CK.Q_GUIDISPLAY) == null && plugin.getDependencies().getCitizens() != null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + ChatColor.GRAY +  " (" + Lang.get("noneSet") + ")\n";
 			} else if (plugin.getDependencies().getCitizens() != null ){
 				ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + ItemUtil.getDisplayString(stack) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
@@ -240,10 +244,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.DARK_AQUA + " - " + Lang.get("questEditorReqs") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.AQUA + " - " + Lang.get("questEditorPln") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + " - " + Lang.get("questEditorStages") + "\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("questEditorRews") + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.DARK_PURPLE + " - " + Lang.get("questEditorRews") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.DARK_GREEN + " - " + Lang.get("questEditorOpts") + "\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("save") + "\n";
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "15" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("exit") + "\n";
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("save") + "\n";
+			text += ChatColor.RED + "" + ChatColor.BOLD + "15" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("exit") + "\n";
 			return text;
 		}
 
@@ -750,7 +754,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.GREEN + "1 - " + Lang.get("yesWord") + "\n" + "2 - " + Lang.get("noWord");
+			String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("yesWord") + "\n" 
+					+ ChatColor.RED + "" +  ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("noWord");
 			return ChatColor.YELLOW + Lang.get("questEditorExited") + "\n" + text;
 		}
 
