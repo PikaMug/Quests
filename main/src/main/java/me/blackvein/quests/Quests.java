@@ -368,8 +368,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		public Prompt acceptInput(ConversationContext context, String s) {
 			Player player = (Player) context.getForWhom();
 			if (s.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
+				String questToTake = getQuester(player.getUniqueId()).questToTake;
 				try {
-					getQuester(player.getUniqueId()).takeQuest(getQuest(getQuester(player.getUniqueId()).questToTake), false);
+					if (getQuest(questToTake) == null) {
+						getLogger().info(player.getName() + " attempted to take quest \"" + questToTake + "\" but something went wrong");
+						player.sendMessage(ChatColor.RED + "Something went wrong! Please report issue to an administrator.");
+					} else {
+						getQuester(player.getUniqueId()).takeQuest(getQuest(questToTake), false);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -3160,7 +3166,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		return true;
 	}
-
+	
+	/**
+	 * Get a Quest by name
+	 * 
+	 * @param name Name of the quest
+	 * @return Quest or null if not found
+	 */
 	public Quest getQuest(String name) {
 		for (Quest q : quests) {
 			if (q.getName().equalsIgnoreCase(name)) {
@@ -3171,7 +3183,31 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		return null;
 	}
+	
+	/**
+	 * Get an Action by name
+	 * 
+	 * @param name Name of the action
+	 * @return Action or null if not found
+	 */
+	public Action getAction(String name) {
+		for (Action e : events) {
+			if (e.getName().equalsIgnoreCase(name)){
+				return e;
+			} else if (e.getName().toLowerCase().startsWith(name.toLowerCase())) {
+				return e;
+			}
+		}
+		return null;
+	}
 
+	/**
+	 * Get an Action by name
+	 * 
+	 * @param name Name of the action
+	 * @return Action or null if not found
+	 * @deprecated Use getAction()
+	 */
 	public Action getEvent(String name) {
 		for (Action e : events) {
 			if (e.getName().equalsIgnoreCase(name)){
