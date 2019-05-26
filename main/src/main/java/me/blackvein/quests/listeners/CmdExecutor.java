@@ -1338,9 +1338,9 @@ public class CmdExecutor implements CommandExecutor {
 			}
 			UUID id = quester.getUUID();
 			LinkedList<Quester> temp = plugin.getQuesters();
-			for (Quester q : temp) {
-				if (q.getUUID().equals(id)) {
-					temp.remove(q);
+			for(Iterator<Quester> itr = temp.iterator(); itr.hasNext();) {
+				if (itr.next().getUUID().equals(id)) {
+					itr.remove();
 				}
 			}
 			plugin.setQuesters(temp);
@@ -1366,7 +1366,7 @@ public class CmdExecutor implements CommandExecutor {
 			quester.setUUID(id);
 			quester.saveData();
 			LinkedList<Quester> temp2 = plugin.getQuesters();
-			temp.add(quester);
+			temp2.add(quester);
 			plugin.setQuesters(temp2);
 		} else {
 			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
