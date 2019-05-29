@@ -18,4 +18,3 @@ show-titles: true
 translate-names: true
 translate-subcommands: false
 use-compass: true
-use-gps-plugin: true

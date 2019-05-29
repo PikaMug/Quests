@@ -10,34 +10,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.events.quest;
 
-public class Options {
-	private boolean allowCommands = true;
-	private boolean useDungeonsXLPlugin = false;
-	private boolean usePartiesPlugin = true;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.events.QuestsEvent;
+
+/**
+ * Represents a quest-related event
+ */
+public abstract class QuestEvent extends QuestsEvent {
+	protected Quest quest;
 	
-	public boolean getAllowCommands() {
-		return allowCommands;
+	public QuestEvent(final Quest quest) {
+		this.quest = quest;
 	}
 	
-	public void setAllowCommands(boolean allowCommands) {
-		this.allowCommands = allowCommands;
-	}
+	public QuestEvent(final Quest quest, boolean async) {
+        super(async);
+        this.quest = quest;
+    }
 	
-	public boolean getUseDungeonsXLPlugin() {
-		return useDungeonsXLPlugin;
-	}
-	
-	public void setUseDungeonsXLPlugin(boolean useDungeonsXLPlugin) {
-		this.useDungeonsXLPlugin = useDungeonsXLPlugin;
-	}
-	
-	public boolean getUsePartiesPlugin() {
-		return usePartiesPlugin;
-	}
-	
-	public void setUsePartiesPlugin(boolean usePartiesPlugin) {
-		this.usePartiesPlugin = usePartiesPlugin;
+	/**
+	 * Returns the quest involved in this event
+	 * 
+	 * @return Quest which is involved in this event
+	 */
+	public final Quest getQuest() {
+		return quest;
 	}
 }

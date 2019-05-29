@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -30,6 +30,8 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Stage;
+import me.blackvein.quests.events.quest.QuestQuitEvent;
+import me.blackvein.quests.events.quest.QuestTakeEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -613,39 +615,40 @@ public class CmdExecutor implements CommandExecutor {
 		}
 	}
 
-	private boolean questsQuit(final Player player, String[] args) {
+	private void questsQuit(final Player player, String[] args) {
 		if (plugin.getSettings().canAllowQuitting() == true) {
 			if (((Player) player).hasPermission("quests.quit")) {
 				if (args.length == 1) {
 					player.sendMessage(ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
-					return true;
+					return;
 				}
 				Quester quester = plugin.getQuester(player.getUniqueId());
 				if (quester.getCurrentQuests().isEmpty() == false) {
-					Quest quest = plugin.getQuest(MiscUtil.concatArgArray(args, 1, args.length - 1, ' '));
-					if (quest == null) {
+					Quest q = plugin.getQuest(MiscUtil.concatArgArray(args, 1, args.length - 1, ' '));
+					if (q != null) {
+						QuestQuitEvent event = new QuestQuitEvent(q, quester);
+						plugin.getServer().getPluginManager().callEvent(event);
+						if (event.isCancelled()) {
+							return;
+						}
+						quester.hardQuit(q);
+						String msg = Lang.get("questQuit");
+						msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + q.getName() + ChatColor.YELLOW);
+						player.sendMessage(ChatColor.YELLOW + msg);
+						quester.saveData();
+						quester.loadData();
+						quester.updateJournal();
+					} else {
 						player.sendMessage(ChatColor.RED + Lang.get(player, "questNotFound"));
-						return true;
 					}
-					quester.hardQuit(quest);
-					String msg = Lang.get("questQuit");
-					msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
-					player.sendMessage(ChatColor.YELLOW + msg);
-					quester.saveData();
-					quester.loadData();
-					quester.updateJournal();
-					return true;
 				} else {
 					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
-					return true;
 				}
 			} else {
 				player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
-				return true;
 			}
 		} else {
 			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
-			return true;
 		}
 	}
 
@@ -684,6 +687,11 @@ public class CmdExecutor implements CommandExecutor {
 					if (questToFind != null) {
 						final Quest q = questToFind;
 						final Quester quester = plugin.getQuester(player.getUniqueId());
+						QuestTakeEvent event = new QuestTakeEvent(q, quester);
+				        plugin.getServer().getPluginManager().callEvent(event);
+				        if (event.isCancelled()) {
+				            return;
+				        }
 						if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
 							String msg = Lang.get(player, "questMaxAllowed");
 							msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));

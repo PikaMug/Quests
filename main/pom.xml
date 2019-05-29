@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>3.6.9</version>
+        <version>3.7.0</version>
     </parent>
     <artifactId>quests-main</artifactId>
     
@@ -112,11 +112,6 @@
 	        <artifactId>PhatLoots</artifactId>
 	        <version>-SNAPSHOT</version>
 	    </dependency>
-        <dependency>
-            <groupId>com.github.PikaMug</groupId>
-            <artifactId>GPS</artifactId>
-            <version>-SNAPSHOT</version>
-        </dependency>
         <dependency>
 	        <groupId>com.github.DRE2N</groupId>
 	        <artifactId>DungeonsXL</artifactId>

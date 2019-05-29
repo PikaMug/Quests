@@ -10,37 +10,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.util;
+package me.blackvein.quests.events.quest;
 
-import java.util.TreeMap;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
 
-public class RomanNumeral {
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 
-    private final static TreeMap<Integer, String> map = new TreeMap<Integer, String>();
+/**
+ * Called when a quest is quit by a quester
+ */
+public class QuestQuitEvent extends QuestEvent implements Cancellable {
+	private static final HandlerList handlers = new HandlerList();
+    private Quester quester;
+    private boolean cancel = false;
 
-    static {
-
-        map.put(1000, "M");
-        map.put(900, "CM");
-        map.put(500, "D");
-        map.put(400, "CD");
-        map.put(100, "C");
-        map.put(90, "XC");
-        map.put(50, "L");
-        map.put(40, "XL");
-        map.put(10, "X");
-        map.put(9, "IX");
-        map.put(5, "V");
-        map.put(4, "IV");
-        map.put(1, "I");
-
+	public QuestQuitEvent(Quest quest, Quester who) {
+		super(quest);
+		this.quester = who;
+	}
+	
+	/**
+	 * Returns the quester involved in this event
+	 * 
+	 * @return Quester who is involved in this event
+	 */
+    public Quester getQuester() {
+    	return quester;
+    }
+    
+    @Override
+    public boolean isCancelled() {
+        return cancel;
     }
 
-    public final static String getNumeral(int number) {
-        int l =  map.floorKey(number);
-        if ( number == l ) {
-            return map.get(number);
-        }
-        return map.get(l) + getNumeral(number-l);
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancel = cancel;
+    }
+
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
+	
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 }

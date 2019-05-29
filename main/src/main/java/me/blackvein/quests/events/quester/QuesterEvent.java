@@ -10,34 +10,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.events.quester;
 
-public class Options {
-	private boolean allowCommands = true;
-	private boolean useDungeonsXLPlugin = false;
-	private boolean usePartiesPlugin = true;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.events.QuestsEvent;
+
+/**
+ * Represents a quester-related event
+ */
+public abstract class QuesterEvent extends QuestsEvent {
+	protected Quester quester;
 	
-	public boolean getAllowCommands() {
-		return allowCommands;
+	public QuesterEvent(final Quester quester) {
+		this.quester = quester;
 	}
 	
-	public void setAllowCommands(boolean allowCommands) {
-		this.allowCommands = allowCommands;
-	}
+	public QuesterEvent(final Quester quester, boolean async) {
+        super(async);
+        this.quester = quester;
+
+    }
 	
-	public boolean getUseDungeonsXLPlugin() {
-		return useDungeonsXLPlugin;
-	}
-	
-	public void setUseDungeonsXLPlugin(boolean useDungeonsXLPlugin) {
-		this.useDungeonsXLPlugin = useDungeonsXLPlugin;
-	}
-	
-	public boolean getUsePartiesPlugin() {
-		return usePartiesPlugin;
-	}
-	
-	public void setUsePartiesPlugin(boolean usePartiesPlugin) {
-		this.usePartiesPlugin = usePartiesPlugin;
+	/**
+	 * Returns the quester involved in this event
+	 * 
+	 * @return Quester which is involved in this event
+	 */
+	public final Quester getQuester() {
+		return quester;
 	}
 }

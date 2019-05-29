@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -216,11 +216,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	public void onDisable() {
 		getLogger().info("Saving Quester data.");
 		for (Player p : getServer().getOnlinePlayers()) {
-			if (depends.getGpsApi() != null) {
-				if (depends.getGpsApi().gpsIsActive(p)) {
-					depends.getGpsApi().stopGPS(p);
-				}
-			}
 			Quester quester = getQuester(p.getUniqueId());
 			quester.saveData();
 		}
@@ -2107,7 +2102,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".enchantments")) {
 				if (Quests.checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".enchantments"), String.class)) {
 					for (String enchant : config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".enchantments")) {
-						Enchantment e = Quests.getEnchantment(enchant);
+						Enchantment e = ItemUtil.getEnchantmentFromProperName(enchant);
 						if (e != null) {
 							enchantments.add(e);
 						} else {
@@ -2674,10 +2669,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 	
 	/**
-	 * Add possibilty to use fallbacks for customs maps
+	 * Add possibilty to use fallbacks for customs maps<p>
+	 * 
 	 * Avoid null objects in datamap by initialize the entry value with empty string if no fallback present.
 	 */
-	static Map<String, Object> populateCustoms(ConfigurationSection sec2, Map<String, Object> datamap) {
+	private static Map<String, Object> populateCustoms(ConfigurationSection sec2, Map<String, Object> datamap) {
 		Map<String,Object> data = new HashMap<String,Object>();
 		if (sec2 != null) {
 			for (String key : datamap.keySet()) {
@@ -2688,10 +2684,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 	
 	/**
-	 * Add possibilty to use fallbacks for customs entries
+	 * Add possibilty to use fallbacks for customs entries<p>
+	 * 
 	 * Avoid null objects in datamap by initialize the entry value with empty string if no fallback present.
 	 */
-	static Entry<String, Object> populateCustoms(ConfigurationSection sec2, Entry<String, Object> datamap) {
+	private static Entry<String, Object> populateCustoms(ConfigurationSection sec2, Entry<String, Object> datamap) {
 		String key = null;;
 		Object value = null;;
 		if (sec2 != null) {
@@ -2721,9 +2718,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (legacyFile.exists()) {
 			getLogger().log(Level.INFO, "Renaming legacy \"events.yml\" to \"actions.yml\"");
 			try {
-				legacyFile.renameTo(actionsFile);
-				if (legacyFile.exists()) {
-					getLogger().log(Level.INFO, "Deleting legacy \"events.yml\" ... done!");
+				if (legacyFile.renameTo(actionsFile)) {
+					getLogger().log(Level.INFO, "Success! Deleting legacy \"events.yml\" ... done!");
 					legacyFile.delete();
 				}
 			} catch (Exception e) {
@@ -3237,130 +3233,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 		}
 		return count - subtract;
-	}
-	
-	@SuppressWarnings("deprecation") // since 1.13
-	public static Enchantment getEnchantment(String enchant) {
-		String ench = Lang.getKey(enchant.replace(" ", ""));
-		ench = ench.replace("ENCHANTMENT_", "");
-		Enchantment e = Enchantment.getByName(ench);
-		return e != null ? e : getEnchantmentLegacy(ench.replace(" ", ""));
-	}
-
-	public static Enchantment getEnchantmentLegacy(String enchant) {
-		if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_DAMAGE"))) {
-			return Enchantment.ARROW_DAMAGE;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_FIRE"))) {
-			return Enchantment.ARROW_FIRE;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_INFINITE"))) {
-			return Enchantment.ARROW_INFINITE;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_KNOCKBACK"))) {
-			return Enchantment.ARROW_KNOCKBACK;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_ALL"))) {
-			return Enchantment.DAMAGE_ALL;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_ARTHROPODS"))) {
-			return Enchantment.DAMAGE_ARTHROPODS;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_UNDEAD"))) {
-			return Enchantment.DAMAGE_UNDEAD;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DIG_SPEED"))) {
-			return Enchantment.DIG_SPEED;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DURABILITY"))) {
-			return Enchantment.DURABILITY;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_FIRE_ASPECT"))) {
-			return Enchantment.FIRE_ASPECT;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_KNOCKBACK"))) {
-			return Enchantment.KNOCKBACK;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LOOT_BONUS_BLOCKS"))) {
-			return Enchantment.LOOT_BONUS_BLOCKS;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LOOT_BONUS_MOBS"))) {
-			return Enchantment.LOOT_BONUS_MOBS;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LUCK"))) {
-			return Enchantment.LOOT_BONUS_MOBS;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LURE"))) {
-			return Enchantment.LOOT_BONUS_MOBS;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_OXYGEN"))) {
-			return Enchantment.OXYGEN;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_ENVIRONMENTAL"))) {
-			return Enchantment.PROTECTION_ENVIRONMENTAL;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_EXPLOSIONS"))) {
-			return Enchantment.PROTECTION_EXPLOSIONS;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_FALL"))) {
-			return Enchantment.PROTECTION_FALL;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_FIRE"))) {
-			return Enchantment.PROTECTION_FIRE;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_PROJECTILE"))) {
-			return Enchantment.PROTECTION_PROJECTILE;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_SILK_TOUCH"))) {
-			return Enchantment.SILK_TOUCH;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_THORNS"))) {
-			return Enchantment.THORNS;
-		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_WATER_WORKER"))) {
-			return Enchantment.WATER_WORKER;
-		} else {
-			return null;
-		}
-	}
-
-	public static Enchantment getEnchantmentPretty(String enchant) {
-		while (Quester.spaceToCapital(enchant) != null) {
-			enchant = Quester.spaceToCapital(enchant);
-		}
-		return getEnchantment(enchant);
-	}
-
-	public static DyeColor getDyeColor(String s) {
-		String col = Lang.getKey(MiscUtil.getCapitalized(s));
-		col = col.replace("COLOR_", "");
-		DyeColor color = null;
-		try {
-			color = DyeColor.valueOf(col);
-		} catch (IllegalArgumentException e) {
-			// Do nothing
-		}
-		return color != null ? color : getDyeColorLegacy(s);
-	}
-
-	public static DyeColor getDyeColorLegacy(String s) {
-		if (s.equalsIgnoreCase("Black") || s.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
-			return DyeColor.BLACK;
-		} else if (s.equalsIgnoreCase("Blue") || s.equalsIgnoreCase(Lang.get("COLOR_BLUE"))) {
-			return DyeColor.BLUE;
-		} else if (s.equalsIgnoreCase("Brown") || s.equalsIgnoreCase(Lang.get("COLOR_BROWN"))) {
-			return DyeColor.BROWN;
-		} else if (s.equalsIgnoreCase("Cyan") || s.equalsIgnoreCase(Lang.get("COLOR_CYAN"))) {
-			return DyeColor.CYAN;
-		} else if (s.equalsIgnoreCase("Gray") || s.equalsIgnoreCase(Lang.get("COLOR_GRAY"))) {
-			return DyeColor.GRAY;
-		} else if (s.equalsIgnoreCase("Green") || s.equalsIgnoreCase(Lang.get("COLOR_GREEN"))) {
-			return DyeColor.GREEN;
-		} else if (s.equalsIgnoreCase("LightBlue") || s.equalsIgnoreCase(Lang.get("COLOR_LIGHT_BLUE"))) {
-			return DyeColor.LIGHT_BLUE;
-		} else if (s.equalsIgnoreCase("Lime") || s.equalsIgnoreCase(Lang.get("COLOR_LIME"))) {
-			return DyeColor.LIME;
-		} else if (s.equalsIgnoreCase("Magenta") || s.equalsIgnoreCase(Lang.get("COLOR_MAGENTA"))) {
-			return DyeColor.MAGENTA;
-		} else if (s.equalsIgnoreCase("Orange") || s.equalsIgnoreCase(Lang.get("COLOR_ORAGE"))) {
-			return DyeColor.ORANGE;
-		} else if (s.equalsIgnoreCase("Pink") || s.equalsIgnoreCase(Lang.get("COLOR_PINK"))) {
-			return DyeColor.PINK;
-		} else if (s.equalsIgnoreCase("Purple") || s.equalsIgnoreCase(Lang.get("COLOR_PURPLE"))) {
-			return DyeColor.PURPLE;
-		} else if (s.equalsIgnoreCase("Red") || s.equalsIgnoreCase(Lang.get("COLOR_RED"))) {
-			return DyeColor.RED;
-		// 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
-		} else if (s.equalsIgnoreCase("Silver") || s.equalsIgnoreCase("LightGray") || s.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
-			return DyeColor.getByColor(Color.SILVER);
-		} else if (s.equalsIgnoreCase("White") || s.equalsIgnoreCase(Lang.get("COLOR_WHITE"))) {
-			return DyeColor.WHITE;
-		} else if (s.equalsIgnoreCase("Yellow") || s.equalsIgnoreCase(Lang.get("COLOR_YELLOW"))) {
-			return DyeColor.YELLOW;
-		} else {
-			return null;
-		}
-	}
-
-	public static String getDyeString(DyeColor dc) {
-		return Lang.get("COLOR_" + dc.name());
 	}
 	
 	/**

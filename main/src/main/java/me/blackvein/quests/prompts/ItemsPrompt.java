@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.blackvein.quests.QuestFactory;
-import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
@@ -90,7 +89,8 @@ public class ItemsPrompt extends FixedSetPrompt {
 			LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES);
 			LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
 			for (int i = 0; i < enchants.size(); i++) {
-				text += ChatColor.GRAY + "     - " + ChatColor.BLUE + Quester.prettyItemString(names.get(i)) + ChatColor.GRAY + " " + Lang.get("with") + " " + ChatColor.AQUA + Quester.prettyEnchantmentString(Quests.getEnchantment(enchants.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) + ChatColor.GRAY + " " + Lang.get("with") + " " + ChatColor.AQUA 
+						+ ItemUtil.getPrettyEnchantmentName(ItemUtil.getEnchantmentFromProperName(enchants.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
 			}
 		}
 		text += ChatColor.GREEN + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("done") + "\n";
@@ -255,7 +255,7 @@ public class ItemsPrompt extends FixedSetPrompt {
 				} else {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetItemNames") + "\n";
 					for (String s : getEnchantItems(context)) {
-						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + Quester.prettyItemString(s) + "\n";
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
 					}
 				}
 				if (context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS) == null) {
@@ -349,9 +349,9 @@ public class ItemsPrompt extends FixedSetPrompt {
 			String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + Lang.get("stageEditorEnchantments") + ChatColor.LIGHT_PURPLE + " -\n";
 			for (int i = 0; i < Enchantment.values().length; i++) {
 				if (i == Enchantment.values().length - 1) {
-					text += ChatColor.GREEN + Quester.prettyEnchantmentString(Enchantment.values()[i]) + " ";
+					text += ChatColor.GREEN + ItemUtil.getPrettyEnchantmentName(Enchantment.values()[i]) + " ";
 				} else {
-					text += ChatColor.GREEN + Quester.prettyEnchantmentString(Enchantment.values()[i]) + ", ";
+					text += ChatColor.GREEN + ItemUtil.getPrettyEnchantmentName(Enchantment.values()[i]) + ", ";
 				}
 			}
 			text = text.substring(0, text.length() - 1);
@@ -368,9 +368,9 @@ public class ItemsPrompt extends FixedSetPrompt {
 					s = s.trim();
 					valid = false;
 					for (Enchantment e : Enchantment.values()) {
-						if (Quester.prettyEnchantmentString(e).equalsIgnoreCase(s)) {
+						if (ItemUtil.getPrettyEnchantmentName(e).equalsIgnoreCase(s)) {
 							if (enchs.contains(s) == false) {
-								enchs.add(Quester.prettyEnchantmentString(e));
+								enchs.add(ItemUtil.getPrettyEnchantmentName(e));
 								valid = true;
 								break;
 							} else {

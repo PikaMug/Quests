@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -39,6 +39,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.events.quester.QuesterPostChangeStageEvent;
+import me.blackvein.quests.events.quester.QuesterPostCompleteQuestEvent;
+import me.blackvein.quests.events.quester.QuesterPostFailQuestEvent;
+import me.blackvein.quests.events.quester.QuesterPreChangeStageEvent;
+import me.blackvein.quests.events.quester.QuesterPreCompleteQuestEvent;
+import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -149,7 +155,7 @@ public class Quest {
 		return initialAction;
 	}
 	
-	public void setInitialActino(Action initialAction) {
+	public void setInitialAction(Action initialAction) {
 		this.initialAction = initialAction;
 	}
 
@@ -237,6 +243,12 @@ public class Quest {
 			throw new InvalidStageException(this, stage);
 		}
 		Stage currentStage = quester.getCurrentStage(this);
+		Stage nextStage = quester.getCurrentStage(this);
+		QuesterPreChangeStageEvent preEvent = new QuesterPreChangeStageEvent(quester, this, currentStage, nextStage);
+        plugin.getServer().getPluginManager().callEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
 		quester.hardQuit(this);
 		quester.hardStagePut(this, stage);
 		quester.addEmptiesFor(this, stage);
@@ -246,12 +258,10 @@ public class Quest {
 		/*
 		 * if (quester.getCurrentStage(this).finishEvent != null) { quester.getCurrentStage(this).finishEvent.fire(quester); }
 		 */
-		Stage nextStage = quester.getCurrentStage(this);
 		if (nextStage.startEvent != null) {
 			nextStage.startEvent.fire(quester, this);
 		}
 		updateCompass(quester, nextStage);
-		updateGPS(quester);
 		String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");
 		msg = msg.replace("<quest>", name);
 		quester.getPlayer().sendMessage(ChatColor.GOLD + msg);
@@ -261,62 +271,8 @@ public class Quest {
 			quester.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageStartMessage, this, quester.getPlayer()));
 		}
 		quester.updateJournal();
-	}
-	
-	/**
-	 * Add location-objective points for GPS and begin navigation.<p>
-	 * 
-	 * Do not call this method multiple times.
-	 * 
-	 * @param quester The quester to have their GPS updated
-	 * @return true if successful
-	 */
-	protected boolean updateGPS(Quester quester) {
-		if (plugin.getDependencies().getGpsApi() == null) {
-			return false;
-		}
-		Stage stage = quester.getCurrentStage(this);
-		LinkedList<Location> targetLocations = new LinkedList<Location>();
-		if (stage == null) {
-			return false;
-		}
-		if (stage.citizensToInteract != null && stage.citizensToInteract.size() > 0) {
-			for (Integer i : stage.citizensToInteract) {
-				targetLocations.add(plugin.getNPCLocation(i));
-			}
-		} else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
-			for (Integer i : stage.citizensToKill) {
-				targetLocations.add(plugin.getNPCLocation(i));
-			}
-		} else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
-			targetLocations.addAll(stage.locationsToReach);
-		} else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
-			for (Integer i : stage.itemDeliveryTargets) {
-				NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(i);
-				targetLocations.add(npc.getStoredLocation());
-			}
-		}
-		if (targetLocations != null && !targetLocations.isEmpty()) {
-			int index = 1;
-			String pointName = "quests-" + quester.getPlayer().getUniqueId().toString() + "-" + stage.toString() + "-";
-			for (Location l : targetLocations) {
-				if (l.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
-					if (!plugin.getDependencies().getGpsApi().gpsIsActive(quester.getPlayer())) {
-						plugin.getDependencies().getGpsApi().addPoint(pointName + index, l);
-						index++;
-					}
-				}
-			}
-			for (int i = 1 ; i < targetLocations.size(); i++) {
-				if (!plugin.getDependencies().getGpsApi().gpsIsActive(quester.getPlayer())) {
-					plugin.getDependencies().getGpsApi().connect(pointName + i, pointName + (i + 1), true);
-				}
-			}
-			if (!plugin.getDependencies().getGpsApi().gpsIsActive(quester.getPlayer())) {
-				plugin.getDependencies().getGpsApi().startGPS(quester.getPlayer(), pointName + (index - 1));
-			}
-		}
-		return targetLocations != null && !targetLocations.isEmpty();
+		QuesterPostChangeStageEvent postEvent = new QuesterPostChangeStageEvent(quester, this, currentStage, nextStage);
+        plugin.getServer().getPluginManager().callEvent(postEvent);
 	}
 
 	/**
@@ -457,6 +413,11 @@ public class Quest {
 	 */
 	@SuppressWarnings("deprecation")
 	public void completeQuest(Quester q) {
+		QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
+        plugin.getServer().getPluginManager().callEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
 		final Player player = plugin.getServer().getPlayer(q.getUUID());
 		q.hardQuit(this);
 		if (!q.completedQuests.contains(name)) {
@@ -596,7 +557,7 @@ public class Quest {
 						if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
 							text +=  ChatColor.GRAY + " " + Lang.get(player, "with") + ChatColor.DARK_PURPLE;
 							for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-								text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+								text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
 							}
 						}
 					} catch (Throwable tr) {
@@ -610,7 +571,7 @@ public class Quest {
 				} else {
 					text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY + " " + Lang.get(player, "with");
 					for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-						text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+						text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
 					}
 					text += ChatColor.GRAY + " x " + i.getAmount();
 				}
@@ -623,7 +584,7 @@ public class Quest {
 						if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
 							text += ChatColor.GRAY + " " + Lang.get(player, "with");
 							for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-								text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+								text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
 							}
 						}
 					} catch (Throwable tr) {
@@ -718,12 +679,9 @@ public class Quest {
 		q.saveData();
 		player.updateInventory();
 		q.updateJournal();
-		if (plugin.getDependencies().getGpsApi() != null) {
-			if (plugin.getDependencies().getGpsApi().gpsIsActive(player)) {
-				plugin.getDependencies().getGpsApi().stopGPS(player);
-			}
-		}
 		q.findCompassTarget();
+		QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(q, this);
+        plugin.getServer().getPluginManager().callEvent(postEvent);
 	}
 	
 	/**
@@ -733,6 +691,11 @@ public class Quest {
 	 */
 	@SuppressWarnings("deprecation")
 	public void failQuest(Quester q) {
+		QuesterPreFailQuestEvent preEvent = new QuesterPreFailQuestEvent(q, this);
+        plugin.getServer().getPluginManager().callEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
 		if (plugin.getServer().getPlayer(q.getUUID()) != null) {
 			Player player = plugin.getServer().getPlayer(q.getUUID());
 			player.sendMessage(ChatColor.GOLD + Lang.get(player, "questObjectivesTitle").replace("<quest>", name));
@@ -745,6 +708,8 @@ public class Quest {
 			q.saveData();
 		}
 		q.updateJournal();
+		QuesterPostFailQuestEvent postEvent = new QuesterPostFailQuestEvent(q, this);
+        plugin.getServer().getPluginManager().callEvent(postEvent);
 	}
 	
 	/**

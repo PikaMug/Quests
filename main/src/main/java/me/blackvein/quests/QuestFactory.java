@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -56,6 +56,7 @@ import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.WorldGuardAPI;
 import net.citizensnpcs.api.CitizensAPI;
 
@@ -1630,7 +1631,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					amounts.add(e.getValue());
 					for (Entry<Enchantment, Material> e2 : e.getKey().entrySet()) {
 						names.add(e2.getValue().name());
-						enchants.add(Quester.prettyEnchantmentString(e2.getKey()));
+						enchants.add(ItemUtil.getPrettyEnchantmentName(e2.getKey()));
 					}
 				}
 				cc.setSessionData(pref + CK.S_ENCHANT_TYPES, enchants);
@@ -1674,7 +1675,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (stage.mobsToKill.isEmpty() == false) {
 				LinkedList<String> mobs = new LinkedList<String>();
 				for (EntityType et : stage.mobsToKill) {
-					mobs.add(Quester.prettyMobString(et));
+					mobs.add(MiscUtil.getPrettyMobName(et));
 				}
 				cc.setSessionData(pref + CK.S_MOB_TYPES, mobs);
 				cc.setSessionData(pref + CK.S_MOB_AMOUNTS, stage.mobNumToKill);
@@ -1701,7 +1702,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				LinkedList<String> mobs = new LinkedList<String>();
 				LinkedList<Integer> amnts = new LinkedList<Integer>();
 				for (Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
-					mobs.add(Quester.prettyMobString(e.getKey()));
+					mobs.add(MiscUtil.getPrettyMobName(e.getKey()));
 					amnts.add(e.getValue());
 				}
 				cc.setSessionData(pref + CK.S_TAME_TYPES, mobs);
@@ -1711,7 +1712,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				LinkedList<String> colors = new LinkedList<String>();
 				LinkedList<Integer> amnts = new LinkedList<Integer>();
 				for (Entry<DyeColor, Integer> e : stage.sheepToShear.entrySet()) {
-					colors.add(Quester.prettyColorString(e.getKey()));
+					colors.add(MiscUtil.getPrettyDyeColorName(e.getKey()));
 					amnts.add(e.getValue());
 				}
 				cc.setSessionData(pref + CK.S_SHEAR_COLORS, colors);

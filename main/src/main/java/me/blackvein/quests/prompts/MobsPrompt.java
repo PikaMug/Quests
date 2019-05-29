@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -31,7 +31,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 
 import me.blackvein.quests.QuestFactory;
-import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
@@ -64,7 +63,7 @@ public class MobsPrompt extends FixedSetPrompt {
 			LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
 			if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
 				for (int i = 0; i < mobs.size(); i++) {
-					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + Quester.prettyMobString(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + MiscUtil.getPrettyMobName(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
 				}
 			} else {
 				LinkedList<String> locs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS);
@@ -73,7 +72,7 @@ public class MobsPrompt extends FixedSetPrompt {
 				for (int i = 0; i < mobs.size(); i++) {
 					String msg = Lang.get("blocksWithin");
 					msg = msg.replaceAll("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
-					text += ChatColor.GRAY + "     - " + ChatColor.BLUE + Quester.prettyMobString(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW + names.get(i) + " (" + locs.get(i) + ")\n";
+					text += ChatColor.GRAY + "     - " + ChatColor.BLUE + MiscUtil.getPrettyMobName(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW + names.get(i) + " (" + locs.get(i) + ")\n";
 				}
 			}
 		}
@@ -612,7 +611,7 @@ public class MobsPrompt extends FixedSetPrompt {
 					if (Quests.getMobType(s) != null) {
 						final EntityType type = Quests.getMobType(s);
 						if (type.isAlive() || Tameable.class.isAssignableFrom(type.getEntityClass())) {
-							mobTypes.add(Quester.prettyMobString(type));
+							mobTypes.add(MiscUtil.getPrettyMobName(type));
 							context.setSessionData(pref + CK.S_TAME_TYPES, mobTypes);
 						} else {
 							player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorInvalidMob"));
@@ -751,9 +750,9 @@ public class MobsPrompt extends FixedSetPrompt {
 			final DyeColor[] colArr = DyeColor.values();
 			for (int i = 0; i < colArr.length; i++) {
 				if (i < (colArr.length - 1)) {
-					cols += Quests.getDyeString(colArr[i]) + ", ";
+					cols += MiscUtil.getDyeString(colArr[i]) + ", ";
 				} else {
-					cols += Quests.getDyeString(colArr[i]) + "\n";
+					cols += MiscUtil.getDyeString(colArr[i]) + "\n";
 				}
 			}
 			return cols + ChatColor.YELLOW + Lang.get("stageEditorShearColorsPrompt");
@@ -765,8 +764,8 @@ public class MobsPrompt extends FixedSetPrompt {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				LinkedList<String> colors = new LinkedList<String>();
 				for (String s : input.split(" ")) {
-					if (Quests.getDyeColor(s) != null) {
-						colors.add(Quests.getDyeString(Quests.getDyeColor(s)));
+					if (MiscUtil.getDyeColor(s) != null) {
+						colors.add(MiscUtil.getDyeString(MiscUtil.getDyeColor(s)));
 						context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
 					} else {
 						player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorInvalidDye"));

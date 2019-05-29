@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -160,7 +160,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 			if (input.equalsIgnoreCase("1")) {
 				if (player.hasPermission("quests.editor.actions.create") || player.hasPermission("quests.editor.events.create")) {
 					context.setSessionData(CK.E_OLD_EVENT, "");
-					return new EventNamePrompt();
+					return new ActionNamePrompt();
 				} else {
 					player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 					return new MenuPrompt();
@@ -416,7 +416,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
-				deleteEvent(context);
+				deleteAction(context);
 				return new MenuPrompt();
 			} else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
 				return new MenuPrompt();
@@ -785,7 +785,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
-				saveEvent(context);
+				saveAction(context);
 				return new MenuPrompt();
 			} else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
 				return new CreateMenuPrompt();
@@ -858,7 +858,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 	}
 	//
 
-	private void deleteEvent(ConversationContext context) {
+	private void deleteAction(ConversationContext context) {
 		YamlConfiguration data = new YamlConfiguration();
 		try {
 			actionsFile = new File(plugin.getDataFolder(), "actions.yml");
@@ -891,7 +891,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		clearData(context);
 	}
 
-	private void saveEvent(ConversationContext context) {
+	private void saveAction(ConversationContext context) {
 		YamlConfiguration data = new YamlConfiguration();
 		try {
 			actionsFile = new File(plugin.getDataFolder(), "actions.yml");
@@ -908,7 +908,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		if (((String) context.getSessionData(CK.E_OLD_EVENT)).isEmpty() == false) {
 			data.set("events." + (String) context.getSessionData(CK.E_OLD_EVENT), null);
 			LinkedList<Action> temp = plugin.getEvents();
-			temp.remove(plugin.getEvent((String) context.getSessionData(CK.E_OLD_EVENT)));
+			temp.remove(plugin.getAction((String) context.getSessionData(CK.E_OLD_EVENT)));
 			plugin.setEvents(temp);
 		}
 		ConfigurationSection section = data.createSection("events." + (String) context.getSessionData(CK.E_NAME));
@@ -1049,7 +1049,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		clearData(context);
 	}
 
-	private class EventNamePrompt extends StringPrompt {
+	private class ActionNamePrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -1064,16 +1064,16 @@ public class ActionFactory implements ConversationAbandonedListener {
 				for (Action e : plugin.getEvents()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
-						return new EventNamePrompt();
+						return new ActionNamePrompt();
 					}
 				}
 				if (names.contains(input)) {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
-					return new EventNamePrompt();
+					return new ActionNamePrompt();
 				}
 				if (StringUtils.isAlphanumeric(input) == false) {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAlpha"));
-					return new EventNamePrompt();
+					return new ActionNamePrompt();
 				}
 				context.setSessionData(CK.E_NAME, input);
 				names.add(input);

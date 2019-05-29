@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -28,8 +28,6 @@ import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.codisimus.plugins.phatloots.PhatLoots;
 import com.gmail.nossr50.mcMMO;
 import com.herocraftonline.heroes.Heroes;
-import com.live.bemmamin.gps.Vars;
-import com.live.bemmamin.gps.api.GPSAPI;
 
 import de.erethon.dungeonsxl.DungeonsXL;
 
@@ -40,7 +38,6 @@ public class Dependencies {
 	private static Permission permission = null;
 	private static WorldGuardAPI worldGuardApi = null;
 	private static mcMMO mcmmo = null;
-	private static GPSAPI gpsapi = null;
 	private static Heroes heroes = null;
 	private static PhatLoots phatLoots = null;
 	private static PlaceholderAPIPlugin placeholder = null;
@@ -68,10 +65,6 @@ public class Dependencies {
 	
 	public mcMMO getMcmmo() {
 		return mcmmo;
-	}
-	
-	public GPSAPI getGpsApi() {
-		return gpsapi;
 	}
 	
 	public Heroes getHeroes() {
@@ -137,10 +130,6 @@ public class Dependencies {
 		}
 		if (isPluginAvailable("mcMMO")) {
 			mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
-		}
-		if (isPluginAvailable("GPS") && plugin.getSettings().canUseGPS()) {
-			gpsapi = new GPSAPI(plugin);
-			Vars.getInstance().setMaxDistanceToEntry(9999.0);
 		}
 		if (isPluginAvailable("Heroes")) {
 			heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");

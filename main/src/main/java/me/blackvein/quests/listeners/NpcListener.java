@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -140,7 +140,7 @@ public class NpcListener implements Listener {
 											// TODO translate enchantment names
 											for (Entry<Enchantment, Integer> e : esmeta.getStoredEnchants().entrySet()) {
 												player.sendMessage(ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN 
-														+ Quester.prettyEnchantmentString(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n");
+														+ ItemUtil.getPrettyEnchantmentName(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n");
 											}
 										}
 									}

@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -40,13 +40,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
+import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.timers.StageTimer;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -388,6 +389,11 @@ public class Quester {
 		if (q == null) {
 			return;
 		}
+		QuesterPreStartQuestEvent preEvent = new QuesterPreStartQuestEvent(this, q);
+        plugin.getServer().getPluginManager().callEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
 		Player player = getPlayer();
 		Planner pln = q.getPlanner();
 		long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
@@ -513,11 +519,12 @@ public class Quester {
 				stage.startEvent.fire(this, q);
 			}
 			q.updateCompass(this, stage);
-			q.updateGPS(this);
 			saveData();
 		} else {
 			player.sendMessage(q.getRequirements().getFailRequirements());
 		}
+		QuesterPostStartQuestEvent postEvent = new QuesterPostStartQuestEvent(this, q);
+        plugin.getServer().getPluginManager().callEvent(postEvent);
 	}
 	
 	/**
@@ -669,12 +676,12 @@ public class Quester {
 					if (num1 < num2) {
 						String obj = Lang.get(getPlayer(), "enchantItem");
 						obj = obj.replace("<item>", ItemUtil.getName(new ItemStack(mat)) + ChatColor.GREEN);
-						obj = obj.replace("<enchantment>", ChatColor.LIGHT_PURPLE + Quester.prettyEnchantmentString(enchantment) + ChatColor.GREEN);
+						obj = obj.replace("<enchantment>", ChatColor.LIGHT_PURPLE + ItemUtil.getPrettyEnchantmentName(enchantment) + ChatColor.GREEN);
 						unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + num1 + "/" + num2);
 					} else {
 						String obj = Lang.get(getPlayer(), "enchantItem");
 						obj = obj.replace("<item>", ItemUtil.getName(new ItemStack(mat)) + ChatColor.GRAY);
-						obj = obj.replace("<enchantment>", ChatColor.LIGHT_PURPLE + Quester.prettyEnchantmentString(enchantment) + ChatColor.GRAY);
+						obj = obj.replace("<enchantment>", ChatColor.LIGHT_PURPLE + ItemUtil.getPrettyEnchantmentName(enchantment) + ChatColor.GRAY);
 						finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + num1 + "/" + num2);
 					}
 				}
@@ -698,12 +705,12 @@ public class Quester {
 								< getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))) {
 							if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
 								unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " 
-										+ ChatColor.AQUA + Quester.prettyMobString(e) + ChatColor.GREEN + ": " 
+										+ ChatColor.AQUA + MiscUtil.getPrettyMobName(e) + ChatColor.GREEN + ": " 
 										+ (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) 
 										+ "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							} else {
 								String obj = Lang.get(getPlayer(), "killAtLocation");
-								obj = obj.replace("<mob>", ChatColor.LIGHT_PURPLE + Quester.prettyMobString(e));
+								obj = obj.replace("<mob>", ChatColor.LIGHT_PURPLE + MiscUtil.getPrettyMobName(e));
 								obj = obj.replace("<location>", getCurrentStage(quest).killNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
 								unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " 
 										+ (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) 
@@ -712,12 +719,12 @@ public class Quester {
 						} else {
 							if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
 								finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " 
-										+ ChatColor.AQUA + Quester.prettyMobString(e) + ChatColor.GRAY + ": " 
+										+ ChatColor.AQUA + MiscUtil.getPrettyMobName(e) + ChatColor.GRAY + ": " 
 										+ (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) 
 										+ "/" + (getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(e))));
 							} else {
 								String obj = Lang.get(getPlayer(), "killAtLocation");
-								obj = obj.replace("<mob>", ChatColor.LIGHT_PURPLE + Quester.prettyMobString(e));
+								obj = obj.replace("<mob>", ChatColor.LIGHT_PURPLE + MiscUtil.getPrettyMobName(e));
 								obj = obj.replace("<location>", getCurrentStage(quest).killNames.get(getCurrentStage(quest).mobsToKill.indexOf(e)));
 								finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " 
 										+ (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2))) 
@@ -796,10 +803,10 @@ public class Quester {
 			for (Entry<EntityType, Integer> e2 : getQuestData(quest).mobsTamed.entrySet()) {
 				if (e.getKey().equals(e2.getKey())) {
 					if (e2.getValue() < e.getValue()) {
-						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "tame") + " " + getCapitalized(e.getKey().name()) 
+						unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "tame") + " " + MiscUtil.getCapitalized(e.getKey().name()) 
 								+ ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue());
 					} else {
-						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "tame") + " " + getCapitalized(e.getKey().name()) 
+						finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "tame") + " " + MiscUtil.getCapitalized(e.getKey().name()) 
 								+ ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue());
 					}
 				}
@@ -1929,125 +1936,6 @@ public class Quester {
 		hardDataPut(quest, data);
 	}
 
-	public static String getCapitalized(String target) {
-		String firstLetter = target.substring(0, 1);
-		String remainder = target.substring(1);
-		String capitalized = firstLetter.toUpperCase() + remainder.toLowerCase();
-		return capitalized;
-	}
-
-	/**
-	 * Cleans up item names. 'WOODEN_BUTTON' becomes 'Wooden Button'
-	 * 
-	 * @param itemName any item name, ideally
-	 * @return cleaned-up string
-	 */
-	public static String prettyItemString(String itemName) {
-		String baseString = Material.matchMaterial(itemName).toString();
-		String[] substrings = baseString.split("_");
-		String prettyString = "";
-		int size = 1;
-		for (String s : substrings) {
-			prettyString = prettyString.concat(Quester.getCapitalized(s));
-			if (size < substrings.length) {
-				prettyString = prettyString.concat(" ");
-			}
-			size++;
-		}
-		return prettyString;
-	}
-	
-	/**
-	 * Gets player-friendly name from type. 'ENDER_DRAGON' becomes 'Ender Dragon'
-	 * 
-	 * @param type any mob type, ideally
-	 * @return cleaned-up string
-	 */
-	public static String prettyMobString(EntityType type) {
-		String baseString = type.toString();
-		String[] substrings = baseString.split("_");
-		String prettyString = "";
-		int size = 1;
-		for (String s : substrings) {
-			prettyString = prettyString.concat(Quester.getCapitalized(s));
-			if (size < substrings.length) {
-				prettyString = prettyString.concat(" ");
-			}
-			size++;
-		}
-		if (type.equals((EntityType.OCELOT))) {
-			prettyString = "Ocelot";
-		}
-		return prettyString;
-	}
-	
-	public static String prettyColorString(DyeColor color) {
-		return Lang.get("COLOR_" + color.name());
-	}
-
-	/**
-	 * Gets player-friendly name from enchantment. 'FIRE_ASPECT' becomes 'Fire Aspect'
-	 * 
-	 * @param e Enchantment to get pretty localized name of
-	 * @return pretty localized name
-	 */
-	public static String prettyEnchantmentString(Enchantment e) {
-		String prettyString = enchantmentString(e);
-		prettyString = capitalsToSpaces(prettyString);
-		return prettyString;
-	}
-	
-	/**
-	 * Gets name of enchantment exactly as it appears in lang file
-	 * 
-	 * @param e Enchantment to get localized name of
-	 * @return localized name
-	 */
-	@SuppressWarnings("deprecation") // since 1.13
-	public static String enchantmentString(Enchantment e) {
-		try {
-			return (Lang.get("ENCHANTMENT_" + e.getName()));
-		} catch (NullPointerException ne) {
-			Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to " 
-					+ "update the file or simply add an entry for the enchantment");
-			return e.getName().toLowerCase().replace("_", " ");
-		}
-	}
-	
-	/**
-	 * Adds a single space in front of all capital letters
-	 * 
-	 * @param s string to process
-	 * @return processed string
-	 */
-	public static String capitalsToSpaces(String s) {
-		int max = s.length();
-		for (int i = 1; i < max; i++) {
-			if (Character.isUpperCase(s.charAt(i))) {
-				s = s.substring(0, i) + " " + s.substring(i);
-				i++;
-				max++;
-			}
-		}
-		return s;
-	}
-
-	/**
-	 * Capitalize character after space
-	 * 
-	 * @param s string to process
-	 * @return processed string
-	 */
-	public static String spaceToCapital(String s) {
-		int index = s.indexOf(' ');
-		if (index == -1) {
-			return null;
-		}
-		s = s.substring(0, (index + 1)) + Character.toUpperCase(s.charAt(index + 1)) + s.substring(index + 2);
-		s = s.replaceFirst(" ", "");
-		return s;
-	}
-
 	public void saveData() {
 		FileConfiguration data = getBaseData();
 		try {
@@ -2174,7 +2062,7 @@ public class Quester {
 						Map<Enchantment, Material> enchMap = (Map<Enchantment, Material>) e.getKey();
 						enchAmounts.add(questData.itemsEnchanted.get(enchMap));
 						for (Entry<Enchantment, Material> e2 : enchMap.entrySet()) {
-							enchantments.add(Quester.prettyEnchantmentString((Enchantment) e2.getKey()));
+							enchantments.add(ItemUtil.getPrettyEnchantmentName((Enchantment) e2.getKey()));
 							itemNames.add(((Material) e2.getValue()).name());
 						}
 					}
@@ -2194,7 +2082,7 @@ public class Quester {
 					LinkedList<String> locations = new LinkedList<String>();
 					LinkedList<Integer> radii = new LinkedList<Integer>();
 					for (EntityType e : questData.mobsKilled) {
-						mobNames.add(Quester.prettyMobString(e));
+						mobNames.add(MiscUtil.getPrettyMobName(e));
 					}
 					for (int i : questData.mobNumKilled) {
 						mobAmounts.add(i);
@@ -2268,7 +2156,7 @@ public class Quester {
 					LinkedList<String> mobNames = new LinkedList<String>();
 					LinkedList<Integer> mobAmounts = new LinkedList<Integer>();
 					for (EntityType e : questData.mobsTamed.keySet()) {
-						mobNames.add(Quester.prettyMobString(e));
+						mobNames.add(MiscUtil.getPrettyMobName(e));
 						mobAmounts.add(questData.mobsTamed.get(e));
 					}
 					questSec.set("mobs-to-tame", mobNames);
@@ -2278,7 +2166,7 @@ public class Quester {
 					LinkedList<String> colors = new LinkedList<String>();
 					LinkedList<Integer> shearAmounts = new LinkedList<Integer>();
 					for (DyeColor d : questData.sheepSheared.keySet()) {
-						colors.add(Quester.prettyColorString(d));
+						colors.add(MiscUtil.getPrettyDyeColorName(d));
 						shearAmounts.add(questData.sheepSheared.get(d));
 					}
 					questSec.set("sheep-to-shear", colors);
@@ -2583,7 +2471,7 @@ public class Quester {
 					List<String> names = questSec.getStringList("enchantment-item-names");
 					List<Integer> times = questSec.getIntegerList("times-enchanted");
 					for (String s : enchantNames) {
-						enchantments.add(Quests.getEnchantment(s));
+						enchantments.add(ItemUtil.getEnchantmentFromProperName(s));
 						materials.add(Material.matchMaterial(names.get(enchantNames.indexOf(s))));
 						amounts.add(times.get(enchantNames.indexOf(s)));
 					}
@@ -2696,7 +2584,7 @@ public class Quester {
 					List<String> colors = questSec.getStringList("sheep-to-shear");
 					List<Integer> amounts = questSec.getIntegerList("sheep-sheared");
 					for (String color : colors) {
-						getQuestData(quest).sheepSheared.put(Quests.getDyeColor(color), amounts.get(colors.indexOf(color)));
+						getQuestData(quest).sheepSheared.put(MiscUtil.getDyeColor(color), amounts.get(colors.indexOf(color)));
 					}
 				}
 				if (questSec.contains("passwords")) {
@@ -2741,132 +2629,6 @@ public class Quester {
 			}
 		}
 		return true;
-	}
-
-	public static ConfigurationSection getLegacyQuestData(FileConfiguration questSec, String questName) {
-		ConfigurationSection newData = questSec.createSection("questData");
-		if (questSec.contains("blocks-broken-names")) {
-			List<String> names = questSec.getStringList("blocks-broken-names");
-			List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
-			newData.set(questName + ".blocks-broken-names", names);
-			newData.set(questName + ".blocks-broken-amounts", amounts);
-		}
-		if (questSec.contains("blocks-damaged-names")) {
-			List<String> names = questSec.getStringList("blocks-damaged-names");
-			List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
-			newData.set(questName + ".blocks-damaged-names", names);
-			newData.set(questName + ".blocks-damaged-amounts", amounts);
-		}
-		if (questSec.contains("blocks-placed-names")) {
-			List<String> names = questSec.getStringList("blocks-placed-names");
-			List<Integer> amounts = questSec.getIntegerList("blocks-placed-amounts");
-			newData.set(questName + ".blocks-placed-names", names);
-			newData.set(questName + ".blocks-placed-amounts", amounts);
-		}
-		if (questSec.contains("blocks-used-names")) {
-			List<String> names = questSec.getStringList("blocks-used-names");
-			List<Integer> amounts = questSec.getIntegerList("blocks-used-amounts");
-			newData.set(questName + ".blocks-used-names", names);
-			newData.set(questName + ".blocks-used-amounts", amounts);
-		}
-		if (questSec.contains("blocks-cut-names")) {
-			List<String> names = questSec.getStringList("blocks-cut-names");
-			List<Integer> amounts = questSec.getIntegerList("blocks-cut-amounts");
-			newData.set(questName + ".blocks-cut-names", names);
-			newData.set(questName + ".blocks-cut-amounts", amounts);
-		}
-		if (questSec.contains("fish-caught")) {
-			newData.set(questName + ".fish-caught", questSec.getInt("fish-caught"));
-		}
-		if (questSec.contains("players-killed")) {
-			newData.set(questName + ".players-killed", questSec.getInt("players-killed"));
-		}
-		if (questSec.contains("enchantments")) {
-			List<String> enchantNames = questSec.getStringList("enchantments");
-			List<String> names = questSec.getStringList("enchantment-item-names");
-			List<Integer> times = questSec.getIntegerList("times-enchanted");
-			newData.set(questName + ".enchantments", enchantNames);
-			newData.set(questName + ".enchantment-item-names", names);
-			newData.set(questName + ".times-enchanted", times);
-		}
-		if (questSec.contains("mobs-killed")) {
-			List<String> mobs = questSec.getStringList("mobs-killed");
-			List<Integer> amounts = questSec.getIntegerList("mobs-killed-amounts");
-			newData.set(questName + ".mobs-killed", mobs);
-			newData.set(questName + ".mobs-killed-amounts", amounts);
-			if (questSec.contains("mob-kill-locations")) {
-				List<String> locations = questSec.getStringList("mob-kill-locations");
-				List<Integer> radii = questSec.getIntegerList("mob-kill-location-radii");
-				newData.set(questName + ".mob-kill-locations", locations);
-				newData.set(questName + ".mob-kill-location-radii", radii);
-			}
-		}
-		if (questSec.contains("item-delivery-amounts")) {
-			List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
-			newData.set(questName + ".item-delivery-amounts", deliveryAmounts);
-		}
-		if (questSec.contains("citizen-ids-to-talk-to")) {
-			List<Integer> ids = questSec.getIntegerList("citizen-ids-to-talk-to");
-			List<Boolean> has = questSec.getBooleanList("has-talked-to");
-			newData.set(questName + ".citizen-ids-to-talk-to", ids);
-			newData.set(questName + ".has-talked-to", has);
-		}
-		if (questSec.contains("citizen-ids-killed")) {
-			List<Integer> ids = questSec.getIntegerList("citizen-ids-killed");
-			List<Integer> num = questSec.getIntegerList("citizen-amounts-killed");
-			newData.set(questName + ".citizen-ids-killed", ids);
-			newData.set(questName + ".citizen-amounts-killed", num);
-		}
-		if (questSec.contains("locations-to-reach")) {
-			List<String> locations = questSec.getStringList("locations-to-reach");
-			List<Boolean> has = questSec.getBooleanList("has-reached-location");
-			List<Integer> radii = questSec.getIntegerList("radii-to-reach-within");
-			newData.set(questName + ".locations-to-reach", locations);
-			newData.set(questName + ".has-reached-location", has);
-			newData.set(questName + ".radii-to-reach-within", radii);
-		}
-		if (questSec.contains("potions-brewed-names")) {
-			List<String> names = questSec.getStringList("potions-brewed-names");
-			List<Integer> amounts = questSec.getIntegerList("potions-brewed-amounts");
-			newData.set(questName + ".potions-brewed-names", names);
-			newData.set(questName + ".potions-brewed-amounts", amounts);
-		}
-		if (questSec.contains("mobs-to-tame")) {
-			List<String> mobs = questSec.getStringList("mobs-to-tame");
-			List<Integer> amounts = questSec.getIntegerList("mob-tame-amounts");
-			newData.set(questName + ".mobs-to-tame", mobs);
-			newData.set(questName + ".mob-tame-amounts", amounts);
-		}
-		if (questSec.contains("sheep-to-shear")) {
-			List<String> colors = questSec.getStringList("sheep-to-shear");
-			List<Integer> amounts = questSec.getIntegerList("sheep-sheared");
-			newData.set(questName + ".sheep-to-shear", colors);
-			newData.set(questName + ".sheep-sheared", amounts);
-		}
-		if (questSec.contains("passwords")) {
-			List<String> passwords = questSec.getStringList("passwords");
-			List<Boolean> said = questSec.getBooleanList("passwords-said");
-			newData.set(questName + ".passwords", passwords);
-			newData.set(questName + ".passwords-said", said);
-		}
-		if (questSec.contains("custom-objectives")) {
-			List<String> customObj = questSec.getStringList("custom-objectives");
-			List<Integer> customObjCount = questSec.getIntegerList("custom-objective-counts");
-			newData.set(questName + ".custom-objectives", customObj);
-			newData.set(questName + ".custom-objective-counts", customObjCount);
-		}
-		if (questSec.contains("stage-delay")) {
-			newData.set(questName + ".stage-delay", questSec.getLong("stage-delay"));
-		}
-		if (questSec.contains("chat-triggers")) {
-			List<String> chatTriggers = questSec.getStringList("chat-triggers");
-			newData.set(questName + ".chat-triggers", chatTriggers);
-		}
-		if (questSec.contains("command-triggers")) {
-			List<String> commandTriggers = questSec.getStringList("command-triggers");
-			newData.set(questName + ".command-triggers", commandTriggers);
-		}
-		return newData;
 	}
 
 	/**
@@ -2952,91 +2714,6 @@ public class Quester {
 		}
 	}
 
-	public static String checkPlacement(Inventory inv, int rawSlot) {
-		if (rawSlot < 0) {
-			return Lang.get("questNoDrop");
-		}
-		InventoryType type = inv.getType();
-		if (type.equals(InventoryType.BREWING)) {
-			if (rawSlot < 4) {
-				return Lang.get("questNoBrew");
-			}
-		} else if (type.equals(InventoryType.CHEST)) {
-			if (inv.getContents().length == 27) {
-				if (rawSlot < 27) {
-					return Lang.get("questNoStore");
-				}
-			} else {
-				if (rawSlot < 54) {
-					return Lang.get("questNoStore");
-				}
-			}
-		} else if (type.equals(InventoryType.CRAFTING)) {
-			if (rawSlot < 5) {
-				return Lang.get("questNoCraft");
-			} else if (rawSlot < 9) {
-				return Lang.get("questNoEquip");
-			}
-		} else if (type.equals(InventoryType.DISPENSER)) {
-			if (rawSlot < 9) {
-				return Lang.get("questNoDispense");
-			}
-		} else if (type.equals(InventoryType.ENCHANTING)) {
-			if (rawSlot == 0) {
-				return Lang.get("questNoEnchant");
-			}
-		} else if (type.equals(InventoryType.ENDER_CHEST)) {
-			if (rawSlot < 27) {
-				return Lang.get("questNoStore");
-			}
-		} else if (type.equals(InventoryType.FURNACE)) {
-			if (rawSlot < 3) {
-				return Lang.get("questNoSmelt");
-			}
-		} else if (type.equals(InventoryType.WORKBENCH)) {
-			if (rawSlot < 10) {
-				return Lang.get("questNoCraft");
-			}
-		}
-		return null;
-	}
-
-	public static List<Integer> getChangedSlots(Inventory inInv, ItemStack inNew) {
-		List<Integer> changed = new ArrayList<Integer>();
-		if (inInv.contains(inNew.getType())) {
-			int amount = inNew.getAmount();
-			HashMap<Integer, ? extends ItemStack> items = inInv.all(inNew.getType());
-			for (int i = 0; i < inInv.getSize(); i++) {
-				if (!items.containsKey((Integer) i)) {
-					continue;
-				}
-				ItemStack item = items.get((Integer) i);
-				int slotamount = item.getMaxStackSize() - item.getAmount();
-				if (slotamount > 1) {
-					if (amount > slotamount) {
-						int toAdd = slotamount - amount;
-						amount = amount - toAdd;
-						changed.add(i);
-					} else {
-						changed.add(i);
-						amount = 0;
-						break;
-					}
-				}
-			}
-			if (amount > 0) {
-				if (inInv.firstEmpty() != -1) {
-					changed.add(inInv.firstEmpty());
-				}
-			}
-		} else {
-			if (inInv.firstEmpty() != -1) {
-				changed.add(inInv.firstEmpty());
-			}
-		}
-		return changed;
-	}
-
 	public void showGUIDisplay(NPC npc, LinkedList<Quest> quests) {
 		Player player = getPlayer();
 		int size = ((quests.size() / 9) + 1) * 9;
@@ -3082,11 +2759,6 @@ public class Quester {
 						plugin.getServer().getScheduler().cancelTask(entry.getKey());
 						timers.remove(entry.getKey());
 					}
-				}
-			}
-			if (plugin.getDependencies().getGpsApi() != null) {
-				if (plugin.getDependencies().getGpsApi().gpsIsActive(this.getPlayer())) {
-					plugin.getDependencies().getGpsApi().stopGPS(this.getPlayer());
 				}
 			}
 		} catch (Exception ex) {
@@ -3166,4 +2838,91 @@ public class Quester {
 		}
 		return playerAmount >= is.getAmount();
 	}
+	
+	// I'm not sure why these methods are here. They've been in the class for a long time but aren't used anywhere?
+
+	/*public static String checkPlacement(Inventory inv, int rawSlot) {
+		if (rawSlot < 0) {
+			return Lang.get("questNoDrop");
+		}
+		InventoryType type = inv.getType();
+		if (type.equals(InventoryType.BREWING)) {
+			if (rawSlot < 4) {
+				return Lang.get("questNoBrew");
+			}
+		} else if (type.equals(InventoryType.CHEST)) {
+			if (inv.getContents().length == 27) {
+				if (rawSlot < 27) {
+					return Lang.get("questNoStore");
+				}
+			} else {
+				if (rawSlot < 54) {
+					return Lang.get("questNoStore");
+				}
+			}
+		} else if (type.equals(InventoryType.CRAFTING)) {
+			if (rawSlot < 5) {
+				return Lang.get("questNoCraft");
+			} else if (rawSlot < 9) {
+				return Lang.get("questNoEquip");
+			}
+		} else if (type.equals(InventoryType.DISPENSER)) {
+			if (rawSlot < 9) {
+				return Lang.get("questNoDispense");
+			}
+		} else if (type.equals(InventoryType.ENCHANTING)) {
+			if (rawSlot == 0) {
+				return Lang.get("questNoEnchant");
+			}
+		} else if (type.equals(InventoryType.ENDER_CHEST)) {
+			if (rawSlot < 27) {
+				return Lang.get("questNoStore");
+			}
+		} else if (type.equals(InventoryType.FURNACE)) {
+			if (rawSlot < 3) {
+				return Lang.get("questNoSmelt");
+			}
+		} else if (type.equals(InventoryType.WORKBENCH)) {
+			if (rawSlot < 10) {
+				return Lang.get("questNoCraft");
+			}
+		}
+		return null;
+	}*/
+
+	/*public static List<Integer> getChangedSlots(Inventory inInv, ItemStack inNew) {
+		List<Integer> changed = new ArrayList<Integer>();
+		if (inInv.contains(inNew.getType())) {
+			int amount = inNew.getAmount();
+			HashMap<Integer, ? extends ItemStack> items = inInv.all(inNew.getType());
+			for (int i = 0; i < inInv.getSize(); i++) {
+				if (!items.containsKey((Integer) i)) {
+					continue;
+				}
+				ItemStack item = items.get((Integer) i);
+				int slotamount = item.getMaxStackSize() - item.getAmount();
+				if (slotamount > 1) {
+					if (amount > slotamount) {
+						int toAdd = slotamount - amount;
+						amount = amount - toAdd;
+						changed.add(i);
+					} else {
+						changed.add(i);
+						amount = 0;
+						break;
+					}
+				}
+			}
+			if (amount > 0) {
+				if (inInv.firstEmpty() != -1) {
+					changed.add(inInv.firstEmpty());
+				}
+			}
+		} else {
+			if (inInv.firstEmpty() != -1) {
+				changed.add(inInv.firstEmpty());
+			}
+		}
+		return changed;
+	}*/
 }

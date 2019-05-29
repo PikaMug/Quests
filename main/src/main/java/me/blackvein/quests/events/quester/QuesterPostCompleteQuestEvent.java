@@ -10,34 +10,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.events.quester;
 
-public class Options {
-	private boolean allowCommands = true;
-	private boolean useDungeonsXLPlugin = false;
-	private boolean usePartiesPlugin = true;
-	
-	public boolean getAllowCommands() {
-		return allowCommands;
-	}
-	
-	public void setAllowCommands(boolean allowCommands) {
-		this.allowCommands = allowCommands;
-	}
-	
-	public boolean getUseDungeonsXLPlugin() {
-		return useDungeonsXLPlugin;
-	}
-	
-	public void setUseDungeonsXLPlugin(boolean useDungeonsXLPlugin) {
-		this.useDungeonsXLPlugin = useDungeonsXLPlugin;
-	}
-	
-	public boolean getUsePartiesPlugin() {
-		return usePartiesPlugin;
-	}
-	
-	public void setUsePartiesPlugin(boolean usePartiesPlugin) {
-		this.usePartiesPlugin = usePartiesPlugin;
-	}
+import org.bukkit.event.HandlerList;
+
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+
+/**
+ * Called after a quester completes a quest
+ */
+public class QuesterPostCompleteQuestEvent extends QuesterEvent {
+	private static final HandlerList handlers = new HandlerList();
+    private Quest quest;
+    
+    public QuesterPostCompleteQuestEvent(Quester quester, Quest quest) {
+    	super(quester);
+        this.quest = quest;
+    }
+    
+    /**
+	 * Returns the quest involved in this event
+	 * 
+	 * @return Quest who is involved in this event
+	 */
+    public Quest getQuest() {
+        return quest;
+    }
+    
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+     
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

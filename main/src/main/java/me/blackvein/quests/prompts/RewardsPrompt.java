@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -32,11 +32,11 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.QuestFactory;
-import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 public class RewardsPrompt extends FixedSetPrompt {
 
@@ -502,7 +502,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				for (String s : args) {
 					if (Quests.getMcMMOSkill(s) != null) {
 						if (skills.contains(s) == false) {
-							skills.add(Quester.getCapitalized(s));
+							skills.add(MiscUtil.getCapitalized(s));
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
 							return new mcMMOSkillsPrompt();

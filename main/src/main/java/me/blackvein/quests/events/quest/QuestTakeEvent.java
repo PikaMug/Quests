@@ -10,34 +10,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.events.quest;
 
-public class Options {
-	private boolean allowCommands = true;
-	private boolean useDungeonsXLPlugin = false;
-	private boolean usePartiesPlugin = true;
-	
-	public boolean getAllowCommands() {
-		return allowCommands;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
+
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+
+/**
+ * Called when a quest is taken by a quester
+ */
+public class QuestTakeEvent extends QuestEvent implements Cancellable {
+	private static final HandlerList handlers = new HandlerList();
+    private Quester quester;
+    private boolean cancel = false;
+
+	public QuestTakeEvent(Quest quest, Quester who) {
+		super(quest);
+		this.quester = who;
 	}
 	
-	public void setAllowCommands(boolean allowCommands) {
-		this.allowCommands = allowCommands;
-	}
-	
-	public boolean getUseDungeonsXLPlugin() {
-		return useDungeonsXLPlugin;
-	}
-	
-	public void setUseDungeonsXLPlugin(boolean useDungeonsXLPlugin) {
-		this.useDungeonsXLPlugin = useDungeonsXLPlugin;
-	}
-	
-	public boolean getUsePartiesPlugin() {
-		return usePartiesPlugin;
-	}
-	
-	public void setUsePartiesPlugin(boolean usePartiesPlugin) {
-		this.usePartiesPlugin = usePartiesPlugin;
+	/**
+	 * Returns the quester involved in this event
+	 * 
+	 * @return Quester who is involved in this event
+	 */
+    public Quester getQuester() {
+    	return quester;
+    }
+    
+    @Override
+    public boolean isCancelled() {
+        return cancel;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancel = cancel;
+    }
+
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
 	}
 }
