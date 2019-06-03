@@ -911,7 +911,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 			temp.remove(plugin.getAction((String) context.getSessionData(CK.E_OLD_EVENT)));
 			plugin.setEvents(temp);
 		}
-		ConfigurationSection section = data.createSection("events." + (String) context.getSessionData(CK.E_NAME));
+		ConfigurationSection section = data.createSection("actions." + (String) context.getSessionData(CK.E_NAME));
 		names.remove((String) context.getSessionData(CK.E_NAME));
 		if (context.getSessionData(CK.E_MESSAGE) != null) {
 			section.set("message", getCString(context, CK.E_MESSAGE));
