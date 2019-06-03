@@ -165,6 +165,10 @@ public class Quest {
 	 * @param q Player to force
 	 */
 	public void nextStage(Quester q) {
+		if (q.getCurrentStage(this) == null) {
+			plugin.getLogger().severe("Current stage was null for quester " + q.getPlayer().getUniqueId());
+			return;
+		}
 		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
 		if (stageCompleteMessage != null) {
 			q.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageCompleteMessage, this, q.getPlayer()));
