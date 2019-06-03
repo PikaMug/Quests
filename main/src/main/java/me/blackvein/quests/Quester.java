@@ -2323,15 +2323,6 @@ public class Quester {
 			completedQuests.clear();
 		}
 		if (data.isString("currentQuests") == false) {
-			List<String> questNames = data.getStringList("currentQuests");
-			List<Integer> questStages = data.getIntegerList("currentStages");
-			// These appear to differ sometimes? That seems bad.
-			int maxSize = Math.min(questNames.size(), questStages.size());
-			for (int i = 0; i < maxSize; i++) {
-				if (plugin.getQuest(questNames.get(i)) != null) {
-					currentQuests.put(plugin.getQuest(questNames.get(i)), questStages.get(i));
-				}
-			}
 			ConfigurationSection dataSec = data.getConfigurationSection("questData");
 			if (dataSec == null || dataSec.getKeys(false).isEmpty()) {
 				return false;
