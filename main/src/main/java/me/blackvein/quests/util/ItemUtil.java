@@ -417,7 +417,7 @@ public class ItemUtil {
 	/**
 	 * Returns a formatted display name. If none exists, returns item name.
 	 * Also returns formatted durability and amount.
-	 * A;so includes formatted enchantments.
+	 * Also includes formatted enchantments.
 	 * 
 	 * Format is ([display]name:durability) with (enchantments:levels) x (amount)
 	 * 
