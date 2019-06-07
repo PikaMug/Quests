@@ -181,12 +181,6 @@ public class CmdExecutor implements CommandExecutor {
 					if (quester.getCurrentQuests().isEmpty() == false) {
 						for (Quest q : quester.getCurrentQuests().keySet()) {
 							Stage stage = quester.getCurrentStage(q);
-							LinkedList<Stage> stages = q.getStages();
-							for (Stage s : stages) {
-								if (s.equals(quester.getCurrentStage(q))) {
-									System.out.println(ChatColor.LIGHT_PURPLE + "quest (" + Lang.get("stageEditorStage") + " " +  (stages.indexOf(s) + 1) + ")");
-								}
-							}
 							q.updateCompass(quester, stage);
 							if (plugin.getQuester(player.getUniqueId()).getQuestData(q).delayStartTime == 0) {
 								String msg = Lang.get(player, "questObjectivesTitle");
