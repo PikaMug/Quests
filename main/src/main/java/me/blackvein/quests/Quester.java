@@ -528,7 +528,7 @@ public class Quester {
 	}
 	
 	/**
-	 * Get all objectives for a quest.
+	 * Get all objectives for a quest
 	 * 
 	 * @param quest The quest to get objectives of
 	 * @param ignoreOverrides Whether to ignore objective-overrides
@@ -994,6 +994,12 @@ public class Quester {
 		return false;
 	}
 	
+	/**
+	 * Mark block as broken if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the block is being broken
+	 * @param m The block being broken
+	 */
 	@SuppressWarnings("deprecation")
 	public void breakBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
@@ -1046,6 +1052,12 @@ public class Quester {
 		}
 	}
 	
+	/**
+	 * Mark block as damaged if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the block is being damaged
+	 * @param m The block being damaged
+	 */
 	@SuppressWarnings("deprecation")
 	public void damageBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
@@ -1096,6 +1108,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark block as placed if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the block is being placed
+	 * @param m The block being placed
+	 */
 	@SuppressWarnings("deprecation")
 	public void placeBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
@@ -1146,6 +1164,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark block as used if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the block is being used
+	 * @param m The block being used
+	 */
 	@SuppressWarnings("deprecation")
 	public void useBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
@@ -1196,6 +1220,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark block as cut if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the block is being cut
+	 * @param m The block being cut
+	 */
 	@SuppressWarnings("deprecation")
 	public void cutBlock(Quest quest, ItemStack m) {
 		ItemStack temp = m;
@@ -1246,6 +1276,12 @@ public class Quester {
 		}
 	}
 	
+	/**
+	 * Mark item as crafted if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the item is being crafted
+	 * @param i The item being crafted
+	 */
 	public void craftItem(Quest quest, ItemStack i) {
 		Player player = getPlayer();
 		ItemStack found = null;
@@ -1277,6 +1313,12 @@ public class Quester {
 		}
 	}
 	
+	/**
+	 * Mark item as smelted if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the item is being smelted
+	 * @param i The item being smelted
+	 */
 	public void smeltItem(Quest quest, ItemStack i) {
 		Player player = getPlayer();
 		ItemStack found = null;
@@ -1308,6 +1350,13 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark item as enchanted if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the item is being enchanted
+	 * @param e The enchantment to be applied
+	 * @param m The item being enchanted
+	 */
 	public void enchantItem(Quest quest, Enchantment e, Material m) {
 		for (Entry<Map<Enchantment, Material>, Integer> entry : getQuestData(quest).itemsEnchanted.entrySet()) {
 			if (entry.getKey().containsKey(e) && entry.getKey().containsValue(m)) {
@@ -1328,6 +1377,11 @@ public class Quester {
 		}
 	}
 	
+	/**
+	 * Mark fish as caught if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the fish is being caught
+	 */
 	public void catchFish(Quest quest) {
 		if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
 			getQuestData(quest).setFishCaught(getQuestData(quest).getFishCaught() + 1);
@@ -1337,6 +1391,13 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark mob as killed if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the mob is being killed
+	 * @param killedLocation The optional location to kill at
+	 * @param e The mob to be killed
+	 */
 	public void killMob(Quest quest, Location killedLocation, EntityType e) {
 		QuestData questData = getQuestData(quest);
 		if (e == null) {
@@ -1376,6 +1437,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark player as killed if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the player is being killed
+	 * @param player The player to be killed
+	 */
 	public void killPlayer(Quest quest, Player player) {
 		if (getQuestData(quest).getPlayersKilled() < getCurrentStage(quest).playersToKill) {
 			getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled() + 1);
@@ -1385,8 +1452,75 @@ public class Quester {
 		}
 	}
 	
-
+	/**
+	 * Mark item as delivered to a NPC if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the item is being delivered
+	 * @param n The NPC being delivered to
+	 * @param i The item being delivered
+	 */
 	@SuppressWarnings("deprecation")
+	public void deliverToNPC(Quest quest, NPC n, ItemStack i) {
+		int currentIndex = -1;
+		LinkedList<Integer> matches = new LinkedList<Integer>();
+		for (ItemStack is : getQuestData(quest).itemsDelivered.keySet()) {
+			currentIndex++;
+			if (ItemUtil.compareItems(i, is, true) == 0) {
+				matches.add(currentIndex);
+			}
+		}
+		
+		if (!matches.isEmpty()) {
+			Player player = getPlayer();
+			for (Integer match : matches) {
+				LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsDelivered.keySet());
+				LinkedList<Integer> amounts = new LinkedList<Integer>(getQuestData(quest).itemsDelivered.values());
+				if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(n.getId())) {
+					continue;
+				}
+				ItemStack found = items.get(match);
+				int amount = amounts.get(match);
+				int req = getCurrentStage(quest).itemsToDeliver.get(match).getAmount();
+				Material m = i.getType();
+				if (amount < req) {
+					int index = player.getInventory().first(i);
+					if (index == -1) {
+						Bukkit.getLogger().warning("Uh oh! " + i.getType().name() + " suddenly disappeared from the inventory of " + player.getName() 
+							+ " when delivering for quest " + quest.getName());
+						return;
+					}
+					if ((i.getAmount() + amount) > req) {
+						getQuestData(quest).itemsDelivered.put(found, req);
+						i.setAmount(i.getAmount() - (req - amount)); // Take away the remaining amount needed to be delivered
+						player.getInventory().setItem(index, i);
+						player.updateInventory();
+						finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+					} else if ((i.getAmount() + amount) == req) {
+						getQuestData(quest).itemsDelivered.put(found, req);
+						player.getInventory().setItem(index, null);
+						player.updateInventory();
+						finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+					} else {
+						getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
+						player.getInventory().setItem(index, null);
+						player.updateInventory();
+						String[] message = Quests.parseStringWithPossibleLineBreaks(getCurrentStage(quest).deliverMessages.get(new Random().nextInt(
+								getCurrentStage(quest).deliverMessages.size())), plugin.getDependencies().getCitizens().getNPCRegistry().getById(
+										getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
+						player.sendMessage(message);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Mark item as delivered to a NPC if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the item is being delivered
+	 * @param i The item being delivered
+	 * @deprecated Use deliverToNPC()
+	 */
 	public void deliverItem(Quest quest, ItemStack i) {
 		Player player = getPlayer();
 		ItemStack found = null;
@@ -1432,7 +1566,13 @@ public class Quester {
 			}
 		}
 	}
-
+	
+	/**
+	 * Mark NPC as interacted with if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the NPC is being interacted with
+	 * @param n The NPC being interacted with
+	 */
 	public void interactWithNPC(Quest quest, NPC n) {
 		if (getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
 			Boolean b = getQuestData(quest).citizensInteracted.get(n.getId());
@@ -1443,6 +1583,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark NPC as killed if the Quester has such an objective
+	 * 
+	 * @param quest The quest for which the NPC is being killed
+	 * @param n The NPC being killed
+	 */
 	public void killNPC(Quest quest, NPC n) {
 		if (getQuestData(quest).citizensKilled.contains(n.getId())) {
 			int index = getQuestData(quest).citizensKilled.indexOf(n.getId());
@@ -1455,6 +1601,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark location as reached if the Quester has such an objective
+	 * 
+	 * @param quest The quest for which the location is being reached
+	 * @param n The location being reached
+	 */
 	public void reachLocation(Quest quest, Location l) {
 		if (getQuestData(quest).locationsReached == null) {
 			return;
@@ -1488,6 +1640,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark mob as tamed if the Quester has such an objective
+	 * 
+	 * @param quest The quest for which the mob is being tamed
+	 * @param entity The mob being tamed
+	 */
 	public void tameMob(Quest quest, EntityType entity) {
 		if (getQuestData(quest).mobsTamed.containsKey(entity)) {
 			getQuestData(quest).mobsTamed.put(entity, (getQuestData(quest).mobsTamed.get(entity) + 1));
@@ -1497,6 +1655,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark sheep as sheared if the Quester has such an objective
+	 * 
+	 * @param quest The quest for which the sheep is being sheared
+	 * @param color The wool color of the sheep being sheared
+	 */
 	public void shearSheep(Quest quest, DyeColor color) {
 		if (getQuestData(quest).sheepSheared.containsKey(color)) {
 			getQuestData(quest).sheepSheared.put(color, (getQuestData(quest).sheepSheared.get(color) + 1));
@@ -1506,6 +1670,12 @@ public class Quester {
 		}
 	}
 
+	/**
+	 * Mark password as entered if the Quester has such an objective
+	 * 
+	 * @param quest The quest for which the password is being entered
+	 * @param evt The event during which the password was entered
+	 */
 	public void sayPassword(Quest quest, AsyncPlayerChatEvent evt) {
 		boolean done;
 		for (LinkedList<String> passes : getCurrentStage(quest).passwordPhrases) {
@@ -1784,7 +1954,13 @@ public class Quester {
 			}
 		}
 	}
-
+	
+	/**
+	 * Check whether a quest has been marked as complete
+	 * 
+	 * @param quest The quest being checked
+	 * @return true if marked complete
+	 */
 	public boolean testComplete(Quest quest) {
 		for (String s : getObjectives(quest, true)) {
 			if (s.startsWith(ChatColor.GREEN.toString())) {
@@ -1935,7 +2111,10 @@ public class Quester {
 		data.setDoJournalUpdate(true);
 		hardDataPut(quest, data);
 	}
-
+	
+	/**
+	 * Save data of the Quester to file
+	 */
 	public void saveData() {
 		FileConfiguration data = getBaseData();
 		try {
@@ -1944,7 +2123,13 @@ public class Quester {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Get the difference between Sytem.currentTimeMillis() and the last completed time for a quest
+	 * 
+	 * @param q The quest to get the last completed time of
+	 * @return Difference between now and then in milliseconds
+	 */
 	public long getCooldownDifference(Quest q) {
 		long currentTime = System.currentTimeMillis();
 		long lastTime;
