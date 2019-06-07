@@ -783,7 +783,7 @@ public class PlayerListener implements Listener {
 				quester.checkQuest(quest);
 			}
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.getCurrentStage(quest).getDelay() > -1) {
+				if (quester.getCurrentStage(quest).getDelay() > -1 && quester.getQuestData(quest).delayOver == false) {
 					quester.startStageTimer(quest);
 				}
 			}
