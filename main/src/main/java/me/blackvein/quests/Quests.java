@@ -247,8 +247,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return Optional.empty();
 	}
 	
-	
-	
 	public List<CustomReward> getCustomRewards() {
 		return customRewards;
 	}
@@ -1780,6 +1778,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		Options opts = quest.getOptions();
 		if (config.contains("quests." + questKey + ".options.allow-commands")) {
 			opts.setAllowCommands(config.getBoolean("quests." + questKey + ".options.allow-commands"));
+		}
+		if (config.contains("quests." + questKey + ".options.allow-quitting")) {
+			opts.setAllowQuitting(config.getBoolean("quests." + questKey + ".options.allow-quitting"));
+		} else if (getConfig().contains("allow-quitting")) {
+			// Legacy
+			opts.setAllowQuitting(getConfig().getBoolean("allow-quitting"));
 		}
 		if (config.contains("quests." + questKey + ".options.use-dungeonsxl-plugin")) {
 			opts.setUseDungeonsXLPlugin(config.getBoolean("quests." + questKey + ".options.use-dungeonsxl-plugin"));

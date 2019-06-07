@@ -33,7 +33,7 @@ public class OptionsPrompt extends FixedSetPrompt {
 	private StringPrompt tempPrompt;
 
 	public OptionsPrompt(Quests plugin, QuestFactory qf) {
-		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
+		super("1", "2", "3");
 		this.plugin = plugin;
 		factory = qf;
 	}
@@ -110,7 +110,16 @@ public class OptionsPrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowCommands") + " (" 
 						+ (commandsOpt ? ChatColor.GREEN + String.valueOf(commandsOpt) : ChatColor.RED + String.valueOf(commandsOpt)) + ChatColor.YELLOW + ")\n";
 			}
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			if (context.getSessionData(CK.OPT_ALLOW_QUITTING) == null) {
+				boolean defaultOpt = new Options().getAllowQuitting();
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowQuitting") + " (" 
+						+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")\n";
+			} else {
+				boolean quittingOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowQuitting") + " (" 
+						+ (quittingOpt ? ChatColor.GREEN + String.valueOf(quittingOpt) : ChatColor.RED + String.valueOf(quittingOpt)) + ChatColor.YELLOW + ")\n";
+			}
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			return text;
 		}
 
@@ -121,6 +130,10 @@ public class OptionsPrompt extends FixedSetPrompt {
 				tempPrompt = new GeneralPrompt();
 				return new TrueFalsePrompt();
 			} else if (input.equalsIgnoreCase("2")) {
+				tempKey = CK.OPT_ALLOW_QUITTING;
+				tempPrompt = new GeneralPrompt();
+				return new TrueFalsePrompt();
+			} else if (input.equalsIgnoreCase("3")) {
 				tempKey = null;
 				tempPrompt = null;
 				return factory.returnToMenu();

@@ -23,7 +23,6 @@ public class Settings {
 	private int acceptTimeout = 20;
 	private boolean allowCommands = true;
 	private boolean allowCommandsForNpcQuests = false;
-	private boolean allowQuitting = true;
 	private boolean askConfirmation = true;
 	private boolean genFilesOnJoin = true;
 	private boolean ignoreLockedQuests = false;
@@ -60,12 +59,6 @@ public class Settings {
 	}
 	public void setAllowCommandsForNpcQuests(boolean allowCommandsForNpcQuests) {
 		this.allowCommandsForNpcQuests = allowCommandsForNpcQuests;
-	}
-	public boolean canAllowQuitting() {
-		return allowQuitting;
-	}
-	public void setAllowQuitting(boolean allowQuitting) {
-		this.allowQuitting = allowQuitting;
 	}
 	public boolean canAskConfirmation() {
 		return askConfirmation;
@@ -169,7 +162,6 @@ public class Settings {
 		acceptTimeout = config.getInt("accept-timeout", 20);
 		allowCommands = config.getBoolean("allow-command-questing", true);
 		allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
-		allowQuitting = config.getBoolean("allow-quitting", true);
 		askConfirmation = config.getBoolean("ask-confirmation", true);
 		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
 		ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);

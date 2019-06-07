@@ -14,6 +14,7 @@ package me.blackvein.quests;
 
 public class Options {
 	private boolean allowCommands = true;
+	private boolean allowQuitting = true;
 	private boolean useDungeonsXLPlugin = false;
 	private boolean usePartiesPlugin = true;
 	
@@ -23,6 +24,14 @@ public class Options {
 	
 	public void setAllowCommands(boolean allowCommands) {
 		this.allowCommands = allowCommands;
+	}
+	
+	public boolean getAllowQuitting() {
+		return allowQuitting;
+	}
+	
+	public void setAllowQuitting(boolean allowQuitting) {
+		this.allowQuitting = allowQuitting;
 	}
 	
 	public boolean getUseDungeonsXLPlugin() {

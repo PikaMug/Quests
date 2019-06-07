@@ -612,16 +612,16 @@ public class CmdExecutor implements CommandExecutor {
 	}
 
 	private void questsQuit(final Player player, String[] args) {
-		if (plugin.getSettings().canAllowQuitting() == true) {
-			if (((Player) player).hasPermission("quests.quit")) {
-				if (args.length == 1) {
-					player.sendMessage(ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
-					return;
-				}
-				Quester quester = plugin.getQuester(player.getUniqueId());
-				if (quester.getCurrentQuests().isEmpty() == false) {
-					Quest q = plugin.getQuest(MiscUtil.concatArgArray(args, 1, args.length - 1, ' '));
-					if (q != null) {
+		if (((Player) player).hasPermission("quests.quit")) {
+			if (args.length == 1) {
+				player.sendMessage(ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
+				return;
+			}
+			Quester quester = plugin.getQuester(player.getUniqueId());
+			if (quester.getCurrentQuests().isEmpty() == false) {
+				Quest q = plugin.getQuest(MiscUtil.concatArgArray(args, 1, args.length - 1, ' '));
+				if (q != null) {
+					if (q.getOptions().getAllowQuitting()) {
 						QuestQuitEvent event = new QuestQuitEvent(q, quester);
 						plugin.getServer().getPluginManager().callEvent(event);
 						if (event.isCancelled()) {
@@ -635,16 +635,16 @@ public class CmdExecutor implements CommandExecutor {
 						quester.loadData();
 						quester.updateJournal();
 					} else {
-						player.sendMessage(ChatColor.RED + Lang.get(player, "questNotFound"));
+						player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
 					}
 				} else {
-					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
+					player.sendMessage(ChatColor.RED + Lang.get(player, "questNotFound"));
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
+				player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
 			}
 		} else {
-			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
+			player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
 		}
 	}
 
