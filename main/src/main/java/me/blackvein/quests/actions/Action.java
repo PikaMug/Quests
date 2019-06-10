@@ -401,13 +401,13 @@ public class Action {
 		}
 		File legacy = new File(plugin.getDataFolder(), "events.yml");
 		File actions = new File(plugin.getDataFolder(), "actions.yml");
-		if (legacy.exists()) {
-			plugin.getLogger().info("Renaming legacy \"events.yml\" to \"actions.yml\" before loading data for " + name);
-			legacy.renameTo(actions);
-		}
 		FileConfiguration data = new YamlConfiguration();
 		try {
-			data.load(actions);
+			if (actions.isFile()) {
+				data.load(actions);
+			} else {
+				data.load(legacy);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InvalidConfigurationException e) {

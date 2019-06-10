@@ -905,13 +905,19 @@ public class ActionFactory implements ConversationAbandonedListener {
 			((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
 			return;
 		}
+		String key = "actions";
+		ConfigurationSection sec = data.getConfigurationSection(key);
+		if (sec == null) {
+			key = "events";
+			sec = data.getConfigurationSection(key);
+		}
 		if (((String) context.getSessionData(CK.E_OLD_EVENT)).isEmpty() == false) {
-			data.set("events." + (String) context.getSessionData(CK.E_OLD_EVENT), null);
+			data.set(key + "." + (String) context.getSessionData(CK.E_OLD_EVENT), null);
 			LinkedList<Action> temp = plugin.getEvents();
 			temp.remove(plugin.getAction((String) context.getSessionData(CK.E_OLD_EVENT)));
 			plugin.setEvents(temp);
 		}
-		ConfigurationSection section = data.createSection("actions." + (String) context.getSessionData(CK.E_NAME));
+		ConfigurationSection section = data.createSection(key + "." + (String) context.getSessionData(CK.E_NAME));
 		names.remove((String) context.getSessionData(CK.E_NAME));
 		if (context.getSessionData(CK.E_MESSAGE) != null) {
 			section.set("message", getCString(context, CK.E_MESSAGE));
