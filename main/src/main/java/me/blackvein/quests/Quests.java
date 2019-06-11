@@ -277,10 +277,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return quests;
 	}
 	
+	public LinkedList<Action> getActions() {
+		return events;
+	}
+	
+	public void setActions(LinkedList<Action> actions) {
+		this.events = actions;
+	}
+	
+	/**
+	 * @deprecated Use getActions()
+	 */
 	public LinkedList<Action> getEvents() {
 		return events;
 	}
 	
+	/**
+	 * @deprecated Use setActions()
+	 */
 	public void setEvents(LinkedList<Action> events) {
 		this.events = events;
 	}
@@ -3202,10 +3216,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 * @return Quest or null if not found
 	 */
 	public Quest getQuest(String name) {
-		for (Quest q : quests) {
-			if (q.getName().equalsIgnoreCase(name)) {
+		LinkedList<Quest> qs = quests;
+		for (Quest q : qs) {
+			if (q.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
 				return q;
-			} else if (q.getName().toLowerCase().startsWith(name.toLowerCase())) {
+			}
+		}
+		for (Quest q : qs) {
+			if (q.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
+				return q;
+			}
+		}
+		for (Quest q : qs) {
+			if (q.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
 				return q;
 			}
 		}
@@ -3219,11 +3242,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 * @return Action or null if not found
 	 */
 	public Action getAction(String name) {
-		for (Action e : events) {
-			if (e.getName().equalsIgnoreCase(name)){
-				return e;
-			} else if (e.getName().toLowerCase().startsWith(name.toLowerCase())) {
-				return e;
+		LinkedList<Action> as = events;
+		for (Action a : as) {
+			if (a.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
+				return a;
+			}
+		}
+		for (Action a : as) {
+			if (a.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
+				return a;
+			}
+		}
+		for (Action a : as) {
+			if (a.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
+				return a;
 			}
 		}
 		return null;

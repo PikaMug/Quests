@@ -134,7 +134,10 @@ public class MiscUtil {
 	public static String getDyeString(DyeColor dc) {
 		return Lang.get("COLOR_" + dc.name());
 	}
-
+	
+	/**
+	 * @deprecated Will be removed in a future version of Quests
+	 */
 	public static String concatArgArray(String[] args, int startingIndex, int endingIndex, char delimiter) {
 		String s = "";
 		for (int i = startingIndex; i <= endingIndex; i++) {

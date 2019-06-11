@@ -316,23 +316,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				for (Quest q : plugin.getQuests()) {
-					if (q.getName().equalsIgnoreCase(input)) {
-						loadQuest(context, q);
-						return new CreateMenuPrompt();
-					}
-				}
-				for (Quest q : plugin.getQuests()) {
-					if (q.getName().toLowerCase().startsWith(input.toLowerCase())) {
-						loadQuest(context, q);
-						return new CreateMenuPrompt();
-					}
-				}
-				for (Quest q : plugin.getQuests()) {
-					if (q.getName().toLowerCase().contains(input.toLowerCase())) {
-						loadQuest(context, q);
-						return new CreateMenuPrompt();
-					}
+				Quest q = plugin.getQuest(input);
+				if (q != null) {
+					loadQuest(context, q);
+					return new CreateMenuPrompt();
 				}
 				return new SelectEditPrompt();
 			} else {
@@ -533,10 +520,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.DARK_GREEN + Lang.get("eventTitle") + "\n";
-			if (plugin.getEvents().isEmpty()) {
+			if (plugin.getActions().isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
-				for (Action e : plugin.getEvents()) {
+				for (Action e : plugin.getActions()) {
 					text += ChatColor.GREEN + "- " + e.getName() + "\n";
 				}
 			}
@@ -547,20 +534,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Action found = null;
-				for (Action e : plugin.getEvents()) {
-					if (e.getName().equalsIgnoreCase(input)) {
-						found = e;
-						break;
-					}
-				}
-				if (found == null) {
-					player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " + Lang.get("questEditorInvalidEventName"));
-					return new InitialEventPrompt();
-				} else {
-					context.setSessionData(CK.Q_INITIAL_EVENT, found.getName());
+				Action a = plugin.getAction(input);
+				if (a != null) {
+					context.setSessionData(CK.Q_INITIAL_EVENT, a.getName());
 					return new CreateMenuPrompt();
 				}
+				player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " + Lang.get("questEditorInvalidEventName"));
+				return new InitialEventPrompt();
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.Q_INITIAL_EVENT, null);
 				player.sendMessage(ChatColor.YELLOW + Lang.get("questEditorEventCleared"));

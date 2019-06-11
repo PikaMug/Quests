@@ -167,7 +167,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 				}
 			} else if (input.equalsIgnoreCase("2")) {
 				if (player.hasPermission("quests.editor.actions.edit") || player.hasPermission("quests.editor.events.edit")) {
-					if (plugin.getEvents().isEmpty()) {
+					if (plugin.getActions().isEmpty()) {
 						((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorNoneToEdit"));
 						return new MenuPrompt();
 					} else {
@@ -179,7 +179,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 				}
 			} else if (input.equalsIgnoreCase("3")) {
 				if (player.hasPermission("quests.editor.actions.delete") || player.hasPermission("quests.editor.events.delete")) {
-					if (plugin.getEvents().isEmpty()) {
+					if (plugin.getActions().isEmpty()) {
 						((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorNoneToDelete"));
 						return new MenuPrompt();
 					} else {
@@ -329,8 +329,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEdit") + " -\n";
-			for (Action evt : plugin.getEvents()) {
-				text += ChatColor.AQUA + evt.getName() + ChatColor.YELLOW + ", ";
+			for (Action a : plugin.getActions()) {
+				text += ChatColor.AQUA + a.getName() + ChatColor.YELLOW + ", ";
 			}
 			text = text.substring(0, text.length() - 2) + "\n";
 			text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
@@ -340,13 +340,12 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				for (Action evt : plugin.getEvents()) {
-					if (evt.getName().toLowerCase().startsWith(input.toLowerCase())) {
-						context.setSessionData(CK.E_OLD_EVENT, evt.getName());
-						context.setSessionData(CK.E_NAME, evt.getName());
-						loadData(evt, context);
-						return new CreateMenuPrompt();
-					}
+				Action a = plugin.getAction(input);
+				if (a != null) {
+					context.setSessionData(CK.E_OLD_EVENT, a.getName());
+					context.setSessionData(CK.E_NAME, a.getName());
+					loadData(a, context);
+					return new CreateMenuPrompt();
 				}
 				((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
 				return new SelectEditPrompt();
@@ -361,8 +360,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GOLD + "- " + Lang.get("eventEditorDelete") + " -\n";
-			for (Action evt : plugin.getEvents()) {
-				text += ChatColor.AQUA + evt.getName() + ChatColor.YELLOW + ",";
+			for (Action a : plugin.getActions()) {
+				text += ChatColor.AQUA + a.getName() + ChatColor.YELLOW + ",";
 			}
 			text = text.substring(0, text.length() - 1) + "\n";
 			text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
@@ -373,27 +372,26 @@ public class ActionFactory implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
 				LinkedList<String> used = new LinkedList<String>();
-				for (Action evt : plugin.getEvents()) {
-					if (evt.getName().equalsIgnoreCase(input)) {
-						for (Quest quest : plugin.getQuests()) {
-							for (Stage stage : quest.getStages()) {
-								if (stage.getFinishEvent() != null && stage.getFinishEvent().getName().equalsIgnoreCase(evt.getName())) {
-									used.add(quest.getName());
-									break;
-								}
+				Action a = plugin.getAction(input);
+				if (a != null) {
+					for (Quest quest : plugin.getQuests()) {
+						for (Stage stage : quest.getStages()) {
+							if (stage.getFinishEvent() != null && stage.getFinishEvent().getName().equalsIgnoreCase(a.getName())) {
+								used.add(quest.getName());
+								break;
 							}
 						}
-						if (used.isEmpty()) {
-							context.setSessionData(CK.ED_EVENT_DELETE, evt.getName());
-							return new DeletePrompt();
-						} else {
-							((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorEventInUse") + " \"" + ChatColor.DARK_PURPLE + evt.getName() + ChatColor.RED + "\":");
-							for (String s : used) {
-								((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
-							}
-							((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorMustModifyQuests"));
-							return new SelectDeletePrompt();
+					}
+					if (used.isEmpty()) {
+						context.setSessionData(CK.ED_EVENT_DELETE, a.getName());
+						return new DeletePrompt();
+					} else {
+						((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorEventInUse") + " \"" + ChatColor.DARK_PURPLE + a.getName() + ChatColor.RED + "\":");
+						for (String s : used) {
+							((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
 						}
+						((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorMustModifyQuests"));
+						return new SelectDeletePrompt();
 					}
 				}
 				((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
@@ -913,9 +911,9 @@ public class ActionFactory implements ConversationAbandonedListener {
 		}
 		if (((String) context.getSessionData(CK.E_OLD_EVENT)).isEmpty() == false) {
 			data.set(key + "." + (String) context.getSessionData(CK.E_OLD_EVENT), null);
-			LinkedList<Action> temp = plugin.getEvents();
+			LinkedList<Action> temp = plugin.getActions();
 			temp.remove(plugin.getAction((String) context.getSessionData(CK.E_OLD_EVENT)));
-			plugin.setEvents(temp);
+			plugin.setActions(temp);
 		}
 		ConfigurationSection section = data.createSection(key + "." + (String) context.getSessionData(CK.E_NAME));
 		names.remove((String) context.getSessionData(CK.E_NAME));
@@ -1067,7 +1065,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				for (Action e : plugin.getEvents()) {
+				for (Action e : plugin.getActions()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
 						return new ActionNamePrompt();
@@ -1142,7 +1140,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				for (Action e : plugin.getEvents()) {
+				for (Action e : plugin.getActions()) {
 					if (e.getName().equalsIgnoreCase(input)) {
 						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
 						return new SetNamePrompt();
