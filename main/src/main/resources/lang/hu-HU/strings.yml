@@ -864,5 +864,5 @@ timerStart: "%green%Van%red% <time> másodperced%green% befejezni a küldetést/
 questErrorReadingFile: "Hiba történt a Quests fájl olvasása közben."
 questSaveError: "Hiba történt a mentés közben."
 noPermission: "Nincs jogod ehhez."
-duplicateEditor: "You are already using an editor!"
+duplicateEditor: "Már használsz egy szerkesztőt!"
 difference: "A különbség '<data>'."
