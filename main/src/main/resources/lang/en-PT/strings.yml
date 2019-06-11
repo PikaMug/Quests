@@ -864,5 +864,5 @@ timerStart: "%green%Ye 'ave%red% <time> seconds%green% t' finish this quest/stag
 questErrorReadingFile: "Error readin' Quests file."
 questSaveError: "An error occurred while savin'."
 noPermission: "Ye do nah 'ave permission t' do that."
-duplicateEditor: "You are already using an editor!"
+duplicateEditor: "Ye be already usin' an editor!"
 difference: "Th' difference be '<data>'."
