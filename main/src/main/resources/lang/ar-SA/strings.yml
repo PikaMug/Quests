@@ -864,4 +864,5 @@ timerStart: "<green>لديك ثانية <red>%s <green>لإنهاء هذه ال�
 questErrorReadingFile: "حدث خطأ أثناء قراءة ملف المسعى."
 questSaveError: "حدث خطأ أثناء الحفظ."
 noPermission: "You do not have permission to do that."
+duplicateEditor: "You are already using an editor!"
 difference: "The difference is '<data>'."
