@@ -436,7 +436,12 @@ public class CmdExecutor implements CommandExecutor {
 	private boolean questsActions(final CommandSender cs) {
 		if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*") 
 				|| cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")) {
-			plugin.getEventFactory().getConversationFactory().buildConversation((Conversable) cs).begin();
+			Conversable c = (Conversable) cs;
+			if (!c.isConversing()) {
+				plugin.getEventFactory().getConversationFactory().buildConversation(c).begin();
+			} else {
+				cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
+			}
 		} else {
 			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
@@ -445,7 +450,12 @@ public class CmdExecutor implements CommandExecutor {
 
 	private boolean questsEditor(final CommandSender cs) {
 		if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
-			plugin.getQuestFactory().getConversationFactory().buildConversation((Conversable) cs).begin();
+			Conversable c = (Conversable) cs;
+			if (!c.isConversing()) {
+				plugin.getQuestFactory().getConversationFactory().buildConversation(c).begin();
+			} else {
+				cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
+			}
 		} else {
 			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
 		}
