@@ -864,4 +864,5 @@ timerStart: "%green%Bu görevin / aşamayı tamamlamak için%red% <time> saniye%
 questErrorReadingFile: "Görevler dosyası okunurken hata oluştu."
 questSaveError: "Kaydederken bir hata oluştu."
 noPermission: "You do not have permission to do that."
+duplicateEditor: "You are already using an editor!"
 difference: "The difference is '<data>'."
