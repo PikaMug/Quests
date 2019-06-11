@@ -864,4 +864,5 @@ timerStart: "%green%Je hebt%red% <time> seconden%green% om deze quest/fase af te
 questErrorReadingFile: "Error tijdens het lezen van het Quests bestand."
 questSaveError: "Er ging iets mis tijdens het opslaan."
 noPermission: "Je hebt geen toestemming om dat te doen."
+duplicateEditor: "You are already using an editor!"
 difference: "Het verschil is '<data>'."
