@@ -864,4 +864,5 @@ timerStart: "%green%Mayroon ka%red% <time> segundo%green% para taposin ang pagsu
 questErrorReadingFile: "Di mabasang file ng pagsusulit."
 questSaveError: "Mayroong error ang lumabas habang ikaw ay nagsisave."
 noPermission: "Wala kang pahintulot na gawin iyon."
+duplicateEditor: "You are already using an editor!"
 difference: "Ang pagkakaiba ay '<data> '."
