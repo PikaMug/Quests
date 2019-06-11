@@ -864,4 +864,5 @@ timerStart: "%green%Kamu punya%red% <time> detik%green% untuk menyelesaikan penc
 questErrorReadingFile: "Kesalahan saat membaca berkas Pencarian."
 questSaveError: "Terjadi kesalahan saat menyimpan."
 noPermission: "Anda tidak memiliki izin untuk melakukan itu."
+duplicateEditor: "You are already using an editor!"
 difference: "Perbedaannya adalah '<data>'."
