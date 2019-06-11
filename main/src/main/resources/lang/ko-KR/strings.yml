@@ -864,4 +864,5 @@ timerStart: "%green%이 퀘스트/스테이지를 완료하려면%red% <time> �
 questErrorReadingFile: "퀘스트 파일을 읽는 중 오류가 발생했습니다."
 questSaveError: "저장하는 동안 오류가 발생했습니다."
 noPermission: "실행할 수 있는 권한이 없습니다."
+duplicateEditor: "You are already using an editor!"
 difference: "다른점은 '<data>' 입니다."
