@@ -1206,8 +1206,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " + Lang.get("yesWord") + "\n";
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.GREEN + " - " + Lang.get("noWord");
-			return ChatColor.RED + Lang.get("stageEditorConfirmStageDelete") + "\n" + ChatColor.YELLOW + Lang.get("stageEditorStage") + " " + stageNum + ": " + context.getSessionData(CK.Q_NAME) + ChatColor.RED + "\n(" + Lang.get("stageEditorConfirmStageNote") + ")\n" + text;
+			text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " + Lang.get("noWord");
+			return ChatColor.RED + Lang.get("stageEditorConfirmStageDelete") + " (" + ChatColor.YELLOW + Lang.get("stageEditorStage") + " " + stageNum + ChatColor.RED + ")\n" + ChatColor.GOLD + "(" + Lang.get("stageEditorConfirmStageNote") + ")\n" + text;
 		}
 
 		@Override

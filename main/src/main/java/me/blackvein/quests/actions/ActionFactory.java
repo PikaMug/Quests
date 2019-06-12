@@ -406,9 +406,9 @@ public class ActionFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.RED + Lang.get("eventEditorDeletePrompt") + " (" + ChatColor.GOLD + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")";
-			text += ChatColor.YELLOW + Lang.get("yesWord") + "/" + Lang.get("noWord");
-			return text;
+			String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " + Lang.get("yesWord") + "\n";
+			text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " + Lang.get("noWord");
+			return ChatColor.RED + Lang.get("eventEditorDeletePrompt") + " (" + ChatColor.YELLOW + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")\n" + text;
 		}
 
 		@Override
