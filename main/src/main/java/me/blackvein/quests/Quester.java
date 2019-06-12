@@ -1614,27 +1614,32 @@ public class Quester {
 		if (getQuestData(quest).locationsReached.isEmpty()) {
 			return;
 		}
+		int index = 0;
 		for (Location location : getQuestData(quest).locationsReached) {
 			try {
-				int index = getQuestData(quest).locationsReached.indexOf(location);
 				Location locationToReach = getCurrentStage(quest).locationsToReach.get(index);
 				double radius = getQuestData(quest).radiiToReachWithin.get(index);
 				if (l.getX() < (locationToReach.getX() + radius) && l.getX() > (locationToReach.getX() - radius)) {
 					if (l.getZ() < (locationToReach.getZ() + radius) && l.getZ() > (locationToReach.getZ() - radius)) {
 						if (l.getY() < (locationToReach.getY() + radius) && l.getY() > (locationToReach.getY() - radius)) {
 							if (l.getWorld().getName().equals(locationToReach.getWorld().getName())) {
-								if (getQuestData(quest).hasReached.get(index) == false) {
+								// TODO - Find proper cause of Github issues #646 and #825
+								if (index >= getQuestData(quest).hasReached.size()) {
+									getQuestData(quest).hasReached.add(true);
+								} else {
 									getQuestData(quest).hasReached.set(index, true);
-									finishObjective(quest, "reachLocation", null, null, null, null, null, null, location, null, null, null);
 								}
+								finishObjective(quest, "reachLocation", null, null, null, null, null, null, location, null, null, null);
 							}
 						}
 					}
 				}
+				index++;
 			} catch (IndexOutOfBoundsException e) {
 				plugin.getLogger().severe("An error has occurred with Quests. Please report on Github. Include the info below");
-				plugin.getLogger().severe("index = " + getQuestData(quest).locationsReached.indexOf(location));
-				plugin.getLogger().severe("locationsReached = " + getQuestData(quest).locationsReached.toString());
+				plugin.getLogger().warning("index = " + index);
+				plugin.getLogger().warning("locationsReached = " + getQuestData(quest).locationsReached.toString());
+				plugin.getLogger().warning("hasReached = " + getQuestData(quest).hasReached.size());
 				e.printStackTrace();
 			}
 		}
@@ -2731,7 +2736,7 @@ public class Quester {
 					LinkedList<Location> locations = new LinkedList<Location>();
 					List<Boolean> has = questSec.getBooleanList("has-reached-location");
 					while (has.size() < locations.size()) {
-						// TODO - find proper cause of Github issue #646
+						// TODO - Find proper cause of Github issues #646 and #825
 						plugin.getLogger().info("Added missing has-reached-location data for Quester " + id);
 						has.add(false);
 					}
