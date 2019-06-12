@@ -634,6 +634,12 @@ public class Quest {
 			player.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " " + Lang.get(player, "experience"));
 			none = null;
 		}
+		if (rews.getCommands().isEmpty() == false) {
+			for (String s : rews.getCommands()) {
+				player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getCommands().get(rews.getCommands().indexOf(s)));
+			}
+			none = null;
+		}
 		if (rews.getMcmmoSkills().isEmpty() == false) {
 			for (String s : rews.getMcmmoSkills()) {
 				player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " + ChatColor.DARK_PURPLE + s + " " + Lang.get(player, "experience"));

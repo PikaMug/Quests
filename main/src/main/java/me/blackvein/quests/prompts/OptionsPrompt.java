@@ -26,7 +26,6 @@ import me.blackvein.quests.util.Lang;
 
 public class OptionsPrompt extends FixedSetPrompt {
 	
-	@SuppressWarnings("unused")
 	private final Quests plugin;
 	private final QuestFactory factory;
 	private String tempKey;

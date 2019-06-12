@@ -350,7 +350,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			String lang1 = Lang.get("rewCommandPrompt");
 			lang1 = lang1.replaceAll("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET + ChatColor.YELLOW);
 			String lang2 = Lang.get("rewCommandPromptHint");
-			return ChatColor.YELLOW + lang1 + "\n" + lang2;
+			return ChatColor.YELLOW + lang1 + "\n" + ChatColor.GOLD + lang2;
 		}
 
 		@Override
@@ -393,7 +393,6 @@ public class RewardsPrompt extends FixedSetPrompt {
 		}
 	}
 
-	// mcMMO
 	private class mcMMOListPrompt extends FixedSetPrompt {
 
 		public mcMMOListPrompt() {
