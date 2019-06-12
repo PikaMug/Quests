@@ -54,24 +54,24 @@ public class RewardsPrompt extends FixedSetPrompt {
 	public String getPromptText(ConversationContext context) {
 		String text;
 		String lang = Lang.get("rewardsTitle");
-		lang = lang.replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
-		text = ChatColor.DARK_AQUA + lang + "\n";
+		lang = lang.replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE);
+		text = ChatColor.LIGHT_PURPLE + lang + "\n";
 		if (context.getSessionData(CK.REW_MONEY) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + moneyRew + " " + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + ChatColor.AQUA + moneyRew + " " + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY + ")\n";
 		}
 		if (context.getSessionData(CK.REW_QUEST_POINTS) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + ChatColor.AQUA + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")\n";
 		}
 		text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetItems") + "\n";
 		if (context.getSessionData(CK.REW_EXP) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + ChatColor.AQUA + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ChatColor.DARK_GRAY + ")\n";
 		}
 		if (context.getSessionData(CK.REW_COMMAND) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";

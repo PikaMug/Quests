@@ -230,7 +230,7 @@ public class NPCsPrompt extends FixedSetPrompt {
 						return new NPCsPrompt(plugin, stageNum, questFactory);
 					}
 				} else {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorDeliveriesNotSameSize"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 					return new DeliveryListPrompt();
 				}
 			}
@@ -417,7 +417,7 @@ public class NPCsPrompt extends FixedSetPrompt {
 				if (one == two) {
 					return new CreateStagePrompt(plugin, stageNum, questFactory);
 				} else {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNPCKillsNotSameSize"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 					return new NPCKillListPrompt();
 				}
 			}

@@ -266,14 +266,14 @@ public class MobsPrompt extends FixedSetPrompt {
 						if (two == three && three == four && four == five) {
 							return new CreateStagePrompt(plugin, stageNum, questFactory);
 						} else {
-							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorAllListsNotSameSize"));
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 							return new MobListPrompt();
 						}
 					} else {
 						return new CreateStagePrompt(plugin, stageNum, questFactory);
 					}
 				} else {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorMobTypesNotSameSize"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 					return new MobListPrompt();
 				}
 			}
@@ -512,7 +512,7 @@ public class MobsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorTameMobs") + " -\n";
 			if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetMobTypes") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("stageEditorSetTameAmounts") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + Lang.get("stageEditorSetTameAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -567,7 +567,7 @@ public class MobsPrompt extends FixedSetPrompt {
 				if (one == two) {
 					return new CreateStagePrompt(plugin, stageNum, questFactory);
 				} else {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorTameMobsNotSameSize"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 					return new TameListPrompt();
 				}
 			}
@@ -669,7 +669,7 @@ public class MobsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorShearSheep") + " -\n";
 			if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetShearColors") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("stageEditorSetShearAmounts") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY +  Lang.get("stageEditorSetShearAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -724,7 +724,7 @@ public class MobsPrompt extends FixedSetPrompt {
 				if (one == two) {
 					return new CreateStagePrompt(plugin, stageNum, questFactory);
 				} else {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorShearNotSameSize"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 					return new ShearListPrompt();
 				}
 			}

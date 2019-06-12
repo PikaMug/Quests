@@ -34,7 +34,7 @@ public class StagesPrompt extends StringPrompt {
 
 	@Override
 	public String getPromptText(ConversationContext cc) {
-		String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + Lang.get("stageEditorStages") + ChatColor.LIGHT_PURPLE + " -\n";
+		String text = ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorStages") + " -\n";
 		int stages = getStages(cc);
 		for (int i = 1; i <= stages; i++) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + i + " - " + ChatColor.RESET + ChatColor.GOLD + Lang.get("stageEditorEditStage") + " " + i + "\n";

@@ -519,7 +519,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.DARK_GREEN + Lang.get("eventTitle") + "\n";
+			String text = ChatColor.AQUA + Lang.get("eventTitle") + "\n";
 			if (plugin.getActions().isEmpty()) {
 				text += ChatColor.RED + "- " + Lang.get("none");
 			} else {
@@ -609,7 +609,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.DARK_GREEN + Lang.get("questRegionTitle") + "\n";
+			String text = ChatColor.AQUA + Lang.get("questRegionTitle") + "\n";
 			boolean any = false;
 			for (World world : plugin.getServer().getWorlds()) {
 				WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();

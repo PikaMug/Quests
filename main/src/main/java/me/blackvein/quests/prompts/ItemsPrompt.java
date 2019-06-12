@@ -241,8 +241,8 @@ public class ItemsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorEnchantItems") + " -\n";
 			if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetEnchantments") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("stageEditorSetItemNames") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "3 - " + Lang.get("stageEditorSetEnchantAmounts") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorSetItemNames") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorSetEnchantAmounts") + " (" + Lang.get("noneSet") + ")\n";
 				text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -319,7 +319,7 @@ public class ItemsPrompt extends FixedSetPrompt {
 				if (one == two && two == three) {
 					return new ItemsPrompt(plugin, stageNum, questFactory);
 				} else {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorEnchantmentNotSameSize"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 					return new EnchantmentListPrompt();
 				}
 			}
@@ -374,7 +374,7 @@ public class ItemsPrompt extends FixedSetPrompt {
 								valid = true;
 								break;
 							} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("stageEditorListContainsDuplicates"));
+								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("listDuplicate"));
 								return new EnchantTypesPrompt();
 							}
 						}
@@ -408,7 +408,7 @@ public class ItemsPrompt extends FixedSetPrompt {
 							//if (names.contains(s) == false) {
 								names.add(s);
 							/*} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("stageEditorListContainsDuplicates"));
+								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("listDuplicate"));
 								return new EnchantItemsPrompt();
 							}*/
 						} else {

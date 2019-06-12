@@ -60,7 +60,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + " (" + moneyReq + " " + (moneyReq > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + " (" + ChatColor.AQUA + moneyReq + " " + (moneyReq > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY + ")\n";
 		}
 		if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestPoints") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
@@ -138,7 +138,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 		} else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
 			text += ChatColor.RED + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.RED + Lang.get("reqSetFail") + " (" + Lang.get("questRequiredNoneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("reqSetFail") + ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("reqSetFail") + ChatColor.GRAY + " (" + ChatColor.AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + ChatColor.GRAY + ")\n";
 		}
 		text += ChatColor.GREEN + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 		return text;

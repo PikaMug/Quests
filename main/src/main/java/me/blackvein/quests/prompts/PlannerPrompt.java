@@ -108,7 +108,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("plnRepeatPrompt");
+			return ChatColor.YELLOW + Lang.get("timePrompt");
 		}
 
 		@Override
@@ -142,7 +142,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("plnCooldownPrompt");
+			return ChatColor.YELLOW + Lang.get("timePrompt");
 		}
 
 		@Override

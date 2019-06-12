@@ -42,10 +42,10 @@ public class OptionsPrompt extends FixedSetPrompt {
 	public String getPromptText(ConversationContext context) {
 		String text;
 		String lang = Lang.get("optionsTitle");
-		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
+		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN);
 		text = ChatColor.DARK_AQUA + lang + "\n";
-		text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optGeneral") + "\n";
-		text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optMultiplayer") + "\n";
+		text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("optGeneral") + "\n";
+		text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("optMultiplayer") + "\n";
 		text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 		return text;
 	}
@@ -97,10 +97,7 @@ public class OptionsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text;
-			String lang = Lang.get("questEditorOpts") + ": " + Lang.get("optGeneral");
-			lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
-			text = ChatColor.DARK_AQUA + lang + "\n";
+			String text = ChatColor.DARK_GREEN + "- " + Lang.get("optGeneral") + " -\n";
 			if (context.getSessionData(CK.OPT_ALLOW_COMMANDS) == null) {
 				boolean defaultOpt = new Options().getAllowCommands();
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowCommands") + " (" 
@@ -136,7 +133,12 @@ public class OptionsPrompt extends FixedSetPrompt {
 			} else if (input.equalsIgnoreCase("3")) {
 				tempKey = null;
 				tempPrompt = null;
-				return factory.returnToMenu();
+				try {
+					return new OptionsPrompt(plugin, factory);
+				} catch (Exception e) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
+					return Prompt.END_OF_CONVERSATION;
+				}
 			}
 			return null;
 		}
@@ -146,10 +148,7 @@ public class OptionsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text;
-			String lang = Lang.get("questEditorOpts") + ": " + Lang.get("optMultiplayer");
-			lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
-			text = ChatColor.DARK_AQUA + lang + "\n";
+			String text = ChatColor.DARK_GREEN + "- " + Lang.get("optMultiplayer") + " -\n";
 			if (context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) == null) {
 				boolean defaultOpt = new Options().getUseDungeonsXLPlugin();
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optUseDungeonsXLPlugin") + " (" 
@@ -185,7 +184,12 @@ public class OptionsPrompt extends FixedSetPrompt {
 			} else if (input.equalsIgnoreCase("3")) {
 				tempKey = null;
 				tempPrompt = null;
-				return factory.returnToMenu();
+				try {
+					return new OptionsPrompt(plugin, factory);
+				} catch (Exception e) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
+					return Prompt.END_OF_CONVERSATION;
+				}
 			}
 			return null;
 		}

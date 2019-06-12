@@ -502,7 +502,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.GOLD + "- " + Lang.get("event") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_NAME) + ChatColor.GOLD + " -\n";
+			String text = ChatColor.GOLD + "- " + Lang.get("eventEditorPlayer") + " -\n";
 			if (context.getSessionData(CK.E_MESSAGE) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMessage") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
@@ -608,7 +608,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.GOLD + "- " + Lang.get("event") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_NAME) + ChatColor.GOLD + " -\n";
+			String text = ChatColor.GOLD + "- " + Lang.get("eventEditorTimer") + " -\n";
 			if (context.getSessionData(CK.E_TIMER) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetTimer") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
@@ -648,7 +648,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.GOLD + "- " + Lang.get("event") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_NAME) + ChatColor.GOLD + " -\n";
+			String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEffect") + " -\n";
 			if (context.getSessionData(CK.E_EFFECTS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetEffects") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
@@ -693,7 +693,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.GOLD + "- " + Lang.get("event") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_NAME) + ChatColor.GOLD + " -\n";
+			String text = ChatColor.GOLD + "- " + Lang.get("eventEditorWeather") + " -\n";
 			if (context.getSessionData(CK.E_WORLD_STORM) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetStorm") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
@@ -1304,7 +1304,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 				if (one == two) {
 					return new CreateMenuPrompt();
 				} else {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorListSizeMismatch"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 					return new SoundEffectListPrompt();
 				}
 			}
