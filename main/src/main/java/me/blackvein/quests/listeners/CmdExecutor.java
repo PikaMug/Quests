@@ -575,14 +575,13 @@ public class CmdExecutor implements CommandExecutor {
 	@SuppressWarnings("deprecation")
 	private void questsJournal(final Player player) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
+		Inventory inv = player.getInventory();
 		if (quester.hasJournal) {
-			Inventory inv = player.getInventory();
 			ItemStack[] arr = inv.getContents();
 			for (int i = 0; i < arr.length; i++) {
 				if (arr[i] != null) {
 					if (ItemUtil.isJournal(arr[i])) {
 						inv.setItem(i, null);
-						break;
 					}
 				}
 			}
@@ -597,10 +596,8 @@ public class CmdExecutor implements CommandExecutor {
 			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken"));
 			quester.hasJournal = true;
 			quester.updateJournal();
-		} else {
-			Inventory inv = player.getInventory();
+		} else if (inv.firstEmpty() != -1) {
 			ItemStack[] arr = inv.getContents();
-			boolean given = false;
 			for (int i = 0; i < arr.length; i++) {
 				if (arr[i] == null) {
 					ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
@@ -609,15 +606,13 @@ public class CmdExecutor implements CommandExecutor {
 					stack.setItemMeta(meta);
 					inv.setItem(i, stack);
 					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken"));
-					given = true;
+					quester.hasJournal = true;
+					quester.updateJournal();
 					break;
 				}
 			}
-			if (given) {
-				quester.hasJournal = true;
-				quester.updateJournal();
-			} else
-				player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalNoRoom"));
+		} else {
+			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalNoRoom"));
 		}
 	}
 
