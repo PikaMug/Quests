@@ -250,6 +250,7 @@ stageEditorObjectiveOverrideCleared: "Usunięto obiektywy nadpisany wyświetlacz
 stageEditorDeliveryAddItem: "Dodaj przedmiot"
 stageEditorDeliveryNPCs: "Zmień ID NPC"
 stageEditorDeliveryMessages: "Zmień dostarczenie wiadomości"
+stageEditorNotSolid: "is not a solid block!"
 stageEditorInvalidBlockName: "nie jest poprawna nazwa bloku!"
 stageEditorInvalidEnchantment: "nie jest poprawna nazwa enchantu!"
 stageEditorInvalidNPC: "nie jest poprawne ID NPC!"
