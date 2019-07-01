@@ -255,13 +255,14 @@ public class BlocksPrompt extends FixedSetPrompt {
 				LinkedList<String> names = new LinkedList<String>();
 				for (String s : args) {
 					try {
-						if (Material.matchMaterial(s) != null) {
-							//if (names.contains(s) == false) {
+						Material m = Material.matchMaterial(s);
+						if (m != null) {
+							if (m.isBlock()) {
 								names.add(s);
-							/*} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
+							} else {
+								context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotSolid"));
 								return new BreakBlockNamesPrompt();
-							}*/
+							}
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidBlockName"));
 							return new BreakBlockNamesPrompt();
@@ -472,13 +473,14 @@ public class BlocksPrompt extends FixedSetPrompt {
 				LinkedList<String> names = new LinkedList<String>();
 				for (String s : args) {
 					try {
-						if (Material.matchMaterial(s) != null) {
-							//if (names.contains(s) == false) {
+						Material m = Material.matchMaterial(s);
+						if (m != null) {
+							if (m.isBlock()) {
 								names.add(s);
-							/*} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
+							} else {
+								context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotSolid"));
 								return new DamageBlockNamesPrompt();
-							}*/
+							}
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidBlockName"));
 							return new DamageBlockNamesPrompt();
@@ -689,13 +691,14 @@ public class BlocksPrompt extends FixedSetPrompt {
 				LinkedList<String> names = new LinkedList<String>();
 				for (String s : args) {
 					try {
-						if (Material.matchMaterial(s) != null) {
-							//if (names.contains(s) == false) {
+						Material m = Material.matchMaterial(s);
+						if (m != null) {
+							if (m.isBlock()) {
 								names.add(s);
-							/*} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
+							} else {
+								context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotSolid"));
 								return new PlaceBlockNamesPrompt();
-							}*/
+							}
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + Lang.get("stageEditorInvalidBlockName"));
 							return new PlaceBlockNamesPrompt();
@@ -906,13 +909,14 @@ public class BlocksPrompt extends FixedSetPrompt {
 				LinkedList<String> names = new LinkedList<String>();
 				for (String s : args) {
 					try {
-						if (Material.matchMaterial(s) != null) {
-							//if (names.contains(s) == false) {
+						Material m = Material.matchMaterial(s);
+						if (m != null) {
+							if (m.isBlock()) {
 								names.add(s);
-							/*} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("listDuplicate"));
+							} else {
+								context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotSolid"));
 								return new UseBlockNamesPrompt();
-							}*/
+							}
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidBlockName"));
 							return new UseBlockNamesPrompt();
@@ -1123,13 +1127,14 @@ public class BlocksPrompt extends FixedSetPrompt {
 				LinkedList<String> names = new LinkedList<String>();
 				for (String s : args) {
 					try {
-						if (Material.matchMaterial(s) != null) {
-							//if (names.contains(s) == false) {
+						Material m = Material.matchMaterial(s);
+						if (m != null) {
+							if (m.isBlock()) {
 								names.add(s);
-							/*} else {
-								context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("listDuplicate"));
+							} else {
+								context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorNotSolid"));
 								return new CutBlockNamesPrompt();
-							}*/
+							}
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " + Lang.get("stageEditorInvalidBlockName"));
 							return new CutBlockNamesPrompt();
