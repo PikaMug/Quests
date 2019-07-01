@@ -250,6 +250,7 @@ stageEditorObjectiveOverrideCleared: "Le remplacement de l'affichage de l'object
 stageEditorDeliveryAddItem: "Ajouter un objet"
 stageEditorDeliveryNPCs: "Définir les ID des NPC"
 stageEditorDeliveryMessages: "Définir le message de livraison"
+stageEditorNotSolid: "is not a solid block!"
 stageEditorInvalidBlockName: "n'est pas un bloc valide !"
 stageEditorInvalidEnchantment: "n'est pas un enchantement valide !"
 stageEditorInvalidNPC: "n'est pas un ID de PNJ valide!"
