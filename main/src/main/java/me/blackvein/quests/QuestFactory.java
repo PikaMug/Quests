@@ -984,19 +984,19 @@ public class QuestFactory implements ConversationAbandonedListener {
 		ConfigurationSection stages = cs.createSection("stages");
 		ConfigurationSection ordered = stages.createSection("ordered");
 		String pref;
-		LinkedList<Integer> breakIds;
+		LinkedList<Integer> breakNames;
 		LinkedList<Integer> breakAmounts;
 		LinkedList<Short> breakDurability;
-		LinkedList<Integer> damageIds;
+		LinkedList<Integer> damageNames;
 		LinkedList<Integer> damageAmounts;
 		LinkedList<Short> damageDurability;
-		LinkedList<Integer> placeIds;
+		LinkedList<Integer> placeNames;
 		LinkedList<Integer> placeAmounts;
 		LinkedList<Short> placeDurability;
-		LinkedList<Integer> useIds;
+		LinkedList<Integer> useNames;
 		LinkedList<Integer> useAmounts;
 		LinkedList<Short> useDurability;
-		LinkedList<Integer> cutIds;
+		LinkedList<Integer> cutNames;
 		LinkedList<Integer> cutAmounts;
 		LinkedList<Short> cutDurability;
 		LinkedList<ItemStack> deliveryItems;
@@ -1046,19 +1046,19 @@ public class QuestFactory implements ConversationAbandonedListener {
 		for (int i = 1; i <= StagesPrompt.getStages(cc); i++) {
 			pref = "stage" + i;
 			ConfigurationSection stage = ordered.createSection("" + i);
-			breakIds = null;
+			breakNames = null;
 			breakAmounts = null;
 			breakDurability = null;
-			damageIds = null;
+			damageNames = null;
 			damageAmounts = null;
 			damageDurability = null;
-			placeIds = null;
+			placeNames = null;
 			placeAmounts = null;
 			placeDurability = null;
-			useIds = null;
+			useNames = null;
 			useAmounts = null;
 			useDurability = null;
-			cutIds = null;
+			cutNames = null;
 			cutAmounts = null;
 			cutDurability = null;
 			craftItems = null;
@@ -1106,27 +1106,27 @@ public class QuestFactory implements ConversationAbandonedListener {
 			startMessage = null;
 			completeMessage = null;
 			if (cc.getSessionData(pref + CK.S_BREAK_NAMES) != null) {
-				breakIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_NAMES);
+				breakNames = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_NAMES);
 				breakAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_BREAK_AMOUNTS);
 				breakDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_BREAK_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
-				damageIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_NAMES);
+				damageNames = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_NAMES);
 				damageAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
 				damageDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_PLACE_NAMES) != null) {
-				placeIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_NAMES);
+				placeNames = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_NAMES);
 				placeAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_PLACE_AMOUNTS);
 				placeDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_PLACE_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_USE_NAMES) != null) {
-				useIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_NAMES);
+				useNames = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_NAMES);
 				useAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_USE_AMOUNTS);
 				useDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_USE_DURABILITY);
 			}
 			if (cc.getSessionData(pref + CK.S_CUT_NAMES) != null) {
-				cutIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_NAMES);
+				cutNames = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_NAMES);
 				cutAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_CUT_AMOUNTS);
 				cutDurability = (LinkedList<Short>) cc.getSessionData(pref + CK.S_CUT_DURABILITY);
 			}
@@ -1226,28 +1226,28 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE) != null) {
 				completeMessage = (String) cc.getSessionData(pref + CK.S_COMPLETE_MESSAGE);
 			}
-			if (breakIds != null && breakIds.isEmpty() == false) {
-				stage.set("break-block-names", breakIds);
+			if (breakNames != null && breakNames.isEmpty() == false) {
+				stage.set("break-block-names", breakNames);
 				stage.set("break-block-amounts", breakAmounts);
 				stage.set("break-block-durability", breakDurability);
 			}
-			if (damageIds != null && damageIds.isEmpty() == false) {
-				stage.set("damage-block-names", damageIds);
+			if (damageNames != null && damageNames.isEmpty() == false) {
+				stage.set("damage-block-names", damageNames);
 				stage.set("damage-block-amounts", damageAmounts);
 				stage.set("damage-block-durability", damageDurability);
 			}
-			if (placeIds != null && placeIds.isEmpty() == false) {
-				stage.set("place-block-names", placeIds);
+			if (placeNames != null && placeNames.isEmpty() == false) {
+				stage.set("place-block-names", placeNames);
 				stage.set("place-block-amounts", placeAmounts);
 				stage.set("place-block-durability", placeDurability);
 			}
-			if (useIds != null && useIds.isEmpty() == false) {
-				stage.set("use-block-names", useIds);
+			if (useNames != null && useNames.isEmpty() == false) {
+				stage.set("use-block-names", useNames);
 				stage.set("use-block-amounts", useAmounts);
 				stage.set("use-block-durability", useDurability);
 			}
-			if (cutIds != null && cutIds.isEmpty() == false) {
-				stage.set("cut-block-names", cutIds);
+			if (cutNames != null && cutNames.isEmpty() == false) {
+				stage.set("cut-block-names", cutNames);
 				stage.set("cut-block-amounts", cutAmounts);
 				stage.set("cut-block-durability", cutDurability);
 			}

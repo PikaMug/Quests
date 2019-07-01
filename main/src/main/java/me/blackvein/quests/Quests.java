@@ -1851,21 +1851,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
 		for (String s2 : questStages.getKeys(false)) {
 			Stage oStage = new Stage();
-			List<String> breaknames = new LinkedList<String>();
-			List<Integer> breakamounts = new LinkedList<Integer>();
-			List<Short> breakdurability = new LinkedList<Short>();
-			List<String> damagenames = new LinkedList<String>();
-			List<Integer> damageamounts = new LinkedList<Integer>();
-			List<Short> damagedurability = new LinkedList<Short>();
-			List<String> placenames = new LinkedList<String>();
-			List<Integer> placeamounts = new LinkedList<Integer>();
-			List<Short> placedurability = new LinkedList<Short>();
-			List<String> usenames = new LinkedList<String>();
-			List<Integer> useamounts = new LinkedList<Integer>();
-			List<Short> usedurability = new LinkedList<Short>();
-			List<String> cutnames = new LinkedList<String>();
-			List<Integer> cutamounts = new LinkedList<Integer>();
-			List<Short> cutdurability = new LinkedList<Short>();
+			List<String> breakNames = new LinkedList<String>();
+			List<Integer> breakAmounts = new LinkedList<Integer>();
+			List<Short> breakDurability = new LinkedList<Short>();
+			List<String> damageNames = new LinkedList<String>();
+			List<Integer> damageAmounts = new LinkedList<Integer>();
+			List<Short> damageDurability = new LinkedList<Short>();
+			List<String> placeNames = new LinkedList<String>();
+			List<Integer> placeAmounts = new LinkedList<Integer>();
+			List<Short> placeDurability = new LinkedList<Short>();
+			List<String> useNames = new LinkedList<String>();
+			List<Integer> useAmounts = new LinkedList<Integer>();
+			List<Short> useDurability = new LinkedList<Short>();
+			List<String> cutNames = new LinkedList<String>();
+			List<Integer> cutAmounts = new LinkedList<Integer>();
+			List<Short> cutDurability = new LinkedList<Short>();
 			List<EntityType> mobsToKill = new LinkedList<EntityType>();
 			List<Integer> mobNumToKill = new LinkedList<Integer>();
 			List<Location> locationsToKillWithin = new LinkedList<Location>();
@@ -1893,13 +1893,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".break-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-names"), String.class)) {
-					breaknames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-names");
+					breakNames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-names");
 				} else {
 					stageFailed("break-block-names: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of strings!");
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".break-block-amounts")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-amounts"), Integer.class)) {
-						breakamounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-amounts");
+						breakAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-amounts");
 					} else {
 						stageFailed("break-block-amounts: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -1908,7 +1908,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".break-block-durability")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-durability"), Integer.class)) {
-						breakdurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-durability");
+						breakDurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-durability");
 					} else {
 						stageFailed("break-block-durability: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -1917,13 +1917,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			int breakIndex = 0;
-			for (String s : breaknames) {
+			for (String s : breakNames) {
 				ItemStack is;
-				if (breakdurability.get(breakIndex) != -1) {
-					is = ItemUtil.processItemStack(s, breakamounts.get(breakIndex), breakdurability.get(breakIndex));
+				if (breakDurability.get(breakIndex) != -1) {
+					is = ItemUtil.processItemStack(s, breakAmounts.get(breakIndex), breakDurability.get(breakIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, breakamounts.get(breakIndex), (short) 0);
+					is = ItemUtil.processItemStack(s, breakAmounts.get(breakIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToBreak.add(is);
@@ -1934,13 +1934,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-names"), String.class)) {
-					damagenames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-names");
+					damageNames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-names");
 				} else {
 					stageFailed("damage-block-names: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of strings!");
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-amounts")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-amounts"), Integer.class)) {
-						damageamounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-amounts");
+						damageAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-amounts");
 					} else {
 						stageFailed("damage-block-amounts: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -1949,7 +1949,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-durability")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-durability"), Integer.class)) {
-						damagedurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-durability");
+						damageDurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".damage-block-durability");
 					} else {
 						stageFailed("damage-block-durability: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -1958,13 +1958,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			int damageIndex = 0;
-			for (String s : damagenames) {
+			for (String s : damageNames) {
 				ItemStack is;
-				if (damagedurability.get(damageIndex) != -1) {
-					is = ItemUtil.processItemStack(s, damageamounts.get(damageIndex), damagedurability.get(damageIndex));
+				if (damageDurability.get(damageIndex) != -1) {
+					is = ItemUtil.processItemStack(s, damageAmounts.get(damageIndex), damageDurability.get(damageIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, damageamounts.get(damageIndex), (short) 0);
+					is = ItemUtil.processItemStack(s, damageAmounts.get(damageIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToDamage.add(is);
@@ -1975,13 +1975,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".place-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-names"), String.class)) {
-					placenames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-names");
+					placeNames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-names");
 				} else {
 					stageFailed("place-block-names: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of strings!");
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".place-block-amounts")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-amounts"), Integer.class)) {
-						placeamounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-amounts");
+						placeAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-amounts");
 					} else {
 						stageFailed("place-block-amounts: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -1990,7 +1990,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".place-block-durability")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-durability"), Integer.class)) {
-						placedurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-durability");
+						placeDurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".place-block-durability");
 					} else {
 						stageFailed("place-block-durability: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -1999,13 +1999,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			int placeIndex = 0;
-			for (String s : placenames) {
+			for (String s : placeNames) {
 				ItemStack is;
-				if (placedurability.get(placeIndex) != -1) {
-					is = ItemUtil.processItemStack(s, placeamounts.get(placeIndex), placedurability.get(placeIndex));
+				if (placeDurability.get(placeIndex) != -1) {
+					is = ItemUtil.processItemStack(s, placeAmounts.get(placeIndex), placeDurability.get(placeIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, placeamounts.get(placeIndex), (short) 0);
+					is = ItemUtil.processItemStack(s, placeAmounts.get(placeIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToPlace.add(is);
@@ -2016,13 +2016,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".use-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-names"), String.class)) {
-					usenames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-names");
+					useNames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-names");
 				} else {
 					stageFailed("use-block-names: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of strings!");
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".use-block-amounts")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-amounts"), Integer.class)) {
-						useamounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-amounts");
+						useAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-amounts");
 					} else {
 						stageFailed("use-block-amounts: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -2031,7 +2031,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".use-block-durability")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-durability"), Integer.class)) {
-						usedurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-durability");
+						useDurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".use-block-durability");
 					} else {
 						stageFailed("use-block-durability: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -2040,13 +2040,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			int useIndex = 0;
-			for (String s : usenames) {
+			for (String s : useNames) {
 				ItemStack is;
-				if (usedurability.get(useIndex) != -1) {
-					is = ItemUtil.processItemStack(s, useamounts.get(useIndex), usedurability.get(useIndex));
+				if (useDurability.get(useIndex) != -1) {
+					is = ItemUtil.processItemStack(s, useAmounts.get(useIndex), useDurability.get(useIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, useamounts.get(useIndex), (short) 0);
+					is = ItemUtil.processItemStack(s, useAmounts.get(useIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToUse.add(is);
@@ -2057,13 +2057,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-names")) {
 				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-names"), String.class)) {
-					cutnames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-names");
+					cutNames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-names");
 				} else {
 					stageFailed("cut-block-names: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of strings!");
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-amounts")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-amounts"), Integer.class)) {
-						cutamounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-amounts");
+						cutAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-amounts");
 					} else {
 						stageFailed("cut-block-amounts: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -2072,7 +2072,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-durability")) {
 					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-durability"), Integer.class)) {
-						cutdurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-durability");
+						cutDurability = config.getShortList("quests." + questKey + ".stages.ordered." + s2 + ".cut-block-durability");
 					} else {
 						stageFailed("cut-block-durability: in Stage " + s2 + " of Quest " + quest.getName() + " is not a list of numbers!");
 					}
@@ -2081,13 +2081,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			int cutIndex = 0;
-			for (String s : cutnames) {
+			for (String s : cutNames) {
 				ItemStack is;
-				if (cutdurability.get(cutIndex) != -1) {
-					is = ItemUtil.processItemStack(s, cutamounts.get(cutIndex), cutdurability.get(cutIndex));
+				if (cutDurability.get(cutIndex) != -1) {
+					is = ItemUtil.processItemStack(s, cutAmounts.get(cutIndex), cutDurability.get(cutIndex));
 				} else {
 					// Legacy
-					is = ItemUtil.processItemStack(s, cutamounts.get(cutIndex), (short) 0);
+					is = ItemUtil.processItemStack(s, cutAmounts.get(cutIndex), (short) 0);
 				}
 				if (Material.matchMaterial(s) != null) {
 					oStage.blocksToCut.add(is);
