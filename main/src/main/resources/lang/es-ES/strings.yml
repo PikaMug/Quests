@@ -250,6 +250,7 @@ stageEditorObjectiveOverrideCleared: "La anulación de visualización de objetiv
 stageEditorDeliveryAddItem: "Añadir ítem"
 stageEditorDeliveryNPCs: "Establecer IDs de NPC"
 stageEditorDeliveryMessages: "Establecer mensajes de entrega"
+stageEditorNotSolid: "is not a solid block!"
 stageEditorInvalidBlockName: "no es un nombre de bloque válido!"
 stageEditorInvalidEnchantment: "no es un nombre de encantamiento válido!"
 stageEditorInvalidNPC: "no es una ID de NPC válido!"
