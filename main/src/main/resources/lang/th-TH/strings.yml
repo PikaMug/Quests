@@ -250,6 +250,7 @@ stageEditorObjectiveOverrideCleared: "ยกเลิกการลบการ
 stageEditorDeliveryAddItem: "เพิ่มรายการ"
 stageEditorDeliveryNPCs: "ตั้งค่ารหัส NPC"
 stageEditorDeliveryMessages: "ตั้งค่าข้อความการจัดส่ง"
+stageEditorNotSolid: "is not a solid block!"
 stageEditorInvalidBlockName: "ไม่มีชื่อบล็อกที่ถูกต้อง!"
 stageEditorInvalidEnchantment: "ไม่มีชื่อทีถูกต้องของมนต์เสน่ห์"
 stageEditorInvalidNPC: "ไม่ใช่ ID ของ NPC ที่ถูกต้อง!"
