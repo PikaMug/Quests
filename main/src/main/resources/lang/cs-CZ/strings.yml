@@ -250,6 +250,7 @@ stageEditorObjectiveOverrideCleared: "Přepnutí zobrazení cíle bylo zrušeno.
 stageEditorDeliveryAddItem: "Přidat předmět"
 stageEditorDeliveryNPCs: "Nastavit NPC ID"
 stageEditorDeliveryMessages: "Nastavit doručovací zprávu"
+stageEditorNotSolid: "is not a solid block!"
 stageEditorInvalidBlockName: "není platný název bloku!"
 stageEditorInvalidEnchantment: "toto není platné jméno enchantu!"
 stageEditorInvalidNPC: "není platné ID NPC!"
