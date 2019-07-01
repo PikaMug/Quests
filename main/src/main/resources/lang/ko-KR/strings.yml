@@ -250,6 +250,7 @@ stageEditorObjectiveOverrideCleared: "목표 디스플레이 오버라이드가 
 stageEditorDeliveryAddItem: "아이템 추가"
 stageEditorDeliveryNPCs: "NPC ID 설정"
 stageEditorDeliveryMessages: "전달 메시지 설정"
+stageEditorNotSolid: "is not a solid block!"
 stageEditorInvalidBlockName: "올바른 블록 이름이 아닙니다!"
 stageEditorInvalidEnchantment: "유효한 인챈트 이름이 아닙니다!"
 stageEditorInvalidNPC: "유효한 NPC ID가 아닙니다."
