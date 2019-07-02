@@ -82,7 +82,7 @@ public class CmdExecutor implements CommandExecutor {
 		if (cmd.getName().equalsIgnoreCase("quest")) {
 			return questCommandHandler(cs, args);
 		} else if (cmd.getName().equalsIgnoreCase("quests")) {
-			return questActionsCommandHandler(cs, args);
+			return questsCommandHandler(cs, args);
 		} else if (cmd.getName().equalsIgnoreCase("questadmin")) {
 			return questAdminCommandHandler(cs, args);
 		}
@@ -196,7 +196,7 @@ public class CmdExecutor implements CommandExecutor {
 					showQuestDetails(cs, args);
 				}
 			} else {
-				cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+				cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 				return true;
 			}
 		} else {
@@ -206,7 +206,7 @@ public class CmdExecutor implements CommandExecutor {
 		return true;
 	}
 	
-	private boolean questActionsCommandHandler(final CommandSender cs, String[] args) {
+	private boolean questsCommandHandler(final CommandSender cs, String[] args) {
 		if (cs instanceof Player) {
 			if (args.length == 0) {
 				questsHelp(cs);
@@ -419,7 +419,7 @@ public class CmdExecutor implements CommandExecutor {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 	
@@ -443,7 +443,7 @@ public class CmdExecutor implements CommandExecutor {
 				cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 		return true;
 	}
@@ -457,7 +457,7 @@ public class CmdExecutor implements CommandExecutor {
 				cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 		return true;
 	}
@@ -649,7 +649,7 @@ public class CmdExecutor implements CommandExecutor {
 				player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
 			}
 		} else {
-			player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
+			player.sendMessage(ChatColor.RED + Lang.get(player, "noPermission"));
 		}
 	}
 
@@ -742,7 +742,7 @@ public class CmdExecutor implements CommandExecutor {
 					}
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
+				player.sendMessage(ChatColor.RED + Lang.get(player, "noPermission"));
 			}
 		} else {
 			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questTakeDisabled"));
@@ -768,7 +768,7 @@ public class CmdExecutor implements CommandExecutor {
 				plugin.listQuests((Player) cs, page);
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -777,7 +777,7 @@ public class CmdExecutor implements CommandExecutor {
 			Player p = (Player) cs;
 			printHelp(p);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 	
@@ -839,7 +839,7 @@ public class CmdExecutor implements CommandExecutor {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin")) {
 			printAdminHelp(cs);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -851,7 +851,7 @@ public class CmdExecutor implements CommandExecutor {
 			msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size()) + ChatColor.GOLD);
 			cs.sendMessage(ChatColor.GOLD + msg);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -887,7 +887,7 @@ public class CmdExecutor implements CommandExecutor {
 				cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -922,7 +922,7 @@ public class CmdExecutor implements CommandExecutor {
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -958,7 +958,7 @@ public class CmdExecutor implements CommandExecutor {
 				quester.saveData();
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -994,7 +994,7 @@ public class CmdExecutor implements CommandExecutor {
 				quester.saveData();
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1051,7 +1051,7 @@ public class CmdExecutor implements CommandExecutor {
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1126,7 +1126,7 @@ public class CmdExecutor implements CommandExecutor {
 			}
 			thread.start();
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1166,7 +1166,7 @@ public class CmdExecutor implements CommandExecutor {
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1224,7 +1224,7 @@ public class CmdExecutor implements CommandExecutor {
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1264,7 +1264,7 @@ public class CmdExecutor implements CommandExecutor {
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1306,7 +1306,7 @@ public class CmdExecutor implements CommandExecutor {
 					}
 				}
 			} else {
-				cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+				cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 			}
 		} catch (NullPointerException npe) {
 			npe.printStackTrace();
@@ -1353,7 +1353,7 @@ public class CmdExecutor implements CommandExecutor {
 			temp2.add(quester);
 			plugin.setQuesters(temp2);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1361,7 +1361,7 @@ public class CmdExecutor implements CommandExecutor {
 		if (cs.hasPermission("quests.admin.*") && cs.hasPermission("quests.admin.stats")) {
 			questsStats(cs, args);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1390,7 +1390,7 @@ public class CmdExecutor implements CommandExecutor {
 			quester.saveData();
 			quester.updateJournal();
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 	

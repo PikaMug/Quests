@@ -462,8 +462,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						context.setSessionData(pref + CK.S_PLAYER_KILL, i);
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new KillPlayerPrompt();
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -652,7 +651,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 						}
 						radii.add(i);
 					} catch (NumberFormatException e) {
-						player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorInvalidNumber"));
+						player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 						return new ReachRadiiPrompt();
 					}
 				}
@@ -1133,7 +1132,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				int i = Integer.parseInt(input);
 				stageDelay = i * 1000;
 			} catch (NumberFormatException e) {
-				player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorInvalidNumber"));
+				player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 				return new DelayPrompt();
 			}
 			if (stageDelay < 1000) {
@@ -1405,7 +1404,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					return new CreateStagePrompt(plugin, stageNum, questFactory);
 				}
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorInvalidNumber"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 				return new CustomObjectiveCountPrompt();
 			}
 		}

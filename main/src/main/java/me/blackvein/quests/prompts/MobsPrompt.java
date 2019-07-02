@@ -370,7 +370,7 @@ public class MobsPrompt extends FixedSetPrompt {
 						}
 						mobAmounts.add(i);
 					} catch (NumberFormatException e) {
-						player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorInvalidNumber"));
+						player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 						return new MobAmountsPrompt();
 					}
 				}
@@ -490,8 +490,7 @@ public class MobsPrompt extends FixedSetPrompt {
 						context.setSessionData(pref + CK.S_FISH, i);
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new FishPrompt();
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -648,7 +647,7 @@ public class MobsPrompt extends FixedSetPrompt {
 						}
 						mobAmounts.add(i);
 					} catch (NumberFormatException e) {
-						player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorInvalidNumber"));
+						player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 						return new TameAmountsPrompt();
 					}
 				}
@@ -798,7 +797,7 @@ public class MobsPrompt extends FixedSetPrompt {
 						}
 						shearAmounts.add(i);
 					} catch (NumberFormatException e) {
-						player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("stageEditorInvalidNumber"));
+						player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 						return new ShearAmountsPrompt();
 					}
 				}

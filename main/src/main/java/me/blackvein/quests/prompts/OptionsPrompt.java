@@ -92,6 +92,35 @@ public class OptionsPrompt extends FixedSetPrompt {
 		}
 	}
 	
+	private class NumberPrompt extends StringPrompt {
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String text = Lang.get("optNumberPrompt");
+			text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "1" + ChatColor.RESET + " = " + ChatColor.GOLD + Lang.get("everything");
+			text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "2" + ChatColor.RESET + " = " + ChatColor.GOLD + Lang.get("objectives");;
+			text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "3" + ChatColor.RESET + " = " + ChatColor.GOLD + Lang.get("stageEditorStages");
+			text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "4" + ChatColor.RESET + " = " + ChatColor.GOLD + Lang.get("quests");
+			return ChatColor.YELLOW + text;
+		}
+
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					context.setSessionData(tempKey, i);
+				} catch (Exception e) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				context.setSessionData(tempKey, null);
+				return tempPrompt;
+			}
+			return tempPrompt;
+		}
+	}
+	
 	private class GeneralPrompt extends StringPrompt {
 
 		@Override
@@ -166,7 +195,16 @@ public class OptionsPrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optUsePartiesPlugin") + " (" 
 						+ (partiesOpt ? ChatColor.GREEN + String.valueOf(partiesOpt) : ChatColor.RED + String.valueOf(partiesOpt)) + ChatColor.YELLOW +  ")\n";
 			}
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			if (context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) == null) {
+				int defaultOpt = new Options().getShareProgressLevel();
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optShareProgressLevel") + " (" 
+						+ ChatColor.AQUA + String.valueOf(defaultOpt) + ChatColor.YELLOW + ")\n";
+			} else {
+				int shareOpt = (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optShareProgressLevel") + " (" 
+						+ ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.YELLOW + ")\n";
+			}
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			return text;
 		}
 
@@ -181,6 +219,10 @@ public class OptionsPrompt extends FixedSetPrompt {
 				tempPrompt = new MultiplayerPrompt();
 				return new TrueFalsePrompt();
 			} else if (input.equalsIgnoreCase("3")) {
+				tempKey = CK.OPT_SHARE_PROGRESS_LEVEL;
+				tempPrompt = new MultiplayerPrompt();
+				return new NumberPrompt();
+			} else if (input.equalsIgnoreCase("4")) {
 				tempKey = null;
 				tempPrompt = null;
 				try {

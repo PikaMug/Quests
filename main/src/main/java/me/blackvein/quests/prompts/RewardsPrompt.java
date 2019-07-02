@@ -210,8 +210,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						return new MoneyPrompt();
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new MoneyPrompt();
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -241,8 +240,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						return new ExperiencePrompt();
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new ExperiencePrompt();
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -272,8 +270,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						return new QuestPointsPrompt();
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new QuestPointsPrompt();
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {

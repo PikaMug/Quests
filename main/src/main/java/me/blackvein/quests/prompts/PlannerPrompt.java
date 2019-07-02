@@ -130,8 +130,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 					context.setSessionData(CK.PLN_REPEAT_CYCLE, delay);
 				}
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED
-						+ Lang.get("stageEditorInvalidNumber"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 				return new RepeatPrompt();
 			}
 			return new PlannerPrompt(plugin, factory);
@@ -164,8 +163,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 					context.setSessionData(CK.PLN_COOLDOWN, delay);
 				}
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED
-						+ Lang.get("stageEditorInvalidNumber"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 				return new CooldownPrompt();
 			}
 			return new PlannerPrompt(plugin, factory);

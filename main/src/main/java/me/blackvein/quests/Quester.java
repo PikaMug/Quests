@@ -46,6 +46,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.alessiodp.parties.api.interfaces.Party;
+
+import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.timers.StageTimer;
@@ -1050,6 +1053,18 @@ public class Quester {
 				}
 			}
 		}
+		
+		// Multiplayer
+		if (quest.getOptions().getShareProgressLevel() == 1) {
+			List<Quester> mq = getMultiplayerQuesters(quest);
+			if (mq != null) {
+				for (Quester q : mq) {
+					if (q.getCurrentQuests().containsKey(quest)) {
+						q.breakBlock(quest, m);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -1740,19 +1755,11 @@ public class Quester {
 			EntityType mob, String extra, NPC npc, Location location, DyeColor color, String pass, CustomObjective co) {
 		Player p = getPlayer();
 		if (getCurrentStage(quest).objectiveOverride != null) {
-			if (testComplete(quest)) {
-				String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + getCurrentStage(quest).objectiveOverride;
-				p.sendMessage(message);
-				quest.nextStage(this);
-			}
-			return;
-		}
-		if (objective.equalsIgnoreCase("password")) {
+			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + getCurrentStage(quest).objectiveOverride;
+			p.sendMessage(message);
+		} else if (objective.equalsIgnoreCase("password")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass;
 			p.sendMessage(message);
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("breakBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break") + " <item>";
 			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
@@ -1760,9 +1767,6 @@ public class Quester {
 				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			} else {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
-			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("damageBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "damage") + " <item>";
@@ -1772,9 +1776,6 @@ public class Quester {
 			} else {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
 			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("placeBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "place") + " <item>";
 			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
@@ -1782,9 +1783,6 @@ public class Quester {
 				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			} else {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
-			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("useBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "use") + " <item>";
@@ -1794,9 +1792,6 @@ public class Quester {
 			} else {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
 			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("cutBlock")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "cut") + " <item>";
 			message = message + " " + goal.getAmount() + "/" + goal.getAmount();
@@ -1804,9 +1799,6 @@ public class Quester {
 				plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
 			} else {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
-			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("craftItem")) {
 			ItemStack is = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(goal));
@@ -1817,9 +1809,6 @@ public class Quester {
 			} else {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
 			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("smeltItem")) {
 			ItemStack is = getCurrentStage(quest).itemsToSmelt.get(getCurrentStage(quest).itemsToSmelt.indexOf(goal));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "smelt") + " <item> "
@@ -1828,9 +1817,6 @@ public class Quester {
 				plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
 			} else {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
 			}
 		} else if (objective.equalsIgnoreCase("enchantItem")) {
 			String obj = Lang.get(p, "enchantItem");
@@ -1849,9 +1835,6 @@ public class Quester {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment))
 						.replace("<enchantment>", enchantment.getName()));
 			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("deliverItem")) {
 			String obj = Lang.get(p, "deliver");
 			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(goal))));
@@ -1862,16 +1845,10 @@ public class Quester {
 			} else {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
 			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("catchFish")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "catchFish") + " ";
 			message = message + " " + getCurrentStage(quest).fishToCatch + "/" + getCurrentStage(quest).fishToCatch;
 			p.sendMessage(message);
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("killMob")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill") + " <mob>";
 			message = message + " " + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob)) + "/" + getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill.indexOf(mob));
@@ -1880,31 +1857,19 @@ public class Quester {
 			} else {
 				p.sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(mob)));
 			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("killPlayer")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "killPlayer");
 			message = message + " " + getCurrentStage(quest).playersToKill + "/" + getCurrentStage(quest).playersToKill;
 			p.sendMessage(message);
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("talkToNPC")) {
 			String obj = Lang.get(p, "talkTo");
 			obj = obj.replace("<npc>", plugin.getNPCName(npc.getId()));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			p.sendMessage(message);
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("killNPC")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill") + " " + npc.getName();
 			message = message + " " + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(npc.getId())) + "/" + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill.indexOf(npc.getId()));
 			p.sendMessage(message);
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("tameMob")) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame") + " <mob>";
 			message = message + " " + getCurrentStage(quest).mobsToTame.get(mob) + "/" + getCurrentStage(quest).mobsToTame.get(mob);
@@ -1913,26 +1878,17 @@ public class Quester {
 			} else {
 				p.sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(mob)));
 			}
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("shearSheep")) {
 			String obj = Lang.get(p, "shearSheep");
 			obj = obj.replace("<color>", color.name().toLowerCase());
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			message = message + " " + getCurrentStage(quest).sheepToShear.get(color) + "/" + getCurrentStage(quest).sheepToShear.get(color);
 			p.sendMessage(message);
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (objective.equalsIgnoreCase("reachLocation")) {
 			String obj = Lang.get(p, "goTo");
 			obj = obj.replace("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest).locationsToReach.indexOf(location)));
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
 			p.sendMessage(message);
-			if (testComplete(quest)) {
-				quest.nextStage(this);
-			}
 		} else if (co != null) {
 			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + co.getDisplay();
 			int index = -1;
@@ -1954,17 +1910,29 @@ public class Quester {
 				message = message.replace("%count%", getCurrentStage(quest).customObjectiveCounts.get(index) + "/" + getCurrentStage(quest).customObjectiveCounts.get(index));
 			}
 			p.sendMessage(message);
-			if (testComplete(quest)) {
-				quest.nextStage(this);
+		}
+		if (testComplete(quest)) {
+			quest.nextStage(this);
+		}
+		
+		// Multiplayer
+		if (quest.getOptions().getShareProgressLevel() == 2) {
+			List<Quester> mq = getMultiplayerQuesters(quest);
+			if (mq != null) {
+				for (Quester q : mq) {
+					if (q.getCurrentQuests().containsKey(quest)) {
+						quest.nextStage(q);
+					}
+				}
 			}
 		}
 	}
 	
 	/**
-	 * Check whether a quest has been marked as complete
+	 * Check whether this Quester has completed all objectives for their current stage
 	 * 
-	 * @param quest The quest being checked
-	 * @return true if marked complete
+	 * @param quest The quest with the current stage being checked
+	 * @return true if all stage objectives are marked complete
 	 */
 	public boolean testComplete(Quest quest) {
 		for (String s : getObjectives(quest, true)) {
@@ -3027,6 +2995,47 @@ public class Quester {
 			}
 		}
 		return playerAmount >= is.getAmount();
+	}
+	
+	/**
+	 * Get a list of follow Questers in a party or group
+	 * 
+	 * @param quest The quest which uses a linked plugin, i.e. Parties or DungeonsXL
+	 * @return null if quest is null, no linked plugins, or party/group is null
+	 */
+	public List<Quester> getMultiplayerQuesters(Quest quest) {
+		if (quest == null) {
+			return null;
+		}
+		if (plugin.getDependencies().getPartiesApi() != null) {
+			if (quest.getOptions().getUsePartiesPlugin()) {
+				Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(getUUID()).getPartyName());
+				if (party != null) {
+					List<Quester> mq = new LinkedList<Quester>();
+					for (UUID id : party.getMembers()) {
+						if (!id.equals(getUUID())) {
+							mq.add(plugin.getQuester(id));
+						}
+					}
+					return mq;
+				}
+			}
+		}
+		if (plugin.getDependencies().getDungeonsApi() != null) {
+			if (quest.getOptions().getUseDungeonsXLPlugin()) {
+				DGroup group = DGroup.getByPlayer(getPlayer());
+				if (group != null) {
+					List<Quester> mq = new LinkedList<Quester>();
+					for (UUID id : group.getPlayers()) {
+						if (!id.equals(getUUID())) {
+							mq.add(plugin.getQuester(id));
+						}
+					}
+					return mq;
+				}
+			}
+		}
+		return null;
 	}
 	
 	// I'm not sure why these methods are here. They've been in the class for a long time but aren't used anywhere?

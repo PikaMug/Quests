@@ -1651,7 +1651,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 				try {
 					inp = Integer.parseInt(input);
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorNotANumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new MobPrompt();
 				}
 				if (inp == types.size() + 1) {
@@ -1889,7 +1889,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 					questMob.setSpawnAmounts(i);
 					return new QuestMobPrompt(mobIndex, questMob);
 				} catch (NumberFormatException e) {
-					player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("eventEditorNotANumber"));
+					player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new MobAmountPrompt(mobIndex, questMob);
 				}
 			}
@@ -2174,7 +2174,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 						}
 						effDurations.add(l / 50L);
 					} catch (NumberFormatException e) {
-						player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("eventEditorNotANumber"));
+						player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
 						return new PotionDurationsPrompt();
 					}
 				}
@@ -2205,7 +2205,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 						}
 						magAmounts.add(i);
 					} catch (NumberFormatException e) {
-						player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("eventEditorNotANumber"));
+						player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
 						return new PotionMagnitudesPrompt();
 					}
 				}
@@ -2234,8 +2234,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 						context.setSessionData(CK.E_HUNGER, (Integer) i);
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new HungerPrompt();
 				}
 			} else {
@@ -2264,8 +2263,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 						context.setSessionData(CK.E_SATURATION, (Integer) i);
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new SaturationPrompt();
 				}
 			} else {
@@ -2294,8 +2292,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 						context.setSessionData(CK.E_HEALTH, (Integer) i);
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new HealthPrompt();
 				}
 			} else {

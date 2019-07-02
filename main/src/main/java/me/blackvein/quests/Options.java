@@ -17,6 +17,7 @@ public class Options {
 	private boolean allowQuitting = true;
 	private boolean useDungeonsXLPlugin = false;
 	private boolean usePartiesPlugin = true;
+	private int shareProgressLevel = 1;
 	
 	public boolean getAllowCommands() {
 		return allowCommands;
@@ -48,5 +49,13 @@ public class Options {
 	
 	public void setUsePartiesPlugin(boolean usePartiesPlugin) {
 		this.usePartiesPlugin = usePartiesPlugin;
+	}
+	
+	public int getShareProgressLevel() {
+		return shareProgressLevel;
+	}
+	
+	public void setShareProgressLevel(int shareProgressLevel) {
+		this.shareProgressLevel = shareProgressLevel;
 	}
 }

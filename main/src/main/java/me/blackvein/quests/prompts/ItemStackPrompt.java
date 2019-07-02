@@ -435,7 +435,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 						return new ItemStackPrompt(oldPrompt);
 					}
 				} catch (NumberFormatException e) {
-					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNotNumber"));
+					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new LevelPrompt(enchantment);
 				}
 			}

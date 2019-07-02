@@ -14,9 +14,9 @@ package me.blackvein.quests;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,7 +27,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import com.alessiodp.parties.api.interfaces.Party;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.codisimus.plugins.phatloots.loot.CommandLoot;
 import com.codisimus.plugins.phatloots.loot.LootBundle;
@@ -37,7 +36,6 @@ import com.herocraftonline.heroes.characters.Hero;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
-import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.events.quester.QuesterPostChangeStageEvent;
 import me.blackvein.quests.events.quester.QuesterPostCompleteQuestEvent;
@@ -185,36 +183,6 @@ public class Quest {
 				if (q.getCurrentStage(this).finishEvent != null) {
 					q.getCurrentStage(this).finishEvent.fire(q, this);
 				}
-				if (plugin.getDependencies().getPartiesApi() != null) {
-					if (opts.getUsePartiesPlugin()) {
-						Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(q.getUUID()).getPartyName());
-						if (party != null) {
-							for (UUID id : party.getMembers()) {
-								if (!id.equals(q.getUUID())) {
-									if (plugin.getQuester(id).getCurrentQuests().containsKey(this)) {
-										completeQuest(plugin.getQuester(id));
-									}
-								}
-							}
-							plugin.getLogger().info("Quest \'" + name + "\' was completed by party " + party.getName() + " (" + party.getMembers().size() + " members)");
-						}
-					}
-				}
-				if (plugin.getDependencies().getDungeonsApi() != null) {
-					if (opts.getUseDungeonsXLPlugin()) {
-						DGroup group = DGroup.getByPlayer(q.getPlayer());
-						if (group != null) {
-							for (UUID id : group.getPlayers().getUniqueIds()) {
-								if (!id.equals(q.getUUID())) {
-									if (plugin.getQuester(id).getCurrentQuests().containsKey(this)) {
-										completeQuest(plugin.getQuester(id));
-									}
-								}
-							}
-							plugin.getLogger().info("Quest \'" + name + "\' was completed by group " + group.getName() + " (" + group.getPlayers().size() + " players)");
-						}
-					}
-				}
 				completeQuest(q);
 			} else {
 				try {
@@ -222,6 +190,22 @@ public class Quest {
 						q.getCurrentStage(this).finishEvent.fire(q, this);
 					}
 					setStage(q, q.currentQuests.get(this) + 1);
+				} catch (InvalidStageException e) {
+					e.printStackTrace();
+				}
+				
+				// Multiplayer
+				try {
+					if (opts.getShareProgressLevel() == 3) {
+						List<Quester> mq = q.getMultiplayerQuesters(this);
+						if (mq != null) {
+							for (Quester qq : mq) {
+								if (qq.getCurrentQuests().containsKey(this)) {
+									setStage(qq, qq.currentQuests.get(this) + 1);
+								}
+							}
+						}
+					}
 				} catch (InvalidStageException e) {
 					e.printStackTrace();
 				}
@@ -692,6 +676,18 @@ public class Quest {
 		q.findCompassTarget();
 		QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(q, this);
         plugin.getServer().getPluginManager().callEvent(postEvent);
+        
+        // Multiplayer
+        if (opts.getShareProgressLevel() == 4) {
+        	List<Quester> mq = q.getMultiplayerQuesters(this);
+    		if (mq != null) {
+    			for (Quester qq : mq) {
+    				if (qq.getCurrentQuests().containsKey(this)) {
+    					completeQuest(qq);
+    				}
+    			}
+    		}
+        }
 	}
 	
 	/**
