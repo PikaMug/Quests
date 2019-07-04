@@ -1500,8 +1500,9 @@ public class ActionFactory implements ConversationAbandonedListener {
 			if (input.intValue() < 1) {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 				return new StormDurationPrompt();
+			} else {
+				context.setSessionData(CK.E_WORLD_STORM_DURATION, input.intValue());
 			}
-			context.setSessionData(CK.E_WORLD_STORM_DURATION, input.intValue());
 			return new StormPrompt();
 		}
 	}
@@ -1517,7 +1518,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 			String text = ChatColor.GOLD + Lang.get("eventEditorThunderTitle") + "\n";
 			if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -1599,7 +1600,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		@Override
 		protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
 			if (input.intValue() < 1) {
-				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAtLeastOneSecond"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
 				return new ThunderDurationPrompt();
 			} else {
 				context.setSessionData(CK.E_WORLD_THUNDER_DURATION, input.intValue());
