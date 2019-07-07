@@ -1358,10 +1358,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 			if (delay != null) {
 				stage.set("delay", delay.intValue() / 1000);
 			}
-			stage.set("delay-message", delayMessage);
-			stage.set("objective-override", overrideDisplay);
-			stage.set("start-message", startMessage);
-			stage.set("complete-message", completeMessage);
+			stage.set("delay-message", delayMessage.replace("\\n", "\n"));
+			stage.set("objective-override", overrideDisplay.replace("\\n", "\n"));
+			stage.set("start-message", startMessage.replace("\\n", "\n"));
+			stage.set("complete-message", completeMessage.replace("\\n", "\n"));
 		}
 		if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false || phatLootRews != null && phatLootRews.isEmpty() == false || customRews != null && customRews.isEmpty() == false) {
 			ConfigurationSection rews = cs.createSection("rewards");
