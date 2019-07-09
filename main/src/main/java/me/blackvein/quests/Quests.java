@@ -3029,7 +3029,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 		}
-		message = message.substring(1, message.length() - 1);
+		if (message.length() > 0) {
+			message = message.substring(1, message.length() - 1);
+		}
 		return message;
 	}
 	

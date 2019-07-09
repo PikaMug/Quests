@@ -2820,7 +2820,12 @@ public class Quester {
 		}
 		getQuestData(quest).delayOver = false;
 	}
-
+	
+	/**
+	 * Get remaining stage delay time
+	 * @param quest The quest of which the timer is for
+	 * @return Remaining time in milliseconds
+	 */
 	public long getStageTime(Quest quest) {
 		if (getQuestData(quest).delayTimeLeft > -1) {
 			return getQuestData(quest).delayTimeLeft - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);

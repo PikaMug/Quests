@@ -187,6 +187,12 @@ public class CmdExecutor implements CommandExecutor {
 								msg = msg.replace("<quest>", q.getName());
 								player.sendMessage(ChatColor.GOLD + msg);
 								plugin.showObjectives(q, quester, false);
+							} else {
+								long time = plugin.getQuester(player.getUniqueId()).getStageTime(q);
+								String msg = ChatColor.YELLOW + "(" + Lang.get(player, "delay") + ") " + ChatColor.RED +  Lang.get(player, "plnTooEarly");
+								msg = msg.replace("<quest>", q.getName());
+								msg = msg.replace("<time>", Quests.getTime(time));
+								player.sendMessage(msg);
 							}
 						}
 					} else {

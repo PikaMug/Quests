@@ -132,7 +132,7 @@ public class ItemUtil {
 						+ "in accordance with https://bit.ly/2BkBNNN");
 				return new ItemStack(Material.matchMaterial(material, true), amount, durability);
 			} catch (Exception e2) {
-				Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " for as item name");
+				Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
 				e2.printStackTrace();
 				return null;
 			}
