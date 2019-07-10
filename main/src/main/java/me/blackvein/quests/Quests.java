@@ -1234,35 +1234,83 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			}
 		}
 	}
-
+	
+	/**
+	 * Show the player a list of their quests
+	 * 
+	 * @deprecated Use #listQuests(Quester)
+	 * @param player Player to show the list
+	 * @param page Page to display, with 7 quests per page
+	 */
 	public void listQuests(Player player, int page) {
+		listQuests(getQuester(player.getUniqueId()), page);
+	}
+	
+	/**
+	 * Show the player a list of their quests
+	 * 
+	 * @param player Player to show the list
+	 * @param page Page to display, with 7 quests per page
+	 */
+	public void listQuests(Quester quester, int page) {
+		// Although we could copy the quests list to a new object, we instead opt to
+		// duplicate code to improve efficiency if ignore-locked-quests is set to 'false'
         int rows = 7;
-        if ((quests.size() + rows) < ((page * rows)) || quests.size() == 0) {
-            player.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
-        } else {
-            player.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
-            int fromOrder = (page - 1) * rows;
- 
-            List<Quest> subQuests;
- 
-            if (quests.size() >= (fromOrder + rows)) {
-                subQuests = quests.subList((fromOrder), (fromOrder + rows));
+        Player player = quester.getPlayer();
+        if (getSettings().canIgnoreLockedQuests()) {
+        	LinkedList<Quest> available = new LinkedList<Quest>();
+        	for (Quest q : quests) {
+        		if (quester.getCompletedQuests().contains(q.getName()) == false) {
+        			if (q.testRequirements(player)) {
+            			available.add(q);
+            		}
+        		}
+        	}
+        	if ((available.size() + rows) <= ((page * rows)) || available.size() == 0) {
+                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
             } else {
-                subQuests = quests.subList((fromOrder), quests.size());
-            }
- 
-            fromOrder++;
- 
-            for (Quest q : subQuests) {
-                player.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                player.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                int fromOrder = (page - 1) * rows;
+                List<Quest> subQuests;
+                if (available.size() >= (fromOrder + rows)) {
+                    subQuests = available.subList((fromOrder), (fromOrder + rows));
+                } else {
+                    subQuests = available.subList((fromOrder), available.size());
+                }
                 fromOrder++;
+                for (Quest q : subQuests) {
+                    player.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                    fromOrder++;
+                }
+                int numPages = (int) Math.ceil(((double) available.size()) / ((double) rows));
+                String msg = Lang.get(player, "pageFooter");
+                msg = msg.replace("<current>", String.valueOf(page));
+                msg = msg.replace("<all>", String.valueOf(numPages));
+                player.sendMessage(ChatColor.GOLD + msg);
             }
-            int numPages = (int) Math.ceil(((double) quests.size()) / ((double) rows));
- 
-            String msg = Lang.get(player, "pageFooter");
-            msg = msg.replace("<current>", String.valueOf(page));
-            msg = msg.replace("<all>", String.valueOf(numPages));
-            player.sendMessage(ChatColor.GOLD + msg);
+        } else {
+        	if ((quests.size() + rows) <= ((page * rows)) || quests.size() == 0) {
+                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+            } else {
+                player.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                int fromOrder = (page - 1) * rows;
+                List<Quest> subQuests;
+                if (quests.size() >= (fromOrder + rows)) {
+                    subQuests = quests.subList((fromOrder), (fromOrder + rows));
+                } else {
+                    subQuests = quests.subList((fromOrder), quests.size());
+                }
+                fromOrder++;
+                for (Quest q : subQuests) {
+                    player.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                    fromOrder++;
+                }
+                int numPages = (int) Math.ceil(((double) quests.size()) / ((double) rows));
+                String msg = Lang.get(player, "pageFooter");
+                msg = msg.replace("<current>", String.valueOf(page));
+                msg = msg.replace("<all>", String.valueOf(numPages));
+                player.sendMessage(ChatColor.GOLD + msg);
+            }
         }
 	}
 

@@ -755,6 +755,7 @@ public class CmdExecutor implements CommandExecutor {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void questsList(final CommandSender cs, String[] args) {
 		if (((Player) cs).hasPermission("quests.list")) {
 			if (args.length == 1) {
