@@ -799,6 +799,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		List<Integer> RPGItemAmounts = null;
 		Integer expRew = null;
 		List<String> commandRews = null;
+		List<String> commandDisplayOverrideRews = null;
 		List<String> permRews = null;
 		List<String> mcMMOSkillRews = null;
 		List<Integer> mcMMOSkillAmounts = null;
@@ -893,6 +894,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		if (cc.getSessionData(CK.REW_COMMAND) != null) {
 			commandRews = new LinkedList<String>();
 			commandRews.addAll((List<String>)cc.getSessionData(CK.REW_COMMAND));
+		}
+		if (cc.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) != null) {
+			commandDisplayOverrideRews = new LinkedList<String>();
+			commandDisplayOverrideRews.addAll((List<String>)cc.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY));
 		}
 		if (cc.getSessionData(CK.REW_PERMISSION) != null) {
 			permRews = new LinkedList<String>();
@@ -1363,7 +1368,11 @@ public class QuestFactory implements ConversationAbandonedListener {
 			stage.set("start-message", startMessage == null ? startMessage : startMessage.replace("\\n", "\n"));
 			stage.set("complete-message", completeMessage == null ? completeMessage : completeMessage.replace("\\n", "\n"));
 		}
-		if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false || permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false || mcMMOSkillRews != null || RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false || phatLootRews != null && phatLootRews.isEmpty() == false || customRews != null && customRews.isEmpty() == false) {
+		if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false 
+				|| permRews != null && permRews.isEmpty() == false || expRew != null || commandRews != null && commandRews.isEmpty() == false 
+				|| commandDisplayOverrideRews != null && commandDisplayOverrideRews.isEmpty() == false || mcMMOSkillRews != null 
+				|| RPGItemRews != null || heroesClassRews != null && heroesClassRews.isEmpty() == false 
+				|| phatLootRews != null && phatLootRews.isEmpty() == false || customRews != null && customRews.isEmpty() == false) {
 			ConfigurationSection rews = cs.createSection("rewards");
 			rews.set("items", (itemRews != null && itemRews.isEmpty() == false) ? itemRews : null);
 			rews.set("money", moneyRew);
@@ -1371,6 +1380,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			rews.set("exp", expRew);
 			rews.set("permissions", permRews);
 			rews.set("commands", commandRews);
+			rews.set("commands-override-display", commandDisplayOverrideRews);
 			rews.set("mcmmo-skills", mcMMOSkillRews);
 			rews.set("mcmmo-levels", mcMMOSkillAmounts);
 			rews.set("rpgitem-names", RPGItemRews);
@@ -1491,6 +1501,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		if (rews.getCommands().isEmpty() == false) {
 			cc.setSessionData(CK.REW_COMMAND, rews.getCommands());
+		}
+		if (rews.getCommandsOverrideDisplay().isEmpty() == false) {
+			cc.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, rews.getCommandsOverrideDisplay());
 		}
 		if (rews.getPermissions().isEmpty() == false) {
 			cc.setSessionData(CK.REW_PERMISSION, rews.getPermissions());

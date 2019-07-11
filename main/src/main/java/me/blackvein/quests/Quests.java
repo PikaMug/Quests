@@ -1565,10 +1565,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		if (config.contains("quests." + questKey + ".rewards.commands")) {
 			if (Quests.checkList(config.getList("quests." + questKey + ".rewards.commands"), String.class)) {
-				
 				rews.setCommands(config.getStringList("quests." + questKey + ".rewards.commands"));
 			} else {
 				skipQuestProcess("commands: Reward in Quest " + quest.getName() + " is not a list of commands!");
+			}
+		}
+		if (config.contains("quests." + questKey + ".rewards.commands-override-display")) {
+			if (Quests.checkList(config.getList("quests." + questKey + ".rewards.commands-override-display"), String.class)) {
+				rews.setCommandsOverrideDisplay(config.getStringList("quests." + questKey + ".rewards.commands-override-display"));
+			} else {
+				skipQuestProcess("commands-override-display: Reward in Quest " + quest.getName() + " is not a list of strings!");
 			}
 		}
 		if (config.contains("quests." + questKey + ".rewards.permissions")) {

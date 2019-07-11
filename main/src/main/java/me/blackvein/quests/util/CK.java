@@ -114,6 +114,7 @@ public class CK {
 	public static final String REW_ITEMS = "itemRews";
 	public static final String REW_EXP = "expRew";
 	public static final String REW_COMMAND = "commandRews";
+	public static final String REW_COMMAND_OVERRIDE_DISPLAY = "commandOverrideDisplay";
 	public static final String REW_PERMISSION = "permissionRews";
 	public static final String REW_MCMMO_SKILLS = "mcMMOSkillRews";
 	public static final String REW_MCMMO_AMOUNTS = "mcMMOSkillAmounts";

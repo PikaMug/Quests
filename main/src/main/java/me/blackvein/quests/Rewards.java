@@ -24,6 +24,7 @@ public class Rewards {
 	private int questPoints = 0;
 	private int exp = 0;
 	private List<String> commands = new LinkedList<String>();
+	private List<String> commandsOverrideDisplay = new LinkedList<String>();
 	private List<String> permissions = new LinkedList<String>();
 	private List<ItemStack> items = new LinkedList<ItemStack>();
 	private List<String> mcmmoSkills = new LinkedList<String>();
@@ -56,6 +57,12 @@ public class Rewards {
 	}
 	public void setCommands(List<String> commands) {
 		this.commands = commands;
+	}
+	public List<String> getCommandsOverrideDisplay() {
+		return commandsOverrideDisplay;
+	}
+	public void setCommandsOverrideDisplay(List<String> commandsOverrideDisplay) {
+		this.commandsOverrideDisplay = commandsOverrideDisplay;
 	}
 	public List<String> getPermissions() {
 		return permissions;

@@ -78,8 +78,11 @@ public class RewardsPrompt extends FixedSetPrompt {
 		} else {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
 			List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
+			List<String> overrides = (List<String>) context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY);
+			int index = 0;
 			for (String cmd : commands) {
-				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd + (overrides != null ? ChatColor.GRAY + " (\"" + ChatColor.AQUA + overrides.get(index) + ChatColor.GRAY + "\")" : "") + "\n";
+				index++;
 			}
 		}
 		if (context.getSessionData(CK.REW_PERMISSION) == null) {
@@ -156,7 +159,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		} else if (input.equalsIgnoreCase("4")) {
 			return new ExperiencePrompt();
 		} else if (input.equalsIgnoreCase("5")) {
-			return new CommandsPrompt();
+			return new CommandsListPrompt();
 		} else if (input.equalsIgnoreCase("6")) {
 			return new PermissionsPrompt();
 		} else if (input.equalsIgnoreCase("7")) {
@@ -340,6 +343,72 @@ public class RewardsPrompt extends FixedSetPrompt {
 		}
 	}
 
+	private class CommandsListPrompt extends FixedSetPrompt {
+
+		public CommandsListPrompt() {
+			super("1", "2", "3", "4");
+		}
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String text = ChatColor.GOLD + "- " + Lang.get("rewCommands") + " -\n";
+			if (context.getSessionData(CK.REW_COMMAND) == null) {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetCommandsOverrides") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+				text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			} else {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
+				for (String s : getCommand(context)) {
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+				}
+				if (context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) == null) {
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommandsOverrides") + " (" + Lang.get("stageEditorOptional") + ")\n";
+				} else {
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommandsOverrides") + "\n";
+					for (String s : getCommandOverrideDisplay(context)) {
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+					}
+				}
+				text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+				text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			}
+			return text;
+		}
+
+		@Override
+		protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase("1")) {
+				return new CommandsPrompt();
+			} else if (input.equalsIgnoreCase("2")) {
+				if (context.getSessionData(CK.REW_COMMAND) == null) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewNoCommands"));
+					return new CommandsListPrompt();
+				} else {
+					return new CommandsOverrideDisplayPrompt();
+				}
+			} else if (input.equalsIgnoreCase("3")) {
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCommandsCleared"));
+				context.setSessionData(CK.REW_COMMAND, null);
+				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, null);
+				return new CommandsListPrompt();
+			} else if (input.equalsIgnoreCase("4")) {
+				return new RewardsPrompt(plugin, factory);
+			}
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		private List<String> getCommand(ConversationContext context) {
+			return (List<String>) context.getSessionData(CK.REW_COMMAND);
+		}
+
+		@SuppressWarnings("unchecked")
+		private List<String> getCommandOverrideDisplay(ConversationContext context) {
+			return (List<String>) context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY);
+		}
+	}
+	
 	private class CommandsPrompt extends StringPrompt {
 
 		@Override
@@ -365,7 +434,35 @@ public class RewardsPrompt extends FixedSetPrompt {
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REW_COMMAND, null);
 			}
-			return new RewardsPrompt(plugin, factory);
+			return new CommandsListPrompt();
+		}
+	}
+	
+	private class CommandsOverrideDisplayPrompt extends StringPrompt {
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String text = ChatColor.YELLOW + Lang.get("rewCommandsOverridePrompt") + "\n";
+			text += ChatColor.ITALIC + "" + ChatColor.GOLD + Lang.get("rewCommandsOverrideHint");
+			return text;
+		}
+
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				String[] args = input.split(Lang.get("charSemi"));
+				List<String> overrides = new LinkedList<String>();
+				for (String s : args) {
+					if (s.startsWith("/")) {
+						s = s.substring(1);
+					}
+					overrides.add(s);
+				}
+				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, overrides);
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, null);
+			}
+			return new CommandsListPrompt();
 		}
 	}
 

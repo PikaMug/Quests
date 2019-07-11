@@ -133,7 +133,10 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s + "\n";
 			}
 		}
-		if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null && context.getSessionData(CK.REQ_CUSTOM) == null) {
+		if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
+				&& context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null 
+				&& context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
+				&& context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null && context.getSessionData(CK.REQ_CUSTOM) == null) {
 			text += ChatColor.GRAY + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.GRAY + Lang.get("reqSetFail") + " (" + Lang.get("reqNone") + ")\n";
 		} else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
 			text += ChatColor.RED + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.RED + Lang.get("reqSetFail") + " (" + Lang.get("questRequiredNoneSet") + ")\n";
