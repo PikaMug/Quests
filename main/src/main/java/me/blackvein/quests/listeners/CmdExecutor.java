@@ -31,12 +31,10 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.events.quest.QuestQuitEvent;
-import me.blackvein.quests.events.quest.QuestTakeEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
-import me.blackvein.quests.util.WorldGuardAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,9 +50,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class CmdExecutor implements CommandExecutor {
 	private final Quests plugin;
@@ -668,81 +663,7 @@ public class CmdExecutor implements CommandExecutor {
 					Quest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
 					if (questToFind != null) {
 						final Quest q = questToFind;
-						final Quester quester = plugin.getQuester(player.getUniqueId());
-						QuestTakeEvent event = new QuestTakeEvent(q, quester);
-				        plugin.getServer().getPluginManager().callEvent(event);
-				        if (event.isCancelled()) {
-				            return;
-				        }
-						if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
-							String msg = Lang.get(player, "questMaxAllowed");
-							msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (quester.getCurrentQuests().containsKey(q)) {
-							String msg = Lang.get(player, "questAlreadyOn");
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (quester.getCompletedQuests().contains(q.getName()) && q.getPlanner().getCooldown() < 0) {
-							String msg = Lang.get(player, "questAlreadyCompleted");
-							msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + q.getName() + ChatColor.YELLOW);
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (q.getNpcStart() != null && plugin.getSettings().canAllowCommandsForNpcQuests() == false) {
-							String msg = Lang.get(player, "mustSpeakTo");
-							msg = msg.replace("<npc>", ChatColor.DARK_PURPLE + q.getNpcStart().getName() + ChatColor.YELLOW);
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (q.getBlockStart() != null) {
-							String msg = Lang.get(player, "noCommandStart");
-							msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + q.getName() + ChatColor.YELLOW);
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else {
-							boolean takeable = true;
-							if (quester.getCompletedQuests().contains(q.getName())) {
-								if (quester.getCooldownDifference(q) > 0) {
-									String early = Lang.get(player, "questTooEarly");
-									early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-									early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
-									player.sendMessage(ChatColor.YELLOW + early);
-									takeable = false;
-								}
-							}
-							if (q.getRegion() != null) {
-								boolean inRegion = false;
-								Player p = quester.getPlayer();
-								WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-								RegionManager rm = api.getRegionManager(p.getWorld());
-								Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
-								while (it.hasNext()) {
-									ProtectedRegion pr = it.next();
-									if (pr.getId().equalsIgnoreCase(q.getRegion())) {
-										inRegion = true;
-										break;
-									}
-								}
-								if (inRegion == false) {
-									String msg = Lang.get(player, "questInvalidLocation");
-									msg = msg.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-									player.sendMessage(ChatColor.YELLOW + msg);
-									takeable = false;
-								}
-							}
-							if (takeable == true) {
-								if (player instanceof Conversable) {
-									if (((Player) player).isConversing() == false) {
-										quester.setQuestToTake(q.getName());
-										String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.getQuestToTake() + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(quester.getQuestToTake()).getDescription() + "\n";
-										for (String msg : s.split("<br>")) {
-											player.sendMessage(msg);
-										}
-										if (!plugin.getSettings().canAskConfirmation()) {
-											plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
-										} else {
-											plugin.getConversationFactory().buildConversation((Conversable) player).begin();
-										}
-									} else {
-										player.sendMessage(ChatColor.YELLOW + Lang.get(player, "alreadyConversing"));
-									}
-								}
-							}
-						}
+						plugin.getQuester(player.getUniqueId()).offerQuest(q, true);
 					} else {
 						player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questNotFound"));
 					}

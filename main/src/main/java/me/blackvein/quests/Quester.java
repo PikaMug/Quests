@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -47,8 +49,11 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.alessiodp.parties.api.interfaces.Party;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import de.erethon.dungeonsxl.player.DGroup;
+import me.blackvein.quests.events.quest.QuestTakeEvent;
 import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.timers.StageTimer;
@@ -56,6 +61,7 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
+import me.blackvein.quests.util.WorldGuardAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 public class Quester {
@@ -387,7 +393,13 @@ public class Quester {
 			inv.setItem(index, stack);
 		}
 	}
-
+	
+	/**
+	 * Start a quest for this Quester
+	 * 
+	 * @param q The quest to start
+	 * @param override Whether to ignore Requirements
+	 */
 	public void takeQuest(Quest q, boolean override) {
 		if (q == null) {
 			return;
@@ -2843,7 +2855,12 @@ public class Quester {
 		}
 		return completedQuests.isEmpty() == false;
 	}
-
+	
+	/**
+	 * Check whether the provided quest is valid and, if not, inform the Quester
+	 * 
+	 * @param quest The quest to check
+	 */
 	public void checkQuest(Quest quest) {
 		if (quest != null) {
 			boolean exists = false;
@@ -3041,6 +3058,102 @@ public class Quester {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Check if quest is available and, if so, ask Quester if they would like to start it<p>
+	 * 
+	 * @param quest The quest to check an then offer
+	 * @param giveReason Whether to inform player of unavailability
+	 * @return true if successful
+	 */
+	public boolean offerQuest(Quest quest, boolean giveReason) {
+		if (quest == null) {
+			return false;
+		}
+		Player player = this.getPlayer();
+		QuestTakeEvent event = new QuestTakeEvent(quest, this);
+        plugin.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+		if (getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
+			if (giveReason) {
+				String msg = Lang.get(player, "questMaxAllowed");
+				msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
+				player.sendMessage(ChatColor.YELLOW + msg);
+			}
+		} else if (getCurrentQuests().containsKey(quest)) {
+			if (giveReason) {
+				String msg = Lang.get(player, "questAlreadyOn");
+				player.sendMessage(ChatColor.YELLOW + msg);
+			}
+		} else if (getCompletedQuests().contains(quest.getName()) && quest.getPlanner().getCooldown() < 0) {
+			if (giveReason) {
+				String msg = Lang.get(player, "questAlreadyCompleted");
+				msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
+				player.sendMessage(ChatColor.YELLOW + msg);
+			}
+		} else if (quest.getNpcStart() != null && plugin.getSettings().canAllowCommandsForNpcQuests() == false) {
+			if (giveReason) {
+				String msg = Lang.get(player, "mustSpeakTo");
+				msg = msg.replace("<npc>", ChatColor.DARK_PURPLE + quest.getNpcStart().getName() + ChatColor.YELLOW);
+				player.sendMessage(ChatColor.YELLOW + msg);
+			}
+		} else if (quest.getBlockStart() != null) {
+			if (giveReason) {
+				String msg = Lang.get(player, "noCommandStart");
+				msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
+				player.sendMessage(ChatColor.YELLOW + msg);
+			}
+		} else if (getCompletedQuests().contains(quest.getName()) && getCooldownDifference(quest) > 0) {
+			if (giveReason) {
+				String msg = Lang.get(player, "questTooEarly");
+				msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
+				msg = msg.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(getCooldownDifference(quest)) + ChatColor.YELLOW);
+				player.sendMessage(ChatColor.YELLOW + msg);
+			}
+		} else {
+			if (quest.getRegion() != null) {
+				boolean inRegion = false;
+				WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+				RegionManager rm = api.getRegionManager(player.getWorld());
+				Iterator<ProtectedRegion> it = rm.getApplicableRegions(player.getLocation()).iterator();
+				while (it.hasNext()) {
+					ProtectedRegion pr = it.next();
+					if (pr.getId().equalsIgnoreCase(quest.getRegion())) {
+						inRegion = true;
+						break;
+					}
+				}
+				if (inRegion == false) {
+					if (giveReason) {
+						String msg = Lang.get(player, "questInvalidLocation");
+						msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
+						player.sendMessage(ChatColor.YELLOW + msg);
+					}
+					return false;
+				}
+			}
+			if (player instanceof Conversable) {
+				if (((Player) player).isConversing() == false) {
+					setQuestToTake(quest.getName());
+					String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + getQuestToTake() + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(getQuestToTake()).getDescription() + "\n";
+					for (String msg : s.split("<br>")) {
+						player.sendMessage(msg);
+					}
+					if (!plugin.getSettings().canAskConfirmation()) {
+						takeQuest(plugin.getQuest(getQuestToTake()), false);
+					} else {
+						plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+					}
+					return true;
+				} else {
+					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "alreadyConversing"));
+				}
+			}
+		}
+		return false;
 	}
 	
 	// I'm not sure why these methods are here. They've been in the class for a long time but aren't used anywhere?
