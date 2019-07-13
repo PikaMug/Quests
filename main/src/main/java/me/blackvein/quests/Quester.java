@@ -3127,6 +3127,9 @@ public class Quester {
 	 * @return true if available
 	 */
 	public boolean canAcceptOffer(Quest quest, boolean giveReason) {
+		if (quest == null) {
+			return false;
+		}
 		if (getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
 			if (giveReason) {
 				String msg = Lang.get(getPlayer(), "questMaxAllowed");
