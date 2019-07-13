@@ -3063,62 +3063,25 @@ public class Quester {
 	/**
 	 * Check if quest is available and, if so, ask Quester if they would like to start it<p>
 	 * 
-	 * @param quest The quest to check an then offer
-	 * @param giveReason Whether to inform player of unavailability
+	 * @param quest The quest to check and then offer
+	 * @param giveReason Whether to inform Quester of unavailability
 	 * @return true if successful
 	 */
 	public boolean offerQuest(Quest quest, boolean giveReason) {
 		if (quest == null) {
 			return false;
 		}
-		Player player = this.getPlayer();
 		QuestTakeEvent event = new QuestTakeEvent(quest, this);
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
         }
-		if (getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
-			if (giveReason) {
-				String msg = Lang.get(player, "questMaxAllowed");
-				msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
-				player.sendMessage(ChatColor.YELLOW + msg);
-			}
-		} else if (getCurrentQuests().containsKey(quest)) {
-			if (giveReason) {
-				String msg = Lang.get(player, "questAlreadyOn");
-				player.sendMessage(ChatColor.YELLOW + msg);
-			}
-		} else if (getCompletedQuests().contains(quest.getName()) && quest.getPlanner().getCooldown() < 0) {
-			if (giveReason) {
-				String msg = Lang.get(player, "questAlreadyCompleted");
-				msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
-				player.sendMessage(ChatColor.YELLOW + msg);
-			}
-		} else if (quest.getNpcStart() != null && plugin.getSettings().canAllowCommandsForNpcQuests() == false) {
-			if (giveReason) {
-				String msg = Lang.get(player, "mustSpeakTo");
-				msg = msg.replace("<npc>", ChatColor.DARK_PURPLE + quest.getNpcStart().getName() + ChatColor.YELLOW);
-				player.sendMessage(ChatColor.YELLOW + msg);
-			}
-		} else if (quest.getBlockStart() != null) {
-			if (giveReason) {
-				String msg = Lang.get(player, "noCommandStart");
-				msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
-				player.sendMessage(ChatColor.YELLOW + msg);
-			}
-		} else if (getCompletedQuests().contains(quest.getName()) && getCooldownDifference(quest) > 0) {
-			if (giveReason) {
-				String msg = Lang.get(player, "questTooEarly");
-				msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-				msg = msg.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(getCooldownDifference(quest)) + ChatColor.YELLOW);
-				player.sendMessage(ChatColor.YELLOW + msg);
-			}
-		} else {
+		if (canAcceptOffer(quest, giveReason)) {
 			if (quest.getRegion() != null) {
 				boolean inRegion = false;
 				WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-				RegionManager rm = api.getRegionManager(player.getWorld());
-				Iterator<ProtectedRegion> it = rm.getApplicableRegions(player.getLocation()).iterator();
+				RegionManager rm = api.getRegionManager(getPlayer().getWorld());
+				Iterator<ProtectedRegion> it = rm.getApplicableRegions(getPlayer().getLocation()).iterator();
 				while (it.hasNext()) {
 					ProtectedRegion pr = it.next();
 					if (pr.getId().equalsIgnoreCase(quest.getRegion())) {
@@ -3128,32 +3091,86 @@ public class Quester {
 				}
 				if (inRegion == false) {
 					if (giveReason) {
-						String msg = Lang.get(player, "questInvalidLocation");
+						String msg = Lang.get(getPlayer(), "questInvalidLocation");
 						msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-						player.sendMessage(ChatColor.YELLOW + msg);
+						getPlayer().sendMessage(ChatColor.YELLOW + msg);
 					}
 					return false;
 				}
 			}
-			if (player instanceof Conversable) {
-				if (((Player) player).isConversing() == false) {
+			if (getPlayer() instanceof Conversable) {
+				if (getPlayer().isConversing() == false) {
 					setQuestToTake(quest.getName());
 					String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + getQuestToTake() + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(getQuestToTake()).getDescription() + "\n";
 					for (String msg : s.split("<br>")) {
-						player.sendMessage(msg);
+						getPlayer().sendMessage(msg);
 					}
 					if (!plugin.getSettings().canAskConfirmation()) {
 						takeQuest(plugin.getQuest(getQuestToTake()), false);
 					} else {
-						plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+						plugin.getConversationFactory().buildConversation((Conversable) getPlayer()).begin();
 					}
 					return true;
 				} else {
-					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "alreadyConversing"));
+					getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "alreadyConversing"));
 				}
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Check if quest is available to this Quester<p>
+	 * 
+	 * @param quest The quest to check
+	 * @param giveReason Whether to inform Quester of unavailability
+	 * @return true if available
+	 */
+	public boolean canAcceptOffer(Quest quest, boolean giveReason) {
+		if (getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
+			if (giveReason) {
+				String msg = Lang.get(getPlayer(), "questMaxAllowed");
+				msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
+				getPlayer().sendMessage(ChatColor.YELLOW + msg);
+			}
+			return false;
+		} else if (getCurrentQuests().containsKey(quest)) {
+			if (giveReason) {
+				String msg = Lang.get(getPlayer(), "questAlreadyOn");
+				getPlayer().sendMessage(ChatColor.YELLOW + msg);
+			}
+			return false;
+		} else if (getCompletedQuests().contains(quest.getName()) && quest.getPlanner().getCooldown() < 0) {
+			if (giveReason) {
+				String msg = Lang.get(getPlayer(), "questAlreadyCompleted");
+				msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
+				getPlayer().sendMessage(ChatColor.YELLOW + msg);
+			}
+			return false;
+		} else if (quest.getNpcStart() != null && plugin.getSettings().canAllowCommandsForNpcQuests() == false) {
+			if (giveReason) {
+				String msg = Lang.get(getPlayer(), "mustSpeakTo");
+				msg = msg.replace("<npc>", ChatColor.DARK_PURPLE + quest.getNpcStart().getName() + ChatColor.YELLOW);
+				getPlayer().sendMessage(ChatColor.YELLOW + msg);
+			}
+			return false;
+		} else if (quest.getBlockStart() != null) {
+			if (giveReason) {
+				String msg = Lang.get(getPlayer(), "noCommandStart");
+				msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
+				getPlayer().sendMessage(ChatColor.YELLOW + msg);
+			}
+			return false;
+		} else if (getCompletedQuests().contains(quest.getName()) && getCooldownDifference(quest) > 0) {
+			if (giveReason) {
+				String msg = Lang.get(getPlayer(), "questTooEarly");
+				msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
+				msg = msg.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(getCooldownDifference(quest)) + ChatColor.YELLOW);
+				getPlayer().sendMessage(ChatColor.YELLOW + msg);
+			}
+			return false;
+		}
+		return true;
 	}
 	
 	// I'm not sure why these methods are here. They've been in the class for a long time but aren't used anywhere?
