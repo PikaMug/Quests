@@ -622,7 +622,9 @@ public class Quest {
 			int index = 0;
 			for (String s : rews.getCommands()) {
 				if (rews.getCommandsOverrideDisplay().isEmpty() == false && rews.getCommandsOverrideDisplay().size() >= index) {
-					player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getCommandsOverrideDisplay().get(index));
+					if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
+						player.sendMessage("- " + ChatColor.DARK_GREEN + rews.getCommandsOverrideDisplay().get(index));
+					}
 				} else {
 					player.sendMessage("- " + ChatColor.DARK_GREEN + s);
 				}
