@@ -430,7 +430,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					}
 					commands.add(s);
 				}
-				context.setSessionData(CK.REW_COMMAND, commands);
+				context.setSessionData(CK.REW_COMMAND, commands.isEmpty() ? null : commands);
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REW_COMMAND, null);
 			}
@@ -458,7 +458,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					}
 					overrides.add(s);
 				}
-				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, overrides);
+				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, overrides.isEmpty() ? null : overrides);
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, null);
 			}
