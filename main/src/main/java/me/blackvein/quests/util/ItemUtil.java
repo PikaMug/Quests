@@ -29,6 +29,7 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -51,6 +52,8 @@ public class ItemUtil {
 	 * -5 if stack enchantments are unequal<br>
 	 * -6 if stack stored enchants are unequal<br>
 	 * -7 if stack item flags are unequal
+	 * -8 if stack Written Book data is unequal
+	 * -9 if stack Potion type is unequal
 	 */
 	@SuppressWarnings("deprecation")
 	public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
@@ -95,6 +98,27 @@ public class ItemUtil {
 				}
 			} catch (Throwable tr) {
 				// We're below 1.11 so don't check ItemFlags
+			}
+			if (one.getType().equals(Material.WRITTEN_BOOK)) {
+				BookMeta bmeta1 = (BookMeta) one.getItemMeta();
+				BookMeta bmeta2 = (BookMeta) two.getItemMeta();
+				if (bmeta1.getTitle().equals(bmeta2.getTitle()) == false) {
+					if (bmeta1.getAuthor().equals(bmeta2.getAuthor()) == false) {
+						if (bmeta1.getPages().equals(bmeta2.getPages()) == false) {
+							return -8;
+						}
+					}
+				}
+			}
+			if (Material.getMaterial("LINGERING_POTION") != null) {
+				// Bukkit version is 1.9+
+				if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) || one.getType().equals(Material.SPLASH_POTION)) {
+					PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
+					PotionMeta pmeta2 = (PotionMeta) one.getItemMeta();
+					if (pmeta1.getBasePotionData().getType().equals(pmeta2.getBasePotionData().getType()) == false) {
+						return -9;
+					}
+				}
 			}
 		}
 		if (one.getEnchantments().equals(two.getEnchantments()) == false) {

@@ -130,6 +130,12 @@ public class NpcListener implements Listener {
 									case -7:
 										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "item flags"));
 										break;
+									case -8:
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "book data"));
+										break;
+									case -9:
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "potion type"));
+										break;
 									default:
 										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "unknown"));
 								}
