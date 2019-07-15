@@ -77,6 +77,7 @@
 	        <groupId>com.github.mcMMO-Dev</groupId>
 	        <artifactId>mcMMO-Classic</artifactId>
 	        <version>master-82f97cbe04-1</version>
+	        <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.herocraftonline.heroes</groupId>
@@ -106,16 +107,19 @@
 	        <groupId>ro.nicuch</groupId>
 	        <artifactId>CitizensBooks</artifactId>
 	        <version>2.4.8</version>
+	        <scope>provided</scope>
 	    </dependency>
         <dependency>
 	        <groupId>com.github.PikaMug</groupId>
 	        <artifactId>PhatLoots</artifactId>
 	        <version>-SNAPSHOT</version>
+	        <scope>provided</scope>
 	    </dependency>
         <dependency>
 	        <groupId>com.github.DRE2N</groupId>
 	        <artifactId>DungeonsXL</artifactId>
 	        <version>-6523caa908-1</version>
+	        <scope>provided</scope>
 	    </dependency>
         <dependency>
             <groupId>com.github.AlessioDP.Parties</groupId>
