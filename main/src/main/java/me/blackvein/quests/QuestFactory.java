@@ -1007,14 +1007,15 @@ public class QuestFactory implements ConversationAbandonedListener {
 		LinkedList<Integer> cutNames;
 		LinkedList<Integer> cutAmounts;
 		LinkedList<Short> cutDurability;
-		LinkedList<ItemStack> deliveryItems;
+		LinkedList<ItemStack> craftItems;
+		LinkedList<ItemStack> smeltItems;
 		LinkedList<String> enchantments;
 		LinkedList<Integer> enchantmentIds;
 		LinkedList<Integer> enchantmentAmounts;
+		LinkedList<ItemStack> brewItems;
 		Integer fish;
 		Integer players;
-		LinkedList<ItemStack> craftItems;
-		LinkedList<ItemStack> smeltItems;
+		LinkedList<ItemStack> deliveryItems;
 		LinkedList<Integer> deliveryNPCIds;
 		LinkedList<String> deliveryMessages;
 		LinkedList<Integer> npcTalkIds;
@@ -1074,6 +1075,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			enchantments = null;
 			enchantmentIds = null;
 			enchantmentAmounts = null;
+			brewItems = null;
 			fish = null;
 			players = null;
 			deliveryItems = null;
@@ -1148,6 +1150,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 				enchantments = (LinkedList<String>) cc.getSessionData(pref + CK.S_ENCHANT_TYPES);
 				enchantmentIds = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_ENCHANT_NAMES);
 				enchantmentAmounts = (LinkedList<Integer>) cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
+			}
+			if (cc.getSessionData(pref + CK.S_BREW_ITEMS) != null) {
+				brewItems = (LinkedList<ItemStack>) cc.getSessionData(pref + CK.S_BREW_ITEMS);
 			}
 			if (cc.getSessionData(pref + CK.S_FISH) != null) {
 				fish = (Integer) cc.getSessionData(pref + CK.S_FISH);
@@ -1280,6 +1285,15 @@ public class QuestFactory implements ConversationAbandonedListener {
 			stage.set("enchantments", enchantments);
 			stage.set("enchantment-item-names", enchantmentIds);
 			stage.set("enchantment-amounts", enchantmentAmounts);
+			if (brewItems != null && brewItems.isEmpty() == false) {
+				LinkedList<String> items = new LinkedList<String>();
+				for (ItemStack is : brewItems) {
+					items.add(ItemUtil.serializeItemStack(is));
+				}
+				stage.set("items-to-brew", items);
+			} else {
+				stage.set("items-to-brew", null);
+			}
 			stage.set("fish-to-catch", fish);
 			stage.set("players-to-kill", players);
 			if (deliveryItems != null && deliveryItems.isEmpty() == false) {
@@ -1641,6 +1655,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 				cc.setSessionData(pref + CK.S_ENCHANT_TYPES, enchants);
 				cc.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
 				cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
+			}
+			if (stage.getItemsToBrew().isEmpty() == false) {
+				LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+				for (ItemStack is : stage.getItemsToBrew()) {
+					items.add(is);
+				}
+				cc.setSessionData(pref + CK.S_BREW_ITEMS, items);
 			}
 			if (stage.fishToCatch != null) {
 				cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);

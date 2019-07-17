@@ -40,6 +40,7 @@ public class Stage {
 	protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
 	protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
 	protected Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
+	protected LinkedList<ItemStack> itemsToBrew = new LinkedList<ItemStack>();
 	protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
 	protected LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
 
@@ -209,6 +210,14 @@ public class Stage {
 	public void setItemsToEnchant(
 			Map<Map<Enchantment, Material>, Integer> itemsToEnchant) {
 		this.itemsToEnchant = itemsToEnchant;
+	}
+	
+	public LinkedList<ItemStack> getItemsToBrew() {
+		return itemsToBrew;
+	}
+
+	public void setItemsToBrew(LinkedList<ItemStack> itemsToBrew) {
+		this.itemsToBrew = itemsToBrew;
 	}
 
 	public LinkedList<ItemStack> getItemsToDeliver() {
@@ -507,6 +516,7 @@ public class Stage {
 		if (itemsToCraft.isEmpty() == false) { return true; }
 		if (itemsToSmelt.isEmpty() == false) { return true; }
 		if (itemsToEnchant.isEmpty() == false) { return true; }
+		if (itemsToBrew.isEmpty() == false) { return true; }
 		if (itemsToDeliver.isEmpty() == false) { return true; }
 		if (citizensToInteract.isEmpty() == false) { return true; }
 		if (citizensToKill.isEmpty() == false) { return true; }

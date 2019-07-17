@@ -541,7 +541,7 @@ public class PlayerListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onSmeltItem(InventoryClickEvent evt) {
+	public void onInventoryClick(InventoryClickEvent evt) {
 		if (evt.getWhoClicked() instanceof Player) {
 			if (evt.getInventory().getType() == InventoryType.FURNACE) {
 				if (evt.getSlotType() == SlotType.RESULT) {
@@ -549,6 +549,15 @@ public class PlayerListener implements Listener {
 					for (Quest quest : quester.getCurrentQuests().keySet()) {
 						if (quester.containsObjective(quest, "smeltItem")) {
 							quester.smeltItem(quest, evt.getCurrentItem());
+						}
+					}
+				}
+			} else if (evt.getInventory().getType() == InventoryType.BREWING) {
+				if (evt.getSlotType() == SlotType.CRAFTING) {
+					Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+					for (Quest quest : quester.getCurrentQuests().keySet()) {
+						if (quester.containsObjective(quest, "brewItem")) {
+							quester.brewItem(quest, evt.getCurrentItem());
 						}
 					}
 				}

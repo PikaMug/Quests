@@ -702,6 +702,20 @@ public class Quester {
 				}
 			}
 		}
+		for (ItemStack is : getCurrentStage(quest).itemsToBrew) {
+			int brewed = 0;
+			if (getQuestData(quest).itemsBrewed.containsKey(is)) {
+				brewed = getQuestData(quest).itemsBrewed.get(is);
+			}
+			int amt = is.getAmount();
+			if (brewed < amt) {
+				String obj = Lang.get(getPlayer(), "brew") + " " + ItemUtil.getName(is);
+				unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + brewed + "/" + amt);
+			} else {
+				String obj = Lang.get(getPlayer(), "brew") + " " + ItemUtil.getName(is);
+				finishedObjectives.add(ChatColor.GRAY + obj + ": " + brewed + "/" + amt);
+			}
+		}
 		if (getCurrentStage(quest).fishToCatch != null) {
 			if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
 				unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "catchFish") + ChatColor.GREEN + ": " 
@@ -965,6 +979,8 @@ public class Quester {
 			return !getCurrentStage(quest).itemsToSmelt.isEmpty();
 		} else if (s.equalsIgnoreCase("enchantItem")) {
 			return !getCurrentStage(quest).itemsToEnchant.isEmpty();
+		} else if (s.equalsIgnoreCase("brewItem")) {
+			return !getCurrentStage(quest).itemsToBrew.isEmpty();
 		} else if (s.equalsIgnoreCase("catchFish")) {
 			return getCurrentStage(quest).fishToCatch != null;
 		} else if (s.equalsIgnoreCase("killMob")) {
@@ -1324,7 +1340,7 @@ public class Quester {
 				plugin.getLogger().severe("Index out of bounds while crafting " + found.getType() + " x " + found.getAmount() + " for quest " 
 						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already crafted. Int -amount- reports value of " + 
 						+ amount + ". Please report this error on Github!");
-				player.sendMessage("Quests had a problem crafting your item, please contact an administrator!");
+				player.sendMessage(ChatColor.RED + "Quests had a problem crafting your item, please contact an administrator!");
 				return;
 			}
 			int req = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(found)).getAmount();
@@ -1361,7 +1377,7 @@ public class Quester {
 				plugin.getLogger().severe("Index out of bounds while smelting " + found.getType() + " x " + found.getAmount() + " for quest " 
 						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already smelted. Int -amount- reports value of " + 
 						+ amount + ". Please report this error on Github!");
-				player.sendMessage("Quests had a problem smelting your item, please contact an administrator!");
+				player.sendMessage(ChatColor.RED + "Quests had a problem smelting your item, please contact an administrator!");
 				return;
 			}
 			int req = getCurrentStage(quest).itemsToSmelt.get(getCurrentStage(quest).itemsToSmelt.indexOf(found)).getAmount();
@@ -1400,6 +1416,43 @@ public class Quester {
 					}
 				}
 				break;
+			}
+		}
+	}
+	
+	/**
+	 * Mark item as brewed if Quester has such an objective
+	 * 
+	 * @param quest The quest for which the item is being brewed
+	 * @param i The item being brewed
+	 */
+	public void brewItem(Quest quest, ItemStack i) {
+		Player player = getPlayer();
+		ItemStack found = null;
+		for (ItemStack is : getQuestData(quest).itemsBrewed.keySet()) {
+			if (ItemUtil.compareItems(i, is, true) == 0) {
+				found = is;
+				break;
+			}
+		}
+		if (found != null) {
+			int amount = getQuestData(quest).itemsBrewed.get(found);
+			if (getCurrentStage(quest).itemsToBrew.indexOf(found) < 0) {
+				plugin.getLogger().severe("Index out of bounds while brewing " + found.getType() + " x " + found.getAmount() + " for quest " 
+						+ quest.getName() + " with " + i.getType() + " x " + i.getAmount() + " already smelted. Int -amount- reports value of " + 
+						+ amount + ". Please report this error on Github!");
+				player.sendMessage(ChatColor.RED + "Quests had a problem brewing your item, please contact an administrator!");
+				return;
+			}
+			int req = getCurrentStage(quest).itemsToBrew.get(getCurrentStage(quest).itemsToBrew.indexOf(found)).getAmount();
+			Material m = i.getType();
+			if (amount < req) {
+				if ((i.getAmount() + amount) >= req) {
+					getQuestData(quest).itemsBrewed.put(found, req);
+					finishObjective(quest, "brewItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+				} else {
+					getQuestData(quest).itemsBrewed.put(found, (amount + i.getAmount()));
+				}
 			}
 		}
 	}
@@ -1847,6 +1900,15 @@ public class Quester {
 				p.sendMessage(message.replace("<item>", ItemUtil.getName(increment))
 						.replace("<enchantment>", enchantment.getName()));
 			}
+		} else if (objective.equalsIgnoreCase("brewItem")) {
+			ItemStack is = getCurrentStage(quest).itemsToBrew.get(getCurrentStage(quest).itemsToBrew.indexOf(goal));
+			String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "brew") + " <item> "
+					+ is.getAmount() + "/" + is.getAmount();
+			if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() && !increment.getItemMeta().hasDisplayName()) {
+				plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+			} else {
+				p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+			}
 		} else if (objective.equalsIgnoreCase("deliverItem")) {
 			String obj = Lang.get(p, "deliver");
 			obj = obj.replace("<npc>", plugin.getNPCName(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(goal))));
@@ -2036,6 +2098,11 @@ public class Quester {
 				data.itemsEnchanted.put(map, 0);
 			}
 		}
+		if (quest.getStage(stage).itemsToBrew.isEmpty() == false) {
+			for (ItemStack is : quest.getStage(stage).itemsToBrew) {
+				data.itemsBrewed.put(is, 0);
+			}
+		}
 		if (quest.getStage(stage).mobsToKill.isEmpty() == false) {
 			for (EntityType e : quest.getStage(stage).mobsToKill) {
 				data.mobsKilled.add(e);
@@ -2217,6 +2284,13 @@ public class Quester {
 					questSec.set("blocks-cut-amounts", blockAmounts);
 					questSec.set("blocks-cut-durability", blockDurability);
 				}
+				if (questData.itemsCrafted.isEmpty() == false) {
+					LinkedList<Integer> craftAmounts = new LinkedList<Integer>();
+					for (Entry<ItemStack, Integer> e : questData.itemsCrafted.entrySet()) {
+						craftAmounts.add(e.getValue());
+					}
+					questSec.set("item-craft-amounts", craftAmounts);
+				}
 				if (questData.itemsSmelted.isEmpty() == false) {
 					LinkedList<Integer> smeltAmounts = new LinkedList<Integer>();
 					for (Entry<ItemStack, Integer> e : questData.itemsSmelted.entrySet()) {
@@ -2239,6 +2313,13 @@ public class Quester {
 					questSec.set("enchantments", enchantments);
 					questSec.set("enchantment-item-names", itemNames);
 					questSec.set("times-enchanted", enchAmounts);
+				}
+				if (questData.itemsBrewed.isEmpty() == false) {
+					LinkedList<Integer> brewAmounts = new LinkedList<Integer>();
+					for (Entry<ItemStack, Integer> e : questData.itemsBrewed.entrySet()) {
+						brewAmounts.add(e.getValue());
+					}
+					questSec.set("item-brew-amounts", brewAmounts);
 				}
 				if (getCurrentStage(quest).fishToCatch != null) {
 					questSec.set("fish-caught", questData.getFishCaught());
@@ -2311,16 +2392,6 @@ public class Quester {
 					questSec.set("locations-to-reach", locations);
 					questSec.set("has-reached-location", has);
 					questSec.set("radii-to-reach-within", radii);
-				}
-				if (questData.potionsBrewed.isEmpty() == false) {
-					LinkedList<String> potionNames = new LinkedList<String>();
-					LinkedList<Integer> potionAmounts = new LinkedList<Integer>();
-					for (Entry<String, Integer> entry : questData.potionsBrewed.entrySet()) {
-						potionNames.add(entry.getKey());
-						potionAmounts.add(entry.getValue());
-					}
-					questSec.set("potions-brewed-names", potionNames);
-					questSec.set("potions-brewed-amounts", potionAmounts);
 				}
 				if (questData.mobsTamed.isEmpty() == false) {
 					LinkedList<String> mobNames = new LinkedList<String>();
@@ -2651,6 +2722,14 @@ public class Quester {
 						getQuestData(quest).itemsEnchanted.put(map, amounts.get(enchantments.indexOf(e)));
 					}
 				}
+				if (questSec.contains("item-brew-amounts")) {
+					List<Integer> brewAmounts = questSec.getIntegerList("item-brew-amounts");
+					for (int i = 0; i < brewAmounts.size(); i++) {
+						if (i < getCurrentStage(quest).itemsToBrew.size()) {
+							getQuestData(quest).itemsBrewed.put(getCurrentStage(quest).itemsToBrew.get(i), brewAmounts.get(i));
+						}
+					}
+				}
 				if (questSec.contains("fish-caught")) {
 					getQuestData(quest).setFishCaught(questSec.getInt("fish-caught"));
 				}
@@ -2734,13 +2813,6 @@ public class Quester {
 					}
 					for (int i : radii) {
 						getQuestData(quest).radiiToReachWithin.add(i);
-					}
-				}
-				if (questSec.contains("potions-brewed-names")) {
-					List<String> names = questSec.getStringList("potions-brewed-names");
-					List<Integer> amounts = questSec.getIntegerList("potions-brewed-amounts");
-					for (String s : names) {
-						getQuestData(quest).potionsBrewed.put(s, amounts.get(names.indexOf(s)));
 					}
 				}
 				if (questSec.contains("mobs-to-tame")) {

@@ -67,6 +67,7 @@ public class CK {
 	public static final String S_ENCHANT_TYPES = "enchantTypes";
 	public static final String S_ENCHANT_NAMES = "enchantNames";
 	public static final String S_ENCHANT_AMOUNTS = "enchantAmounts";
+	public static final String S_BREW_ITEMS = "brewItems";
 	public static final String S_DELIVERY_ITEMS = "deliveryItems";
 	public static final String S_DELIVERY_NPCS = "deliveryNPCs";
 	public static final String S_DELIVERY_MESSAGES = "deliveryMessages";

@@ -37,7 +37,7 @@ public class ItemsPrompt extends FixedSetPrompt {
 	private final QuestFactory questFactory;
 
 	public ItemsPrompt(Quests plugin, int stageNum, QuestFactory qf) {
-		super("1", "2", "3", "4");
+		super("1", "2", "3", "4", "5");
 		this.plugin = plugin;
 		this.stageNum = stageNum;
 		this.pref = "stage" + stageNum;
@@ -93,7 +93,16 @@ public class ItemsPrompt extends FixedSetPrompt {
 						+ ItemUtil.getPrettyEnchantmentName(ItemUtil.getEnchantmentFromProperName(enchants.get(i))) + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
 			}
 		}
-		text += ChatColor.GREEN + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("done") + "\n";
+		if (context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
+			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorBrewItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+		} else {
+			text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorBrewItems") + "\n";
+			LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
+			for (int i = 0; i < items.size(); i++) {
+				text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+			}
+		}
+		text += ChatColor.GREEN + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("done") + "\n";
 		return text;
 	}
 
@@ -105,6 +114,8 @@ public class ItemsPrompt extends FixedSetPrompt {
 			return new SmeltListPrompt();
 		} else if (input.equalsIgnoreCase("3")) {
 			return new EnchantmentListPrompt();
+		} else if (input.equalsIgnoreCase("4")) {
+			return new BrewListPrompt();
 		}
 		try {
 			return new CreateStagePrompt(plugin, stageNum, questFactory);
@@ -169,7 +180,6 @@ public class ItemsPrompt extends FixedSetPrompt {
 		private List<ItemStack> getItems(ConversationContext context) {
 			return (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
 		}
-		
 	}
 	
 	private class SmeltListPrompt extends FixedSetPrompt {
@@ -227,7 +237,6 @@ public class ItemsPrompt extends FixedSetPrompt {
 		private List<ItemStack> getItems(ConversationContext context) {
 			return (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
 		}
-		
 	}
 
 	private class EnchantmentListPrompt extends FixedSetPrompt {
@@ -454,6 +463,63 @@ public class ItemsPrompt extends FixedSetPrompt {
 				context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
 			}
 			return new EnchantmentListPrompt();
+		}
+	}
+	
+	private class BrewListPrompt extends FixedSetPrompt {
+		
+		public BrewListPrompt() {
+			super("1", "2", "3");
+		}
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			// Check/add newly made item
+			if (context.getSessionData("newItem") != null) {
+				if (context.getSessionData(pref + CK.S_BREW_ITEMS) != null) {
+					List<ItemStack> items = getItems(context);
+					items.add((ItemStack) context.getSessionData("tempStack"));
+					context.setSessionData(pref + CK.S_BREW_ITEMS, items);
+				} else {
+					LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+					items.add((ItemStack) context.getSessionData("tempStack"));
+					context.setSessionData(pref + CK.S_BREW_ITEMS, items);
+				}
+				context.setSessionData("newItem", null);
+				context.setSessionData("tempStack", null);
+			}
+			String text = ChatColor.GOLD + "- " + Lang.get("stageEditorBrewItems") + " -\n";
+			if (context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
+				text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
+			} else {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
+				for (ItemStack is : getItems(context)) {
+					text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
+				}
+			}
+			text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			return text;
+		}
+
+		@Override
+		protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase("1")) {
+				return new ItemStackPrompt(BrewListPrompt.this);
+			} else if (input.equalsIgnoreCase("2")) {
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
+				context.setSessionData(pref + CK.S_BREW_ITEMS, null);
+				return new BrewListPrompt();
+			} else if (input.equalsIgnoreCase("3")) {
+				return new ItemsPrompt(plugin, stageNum, questFactory);
+			}
+			return null;
+		}
+		
+		@SuppressWarnings("unchecked")
+		private List<ItemStack> getItems(ConversationContext context) {
+			return (List<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
 		}
 	}
 }

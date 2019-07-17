@@ -33,7 +33,9 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.Potion;
 
+@SuppressWarnings("deprecation")
 public class ItemUtil {
 
 	/**
@@ -55,7 +57,6 @@ public class ItemUtil {
 	 * -8 if stack Written Book data is unequal
 	 * -9 if stack Potion type is unequal
 	 */
-	@SuppressWarnings("deprecation")
 	public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
 		if (one == null || two == null) {
 			return 1;
@@ -110,15 +111,28 @@ public class ItemUtil {
 					}
 				}
 			}
-			if (Material.getMaterial("LINGERING_POTION") != null) {
-				// Bukkit version is 1.9+
-				if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) || one.getType().equals(Material.SPLASH_POTION)) {
-					PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
-					PotionMeta pmeta2 = (PotionMeta) one.getItemMeta();
-					if (pmeta1.getBasePotionData().getType().equals(pmeta2.getBasePotionData().getType()) == false) {
-						return -9;
+			if (one.getItemMeta() instanceof PotionMeta) {
+				if (Material.getMaterial("LINGERING_POTION") != null) {
+					// Bukkit version is 1.9+
+					if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) || one.getType().equals(Material.SPLASH_POTION)) {
+						PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
+						PotionMeta pmeta2 = (PotionMeta) one.getItemMeta();
+						if (pmeta1.getBasePotionData().getType().equals(pmeta2.getBasePotionData().getType()) == false) {
+							return -9;
+						}
 					}
 				}
+			}
+		}
+		if (Material.getMaterial("LINGERING_POTION") == null) {
+			// Bukkit version is below 1.9
+			Potion pot1 = new Potion(one.getDurability());
+			Potion pot2 = new Potion(two.getDurability());
+			if (pot1.getType() == null || pot2.getType() == null) {
+				return -9;
+			}
+			if (!pot1.getType().equals(pot2.getType())) {
+				return -9;
 			}
 		}
 		if (one.getEnchantments().equals(two.getEnchantments()) == false) {
@@ -146,7 +160,6 @@ public class ItemUtil {
 	 * @param durability The data value of the item, default of 0
 	 * @return ItemStack, or null if invalid format
 	 */
-	@SuppressWarnings("deprecation")
 	public static ItemStack processItemStack(String material, int amount, short durability) {
 		try {
 			return new ItemStack(Material.getMaterial(material.toUpperCase()), amount, durability);
@@ -172,7 +185,6 @@ public class ItemUtil {
 	 * @param data formatted string
 	 * @return ItemStack, or null if invalid format
 	 */
-	@SuppressWarnings("deprecation")
 	public static ItemStack readItemStack(String data) {
 		if (data == null) {
 			return null;
@@ -384,7 +396,6 @@ public class ItemUtil {
 	 * @param is ItemStack
 	 * @return formatted string, or null if invalid stack
 	 */
-	@SuppressWarnings("deprecation")
 	public static String serializeItemStack(ItemStack is) {
 		String serial;
 		if (is == null) {
@@ -448,7 +459,6 @@ public class ItemUtil {
 	 * @param is ItemStack to check
 	 * @return true display or item name, plus durability and amount, plus enchantments
 	 */
-	@SuppressWarnings("deprecation")
 	public static String getDisplayString(ItemStack is) {
 		String text;
 		if (is == null) {
@@ -481,7 +491,6 @@ public class ItemUtil {
 	 * @param is ItemStack to check
 	 * @return true display or item name, plus durability and amount, if stack is not null
 	 */
-	@SuppressWarnings("deprecation")
 	public static String getString(ItemStack is) {
 		if (is == null) {
 			return null;
@@ -588,7 +597,6 @@ public class ItemUtil {
 	 * @param e Enchantment to get localized name of
 	 * @return localized name
 	 */
-	@SuppressWarnings("deprecation") // since 1.13
 	private static String getEnchantmentName(Enchantment e) {
 		try {
 			return (Lang.get("ENCHANTMENT_" + e.getName()));
@@ -599,7 +607,6 @@ public class ItemUtil {
 		}
 	}
 	
-	@SuppressWarnings("deprecation") // since 1.13
 	public static Enchantment getEnchantmentFromProperName(String enchant) {
 		String ench = Lang.getKey(enchant.replace(" ", ""));
 		ench = ench.replace("ENCHANTMENT_", "");

@@ -67,7 +67,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				hasObjective = true;
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("stageEditorBlocks") + "\n";
 			}
-			if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null && context.getSessionData(pref + CK.S_SMELT_ITEMS) == null && context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
+			if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null && context.getSessionData(pref + CK.S_SMELT_ITEMS) == null && context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null && context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("stageEditorItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
 				hasObjective = true;

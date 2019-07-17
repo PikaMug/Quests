@@ -257,41 +257,6 @@ public class QuestData {
 		}
 	};
 	
-	public LinkedHashMap<String, Integer> potionsBrewed = new LinkedHashMap<String, Integer>() {
-
-		private static final long serialVersionUID = 5079308756224324031L;
-
-		@Override
-		public Integer put(String key, Integer val) {
-			Integer data = super.put(key, val);
-			if (doJournalUpdate)
-				quester.updateJournal();
-			return data;
-		}
-
-		@Override
-		public Integer remove(Object key) {
-			Integer i = super.remove(key);
-			if (doJournalUpdate)
-				quester.updateJournal();
-			return i;
-		}
-
-		@Override
-		public void clear() {
-			super.clear();
-			if (doJournalUpdate)
-				quester.updateJournal();
-		}
-
-		@Override
-		public void putAll(Map<? extends String, ? extends Integer> m) {
-			super.putAll(m);
-			if (doJournalUpdate)
-				quester.updateJournal();
-		}
-	};
-	
 	public LinkedHashMap<ItemStack, Integer> itemsCrafted = new LinkedHashMap<ItemStack, Integer>() {
 
 		private static final long serialVersionUID = 2774356294049526105L;
@@ -329,7 +294,7 @@ public class QuestData {
 	
 	public LinkedHashMap<ItemStack, Integer> itemsSmelted = new LinkedHashMap<ItemStack, Integer>() {
 
-		private static final long serialVersionUID = 2774356235274526105L;
+		private static final long serialVersionUID = 2774356235274526106L;
 
 		@Override
 		public Integer put(ItemStack key, Integer val) {
@@ -391,6 +356,41 @@ public class QuestData {
 
 		@Override
 		public void putAll(Map<? extends Map<Enchantment, Material>, ? extends Integer> m) {
+			super.putAll(m);
+			if (doJournalUpdate)
+				quester.updateJournal();
+		}
+	};
+	
+	public LinkedHashMap<ItemStack, Integer> itemsBrewed = new LinkedHashMap<ItemStack, Integer>() {
+
+		private static final long serialVersionUID = 2774356235274526107L;
+
+		@Override
+		public Integer put(ItemStack key, Integer val) {
+			Integer data = super.put(key, val);
+			if (doJournalUpdate)
+				quester.updateJournal();
+			return data;
+		}
+
+		@Override
+		public Integer remove(Object key) {
+			Integer i = super.remove(key);
+			if (doJournalUpdate)
+				quester.updateJournal();
+			return i;
+		}
+
+		@Override
+		public void clear() {
+			super.clear();
+			if (doJournalUpdate)
+				quester.updateJournal();
+		}
+
+		@Override
+		public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
 			super.putAll(m);
 			if (doJournalUpdate)
 				quester.updateJournal();

@@ -28,8 +28,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Career;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.Potion;
 
+@SuppressWarnings("deprecation")
 public class LocaleQuery {
 	private static Class<?> craftMagicNumbers = null;
 	private static Class<?> itemClazz = null;
@@ -38,6 +41,7 @@ public class LocaleQuery {
 	private static boolean hasBasePotionData = false;
 	private Map<String, String> oldBlocks = getBlockKeys();
 	private Map<String, String> oldItems = getItemKeys();
+	private Map<String, String> oldPotions_18 = getPotionKeys_18();
 	private Map<String, String> oldPotions = getPotionKeys();
 	private Map<String, String> oldLingeringPotions = getLingeringPotionKeys();
 	private Map<String, String> oldSplashPotions = getSplashPotionKeys();
@@ -66,7 +70,7 @@ public class LocaleQuery {
 	 * Send message with item name translated to the client's locale.
 	 * Material is required. Durability arg is arbitrary for 1.13+
 	 * and can be ignored by setting to a value less than 0.
-	 * Enchantments are optional and may be left null or empty.<p>
+	 * Enchantments & meta are optional and may be left null or empty.<p>
 	 * 
 	 * Message should contain {@code <item>} string for replacement by
 	 * this method (along with applicable {@code <enchantment>} strings).
@@ -76,9 +80,9 @@ public class LocaleQuery {
 	 * @param material The item to be translated
 	 * @param durability Durability for the item being translated
 	 * @param enchantments Enchantments for the item being translated
+	 * @param meta ItemMeta for the item being translated
 	 */
-	@SuppressWarnings("deprecation")
-	public boolean sendMessage(Player player, String message, Material material, short durability, Map<Enchantment, Integer> enchantments) {
+	public boolean sendMessage(Player player, String message, Material material, short durability, Map<Enchantment, Integer> enchantments, ItemMeta meta) {
 		if (material == null) {
 			return false;
 		}
@@ -105,6 +109,8 @@ public class LocaleQuery {
 						} else if (material.equals(Material.SPLASH_POTION)) {
 							matKey = oldSplashPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
 						}
+					} else if (new Potion(durability).getType() != null) {
+						matKey = oldPotions_18.get(new Potion(durability).getType().name());
 					}
 				} else if (durability >= 0 && oldItems.containsKey(material.name() + "." + durability)) {
 					matKey = oldItems.get(material.name() + "." + durability);
@@ -130,6 +136,9 @@ public class LocaleQuery {
 				plugin.getLogger().severe("Unable to query Material: " + material.name());
 				return false;
 			}
+			if (meta != null && meta instanceof PotionMeta) {
+				matKey = "item.minecraft.potion.effect." + ((PotionMeta)meta).getBasePotionData().getType().name().toLowerCase();
+			}
 			if (enchantments != null && !enchantments.isEmpty()) {
 				int count = 0;
 				for (Enchantment e : enchantments.keySet()) {
@@ -149,6 +158,25 @@ public class LocaleQuery {
 	}
 	
 	/**
+	 * Send message with item name translated to the client's locale.
+	 * Material is required. Durability arg is arbitrary for 1.13+
+	 * and can be ignored by setting to a value less than 0.
+	 * Enchantments are optional and may be left null or empty.<p>
+	 * 
+	 * Message should contain {@code <item>} string for replacement by
+	 * this method (along with applicable {@code <enchantment>} strings).
+	 * 
+	 * @param player The player whom the message is to be sent to
+	 * @param message The message to be sent to the player
+	 * @param material The item to be translated
+	 * @param durability Durability for the item being translated
+	 * @param enchantments Enchantments for the item being translated
+	 */
+	public boolean sendMessage(Player player, String message, Material material, short durability, Map<Enchantment, Integer> enchantments) {
+		return sendMessage(player, message, material, durability, enchantments, null);
+	}
+	
+	/**
 	 * Send message with enchantments translated to the client's locale.
 	 * Map of Enchantment+level is required.
 	 * 
@@ -159,7 +187,6 @@ public class LocaleQuery {
 	 * @param message The message to be sent to the player
 	 * @param enchantments Enchantments for the item being translated
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean sendMessage(Player player, String message, Map<Enchantment, Integer> enchantments) {
 		if (enchantments == null) {
 			return false;
@@ -1071,6 +1098,26 @@ public class LocaleQuery {
     	keys.put("WALL_BANNER.0", "item.WALL_BANNER.white.name"); // added
     	return keys;
     }
+    
+    public Map<String, String> getPotionKeys_18() {
+    	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+    	keys.put("WATER", "potion.empty");
+    	keys.put("SPEED", "potion.moveSpeed.postfix");
+    	keys.put("SLOWNESS", "potion.moveSlowdown.postfix");
+    	keys.put("STRENGTH", "potion.damageBoost.postfix");
+    	keys.put("WEAKNESS", "potion.weakness.postfix");
+    	keys.put("INSTANT_HEAL", "potion.effect.healing");
+    	keys.put("INSTANT_DAMAGE", "potion.harm.postfix");
+    	keys.put("JUMP", "potion.jump.postfix");
+    	keys.put("REGEN", "potion.regeneration.postfix");
+    	keys.put("FIRE_RESISTANCE", "potion.fireResistance.postfix");
+    	keys.put("WATER_BREATHING", "potion.waterBreathing.postfix");
+    	keys.put("INVISIBILITY", "potion.invisibility.postfix");
+    	keys.put("NIGHT_VISION", "potion.nightVision.postfix");
+    	keys.put("POISON", "potion.poison.postfix");
+    	return keys;
+    }
+    
     public Map<String, String> getPotionKeys() {
     	LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
     	keys.put("UNCRAFTABLE", "potion.effect.empty");

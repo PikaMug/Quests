@@ -936,6 +936,48 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 		}
+		for (ItemStack is : stage.itemsToBrew) {
+			int brewed = 0;
+			if (data.itemsBrewed.containsKey(is)) {
+				brewed = data.itemsBrewed.get(is);
+			}
+			int amt = is.getAmount();
+			if (brewed < amt) {
+				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "brew") + " <item>" 
+						+ ChatColor.GREEN + ": " + brewed + "/" + is.getAmount();
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				if (getSettings().canTranslateItems()) {
+					if (is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+						// Bukkit version is 1.9+
+						localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments(), is.getItemMeta());
+					} else if (Material.getMaterial("LINGERING_POTION") == null && !is.hasItemMeta() ) {
+						// Bukkit version is below 1.9
+						localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+					} else {
+						quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+					}
+				}
+			} else {
+				String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "brew") + " <item>" 
+						+ ChatColor.GRAY + ": " + brewed + "/" + is.getAmount();
+				if (depends.getPlaceholderApi() != null) {
+					message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+				}
+				if (getSettings().canTranslateItems()) {
+					if (is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+						// Bukkit version is 1.9+
+						localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments(), is.getItemMeta());
+					} else if (Material.getMaterial("LINGERING_POTION") == null && !is.hasItemMeta() ) {
+						// Bukkit version is below 1.9
+						localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), is.getEnchantments());
+					} else {
+						quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+					}
+				}
+			}
+		}
 		if (stage.fishToCatch != null) {
 			if (data.getFishCaught() < stage.fishToCatch) {
 				String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "catchFish")
@@ -1933,6 +1975,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			List<Enchantment> enchantments = new LinkedList<Enchantment>();
 			List<Material> itemsToEnchant = new LinkedList<Material>();
 			List<Integer> amountsToEnchant = new LinkedList<Integer>();
+			List<String> itemsToBrew = new LinkedList<String>();
 			List<Integer> npcIdsToTalkTo = new LinkedList<Integer>();
 			List<String> itemsToDeliver= new LinkedList<String>();
 			List<Integer> itemDeliveryTargetIds = new LinkedList<Integer>();
@@ -2219,6 +2262,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 				} else {
 					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing enchantment-amounts:");
+				}
+			}
+			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-brew")) {
+				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-brew"), String.class)) {
+					itemsToBrew = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-brew");
+					for (String item : itemsToBrew) {
+						ItemStack is = ItemUtil.readItemStack("" + item);
+						if (is != null) {
+							oStage.getItemsToBrew().add(is);
+						} else {
+							stageFailed("" + item + " inside items-to-brew: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+						}
+					}
+				} else {
+					stageFailed("items-to-brew: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".fish-to-catch")) {
