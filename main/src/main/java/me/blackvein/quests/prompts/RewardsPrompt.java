@@ -54,7 +54,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 	public String getPromptText(ConversationContext context) {
 		String text;
 		String lang = Lang.get("rewardsTitle");
-		lang = lang.replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE);
+		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE);
 		text = ChatColor.LIGHT_PURPLE + lang + "\n";
 		if (context.getSessionData(CK.REW_MONEY) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + Lang.get("noneSet") + ")\n";
@@ -194,9 +194,9 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = Lang.get("rewMoneyPrompt");
 			if (plugin.getDependencies().getVaultEconomy() != null) {
-				text = text.replaceAll("<money>", ChatColor.AQUA + (plugin.getDependencies().getVaultEconomy().currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy().currencyNamePlural()) + ChatColor.YELLOW);
+				text = text.replace("<money>", ChatColor.AQUA + (plugin.getDependencies().getVaultEconomy().currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy().currencyNamePlural()) + ChatColor.YELLOW);
 			} else {
-				text = text.replaceAll("<money>", ChatColor.AQUA + Lang.get("money") + ChatColor.YELLOW);
+				text = text.replace("<money>", ChatColor.AQUA + Lang.get("money") + ChatColor.YELLOW);
 			}
 			return ChatColor.YELLOW + text;
 		}
@@ -414,7 +414,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String lang1 = Lang.get("rewCommandPrompt");
-			lang1 = lang1.replaceAll("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET + ChatColor.YELLOW);
+			lang1 = lang1.replace("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET + ChatColor.YELLOW);
 			String lang2 = Lang.get("rewCommandPromptHint");
 			return ChatColor.YELLOW + lang1 + "\n" + ChatColor.GOLD + lang2;
 		}
@@ -498,7 +498,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + Lang.get("mcMMORewardsTitle") + "\n";
 			if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkills") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -602,7 +602,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						}
 					} else {
 						String text = Lang.get("reqMcMMOError");
-						text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						context.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new mcMMOSkillsPrompt();
 					}
@@ -630,7 +630,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						amounts.add(Integer.parseInt(s));
 					} catch (NumberFormatException e) {
 						String text = Lang.get("reqNotANumber");
-						text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						context.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new mcMMOAmountsPrompt();
 					}
@@ -652,7 +652,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + Lang.get("heroesRewardsTitle") + "\n";
 			if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesClasses") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -756,7 +756,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(s);
 					if (hc == null) {
 						String text = Lang.get("rewHeroesInvalidClass");
-						text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						cc.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new HeroesClassesPrompt();
 					} else {
@@ -791,7 +791,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						amounts.add(d);
 					} catch (NumberFormatException nfe) {
 						String text = Lang.get("reqNotANumber");
-						text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						cc.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new HeroesExperiencePrompt();
 					}
@@ -824,7 +824,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				for (String s : arr) {
 					if (PhatLootsAPI.getPhatLoot(s) == null) {
 						String text = Lang.get("rewPhatLootsInvalid");
-						text = text.replaceAll("<input>", ChatColor.DARK_RED + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.DARK_RED + s + ChatColor.RED);
 						cc.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new PhatLootsPrompt();
 					}
@@ -998,7 +998,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				text += ChatColor.GOLD + descriptions.get(temp) + "\n";
 			}
 			String lang = Lang.get("stageEditorCustomDataPrompt");
-			lang = lang.replaceAll("<data>", temp);
+			lang = lang.replace("<data>", temp);
 			text += ChatColor.YELLOW + lang;
 			return text;
 		}
