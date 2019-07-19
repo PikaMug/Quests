@@ -42,10 +42,6 @@
             <id>Vault</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
-        <repository>
-            <id>Pikacraft Repo</id>
-            <url>http://repo.pikacraft.ro/</url>
-        </repository>
     </repositories>
     
     <dependencies>
@@ -104,9 +100,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-	        <groupId>ro.nicuch</groupId>
+	        <groupId>com.github.nicuch</groupId>
 	        <artifactId>CitizensBooks</artifactId>
-	        <version>2.4.8</version>
+	        <version>master-SNAPSHOT</version>
 	        <scope>provided</scope>
 	    </dependency>
         <dependency>
