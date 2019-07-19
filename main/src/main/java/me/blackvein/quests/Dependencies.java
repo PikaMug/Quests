@@ -129,7 +129,12 @@ public class Dependencies {
 			denizen = (Denizen) plugin.getServer().getPluginManager().getPlugin("Denizen");
 		}
 		if (isPluginAvailable("mcMMO")) {
-			mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
+			try {
+				Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
+				mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
+			} catch (Exception e) {
+				// Unsupported version
+			}
 		}
 		if (isPluginAvailable("Heroes")) {
 			heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
