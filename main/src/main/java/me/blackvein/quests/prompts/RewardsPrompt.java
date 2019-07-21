@@ -848,10 +848,10 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + Lang.get("customRewardsTitle") + "\n";
 			if (plugin.getCustomRewards().isEmpty()) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
+				text += ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
 			} else {
 				for (CustomReward cr : plugin.getCustomRewards()) {
-					text += ChatColor.DARK_PURPLE + " - " + cr.getName() + "\n";
+					text += ChatColor.DARK_PURPLE + "  - " + cr.getName() + "\n";
 				}
 			}
 			return text + ChatColor.YELLOW + Lang.get("rewCustomRewardPrompt");
@@ -927,7 +927,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.BOLD + "" + ChatColor.AQUA + "- ";
+			String text = ChatColor.AQUA + "- ";
 			LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
 			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
 			String rewName = list.getLast();
@@ -940,7 +940,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			}
 			Collections.sort(datamapKeys);
 			for (String dataKey : datamapKeys) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + dataKey;
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " + dataKey;
 				if (datamap.get(dataKey) != null) {
 					text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
 				} else {
@@ -948,7 +948,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 				index++;
 			}
-			text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("done");
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + index + ChatColor.YELLOW + " - " + Lang.get("done");
 			return text;
 		}
 

@@ -1277,10 +1277,10 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorCustom") + " -\n";
 			if (plugin.getCustomObjectives().isEmpty()) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
+				text += ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
 			} else {
 				for (CustomObjective co : plugin.getCustomObjectives()) {
-					text += ChatColor.DARK_PURPLE + " - " + co.getName() + "\n";
+					text += ChatColor.DARK_PURPLE + "  - " + co.getName() + "\n";
 				}
 			}
 			return text + ChatColor.YELLOW + Lang.get("stageEditorCustomPrompt");
@@ -1415,7 +1415,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.BOLD + "" + ChatColor.AQUA + "- ";
+			String text = ChatColor.AQUA + "- ";
 			LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
 			LinkedList<Entry<String, Object>> datamapList = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
 			String objName = list.getLast();
@@ -1434,7 +1434,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			for (Entry<String, Object> datamap : found.getData()) {
 				for (Entry<String, Object> currentData : datamapList) {
 					if (currentData.getKey().equals(datamap.getKey())) {
-						text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + datamap.getKey();
+						text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " + datamap.getKey();
 				if (currentData.getValue() != null) {
 					text += ChatColor.GREEN + " (" + currentData.getValue().toString() + ")\n";
 				} else {
@@ -1444,16 +1444,13 @@ public class CreateStagePrompt extends FixedSetPrompt {
 					}
 				}
 			}
-			text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("done");
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + index + ChatColor.YELLOW + " - " + Lang.get("done");
 			return text;
 		}
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			@SuppressWarnings("unchecked")
-			//LinkedList<Entry<String, Object>> datamapList = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
-			
-			
 			LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
 			String objName = list.getLast();
 			CustomObjective found = null;
