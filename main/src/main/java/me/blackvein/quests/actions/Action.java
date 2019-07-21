@@ -352,38 +352,38 @@ public class Action {
 			player.sendMessage(Lang.get(player, "timerStart").replaceAll("<time>", String.valueOf(timer)));
 			if (timer > 60) {
 				quester.getTimers().put(new ActionTimer(quester, quest, 60, false)
-						.runTaskLaterAsynchronously(plugin, (timer-60)*20).getTaskId(), quest);
+						.runTaskLater(plugin, (timer-60)*20).getTaskId(), quest);
 			}
 			if (timer > 30) {
 				quester.getTimers().put(new ActionTimer(quester, quest, 30, false)
-						.runTaskLaterAsynchronously(plugin, (timer-30)*20).getTaskId(), quest);
+						.runTaskLater(plugin, (timer-30)*20).getTaskId(), quest);
 			}
 			if (timer > 10) {
 				quester.getTimers().put(new ActionTimer(quester, quest, 10, false)
-						.runTaskLaterAsynchronously(plugin, (timer-10)*20).getTaskId(), quest);
+						.runTaskLater(plugin, (timer-10)*20).getTaskId(), quest);
 			}
 			if (timer > 5) {
 				quester.getTimers().put(new ActionTimer(quester, quest, 5, false)
-						.runTaskLaterAsynchronously(plugin, (timer-5)*20).getTaskId(), quest);
+						.runTaskLater(plugin, (timer-5)*20).getTaskId(), quest);
 			}
 			if (timer > 4) {
 				quester.getTimers().put(new ActionTimer(quester, quest, 4, false)
-						.runTaskLaterAsynchronously(plugin, (timer-4)*20).getTaskId(), quest);
+						.runTaskLater(plugin, (timer-4)*20).getTaskId(), quest);
 			}
 			if (timer > 3) {
 				quester.getTimers().put(new ActionTimer(quester, quest, 3, false)
-						.runTaskLaterAsynchronously(plugin, (timer-3)*20).getTaskId(), quest);
+						.runTaskLater(plugin, (timer-3)*20).getTaskId(), quest);
 			}
 			if (timer > 2) {
 				quester.getTimers().put(new ActionTimer(quester, quest, 2, false)
-						.runTaskLaterAsynchronously(plugin, (timer-2)*20).getTaskId(), quest);
+						.runTaskLater(plugin, (timer-2)*20).getTaskId(), quest);
 			}
 			if (timer > 1) {
 				quester.getTimers().put(new ActionTimer(quester, quest, 1, false)
-						.runTaskLaterAsynchronously(plugin, (timer-1)*20).getTaskId(), quest);
+						.runTaskLater(plugin, (timer-1)*20).getTaskId(), quest);
 			}
 			quester.getTimers().put(new ActionTimer(quester, quest, 0, true)
-					.runTaskLaterAsynchronously(plugin, timer*20).getTaskId(), quest);
+					.runTaskLater(plugin, timer*20).getTaskId(), quest);
 		}
 		if (cancelTimer) {
 			for (Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
