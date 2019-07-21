@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -49,6 +49,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -86,7 +87,6 @@ public class PlayerListener implements Listener {
 		plugin = newPlugin;
 	}
 
-	@SuppressWarnings("deprecation") // since 1.13
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClickEvent(InventoryClickEvent evt) {
 		InventoryAction ac = evt.getAction();
@@ -114,7 +114,7 @@ public class PlayerListener implements Listener {
 		}
 		Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
 		Player player = (Player) evt.getWhoClicked();
-		if (evt.getInventory().getTitle().contains(Lang.get(player, "quests"))) {
+		if (evt.getView().getTitle().contains(Lang.get(player, "quests"))) {
 			ItemStack clicked = evt.getCurrentItem();
 			if (clicked != null) {
 				for (Quest quest : plugin.getQuests()) {
@@ -386,6 +386,15 @@ public class PlayerListener implements Listener {
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			if (quester.getCurrentQuests().isEmpty() == false) {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
+					if (!quest.getOptions().getAllowCommands()) {
+						if (!evt.getMessage().startsWith("/quest")) {
+							evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "optCommandsDenied").replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED));
+							evt.setCancelled(true);
+							plugin.getLogger().info("Player " + evt.getPlayer().getName() + " tried to use command " + evt.getMessage()
+								+ " but was denied because they are currently on quest " + quest.getName());
+							return;
+						}
+					}
 					Stage currentStage = quester.getCurrentStage(quest);
 					if (currentStage == null) {
 						plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() + " on command for quest " + quest.getName());
@@ -499,6 +508,7 @@ public class PlayerListener implements Listener {
 	}
 	
 
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onCraftItem(CraftItemEvent evt) {
 		if (evt.getWhoClicked() instanceof Player) {
@@ -506,7 +516,49 @@ public class PlayerListener implements Listener {
 				Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "craftItem")) {
-						quester.craftItem(quest, evt.getCurrentItem());
+						ItemStack result = evt.getRecipe().getResult();
+						int numberOfItems = result.getAmount();
+						if (evt.isShiftClick()) {
+							int itemsChecked = 0;
+							for (ItemStack item : evt.getInventory().getMatrix()) {
+								if (item != null && !item.getType().equals(Material.AIR)) {
+									if (itemsChecked == 0) {
+										numberOfItems = item.getAmount();
+									} else {
+										numberOfItems = Math.min(numberOfItems, item.getAmount());
+										itemsChecked++;
+									}
+								}
+							}	
+							quester.craftItem(quest, new ItemStack(result.getType(), numberOfItems, result.getDurability()));
+						} else {
+							quester.craftItem(quest, evt.getCurrentItem());
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent evt) {
+		if (evt.getWhoClicked() instanceof Player) {
+			if (evt.getInventory().getType() == InventoryType.FURNACE) {
+				if (evt.getSlotType() == SlotType.RESULT) {
+					Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+					for (Quest quest : quester.getCurrentQuests().keySet()) {
+						if (quester.containsObjective(quest, "smeltItem")) {
+							quester.smeltItem(quest, evt.getCurrentItem());
+						}
+					}
+				}
+			} else if (evt.getInventory().getType() == InventoryType.BREWING) {
+				if (evt.getSlotType() == SlotType.CRAFTING) {
+					Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+					for (Quest quest : quester.getCurrentQuests().keySet()) {
+						if (quester.containsObjective(quest, "brewItem")) {
+							quester.brewItem(quest, evt.getCurrentItem());
+						}
 					}
 				}
 			}
@@ -740,7 +792,7 @@ public class PlayerListener implements Listener {
 				quester.checkQuest(quest);
 			}
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.getCurrentStage(quest).getDelay() > -1) {
+				if (quester.getCurrentStage(quest).getDelay() > -1 && quester.getQuestData(quest).delayOver == false) {
 					quester.startStageTimer(quest);
 				}
 			}

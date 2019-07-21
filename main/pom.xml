@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>3.6.6</version>
+        <version>3.7.6</version>
     </parent>
     <artifactId>quests-main</artifactId>
     
@@ -42,10 +42,6 @@
             <id>Vault</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
-        <repository>
-            <id>Pikacraft Repo</id>
-            <url>http://repo.pikacraft.ro/</url>
-        </repository>
     </repositories>
     
     <dependencies>
@@ -77,6 +73,7 @@
 	        <groupId>com.github.mcMMO-Dev</groupId>
 	        <artifactId>mcMMO-Classic</artifactId>
 	        <version>master-82f97cbe04-1</version>
+	        <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.herocraftonline.heroes</groupId>
@@ -103,24 +100,22 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-	        <groupId>ro.nicuch</groupId>
+	        <groupId>com.github.nicuch</groupId>
 	        <artifactId>CitizensBooks</artifactId>
-	        <version>2.4.8</version>
+	        <version>master-SNAPSHOT</version>
+	        <scope>provided</scope>
 	    </dependency>
         <dependency>
 	        <groupId>com.github.PikaMug</groupId>
 	        <artifactId>PhatLoots</artifactId>
 	        <version>-SNAPSHOT</version>
+	        <scope>provided</scope>
 	    </dependency>
-        <dependency>
-            <groupId>com.github.PikaMug</groupId>
-            <artifactId>GPS</artifactId>
-            <version>-SNAPSHOT</version>
-        </dependency>
         <dependency>
 	        <groupId>com.github.DRE2N</groupId>
 	        <artifactId>DungeonsXL</artifactId>
 	        <version>-6523caa908-1</version>
+	        <scope>provided</scope>
 	    </dependency>
         <dependency>
             <groupId>com.github.AlessioDP.Parties</groupId>
@@ -143,7 +138,7 @@
                     <include>lang/**/*.*</include>
                     <include>config.yml</include>
                     <include>plugin.yml</include>
-                    <include>events.yml</include>
+                    <include>actions.yml</include>
                     <include>quests.yml</include>
                     <include>data.yml</include>
                     <include>strings.yml</include>

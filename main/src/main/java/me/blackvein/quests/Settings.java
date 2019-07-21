@@ -1,3 +1,15 @@
+/*******************************************************************************************************
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
+
 package me.blackvein.quests;
 
 import java.io.File;
@@ -11,7 +23,6 @@ public class Settings {
 	private int acceptTimeout = 20;
 	private boolean allowCommands = true;
 	private boolean allowCommandsForNpcQuests = false;
-	private boolean allowQuitting = true;
 	private boolean askConfirmation = true;
 	private boolean genFilesOnJoin = true;
 	private boolean ignoreLockedQuests = false;
@@ -48,12 +59,6 @@ public class Settings {
 	}
 	public void setAllowCommandsForNpcQuests(boolean allowCommandsForNpcQuests) {
 		this.allowCommandsForNpcQuests = allowCommandsForNpcQuests;
-	}
-	public boolean canAllowQuitting() {
-		return allowQuitting;
-	}
-	public void setAllowQuitting(boolean allowQuitting) {
-		this.allowQuitting = allowQuitting;
 	}
 	public boolean canAskConfirmation() {
 		return askConfirmation;
@@ -157,7 +162,6 @@ public class Settings {
 		acceptTimeout = config.getInt("accept-timeout", 20);
 		allowCommands = config.getBoolean("allow-command-questing", true);
 		allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
-		allowQuitting = config.getBoolean("allow-quitting", true);
 		askConfirmation = config.getBoolean("ask-confirmation", true);
 		genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
 		ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);

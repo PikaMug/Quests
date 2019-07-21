@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -64,25 +64,25 @@ public class NpcListener implements Listener {
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "deliverItem") && player.getItemInHand() != null) {
 					ItemStack hand = player.getItemInHand();
-					ItemStack found = null;
+					int currentIndex = -1;
+					LinkedList<Integer> matches = new LinkedList<Integer>();
 					int reasonCode = 0;
 					for (ItemStack is : quester.getCurrentStage(quest).getItemsToDeliver()) {
+						currentIndex++;
 						reasonCode = ItemUtil.compareItems(is, hand, true);
 						if (reasonCode == 0) {
-							found = is;
-							break;
+							matches.add(currentIndex);
 						}
 					}
 					NPC clicked = evt.getNPC();
-					if (found != null) {
-						for (Integer n : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
-							if (n.equals(clicked.getId())) {
-								quester.deliverItem(quest, hand);
+					if (!matches.isEmpty()) {
+						for (Integer match : matches) {
+							Integer id = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
+							if (id.equals(clicked.getId())) {
+								quester.deliverToNPC(quest, clicked, hand);
 								delivery = true;
-								break;
 							}
 						}
-						break;
 					} else if (!hand.getType().equals(Material.AIR)) {
 						for (Integer n : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
 							if (n.equals(clicked.getId())) {
@@ -101,7 +101,7 @@ public class NpcListener implements Listener {
 								} else {
 									player.sendMessage(Lang.get(player, "questInvalidDeliveryItem").replace("<item>", text).replace("<item>", ItemUtil.getName(hand)));
 								}
-								switch(reasonCode) {
+								switch (reasonCode) {
 									case 1:
 										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "one item is null"));
 										break;
@@ -130,6 +130,12 @@ public class NpcListener implements Listener {
 									case -7:
 										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "item flags"));
 										break;
+									case -8:
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "book data"));
+										break;
+									case -9:
+										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "potion type"));
+										break;
 									default:
 										player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference").replace("<data>", "unknown"));
 								}
@@ -140,7 +146,7 @@ public class NpcListener implements Listener {
 											// TODO translate enchantment names
 											for (Entry<Enchantment, Integer> e : esmeta.getStoredEnchants().entrySet()) {
 												player.sendMessage(ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN 
-														+ Quester.prettyEnchantmentString(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n");
+														+ ItemUtil.getPrettyEnchantmentName(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n");
 											}
 										}
 									}

@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -32,7 +32,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -265,7 +264,6 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				}
 				
 				stack.setItemMeta(meta);
-				
 				cc.setSessionData("tempStack", stack);
 				cc.setSessionData("newItem", Boolean.TRUE);
 			} else {
@@ -377,7 +375,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext cc) {
 			String text = ChatColor.LIGHT_PURPLE + Lang.get("enchantmentsTitle") + "\n";
 			for (Enchantment e : Enchantment.values()) {
-				text += ChatColor.GREEN + Quester.prettyEnchantmentString(e) + ", ";
+				text += ChatColor.GREEN + ItemUtil.getPrettyEnchantmentName(e) + ", ";
 			}
 			text = text.substring(0, text.length() - 2);
 			return text + "\n" + ChatColor.YELLOW + Lang.get("itemCreateEnterEnch");
@@ -387,10 +385,10 @@ public class ItemStackPrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext cc, String input) {
 			String s = input.replace(":", "");
 			if (s.equalsIgnoreCase(Lang.get("cmdClear")) == false && s.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				Enchantment e = Quests.getEnchantmentPretty(MiscUtil.getCapitalized(s));
+				Enchantment e = ItemUtil.getEnchantmentFromPrettyName(MiscUtil.getCapitalized(s));
 				if (e != null) {
 					cc.setSessionData("tempEnchant", e);
-					return new LevelPrompt(Quester.prettyEnchantmentString(e));
+					return new LevelPrompt(ItemUtil.getPrettyEnchantmentName(e));
 				} else {
 					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidEnch"));
 					return new EnchantmentPrompt();
@@ -437,7 +435,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 						return new ItemStackPrompt(oldPrompt);
 					}
 				} catch (NumberFormatException e) {
-					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNotNumber"));
+					cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new LevelPrompt(enchantment);
 				}
 			}
@@ -491,14 +489,14 @@ public class ItemStackPrompt extends FixedSetPrompt {
 			String item;
 			if (cc.getSessionData("tempDisplay") == null) {
 				String name = (String) cc.getSessionData("tempName");
-				item = ChatColor.AQUA + Quester.prettyItemString(name);
+				item = ChatColor.AQUA + ItemUtil.getPrettyItemName(name);
 				if (cc.getSessionData("tempData") != null) {
 					item += ":" + ChatColor.BLUE + (Short) cc.getSessionData("tempData");
 				}
 			} else {
 				item = ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (String) cc.getSessionData("tempDisplay") + ChatColor.RESET + "" + ChatColor.GRAY + " (";
 				String name = (String) cc.getSessionData("tempName");
-				item += ChatColor.AQUA + Quester.prettyItemString(name);
+				item += ChatColor.AQUA + ItemUtil.getPrettyItemName(name);
 				if (cc.getSessionData("tempData") != null) {
 					item += ":" + ChatColor.BLUE + (Short) cc.getSessionData("tempData");
 				}
@@ -514,7 +512,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
 				@SuppressWarnings("unchecked")
 				Map<Enchantment, Integer> enchantments = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
 				for (Entry<Enchantment, Integer> e : enchantments.entrySet()) {
-					item += ChatColor.GRAY + "  - " + ChatColor.RED + Quester.prettyEnchantmentString(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n";
+					item += ChatColor.GRAY + "  - " + ChatColor.RED + ItemUtil.getPrettyEnchantmentName(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n";
 				}
 			}
 			if (cc.getSessionData("tempLore") != null) {

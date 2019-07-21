@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -32,11 +32,11 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.QuestFactory;
-import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 public class RewardsPrompt extends FixedSetPrompt {
 
@@ -54,32 +54,35 @@ public class RewardsPrompt extends FixedSetPrompt {
 	public String getPromptText(ConversationContext context) {
 		String text;
 		String lang = Lang.get("rewardsTitle");
-		lang = lang.replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
-		text = ChatColor.DARK_AQUA + lang + "\n";
+		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE);
+		text = ChatColor.LIGHT_PURPLE + lang + "\n";
 		if (context.getSessionData(CK.REW_MONEY) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + moneyRew + " " + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + ChatColor.AQUA + moneyRew + " " + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY + ")\n";
 		}
 		if (context.getSessionData(CK.REW_QUEST_POINTS) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + ChatColor.AQUA + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")\n";
 		}
 		text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetItems") + "\n";
 		if (context.getSessionData(CK.REW_EXP) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + ChatColor.AQUA + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ChatColor.DARK_GRAY + ")\n";
 		}
 		if (context.getSessionData(CK.REW_COMMAND) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
 			List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
+			List<String> overrides = (List<String>) context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY);
+			int index = 0;
 			for (String cmd : commands) {
-				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd + "\n";
+				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd + (overrides != null ? ChatColor.GRAY + " (\"" + ChatColor.AQUA + overrides.get(index) + ChatColor.GRAY + "\")" : "") + "\n";
+				index++;
 			}
 		}
 		if (context.getSessionData(CK.REW_PERMISSION) == null) {
@@ -103,7 +106,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "7 - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("reqNoMcMMO") + ")\n";
 		}
 		if (plugin.getDependencies().getHeroes() != null) {
 			if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
@@ -117,7 +120,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "8 - " + Lang.get("rewSetHeroes") + " (" + Lang.get("reqNoHeroes") + ")\n";
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetHeroes") + " (" + Lang.get("reqNoHeroes") + ")\n";
 		}
 		if (plugin.getDependencies().getPhatLoots() != null) {
 			if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
@@ -130,7 +133,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 			}
 		} else {
-			text += ChatColor.GRAY + "9 - " + Lang.get("rewSetPhat") + " (" + Lang.get("rewNoPhat") + ")\n";
+			text += ChatColor.GRAY + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetPhat") + " (" + Lang.get("rewNoPhat") + ")\n";
 		}
 		if (context.getSessionData(CK.REW_CUSTOM) == null) {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.DARK_PURPLE + Lang.get("rewSetCustom") + " (" + Lang.get("noneSet") + ")\n";
@@ -156,7 +159,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		} else if (input.equalsIgnoreCase("4")) {
 			return new ExperiencePrompt();
 		} else if (input.equalsIgnoreCase("5")) {
-			return new CommandsPrompt();
+			return new CommandsListPrompt();
 		} else if (input.equalsIgnoreCase("6")) {
 			return new PermissionsPrompt();
 		} else if (input.equalsIgnoreCase("7")) {
@@ -191,9 +194,9 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = Lang.get("rewMoneyPrompt");
 			if (plugin.getDependencies().getVaultEconomy() != null) {
-				text = text.replaceAll("<money>", ChatColor.AQUA + (plugin.getDependencies().getVaultEconomy().currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy().currencyNamePlural()) + ChatColor.YELLOW);
+				text = text.replace("<money>", ChatColor.AQUA + (plugin.getDependencies().getVaultEconomy().currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy().currencyNamePlural()) + ChatColor.YELLOW);
 			} else {
-				text = text.replaceAll("<money>", ChatColor.AQUA + Lang.get("money") + ChatColor.YELLOW);
+				text = text.replace("<money>", ChatColor.AQUA + Lang.get("money") + ChatColor.YELLOW);
 			}
 			return ChatColor.YELLOW + text;
 		}
@@ -210,8 +213,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						return new MoneyPrompt();
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new MoneyPrompt();
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -241,8 +243,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						return new ExperiencePrompt();
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new ExperiencePrompt();
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -272,8 +273,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						return new QuestPointsPrompt();
 					}
 				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-							+ Lang.get("stageEditorInvalidNumber"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 					return new QuestPointsPrompt();
 				}
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -343,14 +343,80 @@ public class RewardsPrompt extends FixedSetPrompt {
 		}
 	}
 
+	private class CommandsListPrompt extends FixedSetPrompt {
+
+		public CommandsListPrompt() {
+			super("1", "2", "3", "4");
+		}
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String text = ChatColor.GOLD + "- " + Lang.get("rewCommands") + " -\n";
+			if (context.getSessionData(CK.REW_COMMAND) == null) {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetCommandsOverrides") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+				text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			} else {
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
+				for (String s : getCommand(context)) {
+					text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+				}
+				if (context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) == null) {
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommandsOverrides") + " (" + Lang.get("stageEditorOptional") + ")\n";
+				} else {
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommandsOverrides") + "\n";
+					for (String s : getCommandOverrideDisplay(context)) {
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+					}
+				}
+				text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+				text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			}
+			return text;
+		}
+
+		@Override
+		protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase("1")) {
+				return new CommandsPrompt();
+			} else if (input.equalsIgnoreCase("2")) {
+				if (context.getSessionData(CK.REW_COMMAND) == null) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewNoCommands"));
+					return new CommandsListPrompt();
+				} else {
+					return new CommandsOverrideDisplayPrompt();
+				}
+			} else if (input.equalsIgnoreCase("3")) {
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCommandsCleared"));
+				context.setSessionData(CK.REW_COMMAND, null);
+				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, null);
+				return new CommandsListPrompt();
+			} else if (input.equalsIgnoreCase("4")) {
+				return new RewardsPrompt(plugin, factory);
+			}
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		private List<String> getCommand(ConversationContext context) {
+			return (List<String>) context.getSessionData(CK.REW_COMMAND);
+		}
+
+		@SuppressWarnings("unchecked")
+		private List<String> getCommandOverrideDisplay(ConversationContext context) {
+			return (List<String>) context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY);
+		}
+	}
+	
 	private class CommandsPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
 			String lang1 = Lang.get("rewCommandPrompt");
-			lang1 = lang1.replaceAll("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET + ChatColor.YELLOW);
+			lang1 = lang1.replace("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET + ChatColor.YELLOW);
 			String lang2 = Lang.get("rewCommandPromptHint");
-			return ChatColor.YELLOW + lang1 + "\n" + lang2;
+			return ChatColor.YELLOW + lang1 + "\n" + ChatColor.GOLD + lang2;
 		}
 
 		@Override
@@ -364,11 +430,39 @@ public class RewardsPrompt extends FixedSetPrompt {
 					}
 					commands.add(s);
 				}
-				context.setSessionData(CK.REW_COMMAND, commands);
+				context.setSessionData(CK.REW_COMMAND, commands.isEmpty() ? null : commands);
 			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
 				context.setSessionData(CK.REW_COMMAND, null);
 			}
-			return new RewardsPrompt(plugin, factory);
+			return new CommandsListPrompt();
+		}
+	}
+	
+	private class CommandsOverrideDisplayPrompt extends StringPrompt {
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String text = ChatColor.YELLOW + Lang.get("rewCommandsOverridePrompt") + "\n";
+			text += ChatColor.ITALIC + "" + ChatColor.GOLD + Lang.get("rewCommandsOverrideHint");
+			return text;
+		}
+
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				String[] args = input.split(Lang.get("charSemi"));
+				List<String> overrides = new LinkedList<String>();
+				for (String s : args) {
+					if (s.startsWith("/")) {
+						s = s.substring(1);
+					}
+					overrides.add(s);
+				}
+				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, overrides.isEmpty() ? null : overrides);
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, null);
+			}
+			return new CommandsListPrompt();
 		}
 	}
 
@@ -393,7 +487,6 @@ public class RewardsPrompt extends FixedSetPrompt {
 		}
 	}
 
-	// mcMMO
 	private class mcMMOListPrompt extends FixedSetPrompt {
 
 		public mcMMOListPrompt() {
@@ -405,7 +498,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + Lang.get("mcMMORewardsTitle") + "\n";
 			if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkills") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -502,14 +595,14 @@ public class RewardsPrompt extends FixedSetPrompt {
 				for (String s : args) {
 					if (Quests.getMcMMOSkill(s) != null) {
 						if (skills.contains(s) == false) {
-							skills.add(Quester.getCapitalized(s));
+							skills.add(MiscUtil.getCapitalized(s));
 						} else {
 							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
 							return new mcMMOSkillsPrompt();
 						}
 					} else {
 						String text = Lang.get("reqMcMMOError");
-						text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						context.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new mcMMOSkillsPrompt();
 					}
@@ -537,7 +630,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						amounts.add(Integer.parseInt(s));
 					} catch (NumberFormatException e) {
 						String text = Lang.get("reqNotANumber");
-						text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						context.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new mcMMOAmountsPrompt();
 					}
@@ -559,7 +652,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + Lang.get("heroesRewardsTitle") + "\n";
 			if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesClasses") + " (" + Lang.get("noneSet") + ")\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
@@ -663,7 +756,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 					HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(s);
 					if (hc == null) {
 						String text = Lang.get("rewHeroesInvalidClass");
-						text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						cc.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new HeroesClassesPrompt();
 					} else {
@@ -698,7 +791,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 						amounts.add(d);
 					} catch (NumberFormatException nfe) {
 						String text = Lang.get("reqNotANumber");
-						text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
 						cc.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new HeroesExperiencePrompt();
 					}
@@ -731,7 +824,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				for (String s : arr) {
 					if (PhatLootsAPI.getPhatLoot(s) == null) {
 						String text = Lang.get("rewPhatLootsInvalid");
-						text = text.replaceAll("<input>", ChatColor.DARK_RED + s + ChatColor.RED);
+						text = text.replace("<input>", ChatColor.DARK_RED + s + ChatColor.RED);
 						cc.getForWhom().sendRawMessage(ChatColor.RED + text);
 						return new PhatLootsPrompt();
 					}
@@ -755,10 +848,10 @@ public class RewardsPrompt extends FixedSetPrompt {
 		public String getPromptText(ConversationContext context) {
 			String text = ChatColor.LIGHT_PURPLE + Lang.get("customRewardsTitle") + "\n";
 			if (plugin.getCustomRewards().isEmpty()) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
+				text += ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
 			} else {
 				for (CustomReward cr : plugin.getCustomRewards()) {
-					text += ChatColor.DARK_PURPLE + " - " + cr.getName() + "\n";
+					text += ChatColor.DARK_PURPLE + "  - " + cr.getName() + "\n";
 				}
 			}
 			return text + ChatColor.YELLOW + Lang.get("rewCustomRewardPrompt");
@@ -834,7 +927,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.BOLD + "" + ChatColor.AQUA + "- ";
+			String text = ChatColor.AQUA + "- ";
 			LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
 			LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
 			String rewName = list.getLast();
@@ -847,7 +940,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			}
 			Collections.sort(datamapKeys);
 			for (String dataKey : datamapKeys) {
-				text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.RESET + ChatColor.BLUE + dataKey;
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " + dataKey;
 				if (datamap.get(dataKey) != null) {
 					text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
 				} else {
@@ -855,7 +948,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				}
 				index++;
 			}
-			text += ChatColor.BOLD + "" + ChatColor.DARK_BLUE + index + " - " + ChatColor.AQUA + Lang.get("finish");
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + index + ChatColor.YELLOW + " - " + Lang.get("done");
 			return text;
 		}
 
@@ -905,7 +998,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				text += ChatColor.GOLD + descriptions.get(temp) + "\n";
 			}
 			String lang = Lang.get("stageEditorCustomDataPrompt");
-			lang = lang.replaceAll("<data>", temp);
+			lang = lang.replace("<data>", temp);
 			text += ChatColor.YELLOW + lang;
 			return text;
 		}

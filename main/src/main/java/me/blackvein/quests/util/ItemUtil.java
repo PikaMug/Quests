@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -29,12 +29,13 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.Potion;
 
-import me.blackvein.quests.Quester;
-
+@SuppressWarnings("deprecation")
 public class ItemUtil {
 
 	/**
@@ -53,8 +54,9 @@ public class ItemUtil {
 	 * -5 if stack enchantments are unequal<br>
 	 * -6 if stack stored enchants are unequal<br>
 	 * -7 if stack item flags are unequal
+	 * -8 if stack Written Book data is unequal
+	 * -9 if stack Potion type is unequal
 	 */
-	@SuppressWarnings("deprecation")
 	public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
 		if (one == null || two == null) {
 			return 1;
@@ -98,6 +100,40 @@ public class ItemUtil {
 			} catch (Throwable tr) {
 				// We're below 1.11 so don't check ItemFlags
 			}
+			if (one.getType().equals(Material.WRITTEN_BOOK)) {
+				BookMeta bmeta1 = (BookMeta) one.getItemMeta();
+				BookMeta bmeta2 = (BookMeta) two.getItemMeta();
+				if (bmeta1.getTitle().equals(bmeta2.getTitle()) == false) {
+					if (bmeta1.getAuthor().equals(bmeta2.getAuthor()) == false) {
+						if (bmeta1.getPages().equals(bmeta2.getPages()) == false) {
+							return -8;
+						}
+					}
+				}
+			}
+			if (one.getItemMeta() instanceof PotionMeta) {
+				if (Material.getMaterial("LINGERING_POTION") != null) {
+					// Bukkit version is 1.9+
+					if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) || one.getType().equals(Material.SPLASH_POTION)) {
+						PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
+						PotionMeta pmeta2 = (PotionMeta) one.getItemMeta();
+						if (pmeta1.getBasePotionData().getType().equals(pmeta2.getBasePotionData().getType()) == false) {
+							return -9;
+						}
+					}
+				}
+			}
+		}
+		if (Material.getMaterial("LINGERING_POTION") == null) {
+			// Bukkit version is below 1.9
+			Potion pot1 = new Potion(one.getDurability());
+			Potion pot2 = new Potion(two.getDurability());
+			if (pot1.getType() == null || pot2.getType() == null) {
+				return -9;
+			}
+			if (!pot1.getType().equals(pot2.getType())) {
+				return -9;
+			}
 		}
 		if (one.getEnchantments().equals(two.getEnchantments()) == false) {
 			return -5;
@@ -124,7 +160,6 @@ public class ItemUtil {
 	 * @param durability The data value of the item, default of 0
 	 * @return ItemStack, or null if invalid format
 	 */
-	@SuppressWarnings("deprecation")
 	public static ItemStack processItemStack(String material, int amount, short durability) {
 		try {
 			return new ItemStack(Material.getMaterial(material.toUpperCase()), amount, durability);
@@ -134,7 +169,7 @@ public class ItemUtil {
 						+ "in accordance with https://bit.ly/2BkBNNN");
 				return new ItemStack(Material.matchMaterial(material, true), amount, durability);
 			} catch (Exception e2) {
-				Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " for as item name");
+				Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
 				e2.printStackTrace();
 				return null;
 			}
@@ -150,7 +185,6 @@ public class ItemUtil {
 	 * @param data formatted string
 	 * @return ItemStack, or null if invalid format
 	 */
-	@SuppressWarnings("deprecation")
 	public static ItemStack readItemStack(String data) {
 		if (data == null) {
 			return null;
@@ -362,7 +396,6 @@ public class ItemUtil {
 	 * @param is ItemStack
 	 * @return formatted string, or null if invalid stack
 	 */
-	@SuppressWarnings("deprecation")
 	public static String serializeItemStack(ItemStack is) {
 		String serial;
 		if (is == null) {
@@ -419,14 +452,13 @@ public class ItemUtil {
 	/**
 	 * Returns a formatted display name. If none exists, returns item name.
 	 * Also returns formatted durability and amount.
-	 * A;so includes formatted enchantments.
+	 * Also includes formatted enchantments.
 	 * 
 	 * Format is ([display]name:durability) with (enchantments:levels) x (amount)
 	 * 
 	 * @param is ItemStack to check
 	 * @return true display or item name, plus durability and amount, plus enchantments
 	 */
-	@SuppressWarnings("deprecation")
 	public static String getDisplayString(ItemStack is) {
 		String text;
 		if (is == null) {
@@ -442,7 +474,7 @@ public class ItemUtil {
 			if (is.getEnchantments().isEmpty() == false) {
 				text += " " + ChatColor.GRAY + Lang.get("with") + ChatColor.DARK_PURPLE;
 				for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
-					text += " " + Quester.prettyEnchantmentString(e.getKey()) + ":" + e.getValue();
+					text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
 				}
 			}
 			text += ChatColor.AQUA + " x " + is.getAmount();
@@ -459,7 +491,6 @@ public class ItemUtil {
 	 * @param is ItemStack to check
 	 * @return true display or item name, plus durability and amount, if stack is not null
 	 */
-	@SuppressWarnings("deprecation")
 	public static String getString(ItemStack is) {
 		if (is == null) {
 			return null;
@@ -468,7 +499,7 @@ public class ItemUtil {
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
 		} else {
-			text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
+			text = ChatColor.AQUA + getPrettyItemName(is.getType().name());
 			if (is.getDurability() != 0) {
 				text += ChatColor.AQUA + ":" + is.getDurability();
 			}
@@ -491,7 +522,7 @@ public class ItemUtil {
 		if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 			text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName();
 		} else {
-			text = ChatColor.AQUA + Quester.prettyItemString(is.getType().name());
+			text = ChatColor.AQUA + getPrettyItemName(is.getType().name());
 		}
 		return text;
 	}
@@ -524,5 +555,123 @@ public class ItemUtil {
 		if (is.getItemMeta().hasDisplayName() == false)
 			return false;
 		return is.getItemMeta().getDisplayName().equals(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
+	}
+	
+
+	/**
+	 * Cleans up item names. 'WOODEN_BUTTON' becomes 'Wooden Button'
+	 * 
+	 * @param itemName any item name, ideally
+	 * @return cleaned-up string
+	 */
+	public static String getPrettyItemName(String itemName) {
+		String baseString = Material.matchMaterial(itemName).toString();
+		String[] substrings = baseString.split("_");
+		String prettyString = "";
+		int size = 1;
+		for (String s : substrings) {
+			prettyString = prettyString.concat(MiscUtil.getCapitalized(s));
+			if (size < substrings.length) {
+				prettyString = prettyString.concat(" ");
+			}
+			size++;
+		}
+		return prettyString;
+	}
+	
+	/**
+	 * Gets player-friendly name from enchantment. 'FIRE_ASPECT' becomes 'Fire Aspect'
+	 * 
+	 * @param e Enchantment to get pretty localized name of
+	 * @return pretty localized name
+	 */
+	public static String getPrettyEnchantmentName(Enchantment e) {
+		String prettyString = getEnchantmentName(e);
+		prettyString = MiscUtil.capitalsToSpaces(prettyString);
+		return prettyString;
+	}
+	
+	/**
+	 * Gets name of enchantment exactly as it appears in lang file
+	 * 
+	 * @param e Enchantment to get localized name of
+	 * @return localized name
+	 */
+	private static String getEnchantmentName(Enchantment e) {
+		try {
+			return (Lang.get("ENCHANTMENT_" + e.getName()));
+		} catch (NullPointerException ne) {
+			Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to " 
+					+ "update the file or simply add an entry for the enchantment");
+			return e.getName().toLowerCase().replace("_", " ");
+		}
+	}
+	
+	public static Enchantment getEnchantmentFromProperName(String enchant) {
+		String ench = Lang.getKey(enchant.replace(" ", ""));
+		ench = ench.replace("ENCHANTMENT_", "");
+		Enchantment e = Enchantment.getByName(ench);
+		return e != null ? e : getEnchantmentFromProperLegacyName(ench.replace(" ", ""));
+	}
+
+	public static Enchantment getEnchantmentFromProperLegacyName(String enchant) {
+		if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_DAMAGE"))) {
+			return Enchantment.ARROW_DAMAGE;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_FIRE"))) {
+			return Enchantment.ARROW_FIRE;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_INFINITE"))) {
+			return Enchantment.ARROW_INFINITE;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_KNOCKBACK"))) {
+			return Enchantment.ARROW_KNOCKBACK;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_ALL"))) {
+			return Enchantment.DAMAGE_ALL;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_ARTHROPODS"))) {
+			return Enchantment.DAMAGE_ARTHROPODS;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DAMAGE_UNDEAD"))) {
+			return Enchantment.DAMAGE_UNDEAD;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DIG_SPEED"))) {
+			return Enchantment.DIG_SPEED;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_DURABILITY"))) {
+			return Enchantment.DURABILITY;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_FIRE_ASPECT"))) {
+			return Enchantment.FIRE_ASPECT;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_KNOCKBACK"))) {
+			return Enchantment.KNOCKBACK;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LOOT_BONUS_BLOCKS"))) {
+			return Enchantment.LOOT_BONUS_BLOCKS;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LOOT_BONUS_MOBS"))) {
+			return Enchantment.LOOT_BONUS_MOBS;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LUCK"))) {
+			return Enchantment.LOOT_BONUS_MOBS;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_LURE"))) {
+			return Enchantment.LOOT_BONUS_MOBS;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_OXYGEN"))) {
+			return Enchantment.OXYGEN;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_ENVIRONMENTAL"))) {
+			return Enchantment.PROTECTION_ENVIRONMENTAL;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_EXPLOSIONS"))) {
+			return Enchantment.PROTECTION_EXPLOSIONS;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_FALL"))) {
+			return Enchantment.PROTECTION_FALL;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_FIRE"))) {
+			return Enchantment.PROTECTION_FIRE;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_PROTECTION_PROJECTILE"))) {
+			return Enchantment.PROTECTION_PROJECTILE;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_SILK_TOUCH"))) {
+			return Enchantment.SILK_TOUCH;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_THORNS"))) {
+			return Enchantment.THORNS;
+		} else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_WATER_WORKER"))) {
+			return Enchantment.WATER_WORKER;
+		} else {
+			return null;
+		}
+	}
+
+	public static Enchantment getEnchantmentFromPrettyName(String enchant) {
+		while (MiscUtil.spaceToCapital(enchant) != null) {
+			enchant = MiscUtil.spaceToCapital(enchant);
+		}
+		return getEnchantmentFromProperName(enchant);
 	}
 }

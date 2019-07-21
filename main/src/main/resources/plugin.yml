@@ -4,8 +4,8 @@ version: ${project.version}-b${env.BUILD_NUMBER}
 api-version: 1.13
 description: An extensive questing system.
 website: https://www.spigotmc.org/resources/quests.3711/
-dev-url: https://github.com/FlyingPikachu/Quests
-author: HappyPikachu
+dev-url: https://github.com/PikaMug/Quests
+author: PikaMug
 softdepend: [Citizens, CitizensBooks, Denizen, DungeonsXL, GPS, Heroes, mcMMO, Parties, PhatLoots, PlaceholderAPI, Vault, WorldGuard]
 permissions:
     quests.quest:
@@ -99,16 +99,28 @@ permissions:
         description: Ability to delete existing quests
         default: op
     quests.events.editor:
-        description: Ability to open Events Editor
+        description: LEGACY - Ability to open Actions Editor
         default: op
     quests.events.create:
-        description: Ability to create new events
+        description: LEGACY - Ability to create new actions
         default: op
     quests.events.edit:
-        description: Ability to edit existing events
+        description: LEGACY - Ability to edit existing actions
         default: op
     quests.events.delete:
-        description: Ability to delete existing events
+        description: LEGACY - Ability to delete existing actions
+        default: op
+    quests.actions.editor:
+        description: Ability to open Actions Editor
+        default: op
+    quests.actions.create:
+        description: Ability to create new actions
+        default: op
+    quests.actions.edit:
+        description: Ability to edit existing actions
+        default: op
+    quests.actions.delete:
+        description: Ability to delete existing actions
         default: op
     quests.party.create:
         description: Ability to create new parties
@@ -120,10 +132,12 @@ commands:
     quests:
         description: Quests command
         permission: quests.quests
+        aliases: qs
     questadmin:
         description: Quests admin command
         permission: quests.admin
-        aliases: [questsadmin]
+        aliases: [questsadmin, qa]
     quest:
         description: Quest command
         permission: quests.quest
+        aliases: q

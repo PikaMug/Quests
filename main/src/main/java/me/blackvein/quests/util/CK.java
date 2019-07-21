@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -63,9 +63,11 @@ public class CK {
 	public static final String S_FISH = "fish";
 	public static final String S_PLAYER_KILL = "playerKill";
 	public static final String S_CRAFT_ITEMS = "craftItems";
+	public static final String S_SMELT_ITEMS = "smeltItems";
 	public static final String S_ENCHANT_TYPES = "enchantTypes";
 	public static final String S_ENCHANT_NAMES = "enchantNames";
 	public static final String S_ENCHANT_AMOUNTS = "enchantAmounts";
+	public static final String S_BREW_ITEMS = "brewItems";
 	public static final String S_DELIVERY_ITEMS = "deliveryItems";
 	public static final String S_DELIVERY_NPCS = "deliveryNPCs";
 	public static final String S_DELIVERY_MESSAGES = "deliveryMessages";
@@ -113,6 +115,7 @@ public class CK {
 	public static final String REW_ITEMS = "itemRews";
 	public static final String REW_EXP = "expRew";
 	public static final String REW_COMMAND = "commandRews";
+	public static final String REW_COMMAND_OVERRIDE_DISPLAY = "commandOverrideDisplay";
 	public static final String REW_PERMISSION = "permissionRews";
 	public static final String REW_MCMMO_SKILLS = "mcMMOSkillRews";
 	public static final String REW_MCMMO_AMOUNTS = "mcMMOSkillAmounts";
@@ -129,8 +132,11 @@ public class CK {
 	public static final String PLN_REPEAT_CYCLE = "repeatCyclePln";
 	public static final String PLN_COOLDOWN = "cooldownPln";
 	// Options
+	public static final String OPT_ALLOW_COMMANDS = "allowCommandsOpt";
+	public static final String OPT_ALLOW_QUITTING = "allowQuittingOpt";
 	public static final String OPT_USE_DUNGEONSXL_PLUGIN = "useDungeonsXLPluginOpt";
 	public static final String OPT_USE_PARTIES_PLUGIN = "usePartiesPluginOpt";
+	public static final String OPT_SHARE_PROGRESS_LEVEL = "shareProgressLevelOpt";
 	// Events
 	public static final String E_OLD_EVENT = "oldEvent";
 	public static final String E_NAME = "evtName";

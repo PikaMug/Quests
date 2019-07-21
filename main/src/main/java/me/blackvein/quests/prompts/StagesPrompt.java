@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -34,15 +34,15 @@ public class StagesPrompt extends StringPrompt {
 
 	@Override
 	public String getPromptText(ConversationContext cc) {
-		String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + Lang.get("stageEditorStages") + ChatColor.LIGHT_PURPLE + " -\n";
+		String text = ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorStages") + " -\n";
 		int stages = getStages(cc);
 		for (int i = 1; i <= stages; i++) {
-			text += ChatColor.BOLD + "" + ChatColor.GREEN + i + ". " + ChatColor.RESET + ChatColor.GOLD + Lang.get("stageEditorEditStage") + " " + i + "\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + i + " - " + ChatColor.RESET + ChatColor.GOLD + Lang.get("stageEditorEditStage") + " " + i + "\n";
 		}
 		stages++;
-		text += "\n" + ChatColor.BOLD + "" + ChatColor.GREEN + stages + ". " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("stageEditorNewStage");
+		text += "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + stages + " - " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("stageEditorNewStage");
 		stages++;
-		text += "\n" + ChatColor.BOLD + "" + ChatColor.BLUE + stages + ". " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("done");
+		text += "\n" + ChatColor.GREEN + "" + ChatColor.BOLD + stages + " - " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("done");
 		return text;
 	}
 
@@ -113,9 +113,11 @@ public class StagesPrompt extends StringPrompt {
 				cc.setSessionData(newPref + CK.S_CUT_AMOUNTS, cc.getSessionData(pref + CK.S_CUT_AMOUNTS));
 				cc.setSessionData(newPref + CK.S_CUT_DURABILITY, cc.getSessionData(pref + CK.S_CUT_DURABILITY));
 				cc.setSessionData(newPref + CK.S_CRAFT_ITEMS, cc.getSessionData(pref + CK.S_CRAFT_ITEMS));
+				cc.setSessionData(newPref + CK.S_SMELT_ITEMS, cc.getSessionData(pref + CK.S_SMELT_ITEMS));
 				cc.setSessionData(newPref + CK.S_ENCHANT_TYPES, cc.getSessionData(pref + CK.S_ENCHANT_TYPES));
 				cc.setSessionData(newPref + CK.S_ENCHANT_NAMES, cc.getSessionData(pref + CK.S_ENCHANT_NAMES));
 				cc.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, cc.getSessionData(pref + CK.S_ENCHANT_AMOUNTS));
+				cc.setSessionData(newPref + CK.S_BREW_ITEMS, cc.getSessionData(pref + CK.S_BREW_ITEMS));
 				cc.setSessionData(newPref + CK.S_FISH, cc.getSessionData(pref + CK.S_FISH));
 				cc.setSessionData(newPref + CK.S_PLAYER_KILL, cc.getSessionData(pref + CK.S_PLAYER_KILL));
 				cc.setSessionData(newPref + CK.S_DELIVERY_ITEMS, cc.getSessionData(pref + CK.S_DELIVERY_ITEMS));
@@ -172,8 +174,10 @@ public class StagesPrompt extends StringPrompt {
 			cc.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
 			cc.setSessionData(pref + CK.S_CUT_DURABILITY, null);
 			cc.setSessionData(pref + CK.S_CRAFT_ITEMS, null);
+			cc.setSessionData(pref + CK.S_SMELT_ITEMS, null);
 			cc.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
 			cc.setSessionData(pref + CK.S_ENCHANT_NAMES, null);
+			cc.setSessionData(pref + CK.S_BREW_ITEMS, null);
 			cc.setSessionData(pref + CK.S_FISH, null);
 			cc.setSessionData(pref + CK.S_PLAYER_KILL, null);
 			cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, null);

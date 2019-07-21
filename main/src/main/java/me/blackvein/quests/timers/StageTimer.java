@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -15,11 +15,11 @@ package me.blackvein.quests.timers;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.blackvein.quests.Event;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
+import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.util.Lang;
 
 public class StageTimer implements Runnable {
@@ -63,10 +63,11 @@ public class StageTimer implements Runnable {
 				}
 				quester.hardStagePut(quest, stageNum);
 				quester.addEmptiesFor(quest, stageNum);
-				quester.getCurrentStage(quest).setDelay(-1);
+				// Added this line at some point, not sure why. Commented out to fix Github #726
+				//quester.getCurrentStage(quest).setDelay(-1);
 				quester.getQuestData(quest).delayStartTime = 0;
 				quester.getQuestData(quest).delayTimeLeft = -1;
-				Event stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
+				Action stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
 				if (stageStartEvent != null) {
 					stageStartEvent.fire(quester, quest);
 				}
@@ -79,7 +80,6 @@ public class StageTimer implements Runnable {
 				if (stageStartMessage != null) {
 					quester.getPlayer().sendMessage(Quests.parseStringWithPossibleLineBreaks(stageStartMessage, quest));
 				}
-				
 			}
 			if (quester.getQuestData(quest) != null) {
 				quester.getQuestData(quest).delayOver = true;

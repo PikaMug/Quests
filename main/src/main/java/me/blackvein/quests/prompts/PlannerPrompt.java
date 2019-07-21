@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -108,7 +108,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("plnRepeatPrompt");
+			return ChatColor.YELLOW + Lang.get("timePrompt");
 		}
 
 		@Override
@@ -130,8 +130,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 					context.setSessionData(CK.PLN_REPEAT_CYCLE, delay);
 				}
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED
-						+ Lang.get("stageEditorInvalidNumber"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 				return new RepeatPrompt();
 			}
 			return new PlannerPrompt(plugin, factory);
@@ -142,7 +141,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("plnCooldownPrompt");
+			return ChatColor.YELLOW + Lang.get("timePrompt");
 		}
 
 		@Override
@@ -164,8 +163,7 @@ public class PlannerPrompt extends FixedSetPrompt {
 					context.setSessionData(CK.PLN_COOLDOWN, delay);
 				}
 			} catch (NumberFormatException e) {
-				context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED
-						+ Lang.get("stageEditorInvalidNumber"));
+				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
 				return new CooldownPrompt();
 			}
 			return new PlannerPrompt(plugin, factory);

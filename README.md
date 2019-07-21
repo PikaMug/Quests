@@ -1,4 +1,4 @@
-# Quests [![Build Status](http://ci.ac3-servers.eu/buildStatus/icon?job=Quests)](http://ci.ac3-servers.eu/job/Quests/)
+# Quests [![Build Status](https://ci.codemc.org/job/PikaMug/job/Quests/badge/icon)](https://ci.codemc.org/job/PikaMug/job/Quests/)
 
 Quests plugin for Spigot. This work depends on contributions from coders like you!
 

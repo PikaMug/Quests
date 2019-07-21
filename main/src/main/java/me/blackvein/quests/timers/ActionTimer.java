@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -18,14 +18,14 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.util.Lang;
 
-public class EventTimer extends BukkitRunnable {
+public class ActionTimer extends BukkitRunnable {
 
     private Quester quester;
     private Quest quest;
     private int time;
     private boolean last;
 
-    public EventTimer(Quester quester, Quest quest, int time, boolean last) {
+    public ActionTimer(Quester quester, Quest quest, int time, boolean last) {
         this.quester = quester;
         this.quest = quest;
         this.time = time;

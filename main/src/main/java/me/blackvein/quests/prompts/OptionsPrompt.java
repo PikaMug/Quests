@@ -1,3 +1,15 @@
+/*******************************************************************************************************
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
+
 package me.blackvein.quests.prompts;
 
 import org.bukkit.ChatColor;
@@ -14,14 +26,13 @@ import me.blackvein.quests.util.Lang;
 
 public class OptionsPrompt extends FixedSetPrompt {
 	
-	@SuppressWarnings("unused")
 	private final Quests plugin;
 	private final QuestFactory factory;
 	private String tempKey;
 	private StringPrompt tempPrompt;
 
 	public OptionsPrompt(Quests plugin, QuestFactory qf) {
-		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
+		super("1", "2", "3");
 		this.plugin = plugin;
 		factory = qf;
 	}
@@ -30,10 +41,10 @@ public class OptionsPrompt extends FixedSetPrompt {
 	public String getPromptText(ConversationContext context) {
 		String text;
 		String lang = Lang.get("optionsTitle");
-		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
+		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN);
 		text = ChatColor.DARK_AQUA + lang + "\n";
-		text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optGeneral") + "\n";
-		text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optMultiplayer") + "\n";
+		text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("optGeneral") + "\n";
+		text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("optMultiplayer") + "\n";
 		text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 		return text;
 	}
@@ -81,25 +92,81 @@ public class OptionsPrompt extends FixedSetPrompt {
 		}
 	}
 	
+	private class NumberPrompt extends StringPrompt {
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String text = Lang.get("optNumberPrompt");
+			text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "1" + ChatColor.RESET + " = " + ChatColor.GOLD + Lang.get("everything");
+			text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "2" + ChatColor.RESET + " = " + ChatColor.GOLD + Lang.get("objectives");;
+			text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "3" + ChatColor.RESET + " = " + ChatColor.GOLD + Lang.get("stageEditorStages");
+			text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "4" + ChatColor.RESET + " = " + ChatColor.GOLD + Lang.get("quests");
+			return ChatColor.YELLOW + text;
+		}
+
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					context.setSessionData(tempKey, i);
+				} catch (Exception e) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				context.setSessionData(tempKey, null);
+				return tempPrompt;
+			}
+			return tempPrompt;
+		}
+	}
+	
 	private class GeneralPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text;
-			String lang = Lang.get("questEditorOpts") + ": " + Lang.get("optGeneral");
-			lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
-			text = ChatColor.DARK_AQUA + lang + "\n";
-			text += ChatColor.RED + "WIP" + "\n";
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			String text = ChatColor.DARK_GREEN + "- " + Lang.get("optGeneral") + " -\n";
+			if (context.getSessionData(CK.OPT_ALLOW_COMMANDS) == null) {
+				boolean defaultOpt = new Options().getAllowCommands();
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowCommands") + " (" 
+						+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")\n";
+			} else {
+				boolean commandsOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_COMMANDS);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowCommands") + " (" 
+						+ (commandsOpt ? ChatColor.GREEN + String.valueOf(commandsOpt) : ChatColor.RED + String.valueOf(commandsOpt)) + ChatColor.YELLOW + ")\n";
+			}
+			if (context.getSessionData(CK.OPT_ALLOW_QUITTING) == null) {
+				boolean defaultOpt = new Options().getAllowQuitting();
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowQuitting") + " (" 
+						+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")\n";
+			} else {
+				boolean quittingOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowQuitting") + " (" 
+						+ (quittingOpt ? ChatColor.GREEN + String.valueOf(quittingOpt) : ChatColor.RED + String.valueOf(quittingOpt)) + ChatColor.YELLOW + ")\n";
+			}
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			return text;
 		}
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			if (input.equalsIgnoreCase("1")) {
+				tempKey = CK.OPT_ALLOW_COMMANDS;
+				tempPrompt = new GeneralPrompt();
+				return new TrueFalsePrompt();
+			} else if (input.equalsIgnoreCase("2")) {
+				tempKey = CK.OPT_ALLOW_QUITTING;
+				tempPrompt = new GeneralPrompt();
+				return new TrueFalsePrompt();
+			} else if (input.equalsIgnoreCase("3")) {
 				tempKey = null;
 				tempPrompt = null;
-				return factory.returnToMenu();
+				try {
+					return new OptionsPrompt(plugin, factory);
+				} catch (Exception e) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
+					return Prompt.END_OF_CONVERSATION;
+				}
 			}
 			return null;
 		}
@@ -109,10 +176,7 @@ public class OptionsPrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text;
-			String lang = Lang.get("questEditorOpts") + ": " + Lang.get("optMultiplayer");
-			lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
-			text = ChatColor.DARK_AQUA + lang + "\n";
+			String text = ChatColor.DARK_GREEN + "- " + Lang.get("optMultiplayer") + " -\n";
 			if (context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) == null) {
 				boolean defaultOpt = new Options().getUseDungeonsXLPlugin();
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optUseDungeonsXLPlugin") + " (" 
@@ -131,7 +195,16 @@ public class OptionsPrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optUsePartiesPlugin") + " (" 
 						+ (partiesOpt ? ChatColor.GREEN + String.valueOf(partiesOpt) : ChatColor.RED + String.valueOf(partiesOpt)) + ChatColor.YELLOW +  ")\n";
 			}
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			if (context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) == null) {
+				int defaultOpt = new Options().getShareProgressLevel();
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optShareProgressLevel") + " (" 
+						+ ChatColor.AQUA + String.valueOf(defaultOpt) + ChatColor.YELLOW + ")\n";
+			} else {
+				int shareOpt = (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL);
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optShareProgressLevel") + " (" 
+						+ ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.YELLOW + ")\n";
+			}
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			return text;
 		}
 
@@ -146,9 +219,18 @@ public class OptionsPrompt extends FixedSetPrompt {
 				tempPrompt = new MultiplayerPrompt();
 				return new TrueFalsePrompt();
 			} else if (input.equalsIgnoreCase("3")) {
+				tempKey = CK.OPT_SHARE_PROGRESS_LEVEL;
+				tempPrompt = new MultiplayerPrompt();
+				return new NumberPrompt();
+			} else if (input.equalsIgnoreCase("4")) {
 				tempKey = null;
 				tempPrompt = null;
-				return factory.returnToMenu();
+				try {
+					return new OptionsPrompt(plugin, factory);
+				} catch (Exception e) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
+					return Prompt.END_OF_CONVERSATION;
+				}
 			}
 			return null;
 		}

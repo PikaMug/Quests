@@ -1,3 +1,15 @@
+/*******************************************************************************************************
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
+
 package me.blackvein.quests;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -16,8 +28,6 @@ import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.codisimus.plugins.phatloots.PhatLoots;
 import com.gmail.nossr50.mcMMO;
 import com.herocraftonline.heroes.Heroes;
-import com.live.bemmamin.gps.Vars;
-import com.live.bemmamin.gps.api.GPSAPI;
 
 import de.erethon.dungeonsxl.DungeonsXL;
 
@@ -28,7 +38,6 @@ public class Dependencies {
 	private static Permission permission = null;
 	private static WorldGuardAPI worldGuardApi = null;
 	private static mcMMO mcmmo = null;
-	private static GPSAPI gpsapi = null;
 	private static Heroes heroes = null;
 	private static PhatLoots phatLoots = null;
 	private static PlaceholderAPIPlugin placeholder = null;
@@ -56,10 +65,6 @@ public class Dependencies {
 	
 	public mcMMO getMcmmo() {
 		return mcmmo;
-	}
-	
-	public GPSAPI getGpsApi() {
-		return gpsapi;
 	}
 	
 	public Heroes getHeroes() {
@@ -124,11 +129,12 @@ public class Dependencies {
 			denizen = (Denizen) plugin.getServer().getPluginManager().getPlugin("Denizen");
 		}
 		if (isPluginAvailable("mcMMO")) {
-			mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
-		}
-		if (isPluginAvailable("GPS") && plugin.getSettings().canUseGPS()) {
-			gpsapi = new GPSAPI(plugin);
-			Vars.getInstance().setMaxDistanceToEntry(9999.0);
+			try {
+				Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
+				mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
+			} catch (Exception e) {
+				// Unsupported version
+			}
 		}
 		if (isPluginAvailable("Heroes")) {
 			heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");

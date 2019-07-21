@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by FlyingPikachu/HappyPikachu with permission from _Blackvein_. All rights reserved.
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -179,9 +179,11 @@ public abstract class CustomObjective implements Listener {
 					for (Entry<String, Object> e : currentStage.customObjectiveData) {
 						if (e.getKey().equals(datamap.getKey())) {
 							m.put(e.getKey(), e.getValue());
-							return m;
 						}
 					}
+				}
+				if (m != null && !m.isEmpty()) {
+					return m;
 				}
 			}
 		}

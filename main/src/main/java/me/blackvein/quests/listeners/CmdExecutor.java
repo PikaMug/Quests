@@ -1,3 +1,15 @@
+/*******************************************************************************************************
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
+
 package me.blackvein.quests.listeners;
 
 import java.io.File;
@@ -18,11 +30,11 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Stage;
+import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
-import me.blackvein.quests.util.WorldGuardAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,10 +51,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
-public class CmdExecutor implements CommandExecutor{
+public class CmdExecutor implements CommandExecutor {
 	private final Quests plugin;
 	public HashMap<String, Integer> commands = new HashMap<String, Integer>();
 	public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
@@ -68,7 +77,7 @@ public class CmdExecutor implements CommandExecutor{
 		if (cmd.getName().equalsIgnoreCase("quest")) {
 			return questCommandHandler(cs, args);
 		} else if (cmd.getName().equalsIgnoreCase("quests")) {
-			return questActionsCommandHandler(cs, args);
+			return questsCommandHandler(cs, args);
 		} else if (cmd.getName().equalsIgnoreCase("questadmin")) {
 			return questAdminCommandHandler(cs, args);
 		}
@@ -107,7 +116,8 @@ public class CmdExecutor implements CommandExecutor{
 			commands.put("take", 2); // take [quest]
 			commands.put("quit", 2); // quit [quest]
 			commands.put("editor", 1); // editor
-			commands.put("events", 1); // events
+			commands.put("actions", 1); // actions
+			commands.put("events", 1); // LEGACY - events
 			commands.put("stats", 1); // stats
 			commands.put("top", 2); // top [number]
 			commands.put("info", 1); // info
@@ -172,6 +182,12 @@ public class CmdExecutor implements CommandExecutor{
 								msg = msg.replace("<quest>", q.getName());
 								player.sendMessage(ChatColor.GOLD + msg);
 								plugin.showObjectives(q, quester, false);
+							} else {
+								long time = plugin.getQuester(player.getUniqueId()).getStageTime(q);
+								String msg = ChatColor.YELLOW + "(" + Lang.get(player, "delay") + ") " + ChatColor.RED +  Lang.get(player, "plnTooEarly");
+								msg = msg.replace("<quest>", q.getName());
+								msg = msg.replace("<time>", Quests.getTime(time));
+								player.sendMessage(msg);
 							}
 						}
 					} else {
@@ -181,7 +197,7 @@ public class CmdExecutor implements CommandExecutor{
 					showQuestDetails(cs, args);
 				}
 			} else {
-				cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+				cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 				return true;
 			}
 		} else {
@@ -191,7 +207,7 @@ public class CmdExecutor implements CommandExecutor{
 		return true;
 	}
 	
-	private boolean questActionsCommandHandler(final CommandSender cs, String[] args) {
+	private boolean questsCommandHandler(final CommandSender cs, String[] args) {
 		if (cs instanceof Player) {
 			if (args.length == 0) {
 				questsHelp(cs);
@@ -212,8 +228,9 @@ public class CmdExecutor implements CommandExecutor{
 					questsTop(cs, args);
 				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EDITOR") : "editor")) {
 					questsEditor(cs);
-				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EVENTS_EDITOR") : "events")) {
-					questsEvents(cs);
+				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EVENTS_EDITOR") : "actions")
+						|| args[0].equalsIgnoreCase("action") || args[0].equalsIgnoreCase("events")) {
+					questsActions(cs);
 				} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_INFO") : "info")) {
 					questsInfo(cs);
 				} else {
@@ -403,34 +420,45 @@ public class CmdExecutor implements CommandExecutor{
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 	
 	private boolean questsInfo(final CommandSender cs) {
 		if (cs.hasPermission("quests.info")) {
-			cs.sendMessage(ChatColor.GOLD + Lang.get("quests") + " " + plugin.getDescription().getVersion());
-			cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.DARK_RED + "Blackvein"
-					+ ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.DARK_RED + "FlyingPikachu");
+			cs.sendMessage(ChatColor.YELLOW + Lang.get("quests") + " " + ChatColor.GOLD + plugin.getDescription().getVersion());
+			cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.RED + "Blackvein"
+					+ ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug");
 			cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE + "https://www.spigotmc.org/resources/quests.3711/");
 		}
 		return true;
 	}
 
-	private boolean questsEvents(final CommandSender cs) {
-		if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.events.editor")) {
-			plugin.getEventFactory().getConversationFactory().buildConversation((Conversable) cs).begin();
+	private boolean questsActions(final CommandSender cs) {
+		if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*") 
+				|| cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")) {
+			Conversable c = (Conversable) cs;
+			if (!c.isConversing()) {
+				plugin.getEventFactory().getConversationFactory().buildConversation(c).begin();
+			} else {
+				cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
+			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 		return true;
 	}
 
 	private boolean questsEditor(final CommandSender cs) {
 		if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
-			plugin.getQuestFactory().getConversationFactory().buildConversation((Conversable) cs).begin();
+			Conversable c = (Conversable) cs;
+			if (!c.isConversing()) {
+				plugin.getQuestFactory().getConversationFactory().buildConversation(c).begin();
+			} else {
+				cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
+			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 		return true;
 	}
@@ -519,8 +547,11 @@ public class CmdExecutor implements CommandExecutor{
 			cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest") + " " + ChatColor.DARK_PURPLE + Lang.get("none"));
 		} else {
 			cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest"));
-			for (Quest q : quester.getCurrentQuests().keySet()) {
-				cs.sendMessage(ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName());
+			for (Entry<Quest, Integer> set : quester.getCurrentQuests().entrySet()) {
+				Quest q = set.getKey();
+				String msg = ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName()
+					+ ChatColor.LIGHT_PURPLE + " (" + Lang.get("stageEditorStage") + " " +  (set.getValue() + 1) + ")";
+				cs.sendMessage(msg);
 			}
 		}
 		String completed;
@@ -545,14 +576,13 @@ public class CmdExecutor implements CommandExecutor{
 	@SuppressWarnings("deprecation")
 	private void questsJournal(final Player player) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
+		Inventory inv = player.getInventory();
 		if (quester.hasJournal) {
-			Inventory inv = player.getInventory();
 			ItemStack[] arr = inv.getContents();
 			for (int i = 0; i < arr.length; i++) {
 				if (arr[i] != null) {
 					if (ItemUtil.isJournal(arr[i])) {
 						inv.setItem(i, null);
-						break;
 					}
 				}
 			}
@@ -567,10 +597,8 @@ public class CmdExecutor implements CommandExecutor{
 			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken"));
 			quester.hasJournal = true;
 			quester.updateJournal();
-		} else {
-			Inventory inv = player.getInventory();
+		} else if (inv.firstEmpty() != -1) {
 			ItemStack[] arr = inv.getContents();
-			boolean given = false;
 			for (int i = 0; i < arr.length; i++) {
 				if (arr[i] == null) {
 					ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
@@ -579,51 +607,50 @@ public class CmdExecutor implements CommandExecutor{
 					stack.setItemMeta(meta);
 					inv.setItem(i, stack);
 					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken"));
-					given = true;
+					quester.hasJournal = true;
+					quester.updateJournal();
 					break;
 				}
 			}
-			if (given) {
-				quester.hasJournal = true;
-				quester.updateJournal();
-			} else
-				player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalNoRoom"));
+		} else {
+			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalNoRoom"));
 		}
 	}
 
-	private boolean questsQuit(final Player player, String[] args) {
-		if (plugin.getSettings().canAllowQuitting() == true) {
-			if (((Player) player).hasPermission("quests.quit")) {
-				if (args.length == 1) {
-					player.sendMessage(ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
-					return true;
-				}
-				Quester quester = plugin.getQuester(player.getUniqueId());
-				if (quester.getCurrentQuests().isEmpty() == false) {
-					Quest quest = plugin.getQuest(MiscUtil.concatArgArray(args, 1, args.length - 1, ' '));
-					if (quest == null) {
-						player.sendMessage(ChatColor.RED + Lang.get(player, "questNotFound"));
-						return true;
+	private void questsQuit(final Player player, String[] args) {
+		if (((Player) player).hasPermission("quests.quit")) {
+			if (args.length == 1) {
+				player.sendMessage(ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
+				return;
+			}
+			Quester quester = plugin.getQuester(player.getUniqueId());
+			if (quester.getCurrentQuests().isEmpty() == false) {
+				Quest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
+				if (quest != null) {
+					if (quest.getOptions().getAllowQuitting()) {
+						QuestQuitEvent event = new QuestQuitEvent(quest, quester);
+						plugin.getServer().getPluginManager().callEvent(event);
+						if (event.isCancelled()) {
+							return;
+						}
+						quester.hardQuit(quest);
+						String msg = Lang.get("questQuit");
+						msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
+						player.sendMessage(ChatColor.YELLOW + msg);
+						quester.saveData();
+						quester.loadData();
+						quester.updateJournal();
+					} else {
+						player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
 					}
-					quester.hardQuit(quest);
-					String msg = Lang.get("questQuit");
-					msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
-					player.sendMessage(ChatColor.YELLOW + msg);
-					quester.saveData();
-					quester.loadData();
-					quester.updateJournal();
-					return true;
 				} else {
-					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
-					return true;
+					player.sendMessage(ChatColor.RED + Lang.get(player, "questNotFound"));
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
-				return true;
+				player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
 			}
 		} else {
-			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
-			return true;
+			player.sendMessage(ChatColor.RED + Lang.get(player, "noPermission"));
 		}
 	}
 
@@ -633,116 +660,23 @@ public class CmdExecutor implements CommandExecutor{
 				if (args.length == 1) {
 					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "COMMAND_TAKE_USAGE"));
 				} else {
-					String name = null;
-					if (args.length == 2) {
-						name = args[1].toLowerCase();
-					} else {
-						boolean first = true;
-						int lastIndex = (args.length - 1);
-						int index = 0;
-						for (String s : args) {
-							if (index != 0) {
-								if (first) {
-									first = false;
-									if (args.length > 2) {
-										name = s.toLowerCase() + " ";
-									} else {
-										name = s.toLowerCase();
-									}
-								} else if (index == lastIndex) {
-									name = name + s.toLowerCase();
-								} else {
-									name = name + s.toLowerCase() + " ";
-								}
-							}
-							index++;
-						}
-					}
-					Quest questToFind = plugin.getQuest(name);
+					Quest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
 					if (questToFind != null) {
 						final Quest q = questToFind;
-						final Quester quester = plugin.getQuester(player.getUniqueId());
-						if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() > 0) {
-							String msg = Lang.get(player, "questMaxAllowed");
-							msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (quester.getCurrentQuests().containsKey(q)) {
-							String msg = Lang.get(player, "questAlreadyOn");
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (quester.getCompletedQuests().contains(q.getName()) && q.getPlanner().getCooldown() < 0) {
-							String msg = Lang.get(player, "questAlreadyCompleted");
-							msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + q.getName() + ChatColor.YELLOW);
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (q.getNpcStart() != null && plugin.getSettings().canAllowCommandsForNpcQuests() == false) {
-							String msg = Lang.get(player, "mustSpeakTo");
-							msg = msg.replace("<npc>", ChatColor.DARK_PURPLE + q.getNpcStart().getName() + ChatColor.YELLOW);
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else if (q.getBlockStart() != null) {
-							String msg = Lang.get(player, "noCommandStart");
-							msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + q.getName() + ChatColor.YELLOW);
-							player.sendMessage(ChatColor.YELLOW + msg);
-						} else {
-							boolean takeable = true;
-							if (quester.getCompletedQuests().contains(q.getName())) {
-								if (quester.getCooldownDifference(q) > 0) {
-									String early = Lang.get(player, "questTooEarly");
-									early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-									early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
-									player.sendMessage(ChatColor.YELLOW + early);
-									takeable = false;
-								}
-							}
-							if (q.getRegion() != null) {
-								boolean inRegion = false;
-								Player p = quester.getPlayer();
-								WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-								RegionManager rm = api.getRegionManager(p.getWorld());
-								Iterator<ProtectedRegion> it = rm.getApplicableRegions(p.getLocation()).iterator();
-								while (it.hasNext()) {
-									ProtectedRegion pr = it.next();
-									if (pr.getId().equalsIgnoreCase(q.getRegion())) {
-										inRegion = true;
-										break;
-									}
-								}
-								if (inRegion == false) {
-									String msg = Lang.get(player, "questInvalidLocation");
-									msg = msg.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-									player.sendMessage(ChatColor.YELLOW + msg);
-									takeable = false;
-								}
-							}
-							if (takeable == true) {
-								if (player instanceof Conversable) {
-									if (((Player) player).isConversing() == false) {
-										quester.setQuestToTake(q.getName());
-										String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quester.getQuestToTake() + ChatColor.GOLD + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(quester.getQuestToTake()).getDescription() + "\n";
-										for (String msg : s.split("<br>")) {
-											player.sendMessage(msg);
-										}
-										if (!plugin.getSettings().canAskConfirmation()) {
-											plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
-										} else {
-											plugin.getConversationFactory().buildConversation((Conversable) player).begin();
-										}
-									} else {
-										player.sendMessage(ChatColor.YELLOW + Lang.get(player, "alreadyConversing"));
-									}
-								}
-							}
-						}
+						plugin.getQuester(player.getUniqueId()).offerQuest(q, true);
 					} else {
 						player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questNotFound"));
 					}
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + Lang.get(player, "NoPermission"));
+				player.sendMessage(ChatColor.RED + Lang.get(player, "noPermission"));
 			}
 		} else {
 			player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questTakeDisabled"));
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void questsList(final CommandSender cs, String[] args) {
 		if (((Player) cs).hasPermission("quests.list")) {
 			if (args.length == 1) {
@@ -762,7 +696,7 @@ public class CmdExecutor implements CommandExecutor{
 				plugin.listQuests((Player) cs, page);
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -771,7 +705,7 @@ public class CmdExecutor implements CommandExecutor{
 			Player p = (Player) cs;
 			printHelp(p);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 	
@@ -779,49 +713,49 @@ public class CmdExecutor implements CommandExecutor{
 		boolean translateSubCommands = plugin.getSettings().canTranslateSubCommands();
 		player.sendMessage(ChatColor.GOLD + Lang.get(player, "questHelpTitle"));
 		player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "questDisplayHelp"));
-		if (player.hasPermission("quests.list")) {
+		if (player.hasPermission("quests.list") || player.hasPermission("quests.list")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests "+ Lang.get(player, "COMMAND_LIST_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_LIST") : "list"));
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_LIST") : "list") + ChatColor.YELLOW));
 		}
 		if (player.hasPermission("quests.take")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_TAKE_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_TAKE") : "take"));
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_TAKE") : "take") + ChatColor.YELLOW));
 		}
 		if (player.hasPermission("quests.quit")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_QUIT_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_QUIT") : "quit"));
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_QUIT") : "quit") + ChatColor.YELLOW));
 		}
 		if (player.hasPermission("quests.journal")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_JOURNAL_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_JOURNAL") : "journal"));
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_JOURNAL") : "journal") + ChatColor.YELLOW));
 		}
 		if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.editor")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EDITOR_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_EDITOR") : "editor"));
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_EDITOR") : "editor") + ChatColor.YELLOW));
 		}
-		if (player.hasPermission("quests.events.*") || player.hasPermission("quests.events.editor")) {
+		if (player.hasPermission("quests.events.*") || player.hasPermission("quests.actions.*") 
+				|| player.hasPermission("quests.events.editor") || player.hasPermission("quests.actions.editor")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_EVENTS_EDITOR_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_EVENTS_EDITOR") : "events"));
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_EVENTS_EDITOR") : "actions") + ChatColor.YELLOW));
 		}
 		if (player.hasPermission("quests.stats")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_STATS_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_STATS") : "stats"));
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_STATS") : "stats") + ChatColor.YELLOW));
 		}
 		if (player.hasPermission("quests.top")) {
 			player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_TOP_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_TOP") : "top"));
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_TOP") : "top") + ChatColor.YELLOW));
 		}
 		if (player.hasPermission("quests.info")) {
 		player.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get(player, "COMMAND_INFO_HELP")
-				.replace("<command>", translateSubCommands ? Lang.get(player, "COMMAND_INFO") : "info"));
+				.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get(player, "COMMAND_INFO") : "info") + ChatColor.YELLOW));
 		}
-		player.sendMessage(" ");
-		player.sendMessage(ChatColor.YELLOW + "/quest " + Lang.get(player, "COMMAND_QUEST_HELP"));
+		player.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + Lang.get(player, "COMMAND_QUEST_HELP"));
 		if (player.hasPermission("quests.questinfo")) {
-			player.sendMessage(ChatColor.YELLOW + "/quest " + Lang.get(player, "COMMAND_QUESTINFO_HELP"));
+			player.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + Lang.get(player, "COMMAND_QUESTINFO_HELP"));
 		}
 		if (player.hasPermission("quests.admin.*") || player.hasPermission("quests.admin")) {
-			player.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get(player, "COMMAND_QUESTADMIN_HELP"));
+			player.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get(player, "COMMAND_QUESTADMIN_HELP"));
 		}
 	}
 	
@@ -833,7 +767,7 @@ public class CmdExecutor implements CommandExecutor{
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin")) {
 			printAdminHelp(cs);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -845,7 +779,7 @@ public class CmdExecutor implements CommandExecutor{
 			msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size()) + ChatColor.GOLD);
 			cs.sendMessage(ChatColor.GOLD + msg);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -881,7 +815,7 @@ public class CmdExecutor implements CommandExecutor{
 				cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -916,7 +850,7 @@ public class CmdExecutor implements CommandExecutor{
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -952,7 +886,7 @@ public class CmdExecutor implements CommandExecutor{
 				quester.saveData();
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -988,7 +922,7 @@ public class CmdExecutor implements CommandExecutor{
 				quester.saveData();
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1045,7 +979,7 @@ public class CmdExecutor implements CommandExecutor{
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1120,7 +1054,7 @@ public class CmdExecutor implements CommandExecutor{
 			}
 			thread.start();
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1142,7 +1076,7 @@ public class CmdExecutor implements CommandExecutor{
 					msg = msg.replace("<player>", target.getName());
 					cs.sendMessage(ChatColor.YELLOW + msg);
 				} else {
-					Quest quest = plugin.getQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
+					Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
 					if (quest == null) {
 						cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
 						return;
@@ -1160,7 +1094,7 @@ public class CmdExecutor implements CommandExecutor{
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1202,7 +1136,7 @@ public class CmdExecutor implements CommandExecutor{
 					msg = msg.replace("<player>", target.getName());
 					cs.sendMessage(ChatColor.YELLOW + msg);
 				} else {
-					Quest quest = plugin.getQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
+					Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
 					if (quest == null) {
 						cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
 						return;
@@ -1218,7 +1152,7 @@ public class CmdExecutor implements CommandExecutor{
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1240,7 +1174,7 @@ public class CmdExecutor implements CommandExecutor{
 					msg = msg.replace("<player>", target.getName());
 					cs.sendMessage(ChatColor.YELLOW + msg);
 				} else {
-					Quest quest = plugin.getQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
+					Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
 					if (quest == null) {
 						cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
 						return;
@@ -1258,7 +1192,7 @@ public class CmdExecutor implements CommandExecutor{
 				}
 			}
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1281,7 +1215,7 @@ public class CmdExecutor implements CommandExecutor{
 						msg = msg.replace("<player>", target.getName());
 						cs.sendMessage(ChatColor.YELLOW + msg);
 					} else {
-						Quest quest = plugin.getQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
+						Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
 						if (quest == null) {
 							cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
 							return;
@@ -1300,7 +1234,7 @@ public class CmdExecutor implements CommandExecutor{
 					}
 				}
 			} else {
-				cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+				cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 			}
 		} catch (NullPointerException npe) {
 			npe.printStackTrace();
@@ -1316,9 +1250,9 @@ public class CmdExecutor implements CommandExecutor{
 			}
 			UUID id = quester.getUUID();
 			LinkedList<Quester> temp = plugin.getQuesters();
-			for (Quester q : temp) {
-				if (q.getUUID().equals(id)) {
-					temp.remove(q);
+			for(Iterator<Quester> itr = temp.iterator(); itr.hasNext();) {
+				if (itr.next().getUUID().equals(id)) {
+					itr.remove();
 				}
 			}
 			plugin.setQuesters(temp);
@@ -1344,10 +1278,10 @@ public class CmdExecutor implements CommandExecutor{
 			quester.setUUID(id);
 			quester.saveData();
 			LinkedList<Quester> temp2 = plugin.getQuesters();
-			temp.add(quester);
+			temp2.add(quester);
 			plugin.setQuesters(temp2);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1355,7 +1289,7 @@ public class CmdExecutor implements CommandExecutor{
 		if (cs.hasPermission("quests.admin.*") && cs.hasPermission("quests.admin.stats")) {
 			questsStats(cs, args);
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 
@@ -1366,7 +1300,7 @@ public class CmdExecutor implements CommandExecutor{
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 				return;
 			}
-			Quest toRemove = plugin.getQuest(MiscUtil.concatArgArray(args, 2, args.length - 1, ' '));
+			Quest toRemove = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
 			if (toRemove == null) {
 				cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
 				return;
@@ -1384,101 +1318,69 @@ public class CmdExecutor implements CommandExecutor{
 			quester.saveData();
 			quester.updateJournal();
 		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("NoPermission"));
+			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}
 	}
 	
 	public void printAdminHelp(CommandSender cs) {
-		cs.sendMessage(ChatColor.RED + Lang.get("questAdminHelpTitle"));
-		cs.sendMessage("");
-		cs.sendMessage(ChatColor.DARK_RED + "/questadmin" + ChatColor.RED + " " + Lang.get("COMMAND_QUESTADMIN_HELP"));
+		cs.sendMessage(ChatColor.GOLD + Lang.get("questAdminHelpTitle"));
+		cs.sendMessage(ChatColor.YELLOW + "/questadmin" + ChatColor.RED + " " + Lang.get("COMMAND_QUESTADMIN_HELP"));
 		boolean translateSubCommands = plugin.getSettings().canTranslateSubCommands();
-		if (cs.hasPermission("quests.admin.*")) {
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_STATS") : "stats"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVE") : "give"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_QUIT") : "quit"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTS") : "points"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_FINISH") : "finish"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI") : "togglegui"));
-			cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP")
-					.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload"));
-		} else {
-			if (cs.hasPermission("quests.admin.stats")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_STATS") : "stats"));
-			}
-			if (cs.hasPermission("quests.admin.give")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVE") : "give"));
-			}
-			if (cs.hasPermission("quests.admin.quit")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_QUIT") : "quit"));
-			}
-			if (cs.hasPermission("quests.admin.points")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTS") : "points"));
-			}
-			if (cs.hasPermission("quests.admin.takepoints")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints"));
-			}
-			if (cs.hasPermission("quests.admin.givepoints")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints"));
-			}
-			if (cs.hasPermission("quests.admin.pointsall")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall"));
-			}
-			if (cs.hasPermission("quests.admin.finish")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_FINISH") : "finish"));
-			}
-			if (cs.hasPermission("quests.admin.nextstage")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage"));
-			}
-			if (cs.hasPermission("quests.admin.setstage")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage"));
-			}
-			if (cs.hasPermission("quests.admin.reset")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset"));
-			}
-			if (cs.hasPermission("quests.admin.remove")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove"));
-			}
-			if (cs.hasPermission("quests.admin.togglegui")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI") : "togglegui"));
-			}
-			if (cs.hasPermission("quests.admin.reload")) {
-				cs.sendMessage(ChatColor.DARK_RED + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP")
-						.replace("<command>", translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload"));
-			}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.stats")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_STATS_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_STATS") : "stats") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.give")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVE") : "give") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.quit")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_QUIT_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_QUIT") : "quit") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.points")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTS") : "points") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.takepoints")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.givepoints")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.pointsall")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_FINISH") : "finish") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.nextstage")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.setstage")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reset")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.remove")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.togglegui")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI") : "togglegui") + ChatColor.RED));
+		}
+		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
+			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP")
+					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload") + ChatColor.RED));
 		}
 	}
 
@@ -1508,5 +1410,23 @@ public class CmdExecutor implements CommandExecutor{
 			sortedMap.put(entry.getKey(), entry.getValue());
 		}
 		return sortedMap;
+	}
+	
+	/**
+	 * Used to get quest names that contain spaces from command input
+	 * 
+	 * @param args an array of Strings
+	 * @param startingIndex the index to start combining at
+	 * @param endingIndex the index to stop combining at
+	 * @param delimiter the character for which the array was split
+	 * @return a String or null
+	 */
+	private static String concatArgArray(String[] args, int startingIndex, int endingIndex, char delimiter) {
+		String s = "";
+		for (int i = startingIndex; i <= endingIndex; i++) {
+			s += args[i] + delimiter;
+		}
+		s = s.substring(0, s.length());
+		return s.trim().equals("") ? null : s.trim();
 	}
 }
