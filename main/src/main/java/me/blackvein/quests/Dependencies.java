@@ -16,7 +16,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import me.blackvein.quests.util.WorldGuardAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
-import net.aufdemrand.denizen.Denizen;
+import com.denizenscript.denizen.Denizen;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;

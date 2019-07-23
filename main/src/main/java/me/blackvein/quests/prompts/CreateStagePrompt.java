@@ -35,7 +35,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.ScriptRegistry;
 
 public class CreateStagePrompt extends FixedSetPrompt {
 

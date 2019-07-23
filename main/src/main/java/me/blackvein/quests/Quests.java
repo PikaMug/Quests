@@ -96,7 +96,7 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
