@@ -35,7 +35,6 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 
 public class CreateStagePrompt extends FixedSetPrompt {
 
@@ -151,14 +150,14 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDelayMessage") + ChatColor.GRAY + " (" + ChatColor.AQUA + "\"" + context.getSessionData(pref + CK.S_DELAY_MESSAGE) + "\"" + ChatColor.GRAY + ")\n";
 			}
-			if (plugin.getDependencies().getDenizen() == null) {
+			if (plugin.getDependencies().getDenizenAPI() == null) {
 				text += ChatColor.GRAY + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("questDenNotInstalled") + ")\n";
 			} else {
 				if (context.getSessionData(pref + CK.S_DENIZEN) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 				} else {
 					hasObjective = true;
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + ChatColor.AQUA + context.getSessionData(pref + CK.S_DENIZEN) + ChatColor.GRAY + "\n";
+					text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + ChatColor.AQUA + context.getSessionData(pref + CK.S_DENIZEN) + ChatColor.GRAY + ")\n";
 				}
 			}
 			if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
@@ -237,7 +236,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				return new DelayMessagePrompt();
 			}
 		} else if (input.equalsIgnoreCase("12")) {
-			if (plugin.getDependencies().getDenizen() == null) {
+			if (plugin.getDependencies().getDenizenAPI() == null) {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDenizen"));
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
 			} else {
@@ -1172,8 +1171,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.DARK_AQUA + "- " + Lang.get("stageEditorDenizenScript") + " -";
-			for (String s : ScriptRegistry._getScriptNames()) {
+			String text = ChatColor.DARK_AQUA + "- " + Lang.get("stageEditorDenizenScript") + " -\n";
+			for (String s : plugin.getDependencies().getDenizenAPI()._getScriptNames()) {
 				text += ChatColor.AQUA + "- " + s + "\n";
 			}
 			return text + ChatColor.YELLOW + Lang.get("stageEditorScriptPrompt");
@@ -1183,8 +1182,8 @@ public class CreateStagePrompt extends FixedSetPrompt {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				if (ScriptRegistry.containsScript(input)) {
-					context.setSessionData(pref + CK.S_DENIZEN, ScriptRegistry.getScriptContainer(input).getName());
+				if (plugin.getDependencies().getDenizenAPI().containsScript(input)) {
+					context.setSessionData(pref + CK.S_DENIZEN, input.toUpperCase());
 					return new CreateStagePrompt(plugin, stageNum, questFactory);
 				} else {
 					player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidScript"));
@@ -1448,9 +1447,9 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			return text;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
-			@SuppressWarnings("unchecked")
 			LinkedList<String> list = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
 			String objName = list.getLast();
 			CustomObjective found = null;
@@ -1485,7 +1484,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, selectedKey);
 				return new ObjectiveCustomDataPrompt();
 			} else {
-				for (Entry<String, Object> datamap : datamapList) {
+				for (Entry<String, Object> datamap : (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA)) {
 					if (datamap.getValue() == null) {
 						return new ObjectiveCustomDataListPrompt();
 					}
