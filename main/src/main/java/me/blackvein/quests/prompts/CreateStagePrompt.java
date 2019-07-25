@@ -134,7 +134,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.AQUA + " - " + Lang.get("stageEditorEvents") + "\n";
 			}
 			if (!hasObjective) {
-				text += ChatColor.GRAY + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("delay")  + ChatColor.GRAY + " (" + Lang.get("stageEditorOptional") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("delay") + ChatColor.GRAY + " (" + Lang.get("stageEditorOptional") + ")\n";
 			} else {
 				if (context.getSessionData(pref + CK.S_DELAY) == null) {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("delay") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
@@ -153,11 +153,15 @@ public class CreateStagePrompt extends FixedSetPrompt {
 			if (plugin.getDependencies().getDenizenAPI() == null) {
 				text += ChatColor.GRAY + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("questDenNotInstalled") + ")\n";
 			} else {
-				if (context.getSessionData(pref + CK.S_DENIZEN) == null) {
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+				if (!hasObjective) {
+					text += ChatColor.GRAY + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("stageEditorOptional") + ")\n";
 				} else {
-					hasObjective = true;
-					text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + ChatColor.AQUA + context.getSessionData(pref + CK.S_DENIZEN) + ChatColor.GRAY + ")\n";
+					if (context.getSessionData(pref + CK.S_DENIZEN) == null) {
+						text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+					} else {
+						hasObjective = true;
+						text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + ChatColor.AQUA + context.getSessionData(pref + CK.S_DENIZEN) + ChatColor.GRAY + ")\n";
+					}
 				}
 			}
 			if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
@@ -240,7 +244,12 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDenizen"));
 				return new CreateStagePrompt(plugin, stageNum, questFactory);
 			} else {
-				return new DenizenPrompt();
+				if (hasObjective) {
+					return new DenizenPrompt();
+				} else {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+					return new CreateStagePrompt(plugin, stageNum, questFactory);
+				}
 			}
 		} else if (input.equalsIgnoreCase("13")) {
 			if (hasObjective) {
