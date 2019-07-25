@@ -96,7 +96,7 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -1984,8 +1984,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			List<Integer> npcAmountsToKill = new LinkedList<Integer>();
 			// Denizen script load
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run")) {
-				if (ScriptRegistry.containsScript(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run"))) {
-					trigger = new DenizenTrigger();
+				if (getDependencies().getDenizenAPI().containsScript(config.getString("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run"))) {
+					trigger = new DenizenTrigger(this);
 					oStage.script = config.getString("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run");
 				} else {
 					stageFailed("script-to-run: in Stage " + s2 + " of Quest " + quest.getName() + " is not a Denizen script!");

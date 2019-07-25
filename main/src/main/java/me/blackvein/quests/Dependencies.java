@@ -14,9 +14,9 @@ package me.blackvein.quests;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import me.blackvein.quests.util.DenizenAPI;
 import me.blackvein.quests.util.WorldGuardAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
-import net.aufdemrand.denizen.Denizen;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -42,7 +42,7 @@ public class Dependencies {
 	private static PhatLoots phatLoots = null;
 	private static PlaceholderAPIPlugin placeholder = null;
 	private static CitizensPlugin citizens = null;
-	private static Denizen denizen = null;
+	private static DenizenAPI denizenApi = null;
 	private static CitizensBooksAPI citizensBooks = null;
 	private static DungeonsXL dungeons = null;
 	private static PartiesAPI parties = null;
@@ -87,8 +87,8 @@ public class Dependencies {
 		citizens = null;
 	}
 	
-	public Denizen getDenizen() {
-		return denizen;
+	public DenizenAPI getDenizenAPI() {
+		return denizenApi;
 	}
 	
 	public CitizensBooksAPI getCitizensBooksApi() {
@@ -126,7 +126,7 @@ public class Dependencies {
 			worldGuardApi = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
 		}
 		if (isPluginAvailable("Denizen")) {
-			denizen = (Denizen) plugin.getServer().getPluginManager().getPlugin("Denizen");
+			denizenApi = new DenizenAPI();
 		}
 		if (isPluginAvailable("mcMMO")) {
 			try {

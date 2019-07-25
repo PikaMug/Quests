@@ -12,20 +12,18 @@
 
 package me.blackvein.quests;
 
-import net.aufdemrand.denizen.BukkitScriptEntryData;
-import net.aufdemrand.denizen.objects.dPlayer;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
-import net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer;
-
 public class DenizenTrigger {
+	private Quests plugin;
+	
+	public DenizenTrigger(Quests plugin) {
+		this.plugin = plugin;
+	}
 	protected boolean runDenizenScript(String scriptName, Quester quester) {
 		if (scriptName == null) {
 			return false;
 		}
-		if (ScriptRegistry.containsScript(scriptName)) {
-			TaskScriptContainer task_script = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
-			BukkitScriptEntryData entryData = new BukkitScriptEntryData(dPlayer.mirrorBukkitPlayer(quester.getPlayer()), null);
-			task_script.runTaskScript(entryData, null);
+		if (plugin.getDependencies().getDenizenAPI().containsScript(scriptName)) {
+			plugin.getDependencies().getDenizenAPI().runTaskScript(scriptName, quester.getPlayer());
 		}
 		return true;
     }

@@ -17,8 +17,7 @@ import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 
-import me.blackvein.quests.Quests;
-
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -33,7 +32,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
  * @author NathanWolf
  */
 public class WorldGuardAPI {
-    private Quests plugin;
     private Object worldGuard = null;
     private WorldGuardPlugin worldGuardPlugin = null;
     private Object regionContainer = null;
@@ -74,8 +72,8 @@ public class WorldGuardAPI {
     private void initialize() {
         if (!initialized) {
             initialized = true;
-            // Super hacky reflection to deal with differences in WorldGuard 6 and 7+
             if (worldGuard != null) {
+            	// WorldGuard 7+
                 try {
                     Method getPlatFormMethod = worldGuard.getClass().getMethod("getPlatform");
                     Object platform = getPlatFormMethod.invoke(worldGuard);
@@ -85,25 +83,25 @@ public class WorldGuardAPI {
                     Class<?> worldEditAdapterClass = Class.forName("com.sk89q.worldedit.bukkit.BukkitAdapter");
                     worldAdaptMethod = worldEditAdapterClass.getMethod("adapt", World.class);
                     regionContainerGetMethod = regionContainer.getClass().getMethod("get", worldEditWorldClass);
-                } catch (Exception ex) {
-                    plugin.getLogger().log(Level.WARNING, "Failed to bind to WorldGuard, integration will not work!", ex);
+                } catch (Exception e) {
+                	Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to WorldGuard, integration will not work!", e);
                     regionContainer = null;
                     return;
                 }
             } else {
+            	// WorldGuard <7
                 regionContainer = worldGuardPlugin.getRegionContainer();
                 try {
                     regionContainerGetMethod = regionContainer.getClass().getMethod("get", World.class);
-
-                } catch (Exception ex) {
-                    plugin.getLogger().log(Level.WARNING, "Failed to bind to WorldGuard, integration will not work!", ex);
+                } catch (Exception e) {
+                	Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to WorldGuard, integration will not work!", e);
                     regionContainer = null;
                     return;
                 }
             }
 
             if (regionContainer == null) {
-                plugin.getLogger().warning("Failed to find RegionContainer, WorldGuard integration will not function!");
+            	Bukkit.getLogger().warning("Quests failed to find RegionContainer, WorldGuard integration will not function!");
             }
         }
     }
@@ -115,13 +113,15 @@ public class WorldGuardAPI {
         RegionManager regionManager = null;
         try {
             if (worldAdaptMethod != null) {
+            	// WorldGuard 7+
                 Object worldEditWorld = worldAdaptMethod.invoke(null, world);
                 regionManager = (RegionManager)regionContainerGetMethod.invoke(regionContainer, worldEditWorld);
             } else {
+            	// WorldGuard <7
                 regionManager = (RegionManager)regionContainerGetMethod.invoke(regionContainer, world);
             }
-        } catch (Exception ex) {
-            plugin.getLogger().log(Level.WARNING, "An error occurred looking up a WorldGuard RegionManager", ex);
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error getting WorldGuard RegionManager", e);
         }
         return regionManager;
     }
