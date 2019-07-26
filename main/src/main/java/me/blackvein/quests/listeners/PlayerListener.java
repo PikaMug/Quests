@@ -461,7 +461,7 @@ public class PlayerListener implements Listener {
 					}
 					if (quester.containsObjective(quest, "placeBlock")) {
 						for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
-							if (is.getAmount() > 0) {
+							if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
 								int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
 								is.setAmount(is.getAmount() - 1);
 								quester.getQuestData(quest).blocksPlaced.set(index, is);
