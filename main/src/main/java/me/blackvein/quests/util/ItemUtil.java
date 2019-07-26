@@ -125,14 +125,16 @@ public class ItemUtil {
 			}
 		}
 		if (Material.getMaterial("LINGERING_POTION") == null) {
-			// Bukkit version is below 1.9
-			Potion pot1 = new Potion(one.getDurability());
-			Potion pot2 = new Potion(two.getDurability());
-			if (pot1.getType() == null || pot2.getType() == null) {
-				return -9;
-			}
-			if (!pot1.getType().equals(pot2.getType())) {
-				return -9;
+			if (one.getType().equals(Material.POTION)) {
+				// Bukkit version is below 1.9
+				Potion pot1 = new Potion(one.getDurability());
+				Potion pot2 = new Potion(two.getDurability());
+				if (pot1.getType() == null || pot2.getType() == null) {
+					return -9;
+				}
+				if (!pot1.getType().equals(pot2.getType())) {
+					return -9;
+				}
 			}
 		}
 		if (one.getEnchantments().equals(two.getEnchantments()) == false) {
