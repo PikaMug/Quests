@@ -231,7 +231,7 @@ public class Quest {
 			throw new InvalidStageException(this, stage);
 		}
 		Stage currentStage = quester.getCurrentStage(this);
-		Stage nextStage = quester.getCurrentStage(this);
+		Stage nextStage = getStage(stage);
 		QuesterPreChangeStageEvent preEvent = new QuesterPreChangeStageEvent(quester, this, currentStage, nextStage);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
