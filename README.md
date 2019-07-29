@@ -8,11 +8,11 @@ Distributed exclusively through Spigot: https://www.spigotmc.org/resources/quest
 
 ## Usage
 
-Documentation can be found in the Wiki: https://github.com/FlyingPikachu/Quests/wiki
+Documentation can be found in the Wiki: https://github.com/PikaMug/Quests/wiki
 
 ## Compile
 
-Requires Java 8 and Maven: https://github.com/FlyingPikachu/Quests/wiki/Master-%E2%80%90-Plugin-Compilation
+Requires Java 8 and Maven: https://github.com/PikaMug/Quests/wiki/Master-%E2%80%90-Plugin-Compilation
 
 ## Localization [![Crowdin](https://d322cqt584bo4o.cloudfront.net/translate-quests/localized.svg)](https://crowdin.com/project/translate-quests)
 
