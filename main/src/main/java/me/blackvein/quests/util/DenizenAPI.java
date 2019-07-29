@@ -1,3 +1,15 @@
+/*******************************************************************************************************
+ * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * 
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
+
 package me.blackvein.quests.util;
 
 import java.lang.reflect.Constructor;
@@ -13,16 +25,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.denizenscript.denizen.BukkitScriptEntryData;
-import com.denizenscript.denizen.objects.NPCTag;
-import com.denizenscript.denizen.objects.PlayerTag;
-import com.denizenscript.denizencore.scripts.ScriptRegistry;
-import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
-
 import net.citizensnpcs.api.npc.NPC;
 
 public class DenizenAPI {
-    private Object denizen = null;
+    private Class<?> denizen = null;
     private Class<?> scriptRegistry = null;
     private Method containsScriptGetMethod = null;
     private Method _getScriptNamesGetMethod = null;
@@ -35,7 +41,6 @@ public class DenizenAPI {
     private Method mirrorCitizensNPCGetMethod = null;
     private Class<?> scriptEntryData = null;
     private Class<?> bukkitScriptEntryData = null;
-    public boolean isLegacyVersion = false;
 
     public boolean isEnabled() {
         return denizen != null;
@@ -47,7 +52,7 @@ public class DenizenAPI {
     		// Denizen 1.1.0+
     	} catch (Exception e) {
     		try {
-				//denizen = Class.forName("net.aufdemrand.denizen.Denizen");
+				denizen = Class.forName("net.aufdemrand.denizen.Denizen");
 				scriptRegistry = Class.forName("net.aufdemrand.denizencore.scripts.ScriptRegistry");
 				scriptContainer = Class.forName("net.aufdemrand.denizencore.scripts.containers.ScriptContainer");
 				taskScriptContainer = Class.forName("net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer");
@@ -62,31 +67,31 @@ public class DenizenAPI {
     	}
     }
     
+    /**
+     * Initialize Denizen <1.1.0 methods
+     */
     private void initialize() {
-        if (!isLegacyVersion) {
-            isLegacyVersion = true;
-            if (denizen == null) {
-                try {
-                	containsScriptGetMethod = scriptRegistry.getMethod("containsScript", String.class);
-                    _getScriptNamesGetMethod = scriptRegistry.getMethod("_getScriptNames");
-                	getScriptContainerAsGetMethod = scriptRegistry.getMethod("getScriptContainerAs", String.class, taskScriptContainer.getClass());
-                	mirrorBukkitPlayerGetMethod = dPlayer.getMethod("mirrorBukkitPlayer", OfflinePlayer.class);
-                	mirrorCitizensNPCGetMethod = dNPC.getMethod("mirrorCitizensNPC", NPC.class);
-                } catch (Exception e) {
-                    Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to Denizen, integration will not work!", e);
-                    return;
-                }
-            }
+    	try {
+    		containsScriptGetMethod = scriptRegistry.getMethod("containsScript", String.class);
+            _getScriptNamesGetMethod = scriptRegistry.getMethod("_getScriptNames");
+            getScriptContainerAsGetMethod = scriptRegistry.getMethod("getScriptContainerAs", String.class, taskScriptContainer.getClass());
+            mirrorBukkitPlayerGetMethod = dPlayer.getMethod("mirrorBukkitPlayer", OfflinePlayer.class);
+            mirrorCitizensNPCGetMethod = dNPC.getMethod("mirrorCitizensNPC", NPC.class);
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to Denizen, integration will not work!", e);
+            return;
         }
+    }
+    
+    public Class<?> getDenizenClass() {
+    	return denizen;
     }
     
     @Nullable
     public boolean containsScript(String input) {
-    	if (denizen != null) {
-    		// Denizen 1.1.0+
-    		return ScriptRegistry.containsScript(input);
+    	if (denizen.getName().startsWith("c")) { // com.denizenscript.denizen.*
+    		return DenizenAPI_1_1_0.containsScript(input);
     	} else {
-    		// Denizen <1.1.0
     		initialize();
     		if (scriptRegistry == null || containsScriptGetMethod == null) return false;
     		boolean script = false;
@@ -101,8 +106,8 @@ public class DenizenAPI {
     
     @Nullable
     public String getScriptContainerName(String input) {
-    	if (denizen != null) {
-    		return ScriptRegistry.getScriptContainer(input).getName();
+    	if (denizen.getName().startsWith("c")) { // com.denizenscript.denizen.*
+    		return DenizenAPI_1_1_0.getScriptContainerName(input);
     	} else {
     		initialize();
             if (scriptRegistry == null || scriptContainer == null) return null;
@@ -122,8 +127,8 @@ public class DenizenAPI {
     @SuppressWarnings("unchecked")
 	@Nullable
     public Set<String> _getScriptNames() {
-    	if (denizen != null) {
-    		return ScriptRegistry._getScriptNames();
+    	if (denizen.getName().startsWith("c")) { // com.denizenscript.denizen.*
+    		return DenizenAPI_1_1_0._getScriptNames();
     	} else {
     		initialize();
             if (scriptRegistry == null || _getScriptNamesGetMethod == null) return null;
@@ -139,8 +144,8 @@ public class DenizenAPI {
     
     @Nullable
     public Object getScriptContainerAs(String scriptName) {
-    	if (denizen != null) {
-    		return ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
+    	if (denizen.getName().startsWith("c")) { // com.denizenscript.denizen.*
+    		return DenizenAPI_1_1_0.getScriptContainerAs(scriptName);
     	} else {
     		initialize();
             if (scriptRegistry == null || taskScriptContainer == null) return null;
@@ -156,8 +161,8 @@ public class DenizenAPI {
     
     @Nullable
     public Object mirrorBukkitPlayer(Player player) {
-    	if (denizen != null) {
-    		return PlayerTag.mirrorBukkitPlayer(player);
+    	if (denizen.getName().startsWith("c")) { // com.denizenscript.denizen.*
+    		return DenizenAPI_1_1_0.mirrorBukkitPlayer(player);
     	} else {
     		initialize();
             if (dPlayer == null || mirrorBukkitPlayerGetMethod == null) return null;
@@ -173,8 +178,8 @@ public class DenizenAPI {
     
     @Nullable
     public Object mirrorCitizensNPC(NPC npc) {
-    	if (denizen != null) {
-    		return NPCTag.mirrorCitizensNPC(npc);
+    	if (denizen.getName().startsWith("c")) { // com.denizenscript.denizen.*
+    		return DenizenAPI_1_1_0.mirrorCitizensNPC(npc);
     	} else {
     		initialize();
             if (dNPC == null || mirrorCitizensNPCGetMethod == null) return null;
@@ -190,10 +195,8 @@ public class DenizenAPI {
     
     @Nullable
     public void runTaskScript(String scriptName, Player player) {
-    	if (denizen != null) {
-    		TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
-			BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);
-			taskScript.runTaskScript(entryData, null);
+    	if (denizen.getName().startsWith("c")) { // com.denizenscript.denizen.*
+    		DenizenAPI_1_1_0.runTaskScript(scriptName, player);
     	} else {
     		initialize();
             if (scriptRegistry == null || bukkitScriptEntryData == null || scriptEntryData == null) return;
