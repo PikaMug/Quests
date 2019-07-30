@@ -46,6 +46,7 @@ import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 public class Quest {
@@ -450,7 +451,11 @@ public class Quest {
 			none = null;
 		}
 		for (String s : rews.getCommands()) {
-			final String command = s.replace("<player>", player.getName());
+			String temp = s.replace("<player>", player.getName());
+			if (plugin.getDependencies().getPlaceholderApi() != null) {
+				temp = PlaceholderAPI.setPlaceholders(player, temp);
+			}
+			final String command = temp;
 			if (Bukkit.isPrimaryThread()) {
 				Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
 			} else {
