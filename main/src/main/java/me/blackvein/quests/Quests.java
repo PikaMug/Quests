@@ -3333,6 +3333,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 * @return Quest or null if not found
 	 */
 	public Quest getQuest(String name) {
+		if (name == null) {
+			return null;
+		}
 		LinkedList<Quest> qs = quests;
 		for (Quest q : qs) {
 			if (q.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
@@ -3359,6 +3362,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	 * @return Action or null if not found
 	 */
 	public Action getAction(String name) {
+		if (name == null) {
+			return null;
+		}
 		LinkedList<Action> as = events;
 		for (Action a : as) {
 			if (a.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
