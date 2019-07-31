@@ -2590,7 +2590,7 @@ public class Quester {
 					plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + id + "\" on Quest \"" + quest.getName() + "\". Quest ended.");
 					continue;
 				}
-				addEmptiesFor(quest, 0);
+				addEmptiesFor(quest, currentQuests.get(quest));
 				if (questSec == null)
 					continue;
 				if (questSec.contains("blocks-broken-names")) {
