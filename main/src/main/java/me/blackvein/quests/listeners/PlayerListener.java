@@ -703,7 +703,7 @@ public class PlayerListener implements Listener {
 	}
 	
 	/**
-	 * Checks if damager is blacklisted. Ensures damager is Player and not NPC. Kills target Player if objective exists
+	 * Checks if damager is blacklisted. Ensures damager and target are Player and not NPC. Kills target Player if objective exists
 	 * 
 	 * @param damager the attacking entity
 	 * @param target the entity being attacked
@@ -713,15 +713,16 @@ public class PlayerListener implements Listener {
 		if (plugin.checkQuester(damager.getUniqueId()) == true) {
 			return;
 		}
-		//Ensure damager is player AND not an NPC
-		if (damager instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(damager)) {
-			//If target is player AND not an NPC...
-			if (target instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(target)) {
-				Quester quester = plugin.getQuester(damager.getUniqueId());
-				for (Quest quest : quester.getCurrentQuests().keySet()) {
-					if (quester.containsObjective(quest, "killPlayer")) {
-						quester.killPlayer(quest, (Player)target);
-					}
+		if (damager instanceof Player && target instanceof Player) {
+			if (plugin.getDependencies().getCitizens() != null) {
+				if (CitizensAPI.getNPCRegistry().isNPC(damager) && CitizensAPI.getNPCRegistry().isNPC(target)) {
+					return;
+				}
+			}
+			Quester quester = plugin.getQuester(damager.getUniqueId());
+			for (Quest quest : quester.getCurrentQuests().keySet()) {
+				if (quester.containsObjective(quest, "killPlayer")) {
+					quester.killPlayer(quest, (Player)target);
 				}
 			}
 		}
