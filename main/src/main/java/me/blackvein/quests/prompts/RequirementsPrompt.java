@@ -402,7 +402,7 @@ public class RequirementsPrompt extends FixedSetPrompt {
 				if (one == two) {
 					return new RequirementsPrompt(plugin, factory);
 				} else {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqListsNotSameSize"));
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
 					return new ItemListPrompt();
 				}
 			}
