@@ -64,7 +64,7 @@ public class CmdExecutor implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 		if (cs instanceof Player) {
-			if (plugin.checkQuester(((Player) cs).getUniqueId()) == true) {
+			if (!plugin.canUseQuests(((Player) cs).getUniqueId())) {
 				cs.sendMessage(ChatColor.RED + Lang.get((Player) cs, "noPermission"));
 				return true;
 			}

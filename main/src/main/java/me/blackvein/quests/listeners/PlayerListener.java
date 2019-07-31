@@ -346,7 +346,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent evt) {
-		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+		if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 			final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			if (quester.getCurrentQuests().isEmpty() == false) {
 				for (final Quest quest : quester.getCurrentQuests().keySet()) {
@@ -382,7 +382,7 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent evt) {
-		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+		if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			if (quester.getCurrentQuests().isEmpty() == false) {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
@@ -481,7 +481,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerShearEntity(PlayerShearEntityEvent evt) {
-		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+		if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (evt.getEntity().getType() == EntityType.SHEEP && quester.containsObjective(quest, "shearSheep")) {
@@ -496,7 +496,7 @@ public class PlayerListener implements Listener {
 	public void onEntityTame(EntityTameEvent evt) {
 		if (evt.getOwner() instanceof Player) {
 			Player p = (Player) evt.getOwner();
-			if (plugin.checkQuester(p.getUniqueId()) == false) {
+			if (plugin.canUseQuests(p.getUniqueId())) {
 				Quester quester = plugin.getQuester(p.getUniqueId());
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "tameMob")) {
@@ -567,7 +567,7 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler
 	public void onEnchantItem(EnchantItemEvent evt) {
-		if (plugin.checkQuester(evt.getEnchanter().getUniqueId()) == false) {
+		if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
 			Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "enchantItem")) {
@@ -618,7 +618,7 @@ public class PlayerListener implements Listener {
 	 * @since 3.1.4
 	 */
 	public void killMob(Entity damager, Entity target) {
-		if (plugin.checkQuester(damager.getUniqueId()) == true) {
+		if (!plugin.canUseQuests(damager.getUniqueId())) {
 			return;
 		}
 		if (damager instanceof Player) {
@@ -679,7 +679,7 @@ public class PlayerListener implements Listener {
 		}
 			
 		Player target = evt.getEntity();
-		if (plugin.checkQuester(target.getUniqueId()) == false) {
+		if (plugin.canUseQuests(target.getUniqueId())) {
 			Quester quester = plugin.getQuester(target.getUniqueId());
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				Stage stage = quester.getCurrentStage(quest);
@@ -710,7 +710,7 @@ public class PlayerListener implements Listener {
 	 * @since 3.1.4
 	 */
 	public void killPlayer(Entity damager, Entity target) {
-		if (plugin.checkQuester(damager.getUniqueId()) == true) {
+		if (!plugin.canUseQuests(damager.getUniqueId())) {
 			return;
 		}
 		if (damager instanceof Player && target instanceof Player) {
@@ -731,7 +731,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerFish(PlayerFishEvent evt) {
 		Player player = evt.getPlayer();
-		if (plugin.checkQuester(player.getUniqueId()) == false) {
+		if (plugin.canUseQuests(player.getUniqueId())) {
 			Quester quester = plugin.getQuester(player.getUniqueId());
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "catchFish") && evt.getState().equals(State.CAUGHT_FISH)) {
@@ -744,7 +744,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
-		if (plugin.checkQuester(player.getUniqueId()) == false) {
+		if (plugin.canUseQuests(player.getUniqueId())) {
 			Quester quester = plugin.getQuester(player.getUniqueId());
 			quester.findCompassTarget();
 		}
@@ -753,7 +753,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
-		if (plugin.checkQuester(player.getUniqueId()) == false) {
+		if (plugin.canUseQuests(player.getUniqueId())) {
 			final Quester quester = plugin.getQuester(player.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 
@@ -767,7 +767,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent evt) {
-		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+		if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 			Quester quester = new Quester(plugin);
 			quester.setUUID(evt.getPlayer().getUniqueId());
 			if (new File(plugin.getDataFolder(), "data" + File.separator + quester.getUUID() + ".yml").exists()) {
@@ -804,7 +804,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent evt) {
-		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+		if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				Stage currentStage = quester.getCurrentStage(quest);
@@ -857,7 +857,7 @@ public class PlayerListener implements Listener {
 			}
 		}
 		if (plugin.getQuester(evt.getPlayer().getUniqueId()) != null) {
-			if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+			if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 				Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "reachLocation")) {
