@@ -1525,18 +1525,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 						}
 					}
 					if (config.contains("quests." + questKey + ".gui-display")) {
-						String item = config.getString("quests." + questKey + ".gui-display");
-						try {
-							ItemStack stack = ItemUtil.readItemStack(item);
-							if (stack != null) {
-								quest.guiDisplay = stack;
+						ItemStack stack = config.getItemStack("quests." + questKey + ".gui-display");
+						if (stack == null) {
+							// Legacy
+							String item = config.getString("quests." + questKey + ".gui-display");
+							try {
+								stack = ItemUtil.readItemStack(item);
+							} catch (Exception e) {
+								skipQuestProcess(item + " inside items: GUI Display in Quest " + quest.getName() + "is not properly formatted!");
 							}
-						} catch (Exception e) {
-							this.getLogger().warning(item + " in items: GUI Display in Quest " + quest.getName() + "is not properly formatted!");
+						}
+						if (stack != null) {
+							quest.guiDisplay = stack;
 						}
 					}
 					if (config.contains("quests." + questKey + ".redo-delay")) {
-						//Legacy
+						// Legacy
 						if (config.getInt("quests." + questKey + ".redo-delay", -999) != -999) {
 							quest.getPlanner().setCooldown(config.getInt("quests." + questKey + ".redo-delay") * 1000);
 						} else {
@@ -1603,25 +1607,37 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void loadQuestRewards(FileConfiguration config, Quest quest, String questKey) throws SkipQuest {
 		Rewards rews = quest.getRewards();
 		if (config.contains("quests." + questKey + ".rewards.items")) {
-			if (Quests.checkList(config.getList("quests." + questKey + ".rewards.items"), String.class)) {
-				LinkedList<ItemStack> temp = new LinkedList<ItemStack>();
-				for (String item : config.getStringList("quests." + questKey + ".rewards.items")) {
-					try {
-						ItemStack stack = ItemUtil.readItemStack(item);
-						if (stack != null) {
-							temp.add(stack);
-						}
-					} catch (Exception e) {
-						skipQuestProcess("" + item + " in items: Reward in Quest " + quest.getName() + " is not properly formatted!");
+			LinkedList<ItemStack> temp = new LinkedList<ItemStack>(); // TODO - should maybe be = rews.getItems() ?
+			List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey + ".rewards.items");
+			if (Quests.checkList(stackList, ItemStack.class)) {
+				for (ItemStack stack : stackList) {
+					if (stack != null) {
+						temp.add(stack);
 					}
 				}
-				rews.setItems(temp);
 			} else {
-				skipQuestProcess("items: Reward in Quest " + quest.getName() + " is not a list of strings!");
+				// Legacy
+				if (Quests.checkList(stackList, String.class)) {
+					List<String> items = config.getStringList("quests." + questKey + ".rewards.items");
+					for (String item : items) {
+						try {
+							ItemStack stack = ItemUtil.readItemStack(item);
+							if (stack != null) {
+								temp.add(stack);
+							}
+						} catch (Exception e) {
+							skipQuestProcess("" + item + " inside items: Reward in Quest " + quest.getName() + " is not properly formatted!");
+						}
+					}
+				} else {
+					skipQuestProcess("items: Reward in Quest " + quest.getName() + " is not properly formatted!");
+				}
 			}
+			rews.setItems(temp);
 		}
 		if (config.contains("quests." + questKey + ".rewards.money")) {
 			if (config.getInt("quests." + questKey + ".rewards.money", -999) != -999) {
@@ -1733,6 +1749,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void loadQuestRequirements(FileConfiguration config, ConfigurationSection questsSection, Quest quest, String questKey) throws SkipQuest {
 		Requirements reqs = quest.getRequirements();
 		if (config.contains("quests." + questKey + ".requirements.fail-requirement-message")) {
@@ -1741,25 +1758,31 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			skipQuestProcess("Requirements for Quest " + quest.getName() + " is missing fail-requirement-message:");
 		}
 		if (config.contains("quests." + questKey + ".requirements.items")) {
-			if (Quests.checkList(config.getList("quests." + questKey + ".requirements.items"), String.class)) {
-				List<String> itemReqs = config.getStringList("quests." + questKey + ".requirements.items");
-				boolean failed = false;
-				List<ItemStack> temp = reqs.getItems();
-				for (String item : itemReqs) {
-					ItemStack stack = ItemUtil.readItemStack(item);
+			List<ItemStack> temp = reqs.getItems(); // TODO - should maybe be = newLinkedList<ItemStack>() ?
+			List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey + ".requirements.items");
+			if (checkList(stackList, ItemStack.class)) {
+				for (ItemStack stack : stackList) {
 					if (stack != null) {
 						temp.add(stack);
-					} else {
-						failed = true;
-						break;
 					}
 				}
-				reqs.setItems(temp);
-				if (failed == true) {
-					skipQuestProcess("items: Requirement for Quest " + quest.getName() + " is not formatted correctly!");
-				}
 			} else {
-				skipQuestProcess("items: Requirement for Quest " + quest.getName() + " is not formatted correctly!");
+				// Legacy
+				List<String> items = config.getStringList("quests." + questKey + ".requirements.items");
+				if (checkList(items, String.class)) {
+					for (String item : items) {
+						try {
+							ItemStack stack = ItemUtil.readItemStack(item);
+							if (stack != null) {
+								temp.add(stack);
+							}
+						} catch (Exception e) {
+							skipQuestProcess("" + item + " inside items: Requirement in Quest " + quest.getName() + " is not properly formatted!");
+						}
+					}
+				} else {
+					skipQuestProcess("items: Requirement in Quest " + quest.getName() + " is not properly formatted!");
+				}
 			}
 			if (config.contains("quests." + questKey + ".requirements.remove-items")) {
 				if (Quests.checkList(config.getList("quests." + questKey + ".requirements.remove-items"), Boolean.class)) {
@@ -1978,6 +2001,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return exists;
 	}
 
+	@SuppressWarnings({ "unchecked", "unused" })
 	private void processStages(Quest quest, FileConfiguration config, String questKey) throws StageFailedException {
 		ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
 		for (String s2 : questStages.getKeys(false)) {
@@ -2002,14 +2026,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			List<Location> locationsToKillWithin = new LinkedList<Location>();
 			List<Integer> radiiToKillWithin = new LinkedList<Integer>();
 			List<String> areaNames = new LinkedList<String>();
-			List<String> itemsToCraft = new LinkedList<String>();
-			List<String> itemsToSmelt = new LinkedList<String>();
+			List<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
+			List<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
 			List<Enchantment> enchantments = new LinkedList<Enchantment>();
 			List<Material> itemsToEnchant = new LinkedList<Material>();
 			List<Integer> amountsToEnchant = new LinkedList<Integer>();
-			List<String> itemsToBrew = new LinkedList<String>();
+			List<ItemStack> itemsToBrew = new LinkedList<ItemStack>();
 			List<Integer> npcIdsToTalkTo = new LinkedList<Integer>();
-			List<String> itemsToDeliver= new LinkedList<String>();
+			List<ItemStack> itemsToDeliver= new LinkedList<ItemStack>();
 			List<Integer> itemDeliveryTargetIds = new LinkedList<Integer>();
 			List<String> deliveryMessages = new LinkedList<String>();
 			List<Integer> npcIdsToKill = new LinkedList<Integer>();
@@ -2229,33 +2253,57 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				cutIndex++;
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft")) {
-				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft"), String.class)) {
-					itemsToCraft = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft");
-					for (String item : itemsToCraft) {
-						ItemStack is = ItemUtil.readItemStack("" + item);
-						if (is != null) {
-							oStage.getItemsToCraft().add(is);
+				itemsToCraft = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft");
+				if (checkList(itemsToCraft, ItemStack.class)) {
+					for (ItemStack stack : itemsToCraft) {
+						if (stack != null) {
+							oStage.itemsToCraft.add(stack);
 						} else {
-							stageFailed("" + item + " inside items-to-craft: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+							stageFailed("" + stack + " inside items-to-craft: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 						}
 					}
 				} else {
-					stageFailed("items-to-craft: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+					// Legacy
+					List<String> items = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-craft");
+					if (checkList(items, String.class)) {
+						for (String item : items) {
+							ItemStack is = ItemUtil.readItemStack("" + item);
+							if (is != null) {
+								oStage.itemsToCraft.add(is);
+							} else {
+								stageFailed("" + item + " inside legacy items-to-craft: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+							}
+						}
+					} else {
+						stageFailed("items-to-craft: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+					}
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-smelt")) {
-				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-smelt"), String.class)) {
-					itemsToSmelt = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-smelt");
-					for (String item : itemsToSmelt) {
-						ItemStack is = ItemUtil.readItemStack("" + item);
-						if (is != null) {
-							oStage.getItemsToSmelt().add(is);
+				itemsToSmelt = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + s2 + ".items-to-smelt");
+				if (checkList(itemsToSmelt, ItemStack.class)) {
+					for (ItemStack stack : itemsToSmelt) {
+						if (stack != null) {
+							oStage.itemsToSmelt.add(stack);
 						} else {
-							stageFailed("" + item + " inside items-to-smelt: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+							stageFailed("" + stack + " inside items-to-smelt: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 						}
 					}
 				} else {
-					stageFailed("items-to-smelt: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+					// Legacy
+					List<String> items = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-smelt");
+					if (checkList(items, String.class)) {
+						for (String item : items) {
+							ItemStack is = ItemUtil.readItemStack("" + item);
+							if (is != null) {
+								oStage.itemsToSmelt.add(is);
+							} else {
+								stageFailed("" + item + " inside legacy items-to-smelt: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+							}
+						}
+					} else {
+						stageFailed("items-to-smelt: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+					}
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".enchantments")) {
@@ -2297,18 +2345,30 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-brew")) {
-				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-brew"), String.class)) {
-					itemsToBrew = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-brew");
-					for (String item : itemsToBrew) {
-						ItemStack is = ItemUtil.readItemStack("" + item);
-						if (is != null) {
-							oStage.getItemsToBrew().add(is);
+				itemsToBrew = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + s2 + ".items-to-brew");
+				if (checkList(itemsToBrew, ItemStack.class)) {
+					for (ItemStack stack : itemsToBrew) {
+						if (stack != null) {
+							oStage.itemsToBrew.add(stack);
 						} else {
-							stageFailed("" + item + " inside items-to-brew: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+							stageFailed("" + stack + " inside items-to-brew: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 						}
 					}
 				} else {
-					stageFailed("items-to-brew: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+					// Legacy
+					List<String> items = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-brew");
+					if (checkList(items, String.class)) {
+						for (String item : items) {
+							ItemStack is = ItemUtil.readItemStack("" + item);
+							if (is != null) {
+								oStage.itemsToBrew.add(is);
+							} else {
+								stageFailed("" + item + " inside legacy items-to-brew: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+							}
+						}
+					} else {
+						stageFailed("items-to-brew: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+					}
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".fish-to-catch")) {
@@ -2345,46 +2405,71 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".items-to-deliver")) {
-				if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-deliver"), String.class)) {
-					if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".npc-delivery-ids")) {
-						if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".npc-delivery-ids"), Integer.class)) {
-							if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".delivery-messages")) {
-								itemsToDeliver = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-deliver");
-								itemDeliveryTargetIds = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".npc-delivery-ids");
-								deliveryMessages.addAll(config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".delivery-messages"));
-								int index = 0;
-								for (String item : itemsToDeliver) {
-									ItemStack is = ItemUtil.readItemStack("" + item);
-									int npcId = itemDeliveryTargetIds.get(index);
-									index++;
-									if (is != null) {
-										if (getDependencies().getCitizens() != null) {
-											NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
-											if (npc != null) {
-												oStage.getItemsToDeliver().add(is);
-												oStage.getItemDeliveryTargets().add(npcId);
-												oStage.deliverMessages.addAll(deliveryMessages);
+				if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".npc-delivery-ids")) {
+					if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".npc-delivery-ids"), Integer.class)) {
+						if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".delivery-messages")) {
+							itemsToDeliver = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + s2 + ".items-to-deliver");
+							itemDeliveryTargetIds = config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 + ".npc-delivery-ids");
+							deliveryMessages.addAll(config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".delivery-messages"));
+							int index = 0;
+							if (checkList(itemsToDeliver, ItemStack.class)) {
+								for (ItemStack stack : itemsToDeliver) {
+									if (stack != null) {
+										int npcId = itemDeliveryTargetIds.get(index);
+										index++;
+										if (stack != null) {
+											if (getDependencies().getCitizens() != null) {
+												NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
+												if (npc != null) {
+													oStage.getItemsToDeliver().add(stack);
+													oStage.getItemDeliveryTargets().add(npcId);
+													oStage.deliverMessages.addAll(deliveryMessages);
+												} else {
+													stageFailed("Citizens was not installed for ID " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName());
+												}
 											} else {
 												stageFailed("" + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid NPC id!");
 											}
 										} else {
-											stageFailed("Citizens was not installed for ID " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName());
+											stageFailed("" + stack + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 										}
-									} else {
-										stageFailed("" + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
 									}
 								}
 							} else {
-								stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing delivery-messages:");
+								List<String> items = config.getStringList("quests." + questKey + ".stages.ordered." + s2 + ".items-to-deliver");
+								if (checkList(items, String.class)) {
+									// Legacy
+									for (String item : items) {
+										ItemStack is = ItemUtil.readItemStack("" + item);
+										int npcId = itemDeliveryTargetIds.get(index);
+										index++;
+										if (is != null) {
+											if (getDependencies().getCitizens() != null) {
+												NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
+												if (npc != null) {
+													oStage.getItemsToDeliver().add(is);
+													oStage.getItemDeliveryTargets().add(npcId);
+													oStage.deliverMessages.addAll(deliveryMessages);
+												} else {
+													stageFailed("" + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName() + " is not a valid NPC id!");
+												}
+											} else {
+												stageFailed("Citizens was not installed for ID " + npcId + " inside npc-delivery-ids: inside Stage " + s2 + " of Quest " + quest.getName());
+											}
+										} else {
+											stageFailed("" + item + " inside items-to-deliver: inside Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+										}
+									}
+								} else {
+									stageFailed("items-to-deliver: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+								}
 							}
-						} else {
-							stageFailed("npc-delivery-ids: in Stage " + s2 + " of Quest " + ChatColor.DARK_PURPLE + quest.getName() + " is not a list of NPC ids!");
 						}
 					} else {
-						stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing npc-delivery-ids:");
+						stageFailed("npc-delivery-ids: in Stage " + s2 + " of Quest " + ChatColor.DARK_PURPLE + quest.getName() + " is not a list of NPC ids!");
 					}
 				} else {
-					stageFailed("items-to-deliver: in Stage " + s2 + " of Quest " + quest.getName() + " is not formatted properly!");
+					stageFailed("Stage " + s2 + " of Quest " + quest.getName() + " is missing npc-delivery-ids:");
 				}
 			}
 			if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".npc-ids-to-kill")) {
@@ -3353,15 +3438,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return true;
 	}
 
+	/**
+	 * Checks whether items in a list are instances of a class<p>
+	 * 
+	 * Does NOT check whether list objects are null
+	 * 
+	 * @param list The list to check objects of
+	 * @param clazz The class to compare against
+	 * @return false if list is null or list object does not match
+	 */
 	public static boolean checkList(List<?> list, Class<?> clazz) {
 		if (list == null) {
 			return false;
 		}
 		for (Object o : list) {
-			if (o == null) {
-				Bukkit.getLogger().severe("A null " + clazz.getSimpleName() + " value was detected in quests.yml, please correct the file");
-				return false;
-			}
 			if (clazz.isAssignableFrom(o.getClass()) == false) {
 				return false;
 			}

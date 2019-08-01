@@ -794,7 +794,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		String failMessage = null;
 		Integer moneyRew = null;
 		Integer questPointsRew = null;
-		List<String> itemRews = null;
+		List<ItemStack> itemRews = null;
 		List<Integer> RPGItemRews = null;
 		List<Integer> RPGItemAmounts = null;
 		Integer expRew = null;
@@ -883,10 +883,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			questPointsRew = (Integer) cc.getSessionData(CK.REW_QUEST_POINTS);
 		}
 		if (cc.getSessionData(CK.REW_ITEMS) != null) {
-			itemRews = new LinkedList<String>();
-			for (ItemStack is : (List<ItemStack>) cc.getSessionData(CK.REW_ITEMS)) {
-				itemRews.add(ItemUtil.serializeItemStack(is));
-			}
+			itemRews = (List<ItemStack>) cc.getSessionData(CK.REW_ITEMS);
 		}
 		if (cc.getSessionData(CK.REW_EXP) != null) {
 			expRew = (Integer) cc.getSessionData(CK.REW_EXP);
@@ -957,16 +954,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 		cs.set("finish-message", finish);
 		cs.set("event", initialEvent);
 		cs.set("region", region);
-		cs.set("gui-display", ItemUtil.serializeItemStack(guiDisplay));
+		cs.set("gui-display", guiDisplay);
 		if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false || permReqs != null && permReqs.isEmpty() == false || (questReqs != null && questReqs.isEmpty() == false) || (questBlocks != null && questBlocks.isEmpty() == false) || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) || heroesPrimaryReq != null || heroesSecondaryReq != null || customReqs != null) {
 			ConfigurationSection reqs = cs.createSection("requirements");
-			List<String> items = new LinkedList<String>();
-			if (itemReqs != null) {
-				for (ItemStack is : itemReqs) {
-					items.add(ItemUtil.serializeItemStack(is));
-				}
-			}
-			reqs.set("items", (items.isEmpty() == false) ? items : null);
+			reqs.set("items", itemReqs);
 			reqs.set("remove-items", removeItemReqs);
 			reqs.set("money", moneyReq);
 			reqs.set("quest-points", questPointsReq);
@@ -1265,20 +1256,12 @@ public class QuestFactory implements ConversationAbandonedListener {
 				stage.set("cut-block-durability", cutDurability);
 			}
 			if (craftItems != null && craftItems.isEmpty() == false) {
-				LinkedList<String> items = new LinkedList<String>();
-				for (ItemStack is : craftItems) {
-					items.add(ItemUtil.serializeItemStack(is));
-				}
-				stage.set("items-to-craft", items);
+				stage.set("items-to-craft", craftItems);
 			} else {
 				stage.set("items-to-craft", null);
 			}
 			if (smeltItems != null && smeltItems.isEmpty() == false) {
-				LinkedList<String> items = new LinkedList<String>();
-				for (ItemStack is : smeltItems) {
-					items.add(ItemUtil.serializeItemStack(is));
-				}
-				stage.set("items-to-smelt", items);
+				stage.set("items-to-smelt", smeltItems);
 			} else {
 				stage.set("items-to-smelt", null);
 			}
@@ -1286,22 +1269,14 @@ public class QuestFactory implements ConversationAbandonedListener {
 			stage.set("enchantment-item-names", enchantmentIds);
 			stage.set("enchantment-amounts", enchantmentAmounts);
 			if (brewItems != null && brewItems.isEmpty() == false) {
-				LinkedList<String> items = new LinkedList<String>();
-				for (ItemStack is : brewItems) {
-					items.add(ItemUtil.serializeItemStack(is));
-				}
-				stage.set("items-to-brew", items);
+				stage.set("items-to-brew", brewItems);
 			} else {
 				stage.set("items-to-brew", null);
 			}
 			stage.set("fish-to-catch", fish);
 			stage.set("players-to-kill", players);
 			if (deliveryItems != null && deliveryItems.isEmpty() == false) {
-				LinkedList<String> items = new LinkedList<String>();
-				for (ItemStack is : deliveryItems) {
-					items.add(ItemUtil.serializeItemStack(is));
-				}
-				stage.set("items-to-deliver", items);
+				stage.set("items-to-deliver", deliveryItems);
 			} else {
 				stage.set("items-to-deliver", null);
 			}

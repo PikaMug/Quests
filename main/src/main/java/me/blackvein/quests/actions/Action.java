@@ -493,16 +493,28 @@ public class Action {
 		}
 		if (data.contains(actionKey + "items")) {
 			if (Quests.checkList(data.getList(actionKey + "items"), String.class)) {
-				List<ItemStack> eventItems = new LinkedList<ItemStack>();
-				for (String s : data.getStringList(actionKey + "items")) {
-					try {
-						eventItems.add(ItemUtil.readItemStack(s));
-					} catch (Exception e) {
-						plugin.getLogger().severe(ChatColor.GOLD + "[Quests] \"" + ChatColor.RED + s + ChatColor.GOLD + "\" inside " + ChatColor.GREEN + " items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not formatted properly!");
-						return null;
+				@SuppressWarnings("unchecked")
+				List<ItemStack> items = (List<ItemStack>) data.get(actionKey + "items");
+				if (items != null && !items.isEmpty() && items.get(0) instanceof ItemStack) {
+					for (ItemStack item : items) {
+						try {
+							action.items.add(item);
+						} catch (Exception e) {
+							plugin.getLogger().severe(ChatColor.GOLD + "[Quests] \"" + ChatColor.RED + item.getType().name() + ChatColor.GOLD + "\" inside " + ChatColor.GREEN + " items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not formatted properly!");
+							return null;
+						}
+					}
+				} else {
+					// Legacy
+					for (String s : data.getStringList(actionKey + "items")) {
+						try {
+							action.items.add(ItemUtil.readItemStack(s));
+						} catch (Exception e) {
+							plugin.getLogger().severe(ChatColor.GOLD + "[Quests] \"" + ChatColor.RED + s + ChatColor.GOLD + "\" inside " + ChatColor.GREEN + " items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not formatted properly!");
+							return null;
+						}
 					}
 				}
-				action.items.addAll(eventItems);
 			} else {
 				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of items!");
 				return null;

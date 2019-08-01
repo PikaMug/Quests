@@ -935,11 +935,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		if (context.getSessionData(CK.E_ITEMS) != null) {
 			@SuppressWarnings("unchecked")
 			LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
-			LinkedList<String> lines = new LinkedList<String>();
-			for (ItemStack is : items) {
-				lines.add(ItemUtil.serializeItemStack(is));
-			}
-			section.set("items", lines);
+			section.set("items", items);
 		}
 		if (context.getSessionData(CK.E_EXPLOSIONS) != null) {
 			LinkedList<String> locations = getCStringList(context, CK.E_EXPLOSIONS);
