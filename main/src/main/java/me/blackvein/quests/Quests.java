@@ -136,7 +136,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	@Override
 	public void onEnable() {
-		// ORDER MATTERS
+		/****** WARNING: ORDER OF STEPS MATTERS ******/
+
+		// 1 - Intialize variables
 		bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
 		settings = new Settings(this);
 		localeQuery = new LocaleQuery(this);
@@ -151,10 +153,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		depends = new Dependencies(this);
 		lang = new Lang(this);
 
-		// 1 - Load main config
+		// 2 - Load main config
 		settings.init();
 		
-		// 2 - Setup language files
+		// 3 - Setup language files
 		try {
 			setupLang();
 		} catch (IOException e) {
@@ -163,37 +165,37 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			e.printStackTrace();
 		}
 		
-		// 3 - Load command executor
+		// 4 - Load command executor
 		cmdExecutor = new CmdExecutor(this);
 		
-		// 4 - Load soft-depends
+		// 5 - Load soft-depends
 		depends.init();
 		
-		// 5 - Save resources from jar
+		// 6 - Save resources from jar
 		saveResourceAs("quests.yml", "quests.yml", false);
 		saveResourceAs("actions.yml", "actions.yml", false);
 		saveResourceAs("data.yml", "data.yml", false);
 		
-		// 6 - Load player data
+		// 7 - Load player data
 		loadData();
 		
-		// 6 - Save config with any new options
+		// 8 - Save config with any new options
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		
-		// 7 - Setup commands
+		// 9 - Setup commands
 		getCommand("quests").setExecutor(cmdExecutor);
 		getCommand("questadmin").setExecutor(cmdExecutor);
 		getCommand("quest").setExecutor(cmdExecutor);
 		
-		// 8 - Setup conversation factory after timeout has loaded
+		// 10 - Setup conversation factory after timeout has loaded
 		this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix())
 				.withFirstPrompt(new QuestPrompt()).withTimeout(settings.getAcceptTimeout())
 				.thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
 		this.npcConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestAcceptPrompt(this))
 				.withTimeout(settings.getAcceptTimeout()).withLocalEcho(false).addConversationAbandonedListener(this);
 		
-		// 9 - Register listeners
+		// 11 - Register listeners
 		getServer().getPluginManager().registerEvents(playerListener, this);
 		if (depends.getCitizens() != null) {
 			getServer().getPluginManager().registerEvents(npcListener, this);
@@ -208,7 +210,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			getServer().getPluginManager().registerEvents(partiesListener, this);
 		}
 		
-		// 10 - Delay loading of Quests, Actions and modules
+		// 12 - Delay loading of Quests, Actions and modules
 		delayLoadQuestInfo(5L);
 	}
 	
