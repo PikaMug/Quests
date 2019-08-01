@@ -208,8 +208,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			getServer().getPluginManager().registerEvents(partiesListener, this);
 		}
 		
-		// 10 - Delay loading of Quests, Events and modules
-		delayLoadQuestInfo();
+		// 10 - Delay loading of Quests, Actions and modules
+		delayLoadQuestInfo(5L);
 	}
 	
 	@Override
@@ -481,7 +481,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
     }
 
-	private void delayLoadQuestInfo() {
+    /**
+     * Load quests, actions, and modules after specified delay<p>
+     * 
+     * At startup, this permits Citizens to fully load first
+     */
+	private void delayLoadQuestInfo(long ticks) {
 		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 
 			@Override
@@ -500,7 +505,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				}
 				loadModules();
 			}
-		}, 5L);
+		}, ticks);
 	}
 
 	/**
@@ -575,6 +580,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 	}
 
+	/**
+	 * Load the specified jar as a module
+	 * 
+	 * @param jar A custom reward/requirement/objective jar
+	 */
 	public void loadModule(File jar) {
 		try {
 			@SuppressWarnings("resource")
@@ -1356,6 +1366,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
 	}
 
+	/**
+	 * Reload quests, player data, actions, config settings, lang and modules, in that order
+	 */
 	public void reloadQuests() {
 		quests.clear();
 		events.clear();
@@ -1382,6 +1395,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 	}
 
+	/**
+	 * Get online Quester from player UUID
+	 * 
+	 * @param id Player UUID
+	 * @return Quester, or null if offline
+	 */
 	public Quester getQuester(UUID id) {
 		Quester quester = null;
 		for (Quester q: questers) {
@@ -1405,6 +1424,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return quester;
 	}
 
+	/**
+	 * Get online Quester from player name
+	 * 
+	 * @param name Player name
+	 * @return Quester, or null if offline
+	 */
 	public Quester getQuester(String name) {
 		UUID id = null;
 		Quester quester = null;
@@ -1420,6 +1445,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return quester;
 	}
 
+	/**
+	 * Get a list of all online Questers
+	 * 
+	 * @return list of online Questers
+	 */
 	public LinkedList<Quester> getOnlineQuesters() {
 		LinkedList<Quester> qs = new LinkedList<Quester>();
 		for (Player p : getServer().getOnlinePlayers()) {
