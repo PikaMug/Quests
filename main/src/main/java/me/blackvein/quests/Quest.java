@@ -12,7 +12,6 @@
 
 package me.blackvein.quests;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +32,6 @@ import com.codisimus.plugins.phatloots.loot.LootBundle;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.events.quester.QuesterPostChangeStageEvent;
@@ -749,17 +746,11 @@ public class Quest {
 	 */
 	private boolean isInRegion(Player player) {
 		if (region == null) {
-			return true;
-		} else {
-			ApplicableRegionSet ars = plugin.getDependencies().getWorldGuardApi().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
-			Iterator<ProtectedRegion> i = ars.iterator();
-			while (i.hasNext()) {
-				ProtectedRegion pr = i.next();
-				if (pr.getId().equalsIgnoreCase(region)) {
-					return true;
-				}
-			}
 			return false;
 		}
+		if (plugin.getDependencies().getWorldGuardApi().getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(region)) {
+			return true;
+		}
+		return false;
 	}
 }

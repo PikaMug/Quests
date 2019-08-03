@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,8 +48,6 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.alessiodp.parties.api.interfaces.Party;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.events.quest.QuestTakeEvent;
@@ -61,7 +58,6 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
-import me.blackvein.quests.util.WorldGuardAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 public class Quester {
@@ -3182,18 +3178,7 @@ public class Quester {
         }
 		if (canAcceptOffer(quest, giveReason)) {
 			if (quest.getRegion() != null) {
-				boolean inRegion = false;
-				WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-				RegionManager rm = api.getRegionManager(getPlayer().getWorld());
-				Iterator<ProtectedRegion> it = rm.getApplicableRegions(getPlayer().getLocation()).iterator();
-				while (it.hasNext()) {
-					ProtectedRegion pr = it.next();
-					if (pr.getId().equalsIgnoreCase(quest.getRegion())) {
-						inRegion = true;
-						break;
-					}
-				}
-				if (inRegion == false) {
+				if (!quest.isInRegion(this)) {
 					if (giveReason) {
 						String msg = Lang.get(getPlayer(), "questInvalidLocation");
 						msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);

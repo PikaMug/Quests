@@ -30,17 +30,18 @@ import net.citizensnpcs.api.npc.NPC;
 public class DenizenAPI {
     private Class<?> denizen = null;
     private Class<?> scriptRegistry = null;
-    private Method containsScriptGetMethod = null;
-    private Method _getScriptNamesGetMethod = null;
+    private Method containsScriptMethod = null;
+    private Method getScriptNamesMethod = null;
     private Class<?> scriptContainer = null;
     private Class<?> taskScriptContainer = null;
-    private Method getScriptContainerAsGetMethod = null;
+    private Method getScriptContainerAsMethod = null;
     private Class<?> dPlayer = null;
     private Class<?> dNPC = null;
-    private Method mirrorBukkitPlayerGetMethod = null;
-    private Method mirrorCitizensNPCGetMethod = null;
+    private Method mirrorBukkitPlayerMethod = null;
+    private Method mirrorCitizensNPCMethod = null;
     private Class<?> scriptEntryData = null;
     private Class<?> bukkitScriptEntryData = null;
+    private boolean initialized = false;
 
     public boolean isEnabled() {
         return denizen != null;
@@ -71,16 +72,20 @@ public class DenizenAPI {
      * Initialize Denizen <1.1.0 methods
      */
     private void initialize() {
-    	try {
-    		containsScriptGetMethod = scriptRegistry.getMethod("containsScript", String.class);
-            _getScriptNamesGetMethod = scriptRegistry.getMethod("_getScriptNames");
-            getScriptContainerAsGetMethod = scriptRegistry.getMethod("getScriptContainerAs", String.class, taskScriptContainer.getClass());
-            mirrorBukkitPlayerGetMethod = dPlayer.getMethod("mirrorBukkitPlayer", OfflinePlayer.class);
-            mirrorCitizensNPCGetMethod = dNPC.getMethod("mirrorCitizensNPC", NPC.class);
-        } catch (Exception e) {
-            Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to Denizen, integration will not work!", e);
-            return;
-        }
+    	if (!initialized) {
+    		initialized = true;
+    		
+    		try {
+        		containsScriptMethod = scriptRegistry.getMethod("containsScript", String.class);
+                getScriptNamesMethod = scriptRegistry.getMethod("_getScriptNames");
+                getScriptContainerAsMethod = scriptRegistry.getMethod("getScriptContainerAs", String.class, taskScriptContainer.getClass());
+                mirrorBukkitPlayerMethod = dPlayer.getMethod("mirrorBukkitPlayer", OfflinePlayer.class);
+                mirrorCitizensNPCMethod = dNPC.getMethod("mirrorCitizensNPC", NPC.class);
+            } catch (Exception e) {
+                Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to Denizen, integration will not work!", e);
+                return;
+            }
+    	}
     }
     
     public Class<?> getDenizenClass() {
@@ -93,10 +98,10 @@ public class DenizenAPI {
     		return DenizenAPI_1_1_0.containsScript(input);
     	} else {
     		initialize();
-    		if (scriptRegistry == null || containsScriptGetMethod == null) return false;
+    		if (scriptRegistry == null || containsScriptMethod == null) return false;
     		boolean script = false;
     		try {
-    			script = (boolean)containsScriptGetMethod.invoke(scriptRegistry, input);
+    			script = (boolean)containsScriptMethod.invoke(scriptRegistry, input);
     		} catch (Exception e) {
     			Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen ScriptRegistry#containsScript", e);
     		}
@@ -131,10 +136,10 @@ public class DenizenAPI {
     		return DenizenAPI_1_1_0._getScriptNames();
     	} else {
     		initialize();
-            if (scriptRegistry == null || _getScriptNamesGetMethod == null) return null;
+            if (scriptRegistry == null || getScriptNamesMethod == null) return null;
             Set<String> names = null;
             try {
-            	names = (Set<String>)_getScriptNamesGetMethod.invoke(scriptRegistry);
+            	names = (Set<String>)getScriptNamesMethod.invoke(scriptRegistry);
             } catch (Exception e) {
             	Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen ScriptRegistry#_getScriptNames", e);
             }
@@ -151,7 +156,7 @@ public class DenizenAPI {
             if (scriptRegistry == null || taskScriptContainer == null) return null;
             Object container = null;
             try {
-            	container = getScriptContainerAsGetMethod.invoke(scriptRegistry, scriptName, taskScriptContainer);
+            	container = getScriptContainerAsMethod.invoke(scriptRegistry, scriptName, taskScriptContainer);
             } catch (Exception e) {
             	Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen #getScriptContainerAs", e);
             }
@@ -165,10 +170,10 @@ public class DenizenAPI {
     		return DenizenAPI_1_1_0.mirrorBukkitPlayer(player);
     	} else {
     		initialize();
-            if (dPlayer == null || mirrorBukkitPlayerGetMethod == null) return null;
+            if (dPlayer == null || mirrorBukkitPlayerMethod == null) return null;
             Object dp = null;
             try {
-            	dp = mirrorBukkitPlayerGetMethod.invoke(dPlayer, player);
+            	dp = mirrorBukkitPlayerMethod.invoke(dPlayer, player);
             } catch (Exception e) {
             	Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen dPlayer#mirrorBukkitPlayer", e);
             }
@@ -182,10 +187,10 @@ public class DenizenAPI {
     		return DenizenAPI_1_1_0.mirrorCitizensNPC(npc);
     	} else {
     		initialize();
-            if (dNPC == null || mirrorCitizensNPCGetMethod == null) return null;
+            if (dNPC == null || mirrorCitizensNPCMethod == null) return null;
             Object dp = null;
             try {
-            	dp = mirrorCitizensNPCGetMethod.invoke(dNPC, npc);
+            	dp = mirrorCitizensNPCMethod.invoke(dNPC, npc);
             } catch (Exception e) {
             	Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen dNPC#mirrorCitizensNPC", e);
             }

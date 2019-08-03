@@ -80,8 +80,6 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.actions.ActionFactory;
@@ -1519,7 +1517,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					}
 					if (config.contains("quests." + questKey + ".region")) {
 						String region = config.getString("quests." + questKey + ".region");
-						boolean exists = regionFound(quest, region);
+						boolean exists = false;
+						for (World world : getServer().getWorlds()) {
+							if (getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
+								if (getDependencies().getWorldGuardApi().getRegionManager(world).hasRegion(region)) {
+									quest.region = region;
+									exists = true;
+									break;
+								}
+							}
+						}
 						if (!exists) {
 							skipQuestProcess("region: for Quest " + quest.getName() + " is not a valid WorldGuard region!");
 						}
@@ -1981,24 +1988,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
 	private void skipQuestProcess(String msg) throws SkipQuest {
 		skipQuestProcess(new String[] { msg });
-	}
-
-
-
-	private boolean regionFound(Quest quest, String region) {
-		boolean exists = false;
-		for (World world : getServer().getWorlds()) {
-			RegionManager rm = depends.getWorldGuardApi().getRegionManager(world);
-			if (rm != null) {
-				ProtectedRegion pr = rm.getRegion(region);
-				if (pr != null) {
-					quest.region = region;
-					exists = true;
-					break;
-				}
-			}
-		}
-		return exists;
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
