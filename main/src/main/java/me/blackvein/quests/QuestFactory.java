@@ -1486,7 +1486,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			cc.setSessionData(CK.REW_EXP, rews.getExp());
 		}
 		if (rews.getItems().isEmpty() == false) {
-			cc.setSessionData(CK.REW_ITEMS, reqs.getItems());
+			cc.setSessionData(CK.REW_ITEMS, rews.getItems());
 		}
 		if (rews.getCommands().isEmpty() == false) {
 			cc.setSessionData(CK.REW_COMMAND, rews.getCommands());

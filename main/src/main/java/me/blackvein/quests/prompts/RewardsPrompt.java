@@ -57,24 +57,32 @@ public class RewardsPrompt extends FixedSetPrompt {
 		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE);
 		text = ChatColor.LIGHT_PURPLE + lang + "\n";
 		if (context.getSessionData(CK.REW_MONEY) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + " (" + ChatColor.AQUA + moneyRew + " " + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMoney") + ChatColor.GRAY + " (" + ChatColor.AQUA + moneyRew + " " + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY + ")\n";
 		}
 		if (context.getSessionData(CK.REW_QUEST_POINTS) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + " (" + ChatColor.AQUA + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetQuestPoints") + ChatColor.GRAY + " (" + ChatColor.AQUA + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")\n";
 		}
-		text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetItems") + "\n";
-		if (context.getSessionData(CK.REW_EXP) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + Lang.get("noneSet") + ")\n";
+		if (context.getSessionData(CK.REW_ITEMS) == null) {
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + " (" + ChatColor.AQUA + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ChatColor.DARK_GRAY + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetItems") + "\n";
+			LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REW_ITEMS);
+			for (int i = 0; i < items.size(); i++) {
+				text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+			}
+		}
+		if (context.getSessionData(CK.REW_EXP) == null) {
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+		} else {
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetExperience") + ChatColor.GRAY + " (" + ChatColor.AQUA + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ChatColor.DARK_GRAY + ")\n";
 		}
 		if (context.getSessionData(CK.REW_COMMAND) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
 			List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
@@ -86,7 +94,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 			}
 		}
 		if (context.getSessionData(CK.REW_PERMISSION) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPermission") + " (" + Lang.get("noneSet") + ")\n";
+			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPermission") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 		} else {
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPermission") + "\n";
 			List<String> permissions = (List<String>) context.getSessionData(CK.REW_PERMISSION);
@@ -124,7 +132,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		}
 		if (plugin.getDependencies().getPhatLoots() != null) {
 			if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPhat") + " (" + Lang.get("noneSet") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPhat") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
 			} else {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetPhat") + "\n";
 				List<String> phatLoots = (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS);
