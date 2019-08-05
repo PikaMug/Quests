@@ -151,7 +151,7 @@ public class CreateStagePrompt extends FixedSetPrompt {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDelayMessage") + ChatColor.GRAY + " (" + ChatColor.AQUA + "\"" + context.getSessionData(pref + CK.S_DELAY_MESSAGE) + "\"" + ChatColor.GRAY + ")\n";
 			}
 			if (plugin.getDependencies().getDenizenAPI() == null) {
-				text += ChatColor.GRAY + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("questDenNotInstalled") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("notInstalled") + ")\n";
 			} else {
 				if (!hasObjective) {
 					text += ChatColor.GRAY + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorDenizenScript") + ChatColor.GRAY + " (" + Lang.get("stageEditorOptional") + ")\n";

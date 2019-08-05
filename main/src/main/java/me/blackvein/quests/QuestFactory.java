@@ -210,7 +210,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			} else if (plugin.getDependencies().getCitizens() != null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorNPCStart") + " (" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData(CK.Q_START_NPC)).getName() + ")\n";
 			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("questCitNotInstalled") + ")\n";
+				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questEditorNPCStart") + " (" + Lang.get("notInstalled") + ")\n";
 			}
 			if (context.getSessionData(CK.Q_START_BLOCK) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorBlockStart") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
@@ -226,7 +226,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questWGSetRegion") + " (" + ChatColor.GREEN + s + ChatColor.YELLOW + ")\n";
 				}
 			} else {
-				text += ChatColor.GRAY + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("questWGNotInstalled") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questWGSetRegion") + " (" + Lang.get("notInstalled") + ")\n";
 			}
 			if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorInitialEvent") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
@@ -240,7 +240,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("questEditorSetGUI") + " (" + ItemUtil.getDisplayString(stack) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
 			} else {
-				text += ChatColor.GRAY + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("questCitNotInstalled") + ")\n";
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("questEditorSetGUI") + " (" + Lang.get("notInstalled") + ")\n";
 			}
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.DARK_AQUA + " - " + Lang.get("questEditorReqs") + "\n";
 			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.AQUA + " - " + Lang.get("questEditorPln") + "\n";
