@@ -821,13 +821,7 @@ public class CmdExecutor implements CommandExecutor {
 
 	private void adminGivePoints(final CommandSender cs, String[] args) {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.givepoints")) {
-			Player target = null;
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (p.getName().equalsIgnoreCase(args[1])) {
-					target = p;
-					break;
-				}
-			}
+			Player target = getPlayer(args[1]);
 			if (target == null) {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 			} else {
@@ -856,13 +850,7 @@ public class CmdExecutor implements CommandExecutor {
 
 	private void adminTakePoints(final CommandSender cs, String[] args) {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.takepoints")) {
-			Player target = null;
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (p.getName().equalsIgnoreCase(args[1])) {
-					target = p;
-					break;
-				}
-			}
+			Player target = getPlayer(args[1]);
 			if (target == null) {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 			} else {
@@ -892,13 +880,7 @@ public class CmdExecutor implements CommandExecutor {
 
 	private void adminPoints(final CommandSender cs, String[] args) {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.points")) {
-			Player target = null;
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (p.getName().equalsIgnoreCase(args[1])) {
-					target = p;
-					break;
-				}
-			}
+			Player target = getPlayer(args[1]);
 			if (target == null) {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 			} else {
@@ -928,13 +910,7 @@ public class CmdExecutor implements CommandExecutor {
 
 	private void adminGive(final CommandSender cs, String[] args) {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.give")) {
-			Player target = null;
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-					target = p;
-					break;
-				}
-			}
+			Player target = getPlayer(args[1]);
 			if (target == null) {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 			} else {
@@ -1060,13 +1036,7 @@ public class CmdExecutor implements CommandExecutor {
 
 	private void adminFinish(final CommandSender cs, String[] args) {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {
-			Player target = null;
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-					target = p;
-					break;
-				}
-			}
+			Player target = getPlayer(args[1]);
 			if (target == null) {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 			} else {
@@ -1100,14 +1070,7 @@ public class CmdExecutor implements CommandExecutor {
 
 	private void adminSetStage(final CommandSender cs, String[] args) {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.setstage")) {
-			Player target = null;
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				// To ensure the correct player is selected
-				if (p.getName().equalsIgnoreCase(args[1])) {
-					target = p;
-					break;
-				}
-			}
+			Player target = getPlayer(args[1]);
 			if (target == null) {
 				for (Player p : plugin.getServer().getOnlinePlayers()) {
 					if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
@@ -1158,13 +1121,7 @@ public class CmdExecutor implements CommandExecutor {
 
 	private void adminNextStage(final CommandSender cs, String[] args) {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.nextstage")) {
-			Player target = null;
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-					target = p;
-					break;
-				}
-			}
+			Player target = getPlayer(args[1]);
 			if (target == null) {
 				cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 			} else {
@@ -1199,13 +1156,7 @@ public class CmdExecutor implements CommandExecutor {
 	private void adminQuit(final CommandSender cs, String[] args) {
 		try {
 			if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.quit")) {
-				Player target = null;
-				for (Player p : plugin.getServer().getOnlinePlayers()) {
-					if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-						target = p;
-						break;
-					}
-				}
+				Player target = getPlayer(args[1]);
 				if (target == null) {
 					cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
 				} else {
@@ -1428,5 +1379,33 @@ public class CmdExecutor implements CommandExecutor {
 		}
 		s = s.substring(0, s.length());
 		return s.trim().equals("") ? null : s.trim();
+	}
+	
+	/**
+	 * Get a Player by name
+	 * 
+	 * @param name Name of the player
+	 * @return Player or null if not found
+	 */
+	private Player getPlayer(String name) {
+		if (name == null) {
+			return null;
+		}
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+			if (p.getName().equalsIgnoreCase(name)) {
+				return p;
+			}
+		}
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+			if (p.getName().toLowerCase().startsWith(name)) {
+				return p;
+			}
+		}
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+			if (p.getName().toLowerCase().contains(name)) {
+				return p;
+			}
+		}
+		return null;
 	}
 }
