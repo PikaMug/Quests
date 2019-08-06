@@ -18,7 +18,6 @@ import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.conversations.Conversation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -183,15 +182,10 @@ public class NpcListener implements Listener {
 						}
 					}
 					if (npcQuests.isEmpty() == false && npcQuests.size() >= 1) {
-						if (plugin.getQuestNpcGuis().contains(evt.getNPC().getId())) {
-							quester.showGUIDisplay(evt.getNPC(), npcQuests);
-							return;
-						}
-						Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
-						c.getContext().setSessionData("quests", npcQuests);
-						c.getContext().setSessionData("npc", evt.getNPC().getName());
-						c.begin();
+						quester.showGUIDisplay(evt.getNPC(), npcQuests);
+						return;
 					} else if (npcQuests.size() == 1) {
+						// TODO can this block even be reached?
 						Quest q = npcQuests.get(0);
 						if (!quester.getCompletedQuests().contains(q.getName())) {
 							if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() || plugin.getSettings().getMaxQuests() < 1) {

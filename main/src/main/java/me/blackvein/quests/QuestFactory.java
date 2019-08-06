@@ -705,15 +705,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 					ConfigurationSection newSection = questSection.createSection("custom" + customNum);
 					saveQuest(context, newSection);
 					data.save(new File(plugin.getDataFolder(), "quests.yml"));
-					if (context.getSessionData(CK.Q_START_NPC) != null && context.getSessionData(CK.Q_GUIDISPLAY) != null) {
-						int i = (Integer) context.getSessionData(CK.Q_START_NPC);
-						if (!plugin.getQuestNpcGuis().contains(i)) {
-							LinkedList<Integer> temp = plugin.getQuestNpcGuis();
-							temp.add(i);
-							plugin.setQuestNpcGuis(temp);
-						}
-						plugin.updateData();
-					}
 					context.getForWhom().sendRawMessage(ChatColor.GREEN
 							+ Lang.get("questEditorSaved").replaceAll("<command>", "/questadmin " + Lang.get("COMMAND_QUESTADMIN_RELOAD")));
 				} catch (IOException e) {

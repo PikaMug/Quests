@@ -1379,7 +1379,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-				if (Quests.getEffect(input.toUpperCase()) != null) {
+				if (Effect.valueOf(input.toUpperCase()) != null) {
 					LinkedList<String> effects;
 					if (context.getSessionData(CK.E_EFFECTS) != null) {
 						effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);

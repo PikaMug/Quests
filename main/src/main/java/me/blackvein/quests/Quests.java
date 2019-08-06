@@ -45,7 +45,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -71,8 +70,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
@@ -110,7 +107,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	private LinkedList<Quest> quests = new LinkedList<Quest>();
 	private LinkedList<Action> events = new LinkedList<Action>();
 	private LinkedList<NPC> questNpcs = new LinkedList<NPC>();
-	private LinkedList<Integer> questNpcGuis = new LinkedList<Integer>();
 	private CommandExecutor cmdExecutor;
 	private ConversationFactory conversationFactory;
 	private ConversationFactory npcConversationFactory;
@@ -172,28 +168,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		// 6 - Save resources from jar
 		saveResourceAs("quests.yml", "quests.yml", false);
 		saveResourceAs("actions.yml", "actions.yml", false);
-		saveResourceAs("data.yml", "data.yml", false);
 		
-		// 7 - Load player data
-		loadData();
-		
-		// 8 - Save config with any new options
+		// 7 - Save config with any new options
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		
-		// 9 - Setup commands
+		// 8 - Setup commands
 		getCommand("quests").setExecutor(cmdExecutor);
 		getCommand("questadmin").setExecutor(cmdExecutor);
 		getCommand("quest").setExecutor(cmdExecutor);
 		
-		// 10 - Setup conversation factory after timeout has loaded
+		// 9 - Setup conversation factory after timeout has loaded
 		this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix())
 				.withFirstPrompt(new QuestPrompt()).withTimeout(settings.getAcceptTimeout())
 				.thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
 		this.npcConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestAcceptPrompt(this))
 				.withTimeout(settings.getAcceptTimeout()).withLocalEcho(false).addConversationAbandonedListener(this);
 		
-		// 11 - Register listeners
+		// 10 - Register listeners
 		getServer().getPluginManager().registerEvents(playerListener, this);
 		if (depends.getCitizens() != null) {
 			getServer().getPluginManager().registerEvents(npcListener, this);
@@ -208,18 +200,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			getServer().getPluginManager().registerEvents(partiesListener, this);
 		}
 		
-		// 12 - Delay loading of Quests, Actions and modules
+		// 11 - Delay loading of Quests, Actions and modules
 		delayLoadQuestInfo(5L);
 	}
 	
 	@Override
 	public void onDisable() {
-		getLogger().info("Saving Quester data.");
+		getLogger().info("Saving Quester data...");
 		for (Player p : getServer().getOnlinePlayers()) {
 			Quester quester = getQuester(p.getUniqueId());
 			quester.saveData();
 		}
-		updateData();
 	}
 	
 	public String getDetectedBukkitVersion() {
@@ -313,14 +304,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	
 	public void setQuestNpcs(LinkedList<NPC> questNpcs) {
 		this.questNpcs = questNpcs;
-	}
-	
-	public LinkedList<Integer> getQuestNpcGuis() {
-		return questNpcGuis;
-	}
-	
-	public void setQuestNpcGuis(LinkedList<Integer> questNpcGuis) {
-		this.questNpcGuis = questNpcGuis;
 	}
 	
 	public ConversationFactory getConversationFactory() {
@@ -506,24 +489,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				loadModules();
 			}
 		}, ticks);
-	}
-
-	/**
-	 * Load player and NPC GUI data from file
-	 */
-	public void loadData() {
-		YamlConfiguration config = new YamlConfiguration();
-		File dataFile = new File(this.getDataFolder(), "data.yml");
-		try {
-			config.load(dataFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (config.contains("npc-gui")) {
-			List<Integer> ids = config.getIntegerList("npc-gui");
-			questNpcGuis.clear();
-			questNpcGuis.addAll(ids);
-		}
 	}
 	
 	/**
@@ -1374,7 +1339,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		events.clear();
 		
 		loadQuests();
-		loadData();
 		loadActions();
 		// Reload config from disc in-case a setting was changed
 		reloadConfig();
@@ -3172,34 +3136,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		return info;
 	}
 
-	public static Effect getEffect(String eff) {
-		if (eff.equalsIgnoreCase("BLAZE_SHOOT")) {
-			return Effect.BLAZE_SHOOT;
-		} else if (eff.equalsIgnoreCase("BOW_FIRE")) {
-			return Effect.BOW_FIRE;
-		} else if (eff.equalsIgnoreCase("CLICK1")) {
-			return Effect.CLICK1;
-		} else if (eff.equalsIgnoreCase("CLICK2")) {
-			return Effect.CLICK2;
-		} else if (eff.equalsIgnoreCase("DOOR_TOGGLE")) {
-			return Effect.DOOR_TOGGLE;
-		} else if (eff.equalsIgnoreCase("EXTINGUISH")) {
-			return Effect.EXTINGUISH;
-		} else if (eff.equalsIgnoreCase("GHAST_SHOOT")) {
-			return Effect.GHAST_SHOOT;
-		} else if (eff.equalsIgnoreCase("GHAST_SHRIEK")) {
-			return Effect.GHAST_SHRIEK;
-		} else if (eff.equalsIgnoreCase("ZOMBIE_CHEW_IRON_DOOR")) {
-			return Effect.ZOMBIE_CHEW_IRON_DOOR;
-		} else if (eff.equalsIgnoreCase("ZOMBIE_CHEW_WOODEN_DOOR")) {
-			return Effect.ZOMBIE_CHEW_WOODEN_DOOR;
-		} else if (eff.equalsIgnoreCase("ZOMBIE_DESTROY_DOOR")) {
-			return Effect.ZOMBIE_DESTROY_DOOR;
-		} else {
-			return null;
-		}
-	}
-
 	public static EntityType getMobType(String mob) {
 		return MiscUtil.getProperMobType(mob);
 	}
@@ -3251,60 +3187,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 			message = message.substring(1, message.length() - 1);
 		}
 		return message;
-	}
-	
-	public static PotionEffect getPotionEffect(String type, int duration, int amplifier) {
-		PotionEffectType potionType;
-		if (type.equalsIgnoreCase("ABSORPTION")) {
-			potionType = PotionEffectType.ABSORPTION;
-		} else if (type.equalsIgnoreCase("BLINDNESS")) {
-			potionType = PotionEffectType.BLINDNESS;
-		} else if (type.equalsIgnoreCase("CONFUSION")) {
-			potionType = PotionEffectType.CONFUSION;
-		} else if (type.equalsIgnoreCase("DAMAGE_RESISTANCE")) {
-			potionType = PotionEffectType.DAMAGE_RESISTANCE;
-		} else if (type.equalsIgnoreCase("FAST_DIGGING")) {
-			potionType = PotionEffectType.FAST_DIGGING;
-		} else if (type.equalsIgnoreCase("FIRE_RESISTANCE")) {
-			potionType = PotionEffectType.FIRE_RESISTANCE;
-		} else if (type.equalsIgnoreCase("HARM")) {
-			potionType = PotionEffectType.HARM;
-		} else if (type.equalsIgnoreCase("HEAL")) {
-			potionType = PotionEffectType.HEAL;
-		} else if (type.equalsIgnoreCase("HEALTH_BOOST")) {
-			potionType = PotionEffectType.HEALTH_BOOST;
-		} else if (type.equalsIgnoreCase("HUNGER")) {
-			potionType = PotionEffectType.HUNGER;
-		} else if (type.equalsIgnoreCase("INCREASE_DAMAGE")) {
-			potionType = PotionEffectType.INCREASE_DAMAGE;
-		} else if (type.equalsIgnoreCase("INVISIBILITY")) {
-			potionType = PotionEffectType.INVISIBILITY;
-		} else if (type.equalsIgnoreCase("JUMP")) {
-			potionType = PotionEffectType.JUMP;
-		} else if (type.equalsIgnoreCase("NIGHT_VISION")) {
-			potionType = PotionEffectType.NIGHT_VISION;
-		} else if (type.equalsIgnoreCase("POISON")) {
-			potionType = PotionEffectType.POISON;
-		} else if (type.equalsIgnoreCase("REGENERATION")) {
-			potionType = PotionEffectType.REGENERATION;
-		} else if (type.equalsIgnoreCase("SATURATION")) {
-			potionType = PotionEffectType.SATURATION;
-		} else if (type.equalsIgnoreCase("SLOW")) {
-			potionType = PotionEffectType.SLOW;
-		} else if (type.equalsIgnoreCase("SLOW_DIGGING")) {
-			potionType = PotionEffectType.SLOW_DIGGING;
-		} else if (type.equalsIgnoreCase("SPEED")) {
-			potionType = PotionEffectType.SPEED;
-		} else if (type.equalsIgnoreCase("WATER_BREATHING")) {
-			potionType = PotionEffectType.WATER_BREATHING;
-		} else if (type.equalsIgnoreCase("WEAKNESS")) {
-			potionType = PotionEffectType.WEAKNESS;
-		} else if (type.equalsIgnoreCase("WITHER")) {
-			potionType = PotionEffectType.WITHER;
-		} else {
-			return null;
-		}
-		return new PotionEffect(potionType, duration, amplifier);
 	}
 
 	public static SkillType getMcMMOSkill(String s) {
@@ -3615,18 +3497,4 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		Hero hero = getHero(uuid);
 		return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);
 	}
-
-	public void updateData() {
-		YamlConfiguration config = new YamlConfiguration();
-		File dataFile = new File(this.getDataFolder(), "data.yml");
-		try {
-			config.load(dataFile);
-			config.set("npc-gui", questNpcGuis);
-			config.save(dataFile);
-		} catch (Exception e) {
-			getLogger().severe("Unable to update data.yml file");
-			e.printStackTrace();
-		}
-	}
-	
 }

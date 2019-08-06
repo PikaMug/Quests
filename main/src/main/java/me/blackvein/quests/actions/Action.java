@@ -31,6 +31,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestMob;
@@ -465,7 +466,7 @@ public class Action {
 						List<String> effectList = data.getStringList(actionKey + "effects");
 						List<String> effectLocs = data.getStringList(actionKey + "effect-locations");
 						for (String s : effectList) {
-							Effect effect = Quests.getEffect(s);
+							Effect effect = Effect.valueOf(s.toUpperCase());
 							Location l = Quests.getLocation(effectLocs.get(effectList.indexOf(s)));
 							if (effect == null) {
 								plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + "effects: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid effect name!");
@@ -633,11 +634,12 @@ public class Action {
 								List<Integer> durations = data.getIntegerList(actionKey + "potion-effect-durations");
 								List<Integer> amplifiers = data.getIntegerList(actionKey + "potion-effect-amplifiers");
 								for (String s : types) {
-									PotionEffect effect = Quests.getPotionEffect(s, durations.get(types.indexOf(s)), amplifiers.get(types.indexOf(s)));
-									if (effect == null) {
+									PotionEffectType type = PotionEffectType.getByName(s);
+									if (type == null) {
 										plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD + " inside " + ChatColor.GREEN + " lightning-strikes: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a valid potion effect name!");
 										return null;
 									}
+									PotionEffect effect = new PotionEffect(type, durations.get(types.indexOf(s)), amplifiers.get(types.indexOf(s)));
 									action.potionEffects.add(effect);
 								}
 							} else {

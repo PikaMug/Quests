@@ -275,8 +275,6 @@ public class CmdExecutor implements CommandExecutor {
 			adminReset(cs, args);
 		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove")) {
 			adminRemove(cs, args);
-		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI") : "togglegui")) {
-			adminToggieGUI(cs, args);
 		} else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload")) {
 			adminReload(cs);
 		} else {
@@ -778,42 +776,6 @@ public class CmdExecutor implements CommandExecutor {
 			String msg = Lang.get("numQuestsLoaded");
 			msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size()) + ChatColor.GOLD);
 			cs.sendMessage(ChatColor.GOLD + msg);
-		} else {
-			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-		}
-	}
-
-	private void adminToggieGUI(final CommandSender cs, String[] args) {
-		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.togglegui")) {
-			try {
-				int i = Integer.parseInt(args[1]);
-				if (plugin.getDependencies().getCitizens().getNPCRegistry().getById(i) == null) {
-					String msg = Lang.get("errorNPCID");
-					msg = msg.replace("errorNPCID", ChatColor.DARK_PURPLE + "" + i + ChatColor.RED);
-					cs.sendMessage(ChatColor.RED + msg);
-				} else if (plugin.getQuestNpcGuis().contains(i)) {
-					LinkedList<Integer> temp = plugin.getQuestNpcGuis();
-					temp.remove(plugin.getQuestNpcGuis().indexOf(i));
-					plugin.setQuestNpcGuis(temp);
-					plugin.updateData();
-					String msg = Lang.get("disableNPCGUI");
-					msg = msg.replace("<npc>", ChatColor.DARK_PURPLE + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() + ChatColor.YELLOW);
-					cs.sendMessage(ChatColor.YELLOW + msg);
-				} else {
-					LinkedList<Integer> temp = plugin.getQuestNpcGuis();
-					temp.add(i);
-					plugin.setQuestNpcGuis(temp);
-					plugin.updateData();
-					String msg = Lang.get("enableNPCGUI");
-					msg = msg.replace("<npc>", ChatColor.DARK_PURPLE + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() + ChatColor.YELLOW);
-					cs.sendMessage(ChatColor.YELLOW + msg);
-				}
-			} catch (NumberFormatException nfe) {
-				cs.sendMessage(ChatColor.RED + Lang.get("inputNum"));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
-			}
 		} else {
 			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
 		}

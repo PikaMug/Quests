@@ -77,9 +77,6 @@ permissions:
     quests.admin.remove:
         description: Remove a completed quest from a player
         default: op
-    quests.admin.togglegui:
-        description: Toggle GUI Quest Display on an NPC
-        default: op
     quests.admin.reload:
         description: Safely reload the plugin
         default: op
