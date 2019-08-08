@@ -477,7 +477,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				loadQuests();
 				loadActions();
 				getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s)"
-						+ ", " + events.size() + " Event(s)"
+						+ ", " + events.size() + " Action(s)"
 						+ ", " + Lang.size() + " Phrase(s)");
 				questers.addAll(getOnlineQuesters());
 				if (depends.getCitizens() != null) {

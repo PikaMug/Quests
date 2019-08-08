@@ -30,6 +30,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Stage;
+import me.blackvein.quests.events.editor.quests.QuestsEditorOpenMainMenuEvent;
 import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
@@ -46,6 +47,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -451,7 +453,13 @@ public class CmdExecutor implements CommandExecutor {
 		if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
 			Conversable c = (Conversable) cs;
 			if (!c.isConversing()) {
-				plugin.getQuestFactory().getConversationFactory().buildConversation(c).begin();
+				Conversation cn = plugin.getQuestFactory().getConversationFactory().buildConversation(c);
+				QuestsEditorOpenMainMenuEvent event = new QuestsEditorOpenMainMenuEvent(cn.getContext());
+				plugin.getServer().getPluginManager().callEvent(event);
+				if (event.isCancelled()) {
+					return false;
+				}
+				cn.begin();
 			} else {
 				cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
 			}
