@@ -7,11 +7,11 @@ import org.bukkit.event.HandlerList;
 /**
  * Called when the initial Quests Editor menu is opened by a player
  */
-public class QuestsEditorOpenMainMenuEvent extends QuestsEditorEvent implements Cancellable {
+public class QuestsEditorPreOpenMainMenuEvent extends QuestsEditorEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
     
-	public QuestsEditorOpenMainMenuEvent(ConversationContext context) {
+	public QuestsEditorPreOpenMainMenuEvent(ConversationContext context) {
 		super(context);
 		this.context = context;
 	}

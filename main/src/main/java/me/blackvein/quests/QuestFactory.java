@@ -48,7 +48,8 @@ import org.bukkit.inventory.ItemStack;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
 import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.events.editor.quests.QuestsEditorOpenCreateMenuEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenCreateMenuEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenMainMenuEvent;
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.prompts.OptionsPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
@@ -176,6 +177,8 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
+			QuestsEditorPostOpenMainMenuEvent event = new QuestsEditorPostOpenMainMenuEvent(context);
+			plugin.getServer().getPluginManager().callEvent(event);
 			String text = ChatColor.GOLD + getTitle() + "\n";
 			for (int i = 1; i <= maxNumber; i++) {
 				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
@@ -344,13 +347,13 @@ public class QuestFactory implements ConversationAbandonedListener {
 					if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
 						return ChatColor.DARK_RED + "(" + Lang.get("questRequiredNoneSet") + ")";
 					} else {
-						return "(" + context.getSessionData(CK.Q_ASK_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")";
+						return ChatColor.YELLOW + "(" + context.getSessionData(CK.Q_ASK_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")";
 					}
 				case 3:
 					if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
 						return ChatColor.DARK_RED + "(" + Lang.get("questRequiredNoneSet") + ")";
 					} else {
-						return "(" + context.getSessionData(CK.Q_FINISH_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")";
+						return ChatColor.YELLOW + "(" + context.getSessionData(CK.Q_FINISH_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")";
 					}
 				case 4:
 					if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() != null) {
@@ -408,6 +411,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
+			QuestsEditorPostOpenCreateMenuEvent event = new QuestsEditorPostOpenCreateMenuEvent(context);
+			plugin.getServer().getPluginManager().callEvent(event);
+			
 			String text = ChatColor.GOLD + "- " + getTitle(context) + ChatColor.GOLD + " -\n";
 			for (int i = 1; i <= maxNumber; i++) {
 				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
@@ -426,7 +432,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					return new FinishMessagePrompt();
 				case 4:
 					if (plugin.getDependencies().getCitizens() != null) {
-						return new SetNpcStartPrompt();
+						return new NPCStartPrompt();
 					} else {
 						return new CreateMenuPrompt();
 					}
@@ -440,7 +446,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 						return new CreateMenuPrompt();
 					}
 				case 7:
-					return new InitialEventPrompt();
+					return new InitialActionPrompt();
 				case 8:
 					if (plugin.getDependencies().getCitizens() != null) {
 						return new GUIDisplayPrompt();
@@ -521,85 +527,11 @@ public class QuestFactory implements ConversationAbandonedListener {
 					return new QuestNamePrompt();
 				}
 				context.setSessionData(CK.Q_NAME, input);
-				QuestsEditorOpenCreateMenuEvent event = new QuestsEditorOpenCreateMenuEvent(context);
-				plugin.getServer().getPluginManager().callEvent(event);
-				if (event.isCancelled()) {
-					context.setSessionData(CK.Q_NAME, null);
-					return new MainMenuPrompt();
-				}
 				names.add(input);
 				return new CreateMenuPrompt();
 			} else {
 				return new MainMenuPrompt();
 			}
-		}
-	}
-
-	private class SetNpcStartPrompt extends StringPrompt {
-
-		@Override
-		public String getPromptText(ConversationContext context) {
-			selectingNpcs.add((Player) context.getForWhom());
-			return ChatColor.YELLOW + Lang.get("questEditorEnterNPCStart") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
-		}
-
-		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				try {
-					int i = Integer.parseInt(input);
-					if (i > -1) {
-						if (CitizensAPI.getNPCRegistry().getById(i) == null) {
-							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
-							return new SetNpcStartPrompt();
-						}
-						context.setSessionData(CK.Q_START_NPC, i);
-						selectingNpcs.remove((Player) context.getForWhom());
-						return new CreateMenuPrompt();
-					}
-				} catch (NumberFormatException e) {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
-					return new SetNpcStartPrompt();
-				}
-			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-				context.setSessionData(CK.Q_START_NPC, null);
-			}
-			selectingNpcs.remove((Player) context.getForWhom());
-			return new CreateMenuPrompt();
-		}
-	}
-
-	private class BlockStartPrompt extends StringPrompt {
-
-		@Override
-		public String getPromptText(ConversationContext context) {
-			return ChatColor.YELLOW + Lang.get("questEditorEnterBlockStart");
-		}
-
-		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			Player player = (Player) context.getForWhom();
-			if (input.equalsIgnoreCase(Lang.get("cmdDone")) || input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-				if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
-					Block block = selectedBlockStarts.get(player.getUniqueId());
-					if (block != null) {
-						Location loc = block.getLocation();
-						context.setSessionData(CK.Q_START_BLOCK, loc);
-						selectedBlockStarts.remove(player.getUniqueId());
-					} else {
-						player.sendMessage(ChatColor.RED + Lang.get("questEditorNoStartBlockSelected"));
-						return new BlockStartPrompt();
-					}
-				} else {
-					selectedBlockStarts.remove(player.getUniqueId());
-				}
-				return new CreateMenuPrompt();
-			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-				selectedBlockStarts.remove(player.getUniqueId());
-				context.setSessionData(CK.Q_START_BLOCK, null);
-				return new CreateMenuPrompt();
-			}
-			return new BlockStartPrompt();
 		}
 	}
 
@@ -685,93 +617,71 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 	}
 
-	private class InitialEventPrompt extends StringPrompt {
+	private class NPCStartPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.AQUA + Lang.get("eventTitle") + "\n";
-			if (plugin.getActions().isEmpty()) {
-				text += ChatColor.RED + "- " + Lang.get("none");
-			} else {
-				for (Action e : plugin.getActions()) {
-					text += ChatColor.GREEN + "- " + e.getName() + "\n";
+			selectingNpcs.add((Player) context.getForWhom());
+			return ChatColor.YELLOW + Lang.get("questEditorEnterNPCStart") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
+		}
+
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				try {
+					int i = Integer.parseInt(input);
+					if (i > -1) {
+						if (CitizensAPI.getNPCRegistry().getById(i) == null) {
+							context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
+							return new NPCStartPrompt();
+						}
+						context.setSessionData(CK.Q_START_NPC, i);
+						selectingNpcs.remove((Player) context.getForWhom());
+						return new CreateMenuPrompt();
+					}
+				} catch (NumberFormatException e) {
+					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+					return new NPCStartPrompt();
 				}
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				context.setSessionData(CK.Q_START_NPC, null);
 			}
-			return text + ChatColor.YELLOW + Lang.get("questEditorEnterInitialEvent");
+			selectingNpcs.remove((Player) context.getForWhom());
+			return new CreateMenuPrompt();
+		}
+	}
+
+	private class BlockStartPrompt extends StringPrompt {
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			return ChatColor.YELLOW + Lang.get("questEditorEnterBlockStart");
 		}
 
 		@Override
 		public Prompt acceptInput(ConversationContext context, String input) {
 			Player player = (Player) context.getForWhom();
-			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-				Action a = plugin.getAction(input);
-				if (a != null) {
-					context.setSessionData(CK.Q_INITIAL_EVENT, a.getName());
-					return new CreateMenuPrompt();
-				}
-				player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " + Lang.get("questEditorInvalidEventName"));
-				return new InitialEventPrompt();
-			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-				context.setSessionData(CK.Q_INITIAL_EVENT, null);
-				player.sendMessage(ChatColor.YELLOW + Lang.get("questEditorEventCleared"));
-				return new CreateMenuPrompt();
-			} else {
-				return new CreateMenuPrompt();
-			}
-		}
-	}
-
-	private class GUIDisplayPrompt extends FixedSetPrompt {
-
-		public GUIDisplayPrompt() {
-			super("1", "2", "3");
-		}
-
-		@Override
-		public String getPromptText(ConversationContext context) {
-			if (context.getSessionData("tempStack") != null) {
-				ItemStack stack = (ItemStack) context.getSessionData("tempStack");
-				boolean failed = false;
-				for (Quest quest : plugin.getQuests()) {
-					if (quest.guiDisplay != null) {
-						if (ItemUtil.compareItems(stack, quest.guiDisplay, false) == 0) {
-							String error = Lang.get("questGUIError");
-							error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
-							context.getForWhom().sendRawMessage(ChatColor.RED + error);
-							failed = true;
-							break;
-						}
+			if (input.equalsIgnoreCase(Lang.get("cmdDone")) || input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+				if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
+					Block block = selectedBlockStarts.get(player.getUniqueId());
+					if (block != null) {
+						Location loc = block.getLocation();
+						context.setSessionData(CK.Q_START_BLOCK, loc);
+						selectedBlockStarts.remove(player.getUniqueId());
+					} else {
+						player.sendMessage(ChatColor.RED + Lang.get("questEditorNoStartBlockSelected"));
+						return new BlockStartPrompt();
 					}
+				} else {
+					selectedBlockStarts.remove(player.getUniqueId());
 				}
-				if (!failed) {
-					context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
-				}
-				context.setSessionData("tempStack", null);
-			}
-			String text = ChatColor.GREEN + Lang.get("questGUITitle") + "\n";
-			if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
-				ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
-				text += ChatColor.DARK_GREEN + Lang.get("questCurrentItem") + " " + ChatColor.RESET + ItemUtil.getDisplayString(stack) + "\n\n";
-			} else {
-				text += ChatColor.DARK_GREEN + Lang.get("questCurrentItem") + " " + ChatColor.GRAY + "(" + Lang.get("none") + ")\n\n";
-			}
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "1 -" + ChatColor.RESET + ChatColor.DARK_GREEN + " " + Lang.get("questSetItem") + "\n";
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "2 -" + ChatColor.RESET + ChatColor.DARK_GREEN + " " + Lang.get("questClearItem") + "\n";
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 -" + ChatColor.RESET + ChatColor.GREEN + " " + Lang.get("done") + "\n";
-			return text;
-		}
-
-		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase("1")) {
-				return new ItemStackPrompt(GUIDisplayPrompt.this);
-			} else if (input.equalsIgnoreCase("2")) {
-				context.setSessionData(CK.Q_GUIDISPLAY, null);
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questGUICleared"));
-				return new GUIDisplayPrompt();
-			} else {
+				return new CreateMenuPrompt();
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				selectedBlockStarts.remove(player.getUniqueId());
+				context.setSessionData(CK.Q_START_BLOCK, null);
 				return new CreateMenuPrompt();
 			}
+			return new BlockStartPrompt();
 		}
 	}
 
@@ -831,6 +741,96 @@ public class QuestFactory implements ConversationAbandonedListener {
 				context.setSessionData(CK.Q_REGION, null);
 				player.sendMessage(ChatColor.YELLOW + Lang.get("questWGRegionCleared"));
 				return new CreateMenuPrompt();
+			} else {
+				return new CreateMenuPrompt();
+			}
+		}
+	}
+
+	private class InitialActionPrompt extends StringPrompt {
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			String text = ChatColor.AQUA + Lang.get("eventTitle") + "\n";
+			if (plugin.getActions().isEmpty()) {
+				text += ChatColor.RED + "- " + Lang.get("none");
+			} else {
+				for (Action e : plugin.getActions()) {
+					text += ChatColor.GREEN + "- " + e.getName() + "\n";
+				}
+			}
+			return text + ChatColor.YELLOW + Lang.get("questEditorEnterInitialEvent");
+		}
+
+		@Override
+		public Prompt acceptInput(ConversationContext context, String input) {
+			Player player = (Player) context.getForWhom();
+			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+				Action a = plugin.getAction(input);
+				if (a != null) {
+					context.setSessionData(CK.Q_INITIAL_EVENT, a.getName());
+					return new CreateMenuPrompt();
+				}
+				player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " + Lang.get("questEditorInvalidEventName"));
+				return new InitialActionPrompt();
+			} else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+				context.setSessionData(CK.Q_INITIAL_EVENT, null);
+				player.sendMessage(ChatColor.YELLOW + Lang.get("questEditorEventCleared"));
+				return new CreateMenuPrompt();
+			} else {
+				return new CreateMenuPrompt();
+			}
+		}
+	}
+
+	private class GUIDisplayPrompt extends FixedSetPrompt {
+
+		public GUIDisplayPrompt() {
+			super("1", "2", "3");
+		}
+
+		@Override
+		public String getPromptText(ConversationContext context) {
+			if (context.getSessionData("tempStack") != null) {
+				ItemStack stack = (ItemStack) context.getSessionData("tempStack");
+				boolean failed = false;
+				for (Quest quest : plugin.getQuests()) {
+					if (quest.guiDisplay != null) {
+						if (ItemUtil.compareItems(stack, quest.guiDisplay, false) == 0) {
+							String error = Lang.get("questGUIError");
+							error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
+							context.getForWhom().sendRawMessage(ChatColor.RED + error);
+							failed = true;
+							break;
+						}
+					}
+				}
+				if (!failed) {
+					context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
+				}
+				context.setSessionData("tempStack", null);
+			}
+			String text = ChatColor.GREEN + Lang.get("questGUITitle") + "\n";
+			if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
+				ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
+				text += ChatColor.DARK_GREEN + Lang.get("questCurrentItem") + " " + ChatColor.RESET + ItemUtil.getDisplayString(stack) + "\n\n";
+			} else {
+				text += ChatColor.DARK_GREEN + Lang.get("questCurrentItem") + " " + ChatColor.GRAY + "(" + Lang.get("none") + ")\n\n";
+			}
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "1 -" + ChatColor.RESET + ChatColor.DARK_GREEN + " " + Lang.get("questSetItem") + "\n";
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "2 -" + ChatColor.RESET + ChatColor.DARK_GREEN + " " + Lang.get("questClearItem") + "\n";
+			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 -" + ChatColor.RESET + ChatColor.GREEN + " " + Lang.get("done") + "\n";
+			return text;
+		}
+
+		@Override
+		protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+			if (input.equalsIgnoreCase("1")) {
+				return new ItemStackPrompt(GUIDisplayPrompt.this);
+			} else if (input.equalsIgnoreCase("2")) {
+				context.setSessionData(CK.Q_GUIDISPLAY, null);
+				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questGUICleared"));
+				return new GUIDisplayPrompt();
 			} else {
 				return new CreateMenuPrompt();
 			}
