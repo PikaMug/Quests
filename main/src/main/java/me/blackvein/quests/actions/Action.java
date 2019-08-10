@@ -493,33 +493,36 @@ public class Action {
 			}
 		}
 		if (data.contains(actionKey + "items")) {
-			if (Quests.checkList(data.getList(actionKey + "items"), String.class)) {
-				@SuppressWarnings("unchecked")
-				List<ItemStack> items = (List<ItemStack>) data.get(actionKey + "items");
-				if (items != null && !items.isEmpty() && items.get(0) instanceof ItemStack) {
-					for (ItemStack item : items) {
+			LinkedList<ItemStack> temp = new LinkedList<ItemStack>(); // TODO - should maybe be = action.getItems() ?
+			@SuppressWarnings("unchecked")
+			List<ItemStack> stackList = (List<ItemStack>) data.get(actionKey + "items");
+			if (Quests.checkList(stackList, ItemStack.class)) {
+				for (ItemStack stack : stackList) {
+					if (stack != null) {
+						temp.add(stack);
+					}
+				}
+			} else {
+				// Legacy
+				if (Quests.checkList(stackList, String.class)) {
+					List<String> items = data.getStringList(actionKey + "items");
+					for (String item : items) {
 						try {
-							action.items.add(item);
+							ItemStack stack = ItemUtil.readItemStack(item);
+							if (stack != null) {
+								temp.add(stack);
+							}
 						} catch (Exception e) {
-							plugin.getLogger().severe(ChatColor.GOLD + "[Quests] \"" + ChatColor.RED + item.getType().name() + ChatColor.GOLD + "\" inside " + ChatColor.GREEN + " items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not formatted properly!");
+							plugin.getLogger().severe(ChatColor.GOLD + "[Quests] \"" + ChatColor.RED + item + ChatColor.GOLD + "\" inside " + ChatColor.GREEN + " items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not formatted properly!");
 							return null;
 						}
 					}
 				} else {
-					// Legacy
-					for (String s : data.getStringList(actionKey + "items")) {
-						try {
-							action.items.add(ItemUtil.readItemStack(s));
-						} catch (Exception e) {
-							plugin.getLogger().severe(ChatColor.GOLD + "[Quests] \"" + ChatColor.RED + s + ChatColor.GOLD + "\" inside " + ChatColor.GREEN + " items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not formatted properly!");
-							return null;
-						}
-					}
+					plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of items!");
+					return null;
 				}
-			} else {
-				plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + "items: " + ChatColor.GOLD + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD + " is not a list of items!");
-				return null;
 			}
+			action.setItems(temp);
 		}
 		if (data.contains(actionKey + "storm-world")) {
 			World w = plugin.getServer().getWorld(data.getString(actionKey + "storm-world"));
