@@ -36,7 +36,6 @@ import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -50,7 +49,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenCreateMenuEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenMainMenuEvent;
-import me.blackvein.quests.prompts.ItemStackPrompt;
+import me.blackvein.quests.prompts.GUIDisplayPrompt;
 import me.blackvein.quests.prompts.OptionsPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
@@ -449,7 +448,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					return new InitialActionPrompt();
 				case 8:
 					if (plugin.getDependencies().getCitizens() != null) {
-						return new GUIDisplayPrompt();
+						return new GUIDisplayPrompt(plugin, QuestFactory.this);
 					} else {
 						return new CreateMenuPrompt();
 					}
@@ -777,60 +776,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 				context.setSessionData(CK.Q_INITIAL_EVENT, null);
 				player.sendMessage(ChatColor.YELLOW + Lang.get("questEditorEventCleared"));
 				return new CreateMenuPrompt();
-			} else {
-				return new CreateMenuPrompt();
-			}
-		}
-	}
-
-	private class GUIDisplayPrompt extends FixedSetPrompt {
-
-		public GUIDisplayPrompt() {
-			super("1", "2", "3");
-		}
-
-		@Override
-		public String getPromptText(ConversationContext context) {
-			if (context.getSessionData("tempStack") != null) {
-				ItemStack stack = (ItemStack) context.getSessionData("tempStack");
-				boolean failed = false;
-				for (Quest quest : plugin.getQuests()) {
-					if (quest.guiDisplay != null) {
-						if (ItemUtil.compareItems(stack, quest.guiDisplay, false) == 0) {
-							String error = Lang.get("questGUIError");
-							error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
-							context.getForWhom().sendRawMessage(ChatColor.RED + error);
-							failed = true;
-							break;
-						}
-					}
-				}
-				if (!failed) {
-					context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
-				}
-				context.setSessionData("tempStack", null);
-			}
-			String text = ChatColor.GREEN + Lang.get("questGUITitle") + "\n";
-			if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
-				ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
-				text += ChatColor.DARK_GREEN + Lang.get("questCurrentItem") + " " + ChatColor.RESET + ItemUtil.getDisplayString(stack) + "\n\n";
-			} else {
-				text += ChatColor.DARK_GREEN + Lang.get("questCurrentItem") + " " + ChatColor.GRAY + "(" + Lang.get("none") + ")\n\n";
-			}
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "1 -" + ChatColor.RESET + ChatColor.DARK_GREEN + " " + Lang.get("questSetItem") + "\n";
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "2 -" + ChatColor.RESET + ChatColor.DARK_GREEN + " " + Lang.get("questClearItem") + "\n";
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 -" + ChatColor.RESET + ChatColor.GREEN + " " + Lang.get("done") + "\n";
-			return text;
-		}
-
-		@Override
-		protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase("1")) {
-				return new ItemStackPrompt(GUIDisplayPrompt.this);
-			} else if (input.equalsIgnoreCase("2")) {
-				context.setSessionData(CK.Q_GUIDISPLAY, null);
-				context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questGUICleared"));
-				return new GUIDisplayPrompt();
 			} else {
 				return new CreateMenuPrompt();
 			}
