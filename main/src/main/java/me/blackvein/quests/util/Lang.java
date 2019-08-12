@@ -126,36 +126,42 @@ public class Lang {
 	public void loadLang() throws InvalidConfigurationException, IOException {
 		File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings.yml");
 		File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator + "strings_new.yml");
+		boolean exists_new = langFile_new.exists();
 		LinkedHashMap<String, String> allStrings = new LinkedHashMap<String, String>();
-		FileConfiguration config;
-		FileConfiguration config_new;
-		if (langFile.exists() && langFile_new.exists()) {
-			config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
-			config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(langFile_new), "UTF-8"));
-			//Load user's lang file and determine new strings
+		if (langFile.exists()) {
+			FileConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
+			FileConfiguration config_new = null;
+			if (exists_new) {
+				config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(langFile_new), "UTF-8"));
+			}
+			// Load user's lang file and determine new strings
 			for (String key : config.getKeys(false)) {
 				allStrings.put(key, config.getString(key));
-				config_new.set(key, null);
-			}
-			//Add new strings and notify user
-			for (String key : config_new.getKeys(false)) {
-				String value = config_new.getString(key);
-				if (value != null) {
-					allStrings.put(key, value);
-					plugin.getLogger().warning("There are new language phrases in /lang/" + iso + "/strings_new.yml for the current version!"
-							+ " You must transfer them to, or regenerate, strings.yml to remove this warning!");
+				if (exists_new) {
+					config_new.set(key, null);
 				}
 			}
-			config_new.options().header("Below are any new strings for your current version of Quests! Transfer them to the strings.yml of the"
+			// Add new strings and notify user
+			if (exists_new) {
+				for (String key : config_new.getKeys(false)) {
+					String value = config_new.getString(key);
+					if (value != null) {
+						allStrings.put(key, value);
+						plugin.getLogger().warning("There are new language phrases in /lang/" + iso + "/strings_new.yml for the current version!"
+								+ " You must transfer them to, or regenerate, strings.yml to remove this warning!");
+					}
+				}
+				config_new.options().header("Below are any new strings for your current version of Quests! Transfer them to the strings.yml of the"
 					+ " same folder to stay up-to-date and suppress console warnings.");
-			config_new.options().copyHeader(true);
-			config_new.save(langFile_new);
+				config_new.options().copyHeader(true);
+				config_new.save(langFile_new);
+			}
 		} else {
 			plugin.getLogger().severe("Failed loading lang files for " + iso + " because they were not found. Using default en-US");
 			plugin.getLogger().info("If the plugin has not generated language files, ensure Quests has write permissions");
 			plugin.getLogger().info("For help, visit https://github.com/FlyingPikachu/Quests/wiki/Casual-%E2%80%90-Translations");
 			iso = "en-US";
-			config = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"));
+			FileConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"));
 			for (String key : config.getKeys(false)) {
 				allStrings.put(key, config.getString(key));
 			}
