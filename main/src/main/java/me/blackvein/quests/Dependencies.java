@@ -156,7 +156,12 @@ public class Dependencies {
 		    dungeons = DungeonsXL.getInstance();
         }
 		if (isPluginAvailable("Parties")) {
-		    parties = Parties.getApi();
+			try {
+				Class.forName("com.alessiodp.parties.api.Parties");
+				parties = Parties.getApi();
+			} catch (Exception e) {
+				// Unsupported version
+			}
         }
 		if (isPluginAvailable("Vault")) {
 			if (!setupEconomy()) {
