@@ -1281,6 +1281,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         			if (q.testRequirements(player)) {
             			available.add(q);
             		}
+        		} else if (q.getPlanner().hasCooldown() && quester.getCooldownDifference(q) < 0) {
+        			if (q.testRequirements(player)) {
+            			available.add(q);
+            		}
         		}
         	}
         	if ((available.size() + rows) <= ((page * rows)) || available.size() == 0) {
