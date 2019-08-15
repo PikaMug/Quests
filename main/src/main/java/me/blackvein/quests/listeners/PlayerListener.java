@@ -585,7 +585,9 @@ public class PlayerListener implements Listener {
 					Wolf wolf = (Wolf) damager;
 					if (wolf.isTamed() && wolf.getOwner() != null) {
 						Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
-						killPlayer(quester.getPlayer(), evt.getEntity());
+						if (quester != null) {
+							killPlayer(quester.getPlayer(), evt.getEntity());
+						}
 					}
 				} else {
 					killMob(damager, evt.getEntity());
