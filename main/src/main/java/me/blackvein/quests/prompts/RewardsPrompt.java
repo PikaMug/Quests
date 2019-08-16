@@ -102,7 +102,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + perm + "\n";
 			}
 		}
-		if (plugin.getDependencies().getMcmmo() != null) {
+		if (plugin.getDependencies().getMcmmoClassic() != null) {
 			if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetMcMMO") + " (" + Lang.get("noneSet") + ")\n";
 			} else {
@@ -171,7 +171,7 @@ public class RewardsPrompt extends FixedSetPrompt {
 		} else if (input.equalsIgnoreCase("6")) {
 			return new PermissionsPrompt();
 		} else if (input.equalsIgnoreCase("7")) {
-			if (plugin.getDependencies().getMcmmo() != null) {
+			if (plugin.getDependencies().getMcmmoClassic() != null) {
 				return new mcMMOListPrompt();
 			} else {
 				return new RewardsPrompt(plugin, factory);

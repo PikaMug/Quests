@@ -47,8 +47,10 @@ import org.bukkit.inventory.ItemStack;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
 import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenCreateMenuEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenMainMenuEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenCreatePromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenExitPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenMainPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenSavePromptEvent;
 import me.blackvein.quests.prompts.GUIDisplayPrompt;
 import me.blackvein.quests.prompts.OptionsPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
@@ -176,7 +178,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			QuestsEditorPostOpenMainMenuEvent event = new QuestsEditorPostOpenMainMenuEvent(context);
+			QuestsEditorPostOpenMainPromptEvent event = new QuestsEditorPostOpenMainPromptEvent(context);
 			plugin.getServer().getPluginManager().callEvent(event);
 			String text = ChatColor.GOLD + getTitle() + "\n";
 			for (int i = 1; i <= maxNumber; i++) {
@@ -231,7 +233,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		
 		public String getTitle(ConversationContext context) {
-			return Lang.get("quest") + ": " + ChatColor.AQUA + context.getSessionData(CK.Q_NAME);
+			return ChatColor.GOLD + Lang.get("quest") + ": " + ChatColor.AQUA + context.getSessionData(CK.Q_NAME);
 		}
 		
 		public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -410,7 +412,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			QuestsEditorPostOpenCreateMenuEvent event = new QuestsEditorPostOpenCreateMenuEvent(context);
+			QuestsEditorPostOpenCreatePromptEvent event = new QuestsEditorPostOpenCreatePromptEvent(context);
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 			String text = ChatColor.GOLD + "- " + getTitle(context) + ChatColor.GOLD + " -\n";
@@ -782,12 +784,49 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 	}
 
-	private class SavePrompt extends StringPrompt {
+	public class SavePrompt extends StringPrompt {
+		private final int maxNumber = 2;
+		
+		public int getMaxNumber() {
+			return maxNumber;
+		}
+		
+		public ChatColor getNumberColor(ConversationContext context, int number) {
+			switch (number) {
+				case 1:
+					return ChatColor.GREEN;
+				case 2:
+					return ChatColor.RED;
+				default:
+					return null;
+			}
+		}
+		
+		public String getSelectionText(ConversationContext context, int number) {
+			switch (number) {
+				case 1:
+					return ChatColor.GREEN + Lang.get("yesWord");
+				case 2:
+					return ChatColor.RED + Lang.get("noWord");
+				default:
+					return null;
+			}
+		}
+		
+		public String getQueryText(ConversationContext context) {
+			return ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA + context.getSessionData(CK.Q_NAME) + ChatColor.YELLOW + "\"?\n";
+		}
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.GREEN + "1 - " + Lang.get("yesWord") + "\n" + "2 - " + Lang.get("noWord");
-			return ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA + context.getSessionData(CK.Q_NAME) + ChatColor.YELLOW + "\"?\n" + text;
+			QuestsEditorPostOpenSavePromptEvent event = new QuestsEditorPostOpenSavePromptEvent(QuestFactory.this, context);
+			plugin.getServer().getPluginManager().callEvent(event);
+			
+			String text = getQueryText(context);
+			for (int i = 1; i <= maxNumber; i++) {
+				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
+	        }
+			return text;
 		}
 
 		@Override
@@ -837,13 +876,49 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 	}
 
-	private class ExitPrompt extends StringPrompt {
-
+	public class ExitPrompt extends StringPrompt {
+		private final int maxNumber = 2;
+		
+		public int getMaxNumber() {
+			return maxNumber;
+		}
+		
+		public ChatColor getNumberColor(ConversationContext context, int number) {
+			switch (number) {
+				case 1:
+					return ChatColor.GREEN;
+				case 2:
+					return ChatColor.RED;
+				default:
+					return null;
+			}
+		}
+		
+		public String getSelectionText(ConversationContext context, int number) {
+			switch (number) {
+				case 1:
+					return ChatColor.GREEN + Lang.get("yesWord");
+				case 2:
+					return ChatColor.RED + Lang.get("noWord");
+				default:
+					return null;
+			}
+		}
+		
+		public String getQueryText(ConversationContext context) {
+			return ChatColor.YELLOW + Lang.get("questEditorExited") + "\n";
+		}
+		
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("yesWord") + "\n" 
-					+ ChatColor.RED + "" +  ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("noWord");
-			return ChatColor.YELLOW + Lang.get("questEditorExited") + "\n" + text;
+			QuestsEditorPostOpenExitPromptEvent event = new QuestsEditorPostOpenExitPromptEvent(QuestFactory.this, context);
+			plugin.getServer().getPluginManager().callEvent(event);
+			
+			String text = getQueryText(context);
+			for (int i = 1; i <= maxNumber; i++) {
+				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
+	        }
+			return text;
 		}
 
 		@Override

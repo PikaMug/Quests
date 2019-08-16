@@ -5,11 +5,11 @@ import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.QuestFactory;
 
-public class QuestsEditorPostOpenGUIDisplayMenuEvent extends QuestsEditorEvent {
+public class QuestsEditorPostOpenGUIDisplayPromptEvent extends QuestsEditorEvent {
 	private static final HandlerList handlers = new HandlerList();
 	private final QuestFactory factory;
 
-    public QuestsEditorPostOpenGUIDisplayMenuEvent(QuestFactory factory, ConversationContext context) {
+    public QuestsEditorPostOpenGUIDisplayPromptEvent(QuestFactory factory, ConversationContext context) {
     	super(context);
 		this.context = context;
 		this.factory = factory;

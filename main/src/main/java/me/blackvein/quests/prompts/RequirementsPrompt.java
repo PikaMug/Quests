@@ -22,6 +22,7 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
+import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
@@ -33,168 +34,289 @@ import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenRequirementsPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-public class RequirementsPrompt extends FixedSetPrompt {
+public class RequirementsPrompt extends NumericPrompt {
 
 	private Quests plugin;
 	private final QuestFactory factory;
-
+	private final int maxNumber = 11;
+	
 	public RequirementsPrompt(Quests plugin, QuestFactory qf) {
-		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
 		this.plugin = plugin;
 		factory = qf;
 	}
-
+	
+	public int getMaxNumber() {
+		return maxNumber;
+	}
+	
+	public String getTitle(ConversationContext context) {
+		return ChatColor.DARK_AQUA + Lang.get("requirementsTitle").replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
+	}
+	
+	public ChatColor getNumberColor(ConversationContext context, int number) {
+		switch (number) {
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+				return ChatColor.BLUE;
+			case 7:
+				if (plugin.getDependencies().getMcmmoClassic() != null) {
+					return ChatColor.BLUE;
+				} else {
+					return ChatColor.GRAY;
+				}
+			case 8:
+				if (plugin.getDependencies().getHeroes() != null) {
+					return ChatColor.BLUE;
+				} else {
+					return ChatColor.GRAY;
+				}
+			case 9:
+			case 10:
+				if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
+						&& context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null 
+						&& context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
+						&& context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null && context.getSessionData(CK.REQ_CUSTOM) == null) {
+					return ChatColor.GRAY;
+				} else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
+					return ChatColor.RED;
+				} else {
+					return ChatColor.BLUE;
+				}
+			case 11:
+				return ChatColor.GREEN;
+			default:
+				return null;
+		}
+	}
+	
+	public String getSelectionText(ConversationContext context, int number) {
+		switch (number) {
+			case 1:
+				return ChatColor.YELLOW + Lang.get("reqSetMoney");
+			case 2:
+				return ChatColor.YELLOW + Lang.get("reqSetQuestPoints");
+			case 3:
+				return ChatColor.YELLOW + Lang.get("reqSetItem");
+			case 4:
+				return ChatColor.YELLOW + Lang.get("reqSetPerms");
+			case 5:
+				return ChatColor.YELLOW + Lang.get("reqSetQuest");
+			case 6:
+				return ChatColor.YELLOW + Lang.get("reqSetQuestBlocks");
+			case 7:
+				return ChatColor.YELLOW + Lang.get("reqSetMcMMO");
+			case 8:
+				return ChatColor.YELLOW + Lang.get("reqSetHeroes");
+			case 9:
+				return ChatColor.DARK_PURPLE + Lang.get("reqSetCustom");
+			case 10:
+				if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
+						&& context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null 
+						&& context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
+						&& context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null && context.getSessionData(CK.REQ_CUSTOM) == null) {
+					return ChatColor.GRAY + Lang.get("reqSetFail");
+				} else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
+					return ChatColor.RED + Lang.get("reqSetFail");
+				} else {
+					return ChatColor.YELLOW + Lang.get("reqSetFail");
+				}
+			case 11:
+				return ChatColor.YELLOW + Lang.get("done");
+			default:
+				return null;
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
+	public String getAdditionalText(ConversationContext context, int number) {
+		switch (number) {
+			case 1:
+				if (context.getSessionData(CK.REQ_MONEY) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
+					return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " + (moneyReq > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY + ")";
+				}
+			case 2:
+				if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REQ_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")";
+				}
+			case 3:
+				if (context.getSessionData(CK.REQ_ITEMS) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					String text = "";
+					LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
+					for (int i = 0; i < items.size(); i++) {
+						text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount();
+					}
+					return text;
+				}
+			case 4:
+				if (context.getSessionData(CK.REQ_PERMISSION) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					String text = "";
+					List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
+					for (String s : perms) {
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
+					}
+					return text;
+				}
+			case 5:
+				if (context.getSessionData(CK.REQ_QUEST) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					String text = "";
+					List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
+					for (String s : qs) {
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
+					}
+					return text;
+				}
+			case 6:
+				if (context.getSessionData(CK.REQ_QUEST_BLOCK) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					String text = "";
+					List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
+					for (String s : qs) {
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
+					}
+					return text;
+				}
+			case 7:
+				if (plugin.getDependencies().getMcmmoClassic() != null) {
+					if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
+						return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+					} else {
+						String text = "";
+						List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
+						List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
+						for (String s : skills) {
+							text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN + amounts.get(skills.indexOf(s));
+						}
+						return text;
+					}
+				} else {
+					return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+				}
+			case 8:
+				if (plugin.getDependencies().getHeroes() != null) {
+					if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
+						return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
+					} else {
+						String text = "";
+						if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
+							text += ChatColor.AQUA + "    " + Lang.get("reqHeroesPrimaryDisplay") + " " + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
+						}
+						if (context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
+							text += ChatColor.AQUA + "    " + Lang.get("reqHeroesSecondaryDisplay") + " " + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS);
+						}
+						return text;
+					}
+				} else {
+					return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+				}
+			case 9:
+				if (context.getSessionData(CK.REQ_CUSTOM) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					String text = "";
+					LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+					for (String s : customReqs) {
+						text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s;
+					}
+					return text;
+				}
+			case 10:
+				if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
+						&& context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null 
+							&& context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
+								&& context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null && context.getSessionData(CK.REQ_CUSTOM) == null) {
+					return ChatColor.GRAY + Lang.get("reqSetFail") + " (" + Lang.get("reqNone") + ")";
+				} else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
+					return ChatColor.RED + "(" + Lang.get("questRequiredNoneSet") + ")";
+				} else {
+					return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + ChatColor.GRAY + ")";
+				}
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+				return "";
+			default:
+				return null;
+		}
+	}
+	
 	@Override
 	public String getPromptText(ConversationContext context) {
-		String text;
-		String lang = Lang.get("requirementsTitle");
-		lang = lang.replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
-		text = ChatColor.DARK_AQUA + lang + "\n";
-		if (context.getSessionData(CK.REQ_MONEY) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-		} else {
-			int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMoney") + ChatColor.GRAY + " (" + ChatColor.AQUA + moneyReq + " " + (moneyReq > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY + ")\n";
-		}
-		if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestPoints") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestPoints") + ChatColor.GRAY + " (" + ChatColor.AQUA + context.getSessionData(CK.REQ_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")\n";
-		}
-		if (context.getSessionData(CK.REQ_ITEMS) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetItem") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetItem") + "\n";
-			LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
-			for (int i = 0; i < items.size(); i++) {
-				text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
-			}
-		}
-		if (context.getSessionData(CK.REQ_PERMISSION) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetPerms") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetPerms") + "\n";
-			List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
-			for (String s : perms) {
-				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
-			}
-		}
-		if (context.getSessionData(CK.REQ_QUEST) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuest") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuest") + "\n";
-			List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
-			for (String s : qs) {
-				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
-			}
-		}
-		if (context.getSessionData(CK.REQ_QUEST_BLOCK) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestBlocks") + " " + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetQuestBlocks") + "\n";
-			List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
-			for (String s : qs) {
-				text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
-			}
-		}
-		if (plugin.getDependencies().getMcmmo() != null) {
-			if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMcMMO") + " " + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetMcMMO") + "\n";
-				List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
-				List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
-				for (String s : skills) {
-					text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN + amounts.get(skills.indexOf(s)) + "\n";
-				}
-			}
-		} else {
-			text += ChatColor.GRAY + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("reqSetMcMMO") + " (" + Lang.get("notInstalled") + ")\n";
-		}
-		if (plugin.getDependencies().getHeroes() != null) {
-			if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetHeroes") + " " + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetHeroes") + "\n";
-				if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
-					text += ChatColor.AQUA + "    " + Lang.get("reqHeroesPrimaryDisplay") + " " + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) + "\n";
-				}
-				if (context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
-					text += ChatColor.AQUA + "    " + Lang.get("reqHeroesSecondaryDisplay") + " " + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) + "\n";
-				}
-			}
-		} else {
-			text += ChatColor.GRAY + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("reqSetHeroes") + " (" + Lang.get("notInstalled") + ")\n";
-		}
-		if (context.getSessionData(CK.REQ_CUSTOM) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9 - " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.DARK_PURPLE + Lang.get("reqSetCustom") + " (" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "9 - " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.DARK_PURPLE + Lang.get("reqSetCustom") + "\n";
-			LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-			for (String s : customReqs) {
-				text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s + "\n";
-			}
-		}
-		if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
-				&& context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null 
-				&& context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
-				&& context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null && context.getSessionData(CK.REQ_CUSTOM) == null) {
-			text += ChatColor.GRAY + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.GRAY + Lang.get("reqSetFail") + " (" + Lang.get("reqNone") + ")\n";
-		} else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
-			text += ChatColor.RED + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.RED + Lang.get("reqSetFail") + " (" + Lang.get("questRequiredNoneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "10 - " + ChatColor.RESET + ChatColor.YELLOW + Lang.get("reqSetFail") + ChatColor.GRAY + " (" + ChatColor.AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE) + "\"" + ChatColor.GRAY + ")\n";
-		}
-		text += ChatColor.GREEN + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+		QuestsEditorPostOpenRequirementsPromptEvent event = new QuestsEditorPostOpenRequirementsPromptEvent(factory, context);
+		plugin.getServer().getPluginManager().callEvent(event);
+		
+		String text = getTitle(context) + "\n";
+		for (int i = 1; i <= maxNumber; i++) {
+			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+        }
 		return text;
 	}
 
 	@Override
-	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-		if (input.equalsIgnoreCase("1")) {
-			return new MoneyPrompt();
-		} else if (input.equalsIgnoreCase("2")) {
-			return new QuestPointsPrompt();
-		} else if (input.equalsIgnoreCase("3")) {
-			return new ItemListPrompt();
-		} else if (input.equalsIgnoreCase("4")) {
-			return new PermissionsPrompt();
-		} else if (input.equalsIgnoreCase("5")) {
-			return new QuestListPrompt(true);
-		} else if (input.equalsIgnoreCase("6")) {
-			return new QuestListPrompt(false);
-		} else if (input.equalsIgnoreCase("7")) {
-			if (plugin.getDependencies().getMcmmo() != null) {
-				return new mcMMOPrompt();
-			} else {
-				return new RequirementsPrompt(plugin, factory);
-			}
-		} else if (input.equalsIgnoreCase("8")) {
-			if (plugin.getDependencies().getHeroes() != null) {
-				return new HeroesPrompt();
-			} else {
-				return new RequirementsPrompt(plugin, factory);
-			}
-		} else if (input.equalsIgnoreCase("9")) {
-			return new CustomRequirementsPrompt();
-		} else if (input.equalsIgnoreCase("10")) {
-			return new FailMessagePrompt();
-		} else if (input.equalsIgnoreCase("11")) {
-			if (context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null || context.getSessionData(CK.REQ_ITEMS) != null || context.getSessionData(CK.REQ_PERMISSION) != null || context.getSessionData(CK.REQ_QUEST) != null || context.getSessionData(CK.REQ_QUEST_BLOCK) != null || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null || context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null || context.getSessionData(CK.REQ_CUSTOM) != null) {
-				if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNoMessage"));
+	protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+		switch (input.intValue()) {
+			case 1:
+				return new MoneyPrompt();
+			case 2:
+				return new QuestPointsPrompt();
+			case 3:
+				return new ItemListPrompt();
+			case 4:
+				return new PermissionsPrompt();
+			case 5:
+				return new QuestListPrompt(true);
+			case 6:
+				return new QuestListPrompt(false);
+			case 7:
+				if (plugin.getDependencies().getMcmmoClassic() != null) {
+					return new mcMMOPrompt();
+				} else {
 					return new RequirementsPrompt(plugin, factory);
 				}
-			}
-			return factory.returnToMenu();
+			case 8:
+				if (plugin.getDependencies().getHeroes() != null) {
+					return new HeroesPrompt();
+				} else {
+					return new RequirementsPrompt(plugin, factory);
+				}
+			case 9:
+				return new CustomRequirementsPrompt();
+			case 10:
+				return new FailMessagePrompt();
+			case 11:
+				if (context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null || context.getSessionData(CK.REQ_ITEMS) != null || context.getSessionData(CK.REQ_PERMISSION) != null || context.getSessionData(CK.REQ_QUEST) != null || context.getSessionData(CK.REQ_QUEST_BLOCK) != null || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null || context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null || context.getSessionData(CK.REQ_CUSTOM) != null) {
+					if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
+						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNoMessage"));
+						return new RequirementsPrompt(plugin, factory);
+					}
+				}
+				return factory.returnToMenu();
+			default:
+				return null;
 		}
-		return null;
 	}
 
 	private class MoneyPrompt extends StringPrompt {
@@ -355,9 +477,9 @@ public class RequirementsPrompt extends FixedSetPrompt {
 			String text = ChatColor.GOLD + Lang.get("itemRequirementsTitle") + "\n";
 			if (context.getSessionData(CK.REQ_ITEMS) == null) {
 				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
-				text += ChatColor.GRAY + "2 - " + Lang.get("reqSetRemoveItems") + " (" + Lang.get("reqNoItemsSet") + ")\n";
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+				text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("reqSetRemoveItems") + " (" + Lang.get("reqNoItemsSet") + ")\n";
+				text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+				text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			} else {
 				for (ItemStack is : getItems(context)) {
 					text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
@@ -371,8 +493,8 @@ public class RequirementsPrompt extends FixedSetPrompt {
 						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
 					}
 				}
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+				text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
+				text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
 			}
 			return text;
 		}
