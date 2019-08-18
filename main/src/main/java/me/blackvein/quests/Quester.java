@@ -1714,7 +1714,8 @@ public class Quester {
 			} catch (IndexOutOfBoundsException e) {
 				plugin.getLogger().severe("An error has occurred with Quests. Please report on Github. Include the info below");
 				plugin.getLogger().warning("index = " + index);
-				plugin.getLogger().warning("locationsReached = " + getQuestData(quest).locationsReached.toString());
+				plugin.getLogger().warning("currentLocation = " + location.toString());
+				plugin.getLogger().warning("locationsReached = " + getQuestData(quest).locationsReached.size());
 				plugin.getLogger().warning("hasReached = " + getQuestData(quest).hasReached.size());
 				e.printStackTrace();
 			}
