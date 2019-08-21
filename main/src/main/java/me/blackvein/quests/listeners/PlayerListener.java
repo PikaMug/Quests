@@ -696,6 +696,9 @@ public class PlayerListener implements Listener {
 	 * @since 3.1.4
 	 */
 	public void killPlayer(Entity damager, Entity target) {
+		if (damager == null) {
+			return;
+		}
 		if (!plugin.canUseQuests(damager.getUniqueId())) {
 			return;
 		}
