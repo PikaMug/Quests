@@ -704,7 +704,7 @@ setQuestPoints: "<player> kişisinin görev puanı <number> olarak değiştirild
 questPointsSet: "<player> kişisi görev puanlarını <number> olarak değiştirdi."
 takeQuestPoints: "<player> kişisinden <number> görev puanı aldın."
 questPointsTaken: "<player> kişisi senden <number> görev puanı aldı."
-giveQuestPoints: "Gave <number> Quest Points from <player>."
+giveQuestPoints: "<player> kişisine <number> görev puanı verildi."
 questPointsGiven: "<player> kişisi sana <number> Quest Point verdi."
 invalidMinimum: "Girdi en az <number> olmalı!"
 invalidRange: "Girdi <least> ile <greatest> arasında olmalı!"
