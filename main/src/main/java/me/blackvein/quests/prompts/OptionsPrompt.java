@@ -14,57 +14,126 @@ package me.blackvein.quests.prompts;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.FixedSetPrompt;
+import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
 import me.blackvein.quests.Options;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenOptionsGeneralPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenOptionsPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenOptionsTrueFalsePromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
-public class OptionsPrompt extends FixedSetPrompt {
+public class OptionsPrompt extends NumericPrompt {
 	
 	private final Quests plugin;
 	private final QuestFactory factory;
 	private String tempKey;
-	private StringPrompt tempPrompt;
+	private Prompt tempPrompt;
 
 	public OptionsPrompt(Quests plugin, QuestFactory qf) {
-		super("1", "2", "3");
 		this.plugin = plugin;
 		factory = qf;
+	}
+	
+	private final int size = 3;
+	
+	public int getSize() {
+		return size;
+	}
+	
+	public String getTitle(ConversationContext context) {
+		return ChatColor.DARK_GREEN + Lang.get("optionsTitle").replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN);
+	}
+	
+	public ChatColor getNumberColor(ConversationContext context, int number) {
+		switch (number) {
+			case 1:
+				return ChatColor.BLUE;
+			case 2:
+				return ChatColor.BLUE;
+			case 3:
+				return ChatColor.GREEN;
+			default:
+				return null;
+		}
+	}
+	
+	public String getSelectionText(ConversationContext context, int number) {
+		switch (number) {
+			case 1:
+				return ChatColor.GOLD + Lang.get("optGeneral");
+			case 2:
+				return ChatColor.GOLD + Lang.get("optMultiplayer");
+			case 3:
+				return ChatColor.YELLOW + Lang.get("done");
+			default:
+				return null;
+		}
 	}
 
 	@Override
 	public String getPromptText(ConversationContext context) {
-		String text;
-		String lang = Lang.get("optionsTitle");
-		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN);
-		text = ChatColor.DARK_AQUA + lang + "\n";
-		text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("optGeneral") + "\n";
-		text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("optMultiplayer") + "\n";
-		text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+		QuestsEditorPostOpenOptionsPromptEvent event = new QuestsEditorPostOpenOptionsPromptEvent(factory, context);
+		plugin.getServer().getPluginManager().callEvent(event);
+		
+		String text = getTitle(context) + "\n";
+		for (int i = 1; i <= size; i++) {
+			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
+        }
 		return text;
 	}
 
 	@Override
-	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-		if (input.equalsIgnoreCase("1")) {
-			return new GeneralPrompt();
-		} else if (input.equalsIgnoreCase("2")) {
-			return new MultiplayerPrompt();
-		} else if (input.equalsIgnoreCase("3")) {
-			return factory.returnToMenu();
+	protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+		switch (input.intValue()) {
+			case 1:
+				return new GeneralPrompt();
+			case 2:
+				return new MultiplayerPrompt();
+			case 3:
+				return factory.returnToMenu();
+			default:
+				return null;
 		}
-		return null;
 	}
 	
-	private class TrueFalsePrompt extends StringPrompt {
+	public class TrueFalsePrompt extends StringPrompt {
 
+		private final int size = 3;
+		
+		public int getSize() {
+			return size;
+		}
+		
+		public String getQueryText() {
+			String text = "Choose <true> or <false>";
+			text = text.replace("<true>", Lang.get("true"));
+			text = text.replace("<false>", Lang.get("false"));
+			return text;
+		}
+		
+		public String getSelectionText(ConversationContext context, int number) {
+			switch (number) {
+				case 1:
+					return ChatColor.YELLOW + Lang.get("true");
+				case 2:
+					return ChatColor.YELLOW + Lang.get("false");
+				case 3:
+					return ChatColor.RED + Lang.get("cmdClear");
+				default:
+					return null;
+			}
+		}
+		
 		@Override
 		public String getPromptText(ConversationContext context) {
+			QuestsEditorPostOpenOptionsTrueFalsePromptEvent event = new QuestsEditorPostOpenOptionsTrueFalsePromptEvent(factory, context);
+			plugin.getServer().getPluginManager().callEvent(event);
+			
 			String text = Lang.get("optBooleanPrompt");
 			text = text.replace("<true>", Lang.get("true"));
 			text = text.replace("<false>", Lang.get("false"));
@@ -76,7 +145,7 @@ public class OptionsPrompt extends FixedSetPrompt {
 			if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
 				try {
 					boolean b = Boolean.parseBoolean(input);
-					if (input.equalsIgnoreCase("t") || input.equalsIgnoreCase(Lang.get("true"))) {
+					if (input.equalsIgnoreCase("t") || input.equalsIgnoreCase(Lang.get("true")) || input.equalsIgnoreCase(Lang.get("yesWord"))) {
 						b = true;
 					}
 					context.setSessionData(tempKey, b);
@@ -121,54 +190,95 @@ public class OptionsPrompt extends FixedSetPrompt {
 		}
 	}
 	
-	private class GeneralPrompt extends StringPrompt {
+	public class GeneralPrompt extends NumericPrompt {
+		
+		private final int size = 3;
+		
+		public int getSize() {
+			return size;
+		}
+		
+		public String getTitle() {
+			return ChatColor.DARK_GREEN + Lang.get("optGeneral");
+		}
+		
+		public ChatColor getNumberColor(ConversationContext context, int number) {
+			switch (number) {
+				case 1:
+					return ChatColor.BLUE;
+				case 2:
+					return ChatColor.BLUE;
+				case 3:
+					return ChatColor.GREEN;
+				default:
+					return null;
+			}
+		}
+		
+		public String getSelectionText(ConversationContext context, int number) {
+			switch (number) {
+				case 1:
+					if (context.getSessionData(CK.OPT_ALLOW_COMMANDS) == null) {
+						boolean defaultOpt = new Options().getAllowCommands();
+						return ChatColor.YELLOW + Lang.get("optAllowCommands") + " (" 
+								+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")";
+					} else {
+						boolean commandsOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_COMMANDS);
+						return ChatColor.YELLOW + Lang.get("optAllowCommands") + " (" 
+								+ (commandsOpt ? ChatColor.GREEN + String.valueOf(commandsOpt) : ChatColor.RED + String.valueOf(commandsOpt)) + ChatColor.YELLOW + ")";
+					}
+				case 2:
+					if (context.getSessionData(CK.OPT_ALLOW_QUITTING) == null) {
+						boolean defaultOpt = new Options().getAllowQuitting();
+						return ChatColor.YELLOW + Lang.get("optAllowQuitting") + " (" 
+								+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")";
+					} else {
+						boolean quittingOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING);
+						return ChatColor.YELLOW + Lang.get("optAllowQuitting") + " (" 
+								+ (quittingOpt ? ChatColor.GREEN + String.valueOf(quittingOpt) : ChatColor.RED + String.valueOf(quittingOpt)) + ChatColor.YELLOW + ")";
+					}
+				case 3:
+					return ChatColor.YELLOW + Lang.get("done");
+				default:
+					return null;
+			}
+		}
 
 		@Override
 		public String getPromptText(ConversationContext context) {
-			String text = ChatColor.DARK_GREEN + "- " + Lang.get("optGeneral") + " -\n";
-			if (context.getSessionData(CK.OPT_ALLOW_COMMANDS) == null) {
-				boolean defaultOpt = new Options().getAllowCommands();
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowCommands") + " (" 
-						+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")\n";
-			} else {
-				boolean commandsOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_COMMANDS);
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowCommands") + " (" 
-						+ (commandsOpt ? ChatColor.GREEN + String.valueOf(commandsOpt) : ChatColor.RED + String.valueOf(commandsOpt)) + ChatColor.YELLOW + ")\n";
-			}
-			if (context.getSessionData(CK.OPT_ALLOW_QUITTING) == null) {
-				boolean defaultOpt = new Options().getAllowQuitting();
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowQuitting") + " (" 
-						+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")\n";
-			} else {
-				boolean quittingOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING);
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("optAllowQuitting") + " (" 
-						+ (quittingOpt ? ChatColor.GREEN + String.valueOf(quittingOpt) : ChatColor.RED + String.valueOf(quittingOpt)) + ChatColor.YELLOW + ")\n";
-			}
-			text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+			QuestsEditorPostOpenOptionsGeneralPromptEvent event = new QuestsEditorPostOpenOptionsGeneralPromptEvent(factory, context);
+			plugin.getServer().getPluginManager().callEvent(event);
+			
+			String text = ChatColor.DARK_GREEN + "- " + getTitle() + " -\n";
+			for (int i = 1; i <= size; i++) {
+				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
+	        }
 			return text;
 		}
 
 		@Override
-		public Prompt acceptInput(ConversationContext context, String input) {
-			if (input.equalsIgnoreCase("1")) {
-				tempKey = CK.OPT_ALLOW_COMMANDS;
-				tempPrompt = new GeneralPrompt();
-				return new TrueFalsePrompt();
-			} else if (input.equalsIgnoreCase("2")) {
-				tempKey = CK.OPT_ALLOW_QUITTING;
-				tempPrompt = new GeneralPrompt();
-				return new TrueFalsePrompt();
-			} else if (input.equalsIgnoreCase("3")) {
-				tempKey = null;
-				tempPrompt = null;
-				try {
-					return new OptionsPrompt(plugin, factory);
-				} catch (Exception e) {
-					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
-					return Prompt.END_OF_CONVERSATION;
-				}
+		public Prompt acceptValidatedInput(ConversationContext context, Number input) {
+			switch (input.intValue()) {
+				case 1:
+					tempKey = CK.OPT_ALLOW_COMMANDS;
+					tempPrompt = new GeneralPrompt();
+					return new TrueFalsePrompt();
+				case 2:
+					tempKey = CK.OPT_ALLOW_QUITTING;
+					tempPrompt = new GeneralPrompt();
+					return new TrueFalsePrompt();
+				case 3:
+					tempKey = null;
+					tempPrompt = null;
+					try {
+						return new OptionsPrompt(plugin, factory);
+					} catch (Exception e) {
+						context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
+						return Prompt.END_OF_CONVERSATION;
+					}
+				default:
+					return null;
 			}
-			return null;
 		}
 	}
 	

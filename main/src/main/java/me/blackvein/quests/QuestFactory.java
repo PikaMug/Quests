@@ -138,10 +138,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 	}
 	
 	public class MainMenuPrompt extends NumericPrompt {
-		private final int maxNumber = 4;
+		private final int size = 4;
 		
-		public int getMaxNumber() {
-			return maxNumber;
+		public int getSize() {
+			return size;
 		}
 		
 		public String getTitle() {
@@ -181,7 +181,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			QuestsEditorPostOpenMainPromptEvent event = new QuestsEditorPostOpenMainPromptEvent(context);
 			plugin.getServer().getPluginManager().callEvent(event);
 			String text = ChatColor.GOLD + getTitle() + "\n";
-			for (int i = 1; i <= maxNumber; i++) {
+			for (int i = 1; i <= size; i++) {
 				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
 	        }
 			return text;
@@ -226,10 +226,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 	}
 
 	public class CreateMenuPrompt extends NumericPrompt {
-		private final int maxNumber = 15;
+		private final int size = 15;
 		
-		public int getMaxNumber() {
-			return maxNumber;
+		public int getSize() {
+			return size;
 		}
 		
 		public String getTitle(ConversationContext context) {
@@ -416,7 +416,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 			String text = ChatColor.GOLD + "- " + getTitle(context) + ChatColor.GOLD + " -\n";
-			for (int i = 1; i <= maxNumber; i++) {
+			for (int i = 1; i <= size; i++) {
 				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
 	        }
 			return text;
@@ -785,10 +785,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 	}
 
 	public class SavePrompt extends StringPrompt {
-		private final int maxNumber = 2;
+		private final int size = 2;
 		
-		public int getMaxNumber() {
-			return maxNumber;
+		public int getSize() {
+			return size;
 		}
 		
 		public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -823,7 +823,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 			String text = getQueryText(context);
-			for (int i = 1; i <= maxNumber; i++) {
+			for (int i = 1; i <= size; i++) {
 				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
 	        }
 			return text;
@@ -877,10 +877,10 @@ public class QuestFactory implements ConversationAbandonedListener {
 	}
 
 	public class ExitPrompt extends StringPrompt {
-		private final int maxNumber = 2;
+		private final int size = 2;
 		
-		public int getMaxNumber() {
-			return maxNumber;
+		public int getSize() {
+			return size;
 		}
 		
 		public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -915,7 +915,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 			String text = getQueryText(context);
-			for (int i = 1; i <= maxNumber; i++) {
+			for (int i = 1; i <= size; i++) {
 				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
 	        }
 			return text;

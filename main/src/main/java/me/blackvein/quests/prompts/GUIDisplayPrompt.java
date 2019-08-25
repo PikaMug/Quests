@@ -23,10 +23,10 @@ public class GUIDisplayPrompt extends NumericPrompt {
 		this.questFactory = qf;
 	}
 	
-	private final int maxNumber = 3;
+	private final int size = 3;
 	
-	public int getMaxNumber() {
-		return maxNumber;
+	public int getSize() {
+		return size;
 	}
 	
 	public String getTitle() {
@@ -90,7 +90,7 @@ public class GUIDisplayPrompt extends NumericPrompt {
 		} else {
 			text += " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		}
-		for (int i = 1; i <= maxNumber; i++) {
+		for (int i = 1; i <= size; i++) {
 			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
         }
 		return text;

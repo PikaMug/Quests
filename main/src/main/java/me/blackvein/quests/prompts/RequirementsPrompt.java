@@ -44,15 +44,15 @@ public class RequirementsPrompt extends NumericPrompt {
 
 	private Quests plugin;
 	private final QuestFactory factory;
-	private final int maxNumber = 11;
+	private final int size = 11;
 	
 	public RequirementsPrompt(Quests plugin, QuestFactory qf) {
 		this.plugin = plugin;
 		factory = qf;
 	}
 	
-	public int getMaxNumber() {
-		return maxNumber;
+	public int getSize() {
+		return size;
 	}
 	
 	public String getTitle(ConversationContext context) {
@@ -269,7 +269,7 @@ public class RequirementsPrompt extends NumericPrompt {
 		plugin.getServer().getPluginManager().callEvent(event);
 		
 		String text = getTitle(context) + "\n";
-		for (int i = 1; i <= maxNumber; i++) {
+		for (int i = 1; i <= size; i++) {
 			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
 		return text;
