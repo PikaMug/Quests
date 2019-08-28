@@ -42,7 +42,7 @@ import me.blackvein.quests.util.MiscUtil;
 
 public class RequirementsPrompt extends NumericPrompt {
 
-	private Quests plugin;
+	private final Quests plugin;
 	private final QuestFactory factory;
 	private final int size = 11;
 	
@@ -56,7 +56,7 @@ public class RequirementsPrompt extends NumericPrompt {
 	}
 	
 	public String getTitle(ConversationContext context) {
-		return ChatColor.DARK_AQUA + Lang.get("requirementsTitle").replaceAll("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
+		return ChatColor.DARK_AQUA + Lang.get("requirementsTitle").replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
 	}
 	
 	public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -160,7 +160,7 @@ public class RequirementsPrompt extends NumericPrompt {
 					String text = "";
 					LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
 					for (int i = 0; i < items.size(); i++) {
-						text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount();
+						text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
 					}
 					return text;
 				}
@@ -171,7 +171,7 @@ public class RequirementsPrompt extends NumericPrompt {
 					String text = "";
 					List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
 					for (String s : perms) {
-						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 					}
 					return text;
 				}
@@ -182,7 +182,7 @@ public class RequirementsPrompt extends NumericPrompt {
 					String text = "";
 					List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
 					for (String s : qs) {
-						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 					}
 					return text;
 				}
@@ -193,7 +193,7 @@ public class RequirementsPrompt extends NumericPrompt {
 					String text = "";
 					List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
 					for (String s : qs) {
-						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
+						text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
 					}
 					return text;
 				}
@@ -206,7 +206,7 @@ public class RequirementsPrompt extends NumericPrompt {
 						List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
 						List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
 						for (String s : skills) {
-							text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN + amounts.get(skills.indexOf(s));
+							text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN + amounts.get(skills.indexOf(s)) + "\n";
 						}
 						return text;
 					}
@@ -237,7 +237,7 @@ public class RequirementsPrompt extends NumericPrompt {
 					String text = "";
 					LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
 					for (String s : customReqs) {
-						text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s;
+						text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s + "\n";
 					}
 					return text;
 				}
@@ -246,7 +246,7 @@ public class RequirementsPrompt extends NumericPrompt {
 						&& context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null 
 							&& context.getSessionData(CK.REQ_QUEST_BLOCK) == null && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
 								&& context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null && context.getSessionData(CK.REQ_CUSTOM) == null) {
-					return ChatColor.GRAY + Lang.get("reqSetFail") + " (" + Lang.get("reqNone") + ")";
+					return ChatColor.GRAY + "(" + Lang.get("reqNone") + ")";
 				} else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
 					return ChatColor.RED + "(" + Lang.get("questRequiredNoneSet") + ")";
 				} else {
