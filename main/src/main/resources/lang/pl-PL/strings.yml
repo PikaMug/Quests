@@ -296,7 +296,6 @@ eventEditorDeleted: "Wydarzenie usunięte, Misje i wydarzenia załadowane ponown
 eventEditorSaved: "Wydarzenie zapisane, zadania i wydarzanie załadowane."
 eventEditorEnterEventName: "Wprowadź nazwę wydarzenia, <cancel>"
 eventEditorDeletePrompt: "Jesteś pewny że chcesz anulować wydarzenie"
-eventEditorQuitWithoutSaving: "Czy jesteś pewny że chcesz wyjść bez zapisywania?"
 eventEditorModifiedNote: 'Zapis: Zmodyfikowałeś wydarzenie które używa następujących zadań:'
 eventEditorForcedToQuit: "Jeśli zapisałeś wydarzenie, ktokolwiek kto aktualnie robi którekolwiek z tych zadań będzie mógł je zamknąć."
 eventEditorEventInUse: "Następujące zadania są używane w wydarzeniu"
