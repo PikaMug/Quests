@@ -296,7 +296,6 @@ eventEditorDeleted: "Olay silindi, Görevler ve Olaylar yeniden yüklendi."
 eventEditorSaved: "Olay kaydedildi, Görevler ve Olaylar yeniden yüklendi."
 eventEditorEnterEventName: "Bir Olay adı girin, <cancel>"
 eventEditorDeletePrompt: "Bu Olayı silmek istediğinizden emin misiniz?"
-eventEditorQuitWithoutSaving: "Kaydetmeden çıkmak istediğinizden emin misiniz?"
 eventEditorModifiedNote: 'Not: Aşağıdaki Görevlerin kullandığı bir Olayı değiştirdiniz:'
 eventEditorForcedToQuit: "Olayı kaydederseniz, bu Görevleri yapmakta olan herkes görevden zorla çıkarılacaktır."
 eventEditorEventInUse: "Aşağıdaki Görevler Olayı kullanıyor"
