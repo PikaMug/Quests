@@ -296,7 +296,6 @@ eventEditorDeleted: "Action deleted, Quests 'n Actions reloaded."
 eventEditorSaved: "Action saved, Quests 'n Actions reloaded."
 eventEditorEnterEventName: "Enter an Action name, <cancel>"
 eventEditorDeletePrompt: "Are ye sure ye wants t' delete th' Action?"
-eventEditorQuitWithoutSaving: "Are ye sure ye wants t' abandon ship without savin'?"
 eventEditorModifiedNote: 'Note: Ye ''ave modified an Action that th'' followin'' Quests use:'
 eventEditorForcedToQuit: "If ye save th' Action, anyone who be actively doin' any o' these Quests will be forced t' abandon ship."
 eventEditorEventInUse: "Th' followin' Quests use th' Action"
