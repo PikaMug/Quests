@@ -296,7 +296,6 @@ eventEditorDeleted: "Événement supprimée ! Les Quêtes et les Événements o
 eventEditorSaved: "Événement sauvegardés, les Quêtes et les Événements ont été rechargés."
 eventEditorEnterEventName: "Entrez un nom d'événement, <cancel>"
 eventEditorDeletePrompt: "Êtes-vous sûr de vouloir supprimer cet événement"
-eventEditorQuitWithoutSaving: "Voulez-vous vraiment quitter sans enregistrer ?"
 eventEditorModifiedNote: 'Remarque : Vous avez modifié un événement qui utilise les quêtes suivantes :'
 eventEditorForcedToQuit: "Si vous sauvegardez l'évènement, si quelqu'un fait cette quête, il/elle sera obligé(e) de la quitter."
 eventEditorEventInUse: "Les quêtes suivantes utilisent l'Event"
