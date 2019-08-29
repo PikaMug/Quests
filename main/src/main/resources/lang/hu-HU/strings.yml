@@ -296,7 +296,6 @@ eventEditorDeleted: "Esemény törölve, küldetések és események újratöltv
 eventEditorSaved: "Esemény mentve, Küldetések és Események újratöltve."
 eventEditorEnterEventName: "Adja meg az Esemény nevét, <cancel>"
 eventEditorDeletePrompt: "Biztosan törölni szeretné az eseményt"
-eventEditorQuitWithoutSaving: "Biztos, hogy mentés nélkül szeretne kilépni?"
 eventEditorModifiedNote: 'Megjegyzés: Módosítottál egy olyan eseményt, amelyet a következő küldetések használnak:'
 eventEditorForcedToQuit: "Ha elmented az eseményt, mindenki, aki aktívan végez ezen a küldetést, kénytelen lesz kilépni."
 eventEditorEventInUse: "A következő küldetések használják az eseményt"
