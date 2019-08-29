@@ -296,7 +296,6 @@ eventEditorDeleted: "Ang Kaganapan ay burado, Pakikipagsapalaran at Kaganapan ay
 eventEditorSaved: "Ang Kaganapan ay na save, Pakikipagsapalaran at Kaganapan ay ni reload."
 eventEditorEnterEventName: "Ilagay ang pangalan ng Kaganapan, <cancel>"
 eventEditorDeletePrompt: "Ikaw ba ay sigurado na gusto mong burahin ang Kaganapan"
-eventEditorQuitWithoutSaving: "Ikaw ba ay sigurado na gusto mong lumabas kahit hindi mo na i-save?"
 eventEditorModifiedNote: 'Paalala: Babaguhin mo ang kaganapan na ginamit sa sumusunod na pakikipagsapalaran:'
 eventEditorForcedToQuit: "Kung isi-save mo ang Kaganapan, ang bawat isa na aktibong ginagawa ang lahat ng pakikipagsapalaran ay mapipilitang sila ay umalis."
 eventEditorEventInUse: "Ang sumusunod na Pakikipagsapalaran ay ginamit sa kaganapan"
