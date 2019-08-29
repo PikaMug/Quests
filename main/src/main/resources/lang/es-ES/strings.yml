@@ -296,7 +296,6 @@ eventEditorDeleted: "Evento eliminado, Búsqueda y Eventos recargados."
 eventEditorSaved: "Evento guardado, Búsqueda y Eventos recargados."
 eventEditorEnterEventName: "Ingrese un nombre de Evento, <cancel>"
 eventEditorDeletePrompt: "Estás seguro que quieres eliminar el Evento"
-eventEditorQuitWithoutSaving: "¿Estás seguro que quieres salir sin guardar?"
 eventEditorModifiedNote: 'Nota: Has modificado un Evento que usan las siguientes Búsqueda:'
 eventEditorForcedToQuit: "Si guardas el Evento, cualquier que esté haciendo activamente algunas de estás Búsqueda serán obligados a abandonarlas."
 eventEditorEventInUse: "Las siguientes Búsqueda usan el Evento"
