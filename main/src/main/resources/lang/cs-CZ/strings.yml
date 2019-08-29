@@ -296,7 +296,6 @@ eventEditorDeleted: "Event vymazán, úkoly a Eventy se znovu načtou."
 eventEditorSaved: "Event uložen, úkoly a Eventy se znovu načtou."
 eventEditorEnterEventName: "Napiš jméno Eventu, <cancel>"
 eventEditorDeletePrompt: "Opravdu chcete odstranit událost"
-eventEditorQuitWithoutSaving: "Opravdu to chceš vypnout bez vypnutí?"
 eventEditorModifiedNote: 'Poznámka: Upravili jste událost, kterou používají následující úkoly:'
 eventEditorForcedToQuit: "Jestliže uložíš Event, někdo, kdo teď dělá nějaký z úkolů bude nucen přestat."
 eventEditorEventInUse: "Následující úkoly používají event"
