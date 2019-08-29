@@ -296,7 +296,6 @@ eventEditorDeleted: "Event wurde gelöscht, Quests und Events sind automatisch n
 eventEditorSaved: "Event gespeichert, Quests und Events wurden automatisch neu geladen."
 eventEditorEnterEventName: "Event Name eingeben, <cancel>"
 eventEditorDeletePrompt: "Willst du dieses Event wirklich löschen?"
-eventEditorQuitWithoutSaving: "Willst du wirklich ohne zu speichern abbrechen?"
 eventEditorModifiedNote: 'Hinweis: Du hast ein Event geändert, das die folgenden Quests verwenden:'
 eventEditorForcedToQuit: "Wenn du das Event speicherst, wird jeder der gerade eine dieser Quests abschließt, gezwungen diese abzubrechen."
 eventEditorEventInUse: "Folgende Quests benutzen das Event"
