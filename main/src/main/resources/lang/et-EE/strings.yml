@@ -296,7 +296,6 @@ eventEditorDeleted: "Action deleted, Quests and Actions reloaded."
 eventEditorSaved: "Action saved, Quests and Actions reloaded."
 eventEditorEnterEventName: "Enter Action name, <cancel>"
 eventEditorDeletePrompt: "Are you sure you want to delete the Action?"
-eventEditorQuitWithoutSaving: "Are you sure you want to quit without saving?"
 eventEditorModifiedNote: 'Note: You have modified an Action that the following Quests use:'
 eventEditorForcedToQuit: "If you save the Action, anyone who is actively doing any of these Quests will be forced to quit them."
 eventEditorEventInUse: "The following Quests use the Action"
