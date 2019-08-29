@@ -296,7 +296,6 @@ eventEditorDeleted: "Acara dihapus, Quests dan Acara dimuat ulang."
 eventEditorSaved: "Acara disimpan, Quests dan Acara dimuat ulang."
 eventEditorEnterEventName: "Masukkan nama Acara, <cancel>"
 eventEditorDeletePrompt: "Apakah anda yakin ingin menghapus Acara"
-eventEditorQuitWithoutSaving: "Apakah anda yakin ingin keluar tanpa menyimpan?"
 eventEditorModifiedNote: 'Catatan: Anda telah memodifikasi sebuah Event yang diikuti Quests berikut ini:'
 eventEditorForcedToQuit: "Jika Anda menyimpan Acara, siapa pun yang secara aktif melakukan salah satu dari Quests ini akan terpaksa berhenti dari mereka."
 eventEditorEventInUse: "Quest berikut ini menggunakan Acara"
