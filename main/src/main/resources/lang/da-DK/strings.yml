@@ -296,7 +296,6 @@ eventEditorDeleted: "Begivenhed slettet, Quests og begivenheder er blevet genind
 eventEditorSaved: "Begivenhed gemt, Quests og begivenheder er blevet genindlæst."
 eventEditorEnterEventName: "Indtast et begivenhedsnavn, <cancel>"
 eventEditorDeletePrompt: "Er du sikker på, at du vil slette begivenheden"
-eventEditorQuitWithoutSaving: "Er du sikker på, at du vil stoppe uden at gemme?"
 eventEditorModifiedNote: 'Bemærk: Du har ændret en begivenhed, der bruger følgende quests:'
 eventEditorForcedToQuit: "Hvis du redder arrangementet, vil enhver, der aktivt gør nogen af disse Quests, blive tvunget til at afslutte dem."
 eventEditorEventInUse: "Følgende quests bruger arrangementet"
