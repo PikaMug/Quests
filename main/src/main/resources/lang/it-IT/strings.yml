@@ -296,7 +296,6 @@ eventEditorDeleted: "Evento cancellato, missioni ed eventi ricaricati."
 eventEditorSaved: "Evento, missioni e eventi ricaricati salvati."
 eventEditorEnterEventName: "Inserisci il nome della ricerca, <cancel>"
 eventEditorDeletePrompt: "Sei sicuro di voler eliminare l'evento"
-eventEditorQuitWithoutSaving: "Sei sicuro di voler andare via senza salvare?"
 eventEditorModifiedNote: 'Note: Hai modificato un evento che utilizza le seguenti missioni:'
 eventEditorForcedToQuit: "Si salvi l'evento, chiunque faccia attivamente una di queste missioni sarà costretto ad abbandonarlo."
 eventEditorEventInUse: "Le seguenti missioni utilizzano l'evento"
