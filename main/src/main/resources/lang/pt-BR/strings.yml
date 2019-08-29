@@ -296,7 +296,6 @@ eventEditorDeleted: "Quest deletada! Quests e Eventos foram reiniciados."
 eventEditorSaved: "Quest deletada! Quests e Eventos foram reiniciados."
 eventEditorEnterEventName: "Digite o nome da ação, <cancel>"
 eventEditorDeletePrompt: "Tem certeza que deseja excluir a Ação?"
-eventEditorQuitWithoutSaving: "Tem certeza que deseja sair sem salvar?"
 eventEditorModifiedNote: 'Nota: Você modificou uma ação que as seguintes Missões usam:'
 eventEditorForcedToQuit: "Se você salvar a ação, qualquer pessoa que esteja fazendo qualquer destas missões será forçada a eliminá-las."
 eventEditorEventInUse: "As seguintes missões usam a ação"
