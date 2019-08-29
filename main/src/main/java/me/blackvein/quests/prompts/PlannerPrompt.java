@@ -20,88 +20,148 @@ import java.util.TimeZone;
 
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenPlannerPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.FixedSetPrompt;
+import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
-public class PlannerPrompt extends FixedSetPrompt {
+public class PlannerPrompt extends NumericPrompt {
 	
 	private final Quests plugin;
 	private final QuestFactory factory;
 
 	public PlannerPrompt(Quests plugin, QuestFactory qf) {
-		super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
 		this.plugin = plugin;
 		factory = qf;
+	}
+	
+	private final int size = 5;
+	
+	public int getSize() {
+		return size;
+	}
+	
+	public String getTitle(ConversationContext context) {
+		return ChatColor.DARK_AQUA + Lang.get("plannerTitle").replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
+	}
+	
+	public ChatColor getNumberColor(ConversationContext context, int number) {
+		switch (number) {
+			case 1:
+				return ChatColor.BLUE;
+			case 2:
+				return ChatColor.BLUE;
+			case 3:
+				if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+					return ChatColor.GRAY;
+				} else {
+					return ChatColor.BLUE;
+				}
+			case 4:
+				return ChatColor.BLUE;
+			case 5:
+				return ChatColor.GREEN;
+			default:
+				return null;
+		}
+	}
+	
+	public String getSelectionText(ConversationContext context, int number) {
+		switch (number) {
+			case 1:
+				return ChatColor.YELLOW + Lang.get("plnStart");
+			case 2:
+				return ChatColor.YELLOW + Lang.get("plnEnd");
+			case 3:
+				if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+					return ChatColor.GRAY + Lang.get("plnRepeat");
+				} else {
+					return ChatColor.YELLOW + Lang.get("plnRepeat");
+				}
+			case 4:
+				return ChatColor.YELLOW + Lang.get("plnCooldown");
+			case 5:
+				return ChatColor.YELLOW + Lang.get("done");
+			default:
+				return null;
+		}
+	}
+	
+	public String getAdditionalText(ConversationContext context, int number) {
+		switch (number) {
+			case 1:
+				if (context.getSessionData(CK.PLN_START_DATE) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					return ChatColor.YELLOW + "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE));
+				}
+			case 2:
+				if (context.getSessionData(CK.PLN_END_DATE) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					return ChatColor.YELLOW +  "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE));
+				}
+			case 3:
+				if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
+				} else {
+					if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
+						return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+					} else {
+						return ChatColor.YELLOW + "(" + Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ChatColor.RESET + ChatColor.YELLOW + ")";
+					}
+				}
+			case 4:
+				if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
+					return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+				} else {
+					return ChatColor.YELLOW + "(" + Quests.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) + ChatColor.RESET + ChatColor.YELLOW + ")";
+				}
+			case 5:
+				return "";
+			default:
+				return null;
+		}
 	}
 
 	@Override
 	public String getPromptText(ConversationContext context) {
-		String text;
-		String lang = Lang.get("plannerTitle");
-		lang = lang.replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
-		text = ChatColor.DARK_AQUA + lang + "\n";
-		if (context.getSessionData(CK.PLN_START_DATE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + " "
-					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnStart") + "\n";
-			text += "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE)) + "\n";
-		}
-		if (context.getSessionData(CK.PLN_END_DATE) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + " "
-					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnEnd") + "\n";
-			text += "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE)) + "\n";
-		}
-		if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
-			text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("plnRepeat") + " "
-					+ ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")\n";
-		} else {
-			if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " "
-						+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
-			} else {
-				text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnRepeat") + " ("
-						+ Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
-			}
-		}
-		if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " "
-					+ ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
-		} else {
-			text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("plnCooldown") + " ("
-					+ Quests.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
-		}
-		text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+		QuestsEditorPostOpenPlannerPromptEvent event = new QuestsEditorPostOpenPlannerPromptEvent(factory, context);
+		plugin.getServer().getPluginManager().callEvent(event);
+		
+		String text = getTitle(context) + "\n";
+		for (int i = 1; i <= size; i++) {
+			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+        }
 		return text;
 	}
 
 	@Override
-	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-		if (input.equalsIgnoreCase("1")) {
+	protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+		switch (input.intValue()) {
+		case 1:
 			return new DateTimePrompt(plugin, PlannerPrompt.this, "start");
-		} else if (input.equalsIgnoreCase("2")) {
+		case 2:
 			return new DateTimePrompt(plugin, PlannerPrompt.this, "end");
-		} else if (input.equalsIgnoreCase("3")) {
+		case 3:
 			if (context.getSessionData(CK.PLN_START_DATE) != null && context.getSessionData(CK.PLN_END_DATE) != null) {
 				return new RepeatPrompt();
 			} else {
 				context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
 				return new PlannerPrompt(plugin, factory);
 			}
-		} else if (input.equalsIgnoreCase("4")) {
+		case 4:
 			return new CooldownPrompt();
-		} else if (input.equalsIgnoreCase("5")) {
+		case 5:
 			return factory.returnToMenu();
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	private class RepeatPrompt extends StringPrompt {
