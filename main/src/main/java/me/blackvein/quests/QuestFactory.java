@@ -838,7 +838,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 				} else if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedFinishMessage"));
 					return new CreateMenuPrompt();
-				} else if (StagesPrompt.getStages(context) == 0) {
+				} else if (new StagesPrompt(plugin, QuestFactory.this).getStages(context) == 0) {
 					context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedStages"));
 					return new CreateMenuPrompt();
 				}
@@ -1225,7 +1225,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		String delayMessage;
 		String startMessage;
 		String completeMessage;
-		for (int i = 1; i <= StagesPrompt.getStages(cc); i++) {
+		for (int i = 1; i <= new StagesPrompt(plugin, this).getStages(cc); i++) {
 			pref = "stage" + i;
 			ConfigurationSection stage = ordered.createSection("" + i);
 			breakNames = null;
