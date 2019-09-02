@@ -374,7 +374,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				player.sendMessage(ChatColor.YELLOW + Lang.get("cancelled"));
 				return Prompt.END_OF_CONVERSATION;
 			} else {
-				player.sendMessage(ChatColor.RED + Lang.get("questInvalidChoice"));
+				String msg = Lang.get("questInvalidChoice");
+				msg.replace("<yes>", Lang.get(player, "yesWord"));
+				msg.replace("<no>", Lang.get(player, "noWord"));
+				player.sendMessage(ChatColor.RED + msg);
 				return new QuestPrompt();
 			}
 		}
@@ -1281,6 +1284,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         			if (q.testRequirements(player)) {
             			available.add(q);
             		}
+        		} else if (q.getPlanner().hasCooldown() && quester.getCooldownDifference(q) < 0) {
+        			if (q.testRequirements(player)) {
+            			available.add(q);
+            		}
         		}
         	}
         	if ((available.size() + rows) <= ((page * rows)) || available.size() == 0) {
@@ -1658,7 +1665,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 					if (config.contains("quests." + questKey + ".rewards.mcmmo-levels")) {
 						if (Quests.checkList(config.getList("quests." + questKey + ".rewards.mcmmo-levels"), Integer.class)) {
 							for (String skill : config.getStringList("quests." + questKey + ".rewards.mcmmo-skills")) {
-								if (depends.getMcmmo() == null) {
+								if (depends.getMcmmoClassic() == null) {
 									skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.getName() + " requires the mcMMO plugin!");
 								} else if (Quests.getMcMMOSkill(skill) == null) {
 									skipQuestProcess("" + skill + " in mcmmo-skills: Reward in Quest " + quest.getName() + " is not a valid mcMMO skill name!");

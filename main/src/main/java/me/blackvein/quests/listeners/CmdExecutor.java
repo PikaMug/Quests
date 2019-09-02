@@ -30,7 +30,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Stage;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPreOpenMainMenuEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPreOpenMainPromptEvent;
 import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
@@ -454,7 +454,7 @@ public class CmdExecutor implements CommandExecutor {
 			Conversable c = (Conversable) cs;
 			if (!c.isConversing()) {
 				Conversation cn = plugin.getQuestFactory().getConversationFactory().buildConversation(c);
-				QuestsEditorPreOpenMainMenuEvent event = new QuestsEditorPreOpenMainMenuEvent(cn.getContext());
+				QuestsEditorPreOpenMainPromptEvent event = new QuestsEditorPreOpenMainPromptEvent(cn.getContext());
 				plugin.getServer().getPluginManager().callEvent(event);
 				if (event.isCancelled()) {
 					return false;

@@ -250,7 +250,11 @@ public class LocaleQuery {
 				key = oldEntities.get(type.name());
 			}
 		} else {
-			key = "entity.minecraft." + type.toString().toLowerCase();
+			if (type.name().equals("PIG_ZOMBIE")) {
+				key = "entity.minecraft.zombie_pigman";
+			} else {
+				key = "entity.minecraft." + type.toString().toLowerCase();
+			}
 		}
 		String msg = message.replace("<mob>", "\",{\"translate\":\"" + key + "\"},\"");
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");

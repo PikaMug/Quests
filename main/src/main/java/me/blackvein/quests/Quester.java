@@ -1693,6 +1693,9 @@ public class Quester {
 		int index = 0;
 		for (Location location : getQuestData(quest).locationsReached) {
 			try {
+				if (getCurrentStage(quest).locationsToReach.size() <= index) {
+					return;
+				}
 				Location locationToReach = getCurrentStage(quest).locationsToReach.get(index);
 				double radius = getQuestData(quest).radiiToReachWithin.get(index);
 				if (l.getX() < (locationToReach.getX() + radius) && l.getX() > (locationToReach.getX() - radius)) {
@@ -1711,10 +1714,12 @@ public class Quester {
 					}
 				}
 				index++;
+				
 			} catch (IndexOutOfBoundsException e) {
 				plugin.getLogger().severe("An error has occurred with Quests. Please report on Github. Include the info below");
 				plugin.getLogger().warning("index = " + index);
-				plugin.getLogger().warning("locationsReached = " + getQuestData(quest).locationsReached.toString());
+				plugin.getLogger().warning("currentLocation = " + location.toString());
+				plugin.getLogger().warning("locationsReached = " + getQuestData(quest).locationsReached.size());
 				plugin.getLogger().warning("hasReached = " + getQuestData(quest).hasReached.size());
 				e.printStackTrace();
 			}

@@ -3,12 +3,20 @@ package me.blackvein.quests.events.editor.quests;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
-public class QuestsEditorPostOpenCreateMenuEvent extends QuestsEditorEvent {
-	private static final HandlerList handlers = new HandlerList();
+import me.blackvein.quests.QuestFactory;
 
-    public QuestsEditorPostOpenCreateMenuEvent(ConversationContext context) {
+public class QuestsEditorPostOpenPlannerPromptEvent extends QuestsEditorEvent {
+	private static final HandlerList handlers = new HandlerList();
+	private final QuestFactory factory;
+
+    public QuestsEditorPostOpenPlannerPromptEvent(QuestFactory factory, ConversationContext context) {
     	super(context);
 		this.context = context;
+		this.factory = factory;
+    }
+    
+    public QuestFactory getQuestFactory() {
+    	return factory;
     }
 
 	@Override

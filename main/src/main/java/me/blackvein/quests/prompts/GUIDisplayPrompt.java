@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenGUIDisplayMenuEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenGUIDisplayPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -23,14 +23,14 @@ public class GUIDisplayPrompt extends NumericPrompt {
 		this.questFactory = qf;
 	}
 	
-	private final int maxNumber = 3;
+	private final int size = 3;
 	
-	public int getMaxNumber() {
-		return maxNumber;
+	public int getSize() {
+		return size;
 	}
 	
 	public String getTitle() {
-		return Lang.get("questGUITitle");
+		return ChatColor.GOLD + Lang.get("questGUITitle");
 	}
 	
 	public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -61,7 +61,7 @@ public class GUIDisplayPrompt extends NumericPrompt {
 
 	@Override
 	public String getPromptText(ConversationContext context) {
-		QuestsEditorPostOpenGUIDisplayMenuEvent event = new QuestsEditorPostOpenGUIDisplayMenuEvent(questFactory, context);
+		QuestsEditorPostOpenGUIDisplayPromptEvent event = new QuestsEditorPostOpenGUIDisplayPromptEvent(questFactory, context);
 		plugin.getServer().getPluginManager().callEvent(event);
 		
 		if (context.getSessionData("tempStack") != null) {
@@ -83,14 +83,14 @@ public class GUIDisplayPrompt extends NumericPrompt {
 			}
 			context.setSessionData("tempStack", null);
 		}
-		String text = ChatColor.GOLD + getTitle() + "\n";
+		String text = getTitle() + "\n";
 		if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
 			ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
 			text += " " + ChatColor.RESET + ItemUtil.getDisplayString(stack) + "\n";
 		} else {
 			text += " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
 		}
-		for (int i = 1; i <= maxNumber; i++) {
+		for (int i = 1; i <= size; i++) {
 			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
         }
 		return text;
