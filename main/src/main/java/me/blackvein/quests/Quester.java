@@ -1077,18 +1077,6 @@ public class Quester {
 				}
 			}
 		}
-		
-		// Multiplayer
-		if (quest.getOptions().getShareProgressLevel() == 1) {
-			List<Quester> mq = getMultiplayerQuesters(quest);
-			if (mq != null) {
-				for (Quester q : mq) {
-					if (q.getCurrentQuests().containsKey(quest)) {
-						q.breakBlock(quest, m);
-					}
-				}
-			}
-		}
 	}
 	
 	/**
@@ -3125,7 +3113,7 @@ public class Quester {
 	}
 	
 	/**
-	 * Get a list of follow Questers in a party or group
+	 * Get a list of fellow Questers in a party or group
 	 * 
 	 * @param quest The quest which uses a linked plugin, i.e. Parties or DungeonsXL
 	 * @return null if quest is null, no linked plugins, or party/group is null

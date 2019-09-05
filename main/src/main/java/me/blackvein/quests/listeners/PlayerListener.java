@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -208,6 +209,18 @@ public class PlayerListener implements Listener {
         						ItemStack i = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
         						quester.useBlock(quest, i);
         						hasObjective = true;
+        						
+        						// Multiplayer
+        						if (quest.getOptions().getShareProgressLevel() == 1) {
+        							List<Quester> mq = quester.getMultiplayerQuesters(quest);
+        							if (mq != null) {
+        								for (Quester q : mq) {
+        									if (q.getCurrentQuests().containsKey(quest)) {
+        										q.useBlock(quest, i);
+        									}
+        								}
+        							}
+        						}
         					}
         				}
     				}
@@ -358,6 +371,18 @@ public class PlayerListener implements Listener {
 					}
 					if (quester.containsObjective(quest, "password")) {
 						quester.sayPassword(quest, evt);
+						
+						// Multiplayer
+						if (quest.getOptions().getShareProgressLevel() == 1) {
+							List<Quester> mq = quester.getMultiplayerQuesters(quest);
+							if (mq != null) {
+								for (Quester q : mq) {
+									if (q.getCurrentQuests().containsKey(quest)) {
+										q.sayPassword(quest, evt);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -409,6 +434,18 @@ public class PlayerListener implements Listener {
 				if (quester.containsObjective(quest, "damageBlock")) {
 					ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
 					quester.damageBlock(quest, i);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 1) {
+						List<Quester> mq = quester.getMultiplayerQuesters(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.damageBlock(quest, i);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -424,6 +461,18 @@ public class PlayerListener implements Listener {
 					if (evt.isCancelled() == false) {
 						ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
 						quester.placeBlock(quest, i);
+						
+						// Multiplayer
+						if (quest.getOptions().getShareProgressLevel() == 1) {
+							List<Quester> mq = quester.getMultiplayerQuesters(quest);
+							if (mq != null) {
+								for (Quester q : mq) {
+									if (q.getCurrentQuests().containsKey(quest)) {
+										q.placeBlock(quest, i);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -441,6 +490,18 @@ public class PlayerListener implements Listener {
 						if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false) {
 							ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
 							quester.breakBlock(quest, i);
+							
+							// Multiplayer
+							if (quest.getOptions().getShareProgressLevel() == 1) {
+								List<Quester> mq = quester.getMultiplayerQuesters(quest);
+								if (mq != null) {
+									for (Quester q : mq) {
+										if (q.getCurrentQuests().containsKey(quest)) {
+											q.breakBlock(quest, i);
+										}
+									}
+								}
+							}
 						}
 					}
 					if (quester.containsObjective(quest, "placeBlock")) {
@@ -456,6 +517,18 @@ public class PlayerListener implements Listener {
 						if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
 							ItemStack i = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
 							quester.cutBlock(quest, i);
+							
+							// Multiplayer
+							if (quest.getOptions().getShareProgressLevel() == 1) {
+								List<Quester> mq = quester.getMultiplayerQuesters(quest);
+								if (mq != null) {
+									for (Quester q : mq) {
+										if (q.getCurrentQuests().containsKey(quest)) {
+											q.cutBlock(quest, i);
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -471,6 +544,18 @@ public class PlayerListener implements Listener {
 				if (evt.getEntity().getType() == EntityType.SHEEP && quester.containsObjective(quest, "shearSheep")) {
 					Sheep sheep = (Sheep) evt.getEntity();
 					quester.shearSheep(quest, sheep.getColor());
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 1) {
+						List<Quester> mq = quester.getMultiplayerQuesters(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.shearSheep(quest, sheep.getColor());
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -485,6 +570,18 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "tameMob")) {
 						quester.tameMob(quest, evt.getEntityType());
+						
+						// Multiplayer
+						if (quest.getOptions().getShareProgressLevel() == 1) {
+							List<Quester> mq = quester.getMultiplayerQuesters(quest);
+							if (mq != null) {
+								for (Quester q : mq) {
+									if (q.getCurrentQuests().containsKey(quest)) {
+										q.tameMob(quest, evt.getEntityType());
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -515,8 +612,32 @@ public class PlayerListener implements Listener {
 								}
 							}	
 							quester.craftItem(quest, new ItemStack(result.getType(), numberOfItems, result.getDurability()));
+							
+							// Multiplayer
+							if (quest.getOptions().getShareProgressLevel() == 1) {
+								List<Quester> mq = quester.getMultiplayerQuesters(quest);
+								if (mq != null) {
+									for (Quester q : mq) {
+										if (q.getCurrentQuests().containsKey(quest)) {
+											q.craftItem(quest, new ItemStack(result.getType(), numberOfItems, result.getDurability()));
+										}
+									}
+								}
+							}
 						} else {
 							quester.craftItem(quest, evt.getCurrentItem());
+							
+							// Multiplayer
+							if (quest.getOptions().getShareProgressLevel() == 1) {
+								List<Quester> mq = quester.getMultiplayerQuesters(quest);
+								if (mq != null) {
+									for (Quester q : mq) {
+										if (q.getCurrentQuests().containsKey(quest)) {
+											q.craftItem(quest, evt.getCurrentItem());
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -533,6 +654,18 @@ public class PlayerListener implements Listener {
 					for (Quest quest : quester.getCurrentQuests().keySet()) {
 						if (quester.containsObjective(quest, "smeltItem")) {
 							quester.smeltItem(quest, evt.getCurrentItem());
+							
+							// Multiplayer
+							if (quest.getOptions().getShareProgressLevel() == 1) {
+								List<Quester> mq = quester.getMultiplayerQuesters(quest);
+								if (mq != null) {
+									for (Quester q : mq) {
+										if (q.getCurrentQuests().containsKey(quest)) {
+											q.smeltItem(quest, evt.getCurrentItem());
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -542,6 +675,18 @@ public class PlayerListener implements Listener {
 					for (Quest quest : quester.getCurrentQuests().keySet()) {
 						if (quester.containsObjective(quest, "brewItem")) {
 							quester.brewItem(quest, evt.getCurrentItem());
+							
+							// Multiplayer
+							if (quest.getOptions().getShareProgressLevel() == 1) {
+								List<Quester> mq = quester.getMultiplayerQuesters(quest);
+								if (mq != null) {
+									for (Quester q : mq) {
+										if (q.getCurrentQuests().containsKey(quest)) {
+											q.brewItem(quest, evt.getCurrentItem());
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -557,6 +702,18 @@ public class PlayerListener implements Listener {
 				if (quester.containsObjective(quest, "enchantItem")) {
 					for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
 						quester.enchantItem(quest, e, evt.getItem().getType());
+						
+						// Multiplayer
+						if (quest.getOptions().getShareProgressLevel() == 1) {
+							List<Quester> mq = quester.getMultiplayerQuesters(quest);
+							if (mq != null) {
+								for (Quester q : mq) {
+									if (q.getCurrentQuests().containsKey(quest)) {
+										q.enchantItem(quest, e, evt.getItem().getType());
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -573,24 +730,24 @@ public class PlayerListener implements Listener {
 				if (damager instanceof Projectile) {
 					Projectile projectile = (Projectile) damager;
 					if (projectile.getShooter() != null && projectile.getShooter() instanceof Entity) {
-						killMob((Entity)projectile.getShooter(), evt.getEntity());
+						preKillMob((Entity)projectile.getShooter(), evt.getEntity());
 					}
 				} else if (damager instanceof TNTPrimed) {
 					TNTPrimed tnt = (TNTPrimed) damager;
 					Entity source = tnt.getSource();
 					if (source != null && source.isValid()) {
-						killMob(source, evt.getEntity());
+						preKillMob(source, evt.getEntity());
 					}
 				} else if (damager instanceof Wolf) {
 					Wolf wolf = (Wolf) damager;
 					if (wolf.isTamed() && wolf.getOwner() != null) {
 						Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
 						if (quester != null) {
-							killPlayer(quester.getPlayer(), evt.getEntity());
+							preKillPlayer(quester.getPlayer(), evt.getEntity());
 						}
 					}
 				} else {
-					killMob(damager, evt.getEntity());
+					preKillMob(damager, evt.getEntity());
 				}
 			}
 		}
@@ -603,7 +760,7 @@ public class PlayerListener implements Listener {
 	 * @param target the entity being attacked
 	 * @since 3.1.4
 	 */
-	public void killMob(Entity damager, Entity target) {
+	public void preKillMob(Entity damager, Entity target) {
 		if (!plugin.canUseQuests(damager.getUniqueId())) {
 			return;
 		}
@@ -614,6 +771,18 @@ public class PlayerListener implements Listener {
 					for (Quest quest : quester.getCurrentQuests().keySet()) {
 						if (quester.containsObjective(quest, "killNPC")) {
 							quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+							
+							// Multiplayer
+							if (quest.getOptions().getShareProgressLevel() == 1) {
+								List<Quester> mq = quester.getMultiplayerQuesters(quest);
+								if (mq != null) {
+									for (Quester q : mq) {
+										if (q.getCurrentQuests().containsKey(quest)) {
+											q.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+										}
+									}
+								}
+							}
 						}
 					}
 					return;
@@ -623,6 +792,18 @@ public class PlayerListener implements Listener {
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "killMob")) {
 					quester.killMob(quest, target.getLocation(), target.getType());
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 1) {
+						List<Quester> mq = quester.getMultiplayerQuesters(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.killMob(quest, target.getLocation(), target.getType());
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -642,24 +823,24 @@ public class PlayerListener implements Listener {
 				if (damager instanceof Projectile) {
 					Projectile projectile = (Projectile) damager;
 					if (projectile.getShooter() != null && projectile.getShooter() instanceof Entity) {
-						killPlayer((Entity)projectile.getShooter(), evt.getEntity());
+						preKillPlayer((Entity)projectile.getShooter(), evt.getEntity());
 					}
 				} else if (damager instanceof TNTPrimed) {
 					TNTPrimed tnt = (TNTPrimed) damager;
 					Entity source = tnt.getSource();
 					if (source != null) {
 						if (source.isValid()) {
-							killPlayer(source, evt.getEntity());
+							preKillPlayer(source, evt.getEntity());
 						}
 					}
 				} else if (damager instanceof Wolf) {
 					Wolf wolf = (Wolf) damager;
 					if (wolf.isTamed()) {
 						Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
-						killPlayer(quester.getPlayer(), evt.getEntity());
+						preKillPlayer(quester.getPlayer(), evt.getEntity());
 					}
 				} else {
-					killPlayer(damager, evt.getEntity());
+					preKillPlayer(damager, evt.getEntity());
 				}
 			}
 		}
@@ -695,7 +876,7 @@ public class PlayerListener implements Listener {
 	 * @param target the entity being attacked
 	 * @since 3.1.4
 	 */
-	public void killPlayer(Entity damager, Entity target) {
+	public void preKillPlayer(Entity damager, Entity target) {
 		if (damager == null) {
 			return;
 		}
@@ -712,6 +893,18 @@ public class PlayerListener implements Listener {
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "killPlayer")) {
 					quester.killPlayer(quest, (Player)target);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 1) {
+						List<Quester> mq = quester.getMultiplayerQuesters(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.killPlayer(quest, (Player)target);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -725,6 +918,18 @@ public class PlayerListener implements Listener {
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "catchFish") && evt.getState().equals(State.CAUGHT_FISH)) {
 					quester.catchFish(quest);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 1) {
+						List<Quester> mq = quester.getMultiplayerQuesters(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.catchFish(quest);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -851,6 +1056,18 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "reachLocation")) {
 						quester.reachLocation(quest, evt.getTo());
+						
+						// Multiplayer
+						if (quest.getOptions().getShareProgressLevel() == 1) {
+							List<Quester> mq = quester.getMultiplayerQuesters(quest);
+							if (mq != null) {
+								for (Quester q : mq) {
+									if (q.getCurrentQuests().containsKey(quest)) {
+										q.reachLocation(quest, evt.getTo());
+									}
+								}
+							}
+						}
 					}
 				}
 			}
