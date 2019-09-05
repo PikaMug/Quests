@@ -543,7 +543,7 @@ public class Quester {
 	 * 
 	 * @param quest The quest to get objectives of
 	 * @param ignoreOverrides Whether to ignore objective-overrides
-	 * @return
+	 * @return List of detailed objectives
 	 */
 	@SuppressWarnings("deprecation")
 	public LinkedList<String> getObjectives(Quest quest, boolean ignoreOverrides) {
@@ -635,10 +635,10 @@ public class Quester {
 			int amt = is.getAmount();
 			if (crafted < amt) {
 				String obj = Lang.get(getPlayer(), "craft") + " " + ItemUtil.getName(is);
-				unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + crafted + "/" + amt);
+				unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + crafted + "/" + amt);
 			} else {
 				String obj = Lang.get(getPlayer(), "craft") + " " + ItemUtil.getName(is);
-				finishedObjectives.add(ChatColor.GRAY + obj + ": " + crafted + "/" + amt);
+				finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + crafted + "/" + amt);
 			}
 		}
 		for (ItemStack is : getCurrentStage(quest).itemsToSmelt) {
@@ -649,10 +649,10 @@ public class Quester {
 			int amt = is.getAmount();
 			if (smelted < amt) {
 				String obj = Lang.get(getPlayer(), "smelt") + " " + ItemUtil.getName(is);
-				unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + smelted + "/" + amt);
+				unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + smelted + "/" + amt);
 			} else {
 				String obj = Lang.get(getPlayer(), "smelt") + " " + ItemUtil.getName(is);
-				finishedObjectives.add(ChatColor.GRAY + obj + ": " + smelted + "/" + amt);
+				finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + smelted + "/" + amt);
 			}
 		}
 		Map<Enchantment, Material> set;
@@ -706,10 +706,10 @@ public class Quester {
 			int amt = is.getAmount();
 			if (brewed < amt) {
 				String obj = Lang.get(getPlayer(), "brew") + " " + ItemUtil.getName(is);
-				unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + brewed + "/" + amt);
+				unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + brewed + "/" + amt);
 			} else {
 				String obj = Lang.get(getPlayer(), "brew") + " " + ItemUtil.getName(is);
-				finishedObjectives.add(ChatColor.GRAY + obj + ": " + brewed + "/" + amt);
+				finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + brewed + "/" + amt);
 			}
 		}
 		if (getCurrentStage(quest).fishToCatch != null) {
@@ -2501,12 +2501,12 @@ public class Quester {
 			data.set("amountsCompleted", list2);
 		}
 		// #getPlayer is faster
-		OfflinePlayer represented_player = getPlayer();
-		if (represented_player == null) {
-			represented_player = getOfflinePlayer();
+		OfflinePlayer representedPlayer = getPlayer();
+		if (representedPlayer == null) {
+			representedPlayer = getOfflinePlayer();
 		}
 		data.set("hasJournal", hasJournal);
-		data.set("lastKnownName", represented_player.getName());
+		data.set("lastKnownName", representedPlayer.getName());
 		return data;
 	}
 

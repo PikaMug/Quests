@@ -30,6 +30,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Stage;
+import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPreOpenMainPromptEvent;
 import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
@@ -582,6 +583,12 @@ public class CmdExecutor implements CommandExecutor {
 	@SuppressWarnings("deprecation")
 	private void questsJournal(final Player player) {
 		Quester quester = plugin.getQuester(player.getUniqueId());
+		QuestsCommandPreQuestsJournalEvent preEvent = new QuestsCommandPreQuestsJournalEvent(quester);
+        plugin.getServer().getPluginManager().callEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
+        
 		Inventory inv = player.getInventory();
 		if (quester.hasJournal) {
 			ItemStack[] arr = inv.getContents();
