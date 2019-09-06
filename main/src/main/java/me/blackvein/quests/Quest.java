@@ -174,26 +174,19 @@ public class Quest {
 			q.findCompassTarget();
 		}
 		if (q.getCurrentStage(this).delay < 0) {
+			if (q.getCurrentStage(this).finishEvent != null) {
+				q.getCurrentStage(this).finishEvent.fire(q, this);
+			}
 			if (q.currentQuests.get(this) == (orderedStages.size() - 1)) {
 				if (q.getCurrentStage(this).script != null) {
 					plugin.getDenizenTrigger().runDenizenScript(q.getCurrentStage(this).script, q);
 				}
-				if (q.getCurrentStage(this).finishEvent != null) {
-					q.getCurrentStage(this).finishEvent.fire(q, this);
-				}
 				completeQuest(q);
 			} else {
 				try {
-					if (q.getCurrentStage(this).finishEvent != null) {
-						q.getCurrentStage(this).finishEvent.fire(q, this);
-					}
 					setStage(q, q.currentQuests.get(this) + 1);
-				} catch (InvalidStageException e) {
-					e.printStackTrace();
-				}
-				
-				// Multiplayer
-				try {
+
+					// Multiplayer
 					if (opts.getShareProgressLevel() == 3) {
 						List<Quester> mq = q.getMultiplayerQuesters(this);
 						if (mq != null) {
@@ -239,7 +232,7 @@ public class Quest {
 		quester.hardStagePut(this, stage);
 		quester.addEmptiesFor(this, stage);
 		if (currentStage.script != null) {
-			plugin.getDenizenTrigger().runDenizenScript(quester.getCurrentStage(this).script, quester);
+			plugin.getDenizenTrigger().runDenizenScript(currentStage.script, quester);
 		}
 		/*
 		 * if (quester.getCurrentStage(this).finishEvent != null) { quester.getCurrentStage(this).finishEvent.fire(quester); }
