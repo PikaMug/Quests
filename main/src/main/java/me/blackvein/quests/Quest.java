@@ -195,7 +195,7 @@ public class Quest {
 				// Multiplayer
 				try {
 					if (opts.getShareProgressLevel() == 3) {
-						List<Quester> mq = q.getMultiplayerQuesters(this);
+						List<Quester> mq = q.getMultiplayerQuesters();
 						if (mq != null) {
 							for (Quester qq : mq) {
 								if (qq.getCurrentQuests().containsKey(this)) {
@@ -691,7 +691,7 @@ public class Quest {
         
         // Multiplayer
         if (opts.getShareProgressLevel() == 4) {
-        	List<Quester> mq = q.getMultiplayerQuesters(this);
+        	List<Quester> mq = q.getMultiplayerQuesters();
     		if (mq != null) {
     			for (Quester qq : mq) {
     				if (qq.getCurrentQuests().containsKey(this)) {
