@@ -1981,13 +1981,9 @@ public class Quester {
 		
 		// Multiplayer
 		if (quest.getOptions().getShareProgressLevel() == 2) {
-			List<Quester> mq = getMultiplayerQuesters();
-			if (mq != null) {
-				for (Quester q : mq) {
-					if (q.getCurrentQuests().containsKey(quest)) {
-						quest.nextStage(q);
-					}
-				}
+			List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+			for (Quester q : mq) {
+				quest.nextStage(q);
 			}
 		}
 	}
@@ -3120,49 +3116,83 @@ public class Quester {
 	 * @param fun The function to execute, the event call
 	 */
 	public void dispatchMultiplayerEvent(String eventName, BiFunction<Quester, Quest, Void> fun) {
-		List<Quester> mq = getMultiplayerQuesters();
-		if (mq != null) {
-			for (Quester q : mq) {
-				for (Quest quest : q.getCurrentQuests().keySet()) {
-					if (q.containsObjective(quest, eventName) && quest.getOptions().getShareProgressLevel() == 1) {
-						fun.apply(q, quest);
-					}
+		Map<Quester, MultiplayerType> mq = getMultiplayerQuesters();
+		for (Entry<Quester, MultiplayerType> q : mq.entrySet()) {
+			for (Quest quest : q.getKey().getCurrentQuests().keySet()) {
+				if (q.getKey().containsObjective(quest, eventName)
+						&& quest.getOptions().getShareProgressLevel() == 1
+						&& ((quest.getOptions().getUsePartiesPlugin() && q.getValue().parties)
+							|| (quest.getOptions().getUseDungeonsXLPlugin() && q.getValue().dungeonxl))) {
+					fun.apply(q.getKey(), quest);
 				}
 			}
 		}
 	}
 	
 	/**
-	 * Get a list of fellow Questers in a party or group
+	 * Get a map of fellow Questers in a party or group
 	 *
-	 * @return null if no linked plugins, or party/group is null
+	 * @return empty if no linked plugins, or party/group is null
 	 */
-	public List<Quester> getMultiplayerQuesters() {
+	public Map<Quester, MultiplayerType> getMultiplayerQuesters() {
+		Map<Quester, MultiplayerType> ret = new LinkedHashMap<>();
 		if (plugin.getDependencies().getPartiesApi() != null) {
 			Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(getUUID()).getPartyName());
 			if (party != null) {
-				List<Quester> mq = new LinkedList<Quester>();
 				for (UUID id : party.getMembers()) {
 					if (!id.equals(getUUID())) {
-						mq.add(plugin.getQuester(id));
+						ret.put(plugin.getQuester(id), new MultiplayerType(true, false));
 					}
 				}
-				return mq;
 			}
 		}
 		if (plugin.getDependencies().getDungeonsApi() != null) {
 			DGroup group = DGroup.getByPlayer(getPlayer());
 			if (group != null) {
-				List<Quester> mq = new LinkedList<Quester>();
 				for (UUID id : group.getPlayers()) {
 					if (!id.equals(getUUID())) {
-						mq.add(plugin.getQuester(id));
+						Quester q = plugin.getQuester(id);
+						if (ret.containsKey(plugin.getQuester(id)))
+							ret.get(q).dungeonxl = true;
+						else
+							ret.put(q, new MultiplayerType(false, true));
 					}
 				}
-				return mq;
 			}
 		}
-		return null;
+		return ret;
+	}
+	
+	/**
+	 * Get a map of fellow Questers in a party or group
+	 * that are doing the given quest
+	 *
+	 * @param quest the quest to check
+	 * @return empty if no linked plugins, or party/group is null
+	 */
+	public List<Quester> getMultiplayerQuestersByQuest(Quest quest) {
+		List<Quester> ret = new LinkedList<>();
+		Map<Quester, MultiplayerType> mq = getMultiplayerQuesters();
+		for (Entry<Quester, MultiplayerType> q : mq.entrySet()) {
+			if (q.getKey().getCurrentQuests().containsKey(quest)) {
+				if ((quest.getOptions().getUsePartiesPlugin() && q.getValue().parties)
+						|| (quest.getOptions().getUseDungeonsXLPlugin() && q.getValue().dungeonxl)) {
+					ret.add(q.getKey());
+				}
+			}
+			
+		}
+		return ret;
+	}
+	
+	public class MultiplayerType {
+		public boolean parties;
+		public boolean dungeonxl;
+		
+		public MultiplayerType(boolean parties, boolean dungeonxl) {
+			this.parties = parties;
+			this.dungeonxl = dungeonxl;
+		}
 	}
 	
 	/**

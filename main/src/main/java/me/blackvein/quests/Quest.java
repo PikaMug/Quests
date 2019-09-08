@@ -195,13 +195,9 @@ public class Quest {
 				// Multiplayer
 				try {
 					if (opts.getShareProgressLevel() == 3) {
-						List<Quester> mq = q.getMultiplayerQuesters();
-						if (mq != null) {
-							for (Quester qq : mq) {
-								if (qq.getCurrentQuests().containsKey(this)) {
-									setStage(qq, qq.currentQuests.get(this) + 1);
-								}
-							}
+						List<Quester> mq = q.getMultiplayerQuestersByQuest(this);
+						for (Quester qq : mq) {
+							setStage(qq, qq.currentQuests.get(this) + 1);
 						}
 					}
 				} catch (InvalidStageException e) {
@@ -691,14 +687,10 @@ public class Quest {
         
         // Multiplayer
         if (opts.getShareProgressLevel() == 4) {
-        	List<Quester> mq = q.getMultiplayerQuesters();
-    		if (mq != null) {
-    			for (Quester qq : mq) {
-    				if (qq.getCurrentQuests().containsKey(this)) {
-    					completeQuest(qq);
-    				}
-    			}
-    		}
+        	List<Quester> mq = q.getMultiplayerQuestersByQuest(this);
+			for (Quester qq : mq) {
+				completeQuest(qq);
+			}
         }
 	}
 	
