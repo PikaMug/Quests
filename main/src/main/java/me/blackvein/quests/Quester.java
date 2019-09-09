@@ -1468,10 +1468,10 @@ public class Quester {
 		if (e == null) {
 			return;
 		}
-		if (questData.mobsKilled.contains(e) == false) {
+		Stage currentStage = getCurrentStage(quest);
+		if (currentStage.mobsToKill.contains(e) == false) {
 			return;
 		}
-		Stage currentStage = getCurrentStage(quest);
 		int indexOfMobKilled = questData.mobsKilled.indexOf(e);
 		int numberOfSpecificMobKilled = questData.mobNumKilled.get(indexOfMobKilled);
 		int numberOfSpecificMobNeedsToBeKilledInCurrentStage = currentStage.mobNumToKill.get(indexOfMobKilled);
