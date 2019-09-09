@@ -360,42 +360,42 @@ public class QuestFactory implements ConversationAbandonedListener {
 					if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() != null) {
 						return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
 					} else if (plugin.getDependencies().getCitizens() != null) {
-						return "(" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData(CK.Q_START_NPC)).getName() + ")";
+						return ChatColor.YELLOW + "(" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData(CK.Q_START_NPC)).getName() + ")";
 					} else {
-						return "(" + Lang.get("notInstalled") + ")";
+						return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
 					}
 				case 5:
 					if (context.getSessionData(CK.Q_START_BLOCK) == null) {
 						return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
 					} else {
 						Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
-						return "(" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")";
+						return ChatColor.YELLOW + "(" + l.getWorld().getName() + ", " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")";
 					}
 				case 6:
 					if (plugin.getDependencies().getWorldGuardApi() != null) {
 						if (context.getSessionData(CK.Q_REGION) == null) {
 							return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
 						} else {
-							return "(" + ChatColor.GREEN + (String) context.getSessionData(CK.Q_REGION) + ChatColor.YELLOW + ")";
+							return ChatColor.YELLOW + "(" + ChatColor.GREEN + (String) context.getSessionData(CK.Q_REGION) + ChatColor.YELLOW + ")";
 						}
 					} else {
-						return "(" + Lang.get("notInstalled") + ")";
+						return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
 					}
 				case 7:
 					if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
 						return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
 					} else {
-						return "(" + (String) context.getSessionData(CK.Q_INITIAL_EVENT) + ")";
+						return ChatColor.YELLOW + "(" + (String) context.getSessionData(CK.Q_INITIAL_EVENT) + ")";
 					}
 				case 8:
 					if (plugin.getDependencies().getCitizens() != null) {
 						if (context.getSessionData(CK.Q_GUIDISPLAY) == null) {
 							return ChatColor.GRAY +  "(" + Lang.get("noneSet") + ")";
 						} else {
-							return "(" + ItemUtil.getDisplayString((ItemStack) context.getSessionData(CK.Q_GUIDISPLAY)) + ChatColor.RESET + ChatColor.YELLOW + ")";
+							return ChatColor.YELLOW + "(" + ItemUtil.getDisplayString((ItemStack) context.getSessionData(CK.Q_GUIDISPLAY)) + ChatColor.RESET + ChatColor.YELLOW + ")";
 						}
 					} else {
-						return "(" + Lang.get("notInstalled") + ")";
+						return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
 					}
 				case 9:
 				case 10:
