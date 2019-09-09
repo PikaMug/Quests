@@ -160,12 +160,13 @@ public class Quest {
 	 * 
 	 * @param q Player to force
 	 */
-	public void nextStage(Quester q) {
-		if (q.getCurrentStage(this) == null) {
+	public void nextStage(Quester q, boolean enableShareProgress) {
+		Stage currentStage = q.getCurrentStage(this);
+		if (currentStage == null) {
 			plugin.getLogger().severe("Current stage was null for quester " + q.getPlayer().getUniqueId());
 			return;
 		}
-		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
+		String stageCompleteMessage = currentStage.completeMessage;
 		if (stageCompleteMessage != null) {
 			q.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageCompleteMessage, this, q.getPlayer()));
 		}
@@ -173,19 +174,29 @@ public class Quest {
 			q.resetCompass();
 			q.findCompassTarget();
 		}
-		if (q.getCurrentStage(this).delay < 0) {
+		if (currentStage.delay < 0) {
 			if (q.currentQuests.get(this) == (orderedStages.size() - 1)) {
-				if (q.getCurrentStage(this).script != null) {
-					plugin.getDenizenTrigger().runDenizenScript(q.getCurrentStage(this).script, q);
+				if (currentStage.script != null) {
+					plugin.getDenizenTrigger().runDenizenScript(currentStage.script, q);
 				}
-				if (q.getCurrentStage(this).finishEvent != null) {
-					q.getCurrentStage(this).finishEvent.fire(q, this);
+				if (currentStage.finishEvent != null) {
+					currentStage.finishEvent.fire(q, this);
 				}
 				completeQuest(q);
+				
+				// Multiplayer
+				if (enableShareProgress && opts.getShareProgressLevel() == 3) {
+					List<Quester> mq = q.getMultiplayerQuestersByQuest(this);
+					for (Quester qq : mq) {
+						if (currentStage.equals(qq.getCurrentStage(this))) {
+							completeQuest(qq);
+						}
+					}
+				}
 			} else {
 				try {
-					if (q.getCurrentStage(this).finishEvent != null) {
-						q.getCurrentStage(this).finishEvent.fire(q, this);
+					if (currentStage.finishEvent != null) {
+						currentStage.finishEvent.fire(q, this);
 					}
 					setStage(q, q.currentQuests.get(this) + 1);
 				} catch (InvalidStageException e) {
@@ -193,15 +204,13 @@ public class Quest {
 				}
 				
 				// Multiplayer
-				try {
-					if (opts.getShareProgressLevel() == 3) {
-						List<Quester> mq = q.getMultiplayerQuestersByQuest(this);
-						for (Quester qq : mq) {
-							setStage(qq, qq.currentQuests.get(this) + 1);
+				if (enableShareProgress && opts.getShareProgressLevel() == 3) {
+					List<Quester> mq = q.getMultiplayerQuestersByQuest(this);
+					for (Quester qq : mq) {
+						if (currentStage.equals(qq.getCurrentStage(this))) {
+							nextStage(qq, false);
 						}
 					}
-				} catch (InvalidStageException e) {
-					e.printStackTrace();
 				}
 			}
 			if (q.getQuestData(this) != null) {

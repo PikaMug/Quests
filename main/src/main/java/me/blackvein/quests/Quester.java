@@ -1975,17 +1975,31 @@ public class Quester {
 			}
 			p.sendMessage(message);
 		}
+		Stage currentStage = getCurrentStage(quest);
 		if (testComplete(quest)) {
-			quest.nextStage(this);
+			quest.nextStage(this, true);
 		}
 		
 		// Multiplayer
+		/* wip new method
+		if (true && quest.getOptions().getShareProgressLevel() == 2) {
+			List<Quester> mq = getMultiplayerQuestersByQuest(this);
+			for (Quester qq : mq) {
+				if (currentStage.equals(qq.getCurrentStage(quest))) {
+					completeQuest(qq);
+				}
+			}
+		}
+		*/
+		/* old method
 		if (quest.getOptions().getShareProgressLevel() == 2) {
 			List<Quester> mq = getMultiplayerQuestersByQuest(quest);
 			for (Quester q : mq) {
-				quest.nextStage(q);
+				if (q.getCurrentStage(quest).equals(this.getCurrentStage(quest))) {
+					quest.nextStage(q, false);
+				}
 			}
-		}
+		}*/
 	}
 	
 	/**

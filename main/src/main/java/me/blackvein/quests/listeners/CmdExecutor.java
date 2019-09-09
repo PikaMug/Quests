@@ -1121,7 +1121,7 @@ public class CmdExecutor implements CommandExecutor {
 					msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
 					msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
 					target.sendMessage(ChatColor.GREEN + msg2);
-					quest.nextStage(quester);
+					quest.nextStage(quester, false);
 					quester.saveData();
 				}
 			}
