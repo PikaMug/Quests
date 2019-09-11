@@ -1075,6 +1075,18 @@ public class Quester {
 				getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
 				if (broken.getAmount() == toBreak.getAmount()) {
 					finishObjective(quest, "breakBlock", m, toBreak, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "breakBlock", m, toBreak, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1131,6 +1143,18 @@ public class Quester {
 				getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
 				if (damaged.getAmount() == toDamage.getAmount()) {
 					finishObjective(quest, "damageBlock", m, toDamage, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "damageBlock", m, toDamage, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1187,6 +1211,18 @@ public class Quester {
 				getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newplaced);
 				if (placed.getAmount() == toPlace.getAmount()) {
 					finishObjective(quest, "placeBlock", m, toPlace, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "placeBlock", m, toPlace, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1243,6 +1279,18 @@ public class Quester {
 				getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
 				if (used.getAmount() == toUse.getAmount()) {
 					finishObjective(quest, "useBlock", m, toUse, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "useBlock", m, toUse, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1299,6 +1347,18 @@ public class Quester {
 				getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
 				if (cut.getAmount() == toCut.getAmount()) {
 					finishObjective(quest, "cutBlock", m, toCut, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "cutBlock", m, toCut, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1334,6 +1394,18 @@ public class Quester {
 				if ((i.getAmount() + amount) >= req) {
 					getQuestData(quest).itemsCrafted.put(found, req);
 					finishObjective(quest, "craftItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "craftItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				} else {
 					getQuestData(quest).itemsCrafted.put(found, (amount + i.getAmount()));
 				}
@@ -1371,6 +1443,18 @@ public class Quester {
 				if ((i.getAmount() + amount) >= req) {
 					getQuestData(quest).itemsSmelted.put(found, req);
 					finishObjective(quest, "smeltItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "smeltItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				} else {
 					getQuestData(quest).itemsSmelted.put(found, (amount + i.getAmount()));
 				}
@@ -1395,6 +1479,18 @@ public class Quester {
 							getQuestData(quest).itemsEnchanted.put(entry.getKey(), num);
 							if (num.equals(entry2.getValue())) {
 								finishObjective(quest, "enchantItem", new ItemStack(m, 1), null, e, null, null, null, null, null, null, null);
+								
+								// Multiplayer
+								if (quest.getOptions().getShareProgressLevel() == 2) {
+									List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+									if (mq != null) {
+										for (Quester q : mq) {
+											if (q.getCurrentQuests().containsKey(quest)) {
+												q.finishObjective(quest, "enchantItem", new ItemStack(m, 1), null, e, null, null, null, null, null, null, null);
+											}
+										}
+									}
+								}
 							}
 						}
 						break;
@@ -1435,6 +1531,18 @@ public class Quester {
 				if ((i.getAmount() + amount) >= req) {
 					getQuestData(quest).itemsBrewed.put(found, req);
 					finishObjective(quest, "brewItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "brewItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				} else {
 					getQuestData(quest).itemsBrewed.put(found, (amount + i.getAmount()));
 				}
@@ -1452,6 +1560,18 @@ public class Quester {
 			getQuestData(quest).setFishCaught(getQuestData(quest).getFishCaught() + 1);
 			if (((Integer) getQuestData(quest).getFishCaught()).equals(getCurrentStage(quest).fishToCatch)) {
 				finishObjective(quest, "catchFish", null, null, null, null, null, null, null, null, null, null);
+				
+				// Multiplayer
+				if (quest.getOptions().getShareProgressLevel() == 2) {
+					List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+					if (mq != null) {
+						for (Quester q : mq) {
+							if (q.getCurrentQuests().containsKey(quest)) {
+								q.finishObjective(quest, "catchFish", null, null, null, null, null, null, null, null, null, null);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1498,6 +1618,18 @@ public class Quester {
 			questData.mobNumKilled.set(indexOfMobKilled, newNumberOfSpecificMobKilled);
 			if ((newNumberOfSpecificMobKilled).equals(numberOfSpecificMobNeedsToBeKilledInCurrentStage)) {
 				finishObjective(quest, "killMob", null, null, null, e, null, null, null, null, null, null);
+				
+				// Multiplayer
+				if (quest.getOptions().getShareProgressLevel() == 2) {
+					List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+					if (mq != null) {
+						for (Quester q : mq) {
+							if (q.getCurrentQuests().containsKey(quest)) {
+								q.finishObjective(quest, "killMob", null, null, null, e, null, null, null, null, null, null);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1513,6 +1645,18 @@ public class Quester {
 			getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled() + 1);
 			if (((Integer) getQuestData(quest).getPlayersKilled()).equals(getCurrentStage(quest).playersToKill)) {
 				finishObjective(quest, "killPlayer", null, null, null, null, null, null, null, null, null, null);
+				
+				// Multiplayer
+				if (quest.getOptions().getShareProgressLevel() == 2) {
+					List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+					if (mq != null) {
+						for (Quester q : mq) {
+							if (q.getCurrentQuests().containsKey(quest)) {
+								q.finishObjective(quest, "killPlayer", null, null, null, null, null, null, null, null, null, null);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1560,11 +1704,35 @@ public class Quester {
 						player.getInventory().setItem(index, i);
 						player.updateInventory();
 						finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+						
+						// Multiplayer
+						if (quest.getOptions().getShareProgressLevel() == 2) {
+							List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+							if (mq != null) {
+								for (Quester q : mq) {
+									if (q.getCurrentQuests().containsKey(quest)) {
+										q.finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+									}
+								}
+							}
+						}
 					} else if ((i.getAmount() + amount) == req) {
 						getQuestData(quest).itemsDelivered.put(found, req);
 						player.getInventory().setItem(index, null);
 						player.updateInventory();
 						finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+						
+						// Multiplayer
+						if (quest.getOptions().getShareProgressLevel() == 2) {
+							List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+							if (mq != null) {
+								for (Quester q : mq) {
+									if (q.getCurrentQuests().containsKey(quest)) {
+										q.finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+									}
+								}
+							}
+						}
 					} else {
 						getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
 						player.getInventory().setItem(index, null);
@@ -1614,11 +1782,35 @@ public class Quester {
 					player.getInventory().setItem(index, i);
 					player.updateInventory();
 					finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				} else if ((i.getAmount() + amount) == req) {
 					getQuestData(quest).itemsDelivered.put(found, req);
 					player.getInventory().setItem(player.getInventory().first(i), null);
 					player.updateInventory();
 					finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
+								}
+							}
+						}
+					}
 				} else {
 					getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
 					player.getInventory().setItem(player.getInventory().first(i), null);
@@ -1644,6 +1836,18 @@ public class Quester {
 			if (b != null && !b) {
 				getQuestData(quest).citizensInteracted.put(n.getId(), true);
 				finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
+				
+				// Multiplayer
+				if (quest.getOptions().getShareProgressLevel() == 2) {
+					List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+					if (mq != null) {
+						for (Quester q : mq) {
+							if (q.getCurrentQuests().containsKey(quest)) {
+								q.finishObjective(quest, "talkToNPC", null, null, null, null, null, n, null, null, null, null);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1661,6 +1865,18 @@ public class Quester {
 				getQuestData(quest).citizenNumKilled.set(index, getQuestData(quest).citizenNumKilled.get(index) + 1);
 				if (getQuestData(quest).citizenNumKilled.get(index) == getCurrentStage(quest).citizenNumToKill.get(index)) {
 					finishObjective(quest, "killNPC", null, null, null, null, null, n, null, null, null, null);
+					
+					// Multiplayer
+					if (quest.getOptions().getShareProgressLevel() == 2) {
+						List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+						if (mq != null) {
+							for (Quester q : mq) {
+								if (q.getCurrentQuests().containsKey(quest)) {
+									q.finishObjective(quest, "killNPC", null, null, null, null, null, n, null, null, null, null);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1698,6 +1914,18 @@ public class Quester {
 									getQuestData(quest).hasReached.set(index, true);
 								}
 								finishObjective(quest, "reachLocation", null, null, null, null, null, null, location, null, null, null);
+								
+								// Multiplayer
+								if (quest.getOptions().getShareProgressLevel() == 2) {
+									List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+									if (mq != null) {
+										for (Quester q : mq) {
+											if (q.getCurrentQuests().containsKey(quest)) {
+												q.finishObjective(quest, "reachLocation", null, null, null, null, null, null, location, null, null, null);
+											}
+										}
+									}
+								}
 							}
 						}
 					}
@@ -1726,6 +1954,18 @@ public class Quester {
 			getQuestData(quest).mobsTamed.put(entity, (getQuestData(quest).mobsTamed.get(entity) + 1));
 			if (getQuestData(quest).mobsTamed.get(entity).equals(getCurrentStage(quest).mobsToTame.get(entity))) {
 				finishObjective(quest, "tameMob", null, null, null, entity, null, null, null, null, null, null);
+				
+				// Multiplayer
+				if (quest.getOptions().getShareProgressLevel() == 2) {
+					List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+					if (mq != null) {
+						for (Quester q : mq) {
+							if (q.getCurrentQuests().containsKey(quest)) {
+								q.finishObjective(quest, "tameMob", null, null, null, entity, null, null, null, null, null, null);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1741,6 +1981,18 @@ public class Quester {
 			getQuestData(quest).sheepSheared.put(color, (getQuestData(quest).sheepSheared.get(color) + 1));
 			if (getQuestData(quest).sheepSheared.get(color).equals(getCurrentStage(quest).sheepToShear.get(color))) {
 				finishObjective(quest, "shearSheep", null, null, null, null, null, null, null, color, null, null);
+				
+				// Multiplayer
+				if (quest.getOptions().getShareProgressLevel() == 2) {
+					List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+					if (mq != null) {
+						for (Quester q : mq) {
+							if (q.getCurrentQuests().containsKey(quest)) {
+								q.finishObjective(quest, "shearSheep", null, null, null, null, null, null, null, color, null, null);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1766,6 +2018,18 @@ public class Quester {
 						@Override
 						public void run() {
 							finishObjective(quest, "password", null, null, null, null, null, null, null, null, display, null);
+							
+							// Multiplayer
+							if (quest.getOptions().getShareProgressLevel() == 2) {
+								List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+								if (mq != null) {
+									for (Quester q : mq) {
+										if (q.getCurrentQuests().containsKey(quest)) {
+											q.finishObjective(quest, "password", null, null, null, null, null, null, null, null, display, null);
+										}
+									}
+								}
+							}
 						}
 					});
 					break;
@@ -1975,31 +2239,9 @@ public class Quester {
 			}
 			p.sendMessage(message);
 		}
-		Stage currentStage = getCurrentStage(quest);
 		if (testComplete(quest)) {
 			quest.nextStage(this, true);
 		}
-		
-		// Multiplayer
-		/* wip new method
-		if (true && quest.getOptions().getShareProgressLevel() == 2) {
-			List<Quester> mq = getMultiplayerQuestersByQuest(this);
-			for (Quester qq : mq) {
-				if (currentStage.equals(qq.getCurrentStage(quest))) {
-					completeQuest(qq);
-				}
-			}
-		}
-		*/
-		/* old method
-		if (quest.getOptions().getShareProgressLevel() == 2) {
-			List<Quester> mq = getMultiplayerQuestersByQuest(quest);
-			for (Quester q : mq) {
-				if (q.getCurrentStage(quest).equals(this.getCurrentStage(quest))) {
-					quest.nextStage(q, false);
-				}
-			}
-		}*/
 	}
 	
 	/**

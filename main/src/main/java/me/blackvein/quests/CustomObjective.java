@@ -15,6 +15,7 @@ package me.blackvein.quests;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -218,6 +219,18 @@ public abstract class CustomObjective implements Listener {
 				if (index > -1) {
 					if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= quester.getCurrentStage(quest).customObjectiveCounts.get(index)) {
 						quester.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
+						
+						// Multiplayer
+						if (quest.getOptions().getShareProgressLevel() == 2) {
+							List<Quester> mq = quester.getMultiplayerQuestersByQuest(quest);
+							if (mq != null) {
+								for (Quester q : mq) {
+									if (q.getCurrentQuests().containsKey(quest)) {
+										q.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
