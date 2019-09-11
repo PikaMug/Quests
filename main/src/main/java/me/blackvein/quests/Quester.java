@@ -1888,7 +1888,7 @@ public class Quester {
 				
 				// Multiplayer
 				dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
-					q.getQuestData(quest).sheepSheared.put(color, getQuestData(quest).mobsTamed.get(color));
+					q.getQuestData(quest).sheepSheared.put(color, getQuestData(quest).sheepSheared.get(color));
 					q.finishObjective(quest, "shearSheep", null, null, null, null, null, null, null, color, null, null);
 					return null;
 				});
