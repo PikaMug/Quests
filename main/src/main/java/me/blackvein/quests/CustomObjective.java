@@ -221,16 +221,11 @@ public abstract class CustomObjective implements Listener {
 						quester.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
 						
 						// Multiplayer
-						if (quest.getOptions().getShareProgressLevel() == 2) {
-							List<Quester> mq = quester.getMultiplayerQuestersByQuest(quest);
-							if (mq != null) {
-								for (Quester q : mq) {
-									if (q.getCurrentQuests().containsKey(quest)) {
-										q.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
-									}
-								}
-							}
-						}
+						quester.dispatchMultiplayerEventShareObjective(quest, quester.getCurrentStage(quest), (Quester q) -> {
+							q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
+							q.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
+							return null;
+						});
 					}
 				}
 			}
