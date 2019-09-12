@@ -221,7 +221,7 @@ public abstract class CustomObjective implements Listener {
 						quester.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
 						
 						// Multiplayer
-						quester.dispatchMultiplayerEventShareObjective(quest, quester.getCurrentStage(quest), (Quester q) -> {
+						quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (Quester q) -> {
 							q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
 							q.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
 							return null;

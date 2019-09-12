@@ -934,8 +934,9 @@ public class Quester {
 	 * Check if player's current stage has the specified objective<p>
 	 * 
 	 * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-	 * cutBlock, catchFish, enchantItem, killMob, deliverItem, killPlayer,
-	 * talkToNPC, killNPC, tameMob, shearSheep, password, reachLocation
+	 * cutBlock, craftItem, smeltItem, enchantItem, brewItem, catchFish,
+	 * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
+	 * shearSheep, password, reachLocation
 	 * 
 	 * @deprecated Use containsObjective() instead
 	 * @param quest The quest to check objectives of
@@ -950,8 +951,9 @@ public class Quester {
 	 * Check if player's current stage has the specified objective<p>
 	 * 
 	 * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-	 * cutBlock, catchFish, enchantItem, killMob, deliverItem, killPlayer,
-	 * talkToNPC, killNPC, tameMob, shearSheep, password, reachLocation
+	 * cutBlock, craftItem, smeltItem, enchantItem, brewItem, catchFish,
+	 * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
+	 * shearSheep, password, reachLocation
 	 * 
 	 * @param quest The quest to check objectives of
 	 * @param s The type of objective to check for
@@ -1080,7 +1082,7 @@ public class Quester {
 					// Multiplayer
 					final ItemStack finalBroken = broken;
 					final ItemStack finalToBreak = toBreak;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(finalBroken), newBroken);
 						q.finishObjective(quest, "breakBlock", m, finalToBreak, null, null, null, null, null, null, null, null);
 						return null;
@@ -1145,7 +1147,7 @@ public class Quester {
 					// Multiplayer
 					final ItemStack finalDamaged = damaged;
 					final ItemStack finalToDamage = toDamage;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(finalDamaged), newDamaged);
 						q.finishObjective(quest, "damageBlock", m, finalToDamage, null, null, null, null, null, null, null, null);
 						return null;
@@ -1210,7 +1212,7 @@ public class Quester {
 					// Multiplayer
 					final ItemStack finalPlaced = placed;
 					final ItemStack finalToPlace = toPlace;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(finalPlaced), newplaced);
 						q.finishObjective(quest, "damageBlock", m, finalToPlace, null, null, null, null, null, null, null, null);
 						return null;
@@ -1275,7 +1277,7 @@ public class Quester {
 					// Multiplayer
 					final ItemStack finalUsed = used;
 					final ItemStack finalToUse = toUse;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(finalUsed), newUsed);
 						q.finishObjective(quest, "useBlock", m, finalToUse, null, null, null, null, null, null, null, null);
 						return null;
@@ -1340,7 +1342,7 @@ public class Quester {
 					// Multiplayer
 					final ItemStack finalCut = cut;
 					final ItemStack finalToCut = toCut;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(finalCut), newCut);
 						q.finishObjective(quest, "cutBlock", m, finalToCut, null, null, null, null, null, null, null, null);
 						return null;
@@ -1383,7 +1385,7 @@ public class Quester {
 					
 					// Multiplayer
 					final ItemStack finalFound = found;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).itemsCrafted.put(finalFound, req);
 						q.finishObjective(quest, "craftItem", new ItemStack(m, 1), finalFound, null, null, null, null, null, null, null, null);
 						return null;
@@ -1428,7 +1430,7 @@ public class Quester {
 					
 					// Multiplayer
 					final ItemStack finalFound = found;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).itemsSmelted.put(finalFound, req);
 						q.finishObjective(quest, "smeltItem", new ItemStack(m, 1), finalFound, null, null, null, null, null, null, null, null);
 						return null;
@@ -1461,7 +1463,7 @@ public class Quester {
 								finishObjective(quest, "enchantItem", new ItemStack(m, 1), finalToEnchant, e, null, null, null, null, null, null, null);
 								
 								// Multiplayer
-								dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+								dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 									q.getQuestData(quest).itemsEnchanted.put(entry.getKey(), num);
 									q.finishObjective(quest, "enchantItem", new ItemStack(m, 1), finalToEnchant, null, null, null, null, null, null, null, null);
 									return null;
@@ -1509,7 +1511,7 @@ public class Quester {
 					
 					// Multiplayer
 					final ItemStack finalFound = found;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).itemsBrewed.put(finalFound, req);
 						q.finishObjective(quest, "brewItem", new ItemStack(m, 1), finalFound, null, null, null, null, null, null, null, null);
 						return null;
@@ -1535,7 +1537,7 @@ public class Quester {
 				finishObjective(quest, "catchFish", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, fishToCatch), null, null, null, null, null, null, null, null);
 				
 				// Multiplayer
-				dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+				dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 					q.getQuestData(quest).setFishCaught(fishToCatch);
 					q.finishObjective(quest, "catchFish", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, fishToCatch), null, null, null, null, null, null, null, null);
 					return null;
@@ -1589,7 +1591,7 @@ public class Quester {
 						new ItemStack(Material.AIR, numberOfSpecificMobNeedsToBeKilledInCurrentStage), null, e, null, null, null, null, null, null);
 				
 				// Multiplayer
-				dispatchMultiplayerEventShareObjective(quest, currentStage, (Quester q) -> {
+				dispatchMultiplayerObjectives(quest, currentStage, (Quester q) -> {
 					q.getQuestData(quest).mobNumKilled.set(indexOfMobKilled, newNumberOfSpecificMobKilled);
 					q.finishObjective(quest, "killMob", new ItemStack(Material.AIR, 1),
 							new ItemStack(Material.AIR, numberOfSpecificMobNeedsToBeKilledInCurrentStage), null, e, null, null, null, null, null, null);
@@ -1613,7 +1615,7 @@ public class Quester {
 				finishObjective(quest, "killPlayer", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, playersToKill), null, null, null, null, null, null, null, null);
 				
 				// Multiplayer
-				dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+				dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 					q.getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled());
 					q.finishObjective(quest, "killPlayer", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, playersToKill), null, null, null, null, null, null, null, null);
 					return null;
@@ -1671,7 +1673,7 @@ public class Quester {
 						finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
 						
 						// Multiplayer
-						dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+						dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 							q.getQuestData(quest).itemsDelivered.put(found, req);
 							q.finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, null, null, null);
 							return null;
@@ -1732,7 +1734,7 @@ public class Quester {
 					
 					// Multiplayer
 					final ItemStack finalFound = found;
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).itemsDelivered.put(finalFound, req);
 						q.finishObjective(quest, "deliverItem", new ItemStack(m, 1), finalFound, null, null, null, null, null, null, null, null);
 						return null;
@@ -1764,7 +1766,7 @@ public class Quester {
 				finishObjective(quest, "talkToNPC", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, 1), null, null, null, n, null, null, null, null);
 				
 				// Multiplayer
-				dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+				dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 					q.getQuestData(quest).citizensInteracted.put(n.getId(), true);
 					q.finishObjective(quest, "talkToNPC", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, 1), null, null, null, n, null, null, null, null);
 					return null;
@@ -1789,7 +1791,7 @@ public class Quester {
 					finishObjective(quest, "killNPC", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, npcsToKill), null, null, null, n, null, null, null, null);
 					
 					// Multiplayer
-					dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+					dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 						q.getQuestData(quest).citizenNumKilled.set(index, getQuestData(quest).citizenNumKilled.get(index));
 						q.finishObjective(quest, "killNPC", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, npcsToKill), null, null, null, n, null, null, null, null);
 						return null;
@@ -1834,7 +1836,7 @@ public class Quester {
 								
 								// Multiplayer
 								final int finalIndex = index;
-								dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+								dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 									if (finalIndex >= getQuestData(quest).hasReached.size()) {
 										q.getQuestData(quest).hasReached.add(true);
 									} else {
@@ -1874,7 +1876,7 @@ public class Quester {
 				finishObjective(quest, "tameMob", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, mobsToTame), null, entity, null, null, null, null, null, null);
 				
 				// Multiplayer
-				dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+				dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 					q.getQuestData(quest).mobsTamed.put(entity, getQuestData(quest).mobsTamed.get(entity));
 					q.finishObjective(quest, "tameMob", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, mobsToTame), null, entity, null, null, null, null, null, null);
 					return null;
@@ -1897,7 +1899,7 @@ public class Quester {
 				finishObjective(quest, "shearSheep", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, sheepToShear), null, null, null, null, null, color, null, null);
 				
 				// Multiplayer
-				dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+				dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 					q.getQuestData(quest).sheepSheared.put(color, getQuestData(quest).sheepSheared.get(color));
 					q.finishObjective(quest, "shearSheep", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, sheepToShear), null, null, null, null, null, color, null, null);
 					return null;
@@ -1926,7 +1928,7 @@ public class Quester {
 						finishObjective(quest, "password", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, 1), null, null, null, null, null, null, display, null);
 						
 						// Multiplayer
-						dispatchMultiplayerEventShareObjective(quest, getCurrentStage(quest), (Quester q) -> {
+						dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
 							q.getQuestData(quest).passwordsSaid.put(display, true);
 							q.finishObjective(quest, "password", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, 1), null, null, null, null, null, null, display, null);
 							return null;
@@ -3266,16 +3268,21 @@ public class Quester {
 	}
 	
 	/**
-	 * Dispatch any event to the right quest if multiplayer enabled
+	 * Dispatch player event to fellow questers<p>
+	 * 
+	 * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
+	 * cutBlock, craftItem, smeltItem, enchantItem, brewItem, catchFish,
+	 * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
+	 * shearSheep, password, reachLocation
 	 *
-	 * @param eventName the event name
-	 * @param fun the function to execute, the event call
+	 * @param objectiveType The type of objective to progress
+	 * @param fun The function to execute, the event call
 	 */
-	public void dispatchMultiplayerEvent(String eventName, BiFunction<Quester, Quest, Void> fun) {
+	public void dispatchMultiplayerEverything(String objectiveType, BiFunction<Quester, Quest, Void> fun) {
 		Map<Quester, MultiplayerType> mq = getMultiplayerQuesters();
 		for (Entry<Quester, MultiplayerType> q : mq.entrySet()) {
 			for (Quest quest : q.getKey().getCurrentQuests().keySet()) {
-				if (q.getKey().containsObjective(quest, eventName)
+				if (q.getKey().containsObjective(quest, objectiveType)
 						&& quest.getOptions().getShareProgressLevel() == 1
 						&& ((quest.getOptions().getUsePartiesPlugin() && q.getValue().parties)
 							|| (quest.getOptions().getUseDungeonsXLPlugin() && q.getValue().dungeonxl))) {
@@ -3286,13 +3293,13 @@ public class Quester {
 	}
 	
 	/**
-	 * Dispatch a finish objective multiplayer event
+	 * Dispatch finish objective to fellow questers
 	 *
-	 * @param quest the current quest
-	 * @param currentStage the current stage of the quest
-	 * @param fun the function to execute, the event call
+	 * @param quest The current quest
+	 * @param currentStage The current stage of the quest
+	 * @param fun The function to execute, the event call
 	 */
-	public void dispatchMultiplayerEventShareObjective(Quest quest, Stage currentStage, Function<Quester, Void> fun) {
+	public void dispatchMultiplayerObjectives(Quest quest, Stage currentStage, Function<Quester, Void> fun) {
 		if (quest.getOptions().getShareProgressLevel() == 2) {
 			List<Quester> mq = getMultiplayerQuestersByQuest(quest);
 			for (Quester q : mq) {
