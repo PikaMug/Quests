@@ -15,12 +15,13 @@ package me.blackvein.quests;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 public abstract class CustomObjective implements Listener {
 
@@ -217,13 +218,14 @@ public abstract class CustomObjective implements Listener {
 					}
 				}
 				if (index > -1) {
-					if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= quester.getCurrentStage(quest).customObjectiveCounts.get(index)) {
-						quester.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
+					int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
+					if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= goal) {
+						quester.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
 						
 						// Multiplayer
 						quester.dispatchMultiplayerEventShareObjective(quest, quester.getCurrentStage(quest), (Quester q) -> {
 							q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
-							q.finishObjective(quest, "customObj", null, null, null, null, null, null, null, null, null, obj);
+							q.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
 							return null;
 						});
 					}
