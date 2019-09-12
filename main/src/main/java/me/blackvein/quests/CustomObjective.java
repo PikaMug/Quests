@@ -114,8 +114,6 @@ public abstract class CustomObjective implements Listener {
 	
 	/**
 	 * Check whether to let user set required amount for objective
-	 * 
-	 * @param enableCount
 	 */
 	public boolean canShowCount() {
 		return showCount;
@@ -124,7 +122,7 @@ public abstract class CustomObjective implements Listener {
 	/**
 	 * Set whether to let user set required amount for objective
 	 * 
-	 * @param enableCount
+	 * @param showCount
 	 */
 	public void setShowCount(boolean showCount) {
 		this.showCount = showCount;
