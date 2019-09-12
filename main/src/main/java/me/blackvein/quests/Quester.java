@@ -1530,7 +1530,6 @@ public class Quester {
 		final int fishToCatch = getCurrentStage(quest).fishToCatch;
 		if (getQuestData(quest).getFishCaught() < fishToCatch) {
 			getQuestData(quest).setFishCaught(getQuestData(quest).getFishCaught() + 1);
-			final int fishToCatch = getCurrentStage(quest).fishToCatch;
 			if (getQuestData(quest).getFishCaught() == fishToCatch) {
 				finishObjective(quest, "catchFish", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, fishToCatch), null, null, null, null, null, null, null, null);
 				
@@ -1606,9 +1605,9 @@ public class Quester {
 	 * @param player The player to be killed
 	 */
 	public void killPlayer(Quest quest, Player player) {
-		if (getQuestData(quest).getPlayersKilled() < getCurrentStage(quest).playersToKill) {
+		final int playersToKill = getCurrentStage(quest).playersToKill;
+		if (getQuestData(quest).getPlayersKilled() < playersToKill) {
 			getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled() + 1);
-			final int playersToKill = getCurrentStage(quest).playersToKill;
 			if (getQuestData(quest).getPlayersKilled() == playersToKill) {
 				finishObjective(quest, "killPlayer", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, playersToKill), null, null, null, null, null, null, null, null);
 				
@@ -1782,9 +1781,9 @@ public class Quester {
 	public void killNPC(Quest quest, NPC n) {
 		if (getQuestData(quest).citizensKilled.contains(n.getId())) {
 			int index = getQuestData(quest).citizensKilled.indexOf(n.getId());
-			if (getQuestData(quest).citizenNumKilled.get(index) < getCurrentStage(quest).citizenNumToKill.get(index)) {
+			final int npcsToKill = getCurrentStage(quest).citizenNumToKill.get(index);
+			if (getQuestData(quest).citizenNumKilled.get(index) < npcsToKill) {
 				getQuestData(quest).citizenNumKilled.set(index, getQuestData(quest).citizenNumKilled.get(index) + 1);
-				final int npcsToKill = getCurrentStage(quest).citizenNumToKill.get(index);
 				if (getQuestData(quest).citizenNumKilled.get(index).equals(npcsToKill)) {
 					finishObjective(quest, "killNPC", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, npcsToKill), null, null, null, n, null, null, null, null);
 					
