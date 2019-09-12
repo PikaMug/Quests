@@ -1457,6 +1457,7 @@ public class Quester {
 							getQuestData(quest).itemsEnchanted.put(entry.getKey(), num);
 							if (num.equals(entry2.getValue())) {
 								final ItemStack finalToEnchant = new ItemStack(m, entry.getValue());
+								
 								finishObjective(quest, "enchantItem", new ItemStack(m, 1), finalToEnchant, e, null, null, null, null, null, null, null);
 								
 								// Multiplayer
@@ -1526,7 +1527,8 @@ public class Quester {
 	 * @param quest The quest for which the fish is being caught
 	 */
 	public void catchFish(Quest quest) {
-		if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
+		final int fishToCatch = getCurrentStage(quest).fishToCatch;
+		if (getQuestData(quest).getFishCaught() < fishToCatch) {
 			getQuestData(quest).setFishCaught(getQuestData(quest).getFishCaught() + 1);
 			final int fishToCatch = getCurrentStage(quest).fishToCatch;
 			if (getQuestData(quest).getFishCaught() == fishToCatch) {
