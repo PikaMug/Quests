@@ -339,7 +339,7 @@ public class OptionsPrompt extends NumericPrompt {
 	
 	public class MultiplayerPrompt extends NumericPrompt {
 		
-		private final int size = 4;
+		private final int size = 5;
 		
 		public int getSize() {
 			return size;
@@ -358,6 +358,8 @@ public class OptionsPrompt extends NumericPrompt {
 				case 3:
 					return ChatColor.BLUE;
 				case 4:
+					return ChatColor.BLUE;
+				case 5:
 					return ChatColor.GREEN;
 				default:
 					return null;
@@ -397,6 +399,16 @@ public class OptionsPrompt extends NumericPrompt {
 								+ ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.YELLOW + ")";
 					}
 				case 4:
+					if (context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) == null) {
+						boolean defaultOpt = new Options().getRequireSameQuest();
+						return ChatColor.YELLOW + Lang.get("optRequireSameQuest") + " (" 
+						+ (defaultOpt ? ChatColor.GREEN + String.valueOf(defaultOpt) : ChatColor.RED + String.valueOf(defaultOpt)) + ChatColor.YELLOW + ")";
+					} else {
+						boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST);
+						return ChatColor.YELLOW + Lang.get("optRequireSameQuest") + " (" 
+						+ (requireOpt ? ChatColor.GREEN + String.valueOf(requireOpt) : ChatColor.RED + String.valueOf(requireOpt)) + ChatColor.YELLOW +  ")";
+					}
+				case 5:
 					return ChatColor.YELLOW + Lang.get("done");
 				default:
 					return null;
@@ -431,6 +443,10 @@ public class OptionsPrompt extends NumericPrompt {
 					tempPrompt = new MultiplayerPrompt();
 					return new LevelPrompt();
 				case 4:
+					tempKey = CK.OPT_REQUIRE_SAME_QUEST;
+					tempPrompt = new MultiplayerPrompt();
+					return new TrueFalsePrompt();
+				case 5:
 					tempKey = null;
 					tempPrompt = null;
 					try {

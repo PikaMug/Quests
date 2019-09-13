@@ -1946,6 +1946,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		if (config.contains("quests." + questKey + ".options.share-progress-level")) {
 			opts.setShareProgressLevel(config.getInt("quests." + questKey + ".options.share-progress-level"));
 		}
+		if (config.contains("quests." + questKey + ".options.require-same-quest")) {
+			opts.setRequireSameQuest(config.getBoolean("quests." + questKey + ".options.require-same-quest"));
+		}
 	}
 
 	private void skipQuestProcess(String[] msgs) throws SkipQuest {

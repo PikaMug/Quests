@@ -208,7 +208,7 @@ public class Quest {
 			
 			// Multiplayer
 			if (opts.getShareProgressLevel() == 3) {
-				List<Quester> mq = quester.getMultiplayerQuestersByQuest(this);
+				List<Quester> mq = quester.getMultiplayerQuesters(this);
 				for (Quester qq : mq) {
 					if (currentStage.equals(qq.getCurrentStage(this))) {
 						nextStage(qq, allowSharedProgress);
@@ -694,7 +694,7 @@ public class Quest {
         
         // Multiplayer
         if (opts.getShareProgressLevel() == 4) {
-        	List<Quester> mq = q.getMultiplayerQuestersByQuest(this);
+        	List<Quester> mq = q.getMultiplayerQuesters(this);
 			for (Quester qq : mq) {
 				completeQuest(qq);
 			}

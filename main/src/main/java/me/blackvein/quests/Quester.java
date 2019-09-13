@@ -26,7 +26,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.bukkit.Bukkit;
@@ -3278,16 +3277,14 @@ public class Quester {
 	 * @param objectiveType The type of objective to progress
 	 * @param fun The function to execute, the event call
 	 */
-	public void dispatchMultiplayerEverything(String objectiveType, BiFunction<Quester, Quest, Void> fun) {
-		Map<Quester, MultiplayerType> mq = getMultiplayerQuesters();
-		for (Entry<Quester, MultiplayerType> q : mq.entrySet()) {
-			for (Quest quest : q.getKey().getCurrentQuests().keySet()) {
-				if (q.getKey().containsObjective(quest, objectiveType)
-						&& quest.getOptions().getShareProgressLevel() == 1
-						&& ((quest.getOptions().getUsePartiesPlugin() && q.getValue().parties)
-							|| (quest.getOptions().getUseDungeonsXLPlugin() && q.getValue().dungeonxl))) {
-					fun.apply(q.getKey(), quest);
+	public void dispatchMultiplayerEverything(Quest quest, String objectiveType, Function<Quester, Void> fun) {
+		if (quest.getOptions().getShareProgressLevel() == 1) {
+			List<Quester> mq = getMultiplayerQuesters(quest);
+			for (Quester q : mq) {
+				if (q.containsObjective(quest, objectiveType) || !quest.getOptions().getRequireSameQuest()) {
+					fun.apply(q);
 				}
+					
 			}
 		}
 	}
@@ -3301,9 +3298,10 @@ public class Quester {
 	 */
 	public void dispatchMultiplayerObjectives(Quest quest, Stage currentStage, Function<Quester, Void> fun) {
 		if (quest.getOptions().getShareProgressLevel() == 2) {
-			List<Quester> mq = getMultiplayerQuestersByQuest(quest);
+			List<Quester> mq = getMultiplayerQuesters(quest);
 			for (Quester q : mq) {
-				if (q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest))) {
+				if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))
+						|| !quest.getOptions().getRequireSameQuest()) {
 					fun.apply(q);
 				}
 			}
@@ -3315,7 +3313,7 @@ public class Quester {
 	 *
 	 * @return empty if no linked plugins, or party/group is null
 	 */
-	public Map<Quester, MultiplayerType> getMultiplayerQuesters() {
+	/*public Map<Quester, MultiplayerType> getMultiplayerQuesters() {
 		Map<Quester, MultiplayerType> ret = new LinkedHashMap<>();
 		if (plugin.getDependencies().getPartiesApi() != null) {
 			Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(getUUID()).getPartyName());
@@ -3342,7 +3340,7 @@ public class Quester {
 			}
 		}
 		return ret;
-	}
+	}*/
 	
 	/**
 	 * Get a map of fellow Questers in a party or group
@@ -3351,7 +3349,7 @@ public class Quester {
 	 * @param quest the quest to check
 	 * @return empty if no linked plugins, or party/group is null
 	 */
-	public List<Quester> getMultiplayerQuestersByQuest(Quest quest) {
+	/*public List<Quester> getMultiplayerQuestersByQuest(Quest quest) {
 		List<Quester> ret = new LinkedList<>();
 		Map<Quester, MultiplayerType> mq = getMultiplayerQuesters();
 		for (Entry<Quester, MultiplayerType> q : mq.entrySet()) {
@@ -3364,9 +3362,9 @@ public class Quester {
 			
 		}
 		return ret;
-	}
+	}*/
 	
-	public class MultiplayerType {
+	/*public class MultiplayerType {
 		public boolean parties;
 		public boolean dungeonxl;
 		
@@ -3374,6 +3372,47 @@ public class Quester {
 			this.parties = parties;
 			this.dungeonxl = dungeonxl;
 		}
+	}*/
+	
+	/**
+	 * Get a list of follow Questers in a party or group
+	 * 
+	 * @param quest The quest which uses a linked plugin, i.e. Parties or DungeonsXL
+	 * @return null if quest is null, no linked plugins, or party/group is null
+	 */
+	public List<Quester> getMultiplayerQuesters(Quest quest) {
+		if (quest == null) {
+			return null;
+		}
+		if (plugin.getDependencies().getPartiesApi() != null) {
+			if (quest.getOptions().getUsePartiesPlugin()) {
+				Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(getUUID()).getPartyName());
+				if (party != null) {
+					List<Quester> mq = new LinkedList<Quester>();
+					for (UUID id : party.getMembers()) {
+						if (!id.equals(getUUID())) {
+							mq.add(plugin.getQuester(id));
+						}
+					}
+					return mq;
+				}
+			}
+		}
+		if (plugin.getDependencies().getDungeonsApi() != null) {
+			if (quest.getOptions().getUseDungeonsXLPlugin()) {
+				DGroup group = DGroup.getByPlayer(getPlayer());
+				if (group != null) {
+					List<Quester> mq = new LinkedList<Quester>();
+					for (UUID id : group.getPlayers()) {
+						if (!id.equals(getUUID())) {
+							mq.add(plugin.getQuester(id));
+						}
+					}
+					return mq;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**

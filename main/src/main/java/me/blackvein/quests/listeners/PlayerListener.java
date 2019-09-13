@@ -1,4 +1,5 @@
 /*******************************************************************************************************
+
  * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
@@ -209,14 +210,14 @@ public class PlayerListener implements Listener {
         					if (quester.containsObjective(quest, "useBlock")) {
         						quester.useBlock(quest, blockItemStack);
         						hasObjective = true;
+        						
+        						// Multiplayer
+        						quester.dispatchMultiplayerEverything(quest, "useBlock", (Quester q) -> {
+        							q.useBlock(quest, blockItemStack);
+        							return null;
+        						});
         					}
         				}
-					
-						// Multiplayer
-						quester.dispatchMultiplayerEverything("useBlock", (Quester q, Quest quest) -> {
-							q.useBlock(quest, blockItemStack);
-							return null;
-						});
     				}
     				if (!hasObjective) {
     					if (plugin.getQuestFactory().getSelectedBlockStarts().containsKey(evt.getPlayer().getUniqueId())) {
@@ -365,14 +366,14 @@ public class PlayerListener implements Listener {
 					}
 					if (quester.containsObjective(quest, "password")) {
 						quester.sayPassword(quest, evt);
+						
+						// Multiplayer
+						quester.dispatchMultiplayerEverything(quest, "password", (Quester q) -> {
+							q.sayPassword(quest, evt);
+							return null;
+						});
 					}
 				}
-				
-				// Multiplayer
-				quester.dispatchMultiplayerEverything("password", (Quester q, Quest quest) -> {
-					q.sayPassword(quest, evt);
-					return null;
-				});
 			}
 		}
 	}
@@ -423,14 +424,14 @@ public class PlayerListener implements Listener {
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "damageBlock")) {
 					quester.damageBlock(quest, blockItemStack);
+					
+					// Multiplayer
+					quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
+						q.placeBlock(quest, blockItemStack);
+						return null;
+					});
 				}
 			}
-			
-			// Multiplayer
-			quester.dispatchMultiplayerEverything("placeBlock", (Quester q, Quest quest) -> {
-				q.placeBlock(quest, blockItemStack);
-				return null;
-			});
 		}
 	}
 
@@ -445,15 +446,15 @@ public class PlayerListener implements Listener {
 				if (quester.containsObjective(quest, "placeBlock")) {
 					if (evt.isCancelled() == false) {
 						quester.placeBlock(quest, blockItemStack);
+						
+						// Multiplayer
+						quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
+							q.placeBlock(quest, blockItemStack);
+							return null;
+						});
 					}
 				}
 			}
-			
-			// Multiplayer
-			quester.dispatchMultiplayerEverything("placeBlock", (Quester q, Quest quest) -> {
-				q.placeBlock(quest, blockItemStack);
-				return null;
-			});
 		}
 	}
 
@@ -469,6 +470,14 @@ public class PlayerListener implements Listener {
 					if (quester.containsObjective(quest, "breakBlock")) {
 						if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false) {
 							quester.breakBlock(quest, blockItemStack);
+							
+							// Multiplayer
+							quester.dispatchMultiplayerEverything(quest, "breakBlock", (Quester q) -> {
+								if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false) {
+									q.breakBlock(quest, blockItemStack);
+								}
+								return null;
+							});
 						}
 					}
 					if (quester.containsObjective(quest, "placeBlock")) {
@@ -477,40 +486,36 @@ public class PlayerListener implements Listener {
 								int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
 								is.setAmount(is.getAmount() - 1);
 								quester.getQuestData(quest).blocksPlaced.set(index, is);
+								
+								// Multiplayer
+								quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
+									for (ItemStack is2 : q.getQuestData(quest).blocksPlaced) {
+										if (evt.getBlock().getType().equals(is2.getType()) && is2.getAmount() > 0) {
+											int index2 = q.getQuestData(quest).blocksPlaced.indexOf(is2);
+											is2.setAmount(is2.getAmount() - 1);
+											q.getQuestData(quest).blocksPlaced.set(index2, is2);
+										}
+									}
+									return null;
+								});
 							}
 						}
 					}
 					if (quester.containsObjective(quest, "cutBlock")) {
 						if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
 							quester.cutBlock(quest, blockItemStack);
+							
+							// Multiplayer
+							quester.dispatchMultiplayerEverything(quest, "cutBlock", (Quester q) -> {
+								if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
+									q.cutBlock(quest, blockItemStack);
+								}
+								return null;
+							});
 						}
 					}
 				}
 			}
-			
-			// Multiplayer
-			quester.dispatchMultiplayerEverything("breakBlock", (Quester q, Quest quest) -> {
-				if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false) {
-					q.breakBlock(quest, blockItemStack);
-				}
-				return null;
-			});
-			quester.dispatchMultiplayerEverything("placeBlock", (Quester q, Quest quest) -> {
-				for (ItemStack is : q.getQuestData(quest).blocksPlaced) {
-					if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-						int index = q.getQuestData(quest).blocksPlaced.indexOf(is);
-						is.setAmount(is.getAmount() - 1);
-						q.getQuestData(quest).blocksPlaced.set(index, is);
-					}
-				}
-				return null;
-			});
-			quester.dispatchMultiplayerEverything("cutBlock", (Quester q, Quest quest) -> {
-				if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
-					q.cutBlock(quest, blockItemStack);
-				}
-				return null;
-			});
 		}
 	}
 
@@ -523,14 +528,14 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "shearSheep")) {
 						quester.shearSheep(quest, sheep.getColor());
+						
+						// Multiplayer
+						quester.dispatchMultiplayerEverything(quest, "shearSheep", (Quester q) -> {
+							q.shearSheep(quest, sheep.getColor());
+							return null;
+						});
 					}
 				}
-				
-				// Multiplayer
-				quester.dispatchMultiplayerEverything("shearSheep", (Quester q, Quest quest) -> {
-					q.shearSheep(quest, sheep.getColor());
-					return null;
-				});
 			}
 		}
 	}
@@ -544,14 +549,14 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "tameMob")) {
 						quester.tameMob(quest, evt.getEntityType());
+						
+						// Multiplayer
+						quester.dispatchMultiplayerEverything(quest, "tameMob", (Quester q) -> {
+							q.tameMob(quest, evt.getEntityType());
+							return null;
+						});
 					}
 				}
-				
-				// Multiplayer
-				quester.dispatchMultiplayerEverything("tameMob", (Quester q, Quest quest) -> {
-					q.tameMob(quest, evt.getEntityType());
-					return null;
-				});
 			}
 		}
 	}
@@ -567,14 +572,14 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "craftItem")) {
 						quester.craftItem(quest, craftedItem);
+						
+						// Multiplayer
+						quester.dispatchMultiplayerEverything(quest, "craftItem", (Quester q) -> {
+							q.craftItem(quest, craftedItem);
+							return null;
+						});
 					}
 				}
-				
-				// Multiplayer
-				quester.dispatchMultiplayerEverything("craftItem", (Quester q, Quest quest) -> {
-					q.craftItem(quest, craftedItem);
-					return null;
-				});
 			}
 		}
 	}
@@ -611,14 +616,14 @@ public class PlayerListener implements Listener {
 					for (Quest quest : quester.getCurrentQuests().keySet()) {
 						if (quester.containsObjective(quest, "smeltItem")) {
 							quester.smeltItem(quest, evt.getCurrentItem());
+							
+							// Multiplayer
+							quester.dispatchMultiplayerEverything(quest, "smeltItem", (Quester q) -> {
+								q.smeltItem(quest, evt.getCurrentItem());
+								return null;
+							});
 						}
 					}
-					
-					// Multiplayer
-					quester.dispatchMultiplayerEverything("smeltItem", (Quester q, Quest quest) -> {
-						q.smeltItem(quest, evt.getCurrentItem());
-						return null;
-					});
 				}
 			} else if (evt.getInventory().getType() == InventoryType.BREWING) {
 				if (evt.getSlotType() == SlotType.CRAFTING) {
@@ -626,14 +631,14 @@ public class PlayerListener implements Listener {
 					for (Quest quest : quester.getCurrentQuests().keySet()) {
 						if (quester.containsObjective(quest, "brewItem")) {
 							quester.brewItem(quest, evt.getCurrentItem());
+							
+							// Multiplayer
+							quester.dispatchMultiplayerEverything(quest, "brewItem", (Quester q) -> {
+								q.brewItem(quest, evt.getCurrentItem());
+								return null;
+							});
 						}
 					}
-					
-					// Multiplayer
-					quester.dispatchMultiplayerEverything("brewItem", (Quester q, Quest quest) -> {
-						q.brewItem(quest, evt.getCurrentItem());
-						return null;
-					});
 				}
 			}
 		}
@@ -647,17 +652,15 @@ public class PlayerListener implements Listener {
 				if (quester.containsObjective(quest, "enchantItem")) {
 					for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
 						quester.enchantItem(quest, e, evt.getItem().getType());
+						
+						// Multiplayer
+						quester.dispatchMultiplayerEverything(quest, "enchantItem", (Quester q) -> {
+							q.enchantItem(quest, e, evt.getItem().getType());
+							return null;
+						});
 					}
 				}
 			}
-			
-			// Multiplayer
-			quester.dispatchMultiplayerEverything("enchantItem", (Quester q, Quest quest) -> {
-				for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
-					q.enchantItem(quest, e, evt.getItem().getType());
-				}
-				return null;
-			});
 		}
 	}
 
@@ -712,14 +715,14 @@ public class PlayerListener implements Listener {
 					for (Quest quest : quester.getCurrentQuests().keySet()) {
 						if (quester.containsObjective(quest, "killNPC")) {
 							quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+							
+							// Multiplayer
+							quester.dispatchMultiplayerEverything(quest, "killNPC", (Quester q) -> {
+								q.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+								return null;
+							});
 						}
 					}
-					
-					// Multiplayer
-					quester.dispatchMultiplayerEverything("killNPC", (Quester q, Quest quest) -> {
-						q.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
-						return null;
-					});
 					return;
 				}
 			}
@@ -727,14 +730,14 @@ public class PlayerListener implements Listener {
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "killMob")) {
 					quester.killMob(quest, target.getLocation(), target.getType());
+					
+					// Multiplayer
+					quester.dispatchMultiplayerEverything(quest, "killMob", (Quester q) -> {
+						q.killMob(quest, target.getLocation(), target.getType());
+						return null;
+					});
 				}
 			}
-			
-			// Multiplayer
-			quester.dispatchMultiplayerEverything("killMob", (Quester q, Quest quest) -> {
-				q.killMob(quest, target.getLocation(), target.getType());
-				return null;
-			});
 		}
 	}
 
@@ -822,14 +825,14 @@ public class PlayerListener implements Listener {
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "killPlayer")) {
 					quester.killPlayer(quest, (Player)target);
+					
+					// Multiplayer
+					quester.dispatchMultiplayerEverything(quest, "killPlayer", (Quester q) -> {
+						q.killPlayer(quest, (Player)target);
+						return null;
+					});
 				}
 			}
-			
-			// Multiplayer
-			quester.dispatchMultiplayerEverything("killPlayer", (Quester q, Quest quest) -> {
-				q.killPlayer(quest, (Player)target);
-				return null;
-			});
 		}
 	}
 
@@ -841,14 +844,14 @@ public class PlayerListener implements Listener {
 			for (Quest quest : quester.getCurrentQuests().keySet()) {
 				if (quester.containsObjective(quest, "catchFish") && evt.getState().equals(State.CAUGHT_FISH)) {
 					quester.catchFish(quest);
+					
+					// Multiplayer
+					quester.dispatchMultiplayerEverything(quest, "catchFish", (Quester q) -> {
+						q.catchFish(quest);
+						return null;
+					});
 				}
 			}
-			
-			// Multiplayer
-			quester.dispatchMultiplayerEverything("catchFish", (Quester q, Quest quest) -> {
-				q.catchFish(quest);
-				return null;
-			});
 		}
 	}
 
@@ -973,14 +976,14 @@ public class PlayerListener implements Listener {
 				for (Quest quest : quester.getCurrentQuests().keySet()) {
 					if (quester.containsObjective(quest, "reachLocation")) {
 						quester.reachLocation(quest, evt.getTo());
+						
+						// Multiplayer
+						quester.dispatchMultiplayerEverything(quest, "reachLocation", (Quester q) -> {
+							q.reachLocation(quest, evt.getTo());
+							return null;
+						});
 					}
 				}
-				
-				// Multiplayer
-				quester.dispatchMultiplayerEverything("reachLocation", (Quester q, Quest quest) -> {
-					q.reachLocation(quest, evt.getTo());
-					return null;
-				});
 			}
 		}
 	}
