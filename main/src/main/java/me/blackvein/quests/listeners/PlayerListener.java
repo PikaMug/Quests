@@ -727,11 +727,12 @@ public class PlayerListener implements Listener {
 				}
 			}
 			Quester quester = plugin.getQuester(damager.getUniqueId());
-			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.containsObjective(quest, "killMob")) {
+			LinkedList<Quest> allQuests = plugin.getQuests();
+			for (Quest quest : allQuests) {
+				if ((quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "killMob"))
+						|| !quest.getOptions().getRequireSameQuest()) {
 					quester.killMob(quest, target.getLocation(), target.getType());
-					
-					// Multiplayer
+						
 					quester.dispatchMultiplayerEverything(quest, "killMob", (Quester q) -> {
 						q.killMob(quest, target.getLocation(), target.getType());
 						return null;
