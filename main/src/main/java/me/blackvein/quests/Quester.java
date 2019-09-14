@@ -3281,7 +3281,7 @@ public class Quester {
 		if (quest.getOptions().getShareProgressLevel() == 1) {
 			List<Quester> mq = getMultiplayerQuesters(quest);
 			for (Quester q : mq) {
-				if (q.containsObjective(quest, objectiveType) || !quest.getOptions().getRequireSameQuest()) {
+				if (q.containsObjective(quest, objectiveType)) {
 					fun.apply(q);
 				}
 					
