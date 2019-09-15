@@ -3282,9 +3282,7 @@ public class Quester {
 			List<Quester> mq = getMultiplayerQuesters(quest);
 			for (Quester q : mq) {
 				if (q.containsObjective(quest, objectiveType)) {
-					if (quest.getOptions().getRequireSameQuest() && this.containsObjective(quest, objectiveType)) {
-						fun.apply(q);
-					} else if (!quest.getOptions().getRequireSameQuest()) {
+					if (!quest.getOptions().getRequireSameQuest() || this.containsObjective(quest, objectiveType)) {
 						fun.apply(q);
 					}
 				}
