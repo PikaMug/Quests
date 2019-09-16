@@ -3280,6 +3280,9 @@ public class Quester {
 	public void dispatchMultiplayerEverything(Quest quest, String objectiveType, Function<Quester, Void> fun) {
 		if (quest.getOptions().getShareProgressLevel() == 1) {
 			List<Quester> mq = getMultiplayerQuesters(quest);
+			if (mq == null) {
+				return;
+			}
 			for (Quester q : mq) {
 				if (q.containsObjective(quest, objectiveType)) {
 					if (!quest.getOptions().getRequireSameQuest() || this.containsObjective(quest, objectiveType)) {
@@ -3379,17 +3382,17 @@ public class Quester {
 	 * Get a list of follow Questers in a party or group
 	 * 
 	 * @param quest The quest which uses a linked plugin, i.e. Parties or DungeonsXL
-	 * @return null if quest is null, no linked plugins, or party/group is null
+	 * @return Potentially empty list of Questers or null for invalid quest
 	 */
 	public List<Quester> getMultiplayerQuesters(Quest quest) {
 		if (quest == null) {
 			return null;
 		}
+		List<Quester> mq = new LinkedList<Quester>();
 		if (plugin.getDependencies().getPartiesApi() != null) {
 			if (quest.getOptions().getUsePartiesPlugin()) {
 				Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies().getPartiesApi().getPartyPlayer(getUUID()).getPartyName());
 				if (party != null) {
-					List<Quester> mq = new LinkedList<Quester>();
 					for (UUID id : party.getMembers()) {
 						if (!id.equals(getUUID())) {
 							mq.add(plugin.getQuester(id));
@@ -3403,7 +3406,6 @@ public class Quester {
 			if (quest.getOptions().getUseDungeonsXLPlugin()) {
 				DGroup group = DGroup.getByPlayer(getPlayer());
 				if (group != null) {
-					List<Quester> mq = new LinkedList<Quester>();
 					for (UUID id : group.getPlayers()) {
 						if (!id.equals(getUUID())) {
 							mq.add(plugin.getQuester(id));
@@ -3413,7 +3415,7 @@ public class Quester {
 				}
 			}
 		}
-		return null;
+		return mq;
 	}
 	
 	/**
