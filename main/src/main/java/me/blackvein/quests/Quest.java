@@ -49,6 +49,7 @@ import net.citizensnpcs.api.npc.NPC;
 public class Quest {
 
 	protected Quests plugin;
+	protected String id;
 	private String name;
 	protected String description;
 	protected String finished;
@@ -63,20 +64,8 @@ public class Quest {
 	private Rewards rews = new Rewards();
 	private Options opts = new Options();
 	
-	public Requirements getRequirements() {
-		return reqs;
-	}
-	
-	public Planner getPlanner() {
-		return pln;
-	}
-	
-	public Rewards getRewards() {
-		return rews;
-	}
-	
-	public Options getOptions() {
-		return opts;
+	public String getId() {
+		return id;
 	}
 	
 	public String getName() {
@@ -153,6 +142,22 @@ public class Quest {
 	
 	public void setInitialAction(Action initialAction) {
 		this.initialAction = initialAction;
+	}
+	
+	public Requirements getRequirements() {
+		return reqs;
+	}
+	
+	public Planner getPlanner() {
+		return pln;
+	}
+	
+	public Rewards getRewards() {
+		return rews;
+	}
+	
+	public Options getOptions() {
+		return opts;
 	}
 	
 	/**

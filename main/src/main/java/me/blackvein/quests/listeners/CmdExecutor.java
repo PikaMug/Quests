@@ -673,10 +673,16 @@ public class CmdExecutor implements CommandExecutor {
 				if (args.length == 1) {
 					player.sendMessage(ChatColor.YELLOW + Lang.get(player, "COMMAND_TAKE_USAGE"));
 				} else {
-					Quest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
+					final Quest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
+					final Quester quester = plugin.getQuester(player.getUniqueId());
 					if (questToFind != null) {
-						final Quest q = questToFind;
-						plugin.getQuester(player.getUniqueId()).offerQuest(q, true);
+						for (Quest q : quester.getCurrentQuests().keySet()) {
+							if (q.getId().equals(questToFind.getId())) {
+								player.sendMessage(ChatColor.RED + Lang.get(player, "questAlreadyOn"));
+								return;
+							}
+						}
+						quester.offerQuest(questToFind, true);
 					} else {
 						player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questNotFound"));
 					}
