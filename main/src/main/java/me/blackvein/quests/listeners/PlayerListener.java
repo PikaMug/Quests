@@ -205,18 +205,16 @@ public class PlayerListener implements Listener {
     				boolean hasObjective = false;
     				if (evt.isCancelled() == false) {
 						final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt.getClickedBlock().getState().getData().toItemStack().getDurability());
-						
-    					for (Quest quest : quester.getCurrentQuests().keySet()) {
-        					if (quester.containsObjective(quest, "useBlock")) {
+    					for (Quest quest : plugin.getQuests()) {
+        					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "useBlock")) {
         						quester.useBlock(quest, blockItemStack);
         						hasObjective = true;
-        						
-        						// Multiplayer
-        						quester.dispatchMultiplayerEverything(quest, "useBlock", (Quester q) -> {
-        							q.useBlock(quest, blockItemStack);
-        							return null;
-        						});
         					}
+        					
+    						quester.dispatchMultiplayerEverything(quest, "useBlock", (Quester q) -> {
+    							q.useBlock(quest, blockItemStack);
+    							return null;
+    						});
         				}
     				}
     				if (!hasObjective) {
@@ -340,8 +338,8 @@ public class PlayerListener implements Listener {
 	public void onPlayerChat(AsyncPlayerChatEvent evt) {
 		if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 			final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-			if (quester.getCurrentQuests().isEmpty() == false) {
-				for (final Quest quest : quester.getCurrentQuests().keySet()) {
+			for (final Quest quest : plugin.getQuests()) {
+				if (quester.getCurrentQuests().containsKey(quest)) {
 					final Stage currentStage = quester.getCurrentStage(quest);
 					if (currentStage == null) {
 						plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() + " on chat for quest " + quest.getName());
@@ -366,14 +364,13 @@ public class PlayerListener implements Listener {
 					}
 					if (quester.containsObjective(quest, "password")) {
 						quester.sayPassword(quest, evt);
-						
-						// Multiplayer
-						quester.dispatchMultiplayerEverything(quest, "password", (Quester q) -> {
-							q.sayPassword(quest, evt);
-							return null;
-						});
 					}
 				}
+				
+				quester.dispatchMultiplayerEverything(quest, "password", (Quester q) -> {
+					q.sayPassword(quest, evt);
+					return null;
+				});
 			}
 		}
 	}
@@ -419,18 +416,16 @@ public class PlayerListener implements Listener {
 	public void onBlockDamage(BlockDamageEvent evt) {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 			final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
-			
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.containsObjective(quest, "damageBlock")) {
+			for (Quest quest : plugin.getQuests()) {
+				if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "damageBlock")) {
 					quester.damageBlock(quest, blockItemStack);
-					
-					// Multiplayer
-					quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
-						q.placeBlock(quest, blockItemStack);
-						return null;
-					});
 				}
+				
+				quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
+					q.placeBlock(quest, blockItemStack);
+					return null;
+				});
 			}
 		}
 	}
@@ -440,19 +435,17 @@ public class PlayerListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent evt) {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 			final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
-			
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.containsObjective(quest, "placeBlock")) {
-					if (evt.isCancelled() == false) {
+			for (Quest quest : plugin.getQuests()) {
+				if (evt.isCancelled() == false) {
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "placeBlock")) {
 						quester.placeBlock(quest, blockItemStack);
-						
-						// Multiplayer
-						quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
-							q.placeBlock(quest, blockItemStack);
-							return null;
-						});
 					}
+					
+					quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
+						q.placeBlock(quest, blockItemStack);
+						return null;
+					});
 				}
 			}
 		}
@@ -463,57 +456,50 @@ public class PlayerListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent evt) {
 		if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
 			final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState().getData().toItemStack().getDurability());
-			
 			Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-			for (Quest quest : quester.getCurrentQuests().keySet()) {
+			for (Quest quest : plugin.getQuests()) {
 				if (evt.isCancelled() == false) {
-					if (quester.containsObjective(quest, "breakBlock")) {
-						if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false) {
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "breakBlock")) {
+						if (!evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
 							quester.breakBlock(quest, blockItemStack);
-							
-							// Multiplayer
-							quester.dispatchMultiplayerEverything(quest, "breakBlock", (Quester q) -> {
-								if (evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH) == false) {
-									q.breakBlock(quest, blockItemStack);
-								}
-								return null;
-							});
 						}
 					}
-					if (quester.containsObjective(quest, "placeBlock")) {
+					quester.dispatchMultiplayerEverything(quest, "breakBlock", (Quester q) -> {
+						if (!evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+							q.breakBlock(quest, blockItemStack);
+						}
+						return null;
+					});
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "placeBlock")) {
 						for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
 							if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
 								int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
 								is.setAmount(is.getAmount() - 1);
 								quester.getQuestData(quest).blocksPlaced.set(index, is);
-								
-								// Multiplayer
-								quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
-									for (ItemStack is2 : q.getQuestData(quest).blocksPlaced) {
-										if (evt.getBlock().getType().equals(is2.getType()) && is2.getAmount() > 0) {
-											int index2 = q.getQuestData(quest).blocksPlaced.indexOf(is2);
-											is2.setAmount(is2.getAmount() - 1);
-											q.getQuestData(quest).blocksPlaced.set(index2, is2);
-										}
-									}
-									return null;
-								});
 							}
 						}
 					}
-					if (quester.containsObjective(quest, "cutBlock")) {
+					quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
+						for (ItemStack is : q.getQuestData(quest).blocksPlaced) {
+							if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
+								int index = q.getQuestData(quest).blocksPlaced.indexOf(is);
+								is.setAmount(is.getAmount() - 1);
+								q.getQuestData(quest).blocksPlaced.set(index, is);
+							}
+						}
+						return null;
+					});
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "cutBlock")) {
 						if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
 							quester.cutBlock(quest, blockItemStack);
-							
-							// Multiplayer
-							quester.dispatchMultiplayerEverything(quest, "cutBlock", (Quester q) -> {
-								if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
-									q.cutBlock(quest, blockItemStack);
-								}
-								return null;
-							});
 						}
 					}
+					quester.dispatchMultiplayerEverything(quest, "cutBlock", (Quester q) -> {
+						if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
+							q.cutBlock(quest, blockItemStack);
+						}
+						return null;
+					});
 				}
 			}
 		}
@@ -525,16 +511,15 @@ public class PlayerListener implements Listener {
 			if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 				Sheep sheep = (Sheep) evt.getEntity();
 				Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-				for (Quest quest : quester.getCurrentQuests().keySet()) {
-					if (quester.containsObjective(quest, "shearSheep")) {
+				for (Quest quest : plugin.getQuests()) {
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "shearSheep")) {
 						quester.shearSheep(quest, sheep.getColor());
-						
-						// Multiplayer
-						quester.dispatchMultiplayerEverything(quest, "shearSheep", (Quester q) -> {
-							q.shearSheep(quest, sheep.getColor());
-							return null;
-						});
 					}
+					
+					quester.dispatchMultiplayerEverything(quest, "shearSheep", (Quester q) -> {
+						q.shearSheep(quest, sheep.getColor());
+						return null;
+					});
 				}
 			}
 		}
@@ -546,16 +531,15 @@ public class PlayerListener implements Listener {
 			Player p = (Player) evt.getOwner();
 			if (plugin.canUseQuests(p.getUniqueId())) {
 				Quester quester = plugin.getQuester(p.getUniqueId());
-				for (Quest quest : quester.getCurrentQuests().keySet()) {
-					if (quester.containsObjective(quest, "tameMob")) {
+				for (Quest quest : plugin.getQuests()) {
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "tameMob")) {
 						quester.tameMob(quest, evt.getEntityType());
-						
-						// Multiplayer
-						quester.dispatchMultiplayerEverything(quest, "tameMob", (Quester q) -> {
-							q.tameMob(quest, evt.getEntityType());
-							return null;
-						});
 					}
+					
+					quester.dispatchMultiplayerEverything(quest, "tameMob", (Quester q) -> {
+						q.tameMob(quest, evt.getEntityType());
+						return null;
+					});
 				}
 			}
 		}
@@ -569,16 +553,15 @@ public class PlayerListener implements Listener {
 			if (plugin.checkQuester(evt.getWhoClicked().getUniqueId()) == false) {
 				final ItemStack craftedItem = getCraftedItem(evt);
 				Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
-				for (Quest quest : quester.getCurrentQuests().keySet()) {
-					if (quester.containsObjective(quest, "craftItem")) {
+				for (Quest quest : plugin.getQuests()) {
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "craftItem")) {
 						quester.craftItem(quest, craftedItem);
-						
-						// Multiplayer
-						quester.dispatchMultiplayerEverything(quest, "craftItem", (Quester q) -> {
-							q.craftItem(quest, craftedItem);
-							return null;
-						});
 					}
+					
+					quester.dispatchMultiplayerEverything(quest, "craftItem", (Quester q) -> {
+						q.craftItem(quest, craftedItem);
+						return null;
+					});
 				}
 			}
 		}
@@ -613,31 +596,29 @@ public class PlayerListener implements Listener {
 			if (evt.getInventory().getType() == InventoryType.FURNACE) {
 				if (evt.getSlotType() == SlotType.RESULT) {
 					Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
-					for (Quest quest : quester.getCurrentQuests().keySet()) {
-						if (quester.containsObjective(quest, "smeltItem")) {
+					for (Quest quest : plugin.getQuests()) {
+						if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "smeltItem")) {
 							quester.smeltItem(quest, evt.getCurrentItem());
-							
-							// Multiplayer
-							quester.dispatchMultiplayerEverything(quest, "smeltItem", (Quester q) -> {
-								q.smeltItem(quest, evt.getCurrentItem());
-								return null;
-							});
 						}
+						
+						quester.dispatchMultiplayerEverything(quest, "smeltItem", (Quester q) -> {
+							q.smeltItem(quest, evt.getCurrentItem());
+							return null;
+						});
 					}
 				}
 			} else if (evt.getInventory().getType() == InventoryType.BREWING) {
 				if (evt.getSlotType() == SlotType.CRAFTING) {
 					Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
-					for (Quest quest : quester.getCurrentQuests().keySet()) {
-						if (quester.containsObjective(quest, "brewItem")) {
+					for (Quest quest : plugin.getQuests()) {
+						if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "brewItem")) {
 							quester.brewItem(quest, evt.getCurrentItem());
-							
-							// Multiplayer
-							quester.dispatchMultiplayerEverything(quest, "brewItem", (Quester q) -> {
-								q.brewItem(quest, evt.getCurrentItem());
-								return null;
-							});
 						}
+						
+						quester.dispatchMultiplayerEverything(quest, "brewItem", (Quester q) -> {
+							q.brewItem(quest, evt.getCurrentItem());
+							return null;
+						});
 					}
 				}
 			}
@@ -648,18 +629,19 @@ public class PlayerListener implements Listener {
 	public void onEnchantItem(EnchantItemEvent evt) {
 		if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
 			Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
-			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.containsObjective(quest, "enchantItem")) {
+			for (Quest quest : plugin.getQuests()) {
+				if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "enchantItem")) {
 					for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
 						quester.enchantItem(quest, e, evt.getItem().getType());
-						
-						// Multiplayer
-						quester.dispatchMultiplayerEverything(quest, "enchantItem", (Quester q) -> {
-							q.enchantItem(quest, e, evt.getItem().getType());
-							return null;
-						});
 					}
 				}
+				
+				quester.dispatchMultiplayerEverything(quest, "enchantItem", (Quester q) -> {
+					for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
+						q.enchantItem(quest, e, evt.getItem().getType());
+					}
+					return null;
+				});
 			}
 		}
 	}
@@ -709,34 +691,29 @@ public class PlayerListener implements Listener {
 			return;
 		}
 		if (damager instanceof Player) {
-			if (plugin.getDependencies().getCitizens() != null) {
-				if (CitizensAPI.getNPCRegistry().isNPC(target)) {
-					Quester quester = plugin.getQuester(damager.getUniqueId());
-					for (Quest quest : quester.getCurrentQuests().keySet()) {
-						if (quester.containsObjective(quest, "killNPC")) {
-							quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
-							
-							// Multiplayer
-							quester.dispatchMultiplayerEverything(quest, "killNPC", (Quester q) -> {
-								q.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
-								return null;
-							});
-						}
-					}
-					return;
-				}
-			}
 			Quester quester = plugin.getQuester(damager.getUniqueId());
-			LinkedList<Quest> allQuests = plugin.getQuests();
-			for (Quest quest : allQuests) {
-				if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "killMob")) {
-					quester.killMob(quest, target.getLocation(), target.getType());
+			if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
+				for (Quest quest : plugin.getQuests()) {
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "killNPC")) {
+						quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+					}
+					
+					quester.dispatchMultiplayerEverything(quest, "killNPC", (Quester q) -> {
+						q.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+						return null;
+					});
 				}
-				
-				quester.dispatchMultiplayerEverything(quest, "killMob", (Quester q) -> {
-					q.killMob(quest, target.getLocation(), target.getType());
-					return null;
-				});
+			} else {
+				for (Quest quest : plugin.getQuests()) {
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "killMob")) {
+						quester.killMob(quest, target.getLocation(), target.getType());
+					}
+					
+					quester.dispatchMultiplayerEverything(quest, "killMob", (Quester q) -> {
+						q.killMob(quest, target.getLocation(), target.getType());
+						return null;
+					});
+				}
 			}
 		}
 	}
@@ -822,16 +799,15 @@ public class PlayerListener implements Listener {
 				}
 			}
 			Quester quester = plugin.getQuester(damager.getUniqueId());
-			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.containsObjective(quest, "killPlayer")) {
+			for (Quest quest : plugin.getQuests()) {
+				if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "killPlayer")) {
 					quester.killPlayer(quest, (Player)target);
-					
-					// Multiplayer
-					quester.dispatchMultiplayerEverything(quest, "killPlayer", (Quester q) -> {
-						q.killPlayer(quest, (Player)target);
-						return null;
-					});
 				}
+				
+				quester.dispatchMultiplayerEverything(quest, "killPlayer", (Quester q) -> {
+					q.killPlayer(quest, (Player)target);
+					return null;
+				});
 			}
 		}
 	}
@@ -841,16 +817,15 @@ public class PlayerListener implements Listener {
 		Player player = evt.getPlayer();
 		if (plugin.canUseQuests(player.getUniqueId())) {
 			Quester quester = plugin.getQuester(player.getUniqueId());
-			for (Quest quest : quester.getCurrentQuests().keySet()) {
-				if (quester.containsObjective(quest, "catchFish") && evt.getState().equals(State.CAUGHT_FISH)) {
+			for (Quest quest : plugin.getQuests()) {
+				if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "catchFish") && evt.getState().equals(State.CAUGHT_FISH)) {
 					quester.catchFish(quest);
-					
-					// Multiplayer
-					quester.dispatchMultiplayerEverything(quest, "catchFish", (Quester q) -> {
-						q.catchFish(quest);
-						return null;
-					});
 				}
+				
+				quester.dispatchMultiplayerEverything(quest, "catchFish", (Quester q) -> {
+					q.catchFish(quest);
+					return null;
+				});
 			}
 		}
 	}
@@ -973,16 +948,15 @@ public class PlayerListener implements Listener {
 		if (plugin.getQuester(evt.getPlayer().getUniqueId()) != null) {
 			if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
 				Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-				for (Quest quest : quester.getCurrentQuests().keySet()) {
-					if (quester.containsObjective(quest, "reachLocation")) {
+				for (Quest quest : plugin.getQuests()) {
+					if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "reachLocation")) {
 						quester.reachLocation(quest, evt.getTo());
-						
-						// Multiplayer
-						quester.dispatchMultiplayerEverything(quest, "reachLocation", (Quester q) -> {
-							q.reachLocation(quest, evt.getTo());
-							return null;
-						});
 					}
+					
+					quester.dispatchMultiplayerEverything(quest, "reachLocation", (Quester q) -> {
+						q.reachLocation(quest, evt.getTo());
+						return null;
+					});
 				}
 			}
 		}
