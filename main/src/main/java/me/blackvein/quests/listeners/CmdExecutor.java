@@ -112,7 +112,6 @@ public class CmdExecutor implements CommandExecutor {
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"), 3); // nextstage [player] [quest]
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RESET"), 2); // reset [player]
-			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI"), 2); // togglegui [npc id]
 			adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
 		} else {
 			commands.put("list", 1); // list {page}
@@ -137,7 +136,6 @@ public class CmdExecutor implements CommandExecutor {
 			adminCommands.put("nextstage", 3); // nextstage [player] [quest]
 			adminCommands.put("setstage", 4); // setstage [player] [quest] [stage]
 			adminCommands.put("reset", 2); // reset [player]
-			adminCommands.put("togglegui", 2); // togglegui [npc id]
 			adminCommands.put("reload", 1); // reload
 		}
 	}
@@ -1307,10 +1305,6 @@ public class CmdExecutor implements CommandExecutor {
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.remove")) {
 			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_REMOVE_HELP")
 					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove") + ChatColor.RED));
-		}
-		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.togglegui")) {
-			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI_HELP")
-					.replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TOGGLEGUI") : "togglegui") + ChatColor.RED));
 		}
 		if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
 			cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP")

@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -167,6 +168,7 @@ public class NpcListener implements Listener {
 					}
 				}
 				if (!hasObjective) {
+					boolean hasAtLeastOneGUI = false;
 					LinkedList<Quest> npcQuests = new LinkedList<Quest>();
 					for (Quest q : plugin.getQuests()) {
 						if (quester.getCurrentQuests().containsKey(q))
@@ -175,14 +177,27 @@ public class NpcListener implements Listener {
 							if (plugin.getSettings().canIgnoreLockedQuests() && (quester.getCompletedQuests().contains(q.getName()) == false || q.getPlanner().getCooldown() > -1)) {
 								if (q.testRequirements(quester)) {
 									npcQuests.add(q);
+									if (q.getGUIDisplay() != null) {
+										hasAtLeastOneGUI = true;
+									}
 								}
 							} else if (quester.getCompletedQuests().contains(q.getName()) == false || q.getPlanner().getCooldown() > -1) {
 								npcQuests.add(q);
+								if (q.getGUIDisplay() != null) {
+									hasAtLeastOneGUI = true;
+								}
 							}
 						}
 					}
 					if (npcQuests.isEmpty() == false && npcQuests.size() >= 1) {
-						quester.showGUIDisplay(evt.getNPC(), npcQuests);
+						if (hasAtLeastOneGUI) {
+							quester.showGUIDisplay(evt.getNPC(), npcQuests);
+						} else {
+							Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
+                            c.getContext().setSessionData("quests", npcQuests);
+                            c.getContext().setSessionData("npc", evt.getNPC().getName());
+                            c.begin();
+						}
 						return;
 					} else if (npcQuests.size() == 1) {
 						// TODO can this block even be reached?
@@ -197,18 +212,18 @@ public class NpcListener implements Listener {
 								plugin.getNpcConversationFactory().buildConversation(player).begin();
 							} else if (quester.getCurrentQuests().containsKey(q) == false) {
 								String msg = Lang.get(player, "questMaxAllowed");
-								msg = msg.replaceAll("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
+								msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
 								player.sendMessage(ChatColor.YELLOW + msg);
 							}
 						} else if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() || plugin.getSettings().getMaxQuests() < 1) {
 							if (quester.getCooldownDifference(q) > 0) {
 								String early = Lang.get(player, "questTooEarly");
-								early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-								early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
+								early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+								early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
 								player.sendMessage(ChatColor.YELLOW + early);
 							} else if (q.getPlanner().getCooldown() < 0) {
 								String completed = Lang.get(player, "questAlreadyCompleted");
-								completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+								completed = completed.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 								player.sendMessage(ChatColor.YELLOW + completed);
 							} else {
 								quester.setQuestToTake(q.getName());
@@ -220,7 +235,7 @@ public class NpcListener implements Listener {
 							}
 						} else if (quester.getCurrentQuests().containsKey(q) == false) {
 							String msg = Lang.get(player, "questMaxAllowed");
-							msg = msg.replaceAll("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
+							msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
 							player.sendMessage(ChatColor.YELLOW + msg);
 						}
 					} else if (npcQuests.isEmpty()) {

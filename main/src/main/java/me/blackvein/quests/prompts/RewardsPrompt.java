@@ -98,11 +98,11 @@ public class RewardsPrompt extends NumericPrompt {
 	public String getSelectionText(ConversationContext context, int number) {
 		switch (number) {
 			case 1:
-				return ChatColor.YELLOW + Lang.get("reqSetMoney");
+				return ChatColor.YELLOW + Lang.get("rewSetMoney");
 			case 2:
-				return ChatColor.YELLOW + Lang.get("reqSetQuestPoints");
+				return ChatColor.YELLOW + Lang.get("rewSetQuestPoints");
 			case 3:
-				return ChatColor.YELLOW + Lang.get("reqSetItem");
+				return ChatColor.YELLOW + Lang.get("rewSetItem");
 			case 4:
 				return ChatColor.YELLOW + Lang.get("rewSetExperience");
 			case 5:
@@ -110,9 +110,9 @@ public class RewardsPrompt extends NumericPrompt {
 			case 6:
 				return ChatColor.YELLOW + Lang.get("rewSetPermission");
 			case 7:
-				return ChatColor.YELLOW + Lang.get("reqSetMcMMO");
+				return ChatColor.YELLOW + Lang.get("rewSetMcMMO");
 			case 8:
-				return ChatColor.YELLOW + Lang.get("reqSetHeroes");
+				return ChatColor.YELLOW + Lang.get("rewSetHeroes");
 			case 9:
 				return ChatColor.YELLOW + Lang.get("rewSetPhat");
 			case 10:
