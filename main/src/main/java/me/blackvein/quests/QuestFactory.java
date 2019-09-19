@@ -999,6 +999,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		boolean useDungeonsXLPluginOpt = false;
 		boolean usePartiesPluginOpt = true;
 		Integer shareProgressLevelOpt = 1;
+		boolean requireSameQuestOpt = true;
 		if (cc.getSessionData(CK.Q_START_NPC) != null) {
 			npcStart = (Integer) cc.getSessionData(CK.Q_START_NPC);
 		}
@@ -1128,6 +1129,9 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		if (cc.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null) {
 			shareProgressLevelOpt = (Integer) cc.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL);
+		}
+		if (cc.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null) {
+			requireSameQuestOpt = (Boolean) cc.getSessionData(CK.OPT_REQUIRE_SAME_QUEST);
 		}
 		cs.set("name", name);
 		cs.set("npc-giver-id", npcStart);
@@ -1593,6 +1597,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		sch.set("use-dungeonsxl-plugin", useDungeonsXLPluginOpt);
 		sch.set("use-parties-plugin", usePartiesPluginOpt);
 		sch.set("share-progress-level", shareProgressLevelOpt);
+		sch.set("require-same-quest", requireSameQuestOpt);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1713,6 +1718,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		cc.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.getUseDungeonsXLPlugin());
 		cc.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.getUsePartiesPlugin());
 		cc.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
+		cc.setSessionData(CK.OPT_REQUIRE_SAME_QUEST, opt.getRequireSameQuest());
 		// Stages (Objectives)
 		int index = 1;
 		for (Stage stage : q.getStages()) {

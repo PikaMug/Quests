@@ -18,6 +18,7 @@ public class Options {
 	private boolean useDungeonsXLPlugin = false;
 	private boolean usePartiesPlugin = true;
 	private int shareProgressLevel = 1;
+	private boolean requireSameQuest = true;
 	
 	public boolean getAllowCommands() {
 		return allowCommands;
@@ -57,5 +58,13 @@ public class Options {
 	
 	public void setShareProgressLevel(int shareProgressLevel) {
 		this.shareProgressLevel = shareProgressLevel;
+	}
+	
+	public boolean getRequireSameQuest() {
+		return requireSameQuest;
+	}
+	
+	public void setRequireSameQuest(boolean requireSameQuest) {
+		this.requireSameQuest = requireSameQuest;
 	}
 }

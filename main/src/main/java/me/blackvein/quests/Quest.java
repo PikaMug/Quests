@@ -49,6 +49,7 @@ import net.citizensnpcs.api.npc.NPC;
 public class Quest {
 
 	protected Quests plugin;
+	protected String id;
 	private String name;
 	protected String description;
 	protected String finished;
@@ -63,20 +64,8 @@ public class Quest {
 	private Rewards rews = new Rewards();
 	private Options opts = new Options();
 	
-	public Requirements getRequirements() {
-		return reqs;
-	}
-	
-	public Planner getPlanner() {
-		return pln;
-	}
-	
-	public Rewards getRewards() {
-		return rews;
-	}
-	
-	public Options getOptions() {
-		return opts;
+	public String getId() {
+		return id;
 	}
 	
 	public String getName() {
@@ -154,61 +143,87 @@ public class Quest {
 	public void setInitialAction(Action initialAction) {
 		this.initialAction = initialAction;
 	}
+	
+	public Requirements getRequirements() {
+		return reqs;
+	}
+	
+	public Planner getPlanner() {
+		return pln;
+	}
+	
+	public Rewards getRewards() {
+		return rews;
+	}
+	
+	public Options getOptions() {
+		return opts;
+	}
+	
+	/**
+	 * Force player to proceed to the next ordered stage
+	 * 
+	 * @param quester Player to force
+	 * @deprecated Use nextStage(Quester, boolean)
+	 */
+	public void nextStage(Quester quester) {
+		nextStage(quester, false);
+	}
 
 	/**
 	 * Force player to proceed to the next ordered stage
 	 * 
-	 * @param q Player to force
+	 * @param quester Player to force
+	 * @param allowSharedProgress Whether to distribute progress to fellow questers
 	 */
-	public void nextStage(Quester q) {
-		if (q.getCurrentStage(this) == null) {
-			plugin.getLogger().severe("Current stage was null for quester " + q.getPlayer().getUniqueId());
+	public void nextStage(Quester quester, boolean allowSharedProgress) {
+		Stage currentStage = quester.getCurrentStage(this);
+		if (currentStage == null) {
+			plugin.getLogger().severe("Current stage was null for quester " + quester.getPlayer().getUniqueId());
 			return;
 		}
-		String stageCompleteMessage = q.getCurrentStage(this).completeMessage;
+		String stageCompleteMessage = currentStage.completeMessage;
 		if (stageCompleteMessage != null) {
-			q.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageCompleteMessage, this, q.getPlayer()));
+			quester.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageCompleteMessage, this, quester.getPlayer()));
 		}
 		if (plugin.getSettings().canUseCompass()) {
-			q.resetCompass();
-			q.findCompassTarget();
+			quester.resetCompass();
+			quester.findCompassTarget();
 		}
-		if (q.getCurrentStage(this).delay < 0) {
-			if (q.getCurrentStage(this).finishEvent != null) {
-				q.getCurrentStage(this).finishEvent.fire(q, this);
+		if (currentStage.delay < 0) {
+			if (currentStage.finishEvent != null) {
+				currentStage.finishEvent.fire(quester, this);
 			}
-			if (q.currentQuests.get(this) == (orderedStages.size() - 1)) {
-				if (q.getCurrentStage(this).script != null) {
-					plugin.getDenizenTrigger().runDenizenScript(q.getCurrentStage(this).script, q);
+			if (quester.currentQuests.get(this) == (orderedStages.size() - 1)) {
+				if (currentStage.script != null) {
+					plugin.getDenizenTrigger().runDenizenScript(currentStage.script, quester);
 				}
-				completeQuest(q);
+				completeQuest(quester);
 			} else {
 				try {
-					setStage(q, q.currentQuests.get(this) + 1);
-
-					// Multiplayer
-					if (opts.getShareProgressLevel() == 3) {
-						List<Quester> mq = q.getMultiplayerQuesters(this);
-						if (mq != null) {
-							for (Quester qq : mq) {
-								if (qq.getCurrentQuests().containsKey(this)) {
-									setStage(qq, qq.currentQuests.get(this) + 1);
-								}
-							}
-						}
-					}
+					setStage(quester, quester.currentQuests.get(this) + 1);
 				} catch (InvalidStageException e) {
 					e.printStackTrace();
 				}
 			}
-			if (q.getQuestData(this) != null) {
-				q.getQuestData(this).delayStartTime = 0;
-				q.getQuestData(this).delayTimeLeft = -1;
+			if (quester.getQuestData(this) != null) {
+				quester.getQuestData(this).delayStartTime = 0;
+				quester.getQuestData(this).delayTimeLeft = -1;
+			}
+			
+			// Multiplayer
+			if (opts.getShareProgressLevel() == 3) {
+				List<Quester> mq = quester.getMultiplayerQuesters(this);
+				for (Quester qq : mq) {
+					if (currentStage.equals(qq.getCurrentStage(this))) {
+						nextStage(qq, allowSharedProgress);
+					}
+				}
 			}
 		} else {
-			q.startStageTimer(this);
+			quester.startStageTimer(this);
 		}
-		q.updateJournal();
+		quester.updateJournal();
 	}
 
 	/**
@@ -232,7 +247,7 @@ public class Quest {
 		quester.hardStagePut(this, stage);
 		quester.addEmptiesFor(this, stage);
 		if (currentStage.script != null) {
-			plugin.getDenizenTrigger().runDenizenScript(currentStage.script, quester);
+			plugin.getDenizenTrigger().runDenizenScript(quester.getCurrentStage(this).script, quester);
 		}
 		/*
 		 * if (quester.getCurrentStage(this).finishEvent != null) { quester.getCurrentStage(this).finishEvent.fire(quester); }
@@ -685,13 +700,9 @@ public class Quest {
         // Multiplayer
         if (opts.getShareProgressLevel() == 4) {
         	List<Quester> mq = q.getMultiplayerQuesters(this);
-    		if (mq != null) {
-    			for (Quester qq : mq) {
-    				if (qq.getCurrentQuests().containsKey(this)) {
-    					completeQuest(qq);
-    				}
-    			}
-    		}
+			for (Quester qq : mq) {
+				completeQuest(qq);
+			}
         }
 	}
 	

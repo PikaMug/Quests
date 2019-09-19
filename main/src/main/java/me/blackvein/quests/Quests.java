@@ -1339,9 +1339,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 	}
 
 	/**
-	 * Reload quests, player data, actions, config settings, lang and modules, in that order
+	 * Reload quests, actions, config settings, lang and modules, and player data
 	 */
 	public void reloadQuests() {
+		for (Quester quester : questers) {
+			quester.saveData();
+		}
 		quests.clear();
 		events.clear();
 		
@@ -1360,6 +1363,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		loadModules();
 		for (Quester quester : questers) {
+			quester.loadData();
 			for (Quest q : quester.currentQuests.keySet()) {
 				quester.checkQuest(q);
 			}
@@ -1465,6 +1469,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				try { // main "skip quest" try/catch block
 					Quest quest = new Quest();
 					failedToLoad = false;
+					quest.id = questKey;
 					if (config.contains("quests." + questKey + ".name")) {
 						quest.setName(parseString(config.getString("quests." + questKey + ".name"), quest));
 					} else {
@@ -1945,6 +1950,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 		if (config.contains("quests." + questKey + ".options.share-progress-level")) {
 			opts.setShareProgressLevel(config.getInt("quests." + questKey + ".options.share-progress-level"));
+		}
+		if (config.contains("quests." + questKey + ".options.require-same-quest")) {
+			opts.setRequireSameQuest(config.getBoolean("quests." + questKey + ".options.require-same-quest"));
 		}
 	}
 
