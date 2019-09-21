@@ -476,7 +476,7 @@ optCommandsDenied: "Вы не можете использовать команд
 optUseDungeonsXLPlugin: "Используйте плагин DungeonsXL"
 optUsePartiesPlugin: "Используйте плагин Parties"
 optShareProgressLevel: "Уровень прогресса обмена"
-optRequireSameQuest: "Require same quest"
+optRequireSameQuest: "Требовать такой же квест"
 rewSetMoney: "Установить денежный приз"
 rewSetQuestPoints: "Установить очки квеста"
 rewSetItems: "Установить предмет"
