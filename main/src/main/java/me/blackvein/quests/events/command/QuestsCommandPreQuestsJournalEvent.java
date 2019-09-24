@@ -5,6 +5,9 @@ import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.Quester;
 
+/**
+ * Called when the /quests journal command is run by a player
+ */
 public class QuestsCommandPreQuestsJournalEvent extends QuestsCommandEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancel = false;
