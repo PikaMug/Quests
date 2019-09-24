@@ -81,6 +81,7 @@ public class RequirementsPrompt extends NumericPrompt {
 					return ChatColor.GRAY;
 				}
 			case 9:
+				return ChatColor.BLUE;
 			case 10:
 				if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
 						&& context.getSessionData(CK.REQ_ITEMS) == null && context.getSessionData(CK.REQ_PERMISSION) == null && context.getSessionData(CK.REQ_QUEST) == null 
