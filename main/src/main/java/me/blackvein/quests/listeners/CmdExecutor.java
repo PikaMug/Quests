@@ -1066,7 +1066,7 @@ public class CmdExecutor implements CommandExecutor {
 			int stage = -1;
 			if (args.length > 3) {
 				try {
-					stage = Integer.parseInt(args[2]);
+					stage = Integer.parseInt(args[3]);
 				} catch (NumberFormatException e) {
 					cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
 				}
@@ -1083,13 +1083,13 @@ public class CmdExecutor implements CommandExecutor {
 					msg = msg.replace("<player>", target.getName());
 					cs.sendMessage(ChatColor.YELLOW + msg);
 				} else {
-					Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
+					Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 2, ' '));
 					if (quest == null) {
 						cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
 						return;
 					}
 					try {
-						quest.setStage(quester, stage);
+						quest.setStage(quester, stage - 1);
 					} catch (InvalidStageException e) {
 						String msg = Lang.get("invalidStageNum");
 						msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
