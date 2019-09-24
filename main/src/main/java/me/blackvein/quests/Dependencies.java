@@ -89,6 +89,15 @@ public class Dependencies {
 	}
 	
 	public CitizensPlugin getCitizens() {
+		if (citizens == null) {
+			if (isPluginAvailable("Citizens")) {
+				try {
+					citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+				} catch (Exception e) {
+					plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
+				}
+			}
+		}
 		return citizens;
 	}
 	
@@ -124,12 +133,12 @@ public class Dependencies {
 	}
 	
 	void init() {
-		try {
-			if (isPluginAvailable("Citizens")) {
+		if (isPluginAvailable("Citizens")) {
+			try {
 				citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+			} catch (Exception e) {
+				plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
 			}
-		} catch (Exception e) {
-			plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
 		}
 		if (isPluginAvailable("WorldGuard")) {
 			worldGuardApi = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
