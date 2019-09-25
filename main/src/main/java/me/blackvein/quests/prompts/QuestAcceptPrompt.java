@@ -44,8 +44,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 		quests = (LinkedList<Quest>) cc.getSessionData("quests");
 		quester = plugin.getQuester(((Player) cc.getForWhom()).getUniqueId());
 		String npc = (String) cc.getSessionData("npc");
-		String text = Lang.get("questNPCListTitle");
-		text = text.replaceAll("<npc>", npc);
+		String text = Lang.get("questNPCListTitle").replace("<npc>", npc);
 		String menu = text + "\n";
 		for (int i = 1; i <= quests.size(); i++) {
 			Quest quest = quests.get(i - 1);
@@ -118,19 +117,19 @@ public class QuestAcceptPrompt extends StringPrompt {
 						}
 					} else if (quester.getCurrentQuests().containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
-						msg = msg.replaceAll("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
+						msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
 						player.sendMessage(ChatColor.YELLOW + msg);
 					}
 				} else if (quester.getCompletedQuests().contains(q.getName())) {
 					if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() || plugin.getSettings().getMaxQuests() < 1) {
 						if (quester.getCooldownDifference(q) > 0) {
 							String early = Lang.get("questTooEarly");
-							early = early.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-							early = early.replaceAll("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
+							early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+							early = early.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + early);
 						} else if (q.getPlanner().getCooldown() < 0) {
 							String completed = Lang.get("questAlreadyCompleted");
-							completed = completed.replaceAll("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+							completed = completed.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
 							player.sendMessage(ChatColor.YELLOW + completed);
 						} else {
 							quester.setQuestToTake(q.getName());
@@ -146,7 +145,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 						}
 					} else if (quester.getCurrentQuests().containsKey(q) == false) {
 						String msg = Lang.get("questMaxAllowed");
-						msg = msg.replaceAll("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
+						msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
 						player.sendMessage(ChatColor.YELLOW + msg);
 					}
 				}

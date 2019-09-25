@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -189,18 +190,7 @@ public class NpcListener implements Listener {
 							}
 						}
 					}
-					if (npcQuests.isEmpty() == false && npcQuests.size() >= 1) {
-						if (hasAtLeastOneGUI) {
-							quester.showGUIDisplay(evt.getNPC(), npcQuests);
-						} else {
-							Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
-                            c.getContext().setSessionData("quests", npcQuests);
-                            c.getContext().setSessionData("npc", evt.getNPC().getName());
-                            c.begin();
-						}
-						return;
-					} else if (npcQuests.size() == 1) {
-						// TODO can this block even be reached?
+					if (npcQuests.isEmpty() == false && npcQuests.size() == 1) {
 						Quest q = npcQuests.get(0);
 						if (!quester.getCompletedQuests().contains(q.getName())) {
 							if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() || plugin.getSettings().getMaxQuests() < 1) {
@@ -209,7 +199,11 @@ public class NpcListener implements Listener {
 								for (String msg : s.split("<br>")) {
 									player.sendMessage(msg);
 								}
-								plugin.getNpcConversationFactory().buildConversation(player).begin();
+								if (!plugin.getSettings().canAskConfirmation()) {
+									plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
+								} else {
+									plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+								}
 							} else if (quester.getCurrentQuests().containsKey(q) == false) {
 								String msg = Lang.get(player, "questMaxAllowed");
 								msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
@@ -231,13 +225,27 @@ public class NpcListener implements Listener {
 								for (String msg : s.split("<br>")) {
 									player.sendMessage(msg);
 								}
-								plugin.getConversationFactory().buildConversation(player).begin();
+								if (!plugin.getSettings().canAskConfirmation()) {
+									plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
+								} else {
+									plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+								}
 							}
 						} else if (quester.getCurrentQuests().containsKey(q) == false) {
 							String msg = Lang.get(player, "questMaxAllowed");
 							msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
 							player.sendMessage(ChatColor.YELLOW + msg);
 						}
+					} else if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
+							if (hasAtLeastOneGUI) {
+								quester.showGUIDisplay(evt.getNPC(), npcQuests);
+							} else {
+								Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
+	                            c.getContext().setSessionData("quests", npcQuests);
+	                            c.getContext().setSessionData("npc", evt.getNPC().getName());
+	                            c.begin();
+							}
+							return;
 					} else if (npcQuests.isEmpty()) {
 						evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
 					}
