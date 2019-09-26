@@ -200,7 +200,7 @@ public class NpcListener implements Listener {
 									player.sendMessage(msg);
 								}
 								if (!plugin.getSettings().canAskConfirmation()) {
-									plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
+									quester.takeQuest(q, false);
 								} else {
 									plugin.getConversationFactory().buildConversation((Conversable) player).begin();
 								}
@@ -226,7 +226,7 @@ public class NpcListener implements Listener {
 									player.sendMessage(msg);
 								}
 								if (!plugin.getSettings().canAskConfirmation()) {
-									plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
+									quester.takeQuest(q, false);
 								} else {
 									plugin.getConversationFactory().buildConversation((Conversable) player).begin();
 								}
