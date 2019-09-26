@@ -28,13 +28,13 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.Lang;
 
-public class QuestAcceptPrompt extends StringPrompt {
+public class QuestOfferPrompt extends StringPrompt {
 
 	private final Quests plugin;
 	private Quester quester;
 	private LinkedList<Quest> quests;
 
-	public QuestAcceptPrompt(Quests plugin) {
+	public QuestOfferPrompt(Quests plugin) {
 		this.plugin = plugin;
 	}
 
@@ -96,7 +96,7 @@ public class QuestAcceptPrompt extends StringPrompt {
 			}
 			if (q == null) {
 				cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-				return new QuestAcceptPrompt(plugin);
+				return new QuestOfferPrompt(plugin);
 			} else {
 				Player player = quester.getPlayer();
 				if (!quester.getCompletedQuests().contains(q.getName())) {

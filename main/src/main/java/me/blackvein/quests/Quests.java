@@ -85,7 +85,7 @@ import me.blackvein.quests.listeners.DungeonsListener;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
-import me.blackvein.quests.prompts.QuestAcceptPrompt;
+import me.blackvein.quests.prompts.QuestOfferPrompt;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
@@ -180,9 +180,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		
 		// 9 - Setup conversation factory after timeout has loaded
 		this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix())
-				.withFirstPrompt(new QuestPrompt()).withTimeout(settings.getAcceptTimeout())
+				.withFirstPrompt(new QuestAcceptPrompt()).withTimeout(settings.getAcceptTimeout())
 				.thatExcludesNonPlayersWithMessage("Console may not perform this conversation!").addConversationAbandonedListener(this);
-		this.npcConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestAcceptPrompt(this))
+		this.npcConversationFactory = new ConversationFactory(this).withModality(false).withFirstPrompt(new QuestOfferPrompt(this))
 				.withTimeout(settings.getAcceptTimeout()).withLocalEcho(false).addConversationAbandonedListener(this);
 		
 		// 10 - Register listeners
@@ -347,7 +347,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 		}
 	}
 
-	private class QuestPrompt extends StringPrompt {
+	private class QuestAcceptPrompt extends StringPrompt {
 
 		@Override
 		public String getPromptText(ConversationContext context) {
@@ -378,7 +378,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 				msg.replace("<yes>", Lang.get(player, "yesWord"));
 				msg.replace("<no>", Lang.get(player, "noWord"));
 				player.sendMessage(ChatColor.RED + msg);
-				return new QuestPrompt();
+				return new QuestAcceptPrompt();
 			}
 		}
 	}
