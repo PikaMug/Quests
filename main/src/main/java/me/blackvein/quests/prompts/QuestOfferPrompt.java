@@ -108,7 +108,7 @@ public class QuestOfferPrompt extends StringPrompt {
 								player.sendMessage(msg);
 							}
 							if (!plugin.getSettings().canAskConfirmation()) {
-								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
+								quester.takeQuest(q, false);
 							} else {
 								plugin.getConversationFactory().buildConversation((Conversable) player).begin();
 							}
@@ -138,7 +138,7 @@ public class QuestOfferPrompt extends StringPrompt {
 								player.sendMessage(msg);
 							}
 							if (!plugin.getSettings().canAskConfirmation()) {
-								plugin.getQuester(player.getUniqueId()).takeQuest(plugin.getQuest(plugin.getQuester(player.getUniqueId()).getQuestToTake()), false);
+								quester.takeQuest(q, false);
 							} else {
 								plugin.getConversationFactory().buildConversation((Conversable) player).begin();
 							}
