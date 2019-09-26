@@ -247,7 +247,7 @@ public class Quest {
 		quester.hardStagePut(this, stage);
 		quester.addEmptiesFor(this, stage);
 		if (currentStage.script != null) {
-			plugin.getDenizenTrigger().runDenizenScript(quester.getCurrentStage(this).script, quester);
+			plugin.getDenizenTrigger().runDenizenScript(currentStage.script, quester);
 		}
 		/*
 		 * if (quester.getCurrentStage(this).finishEvent != null) { quester.getCurrentStage(this).finishEvent.fire(quester); }
