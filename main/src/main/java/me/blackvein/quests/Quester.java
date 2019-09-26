@@ -236,7 +236,12 @@ public class Quester {
 	}
 
 	public void setQuestToTake(String questToTake) {
+		Quester q = this;
 		this.questToTake = questToTake;
+		if (plugin.getQuesters().contains(q)) {
+			plugin.getQuesters().remove(q);
+			plugin.getQuesters().add(this);
+		}
 	}
 
 	public int getQuestPoints() {
