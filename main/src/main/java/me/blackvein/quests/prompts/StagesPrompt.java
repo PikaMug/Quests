@@ -39,7 +39,7 @@ public class StagesPrompt extends NumericPrompt {
 	}
 	
 	public String getTitle() {
-		return ChatColor.LIGHT_PURPLE + Lang.get("stageEditorStages");
+		return Lang.get("stageEditorStages");
 	}
 	
 	public ChatColor getNumberColor(ConversationContext context, int number) {

@@ -56,7 +56,7 @@ public class RewardsPrompt extends NumericPrompt {
 	}
 	
 	public String getTitle(ConversationContext context) {
-		return ChatColor.LIGHT_PURPLE + Lang.get("rewardsTitle").replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE);
+		return Lang.get("rewardsTitle").replace("<quest>", (String) context.getSessionData(CK.Q_NAME));
 	}
 	
 	public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -256,7 +256,7 @@ public class RewardsPrompt extends NumericPrompt {
 		QuestsEditorPostOpenRewardsPromptEvent event = new QuestsEditorPostOpenRewardsPromptEvent(factory, context);
 		plugin.getServer().getPluginManager().callEvent(event);
 		
-		String text = getTitle(context) + "\n";
+		String text = ChatColor.LIGHT_PURPLE + getTitle(context).replace((String) context.getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE) + "\n";
 		for (int i = 1; i <= size; i++) {
 			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }

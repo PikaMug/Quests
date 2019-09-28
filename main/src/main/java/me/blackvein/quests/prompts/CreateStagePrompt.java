@@ -59,7 +59,7 @@ public class CreateStagePrompt extends NumericPrompt {
 	}
 	
 	public String getTitle(ConversationContext context) {
-		return ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE + " | " + Lang.get("stageEditorStage") + " " + stageNum;
+		return (String) context.getSessionData(CK.Q_NAME) + " | " + Lang.get("stageEditorStage") + " " + stageNum;
 	}
 	
 	public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -376,7 +376,7 @@ public class CreateStagePrompt extends NumericPrompt {
 		QuestsEditorPostOpenCreateStagePromptEvent event = new QuestsEditorPostOpenCreateStagePromptEvent(questFactory, stageNum, context);
 		plugin.getServer().getPluginManager().callEvent(event);
 		
-		String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -\n";
+		String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.AQUA + getTitle(context).replaceFirst(" \\| ", ChatColor.LIGHT_PURPLE + " | ") + " -\n";
 		for (int i = 1; i <= size; i++) {
 			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }

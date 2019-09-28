@@ -233,7 +233,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		
 		public String getTitle(ConversationContext context) {
-			return ChatColor.GOLD + Lang.get("quest") + ": " + ChatColor.AQUA + context.getSessionData(CK.Q_NAME);
+			return Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME);
 		}
 		
 		public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -415,7 +415,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 			QuestsEditorPostOpenCreatePromptEvent event = new QuestsEditorPostOpenCreatePromptEvent(context);
 			plugin.getServer().getPluginManager().callEvent(event);
 			
-			String text = ChatColor.GOLD + "- " + getTitle(context) + ChatColor.GOLD + " -\n";
+			String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA) + ChatColor.GOLD + " -\n";
 			for (int i = 1; i <= size; i++) {
 				text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
 	        }

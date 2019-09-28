@@ -48,7 +48,7 @@ public class OptionsPrompt extends NumericPrompt {
 	}
 	
 	public String getTitle(ConversationContext context) {
-		return ChatColor.DARK_GREEN + Lang.get("optionsTitle").replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN);
+		return Lang.get("optionsTitle").replace("<quest>", (String) context.getSessionData(CK.Q_NAME));
 	}
 	
 	public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -82,7 +82,7 @@ public class OptionsPrompt extends NumericPrompt {
 		QuestsEditorPostOpenOptionsPromptEvent event = new QuestsEditorPostOpenOptionsPromptEvent(factory, context);
 		plugin.getServer().getPluginManager().callEvent(event);
 		
-		String text = getTitle(context) + "\n";
+		String text = ChatColor.DARK_GREEN + getTitle(context).replace((String) context.getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN) + "\n";
 		for (int i = 1; i <= size; i++) {
 			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
         }

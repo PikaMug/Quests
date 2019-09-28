@@ -30,7 +30,7 @@ public class GUIDisplayPrompt extends NumericPrompt {
 	}
 	
 	public String getTitle() {
-		return ChatColor.GOLD + Lang.get("questGUITitle");
+		return Lang.get("questGUITitle");
 	}
 	
 	public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -83,7 +83,7 @@ public class GUIDisplayPrompt extends NumericPrompt {
 			}
 			context.setSessionData("tempStack", null);
 		}
-		String text = getTitle() + "\n";
+		String text = ChatColor.GOLD + getTitle() + "\n";
 		if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
 			ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
 			text += " " + ChatColor.RESET + ItemUtil.getDisplayString(stack) + "\n";

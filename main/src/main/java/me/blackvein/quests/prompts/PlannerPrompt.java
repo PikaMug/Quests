@@ -47,7 +47,7 @@ public class PlannerPrompt extends NumericPrompt {
 	}
 	
 	public String getTitle(ConversationContext context) {
-		return ChatColor.DARK_AQUA + Lang.get("plannerTitle").replace("<quest>", ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA);
+		return Lang.get("plannerTitle").replace("<quest>", (String) context.getSessionData(CK.Q_NAME));
 	}
 	
 	public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -134,7 +134,7 @@ public class PlannerPrompt extends NumericPrompt {
 		QuestsEditorPostOpenPlannerPromptEvent event = new QuestsEditorPostOpenPlannerPromptEvent(factory, context);
 		plugin.getServer().getPluginManager().callEvent(event);
 		
-		String text = getTitle(context) + "\n";
+		String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context.getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA) + "\n";
 		for (int i = 1; i <= size; i++) {
 			text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
