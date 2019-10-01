@@ -360,7 +360,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 					if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() != null) {
 						return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
 					} else if (plugin.getDependencies().getCitizens() != null) {
-						return ChatColor.YELLOW + "(" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData(CK.Q_START_NPC)).getName() + ")";
+						return ChatColor.YELLOW + "(" + CitizensAPI.getNPCRegistry().getById((Integer) context.getSessionData(CK.Q_START_NPC)).getName() + ChatColor.RESET + ChatColor.YELLOW + ")";
 					} else {
 						return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
 					}
