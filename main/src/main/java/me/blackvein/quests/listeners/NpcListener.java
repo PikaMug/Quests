@@ -202,7 +202,11 @@ public class NpcListener implements Listener {
 								if (!plugin.getSettings().canAskConfirmation()) {
 									quester.takeQuest(q, false);
 								} else {
-									plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+									if (q.getGUIDisplay() != null) {
+										quester.showGUIDisplay(evt.getNPC(), npcQuests);
+									} else {
+										plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+									}
 								}
 							} else if (quester.getCurrentQuests().containsKey(q) == false) {
 								String msg = Lang.get(player, "questMaxAllowed");

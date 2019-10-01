@@ -1057,7 +1057,6 @@ public class QuestFactory implements ConversationAbandonedListener {
 		}
 		if (cc.getSessionData(CK.Q_GUIDISPLAY) != null) {
 			guiDisplay = (ItemStack) cc.getSessionData(CK.Q_GUIDISPLAY);
-			guiDisplay = new ItemStack(guiDisplay.getType());
 		}
 		if (cc.getSessionData(CK.REW_MONEY) != null) {
 			moneyRew = (Integer) cc.getSessionData(CK.REW_MONEY);
