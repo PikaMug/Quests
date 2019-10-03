@@ -10,35 +10,35 @@ import me.blackvein.quests.Quester;
  * Called when the /quests editor command is run by a player
  */
 public class QuestsCommandPreQuestsEditorEvent extends QuestsCommandEvent implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
     private ConversationContext context;
     
-	public QuestsCommandPreQuestsEditorEvent(Quester quester, ConversationContext context) {
-		super(quester);
-		this.context = context;
-	}
+    public QuestsCommandPreQuestsEditorEvent(Quester quester, ConversationContext context) {
+        super(quester);
+        this.context = context;
+    }
     
-	@Override
-	public boolean isCancelled() {
-		return cancel;
-	}
+    @Override
+    public boolean isCancelled() {
+        return cancel;
+    }
 
-	@Override
-	public void setCancelled(boolean cancel) {
-		this.cancel = cancel;
-	}
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancel = cancel;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-	
-	public static HandlerList getHandlerList() {
+    @Override
+    public HandlerList getHandlers() {
         return handlers;
     }
-	
-	public ConversationContext getConversationContext() {
-		return context;
-	}
+    
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+    
+    public ConversationContext getConversationContext() {
+        return context;
+    }
 }

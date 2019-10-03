@@ -36,7 +36,7 @@ public enum PreBuiltParticle {
     private static Map<String, PreBuiltParticle> FROM_IDENTIFIER = new HashMap<>();
 
     static {
-    	Stream.of(values()).forEach(p -> FROM_IDENTIFIER.put(p.identifier, p));
+        Stream.of(values()).forEach(p -> FROM_IDENTIFIER.put(p.identifier, p));
     }
 
     private String identifier;
@@ -100,5 +100,4 @@ public enum PreBuiltParticle {
     public static PreBuiltParticle fromIdentifier(String identifier) {
         return FROM_IDENTIFIER.get(identifier);
     }
-
 }

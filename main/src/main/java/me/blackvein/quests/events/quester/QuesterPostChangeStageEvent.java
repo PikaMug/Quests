@@ -22,7 +22,7 @@ import me.blackvein.quests.Stage;
  * Called after a quester changes stage
  */
 public class QuesterPostChangeStageEvent extends QuesterEvent {
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     private Quest quest;
     private Stage current;
     private Stage next;
@@ -35,20 +35,20 @@ public class QuesterPostChangeStageEvent extends QuesterEvent {
     }
     
     /**
-	 * Returns the quest involved in this event
-	 * 
-	 * @return Quest who is involved in this event
-	 */
+     * Returns the quest involved in this event
+     * 
+     * @return Quest who is involved in this event
+     */
     public Quest getQuest() {
         return quest;
     }
     
     public Stage getCurrentStage() {
-    	return current;
+        return current;
     }
     
     public Stage getNextStage() {
-    	return next;
+        return next;
     }
     
     public HandlerList getHandlers() {

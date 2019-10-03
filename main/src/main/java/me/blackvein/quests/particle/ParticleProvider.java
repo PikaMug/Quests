@@ -102,7 +102,7 @@ public abstract class ParticleProvider {
             try {
                 loaded.spawnParticle(player, location, Particle.valueOf(particleId), 0, 0, 0, 1, 3, null);
             } catch (NoClassDefFoundError e1) {
-            	Bukkit.getLogger().severe("[Quests] This protocol does not support npc-effect: " + particleId);
+                Bukkit.getLogger().severe("[Quests] This protocol does not support npc-effect: " + particleId);
             } catch (IllegalArgumentException exception) {
                 // Fail silently
             }
@@ -125,7 +125,7 @@ public abstract class ParticleProvider {
             pos.add(particle.getVector());
         }
         loaded.spawnParticle(player, pos, 
-        		loaded.getParticleMap().get(particle), 
-        		particle.getOffsetX(), particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(), particle.getCount(), null);
+                loaded.getParticleMap().get(particle), 
+                particle.getOffsetX(), particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(), particle.getCount(), null);
     }
 }

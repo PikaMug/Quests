@@ -29,23 +29,23 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
  */
 public class WorldGuardAPI_7_0_0 {
 
-	@Nullable
-	public static WorldGuard getInstance() {
-		return WorldGuard.getInstance();
-	}
-	
-	@Nullable
-	public static RegionManager getRegionManager(World world) {
-		return WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
-	}
-	
-	@Nullable
-	public static ApplicableRegionSet getApplicableRegions(World world, Location location) {
-		return getRegionManager(world).getApplicableRegions(BukkitAdapter.asBlockVector(location));
-	}
-	
-	@Nullable
-	public static List<String> getApplicableRegionsIDs(World world, Location location) {
-		return getRegionManager(world).getApplicableRegionsIDs(BukkitAdapter.asBlockVector(location));
-	}
+    @Nullable
+    public static WorldGuard getInstance() {
+        return WorldGuard.getInstance();
+    }
+    
+    @Nullable
+    public static RegionManager getRegionManager(World world) {
+        return WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+    }
+    
+    @Nullable
+    public static ApplicableRegionSet getApplicableRegions(World world, Location location) {
+        return getRegionManager(world).getApplicableRegions(BukkitAdapter.asBlockVector(location));
+    }
+    
+    @Nullable
+    public static List<String> getApplicableRegionsIDs(World world, Location location) {
+        return getRegionManager(world).getApplicableRegionsIDs(BukkitAdapter.asBlockVector(location));
+    }
 }

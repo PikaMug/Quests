@@ -19,24 +19,24 @@ import me.blackvein.quests.events.QuestsEvent;
  * Represents a quester-related event
  */
 public abstract class QuesterEvent extends QuestsEvent {
-	protected Quester quester;
-	
-	public QuesterEvent(final Quester quester) {
-		this.quester = quester;
-	}
-	
-	public QuesterEvent(final Quester quester, boolean async) {
+    protected Quester quester;
+    
+    public QuesterEvent(final Quester quester) {
+        this.quester = quester;
+    }
+    
+    public QuesterEvent(final Quester quester, boolean async) {
         super(async);
         this.quester = quester;
 
     }
-	
-	/**
-	 * Returns the quester involved in this event
-	 * 
-	 * @return Quester which is involved in this event
-	 */
-	public final Quester getQuester() {
-		return quester;
-	}
+    
+    /**
+     * Returns the quester involved in this event
+     * 
+     * @return Quester which is involved in this event
+     */
+    public final Quester getQuester() {
+        return quester;
+    }
 }

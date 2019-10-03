@@ -32,186 +32,186 @@ import com.herocraftonline.heroes.Heroes;
 import de.erethon.dungeonsxl.DungeonsXL;
 
 public class Dependencies {
-	
-	private Quests plugin;
-	private static Economy economy = null;
-	private static Permission permission = null;
-	private static WorldGuardAPI worldGuardApi = null;
-	private static mcMMO mcmmo = null;
-	private static Heroes heroes = null;
-	private static PhatLoots phatLoots = null;
-	private static PlaceholderAPIPlugin placeholder = null;
-	private static CitizensPlugin citizens = null;
-	private static DenizenAPI denizenApi = null;
-	private static CitizensBooksAPI citizensBooks = null;
-	private static DungeonsXL dungeons = null;
-	private static PartiesAPI parties = null;
-	
-	public Dependencies(Quests plugin) {
-		this.plugin = plugin;
-	}
-	
-	public Economy getVaultEconomy() {
-		return economy;
-	}
-	
-	public Permission getVaultPermission() {
-		return permission;
-	}
-	
-	public WorldGuardAPI getWorldGuardApi() {
-		return worldGuardApi;
-	}
-	
-	/**
-	 * Get mcMMO Classic plugin
-	 * 
-	 * @deprecated Use {@link #getMcmmoClassic()}
-	 */
-	public mcMMO getMcmmo() {
-		return mcmmo;
-	}
-	
-	public mcMMO getMcmmoClassic() {
-		return mcmmo;
-	}
-	
-	public Heroes getHeroes() {
-		return heroes;
-	}
-	
-	public PhatLoots getPhatLoots() {
-		return phatLoots;
-	}
-	
-	public PlaceholderAPIPlugin getPlaceholderApi() {
-		return placeholder;
-	}
-	
-	public CitizensPlugin getCitizens() {
-		if (citizens == null) {
-			if (isPluginAvailable("Citizens")) {
-				try {
-					citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
-				} catch (Exception e) {
-					plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
-				}
-			}
-		}
-		return citizens;
-	}
-	
-	public void disableCitizens() {
-		citizens = null;
-	}
-	
-	public DenizenAPI getDenizenAPI() {
-		return denizenApi;
-	}
-	
-	public CitizensBooksAPI getCitizensBooksApi() {
-		return citizensBooks;
-	}
-	
-	public DungeonsXL getDungeonsApi() {
-		return dungeons;
-	}
-	
-	public PartiesAPI getPartiesApi() {
-		return parties;
-	}
-	
-	public boolean isPluginAvailable(String pluginName) {
-		if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null ) {
-			if (!plugin.getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
-				plugin.getLogger().warning(pluginName + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
-			} else {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	void init() {
-		if (isPluginAvailable("Citizens")) {
-			try {
-				citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
-			} catch (Exception e) {
-				plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
-			}
-		}
-		if (isPluginAvailable("WorldGuard")) {
-			worldGuardApi = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
-		}
-		if (isPluginAvailable("Denizen")) {
-			denizenApi = new DenizenAPI();
-		}
-		if (isPluginAvailable("mcMMO")) {
-			try {
-				Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
-				mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
-			} catch (Exception e) {
-				// Unsupported version
-			}
-		}
-		if (isPluginAvailable("Heroes")) {
-			heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
-		}
-		if (isPluginAvailable("PhatLoots")) {
-			try {
-				phatLoots = (PhatLoots) plugin.getServer().getPluginManager().getPlugin("PhatLoots");
-			} catch (NoClassDefFoundError e) {
-				plugin.getLogger().warning("Unofficial version of PhatLoots found. PhatLoots in Quests not enabled.");
-			}
-		}
-		if (isPluginAvailable("PlaceholderAPI")) {
-			placeholder = (PlaceholderAPIPlugin) plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI");
-		}
-		if (isPluginAvailable("CitizensBooks")) {
-		    citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks")).getAPI();
+    
+    private Quests plugin;
+    private static Economy economy = null;
+    private static Permission permission = null;
+    private static WorldGuardAPI worldGuardApi = null;
+    private static mcMMO mcmmo = null;
+    private static Heroes heroes = null;
+    private static PhatLoots phatLoots = null;
+    private static PlaceholderAPIPlugin placeholder = null;
+    private static CitizensPlugin citizens = null;
+    private static DenizenAPI denizenApi = null;
+    private static CitizensBooksAPI citizensBooks = null;
+    private static DungeonsXL dungeons = null;
+    private static PartiesAPI parties = null;
+    
+    public Dependencies(Quests plugin) {
+        this.plugin = plugin;
+    }
+    
+    public Economy getVaultEconomy() {
+        return economy;
+    }
+    
+    public Permission getVaultPermission() {
+        return permission;
+    }
+    
+    public WorldGuardAPI getWorldGuardApi() {
+        return worldGuardApi;
+    }
+    
+    /**
+     * Get mcMMO Classic plugin
+     * 
+     * @deprecated Use {@link #getMcmmoClassic()}
+     */
+    public mcMMO getMcmmo() {
+        return mcmmo;
+    }
+    
+    public mcMMO getMcmmoClassic() {
+        return mcmmo;
+    }
+    
+    public Heroes getHeroes() {
+        return heroes;
+    }
+    
+    public PhatLoots getPhatLoots() {
+        return phatLoots;
+    }
+    
+    public PlaceholderAPIPlugin getPlaceholderApi() {
+        return placeholder;
+    }
+    
+    public CitizensPlugin getCitizens() {
+        if (citizens == null) {
+            if (isPluginAvailable("Citizens")) {
+                try {
+                    citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+                } catch (Exception e) {
+                    plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
+                }
+            }
         }
-		if (isPluginAvailable("DungeonsXL")) {
-		    dungeons = DungeonsXL.getInstance();
+        return citizens;
+    }
+    
+    public void disableCitizens() {
+        citizens = null;
+    }
+    
+    public DenizenAPI getDenizenAPI() {
+        return denizenApi;
+    }
+    
+    public CitizensBooksAPI getCitizensBooksApi() {
+        return citizensBooks;
+    }
+    
+    public DungeonsXL getDungeonsApi() {
+        return dungeons;
+    }
+    
+    public PartiesAPI getPartiesApi() {
+        return parties;
+    }
+    
+    public boolean isPluginAvailable(String pluginName) {
+        if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null ) {
+            if (!plugin.getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
+                plugin.getLogger().warning(pluginName + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
+            } else {
+                return true;
+            }
         }
-		if (isPluginAvailable("Parties")) {
-			try {
-				Class.forName("com.alessiodp.parties.api.Parties");
-				parties = Parties.getApi();
-			} catch (Exception e) {
-				// Unsupported version
-			}
+        return false;
+    }
+    
+    void init() {
+        if (isPluginAvailable("Citizens")) {
+            try {
+                citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+            } catch (Exception e) {
+                plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
+            }
         }
-		if (isPluginAvailable("Vault")) {
-			if (!setupEconomy()) {
-				plugin.getLogger().warning("Economy not found.");
-			}
-			if (!setupPermissions()) {
-				plugin.getLogger().warning("Permissions not found.");
-			}
-		}
-	}
+        if (isPluginAvailable("WorldGuard")) {
+            worldGuardApi = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
+        }
+        if (isPluginAvailable("Denizen")) {
+            denizenApi = new DenizenAPI();
+        }
+        if (isPluginAvailable("mcMMO")) {
+            try {
+                Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
+                mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
+            } catch (Exception e) {
+                // Unsupported version
+            }
+        }
+        if (isPluginAvailable("Heroes")) {
+            heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
+        }
+        if (isPluginAvailable("PhatLoots")) {
+            try {
+                phatLoots = (PhatLoots) plugin.getServer().getPluginManager().getPlugin("PhatLoots");
+            } catch (NoClassDefFoundError e) {
+                plugin.getLogger().warning("Unofficial version of PhatLoots found. PhatLoots in Quests not enabled.");
+            }
+        }
+        if (isPluginAvailable("PlaceholderAPI")) {
+            placeholder = (PlaceholderAPIPlugin) plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI");
+        }
+        if (isPluginAvailable("CitizensBooks")) {
+            citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks")).getAPI();
+        }
+        if (isPluginAvailable("DungeonsXL")) {
+            dungeons = DungeonsXL.getInstance();
+        }
+        if (isPluginAvailable("Parties")) {
+            try {
+                Class.forName("com.alessiodp.parties.api.Parties");
+                parties = Parties.getApi();
+            } catch (Exception e) {
+                // Unsupported version
+            }
+        }
+        if (isPluginAvailable("Vault")) {
+            if (!setupEconomy()) {
+                plugin.getLogger().warning("Economy not found.");
+            }
+            if (!setupPermissions()) {
+                plugin.getLogger().warning("Permissions not found.");
+            }
+        }
+    }
 
-	private boolean setupEconomy() {
-		try {
-			RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-			if (economyProvider != null) {
-				economy = economyProvider.getProvider();
-			}
-			return (economy != null);
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    private boolean setupEconomy() {
+        try {
+            RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+            if (economyProvider != null) {
+                economy = economyProvider.getProvider();
+            }
+            return (economy != null);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	private boolean setupPermissions() {
-		RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-		if (permissionProvider != null) {
-			permission = permissionProvider.getProvider();
-		}
-		return (permission != null);
-	}
-	
-	public boolean runDenizenScript(String scriptName, Quester quester) {
-		return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester);
-	}
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
+    }
+    
+    public boolean runDenizenScript(String scriptName, Quester quester) {
+        return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester);
+    }
 }
