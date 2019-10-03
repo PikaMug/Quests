@@ -123,16 +123,11 @@ public class QuestMob {
                 entity.setCustomNameVisible(true);
             }
             EntityEquipment eq = entity.getEquipment();
-            try {
-                eq.setItemInHand(inventory[0]);
-                eq.setBoots(inventory[1]);
-                eq.setLeggings(inventory[2]);
-                eq.setChestplate(inventory[3]);
-                eq.setHelmet(inventory[4]);
-            } catch (Exception e) {
-                Bukkit.getLogger().severe("Entity NMS is invalid for this version of CraftBukkit. Please notify the developer");
-                e.printStackTrace();
-            }
+            eq.setItemInHand(inventory[0]);
+            eq.setBoots(inventory[1]);
+            eq.setLeggings(inventory[2]);
+            eq.setChestplate(inventory[3]);
+            eq.setHelmet(inventory[4]);
             if (dropChances[0] != null) {
                 eq.setItemInHandDropChance(dropChances[0]);
             }
