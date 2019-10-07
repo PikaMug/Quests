@@ -36,7 +36,8 @@ public class NpcEffectThread implements Runnable {
             List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
             if (nearby.isEmpty() == false) {
                 for (Entity e : nearby) {
-                    if (plugin.getDependencies().getCitizens() != null && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {
+                    if (plugin.getDependencies().getCitizens() != null 
+                            && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {
                         if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(e)) {
                             NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(e);
                             if (plugin.hasQuest(npc, quester)) {

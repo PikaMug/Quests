@@ -327,7 +327,8 @@ public class QuestData {
         }
     };
     
-    public LinkedHashMap<Map<Enchantment, Material>, Integer> itemsEnchanted = new LinkedHashMap<Map<Enchantment, Material>, Integer>() {
+    public LinkedHashMap<Map<Enchantment, Material>, Integer> itemsEnchanted 
+            = new LinkedHashMap<Map<Enchantment, Material>, Integer>() {
 
         private static final long serialVersionUID = 416869352279205852L;
 

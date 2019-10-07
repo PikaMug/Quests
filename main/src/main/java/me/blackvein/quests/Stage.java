@@ -39,7 +39,8 @@ public class Stage {
     protected Integer playersToKill;
     protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
-    protected Map<Map<Enchantment, Material>, Integer> itemsToEnchant = new HashMap<Map<Enchantment, Material>, Integer>();
+    protected Map<Map<Enchantment, Material>, Integer> itemsToEnchant 
+            = new HashMap<Map<Enchantment, Material>, Integer>();
     protected LinkedList<ItemStack> itemsToBrew = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
     protected LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {

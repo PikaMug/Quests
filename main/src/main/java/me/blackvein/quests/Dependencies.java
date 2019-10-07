@@ -124,7 +124,8 @@ public class Dependencies {
     public boolean isPluginAvailable(String pluginName) {
         if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null ) {
             if (!plugin.getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
-                plugin.getLogger().warning(pluginName + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
+                plugin.getLogger().warning(pluginName 
+                        + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
             } else {
                 return true;
             }
@@ -168,7 +169,8 @@ public class Dependencies {
             placeholder = (PlaceholderAPIPlugin) plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI");
         }
         if (isPluginAvailable("CitizensBooks")) {
-            citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks")).getAPI();
+            citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks"))
+                    .getAPI();
         }
         if (isPluginAvailable("DungeonsXL")) {
             dungeons = DungeonsXL.getInstance();
@@ -193,7 +195,8 @@ public class Dependencies {
 
     private boolean setupEconomy() {
         try {
-            RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+            RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager()
+                    .getRegistration(net.milkbowl.vault.economy.Economy.class);
             if (economyProvider != null) {
                 economy = economyProvider.getProvider();
             }
@@ -204,7 +207,8 @@ public class Dependencies {
     }
 
     private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager()
+                .getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }

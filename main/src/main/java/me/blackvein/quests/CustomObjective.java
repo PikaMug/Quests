@@ -204,9 +204,11 @@ public abstract class CustomObjective implements Listener {
             if (hasQuest && quester.hasCustomObjective(quest, obj.getName())) {
                 if (quester.getQuestData(quest).customObjectiveCounts.containsKey(obj.getName())) {
                     int old = quester.getQuestData(quest).customObjectiveCounts.get(obj.getName());
-                    plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts.put(obj.getName(), old + count);
+                    plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts
+                            .put(obj.getName(), old + count);
                 } else {
-                    plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts.put(obj.getName(), count);
+                    plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts
+                            .put(obj.getName(), count);
                 }
                 int index = -1;
                 for (int i = 0; i < quester.getCurrentStage(quest).customObjectives.size(); i++) {
@@ -218,12 +220,15 @@ public abstract class CustomObjective implements Listener {
                 if (index > -1) {
                     int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
                     if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= goal) {
-                        quester.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
+                        quester.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), 
+                                new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
                         
                         // Multiplayer
                         quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (Quester q) -> {
-                            q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
-                            q.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
+                            q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), 
+                                    quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
+                            q.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), 
+                                    new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
                             return null;
                         });
                     }

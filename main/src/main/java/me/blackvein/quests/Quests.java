@@ -1942,9 +1942,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".requirements.mcmmo-skills")) {
             if (Quests.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-skills"), String.class)) {
                 if (config.contains("quests." + questKey + ".requirements.mcmmo-amounts")) {
-                    if (Quests.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-amounts"), Integer.class)) {
+                    if (Quests.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-amounts"), 
+                            Integer.class)) {
                         List<String> skills = config.getStringList("quests." + questKey + ".requirements.mcmmo-skills");
-                        List<Integer> amounts = config.getIntegerList("quests." + questKey + ".requirements.mcmmo-amounts");
+                        List<Integer> amounts = config.getIntegerList("quests." + questKey 
+                                + ".requirements.mcmmo-amounts");
                         if (skills.size() != amounts.size()) {
                             skipQuestProcess("mcmmo-skills: and mcmmo-amounts: in requirements: for Quest " 
                                     + quest.getName() + " are not the same size!");
@@ -2108,7 +2110,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".break-block-names")) {
-                if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-names"), String.class)) {
+                if (checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".break-block-names"), 
+                        String.class)) {
                     breakNames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 
                             + ".break-block-names");
                 } else {
