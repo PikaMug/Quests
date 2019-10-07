@@ -2165,9 +2165,10 @@ public class Quester {
             ItemStack is = getCurrentStage(quest).itemsToBrew.get(getCurrentStage(quest).itemsToBrew.indexOf(goal));
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "brew") + " <item> "
                     + is.getAmount() + "/" + is.getAmount();
-            if (plugin.getSettings().canTranslateItems() && !increment.hasItemMeta() 
+            if (plugin.getSettings().canTranslateItems() && goal.hasItemMeta() 
                     && !increment.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null, 
+                        goal.getItemMeta());
             } else {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }

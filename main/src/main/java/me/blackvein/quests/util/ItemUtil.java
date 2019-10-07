@@ -116,7 +116,7 @@ public class ItemUtil {
                     // Bukkit version is 1.9+
                     if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) || one.getType().equals(Material.SPLASH_POTION)) {
                         PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
-                        PotionMeta pmeta2 = (PotionMeta) one.getItemMeta();
+                        PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
                         if (pmeta1.getBasePotionData().getType().equals(pmeta2.getBasePotionData().getType()) == false) {
                             return -9;
                         }
