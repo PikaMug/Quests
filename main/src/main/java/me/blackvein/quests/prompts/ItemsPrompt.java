@@ -94,9 +94,9 @@ public class ItemsPrompt extends FixedSetPrompt {
             }
         }
         if (context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorBrewItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorBrewPotions") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorBrewItems") + "\n";
+            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorBrewPotions") + "\n";
             LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
             for (int i = 0; i < items.size(); i++) {
                 text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
@@ -488,7 +488,7 @@ public class ItemsPrompt extends FixedSetPrompt {
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
             }
-            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorBrewItems") + " -\n";
+            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorBrewPotions") + " -\n";
             if (context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
                 text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
