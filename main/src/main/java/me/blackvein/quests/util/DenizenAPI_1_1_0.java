@@ -30,41 +30,41 @@ import net.citizensnpcs.api.npc.NPC;
  * This class's imports must exist separately from DenizenAPI.java in order to not crash from NoClassDefFoundError at runtime
  */
 public class DenizenAPI_1_1_0 {
-	
-	@Nullable
+    
+    @Nullable
     public static boolean containsScript(String input) {
-		return ScriptRegistry.containsScript(input);
-	}
-	
-	@Nullable
-    public static String getScriptContainerName(String input) {
-		return ScriptRegistry.getScriptContainer(input).getName();
-	}
-	
-	@Nullable
-    public static Set<String> _getScriptNames() {
-		return ScriptRegistry._getScriptNames();
-	}
-	
-	@Nullable
-    public static Object getScriptContainerAs(String scriptName) {
-		return ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
-	}
-	
-	@Nullable
-    public static Object mirrorBukkitPlayer(Player player) {
-		return PlayerTag.mirrorBukkitPlayer(player);
-	}
-	
-	@Nullable
-    public static Object mirrorCitizensNPC(NPC npc) {
-    	return NPCTag.mirrorCitizensNPC(npc);
+        return ScriptRegistry.containsScript(input);
     }
-	
-	@Nullable
+    
+    @Nullable
+    public static String getScriptContainerName(String input) {
+        return ScriptRegistry.getScriptContainer(input).getName();
+    }
+    
+    @Nullable
+    public static Set<String> _getScriptNames() {
+        return ScriptRegistry._getScriptNames();
+    }
+    
+    @Nullable
+    public static Object getScriptContainerAs(String scriptName) {
+        return ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
+    }
+    
+    @Nullable
+    public static Object mirrorBukkitPlayer(Player player) {
+        return PlayerTag.mirrorBukkitPlayer(player);
+    }
+    
+    @Nullable
+    public static Object mirrorCitizensNPC(NPC npc) {
+        return NPCTag.mirrorCitizensNPC(npc);
+    }
+    
+    @Nullable
     public static void runTaskScript(String scriptName, Player player) {
-		TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
-		BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);
-		taskScript.runTaskScript(entryData, null);
-	}
+        TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
+        BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);
+        taskScript.runTaskScript(entryData, null);
+    }
 }

@@ -21,19 +21,19 @@ import me.blackvein.quests.Quester;
  * Called after a quester starts a quest
  */
 public class QuesterPostStartQuestEvent extends QuesterEvent {
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     private Quest quest;
     
     public QuesterPostStartQuestEvent(Quester quester, Quest quest) {
-    	super(quester);
+        super(quester);
         this.quest = quest;
     }
     
     /**
-	 * Returns the quest involved in this event
-	 * 
-	 * @return Quest who is involved in this event
-	 */
+     * Returns the quest involved in this event
+     * 
+     * @return Quest who is involved in this event
+     */
     public Quest getQuest() {
         return quest;
     }

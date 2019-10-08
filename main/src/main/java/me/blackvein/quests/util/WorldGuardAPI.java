@@ -50,7 +50,7 @@ public class WorldGuardAPI {
             worldGuardPlugin = (WorldGuardPlugin)wg;
 
             try {
-            	Class.forName("com.sk89q.worldguard.WorldGuard");
+                Class.forName("com.sk89q.worldguard.WorldGuard");
                 worldGuard7 = WorldGuardAPI_7_0_0.getInstance();
                 // WorldGuard 7+
             } catch (Exception ex) {
@@ -74,32 +74,32 @@ public class WorldGuardAPI {
         if (!initialized) {
             initialized = true;
             if (worldGuard7 == null) {
-            	// WorldGuard <7
+                // WorldGuard <7
                 try {
-                	Method getRegionContainerMethod = worldGuardPlugin.getClass().getMethod("getRegionContainer");
-                	regionContainer = getRegionContainerMethod.invoke(worldGuardPlugin);
+                    Method getRegionContainerMethod = worldGuardPlugin.getClass().getMethod("getRegionContainer");
+                    regionContainer = getRegionContainerMethod.invoke(worldGuardPlugin);
                     regionContainerGetMethod = regionContainer.getClass().getMethod("get", World.class);
                     vector = Class.forName("com.sk89q.worldedit.Vector");
-                	vectorConstructor = vector.getConstructor(double.class, double.class, double.class);
+                    vectorConstructor = vector.getConstructor(double.class, double.class, double.class);
                 } catch (Exception e) {
-                	Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to WorldGuard, integration will not work!", e);
+                    Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to WorldGuard, integration will not work!", e);
                     regionContainer = null;
                     return;
                 }
             }
 
             if (regionContainer == null) {
-            	Bukkit.getLogger().warning("Quests failed to find RegionContainer, WorldGuard integration will not function!");
+                Bukkit.getLogger().warning("Quests failed to find RegionContainer, WorldGuard integration will not function!");
             }
         }
     }
 
     @Nullable
     public RegionManager getRegionManager(World world) {
-    	if (worldGuard7 != null) {
-    		return WorldGuardAPI_7_0_0.getRegionManager(world);
-    	} else {
-    		initialize();
+        if (worldGuard7 != null) {
+            return WorldGuardAPI_7_0_0.getRegionManager(world);
+        } else {
+            initialize();
             if (regionContainer == null || regionContainerGetMethod == null) return null;
             RegionManager regionManager = null;
             try {
@@ -108,44 +108,44 @@ public class WorldGuardAPI {
                 Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error getting WorldGuard RegionManager", e);
             }
             return regionManager;
-    	}
+        }
     }
     
     public ApplicableRegionSet getApplicableRegions(World world, Location location) {
-    	if (worldGuard7 != null) {
-    		return WorldGuardAPI_7_0_0.getApplicableRegions(world, location);
-    	} else {
-    		initialize();
+        if (worldGuard7 != null) {
+            return WorldGuardAPI_7_0_0.getApplicableRegions(world, location);
+        } else {
+            initialize();
             RegionManager regionManager = getRegionManager(world);
             ApplicableRegionSet ars = null;
             if (regionManager == null) return null;
             try {
-            	Method getApplicableRegionsMethod = regionManager.getClass().getMethod("getApplicableRegions", Location.class);
-            	ars = (ApplicableRegionSet)getApplicableRegionsMethod.invoke(regionManager, location);
+                Method getApplicableRegionsMethod = regionManager.getClass().getMethod("getApplicableRegions", Location.class);
+                ars = (ApplicableRegionSet)getApplicableRegionsMethod.invoke(regionManager, location);
             } catch (Exception e) {
-            	Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error getting RegionManager#getApplicableRegions", e);
+                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error getting RegionManager#getApplicableRegions", e);
             }
             return ars;
-    	}
+        }
     }
     
     @SuppressWarnings("unchecked")
-	public List<String> getApplicableRegionsIDs(World world, Location location) {
-    	if (worldGuard7 != null) {
-    		return WorldGuardAPI_7_0_0.getApplicableRegionsIDs(world, location);
-    	} else {
-    		initialize();
+    public List<String> getApplicableRegionsIDs(World world, Location location) {
+        if (worldGuard7 != null) {
+            return WorldGuardAPI_7_0_0.getApplicableRegionsIDs(world, location);
+        } else {
+            initialize();
             RegionManager regionManager = getRegionManager(world);
             List<String> ari = null;
             if (regionManager == null) return null;
             try {
-            	Method getApplicableRegionsMethod = regionManager.getClass().getMethod("getApplicableRegionsIDs", vector);
-            	ari = (List<String>)getApplicableRegionsMethod.invoke(regionManager, 
-                    	vectorConstructor.newInstance(location.getX(), location.getY(), location.getZ()));
+                Method getApplicableRegionsMethod = regionManager.getClass().getMethod("getApplicableRegionsIDs", vector);
+                ari = (List<String>)getApplicableRegionsMethod.invoke(regionManager, 
+                        vectorConstructor.newInstance(location.getX(), location.getY(), location.getZ()));
             } catch (Exception e) {
-            	Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error getting RegionManager#getApplicableRegionsIDs", e);
+                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error getting RegionManager#getApplicableRegionsIDs", e);
             }
             return ari;
-    	}
+        }
     }
 }

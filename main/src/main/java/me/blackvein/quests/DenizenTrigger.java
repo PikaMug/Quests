@@ -13,18 +13,18 @@
 package me.blackvein.quests;
 
 public class DenizenTrigger {
-	private Quests plugin;
-	
-	public DenizenTrigger(Quests plugin) {
-		this.plugin = plugin;
-	}
-	protected boolean runDenizenScript(String scriptName, Quester quester) {
-		if (scriptName == null) {
-			return false;
-		}
-		if (plugin.getDependencies().getDenizenAPI().containsScript(scriptName)) {
-			plugin.getDependencies().getDenizenAPI().runTaskScript(scriptName, quester.getPlayer());
-		}
-		return true;
+    private Quests plugin;
+    
+    public DenizenTrigger(Quests plugin) {
+        this.plugin = plugin;
+    }
+    protected boolean runDenizenScript(String scriptName, Quester quester) {
+        if (scriptName == null) {
+            return false;
+        }
+        if (plugin.getDependencies().getDenizenAPI().containsScript(scriptName)) {
+            plugin.getDependencies().getDenizenAPI().runTaskScript(scriptName, quester.getPlayer());
+        }
+        return true;
     }
 }

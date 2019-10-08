@@ -22,22 +22,22 @@ import me.blackvein.quests.Quester;
  * Called when a quest is taken by a quester
  */
 public class QuestTakeEvent extends QuestEvent implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     private Quester quester;
     private boolean cancel = false;
 
-	public QuestTakeEvent(Quest quest, Quester who) {
-		super(quest);
-		this.quester = who;
-	}
-	
-	/**
-	 * Returns the quester involved in this event
-	 * 
-	 * @return Quester who is involved in this event
-	 */
+    public QuestTakeEvent(Quest quest, Quester who) {
+        super(quest);
+        this.quester = who;
+    }
+    
+    /**
+     * Returns the quester involved in this event
+     * 
+     * @return Quester who is involved in this event
+     */
     public Quester getQuester() {
-    	return quester;
+        return quester;
     }
     
     @Override
@@ -50,8 +50,8 @@ public class QuestTakeEvent extends QuestEvent implements Cancellable {
         this.cancel = cancel;
     }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 }

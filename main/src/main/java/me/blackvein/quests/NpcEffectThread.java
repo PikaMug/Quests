@@ -23,43 +23,44 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class NpcEffectThread implements Runnable {
 
-	final Quests plugin;
+    final Quests plugin;
 
-	public NpcEffectThread(Quests quests) {
-		plugin = quests;
-	}
+    public NpcEffectThread(Quests quests) {
+        plugin = quests;
+    }
 
-	@Override
-	public void run() {
-		for (Player player : plugin.getServer().getOnlinePlayers()) {
-			Quester quester = plugin.getQuester(player.getUniqueId());
-			List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
-			if (nearby.isEmpty() == false) {
-				for (Entity e : nearby) {
-					if (plugin.getDependencies().getCitizens() != null && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {
-						if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(e)) {
-							NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(e);
-							if (plugin.hasQuest(npc, quester)) {
-								showEffect(player, npc, plugin.getSettings().getEffect());
-							} else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
-								showEffect(player, npc, plugin.getSettings().getRedoEffect());
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Display a particle effect above an NPC one time
-	 * @param player Target player to let view the effect
-	 * @param npc Target NPC to place the effect above
-	 * @param effectType Value of EnumParticle such as NOTE or SMOKE
-	 */
-	public void showEffect(Player player, NPC npc, String effectType) {
-		Location eyeLoc = npc.getEntity().getLocation();
-		eyeLoc.setY(eyeLoc.getY() + 1.5);
-		ParticleProvider.sendToPlayer(player, eyeLoc, effectType);
-	}
+    @Override
+    public void run() {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            Quester quester = plugin.getQuester(player.getUniqueId());
+            List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
+            if (nearby.isEmpty() == false) {
+                for (Entity e : nearby) {
+                    if (plugin.getDependencies().getCitizens() != null 
+                            && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {
+                        if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(e)) {
+                            NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(e);
+                            if (plugin.hasQuest(npc, quester)) {
+                                showEffect(player, npc, plugin.getSettings().getEffect());
+                            } else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
+                                showEffect(player, npc, plugin.getSettings().getRedoEffect());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Display a particle effect above an NPC one time
+     * @param player Target player to let view the effect
+     * @param npc Target NPC to place the effect above
+     * @param effectType Value of EnumParticle such as NOTE or SMOKE
+     */
+    public void showEffect(Player player, NPC npc, String effectType) {
+        Location eyeLoc = npc.getEntity().getLocation();
+        eyeLoc.setY(eyeLoc.getY() + 1.5);
+        ParticleProvider.sendToPlayer(player, eyeLoc, effectType);
+    }
 }

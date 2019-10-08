@@ -22,20 +22,20 @@ import me.blackvein.quests.Quester;
  * Called before a quester completes a quest
  */
 public class QuesterPreCompleteQuestEvent extends QuesterEvent implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     private Quest quest;
     private boolean cancel = false;
     
     public QuesterPreCompleteQuestEvent(Quester quester, Quest quest) {
-    	super(quester);
+        super(quester);
         this.quest = quest;
     }
     
     /**
-	 * Returns the quest involved in this event
-	 * 
-	 * @return Quest who is involved in this event
-	 */
+     * Returns the quest involved in this event
+     * 
+     * @return Quest who is involved in this event
+     */
     public Quest getQuest() {
         return quest;
     }

@@ -19,23 +19,23 @@ import me.blackvein.quests.events.QuestsEvent;
  * Represents a quest-related event
  */
 public abstract class QuestEvent extends QuestsEvent {
-	protected Quest quest;
-	
-	public QuestEvent(final Quest quest) {
-		this.quest = quest;
-	}
-	
-	public QuestEvent(final Quest quest, boolean async) {
+    protected Quest quest;
+    
+    public QuestEvent(final Quest quest) {
+        this.quest = quest;
+    }
+    
+    public QuestEvent(final Quest quest, boolean async) {
         super(async);
         this.quest = quest;
     }
-	
-	/**
-	 * Returns the quest involved in this event
-	 * 
-	 * @return Quest which is involved in this event
-	 */
-	public final Quest getQuest() {
-		return quest;
-	}
+    
+    /**
+     * Returns the quest involved in this event
+     * 
+     * @return Quest which is involved in this event
+     */
+    public final Quest getQuest() {
+        return quest;
+    }
 }

@@ -13,49 +13,58 @@
 package me.blackvein.quests;
 
 public class Options {
-	private boolean allowCommands = true;
-	private boolean allowQuitting = true;
-	private boolean useDungeonsXLPlugin = false;
-	private boolean usePartiesPlugin = true;
-	private int shareProgressLevel = 1;
-	
-	public boolean getAllowCommands() {
-		return allowCommands;
-	}
-	
-	public void setAllowCommands(boolean allowCommands) {
-		this.allowCommands = allowCommands;
-	}
-	
-	public boolean getAllowQuitting() {
-		return allowQuitting;
-	}
-	
-	public void setAllowQuitting(boolean allowQuitting) {
-		this.allowQuitting = allowQuitting;
-	}
-	
-	public boolean getUseDungeonsXLPlugin() {
-		return useDungeonsXLPlugin;
-	}
-	
-	public void setUseDungeonsXLPlugin(boolean useDungeonsXLPlugin) {
-		this.useDungeonsXLPlugin = useDungeonsXLPlugin;
-	}
-	
-	public boolean getUsePartiesPlugin() {
-		return usePartiesPlugin;
-	}
-	
-	public void setUsePartiesPlugin(boolean usePartiesPlugin) {
-		this.usePartiesPlugin = usePartiesPlugin;
-	}
-	
-	public int getShareProgressLevel() {
-		return shareProgressLevel;
-	}
-	
-	public void setShareProgressLevel(int shareProgressLevel) {
-		this.shareProgressLevel = shareProgressLevel;
-	}
+    private boolean allowCommands = true;
+    private boolean allowQuitting = true;
+    private boolean useDungeonsXLPlugin = false;
+    private boolean usePartiesPlugin = true;
+    private int shareProgressLevel = 1;
+    private boolean requireSameQuest = true;
+    
+    public boolean getAllowCommands() {
+        return allowCommands;
+    }
+    
+    public void setAllowCommands(boolean allowCommands) {
+        this.allowCommands = allowCommands;
+    }
+    
+    public boolean getAllowQuitting() {
+        return allowQuitting;
+    }
+    
+    public void setAllowQuitting(boolean allowQuitting) {
+        this.allowQuitting = allowQuitting;
+    }
+    
+    public boolean getUseDungeonsXLPlugin() {
+        return useDungeonsXLPlugin;
+    }
+    
+    public void setUseDungeonsXLPlugin(boolean useDungeonsXLPlugin) {
+        this.useDungeonsXLPlugin = useDungeonsXLPlugin;
+    }
+    
+    public boolean getUsePartiesPlugin() {
+        return usePartiesPlugin;
+    }
+    
+    public void setUsePartiesPlugin(boolean usePartiesPlugin) {
+        this.usePartiesPlugin = usePartiesPlugin;
+    }
+    
+    public int getShareProgressLevel() {
+        return shareProgressLevel;
+    }
+    
+    public void setShareProgressLevel(int shareProgressLevel) {
+        this.shareProgressLevel = shareProgressLevel;
+    }
+    
+    public boolean getRequireSameQuest() {
+        return requireSameQuest;
+    }
+    
+    public void setRequireSameQuest(boolean requireSameQuest) {
+        this.requireSameQuest = requireSameQuest;
+    }
 }

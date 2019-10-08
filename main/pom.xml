@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>3.8.0</version>
+        <version>3.8.1</version>
     </parent>
     <artifactId>quests-main</artifactId>
     
@@ -14,9 +14,14 @@
     
     <repositories>
         <repository>
-        	<!-- Parties, GPS, PhatLoots, CitizensBooks, mcMMO Classic -->
+        	<!-- GPS, PhatLoots, CitizensBooks, mcMMO Classic -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <!-- Parties repo -->
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
@@ -106,7 +111,7 @@
 	        <scope>provided</scope>
 	    </dependency>
         <dependency>
-	        <groupId>com.github.PikaMug</groupId>
+	        <groupId>com.github.RednedEpic</groupId>
 	        <artifactId>PhatLoots</artifactId>
 	        <version>-SNAPSHOT</version>
 	        <scope>provided</scope>
@@ -118,9 +123,9 @@
 	        <scope>provided</scope>
 	    </dependency>
         <dependency>
-            <groupId>com.github.AlessioDP.Parties</groupId>
+            <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>2.4.6</version>
+            <version>2.6.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

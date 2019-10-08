@@ -16,69 +16,69 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 public class Planner {
-	public String start = null;
-	public String end = null;
-	public long repeat = -1;
-	public long cooldown = -1;
-	
-	public String getStart() {
-		return start;
-	}
-	public long getStartInMillis() {
-		if (start == null) {
-			return -1;
-		}
-		Calendar cal = Calendar.getInstance();
-		String[] s = start.split(":");
-		cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
-				Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
-		TimeZone tz = TimeZone.getTimeZone(s[6]);
-		cal.setTimeZone(tz);
-		return cal.getTimeInMillis();
-	}
-	public boolean hasStart() {
-		return start != null;
-	}
-	public void setStart(String start) {
-		this.start = start;
-	}
-	public String getEnd() {
-		return end;
-	}
-	public long getEndInMillis() {
-		if (end == null) {
-			return -1;
-		}
-		Calendar cal = Calendar.getInstance();
-		String[] s = end.split(":");
-		cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
-				Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
-		TimeZone tz = TimeZone.getTimeZone(s[6]);
-		cal.setTimeZone(tz);
-		return cal.getTimeInMillis();
-	}
-	public boolean hasEnd() {
-		return end != null;
-	}
-	public void setEnd(String end) {
-		this.end = end;
-	}
-	public long getRepeat() {
-		return repeat;
-	}
-	public boolean hasRepeat() {
-		return repeat != -1;
-	}
-	public void setRepeat(long repeat) {
-		this.repeat = repeat;
-	}
-	public long getCooldown() {
-		return cooldown;
-	}
-	public boolean hasCooldown() {
-		return cooldown != -1;
-	}
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
-	}
+    public String start = null;
+    public String end = null;
+    public long repeat = -1;
+    public long cooldown = -1;
+    
+    public String getStart() {
+        return start;
+    }
+    public long getStartInMillis() {
+        if (start == null) {
+            return -1;
+        }
+        Calendar cal = Calendar.getInstance();
+        String[] s = start.split(":");
+        cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
+                Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+        TimeZone tz = TimeZone.getTimeZone(s[6]);
+        cal.setTimeZone(tz);
+        return cal.getTimeInMillis();
+    }
+    public boolean hasStart() {
+        return start != null;
+    }
+    public void setStart(String start) {
+        this.start = start;
+    }
+    public String getEnd() {
+        return end;
+    }
+    public long getEndInMillis() {
+        if (end == null) {
+            return -1;
+        }
+        Calendar cal = Calendar.getInstance();
+        String[] s = end.split(":");
+        cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
+                Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+        TimeZone tz = TimeZone.getTimeZone(s[6]);
+        cal.setTimeZone(tz);
+        return cal.getTimeInMillis();
+    }
+    public boolean hasEnd() {
+        return end != null;
+    }
+    public void setEnd(String end) {
+        this.end = end;
+    }
+    public long getRepeat() {
+        return repeat;
+    }
+    public boolean hasRepeat() {
+        return repeat != -1;
+    }
+    public void setRepeat(long repeat) {
+        this.repeat = repeat;
+    }
+    public long getCooldown() {
+        return cooldown;
+    }
+    public boolean hasCooldown() {
+        return cooldown != -1;
+    }
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
+    }
 }

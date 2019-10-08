@@ -24,67 +24,67 @@ import me.blackvein.quests.util.Lang;
 
 public class StageTimer implements Runnable {
 
-	private Quester quester;
-	private Quests plugin;
-	private Quest quest;
+    private Quester quester;
+    private Quests plugin;
+    private Quest quest;
 
-	public StageTimer(Quests quests, Quester q, Quest qu) {
-		quester = q;
-		quest = qu;
-		plugin = quests;
-	}
+    public StageTimer(Quests quests, Quester q, Quest qu) {
+        quester = q;
+        quest = qu;
+        plugin = quests;
+    }
 
-	@Override
-	public void run() {
-		if (quester == null) {
-			return;
-		}
-		if (quester.getQuestData(quest) == null) {
-			return;
-		}
-		if (quester.getQuestData(quest).delayOver) {
-			if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
-				if (quester.getCurrentStage(quest).getScript() != null) {
-					plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
-				}
-				if (quester.getCurrentStage(quest).getFinishEvent() != null) {
-					quester.getCurrentStage(quest).getFinishEvent().fire(quester, quest);
-				}
-				quest.completeQuest(quester);
-			} else {
-				Stage currentStage = quester.getCurrentStage(quest);
-				int stageNum = quester.getCurrentQuests().get(quest) + 1;
-				quester.hardQuit(quest);
-				if (currentStage.getScript() != null) {
-					plugin.getDependencies().runDenizenScript(currentStage.getScript(), quester);
-				}
-				if (currentStage.getFinishEvent() != null) {
-					currentStage.getFinishEvent().fire(quester, quest);
-				}
-				quester.hardStagePut(quest, stageNum);
-				quester.addEmptiesFor(quest, stageNum);
-				// Added this line at some point, not sure why. Commented out to fix Github #726
-				//quester.getCurrentStage(quest).setDelay(-1);
-				quester.getQuestData(quest).delayStartTime = 0;
-				quester.getQuestData(quest).delayTimeLeft = -1;
-				Action stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
-				if (stageStartEvent != null) {
-					stageStartEvent.fire(quester, quest);
-				}
-				Player player = quester.getPlayer();
-				String msg = Lang.get(player, "questObjectivesTitle");
-				msg = msg.replace("<quest>", quest.getName());
-				player.sendMessage(ChatColor.GOLD + msg);
-				plugin.showObjectives(quest, quester, false);
-				String stageStartMessage = quester.getCurrentStage(quest).getStartMessage();
-				if (stageStartMessage != null) {
-					quester.getPlayer().sendMessage(Quests.parseStringWithPossibleLineBreaks(stageStartMessage, quest));
-				}
-			}
-			if (quester.getQuestData(quest) != null) {
-				quester.getQuestData(quest).delayOver = true;
-			}
-			quester.updateJournal();
-		}
-	}
+    @Override
+    public void run() {
+        if (quester == null) {
+            return;
+        }
+        if (quester.getQuestData(quest) == null) {
+            return;
+        }
+        if (quester.getQuestData(quest).delayOver) {
+            if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
+                if (quester.getCurrentStage(quest).getScript() != null) {
+                    plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
+                }
+                if (quester.getCurrentStage(quest).getFinishEvent() != null) {
+                    quester.getCurrentStage(quest).getFinishEvent().fire(quester, quest);
+                }
+                quest.completeQuest(quester);
+            } else {
+                Stage currentStage = quester.getCurrentStage(quest);
+                int stageNum = quester.getCurrentQuests().get(quest) + 1;
+                quester.hardQuit(quest);
+                if (currentStage.getScript() != null) {
+                    plugin.getDependencies().runDenizenScript(currentStage.getScript(), quester);
+                }
+                if (currentStage.getFinishEvent() != null) {
+                    currentStage.getFinishEvent().fire(quester, quest);
+                }
+                quester.hardStagePut(quest, stageNum);
+                quester.addEmptiesFor(quest, stageNum);
+                // Added this line at some point, not sure why. Commented out to fix Github #726
+                //quester.getCurrentStage(quest).setDelay(-1);
+                quester.getQuestData(quest).delayStartTime = 0;
+                quester.getQuestData(quest).delayTimeLeft = -1;
+                Action stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
+                if (stageStartEvent != null) {
+                    stageStartEvent.fire(quester, quest);
+                }
+                Player player = quester.getPlayer();
+                String msg = Lang.get(player, "questObjectivesTitle");
+                msg = msg.replace("<quest>", quest.getName());
+                player.sendMessage(ChatColor.GOLD + msg);
+                plugin.showObjectives(quest, quester, false);
+                String stageStartMessage = quester.getCurrentStage(quest).getStartMessage();
+                if (stageStartMessage != null) {
+                    quester.getPlayer().sendMessage(Quests.parseStringWithPossibleLineBreaks(stageStartMessage, quest));
+                }
+            }
+            if (quester.getQuestData(quest) != null) {
+                quester.getQuestData(quest).delayOver = true;
+            }
+            quester.updateJournal();
+        }
+    }
 }
