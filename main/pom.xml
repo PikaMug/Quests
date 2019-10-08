@@ -111,7 +111,7 @@
 	        <scope>provided</scope>
 	    </dependency>
         <dependency>
-	        <groupId>com.github.PikaMug</groupId>
+	        <groupId>com.github.RednedEpic</groupId>
 	        <artifactId>PhatLoots</artifactId>
 	        <version>-SNAPSHOT</version>
 	        <scope>provided</scope>
