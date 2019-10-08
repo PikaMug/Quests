@@ -70,7 +70,8 @@ public class LocaleQuery {
      * Send message with item name translated to the client's locale.
      * Material is required. Durability arg is arbitrary for 1.13+
      * and can be ignored by setting to a value less than 0.
-     * Enchantments & meta are optional and may be left null or empty.<p>
+     * Enchantments & meta are optional and may be left null or empty,
+     * but note that most Potions use meta for 1.13+.<p>
      * 
      * Message should contain {@code <item>} string for replacement by
      * this method (along with applicable {@code <enchantment>} strings).
