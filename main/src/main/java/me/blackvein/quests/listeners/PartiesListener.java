@@ -63,7 +63,7 @@ public class PartiesListener implements Listener {
     
     @EventHandler
     public void onPlayerLeaveEvent(BukkitPartiesPlayerPostLeaveEvent event) {
-        if (event.isKicked()) {
+        if (event.isKicked() && event.getKicker() != null) {
             Player k = Bukkit.getServer().getPlayer(event.getKicker().getPlayerUUID());
             if (k != null) {
                 k.sendMessage(ChatColor.RED + Lang.get(k, "questPartiesKicked").replace("<player>", k.getName()));
