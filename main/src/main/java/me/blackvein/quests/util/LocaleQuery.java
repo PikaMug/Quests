@@ -139,7 +139,8 @@ public class LocaleQuery {
             }
             if (meta != null && meta instanceof PotionMeta) {
                 matKey = "item.minecraft.potion.effect." + ((PotionMeta)meta).getBasePotionData().getType().name().toLowerCase()
-                        .replace("regen", "regeneration").replace("speed", "swiftness");
+                        .replace("regen", "regeneration").replace("speed", "swiftness").replace("jump", "leaping")
+                        .replace("instant_heal", "healing").replace("instant_damage", "harming");
             }
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
