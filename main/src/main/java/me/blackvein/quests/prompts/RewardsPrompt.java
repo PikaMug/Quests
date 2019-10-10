@@ -166,7 +166,13 @@ public class RewardsPrompt extends NumericPrompt {
                     List<String> overrides = (List<String>) context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY);
                     int index = 0;
                     for (String cmd : commands) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd + (overrides != null ? ChatColor.GRAY + " (\"" + ChatColor.AQUA + overrides.get(index) + ChatColor.GRAY + "\")" : "") + "\n";
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd;
+                        if (overrides != null) {
+                            if (index < overrides.size()) {
+                                text += ChatColor.GRAY + " (\"" + ChatColor.AQUA + overrides.get(index) + ChatColor.GRAY + "\")";
+                            }
+                        }
+                        text += "\n";
                         index++;
                     }
                     return text;
