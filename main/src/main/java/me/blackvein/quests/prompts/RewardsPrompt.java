@@ -102,7 +102,7 @@ public class RewardsPrompt extends NumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("rewSetQuestPoints");
             case 3:
-                return ChatColor.YELLOW + Lang.get("rewSetItem");
+                return ChatColor.YELLOW + Lang.get("rewSetItems");
             case 4:
                 return ChatColor.YELLOW + Lang.get("rewSetExperience");
             case 5:
