@@ -13,7 +13,6 @@
 package me.blackvein.quests.particle;
 
 import java.util.Map;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -28,18 +27,21 @@ public abstract class ParticleProvider {
             String packageName = ParticleProvider.class.getPackage().getName();
             String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             if (internalsName.startsWith("v1_8_R")) {
-                loaded = (ParticleProvider) Class.forName(packageName + ".ParticleProvider_" + internalsName).newInstance();
+                loaded = (ParticleProvider) Class.forName(packageName + ".ParticleProvider_" + internalsName)
+                        .newInstance();
             } else {
                 loaded = new ParticleProvider_Bukkit();
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
-            Bukkit.getLogger().log(Level.SEVERE, "Quests could not find a valid implementation for this server version.");
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
+                | ClassCastException exception) {
+            Bukkit.getLogger().severe("[Quests] Could not find a valid implementation for this server version.");
         }
     }
 
     abstract Map<PreBuiltParticle, Object> getParticleMap();
 
-    abstract void spawnParticle(Player player, Location location, Object particle, float offsetX, float offsetY, float offsetZ, float speed, int count, int[] data);
+    abstract void spawnParticle(Player player, Location location, Object particle, float offsetX, float offsetY,
+            float offsetZ, float speed, int count, int[] data);
 
     /**
      * Sends the particle to the player.
@@ -65,7 +67,8 @@ public abstract class ParticleProvider {
      *                   packets such as block crack or particle colour on redstone /
      *                   firework particles.
      */
-    public static void sendToPlayer(Player player, Location location, String particleId, float offsetX, float offsetY, float offsetZ, float speed, int count, int[] data) {
+    public static void sendToPlayer(Player player, Location location, String particleId, float offsetX, float offsetY,
+            float offsetZ, float speed, int count, int[] data) {
         Object particle;
         PreBuiltParticle pbp = PreBuiltParticle.fromIdentifier(particleId);
         if (pbp != null) {
@@ -124,8 +127,7 @@ public abstract class ParticleProvider {
         if (particle.getVector() != null) {
             pos.add(particle.getVector());
         }
-        loaded.spawnParticle(player, pos, 
-                loaded.getParticleMap().get(particle), 
-                particle.getOffsetX(), particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(), particle.getCount(), null);
+        loaded.spawnParticle(player, pos, loaded.getParticleMap().get(particle), particle.getOffsetX(),
+                particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(),particle.getCount(), null);
     }
 }

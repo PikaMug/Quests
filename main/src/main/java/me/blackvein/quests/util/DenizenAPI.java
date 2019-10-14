@@ -56,7 +56,8 @@ public class DenizenAPI {
                 denizen = Class.forName("net.aufdemrand.denizen.Denizen");
                 scriptRegistry = Class.forName("net.aufdemrand.denizencore.scripts.ScriptRegistry");
                 scriptContainer = Class.forName("net.aufdemrand.denizencore.scripts.containers.ScriptContainer");
-                taskScriptContainer = Class.forName("net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer");
+                taskScriptContainer 
+                        = Class.forName("net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer");
                 dPlayer = Class.forName("net.aufdemrand.denizen.objects.dPlayer");
                 dNPC = Class.forName("net.aufdemrand.denizen.objects.dNPC");
                 scriptEntryData = Class.forName("net.aufdemrand.denizencore.scripts.ScriptEntryData");
@@ -78,11 +79,13 @@ public class DenizenAPI {
             try {
                 containsScriptMethod = scriptRegistry.getMethod("containsScript", String.class);
                 getScriptNamesMethod = scriptRegistry.getMethod("_getScriptNames");
-                getScriptContainerAsMethod = scriptRegistry.getMethod("getScriptContainerAs", String.class, taskScriptContainer.getClass());
+                getScriptContainerAsMethod = scriptRegistry
+                        .getMethod("getScriptContainerAs", String.class, taskScriptContainer.getClass());
                 mirrorBukkitPlayerMethod = dPlayer.getMethod("mirrorBukkitPlayer", OfflinePlayer.class);
                 mirrorCitizensNPCMethod = dNPC.getMethod("mirrorCitizensNPC", NPC.class);
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.WARNING, "Quests failed to bind to Denizen, integration will not work!", e);
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Quests failed to bind to Denizen, integration will not work!", e);
                 return;
             }
         }
@@ -103,7 +106,8 @@ public class DenizenAPI {
             try {
                 script = (boolean)containsScriptMethod.invoke(scriptRegistry, input);
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen ScriptRegistry#containsScript", e);
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Quests encountered an error invoking Denizen ScriptRegistry#containsScript", e);
             }
             return script;
         }
@@ -123,7 +127,8 @@ public class DenizenAPI {
                 instance = constructor.newInstance(null, input);
                 name = (String)instance.getClass().getMethod("getName").invoke(scriptContainer);
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen ScriptContainer#getName", e);
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Quests encountered an error invoking Denizen ScriptContainer#getName", e);
             }
             return name;
         }
@@ -141,7 +146,8 @@ public class DenizenAPI {
             try {
                 names = (Set<String>)getScriptNamesMethod.invoke(scriptRegistry);
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen ScriptRegistry#_getScriptNames", e);
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Quests encountered an error invoking Denizen ScriptRegistry#_getScriptNames", e);
             }
             return names;
         }
@@ -158,7 +164,8 @@ public class DenizenAPI {
             try {
                 container = getScriptContainerAsMethod.invoke(scriptRegistry, scriptName, taskScriptContainer);
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen #getScriptContainerAs", e);
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Quests encountered an error invoking Denizen #getScriptContainerAs", e);
             }
             return container;
         }
@@ -175,7 +182,8 @@ public class DenizenAPI {
             try {
                 dp = mirrorBukkitPlayerMethod.invoke(dPlayer, player);
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen dPlayer#mirrorBukkitPlayer", e);
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Quests encountered an error invoking Denizen dPlayer#mirrorBukkitPlayer", e);
             }
             return dp;
         }
@@ -192,7 +200,8 @@ public class DenizenAPI {
             try {
                 dp = mirrorCitizensNPCMethod.invoke(dNPC, npc);
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen dNPC#mirrorCitizensNPC", e);
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Quests encountered an error invoking Denizen dNPC#mirrorCitizensNPC", e);
             }
             return dp;
         }
@@ -211,7 +220,8 @@ public class DenizenAPI {
                 Method runTaskScript = tsc.getClass().getMethod("runTaskScript", scriptEntryData, Map.class);
                 runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.WARNING, "Quests encountered an error invoking Denizen TaskScriptContainer#runTaskScript", e);
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Quests encountered an error invoking Denizen TaskScriptContainer#runTaskScript", e);
             }
         }
     }

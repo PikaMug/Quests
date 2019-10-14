@@ -46,7 +46,8 @@ public class DungeonsListener implements Listener {
             Player p = event.getDPlayer().getPlayer();
             if (i != null && p != null) {
                 if (Lang.get("questDungeonsInvite").length() > 0) {
-                    i.sendMessage(ChatColor.GREEN + Lang.get(i, "questDungeonsInvite").replace("<player>", p.getName()));
+                    i.sendMessage(ChatColor.GREEN + Lang.get(i, "questDungeonsInvite")
+                            .replace("<player>", p.getName()));
                 }
                 if (Lang.get("questDungeonsJoin").length() > 0) {
                     p.sendMessage(ChatColor.GREEN + Lang.get(p, "questDungeonsJoin").replace("<player>", i.getName()));

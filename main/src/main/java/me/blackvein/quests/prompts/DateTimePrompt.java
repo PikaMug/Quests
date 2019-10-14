@@ -67,8 +67,9 @@ public class DateTimePrompt extends FixedSetPrompt {
         if (cc.getSessionData("tempSecond") == null) {
             cc.setSessionData("tempSecond", cal.get(Calendar.SECOND));
         }
-        cal.set((Integer) cc.getSessionData("tempYear"), (Integer) cc.getSessionData("tempMonth"), (Integer) cc.getSessionData("tempDay"),
-                (Integer) cc.getSessionData("tempHour"), (Integer) cc.getSessionData("tempMinute"), (Integer) cc.getSessionData("tempSecond"));
+        cal.set((Integer) cc.getSessionData("tempYear"), (Integer) cc.getSessionData("tempMonth"), 
+                (Integer) cc.getSessionData("tempDay"), (Integer) cc.getSessionData("tempHour"), 
+                (Integer) cc.getSessionData("tempMinute"), (Integer) cc.getSessionData("tempSecond"));
         dateData += ChatColor.DARK_AQUA + dateFormat.format(cal.getTime()) + " ";
         dateData += ChatColor.AQUA + timeFormat.format(cal.getTime()) + " ";
         
@@ -82,21 +83,31 @@ public class DateTimePrompt extends FixedSetPrompt {
         Double hour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         String[] sep = String.valueOf(hour).replace("-", "").split("\\.");
         DecimalFormat zoneFormat = new DecimalFormat("00");
-        dateData += ChatColor.LIGHT_PURPLE + "UTC" + (hour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0])) + ":" + zoneFormat.format(Integer.valueOf(sep[1]))
-                + ChatColor.GREEN + " (" + cal.getTimeZone().getDisplayName(loc) + ")";
+        dateData += ChatColor.LIGHT_PURPLE + "UTC" + (hour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0])) 
+                + ":" + zoneFormat.format(Integer.valueOf(sep[1])) + ChatColor.GREEN + " (" 
+                + cal.getTimeZone().getDisplayName(loc) + ")";
         if (dateData != null) {
             menu += dateData + "\n";
         }
 
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "1. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeDay") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "2. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeMonth") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "3. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeYear") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "4. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeHour") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "5. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeMinute") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "6. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeSecond") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("timeZone") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.RED + Lang.get("cancel") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "9. " + ChatColor.RESET + "" + ChatColor.GREEN + Lang.get("done") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "1. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("timeDay") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "2. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("timeMonth") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "3. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("timeYear") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "4. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("timeHour") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "5. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("timeMinute") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "6. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("timeSecond") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("timeZone") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.RED 
+                + Lang.get("cancel") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "9. " + ChatColor.RESET + "" + ChatColor.GREEN 
+                + Lang.get("done") + "\n";
         return menu;
     }
 

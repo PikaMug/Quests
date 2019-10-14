@@ -77,7 +77,8 @@ public class StagesPrompt extends NumericPrompt {
         
         String text = ChatColor.LIGHT_PURPLE + "- " + getTitle() + " -\n";
         for (int i = 1; i <= (getStages(context) + size); i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + "\n";
         }
         return text;
     }
@@ -129,63 +130,92 @@ public class StagesPrompt extends NumericPrompt {
                 newPref = "stage" + (current - 1);
                 context.setSessionData(newPref + CK.S_BREAK_NAMES, context.getSessionData(pref + CK.S_BREAK_NAMES));
                 context.setSessionData(newPref + CK.S_BREAK_AMOUNTS, context.getSessionData(pref + CK.S_BREAK_AMOUNTS));
-                context.setSessionData(newPref + CK.S_BREAK_DURABILITY, context.getSessionData(pref + CK.S_BREAK_DURABILITY));
+                context.setSessionData(newPref + CK.S_BREAK_DURABILITY, context.getSessionData(pref 
+                        + CK.S_BREAK_DURABILITY));
                 context.setSessionData(newPref + CK.S_DAMAGE_NAMES, context.getSessionData(pref + CK.S_DAMAGE_NAMES));
-                context.setSessionData(newPref + CK.S_DAMAGE_AMOUNTS, context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS));
-                context.setSessionData(newPref + CK.S_DAMAGE_DURABILITY, context.getSessionData(pref + CK.S_DAMAGE_DURABILITY));
+                context.setSessionData(newPref + CK.S_DAMAGE_AMOUNTS, context.getSessionData(pref 
+                        + CK.S_DAMAGE_AMOUNTS));
+                context.setSessionData(newPref + CK.S_DAMAGE_DURABILITY, context.getSessionData(pref 
+                        + CK.S_DAMAGE_DURABILITY));
                 context.setSessionData(newPref + CK.S_PLACE_NAMES, context.getSessionData(pref + CK.S_PLACE_NAMES));
                 context.setSessionData(newPref + CK.S_PLACE_NAMES, context.getSessionData(pref + CK.S_PLACE_AMOUNTS));
-                context.setSessionData(newPref + CK.S_PLACE_DURABILITY, context.getSessionData(pref + CK.S_PLACE_DURABILITY));
+                context.setSessionData(newPref + CK.S_PLACE_DURABILITY, context.getSessionData(pref 
+                        + CK.S_PLACE_DURABILITY));
                 context.setSessionData(newPref + CK.S_USE_NAMES, context.getSessionData(pref + CK.S_USE_NAMES));
                 context.setSessionData(newPref + CK.S_USE_AMOUNTS, context.getSessionData(pref + CK.S_USE_AMOUNTS));
-                context.setSessionData(newPref + CK.S_USE_DURABILITY, context.getSessionData(pref + CK.S_USE_DURABILITY));
+                context.setSessionData(newPref + CK.S_USE_DURABILITY, context.getSessionData(pref 
+                        + CK.S_USE_DURABILITY));
                 context.setSessionData(newPref + CK.S_CUT_NAMES, context.getSessionData(pref + CK.S_CUT_NAMES));
                 context.setSessionData(newPref + CK.S_CUT_AMOUNTS, context.getSessionData(pref + CK.S_CUT_AMOUNTS));
-                context.setSessionData(newPref + CK.S_CUT_DURABILITY, context.getSessionData(pref + CK.S_CUT_DURABILITY));
+                context.setSessionData(newPref + CK.S_CUT_DURABILITY, context.getSessionData(pref 
+                        + CK.S_CUT_DURABILITY));
                 context.setSessionData(newPref + CK.S_CRAFT_ITEMS, context.getSessionData(pref + CK.S_CRAFT_ITEMS));
                 context.setSessionData(newPref + CK.S_SMELT_ITEMS, context.getSessionData(pref + CK.S_SMELT_ITEMS));
                 context.setSessionData(newPref + CK.S_ENCHANT_TYPES, context.getSessionData(pref + CK.S_ENCHANT_TYPES));
                 context.setSessionData(newPref + CK.S_ENCHANT_NAMES, context.getSessionData(pref + CK.S_ENCHANT_NAMES));
-                context.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS));
+                context.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, context.getSessionData(pref 
+                        + CK.S_ENCHANT_AMOUNTS));
                 context.setSessionData(newPref + CK.S_BREW_ITEMS, context.getSessionData(pref + CK.S_BREW_ITEMS));
                 context.setSessionData(newPref + CK.S_FISH, context.getSessionData(pref + CK.S_FISH));
                 context.setSessionData(newPref + CK.S_PLAYER_KILL, context.getSessionData(pref + CK.S_PLAYER_KILL));
-                context.setSessionData(newPref + CK.S_DELIVERY_ITEMS, context.getSessionData(pref + CK.S_DELIVERY_ITEMS));
+                context.setSessionData(newPref + CK.S_DELIVERY_ITEMS, context.getSessionData(pref 
+                        + CK.S_DELIVERY_ITEMS));
                 context.setSessionData(newPref + CK.S_DELIVERY_NPCS, context.getSessionData(pref + CK.S_DELIVERY_NPCS));
-                context.setSessionData(newPref + CK.S_DELIVERY_MESSAGES, context.getSessionData(pref + CK.S_DELIVERY_MESSAGES));
-                context.setSessionData(newPref + CK.S_NPCS_TO_TALK_TO, context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO));
+                context.setSessionData(newPref + CK.S_DELIVERY_MESSAGES, context.getSessionData(pref 
+                        + CK.S_DELIVERY_MESSAGES));
+                context.setSessionData(newPref + CK.S_NPCS_TO_TALK_TO, context.getSessionData(pref 
+                        + CK.S_NPCS_TO_TALK_TO));
                 context.setSessionData(newPref + CK.S_NPCS_TO_KILL, context.getSessionData(pref + CK.S_NPCS_TO_KILL));
-                context.setSessionData(newPref + CK.S_NPCS_TO_KILL_AMOUNTS, context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS));
+                context.setSessionData(newPref + CK.S_NPCS_TO_KILL_AMOUNTS, context.getSessionData(pref 
+                        + CK.S_NPCS_TO_KILL_AMOUNTS));
                 context.setSessionData(newPref + CK.S_MOB_TYPES, context.getSessionData(pref + CK.S_MOB_TYPES));
                 context.setSessionData(newPref + CK.S_MOB_AMOUNTS, context.getSessionData(pref + CK.S_MOB_AMOUNTS));
-                context.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS, context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS));
-                context.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS_RADIUS, context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS));
-                context.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS_NAMES, context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES));
-                context.setSessionData(newPref + CK.S_REACH_LOCATIONS, context.getSessionData(pref + CK.S_REACH_LOCATIONS));
-                context.setSessionData(newPref + CK.S_REACH_LOCATIONS_RADIUS, context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS));
-                context.setSessionData(newPref + CK.S_REACH_LOCATIONS_NAMES, context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES));
+                context.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS, context.getSessionData(pref 
+                        + CK.S_MOB_KILL_LOCATIONS));
+                context.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS_RADIUS, context.getSessionData(pref 
+                        + CK.S_MOB_KILL_LOCATIONS_RADIUS));
+                context.setSessionData(newPref + CK.S_MOB_KILL_LOCATIONS_NAMES, context.getSessionData(pref 
+                        + CK.S_MOB_KILL_LOCATIONS_NAMES));
+                context.setSessionData(newPref + CK.S_REACH_LOCATIONS, context.getSessionData(pref 
+                        + CK.S_REACH_LOCATIONS));
+                context.setSessionData(newPref + CK.S_REACH_LOCATIONS_RADIUS, context.getSessionData(pref 
+                        + CK.S_REACH_LOCATIONS_RADIUS));
+                context.setSessionData(newPref + CK.S_REACH_LOCATIONS_NAMES, context.getSessionData(pref 
+                        + CK.S_REACH_LOCATIONS_NAMES));
                 context.setSessionData(newPref + CK.S_TAME_TYPES, context.getSessionData(pref + CK.S_TAME_TYPES));
                 context.setSessionData(newPref + CK.S_TAME_AMOUNTS, context.getSessionData(pref + CK.S_TAME_AMOUNTS));
                 context.setSessionData(newPref + CK.S_SHEAR_COLORS, context.getSessionData(pref + CK.S_SHEAR_COLORS));
                 context.setSessionData(newPref + CK.S_SHEAR_AMOUNTS, context.getSessionData(pref + CK.S_SHEAR_AMOUNTS));
                 context.setSessionData(newPref + CK.S_START_EVENT, context.getSessionData(pref + CK.S_START_EVENT));
-                context.setSessionData(newPref + CK.S_DISCONNECT_EVENT, context.getSessionData(pref + CK.S_DISCONNECT_EVENT));
+                context.setSessionData(newPref + CK.S_DISCONNECT_EVENT, context.getSessionData(pref 
+                        + CK.S_DISCONNECT_EVENT));
                 context.setSessionData(newPref + CK.S_DEATH_EVENT, context.getSessionData(pref + CK.S_DEATH_EVENT));
                 context.setSessionData(newPref + CK.S_CHAT_EVENTS, context.getSessionData(pref + CK.S_CHAT_EVENTS));
-                context.setSessionData(newPref + CK.S_CHAT_EVENT_TRIGGERS, context.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS));
+                context.setSessionData(newPref + CK.S_CHAT_EVENT_TRIGGERS, context.getSessionData(pref 
+                        + CK.S_CHAT_EVENT_TRIGGERS));
                 context.setSessionData(newPref + CK.S_FINISH_EVENT, context.getSessionData(pref + CK.S_FINISH_EVENT));
-                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES, context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES));
-                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA, context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA));
-                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_COUNT, context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT));
-                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS));
-                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP));
-                context.setSessionData(newPref + CK.S_PASSWORD_DISPLAYS, context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS));
-                context.setSessionData(newPref + CK.S_PASSWORD_PHRASES, context.getSessionData(pref + CK.S_PASSWORD_PHRASES));
-                context.setSessionData(newPref + CK.S_OVERRIDE_DISPLAY, context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY));
+                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES, context.getSessionData(pref 
+                        + CK.S_CUSTOM_OBJECTIVES));
+                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA, context.getSessionData(pref 
+                        + CK.S_CUSTOM_OBJECTIVES_DATA));
+                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_COUNT, context.getSessionData(pref 
+                        + CK.S_CUSTOM_OBJECTIVES_COUNT));
+                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, context.getSessionData(pref 
+                        + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS));
+                context.setSessionData(newPref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, context.getSessionData(pref 
+                        + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP));
+                context.setSessionData(newPref + CK.S_PASSWORD_DISPLAYS, context.getSessionData(pref 
+                        + CK.S_PASSWORD_DISPLAYS));
+                context.setSessionData(newPref + CK.S_PASSWORD_PHRASES, context.getSessionData(pref 
+                        + CK.S_PASSWORD_PHRASES));
+                context.setSessionData(newPref + CK.S_OVERRIDE_DISPLAY, context.getSessionData(pref 
+                        + CK.S_OVERRIDE_DISPLAY));
                 context.setSessionData(newPref + CK.S_DELAY, context.getSessionData(pref + CK.S_DELAY));
-                context.setSessionData(newPref + CK.S_DELAY_MESSAGE, context.getSessionData(pref + CK.S_DELAY_MESSAGE));
+                context.setSessionData(newPref + CK.S_DELAY_MESSAGE, context.getSessionData(pref 
+                        + CK.S_DELAY_MESSAGE));
                 context.setSessionData(newPref + CK.S_DENIZEN, context.getSessionData(pref + CK.S_DENIZEN));
-                context.setSessionData(newPref + CK.S_COMPLETE_MESSAGE, context.getSessionData(pref + CK.S_COMPLETE_MESSAGE));
+                context.setSessionData(newPref + CK.S_COMPLETE_MESSAGE, context.getSessionData(pref 
+                        + CK.S_COMPLETE_MESSAGE));
                 context.setSessionData(newPref + CK.S_START_MESSAGE, context.getSessionData(pref + CK.S_START_MESSAGE));
             }
             context.setSessionData(pref + CK.S_BREAK_NAMES, null);

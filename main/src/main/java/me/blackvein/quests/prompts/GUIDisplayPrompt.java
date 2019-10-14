@@ -61,7 +61,8 @@ public class GUIDisplayPrompt extends NumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenGUIDisplayPromptEvent event = new QuestsEditorPostOpenGUIDisplayPromptEvent(questFactory, context);
+        QuestsEditorPostOpenGUIDisplayPromptEvent event 
+                = new QuestsEditorPostOpenGUIDisplayPromptEvent(questFactory, context);
         plugin.getServer().getPluginManager().callEvent(event);
         
         if (context.getSessionData("tempStack") != null) {
@@ -91,7 +92,8 @@ public class GUIDisplayPrompt extends NumericPrompt {
             text += " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
         }
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + "\n";
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + "\n";
         }
         return text;
     }

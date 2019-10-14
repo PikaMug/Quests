@@ -39,7 +39,8 @@ public class ActionTimer extends BukkitRunnable {
             quest.failQuest(quester);
             quester.updateJournal();
         } else {
-            quester.getPlayer().sendMessage(Lang.get(quester.getPlayer(), "timerMessage").replace("<time>", String.valueOf(time)));
+            quester.getPlayer().sendMessage(Lang.get(quester.getPlayer(), "timerMessage")
+                    .replace("<time>", String.valueOf(time)));
         }
     }
 }

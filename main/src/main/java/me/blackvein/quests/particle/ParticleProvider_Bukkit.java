@@ -43,7 +43,8 @@ class ParticleProvider_Bukkit extends ParticleProvider {
     }
 
     @Override
-    void spawnParticle(Player player, Location location, Object particle, float offsetX, float offsetY, float offsetZ, float speed, int count, int[] data) {
+    void spawnParticle(Player player, Location location, Object particle, float offsetX, float offsetY, float offsetZ, 
+            float speed, int count, int[] data) {
         player.spawnParticle((Particle) particle, location, count, offsetX, offsetY, offsetZ, speed, data);
     }
 }

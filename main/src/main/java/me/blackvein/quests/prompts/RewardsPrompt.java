@@ -132,13 +132,16 @@ public class RewardsPrompt extends NumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyRew + " " + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyRew + " " 
+                            + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY 
+                            + ")";
                 }
             case 2:
                 if (context.getSessionData(CK.REW_QUEST_POINTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_QUEST_POINTS) + " " + Lang.get("questPoints") + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_QUEST_POINTS) + " " 
+                            + Lang.get("questPoints") + ChatColor.GRAY + ")";
                 }
             case 3:
                 if (context.getSessionData(CK.REW_ITEMS) == null) {
@@ -147,7 +150,8 @@ public class RewardsPrompt extends NumericPrompt {
                     String text = "";
                     LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REW_ITEMS);
                     for (int i = 0; i < items.size(); i++) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                                + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
                     }
                     return text;
                 }
@@ -155,7 +159,8 @@ public class RewardsPrompt extends NumericPrompt {
                 if (context.getSessionData(CK.REW_EXP) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_EXP) + " " + Lang.get("points") + ChatColor.DARK_GRAY + ")";
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_EXP) + " " 
+                            + Lang.get("points") + ChatColor.DARK_GRAY + ")";
                 }
             case 5:
                 if (context.getSessionData(CK.REW_COMMAND) == null) {
@@ -169,7 +174,8 @@ public class RewardsPrompt extends NumericPrompt {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + cmd;
                         if (overrides != null) {
                             if (index < overrides.size()) {
-                                text += ChatColor.GRAY + " (\"" + ChatColor.AQUA + overrides.get(index) + ChatColor.GRAY + "\")";
+                                text += ChatColor.GRAY + " (\"" + ChatColor.AQUA + overrides.get(index) 
+                                        + ChatColor.GRAY + "\")";
                             }
                         }
                         text += "\n";
@@ -197,7 +203,8 @@ public class RewardsPrompt extends NumericPrompt {
                         List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
                         List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
                         for (String skill : skills) {
-                            text += ChatColor.GRAY + "     - " + ChatColor.AQUA + skill + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amounts.get(skills.indexOf(skill)) + "\n";
+                            text += ChatColor.GRAY + "     - " + ChatColor.AQUA + skill + ChatColor.GRAY + " x " 
+                                    + ChatColor.DARK_AQUA + amounts.get(skills.indexOf(skill)) + "\n";
                         }
                         return text;
                     }
@@ -213,7 +220,9 @@ public class RewardsPrompt extends NumericPrompt {
                         List<String> heroClasses = (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
                         List<Double> amounts = (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
                         for (String heroClass : heroClasses) {
-                            text += ChatColor.GRAY + "     - " + ChatColor.AQUA + amounts.get(heroClasses.indexOf(heroClass)) + " " + ChatColor.DARK_AQUA + heroClass + " " + Lang.get("experience") + "\n";
+                            text += ChatColor.GRAY + "     - " + ChatColor.AQUA 
+                                    + amounts.get(heroClasses.indexOf(heroClass)) + " " + ChatColor.DARK_AQUA 
+                                    + heroClass + " " + Lang.get("experience") + "\n";
                         }
                         return text;
                     }
@@ -242,7 +251,8 @@ public class RewardsPrompt extends NumericPrompt {
                     String text = "";
                     LinkedList<String> customRews = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
                     for (String s : customRews) {
-                        text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s + "\n";
+                        text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s 
+                                + "\n";
                     }
                     return text;
                 }
@@ -262,9 +272,12 @@ public class RewardsPrompt extends NumericPrompt {
         QuestsEditorPostOpenRewardsPromptEvent event = new QuestsEditorPostOpenRewardsPromptEvent(factory, context);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.LIGHT_PURPLE + getTitle(context).replace((String) context.getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE) + "\n";
+        String text = ChatColor.LIGHT_PURPLE + getTitle(context).replace((String) context
+                .getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) 
+                + ChatColor.LIGHT_PURPLE) + "\n";
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
         return text;
     }
@@ -317,7 +330,9 @@ public class RewardsPrompt extends NumericPrompt {
         public String getPromptText(ConversationContext context) {
             String text = Lang.get("rewMoneyPrompt");
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                text = text.replace("<money>", ChatColor.AQUA + (plugin.getDependencies().getVaultEconomy().currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy().currencyNamePlural()) + ChatColor.YELLOW);
+                text = text.replace("<money>", ChatColor.AQUA + (plugin.getDependencies().getVaultEconomy()
+                        .currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy()
+                        .currencyNamePlural()) + ChatColor.YELLOW);
             } else {
                 text = text.replace("<money>", ChatColor.AQUA + Lang.get("money") + ChatColor.YELLOW);
             }
@@ -326,7 +341,8 @@ public class RewardsPrompt extends NumericPrompt {
         
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
                     int i = Integer.parseInt(input);
                     if (i > 0) {
@@ -336,7 +352,8 @@ public class RewardsPrompt extends NumericPrompt {
                         return new MoneyPrompt();
                     }
                 } catch (NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
                     return new MoneyPrompt();
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -356,7 +373,8 @@ public class RewardsPrompt extends NumericPrompt {
         
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
                     int i = Integer.parseInt(input);
                     if (i > 0) {
@@ -366,7 +384,8 @@ public class RewardsPrompt extends NumericPrompt {
                         return new ExperiencePrompt();
                     }
                 } catch (NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
                     return new ExperiencePrompt();
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -386,7 +405,8 @@ public class RewardsPrompt extends NumericPrompt {
         
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
                     int i = Integer.parseInt(input);
                     if (i > 0) {
@@ -396,7 +416,8 @@ public class RewardsPrompt extends NumericPrompt {
                         return new QuestPointsPrompt();
                     }
                 } catch (NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
                     return new QuestPointsPrompt();
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -432,16 +453,22 @@ public class RewardsPrompt extends NumericPrompt {
             String text = ChatColor.GOLD + Lang.get("itemRewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_ITEMS) == null) {
                 text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
                 for (ItemStack is : getItems(context)) {
                     text += ChatColor.GRAY + "- " + ItemUtil.getDisplayString(is) + "\n";
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -476,25 +503,34 @@ public class RewardsPrompt extends NumericPrompt {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("rewCommands") + " -\n";
             if (context.getSessionData(CK.REW_COMMAND) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetCommandsOverrides") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("rewSetCommands") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
+                        + Lang.get("rewSetCommandsOverrides") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommands") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("rewSetCommands") + "\n";
                 for (String s : getCommand(context)) {
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
                 if (context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommandsOverrides") + " (" + Lang.get("stageEditorOptional") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("rewSetCommandsOverrides") + " (" + Lang.get("stageEditorOptional") + ")\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetCommandsOverrides") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("rewSetCommandsOverrides") + "\n";
                     for (String s : getCommandOverrideDisplay(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
                 }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -537,14 +573,16 @@ public class RewardsPrompt extends NumericPrompt {
         @Override
         public String getPromptText(ConversationContext context) {
             String lang1 = Lang.get("rewCommandPrompt");
-            lang1 = lang1.replace("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET + ChatColor.YELLOW);
+            lang1 = lang1.replace("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET 
+                    + ChatColor.YELLOW);
             String lang2 = Lang.get("rewCommandPromptHint");
             return ChatColor.YELLOW + lang1 + "\n" + ChatColor.GOLD + lang2;
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 String[] args = input.split(Lang.get("charSemi"));
                 List<String> commands = new LinkedList<String>();
                 for (String s : args) {
@@ -572,7 +610,8 @@ public class RewardsPrompt extends NumericPrompt {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 String[] args = input.split(Lang.get("charSemi"));
                 List<String> overrides = new LinkedList<String>();
                 for (String s : args) {
@@ -598,7 +637,8 @@ public class RewardsPrompt extends NumericPrompt {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 String[] args = input.split(" ");
                 List<String> permissions = new LinkedList<String>();
                 permissions.addAll(Arrays.asList(args));
@@ -620,25 +660,34 @@ public class RewardsPrompt extends NumericPrompt {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("mcMMORewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkills") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("reqSetSkills") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
+                        + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkills") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("reqSetSkills") + "\n";
                 for (String s : getSkills(context)) {
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
                 if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("reqSetSkillAmounts") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("reqSetSkillAmounts") + "\n";
                     for (Integer i : getSkillAmounts(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -774,25 +823,34 @@ public class RewardsPrompt extends NumericPrompt {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("heroesRewardsTitle") + "\n";
             if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesClasses") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("rewSetHeroesClasses") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
+                        + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesClasses") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                        + Lang.get("rewSetHeroesClasses") + "\n";
                 for (String s : getClasses(context)) {
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
                 if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("rewSetHeroesAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("rewSetHeroesAmounts") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("rewSetHeroesAmounts") + "\n";
                     for (Double d : getClassAmounts(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + d + "\n";
                     }
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -941,7 +999,8 @@ public class RewardsPrompt extends NumericPrompt {
 
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 String[] arr = input.split(" ");
                 List<String> loots = new LinkedList<String>();
                 for (String s : arr) {
@@ -983,7 +1042,8 @@ public class RewardsPrompt extends NumericPrompt {
         @SuppressWarnings("unchecked")
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 CustomReward found = null;
                 // Check if we have a custom reward with the specified name
                 for (CustomReward cr : plugin.getCustomRewards()) {
@@ -1005,7 +1065,8 @@ public class RewardsPrompt extends NumericPrompt {
                     if (context.getSessionData(CK.REW_CUSTOM) != null) {
                         // The custom reward may already have been added, so let's check that
                         LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
-                        LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
+                        LinkedList<Map<String, Object>> datamapList 
+                                = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
                         if (list.contains(found.getName()) == false) {
                             // Hasn't been added yet, so let's do it
                             list.add(found.getName());
@@ -1052,7 +1113,8 @@ public class RewardsPrompt extends NumericPrompt {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.AQUA + "- ";
             LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
-            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
+            LinkedList<Map<String, Object>> datamapList 
+                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
             String rewName = list.getLast();
             Map<String, Object> datamap = datamapList.getLast();
             text += rewName + " -\n";
@@ -1063,7 +1125,8 @@ public class RewardsPrompt extends NumericPrompt {
             }
             Collections.sort(datamapKeys);
             for (String dataKey : datamapKeys) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " + dataKey;
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + dataKey;
                 if (datamap.get(dataKey) != null) {
                     text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
                 } else {
@@ -1078,7 +1141,8 @@ public class RewardsPrompt extends NumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             @SuppressWarnings("unchecked")
-            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
+            LinkedList<Map<String, Object>> datamapList 
+                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
             int numInput;
             try {
@@ -1116,7 +1180,8 @@ public class RewardsPrompt extends NumericPrompt {
             String text = "";
             String temp = (String) context.getSessionData(CK.REW_CUSTOM_DATA_TEMP);
             @SuppressWarnings("unchecked")
-            Map<String, String> descriptions = (Map<String, String>) context.getSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS);
+            Map<String, String> descriptions 
+                    = (Map<String, String>) context.getSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS);
             if (descriptions.get(temp) != null) {
                 text += ChatColor.GOLD + descriptions.get(temp) + "\n";
             }
@@ -1129,7 +1194,8 @@ public class RewardsPrompt extends NumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             @SuppressWarnings("unchecked")
-            LinkedList<Map<String, Object>> datamapList = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
+            LinkedList<Map<String, Object>> datamapList 
+                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
             Map<String, Object> datamap = datamapList.getLast();
             datamap.put((String) context.getSessionData(CK.REW_CUSTOM_DATA_TEMP), input);
             context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);

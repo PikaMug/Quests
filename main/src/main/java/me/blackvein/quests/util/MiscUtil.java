@@ -60,7 +60,8 @@ public class MiscUtil {
         name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
         int index = name.indexOf('_');
         if (index != -1) {
-            name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) + name.substring(index + 2);
+            name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) 
+                    + name.substring(index + 2);
             name = name.replaceFirst("_", "");
         }
         return name;
@@ -120,7 +121,8 @@ public class MiscUtil {
         } else if (s.equalsIgnoreCase("Red") || s.equalsIgnoreCase(Lang.get("COLOR_RED"))) {
             return DyeColor.RED;
         // 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
-        } else if (s.equalsIgnoreCase("Silver") || s.equalsIgnoreCase("LightGray") || s.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
+        } else if (s.equalsIgnoreCase("Silver") || s.equalsIgnoreCase("LightGray") 
+                || s.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
             return DyeColor.getByColor(Color.SILVER);
         } else if (s.equalsIgnoreCase("White") || s.equalsIgnoreCase(Lang.get("COLOR_WHITE"))) {
             return DyeColor.WHITE;

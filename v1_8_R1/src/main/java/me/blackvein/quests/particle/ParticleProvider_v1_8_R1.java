@@ -45,8 +45,11 @@ public class ParticleProvider_v1_8_R1 extends ParticleProvider {
     }
 
     @Override
-    void spawnParticle(Player player, Location location, Object particle, float offsetX, float offsetY, float offsetZ, float speed, int count, int[] data) {
-        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles((EnumParticle) particle, false, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count, data);
+    void spawnParticle(Player player, Location location, Object particle, float offsetX, float offsetY, float offsetZ,
+            float speed, int count, int[] data) {
+        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles((EnumParticle) particle, false,
+                (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ,
+                speed, count, data);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 }

@@ -51,7 +51,8 @@ public class LocaleQuery {
         this.plugin = plugin;
         String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         try {
-            craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers".replace("{v}", version));
+            craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers"
+                    .replace("{v}", version));
             itemClazz = Class.forName("net.minecraft.server.{v}.Item".replace("{v}", version));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -83,7 +84,8 @@ public class LocaleQuery {
      * @param enchantments Enchantments for the item being translated
      * @param meta ItemMeta for the item being translated
      */
-    public boolean sendMessage(Player player, String message, Material material, short durability, Map<Enchantment, Integer> enchantments, ItemMeta meta) {
+    public boolean sendMessage(Player player, String message, Material material, short durability, 
+            Map<Enchantment, Integer> enchantments, ItemMeta meta) {
         if (material == null) {
             return false;
         }
@@ -106,9 +108,11 @@ public class LocaleQuery {
                         if (material.equals(Material.POTION)) {
                             matKey = oldPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
                         } else if (material.equals(Material.LINGERING_POTION)) {
-                            matKey = oldLingeringPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
+                            matKey = oldLingeringPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType()
+                                    .name());
                         } else if (material.equals(Material.SPLASH_POTION)) {
-                            matKey = oldSplashPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType().name());
+                            matKey = oldSplashPotions.get(((PotionMeta)i.getItemMeta()).getBasePotionData().getType()
+                                    .name());
                         }
                     } else if (new Potion(durability).getType() != null) {
                         matKey = oldPotions_18.get(new Potion(durability).getType().name());
@@ -138,9 +142,10 @@ public class LocaleQuery {
                 return false;
             }
             if (meta != null && meta instanceof PotionMeta) {
-                matKey = "item.minecraft.potion.effect." + ((PotionMeta)meta).getBasePotionData().getType().name().toLowerCase()
-                        .replace("regen", "regeneration").replace("speed", "swiftness").replace("jump", "leaping")
-                        .replace("instant_heal", "healing").replace("instant_damage", "harming");
+                matKey = "item.minecraft.potion.effect." + ((PotionMeta)meta).getBasePotionData().getType().name()
+                        .toLowerCase().replace("regen", "regeneration").replace("speed", "swiftness")
+                        .replace("jump", "leaping").replace("instant_heal", "healing")
+                        .replace("instant_damage", "harming");
             }
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
@@ -175,7 +180,8 @@ public class LocaleQuery {
      * @param durability Durability for the item being translated
      * @param enchantments Enchantments for the item being translated
      */
-    public boolean sendMessage(Player player, String message, Material material, short durability, Map<Enchantment, Integer> enchantments) {
+    public boolean sendMessage(Player player, String message, Material material, short durability, 
+            Map<Enchantment, Integer> enchantments) {
         return sendMessage(player, message, material, durability, enchantments, null);
     }
     

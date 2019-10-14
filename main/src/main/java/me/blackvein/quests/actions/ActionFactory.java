@@ -74,7 +74,10 @@ public class ActionFactory implements ConversationAbandonedListener {
         this.plugin = plugin;
         actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
-        this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false).withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new MenuPrompt()).withTimeout(3600).thatExcludesNonPlayersWithMessage("Console may not perform this operation!").addConversationAbandonedListener(this);
+        this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
+                .withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new MenuPrompt()).withTimeout(3600)
+                .thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
+                .addConversationAbandonedListener(this);
     }
     
     public Map<UUID, Block> getSelectedExplosionLocations() {
@@ -150,7 +153,12 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("eventEditorTitle") + "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorCreate") + "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorEdit") + "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorDelete") + "\n" + ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("exit");
+            String text = ChatColor.GOLD + Lang.get("eventEditorTitle") + "\n" + ChatColor.BLUE + "" + ChatColor.BOLD 
+                    + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorCreate") + "\n" 
+                    + ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorEdit") + "\n" + ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET
+                    + ChatColor.YELLOW + " - " + Lang.get("eventEditorDelete") + "\n" + ChatColor.GREEN + "" 
+                    + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("exit");
             return text;
         }
 
@@ -158,7 +166,8 @@ public class ActionFactory implements ConversationAbandonedListener {
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase("1")) {
-                if (player.hasPermission("quests.editor.actions.create") || player.hasPermission("quests.editor.events.create")) {
+                if (player.hasPermission("quests.editor.actions.create") 
+                        || player.hasPermission("quests.editor.events.create")) {
                     context.setSessionData(CK.E_OLD_EVENT, "");
                     return new ActionNamePrompt();
                 } else {
@@ -166,9 +175,11 @@ public class ActionFactory implements ConversationAbandonedListener {
                     return new MenuPrompt();
                 }
             } else if (input.equalsIgnoreCase("2")) {
-                if (player.hasPermission("quests.editor.actions.edit") || player.hasPermission("quests.editor.events.edit")) {
+                if (player.hasPermission("quests.editor.actions.edit") 
+                        || player.hasPermission("quests.editor.events.edit")) {
                     if (plugin.getActions().isEmpty()) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorNoneToEdit"));
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
+                                + Lang.get("eventEditorNoneToEdit"));
                         return new MenuPrompt();
                     } else {
                         return new SelectEditPrompt();
@@ -178,9 +189,11 @@ public class ActionFactory implements ConversationAbandonedListener {
                     return new MenuPrompt();
                 }
             } else if (input.equalsIgnoreCase("3")) {
-                if (player.hasPermission("quests.editor.actions.delete") || player.hasPermission("quests.editor.events.delete")) {
+                if (player.hasPermission("quests.editor.actions.delete") 
+                        || player.hasPermission("quests.editor.events.delete")) {
                     if (plugin.getActions().isEmpty()) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorNoneToDelete"));
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
+                                + Lang.get("eventEditorNoneToDelete"));
                         return new MenuPrompt();
                     } else {
                         return new SelectDeletePrompt();
@@ -376,7 +389,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 if (a != null) {
                     for (Quest quest : plugin.getQuests()) {
                         for (Stage stage : quest.getStages()) {
-                            if (stage.getFinishEvent() != null && stage.getFinishEvent().getName().equalsIgnoreCase(a.getName())) {
+                            if (stage.getFinishEvent() != null 
+                                    && stage.getFinishEvent().getName().equalsIgnoreCase(a.getName())) {
                                 used.add(quest.getName());
                                 break;
                             }
@@ -386,11 +400,13 @@ public class ActionFactory implements ConversationAbandonedListener {
                         context.setSessionData(CK.ED_EVENT_DELETE, a.getName());
                         return new DeletePrompt();
                     } else {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorEventInUse") + " \"" + ChatColor.DARK_PURPLE + a.getName() + ChatColor.RED + "\":");
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorEventInUse") 
+                        + " \"" + ChatColor.DARK_PURPLE + a.getName() + ChatColor.RED + "\":");
                         for (String s : used) {
                             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorMustModifyQuests"));
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
+                                + Lang.get("eventEditorMustModifyQuests"));
                         return new SelectDeletePrompt();
                     }
                 }
@@ -406,9 +422,12 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " + Lang.get("yesWord") + "\n";
-            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " + Lang.get("noWord");
-            return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")\n" + text;
+            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
+        + Lang.get("yesWord") + "\n";
+            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
+        + Lang.get("noWord");
+            return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
+                    + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")\n" + text;
         }
 
         @Override
@@ -433,28 +452,43 @@ public class ActionFactory implements ConversationAbandonedListener {
         @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("event") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_NAME) + ChatColor.GOLD + " -\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetName") + "\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("eventEditorPlayer") + "\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("eventEditorTimer") +"\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("eventEditorEffect") +"\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.GOLD + " - " + Lang.get("eventEditorWeather") +"\n";
+            String text = ChatColor.GOLD + "- " + Lang.get("event") + ": " + ChatColor.AQUA 
+                    + context.getSessionData(CK.E_NAME) + ChatColor.GOLD + " -\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetName") + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GOLD + " - " 
+                    + Lang.get("eventEditorPlayer") + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GOLD + " - " 
+                    + Lang.get("eventEditorTimer") +"\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.GOLD + " - " 
+                    + Lang.get("eventEditorEffect") +"\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.GOLD + " - " 
+                    + Lang.get("eventEditorWeather") +"\n";
             if (context.getSessionData(CK.E_MOB_TYPES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+            + Lang.get("eventEditorSetMobSpawns") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
                 LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobSpawns") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                + Lang.get("eventEditorSetMobSpawns") + "\n";
                 for (String s : types) {
                     QuestMob qm = QuestMob.fromString(s);
-                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + qm.getType().name() + ((qm.getName() != null) ? ": " + qm.getName() : "") + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + qm.getSpawnAmounts() + ChatColor.GRAY + " -> " + ChatColor.GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
+                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + qm.getType().name() 
+                            + ((qm.getName() != null) ? ": " + qm.getName() : "") + ChatColor.GRAY + " x " 
+                            + ChatColor.DARK_AQUA + qm.getSpawnAmounts() + ChatColor.GRAY + " -> " + ChatColor.GREEN 
+                            + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
             }
             if (context.getSessionData(CK.E_FAIL_QUEST) == null) {
                 context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
             }
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorFailQuest") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_FAIL_QUEST) + "\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("save") + "\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("exit");
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorFailQuest") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_FAIL_QUEST)
+                    + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.GREEN + " - " 
+                    + Lang.get("save") + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.RED + " - " 
+                    + Lang.get("exit");
             return text;
         }
 
@@ -504,18 +538,25 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("eventEditorPlayer") + " -\n";
             if (context.getSessionData(CK.E_MESSAGE) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMessage") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetMessage") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMessage") + " (" + ChatColor.AQUA + context.getSessionData(CK.E_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetMessage") + " (" + ChatColor.AQUA 
+                        + context.getSessionData(CK.E_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
             }
             if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
                 context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
             }
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorClearInv") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_CLEAR_INVENTORY) + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorClearInv") + ": " + ChatColor.AQUA 
+                    + context.getSessionData(CK.E_CLEAR_INVENTORY) + "\n";
             if (context.getSessionData(CK.E_ITEMS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetItems") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetItems") + "\n";
                 LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
                 for (ItemStack is : items) {
                     if (is != null) {
@@ -524,47 +565,66 @@ public class ActionFactory implements ConversationAbandonedListener {
                 }
             }
             if (context.getSessionData(CK.E_POTION_TYPES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetPotionEffects") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetPotionEffects") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetPotionEffects") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetPotionEffects") + "\n";
                 LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES);
                 LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
                 LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT);
                 int index = -1;
                 for (String type : types) {
                     index++;
-                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + type + ChatColor.DARK_PURPLE + " " + RomanNumeral.getNumeral(mags.get(index)) + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + Quests.getTime(durations.get(index) * 50L) + "\n";
+                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + type + ChatColor.DARK_PURPLE + " " 
+                            + RomanNumeral.getNumeral(mags.get(index)) + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA 
+                            + Quests.getTime(durations.get(index) * 50L) + "\n";
                 }
             }
             if (context.getSessionData(CK.E_HUNGER) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetHunger") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetHunger") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetHunger") + ChatColor.AQUA + " (" + (Integer) context.getSessionData(CK.E_HUNGER) + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetHunger") + ChatColor.AQUA + " (" 
+                        + (Integer) context.getSessionData(CK.E_HUNGER) + ")\n";
             }
             if (context.getSessionData(CK.E_SATURATION) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetSaturation") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetSaturation") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetSaturation") + ChatColor.AQUA + " (" + (Integer) context.getSessionData(CK.E_SATURATION) + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetSaturation") + ChatColor.AQUA + " (" 
+                        + (Integer) context.getSessionData(CK.E_SATURATION) + ")\n";
             }
             if (context.getSessionData(CK.E_HEALTH) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetHealth") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetHealth") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetHealth") + ChatColor.AQUA + " (" + (Integer) context.getSessionData(CK.E_HEALTH) + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetHealth") + ChatColor.AQUA + " (" 
+                        + (Integer) context.getSessionData(CK.E_HEALTH) + ")\n";
             }
             if (context.getSessionData(CK.E_TELEPORT) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetTeleport") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetTeleport") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetTeleport") + ChatColor.AQUA + " (" + (String) context.getSessionData(CK.E_TELEPORT) + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetTeleport") + ChatColor.AQUA + " (" 
+                        + (String) context.getSessionData(CK.E_TELEPORT) + ")\n";
             }
             if (context.getSessionData(CK.E_COMMANDS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetCommands") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetCommands") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetCommands") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetCommands") + "\n";
                 for (String s : (LinkedList<String>) context.getSessionData(CK.E_COMMANDS)) {
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
                 }
             }
-            text += ChatColor.GREEN + "" + ChatColor.BOLD + "10 " + ChatColor.RESET + ChatColor.YELLOW + "- " + Lang.get("done") + "\n";
+            text += ChatColor.GREEN + "" + ChatColor.BOLD + "10 " + ChatColor.RESET + ChatColor.YELLOW + "- " 
+                    + Lang.get("done") + "\n";
             return text;
         }
 
@@ -610,15 +670,21 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("eventEditorTimer") + " -\n";
             if (context.getSessionData(CK.E_TIMER) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetTimer") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetTimer") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetTimer") + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.E_TIMER) + "\"" + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetTimer") + "(" + ChatColor.AQUA + "\"" 
+                        + context.getSessionData(CK.E_TIMER) + "\"" + ChatColor.YELLOW + ")\n";
             }
             if (context.getSessionData(CK.E_CANCEL_TIMER) == null) {
                 context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
             }
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorCancelTimer") + ": " + ChatColor.AQUA + context.getSessionData(CK.E_CANCEL_TIMER) + "\n";
-            text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.YELLOW + "- " + Lang.get("done") + "\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorCancelTimer") + ": " + ChatColor.AQUA 
+                    + context.getSessionData(CK.E_CANCEL_TIMER) + "\n";
+            text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.YELLOW + "- " 
+                    + Lang.get("done") + "\n";
             return text;
         }
 
@@ -650,25 +716,31 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEffect") + " -\n";
             if (context.getSessionData(CK.E_EFFECTS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetEffects") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetEffects") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetEffects") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetEffects") + "\n";
                 LinkedList<String> effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
                 LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
                 for (String effect : effects) {
-                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + effect + ChatColor.GRAY + " at " + ChatColor.DARK_AQUA + locations.get(effects.indexOf(effect)) + "\n";
+                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + effect + ChatColor.GRAY + " at " 
+                            + ChatColor.DARK_AQUA + locations.get(effects.indexOf(effect)) + "\n";
                 }
             }
             if (context.getSessionData(CK.E_EXPLOSIONS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetExplosions") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetExplosions") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetExplosions") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetExplosions") + "\n";
                 LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
                 for (String loc : locations) {
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + loc + "\n";
                 }
             }
-            text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.YELLOW + "- " + Lang.get("done") + "\n";
+            text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.YELLOW + "- " 
+                    + Lang.get("done") + "\n";
             return text;
         }
 
@@ -695,26 +767,39 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("eventEditorWeather") + " -\n";
             if (context.getSessionData(CK.E_WORLD_STORM) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetStorm") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetStorm") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetStorm") + " (" + ChatColor.AQUA + (String) context.getSessionData(CK.E_WORLD_STORM) + ChatColor.YELLOW + " -> " + ChatColor.DARK_AQUA + Quests.getTime(Long.valueOf((int)context.getSessionData(CK.E_WORLD_STORM_DURATION) * 1000)) + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetStorm") + " (" + ChatColor.AQUA 
+                        + (String) context.getSessionData(CK.E_WORLD_STORM) + ChatColor.YELLOW + " -> " 
+                        + ChatColor.DARK_AQUA + Quests.getTime(Long.valueOf((int)context
+                        .getSessionData(CK.E_WORLD_STORM_DURATION) * 1000)) + ChatColor.YELLOW + ")\n";
             }
             if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetThunder") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetThunder") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetThunder") + " (" + ChatColor.AQUA + (String) context.getSessionData(CK.E_WORLD_THUNDER) + ChatColor.YELLOW + " -> " + ChatColor.DARK_AQUA + Quests.getTime(Long.valueOf((int)context.getSessionData(CK.E_WORLD_THUNDER_DURATION) * 1000)) + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetThunder") + " (" + ChatColor.AQUA 
+                        + (String) context.getSessionData(CK.E_WORLD_THUNDER) + ChatColor.YELLOW + " -> " 
+                        + ChatColor.DARK_AQUA + Quests.getTime(Long.valueOf((int)context
+                        .getSessionData(CK.E_WORLD_THUNDER_DURATION) * 1000)) + ChatColor.YELLOW + ")\n";
             }
             
             if (context.getSessionData(CK.E_LIGHTNING) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetLightning") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetLightning") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetLightning") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetLightning") + "\n";
                 LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
                 for (String loc : locations) {
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + loc + "\n";
                 }
             }
-            text += ChatColor.GREEN + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.GREEN + "- " + Lang.get("done") + "\n";
+            text += ChatColor.GREEN + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.GREEN + "- " 
+                    + Lang.get("done") + "\n";
             return text;
         }
 
@@ -769,7 +854,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA + context.getSessionData(CK.E_NAME) + ChatColor.YELLOW + "\"?\n";
+            String text = ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA 
+                    + context.getSessionData(CK.E_NAME) + ChatColor.YELLOW + "\"?\n";
             if (modified.isEmpty() == false) {
                 text += ChatColor.RED + Lang.get("eventEditorModifiedNote") + "\n";
                 for (String s : modified) {
@@ -797,8 +883,9 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " + Lang.get("yesWord") + "\n" 
-                    + ChatColor.RED + "" +  ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.RED + " - " + Lang.get("noWord");
+            String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " 
+                    + Lang.get("yesWord") + "\n" + ChatColor.RED + "" +  ChatColor.BOLD + "2" + ChatColor.RESET 
+                    + ChatColor.RED + " - " + Lang.get("noWord");
             return ChatColor.YELLOW + Lang.get("confirmDelete") + "\n" + text;
         }
 
@@ -1167,7 +1254,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 context.setSessionData(CK.E_MESSAGE, input);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_MESSAGE, null);
@@ -1200,16 +1288,22 @@ public class ActionFactory implements ConversationAbandonedListener {
             }
             String text = ChatColor.GOLD + Lang.get("eventEditorGiveItemsTitle") + "\n";
             if (context.getSessionData(CK.E_ITEMS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
                 for (ItemStack is : getItems(context)) {
                     text += ChatColor.GRAY + "    - " + ItemUtil.getDisplayString(is) + "\n";
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -1244,25 +1338,34 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEffects") + " -\n";
             if (context.getSessionData(CK.E_EFFECTS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorAddEffect") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorAddEffectLocation") + " (" + Lang.get("eventEditorNoEffects") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorAddEffect") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorAddEffectLocation") + " (" 
+                        + Lang.get("eventEditorNoEffects") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorAddEffect") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorAddEffect") + "\n";
                 for (String s : getEffects(context)) {
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
                 }
                 if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorAddEffectLocation") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("eventEditorAddEffectLocation") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorAddEffectLocation") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("eventEditorAddEffectLocation") + "\n";
                     for (String s : getEffectLocations(context)) {
                         text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
                     }
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -1361,16 +1464,22 @@ public class ActionFactory implements ConversationAbandonedListener {
         @Override
         public String getPromptText(ConversationContext context) {
             String effects = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorEffectsTitle") + "\n";
-            effects += ChatColor.DARK_PURPLE + "BLAZE_SHOOT " + ChatColor.GRAY + "- " + Lang.get("effBlazeShoot") + "\n";
+            effects += ChatColor.DARK_PURPLE + "BLAZE_SHOOT " + ChatColor.GRAY + "- " + Lang.get("effBlazeShoot") 
+                + "\n";
             effects += ChatColor.DARK_PURPLE + "BOW_FIRE " + ChatColor.GRAY + "- " + Lang.get("effBowFire") + "\n";
             effects += ChatColor.DARK_PURPLE + "CLICK1 " + ChatColor.GRAY + "- " + Lang.get("effClick1") + "\n";
             effects += ChatColor.DARK_PURPLE + "CLICK2 " + ChatColor.GRAY + "- " + Lang.get("effClick2") + "\n";
-            effects += ChatColor.DARK_PURPLE + "DOOR_TOGGLE " + ChatColor.GRAY + "- " + Lang.get("effDoorToggle") + "\n";
+            effects += ChatColor.DARK_PURPLE + "DOOR_TOGGLE " + ChatColor.GRAY + "- " + Lang.get("effDoorToggle") 
+                + "\n";
             effects += ChatColor.DARK_PURPLE + "EXTINGUISH " + ChatColor.GRAY + "- " + Lang.get("effExtinguish") + "\n";
-            effects += ChatColor.DARK_PURPLE + "GHAST_SHOOT " + ChatColor.GRAY + "- " + Lang.get("effGhastShoot") + "\n";
-            effects += ChatColor.DARK_PURPLE + "GHAST_SHRIEK " + ChatColor.GRAY + "- " + Lang.get("effGhastShriek") + "\n";
-            effects += ChatColor.DARK_PURPLE + "ZOMBIE_CHEW_IRON_DOOR " + ChatColor.GRAY + "- " + Lang.get("effZombieWood") + "\n";
-            effects += ChatColor.DARK_PURPLE + "ZOMBIE_CHEW_WOODEN_DOOR " + ChatColor.GRAY + "- " + Lang.get("effZombieIron") + "\n";
+            effects += ChatColor.DARK_PURPLE + "GHAST_SHOOT " + ChatColor.GRAY + "- " + Lang.get("effGhastShoot") 
+                + "\n";
+            effects += ChatColor.DARK_PURPLE + "GHAST_SHRIEK " + ChatColor.GRAY + "- " + Lang.get("effGhastShriek") 
+                + "\n";
+            effects += ChatColor.DARK_PURPLE + "ZOMBIE_CHEW_IRON_DOOR " + ChatColor.GRAY + "- " 
+                + Lang.get("effZombieWood") + "\n";
+            effects += ChatColor.DARK_PURPLE + "ZOMBIE_CHEW_WOODEN_DOOR " + ChatColor.GRAY + "- " 
+                + Lang.get("effZombieIron") + "\n";
             return ChatColor.YELLOW + effects + Lang.get("effEnterName");
         }
 
@@ -1391,7 +1500,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                     selectedEffectLocations.remove(player.getUniqueId());
                     return new SoundEffectListPrompt();
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("eventEditorInvalidEffect"));
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                            + Lang.get("eventEditorInvalidEffect"));
                     return new SoundEffectPrompt();
                 }
             } else {
@@ -1411,20 +1521,31 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("eventEditorStormTitle") + "\n";
             if (context.getSessionData(CK.E_WORLD_STORM) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorSetDuration") + " " 
+                        + Lang.get("eventEditorNoWorld") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + ChatColor.AQUA + ((String) context.getSessionData(CK.E_WORLD_STORM)) + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetWorld") + " (" + ChatColor.AQUA 
+                        + ((String) context.getSessionData(CK.E_WORLD_STORM)) + ChatColor.YELLOW + ")\n";
                 if (context.getSessionData(CK.E_WORLD_STORM_DURATION) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
                     int dur = (int) context.getSessionData(CK.E_WORLD_STORM_DURATION);
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur * 1000) + ChatColor.YELLOW + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur * 1000) 
+                            + ChatColor.YELLOW + ")\n";
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -1446,7 +1567,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 context.setSessionData(CK.E_WORLD_STORM_DURATION, null);
                 return new StormPrompt();
             } else if (input.equalsIgnoreCase("4")) {
-                if (context.getSessionData(CK.E_WORLD_STORM) != null && context.getSessionData(CK.E_WORLD_STORM_DURATION) == null) {
+                if (context.getSessionData(CK.E_WORLD_STORM) != null 
+                        && context.getSessionData(CK.E_WORLD_STORM_DURATION) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetStormDuration"));
                     return new StormPrompt();
                 } else {
@@ -1476,7 +1598,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 if (plugin.getServer().getWorld(input) != null) {
                     context.setSessionData(CK.E_WORLD_STORM, plugin.getServer().getWorld(input).getName());
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("eventEditorInvalidWorld"));
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                            + Lang.get("eventEditorInvalidWorld"));
                     return new StormWorldPrompt();
                 }
             }
@@ -1494,7 +1617,8 @@ public class ActionFactory implements ConversationAbandonedListener {
         @Override
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             if (input.intValue() < 1) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                context.getForWhom().sendRawMessage(ChatColor.RED 
+                        + Lang.get("invalidMinimum").replace("<number>", "1"));
                 return new StormDurationPrompt();
             } else {
                 context.setSessionData(CK.E_WORLD_STORM_DURATION, input.intValue());
@@ -1513,20 +1637,31 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("eventEditorThunderTitle") + "\n";
             if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
+                        + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetWorld") + " (" + ChatColor.AQUA + ((String) context.getSessionData(CK.E_WORLD_THUNDER)) + ChatColor.YELLOW + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetWorld") + " (" + ChatColor.AQUA 
+                        + ((String) context.getSessionData(CK.E_WORLD_THUNDER)) + ChatColor.YELLOW + ")\n";
                 if (context.getSessionData(CK.E_WORLD_THUNDER_DURATION) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
                     int dur = (int) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur * 1000) + ChatColor.YELLOW + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur * 1000) 
+                            + ChatColor.YELLOW + ")\n";
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -1548,7 +1683,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 context.setSessionData(CK.E_WORLD_THUNDER_DURATION, null);
                 return new ThunderPrompt();
             } else if (input.equalsIgnoreCase("4")) {
-                if (context.getSessionData(CK.E_WORLD_THUNDER) != null && context.getSessionData(CK.E_WORLD_THUNDER_DURATION) == null) {
+                if (context.getSessionData(CK.E_WORLD_THUNDER) != null 
+                        && context.getSessionData(CK.E_WORLD_THUNDER_DURATION) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetThunderDuration"));
                     return new ThunderPrompt();
                 } else {
@@ -1578,7 +1714,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 if (plugin.getServer().getWorld(input) != null) {
                     context.setSessionData(CK.E_WORLD_THUNDER, plugin.getServer().getWorld(input).getName());
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("eventEditorInvalidWorld"));
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                            + Lang.get("eventEditorInvalidWorld"));
                     return new ThunderWorldPrompt();
                 }
             }
@@ -1596,7 +1733,8 @@ public class ActionFactory implements ConversationAbandonedListener {
         @Override
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             if (input.intValue() < 1) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                context.getForWhom().sendRawMessage(ChatColor.RED 
+                        + Lang.get("invalidMinimum").replace("<number>", "1"));
                 return new ThunderDurationPrompt();
             } else {
                 context.setSessionData(CK.E_WORLD_THUNDER_DURATION, input.intValue());
@@ -1611,20 +1749,29 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("eventEditorMobSpawnsTitle") + "\n";
             if (context.getSessionData(CK.E_MOB_TYPES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorAddMobTypes") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorAddMobTypes") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.GREEN + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
                 @SuppressWarnings("unchecked")
                 LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
                 for (int i = 0; i < types.size(); i++) {
                     QuestMob qm = QuestMob.fromString(types.get(i));
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + (i + 1) + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("edit") + ": "
-                            + ChatColor.AQUA + qm.getType().name() + ((qm.getName() != null) ? ": " + qm.getName() : "") + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + qm.getSpawnAmounts() + ChatColor.GRAY + " -> " + ChatColor.GREEN + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + (i + 1) + ChatColor.RESET + ChatColor.YELLOW + " - "
+                            + Lang.get("edit") + ": " + ChatColor.AQUA + qm.getType().name() 
+                            + ((qm.getName() != null) ? ": " + qm.getName() : "") + ChatColor.GRAY + " x " 
+                            + ChatColor.DARK_AQUA + qm.getSpawnAmounts() + ChatColor.GRAY + " -> " + ChatColor.GREEN 
+                            + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + (types.size() + 1) + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorAddMobTypes") + "\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + (types.size() + 2) + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + (types.size() + 3) + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + (types.size() + 1) + ChatColor.RESET + ChatColor.YELLOW 
+                        + " - " + Lang.get("eventEditorAddMobTypes") + "\n";
+                text += ChatColor.RED + "" + ChatColor.BOLD + (types.size() + 2) + ChatColor.RESET + ChatColor.YELLOW 
+                        + " - " + Lang.get("clear") + "\n";
+                text += ChatColor.GREEN + "" + ChatColor.BOLD + (types.size() + 3) + ChatColor.RESET + ChatColor.YELLOW
+                        + " - " + Lang.get("done");
             }
             return text;
         }
@@ -1648,7 +1795,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 try {
                     inp = Integer.parseInt(input);
                 } catch (NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED 
+                            + Lang.get("reqNotANumber").replace("<input>", input));
                     return new MobPrompt();
                 }
                 if (inp == types.size() + 1) {
@@ -1695,22 +1843,66 @@ public class ActionFactory implements ConversationAbandonedListener {
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
             }
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobName") + ChatColor.GRAY + " (" + ((questMob.getName() == null) ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getName()) + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobType") + ChatColor.GRAY + " (" + ((questMob.getType() == null) ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getType().name()) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorAddSpawnLocation") + ChatColor.GRAY + " (" + ((questMob.getSpawnLocation() == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + Quests.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobSpawnAmount") + ChatColor.GRAY + " (" + ((questMob.getSpawnAmounts() == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getSpawnAmounts()) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobItemInHand") + ChatColor.GRAY + " (" + ((questMob.getInventory()[0] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[0])) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobItemInHandDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[0] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[0]) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobBoots") + ChatColor.GRAY + " (" + ((questMob.getInventory()[1] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[1])) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobBootsDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[1] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[1]) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobLeggings") + ChatColor.GRAY + " (" + ((questMob.getInventory()[2] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[2])) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobLeggingsDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[2] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[2]) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobChestPlate") + ChatColor.GRAY + " (" + ((questMob.getInventory()[3] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[3])) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobChestPlateDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[3] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[3]) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobHelmet") + ChatColor.GRAY + " (" + ((questMob.getInventory()[4] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + ItemUtil.getDisplayString(questMob.getInventory()[4])) + ChatColor.GRAY + ")\n";
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetMobHelmetDrop") + ChatColor.GRAY + " (" + ((questMob.getDropChances()[4] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[4]) + ChatColor.GRAY + ")\n";
-            text += ChatColor.GREEN + "" + ChatColor.BOLD + "15" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done") + "\n";
-            text += ChatColor.RED + "" + ChatColor.BOLD + "16" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("cancel");
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobName") + ChatColor.GRAY + " (" 
+                    + ((questMob.getName() == null) ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getName()) 
+                    + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobType") + ChatColor.GRAY + " (" 
+                    + ((questMob.getType() == null) ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getType().name())
+                    + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorAddSpawnLocation") + ChatColor.GRAY + " (" 
+                    + ((questMob.getSpawnLocation() == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
+                            + Quests.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobSpawnAmount") + ChatColor.GRAY + " (" 
+                    + ((questMob.getSpawnAmounts() == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
+                            + "" + questMob.getSpawnAmounts()) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobItemInHand") + ChatColor.GRAY + " (" 
+                    + ((questMob.getInventory()[0] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
+                            + ItemUtil.getDisplayString(questMob.getInventory()[0])) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobItemInHandDrop") + ChatColor.GRAY + " (" 
+                    + ((questMob.getDropChances()[0] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
+                    + "" + questMob.getDropChances()[0]) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobBoots") + ChatColor.GRAY + " (" 
+                    + ((questMob.getInventory()[1] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
+                    + ItemUtil.getDisplayString(questMob.getInventory()[1])) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobBootsDrop") + ChatColor.GRAY + " (" 
+                    + ((questMob.getDropChances()[1] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
+                    + "" + questMob.getDropChances()[1]) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobLeggings") + ChatColor.GRAY + " (" 
+                    + ((questMob.getInventory()[2] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
+                    + ItemUtil.getDisplayString(questMob.getInventory()[2])) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "10" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobLeggingsDrop") + ChatColor.GRAY + " (" 
+                    + ((questMob.getDropChances()[2] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                    + "" + questMob.getDropChances()[2]) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "11" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobChestPlate") + ChatColor.GRAY + " (" 
+                    + ((questMob.getInventory()[3] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                    + ItemUtil.getDisplayString(questMob.getInventory()[3])) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "12" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobChestPlateDrop") + ChatColor.GRAY + " (" 
+                    + ((questMob.getDropChances()[3] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                    + "" + questMob.getDropChances()[3]) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "13" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobHelmet") + ChatColor.GRAY + " (" 
+                    + ((questMob.getInventory()[4] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                    + ItemUtil.getDisplayString(questMob.getInventory()[4])) + ChatColor.GRAY + ")\n";
+            text += ChatColor.BLUE + "" + ChatColor.BOLD + "14" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("eventEditorSetMobHelmetDrop") + ChatColor.GRAY + " (" 
+                    + ((questMob.getDropChances()[4] == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                    + "" + questMob.getDropChances()[4]) + ChatColor.GRAY + ")\n";
+            text += ChatColor.GREEN + "" + ChatColor.BOLD + "15" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("done") + "\n";
+            text += ChatColor.RED + "" + ChatColor.BOLD + "16" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("cancel");
             return text;
         }
 
@@ -1762,7 +1954,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetMobAmountsFirst"));
                     return new QuestMobPrompt(mobIndex, questMob);
                 }
-                if (context.getSessionData(CK.E_MOB_TYPES) == null || ((LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)).isEmpty()) {
+                if (context.getSessionData(CK.E_MOB_TYPES) == null 
+                        || ((LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)).isEmpty()) {
                     LinkedList<String> list = new LinkedList<String>();
                     list.add(questMob.serialize());
                     context.setSessionData(CK.E_MOB_TYPES, list);
@@ -1850,7 +2043,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 if (MiscUtil.getProperMobType(input) != null) {
                     questMob.setType(MiscUtil.getProperMobType(input));
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED + Lang.get("eventEditorInvalidMob"));
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                            + Lang.get("eventEditorInvalidMob"));
                     return new MobTypePrompt(mobIndex, questMob);
                 }
             }
@@ -2028,35 +2222,48 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("eventEditorPotionEffectsTitle") + "\n";
             if (context.getSessionData(CK.E_POTION_TYPES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetPotionEffectTypes") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorSetPotionDurations") + " " + Lang.get("noneSet") + "\n";
-                text += ChatColor.GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " " + Lang.get("noneSet") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("eventEditorSetPotionEffectTypes") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorSetPotionDurations") + " " + Lang.get("noneSet")
+                        + "\n";
+                text += ChatColor.GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " " + Lang.get("noneSet")
+                        + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                        + Lang.get("done");
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetPotionEffectTypes") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                        + Lang.get("eventEditorSetPotionEffectTypes") + "\n";
                 for (String s : (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES)) {
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
                 }
                 if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetPotionDurations") + " (" + Lang.get("noneSet") + ")\n";
-                    text += ChatColor.GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " " + Lang.get("noneSet") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                            + Lang.get("eventEditorSetPotionDurations") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " "
+                            + Lang.get("noneSet") + "\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("noneSet") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                            + Lang.get("noneSet") + "\n";
                     for (Long l : (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS)) {
                         text += ChatColor.GRAY + "    - " + ChatColor.DARK_AQUA + Quests.getTime(l * 50L) + "\n";
                     }
                     if (context.getSessionData(CK.E_POTION_STRENGHT) == null) {
-                        text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetPotionMagnitudes") + " (" + Lang.get("noneSet") + ")\n";
+                        text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                                + Lang.get("eventEditorSetPotionMagnitudes") + " (" + Lang.get("noneSet") + ")\n";
                     } else {
-                        text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("eventEditorSetPotionMagnitudes") + "\n";
+                        text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                                + Lang.get("eventEditorSetPotionMagnitudes") + "\n";
                         for (int i : (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT)) {
                             text += ChatColor.GRAY + "    - " + ChatColor.DARK_PURPLE + i + "\n";
                         }
                     }
                 }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                        + Lang.get("done");
             }
             return text;
         }
@@ -2075,10 +2282,12 @@ public class ActionFactory implements ConversationAbandonedListener {
                 }
             } else if (input.equalsIgnoreCase("3")) {
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetPotionTypesAndDurationsFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED
+                            + Lang.get("eventEditorMustSetPotionTypesAndDurationsFirst"));
                     return new PotionEffectPrompt();
                 } else if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetPotionDurationsFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED
+                            + Lang.get("eventEditorMustSetPotionDurationsFirst"));
                     return new PotionEffectPrompt();
                 } else {
                     return new PotionMagnitudesPrompt();
@@ -2140,7 +2349,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                         effTypes.add(PotionEffectType.getByName(s.toUpperCase()).getName());
                         context.setSessionData(CK.E_POTION_TYPES, effTypes);
                     } else {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("eventEditorInvalidPotionType"));
+                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                               + Lang.get("eventEditorInvalidPotionType"));
                         return new PotionTypesPrompt();
                     }
                 }
@@ -2225,13 +2435,15 @@ public class ActionFactory implements ConversationAbandonedListener {
                 try {
                     int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                                + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new HungerPrompt();
                     } else {
                         context.setSessionData(CK.E_HUNGER, (Integer) i);
                     }
                 } catch (NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED
+                            + Lang.get("reqNotANumber").replace("<input>", input));
                     return new HungerPrompt();
                 }
             } else {
@@ -2254,13 +2466,15 @@ public class ActionFactory implements ConversationAbandonedListener {
                 try {
                     int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                                + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new SaturationPrompt();
                     } else {
                         context.setSessionData(CK.E_SATURATION, (Integer) i);
                     }
                 } catch (NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED
+                            + Lang.get("reqNotANumber").replace("<input>", input));
                     return new SaturationPrompt();
                 }
             } else {
@@ -2283,13 +2497,15 @@ public class ActionFactory implements ConversationAbandonedListener {
                 try {
                     int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "0"));
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                                + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new HealthPrompt();
                     } else {
                         context.setSessionData(CK.E_HEALTH, (Integer) i);
                     }
                 } catch (NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED
+                            + Lang.get("reqNotANumber").replace("<input>", input));
                     return new HealthPrompt();
                 }
             } else {
@@ -2343,7 +2559,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 String[] commands = input.split(Lang.get("charSemi"));
                 LinkedList<String> cmdList = new LinkedList<String>();
                 cmdList.addAll(Arrays.asList(commands));
