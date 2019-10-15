@@ -32,6 +32,7 @@ import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsEditorEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
+import me.blackvein.quests.events.command.QuestsCommandPreQuestsListEvent;
 import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
@@ -724,22 +725,38 @@ public class CmdExecutor implements CommandExecutor {
 
     @SuppressWarnings("deprecation")
     private void questsList(final CommandSender cs, String[] args) {
-        if (((Player) cs).hasPermission("quests.list")) {
+        Player player = (Player)cs;
+        if (player.hasPermission("quests.list")) {
             if (args.length == 1) {
-                plugin.listQuests((Player) cs, 1);
+                Quester quester = plugin.getQuester(player.getUniqueId());
+                QuestsCommandPreQuestsListEvent preEvent = new QuestsCommandPreQuestsListEvent(quester, 1);
+                plugin.getServer().getPluginManager().callEvent(preEvent);
+                if (preEvent.isCancelled()) {
+                    return;
+                }
+                
+                plugin.listQuests(player, 1);
             } else if (args.length == 2) {
-                int page;
+                int page = 1;
                 try {
                     page = Integer.parseInt(args[1]);
                     if (page < 1) {
                         cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionPosNum"));
                         return;
+                    } else {
+                        Quester quester = plugin.getQuester(player.getUniqueId());
+                        QuestsCommandPreQuestsListEvent preEvent = new QuestsCommandPreQuestsListEvent(quester, page);
+                        plugin.getServer().getPluginManager().callEvent(preEvent);
+                        if (preEvent.isCancelled()) {
+                            return;
+                        }
+                        
+                        plugin.listQuests(player, page);
                     }
                 } catch (NumberFormatException e) {
                     cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionNum"));
                     return;
                 }
-                plugin.listQuests((Player) cs, page);
             }
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));

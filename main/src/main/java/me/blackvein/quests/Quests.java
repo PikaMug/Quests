@@ -1337,7 +1337,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                 }
             }
-            if ((available.size() + rows) <= ((page * rows)) || available.size() == 0) {
+            if ((available.size() + rows) <= (page * rows) || available.size() == 0) {
                 player.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
             } else {
                 player.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
@@ -1360,7 +1360,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 player.sendMessage(ChatColor.GOLD + msg);
             }
         } else {
-            if ((quests.size() + rows) <= ((page * rows)) || quests.size() == 0) {
+            if ((quests.size() + rows) <= (page * rows) || quests.size() == 0) {
                 player.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
             } else {
                 player.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
