@@ -135,11 +135,15 @@ public class LocaleQuery {
                 }
             }
         } else {
-            try {
-                matKey = queryMaterial(material);
-            } catch (Exception ex) {
-                plugin.getLogger().severe("Unable to query Material: " + material.name());
-                return false;
+            if (Bukkit.createBlockData(material) instanceof org.bukkit.block.data.Ageable) {
+                matKey = "block.minecraft." + material.name().toLowerCase();
+            } else {
+                try {
+                    matKey = queryMaterial(material);
+                } catch (Exception ex) {
+                    plugin.getLogger().severe("Unable to query Material: " + material.name());
+                    return false;
+                }
             }
             if (meta != null && meta instanceof PotionMeta) {
                 matKey = "item.minecraft.potion.effect." + ((PotionMeta)meta).getBasePotionData().getType().name()
