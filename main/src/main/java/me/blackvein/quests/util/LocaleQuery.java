@@ -135,7 +135,7 @@ public class LocaleQuery {
                 }
             }
         } else {
-            if (Bukkit.createBlockData(material) instanceof org.bukkit.block.data.Ageable) {
+            if (material.isBlock() && Bukkit.createBlockData(material) instanceof org.bukkit.block.data.Ageable) {
                 matKey = "block.minecraft." + material.name().toLowerCase();
             } else {
                 try {
