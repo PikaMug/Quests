@@ -3706,12 +3706,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return getAction(name);
     }
 
+    /**
+     * @deprecated Use Dependencies.getNPCLocation(int)
+     */
     public Location getNPCLocation(int id) {
-        return depends.getCitizens().getNPCRegistry().getById(id).getStoredLocation();
+        return depends.getNPCLocation(id);
     }
 
+    /**
+     * @deprecated Use Dependencies.getNPCName(int)
+     */
     public String getNPCName(int id) {
-        return depends.getCitizens().getNPCRegistry().getById(id).getName();
+        return depends.getNPCName(id);
     }
 
     public static int countInv(Inventory inv, Material m, int subtract) {
@@ -3728,15 +3734,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     
     /**
      * Checks whether an NPC has a quest that the player may accept
+     * 
      * @param npc The giver NPC to check
      * @param quester The player to check
-     * @return true if at least one quest is available
+     * @return true if at least one quest is available and not yet completed
      */
     public boolean hasQuest(NPC npc, Quester quester) {
         for (Quest q : quests) {
-            // Return false for expired quests
-
-            // Return true if not yet completed
             if (q.npcStart != null && quester.completedQuests.contains(q.getName()) == false) {
                 if (q.npcStart.getId() == npc.getId()) {
                     boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();

@@ -14,6 +14,7 @@ package me.blackvein.quests;
 
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -224,6 +225,14 @@ public class Dependencies {
     
     public boolean runDenizenScript(String scriptName, Quester quester) {
         return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester);
+    }
+    
+    public Location getNPCLocation(int id) {
+        return citizens.getNPCRegistry().getById(id).getStoredLocation();
+    }
+
+    public String getNPCName(int id) {
+        return citizens.getNPCRegistry().getById(id).getName();
     }
     
     public int getMcmmoSkillLevel(SkillType st, String player) {

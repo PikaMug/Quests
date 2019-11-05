@@ -289,9 +289,9 @@ public class Quest {
         }
         Location targetLocation = null;
         if (nextStage.citizensToInteract != null && nextStage.citizensToInteract.size() > 0) {
-            targetLocation = plugin.getNPCLocation(nextStage.citizensToInteract.getFirst());
+            targetLocation = plugin.getDependencies().getNPCLocation(nextStage.citizensToInteract.getFirst());
         } else if (nextStage.citizensToKill != null && nextStage.citizensToKill.size() > 0) {
-            targetLocation = plugin.getNPCLocation(nextStage.citizensToKill.getFirst());
+            targetLocation = plugin.getDependencies().getNPCLocation(nextStage.citizensToKill.getFirst());
         } else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0) {
             targetLocation = nextStage.locationsToReach.getFirst();
         } else if (nextStage.itemDeliveryTargets != null && nextStage.itemDeliveryTargets.size() > 0) {
