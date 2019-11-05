@@ -189,7 +189,7 @@ public class CmdExecutor implements CommandExecutor {
                                 String msg = ChatColor.YELLOW + "(" + Lang.get(player, "delay") + ") " + ChatColor.RED
                                         +  Lang.get(player, "plnTooEarly");
                                 msg = msg.replace("<quest>", q.getName());
-                                msg = msg.replace("<time>", Quests.getTime(time));
+                                msg = msg.replace("<time>", MiscUtil.getTime(time));
                                 player.sendMessage(msg);
                             }
                         }

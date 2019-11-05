@@ -19,7 +19,6 @@ public class RomanNumeral {
     private final static TreeMap<Integer, String> map = new TreeMap<Integer, String>();
 
     static {
-
         map.put(1000, "M");
         map.put(900, "CM");
         map.put(500, "D");
@@ -33,7 +32,6 @@ public class RomanNumeral {
         map.put(5, "V");
         map.put(4, "IV");
         map.put(1, "I");
-
     }
 
     public final static String getNumeral(int number) {

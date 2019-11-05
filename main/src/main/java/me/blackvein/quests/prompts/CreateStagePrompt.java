@@ -36,7 +36,9 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenCreateStagePromptEvent;
 import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 public class CreateStagePrompt extends NumericPrompt {
 
@@ -326,7 +328,7 @@ public class CreateStagePrompt extends NumericPrompt {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
                         long time = (Long) context.getSessionData(pref + CK.S_DELAY);
-                        return ChatColor.GRAY + "(" + ChatColor.AQUA + Quests.getTime(time) + ChatColor.GRAY + ")";
+                        return ChatColor.GRAY + "(" + ChatColor.AQUA + MiscUtil.getTime(time) + ChatColor.GRAY + ")";
                     }
                 }
             case 11:
@@ -895,7 +897,7 @@ public class CreateStagePrompt extends NumericPrompt {
                     } else {
                         locs = new LinkedList<String>();
                     }
-                    locs.add(Quests.getLocationInfo(loc));
+                    locs.add(ConfigUtil.getLocationInfo(loc));
                     context.setSessionData(pref + CK.S_REACH_LOCATIONS, locs);
                     Map<UUID, Block> temp = questFactory.getSelectedReachLocations();
                     temp.remove(player.getUniqueId());

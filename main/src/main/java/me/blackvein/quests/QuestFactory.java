@@ -58,6 +58,7 @@ import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.PlannerPrompt;
 import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -1032,7 +1033,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             npcStart = (Integer) cc.getSessionData(CK.Q_START_NPC);
         }
         if (cc.getSessionData(CK.Q_START_BLOCK) != null) {
-            blockStart = Quests.getLocationInfo((Location) cc.getSessionData(CK.Q_START_BLOCK));
+            blockStart = ConfigUtil.getLocationInfo((Location) cc.getSessionData(CK.Q_START_BLOCK));
         }
         if (cc.getSessionData(CK.REQ_MONEY) != null) {
             moneyReq = (Integer) cc.getSessionData(CK.REQ_MONEY);

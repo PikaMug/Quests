@@ -38,6 +38,7 @@ import me.blackvein.quests.QuestMob;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.timers.ActionTimer;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -271,7 +272,7 @@ public class Action {
     public void fire(Quester quester, Quest quest) {
         Player player = quester.getPlayer();
         if (message != null) {
-            player.sendMessage(plugin.parseStringWithPossibleLineBreaks(message, quest, player));
+            player.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(message, quest, player));
         }
         if (clearInv == true) {
             player.getInventory().clear();
@@ -425,7 +426,7 @@ public class Action {
         Action action = new Action(plugin);
         action.name = name;
         if (data.contains(actionKey + "message")) {
-            action.message = Quests.parseString(data.getString(actionKey + "message"));
+            action.message = ConfigUtil.parseString(data.getString(actionKey + "message"));
         }
         if (data.contains(actionKey + "open-book")) {
             action.book = data.getString(actionKey + "open-book");
@@ -451,9 +452,9 @@ public class Action {
             }
         }
         if (data.contains(actionKey + "explosions")) {
-            if (Quests.checkList(data.getList(actionKey + "explosions"), String.class)) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "explosions"), String.class)) {
                 for (String s : data.getStringList(actionKey + "explosions")) {
-                    Location loc = Quests.getLocation(s);
+                    Location loc = ConfigUtil.getLocation(s);
                     if (loc == null) {
                         plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + loc + ChatColor.GOLD 
                                 + " inside " + ChatColor.GREEN + "explosions: " + ChatColor.GOLD + "inside Action " 
@@ -472,14 +473,14 @@ public class Action {
             }
         }
         if (data.contains(actionKey + "effects")) {
-            if (Quests.checkList(data.getList(actionKey + "effects"), String.class)) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "effects"), String.class)) {
                 if (data.contains(actionKey + "effect-locations")) {
-                    if (Quests.checkList(data.getList(actionKey + "effect-locations"), String.class)) {
+                    if (ConfigUtil.checkList(data.getList(actionKey + "effect-locations"), String.class)) {
                         List<String> effectList = data.getStringList(actionKey + "effects");
                         List<String> effectLocs = data.getStringList(actionKey + "effect-locations");
                         for (String s : effectList) {
                             Effect effect = Effect.valueOf(s.toUpperCase());
-                            Location l = Quests.getLocation(effectLocs.get(effectList.indexOf(s)));
+                            Location l = ConfigUtil.getLocation(effectLocs.get(effectList.indexOf(s)));
                             if (effect == null) {
                                 plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s 
                                         + ChatColor.GOLD + " inside " + ChatColor.GREEN + "effects: " + ChatColor.GOLD 
@@ -521,7 +522,7 @@ public class Action {
             LinkedList<ItemStack> temp = new LinkedList<ItemStack>(); // TODO - should maybe be = action.getItems() ?
             @SuppressWarnings("unchecked")
             List<ItemStack> stackList = (List<ItemStack>) data.get(actionKey + "items");
-            if (Quests.checkList(stackList, ItemStack.class)) {
+            if (ConfigUtil.checkList(stackList, ItemStack.class)) {
                 for (ItemStack stack : stackList) {
                     if (stack != null) {
                         temp.add(stack);
@@ -529,7 +530,7 @@ public class Action {
                 }
             } else {
                 // Legacy
-                if (Quests.checkList(stackList, String.class)) {
+                if (ConfigUtil.checkList(stackList, String.class)) {
                     List<String> items = data.getStringList(actionKey + "items");
                     for (String item : items) {
                         try {
@@ -607,7 +608,7 @@ public class Action {
             // is a mob, the keys are just a number or something.
             for (String s : section.getKeys(false)) {
                 String mobName = section.getString(s + ".name");
-                Location spawnLocation = Quests.getLocation(section.getString(s + ".spawn-location"));
+                Location spawnLocation = ConfigUtil.getLocation(section.getString(s + ".spawn-location"));
                 EntityType type = MiscUtil.getProperMobType(section.getString(s + ".mob-type"));
                 Integer mobAmount = section.getInt(s + ".spawn-amounts");
                 if (spawnLocation == null) {
@@ -646,9 +647,9 @@ public class Action {
             }
         }
         if (data.contains(actionKey + "lightning-strikes")) {
-            if (Quests.checkList(data.getList(actionKey + "lightning-strikes"), String.class)) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "lightning-strikes"), String.class)) {
                 for (String s : data.getStringList(actionKey + "lightning-strikes")) {
-                    Location loc = Quests.getLocation(s);
+                    Location loc = ConfigUtil.getLocation(s);
                     if (loc == null) {
                         plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD 
                                 + " inside " + ChatColor.GREEN + " lightning-strikes: " + ChatColor.GOLD 
@@ -668,7 +669,7 @@ public class Action {
             }
         }
         if (data.contains(actionKey + "commands")) {
-            if (Quests.checkList(data.getList(actionKey + "commands"), String.class)) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "commands"), String.class)) {
                 for (String s : data.getStringList(actionKey + "commands")) {
                     if (s.startsWith("/")) {
                         s = s.replaceFirst("/", "");
@@ -683,11 +684,11 @@ public class Action {
             }
         }
         if (data.contains(actionKey + "potion-effect-types")) {
-            if (Quests.checkList(data.getList(actionKey + "potion-effect-types"), String.class)) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-types"), String.class)) {
                 if (data.contains(actionKey + "potion-effect-durations")) {
-                    if (Quests.checkList(data.getList(actionKey + "potion-effect-durations"), Integer.class)) {
+                    if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-durations"), Integer.class)) {
                         if (data.contains(actionKey + "potion-effect-amplifiers")) {
-                            if (Quests.checkList(data.getList(actionKey + "potion-effect-amplifiers"), Integer.class)) {
+                            if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-amplifiers"), Integer.class)) {
                                 List<String> types = data.getStringList(actionKey + "potion-effect-types");
                                 List<Integer> durations = data.getIntegerList(actionKey + "potion-effect-durations");
                                 List<Integer> amplifiers = data.getIntegerList(actionKey + "potion-effect-amplifiers");
@@ -763,7 +764,7 @@ public class Action {
         }
         if (data.contains(actionKey + "teleport-location")) {
             if (data.isString(actionKey + "teleport-location")) {
-                Location l = Quests.getLocation(data.getString(actionKey + "teleport-location"));
+                Location l = ConfigUtil.getLocation(data.getString(actionKey + "teleport-location"));
                 if (l == null) {
                     plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + data.getString(actionKey 
                             + "teleport-location") + ChatColor.GOLD + "for " + ChatColor.GREEN + " teleport-location: "

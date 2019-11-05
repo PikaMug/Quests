@@ -74,6 +74,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import net.citizensnpcs.api.CitizensAPI;
 
 public class PlayerListener implements Listener {
@@ -139,7 +140,7 @@ public class PlayerListener implements Listener {
                                         early = early.replace("<quest>", ChatColor.AQUA + quest.getName() 
                                                 + ChatColor.YELLOW);
                                         early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                                + Quests.getTime(quester.getCooldownDifference(quest)) 
+                                                + MiscUtil.getTime(quester.getCooldownDifference(quest)) 
                                                 + ChatColor.YELLOW);
                                         player.sendMessage(ChatColor.YELLOW + early);
                                         takeable = false;

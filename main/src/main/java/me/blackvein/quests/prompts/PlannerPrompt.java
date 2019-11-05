@@ -23,6 +23,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenPlannerPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -119,7 +120,7 @@ public class PlannerPrompt extends NumericPrompt {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
                         return ChatColor.YELLOW + "(" 
-                                + Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) 
+                                + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) 
                                 + ChatColor.RESET + ChatColor.YELLOW + ")";
                     }
                 }
@@ -127,7 +128,7 @@ public class PlannerPrompt extends NumericPrompt {
                 if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.YELLOW + "(" + Quests.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) 
+                    return ChatColor.YELLOW + "(" + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) 
                             + ChatColor.RESET + ChatColor.YELLOW + ")";
                 }
             case 5:

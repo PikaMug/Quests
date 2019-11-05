@@ -53,6 +53,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -265,7 +266,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         if (event.explosions != null && event.explosions.isEmpty() == false) {
             LinkedList<String> locs = new LinkedList<String>();
             for (Location loc : event.explosions) {
-                locs.add(Quests.getLocationInfo(loc));
+                locs.add(ConfigUtil.getLocationInfo(loc));
             }
             context.setSessionData(CK.E_EXPLOSIONS, locs);
         }
@@ -273,7 +274,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             LinkedList<String> locs = new LinkedList<String>();
             LinkedList<String> effs = new LinkedList<String>();
             for (Entry<Location, Effect> e : event.effects.entrySet()) {
-                locs.add(Quests.getLocationInfo((Location) e.getKey()));
+                locs.add(ConfigUtil.getLocationInfo((Location) e.getKey()));
                 effs.add(((Effect) e.getValue()).toString());
             }
             context.setSessionData(CK.E_EFFECTS, effs);
@@ -297,7 +298,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         if (event.lightningStrikes != null && event.lightningStrikes.isEmpty() == false) {
             LinkedList<String> locs = new LinkedList<String>();
             for (Location loc : event.lightningStrikes) {
-                locs.add(Quests.getLocationInfo(loc));
+                locs.add(ConfigUtil.getLocationInfo(loc));
             }
             context.setSessionData(CK.E_LIGHTNING, locs);
         }
@@ -324,7 +325,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.E_HEALTH, (Float) event.health);
         }
         if (event.teleport != null) {
-            context.setSessionData(CK.E_TELEPORT, Quests.getLocationInfo(event.teleport));
+            context.setSessionData(CK.E_TELEPORT, ConfigUtil.getLocationInfo(event.teleport));
         }
         if (event.commands != null) {
             context.setSessionData(CK.E_COMMANDS, event.commands);
@@ -476,7 +477,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + qm.getType().name() 
                             + ((qm.getName() != null) ? ": " + qm.getName() : "") + ChatColor.GRAY + " x " 
                             + ChatColor.DARK_AQUA + qm.getSpawnAmounts() + ChatColor.GRAY + " -> " + ChatColor.GREEN 
-                            + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
+                            + ConfigUtil.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
             }
             if (context.getSessionData(CK.E_FAIL_QUEST) == null) {
@@ -578,7 +579,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     index++;
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + type + ChatColor.DARK_PURPLE + " " 
                             + RomanNumeral.getNumeral(mags.get(index)) + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA 
-                            + Quests.getTime(durations.get(index) * 50L) + "\n";
+                            + MiscUtil.getTime(durations.get(index) * 50L) + "\n";
                 }
             }
             if (context.getSessionData(CK.E_HUNGER) == null) {
@@ -773,7 +774,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("eventEditorSetStorm") + " (" + ChatColor.AQUA 
                         + (String) context.getSessionData(CK.E_WORLD_STORM) + ChatColor.YELLOW + " -> " 
-                        + ChatColor.DARK_AQUA + Quests.getTime(Long.valueOf((int)context
+                        + ChatColor.DARK_AQUA + MiscUtil.getTime(Long.valueOf((int)context
                         .getSessionData(CK.E_WORLD_STORM_DURATION) * 1000)) + ChatColor.YELLOW + ")\n";
             }
             if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
@@ -783,7 +784,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("eventEditorSetThunder") + " (" + ChatColor.AQUA 
                         + (String) context.getSessionData(CK.E_WORLD_THUNDER) + ChatColor.YELLOW + " -> " 
-                        + ChatColor.DARK_AQUA + Quests.getTime(Long.valueOf((int)context
+                        + ChatColor.DARK_AQUA + MiscUtil.getTime(Long.valueOf((int)context
                         .getSessionData(CK.E_WORLD_THUNDER_DURATION) * 1000)) + ChatColor.YELLOW + ")\n";
             }
             
@@ -1059,7 +1060,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                         continue;
                     }
                     ss.set("name", questMob.getName());
-                    ss.set("spawn-location", Quests.getLocationInfo(questMob.getSpawnLocation()));
+                    ss.set("spawn-location", ConfigUtil.getLocationInfo(questMob.getSpawnLocation()));
                     ss.set("mob-type", questMob.getType().name());
                     ss.set("spawn-amounts", questMob.getSpawnAmounts());
                     ss.set("held-item", ItemUtil.serializeItemStack(questMob.getInventory()[0]));
@@ -1192,7 +1193,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     } else {
                         locs = new LinkedList<String>();
                     }
-                    locs.add(Quests.getLocationInfo(loc));
+                    locs.add(ConfigUtil.getLocationInfo(loc));
                     context.setSessionData(CK.E_EXPLOSIONS, locs);
                     selectedExplosionLocations.remove(player.getUniqueId());
                 } else {
@@ -1442,7 +1443,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     } else {
                         locs = new LinkedList<String>();
                     }
-                    locs.add(Quests.getLocationInfo(loc));
+                    locs.add(ConfigUtil.getLocationInfo(loc));
                     context.setSessionData(CK.E_EFFECTS_LOCATIONS, locs);
                     selectedEffectLocations.remove(player.getUniqueId());
                 } else {
@@ -1533,7 +1534,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 } else {
                     int dur = (int) context.getSessionData(CK.E_WORLD_STORM_DURATION);
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur * 1000) 
+                            + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + MiscUtil.getTime(dur * 1000) 
                             + ChatColor.YELLOW + ")\n";
                 }
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -1649,7 +1650,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 } else {
                     int dur = (int) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + Quests.getTime(dur * 1000) 
+                            + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + MiscUtil.getTime(dur * 1000) 
                             + ChatColor.YELLOW + ")\n";
                 }
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -1758,7 +1759,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                             + Lang.get("edit") + ": " + ChatColor.AQUA + qm.getType().name() 
                             + ((qm.getName() != null) ? ": " + qm.getName() : "") + ChatColor.GRAY + " x " 
                             + ChatColor.DARK_AQUA + qm.getSpawnAmounts() + ChatColor.GRAY + " -> " + ChatColor.GREEN 
-                            + Quests.getLocationInfo(qm.getSpawnLocation()) + "\n";
+                            + ConfigUtil.getLocationInfo(qm.getSpawnLocation()) + "\n";
                 }
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + (types.size() + 1) + ChatColor.RESET + ChatColor.YELLOW 
                         + " - " + Lang.get("eventEditorAddMobTypes") + "\n";
@@ -1848,7 +1849,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorAddSpawnLocation") + ChatColor.GRAY + " (" 
                     + ((questMob.getSpawnLocation() == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                            + Quests.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")\n";
+                            + ConfigUtil.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")\n";
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetMobSpawnAmount") + ChatColor.GRAY + " (" 
                     + ((questMob.getSpawnAmounts() == null) ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
@@ -2184,7 +2185,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     } else {
                         locs = new LinkedList<String>();
                     }
-                    locs.add(Quests.getLocationInfo(loc));
+                    locs.add(ConfigUtil.getLocationInfo(loc));
                     context.setSessionData(CK.E_LIGHTNING, locs);
                     selectedLightningLocations.remove(player.getUniqueId());
                 } else {
@@ -2241,7 +2242,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
                             + Lang.get("noneSet") + "\n";
                     for (Long l : (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS)) {
-                        text += ChatColor.GRAY + "    - " + ChatColor.DARK_AQUA + Quests.getTime(l * 50L) + "\n";
+                        text += ChatColor.GRAY + "    - " + ChatColor.DARK_AQUA + MiscUtil.getTime(l * 50L) + "\n";
                     }
                     if (context.getSessionData(CK.E_POTION_STRENGHT) == null) {
                         text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
@@ -2523,7 +2524,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 Block block = selectedTeleportLocations.get(player.getUniqueId());
                 if (block != null) {
                     Location loc = block.getLocation();
-                    context.setSessionData(CK.E_TELEPORT, Quests.getLocationInfo(loc));
+                    context.setSessionData(CK.E_TELEPORT, ConfigUtil.getLocationInfo(loc));
                     selectedTeleportLocations.remove(player.getUniqueId());
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));

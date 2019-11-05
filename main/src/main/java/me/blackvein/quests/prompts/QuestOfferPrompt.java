@@ -29,6 +29,7 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 public class QuestOfferPrompt extends StringPrompt {
 
@@ -140,7 +141,7 @@ public class QuestOfferPrompt extends StringPrompt {
                             String early = Lang.get("questTooEarly");
                             early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
                             early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                    + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
+                                    + MiscUtil.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
                             player.sendMessage(ChatColor.YELLOW + early);
                         } else if (q.getPlanner().getCooldown() < 0) {
                             String completed = Lang.get("questAlreadyCompleted");

@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -473,7 +473,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
             String s = input.replace(":", "");
             if (s.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && s.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                s = Quests.parseString(s);
+                s = ConfigUtil.parseString(s);
                 cc.setSessionData("tempDisplay", s);
             } else if (s.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 cc.setSessionData("tempDisplay", null);
@@ -494,7 +494,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
             String s = input.replace(":", "");
             if (s.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && s.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                s = Quests.parseString(s);
+                s = ConfigUtil.parseString(s);
                 LinkedList<String> lore = new LinkedList<String>();
                 lore.addAll(Arrays.asList(s.split(Lang.get("charSemi"))));
                 cc.setSessionData("tempLore", lore);

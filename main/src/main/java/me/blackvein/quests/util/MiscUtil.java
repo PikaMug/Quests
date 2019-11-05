@@ -21,6 +21,55 @@ import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
     
+    public static String getTime(long milliseconds) {
+        String message = "";
+        long days = milliseconds / 86400000;
+        long hours = (milliseconds % 86400000) / 3600000;
+        long minutes = ((milliseconds % 86400000) % 3600000) / 60000;
+        long seconds = (((milliseconds % 86400000) % 3600000) % 60000) / 1000;
+        long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
+        if (days > 0L) {
+            if (days == 1L) {
+                message += " 1 " + Lang.get("timeDay") + ",";
+            } else {
+                message += " " + days + " " + Lang.get("timeDays") + ",";
+            }
+        }
+        if (hours > 0L) {
+            if (hours == 1L) {
+                message += " 1 " + Lang.get("timeHour") + ",";
+            } else {
+                message += " " + hours + " " + Lang.get("timeHours") + ",";
+            }
+        }
+        if (minutes > 0L) {
+            if (minutes == 1L) {
+                message += " 1 " + Lang.get("timeMinute") + ",";
+            } else {
+                message += " " + minutes + " " + Lang.get("timeMinutes") + ",";
+            }
+        }
+        if (seconds > 0L) {
+            if (seconds == 1L) {
+                message += " 1 " + Lang.get("timeSecond") + ",";
+            } else {
+                message += " " + seconds + " " + Lang.get("timeSeconds") + ",";
+            }
+        } else {
+            if (milliSeconds2 > 0L) {
+                if (milliSeconds2 == 1L) {
+                    message += " 1 " + Lang.get("timeMillisecond") + ",";
+                } else {
+                    message += " " + milliSeconds2 + " " + Lang.get("timeMilliseconds") + ",";
+                }
+            }
+        }
+        if (message.length() > 0) {
+            message = message.substring(1, message.length() - 1);
+        }
+        return message;
+    }
+    
     /**
      * Capitalize first letter of text and set remainder to lowercase
      * 

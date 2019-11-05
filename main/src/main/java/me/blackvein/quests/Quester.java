@@ -55,6 +55,7 @@ import me.blackvein.quests.events.quest.QuestTakeEvent;
 import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.timers.StageTimer;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
@@ -419,7 +420,7 @@ public class Quester {
                 String early = Lang.get("plnTooEarly");
                 early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
                 early = early.replace("<time>", ChatColor.DARK_PURPLE
-                        + Quests.getTime(start - System.currentTimeMillis()) + ChatColor.YELLOW);
+                        + MiscUtil.getTime(start - System.currentTimeMillis()) + ChatColor.YELLOW);
                 player.sendMessage(ChatColor.YELLOW + early);
                 return;
             }
@@ -429,7 +430,7 @@ public class Quester {
                 String late = Lang.get("plnTooLate");
                 late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
                 late = late.replace("<time>", ChatColor.DARK_PURPLE
-                        + Quests.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
+                        + MiscUtil.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
                 player.sendMessage(ChatColor.RED + late);
                 return;
             }
@@ -470,7 +471,7 @@ public class Quester {
                     String early = Lang.get("plnTooEarly");
                     early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
                     early = early.replace("<time>", ChatColor.DARK_PURPLE
-                            + Quests.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
+                            + MiscUtil.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
                     player.sendMessage(ChatColor.YELLOW + early);
                     return;
                 }
@@ -516,7 +517,7 @@ public class Quester {
             plugin.showObjectives(q, this, false);
             String stageStartMessage = stage.startMessage;
             if (stageStartMessage != null) {
-                getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
+                getPlayer().sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
             }
             if (stage.chatEvents.isEmpty() == false) {
                 for (String chatTrigger : stage.chatEvents.keySet()) {
@@ -3153,7 +3154,7 @@ public class Quester {
                     (long) (getCurrentStage(quest).delay * 0.02));
             if (getCurrentStage(quest).delayMessage != null) {
                 Player p = plugin.getServer().getPlayer(id);
-                p.sendMessage(plugin.parseStringWithPossibleLineBreaks((getCurrentStage(quest)
+                p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks((getCurrentStage(quest)
                         .delayMessage), quest, p));
             }
         }
@@ -3241,10 +3242,10 @@ public class Quester {
                 ItemStack display = quests.get(i).guiDisplay;
                 ItemMeta meta = display.getItemMeta();
                 if (completedQuests.contains(quests.get(i).getName())) {
-                    meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName()
+                    meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quests.get(i).getName()
                             + " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), npc));
                 } else {
-                    meta.setDisplayName(ChatColor.DARK_PURPLE + Quests.parseString(quests.get(i).getName(), npc));
+                    meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quests.get(i).getName(), npc));
                 }
                 if (!meta.hasLore()) {
                     LinkedList<String> lines = new LinkedList<String>();
@@ -3582,7 +3583,7 @@ public class Quester {
             if (giveReason) {
                 String msg = Lang.get(getPlayer(), "questTooEarly");
                 msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-                msg = msg.replace("<time>", ChatColor.DARK_PURPLE + Quests.getTime(getCooldownDifference(quest)) 
+                msg = msg.replace("<time>", ChatColor.DARK_PURPLE + MiscUtil.getTime(getCooldownDifference(quest)) 
                         + ChatColor.YELLOW);
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }

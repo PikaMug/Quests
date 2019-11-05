@@ -33,6 +33,7 @@ import org.bukkit.entity.Tameable;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
@@ -440,7 +441,7 @@ public class MobsPrompt extends FixedSetPrompt {
                     } else {
                         locs = new LinkedList<String>();
                     }
-                    locs.add(Quests.getLocationInfo(loc));
+                    locs.add(ConfigUtil.getLocationInfo(loc));
                     context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
                     Map<UUID, Block> temp = questFactory.getSelectedKillLocations();
                     temp.remove(player.getUniqueId());

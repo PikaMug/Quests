@@ -41,6 +41,7 @@ import me.blackvein.quests.events.quester.QuesterPreChangeStageEvent;
 import me.blackvein.quests.events.quester.QuesterPreCompleteQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -184,7 +185,7 @@ public class Quest {
         }
         String stageCompleteMessage = currentStage.completeMessage;
         if (stageCompleteMessage != null) {
-            quester.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageCompleteMessage, 
+            quester.getPlayer().sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageCompleteMessage, 
                     this, quester.getPlayer()));
         }
         if (plugin.getSettings().canUseCompass()) {
@@ -260,7 +261,7 @@ public class Quest {
         plugin.showObjectives(this, quester, false);
         String stageStartMessage = quester.getCurrentStage(this).startMessage;
         if (stageStartMessage != null) {
-            quester.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageStartMessage, this, 
+            quester.getPlayer().sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, this, 
                     quester.getPlayer()));
         }
         quester.updateJournal();

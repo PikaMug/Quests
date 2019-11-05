@@ -48,7 +48,7 @@ public class Dependencies {
     private static mcMMO mcmmo = null;
     private static Heroes heroes = null;
     private static PhatLoots phatLoots = null;
-    private static PlaceholderAPIPlugin placeholder = null;
+    public static PlaceholderAPIPlugin placeholder = null;
     private static CitizensPlugin citizens = null;
     private static DenizenAPI denizenApi = null;
     private static CitizensBooksAPI citizensBooks = null;

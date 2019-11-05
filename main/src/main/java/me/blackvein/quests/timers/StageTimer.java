@@ -20,6 +20,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 
 public class StageTimer implements Runnable {
@@ -78,7 +79,8 @@ public class StageTimer implements Runnable {
                 plugin.showObjectives(quest, quester, false);
                 String stageStartMessage = quester.getCurrentStage(quest).getStartMessage();
                 if (stageStartMessage != null) {
-                    quester.getPlayer().sendMessage(Quests.parseStringWithPossibleLineBreaks(stageStartMessage, quest));
+                    quester.getPlayer().sendMessage(ConfigUtil
+                            .parseStringWithPossibleLineBreaks(stageStartMessage, quest));
                 }
             }
             if (quester.getQuestData(quest) != null) {
