@@ -159,8 +159,8 @@ public class RequirementsPrompt extends NumericPrompt {
                 } else {
                     int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
-                            + (moneyReq > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY 
-                            + ")";
+                            + (moneyReq > 1 ? plugin.getDependencies().getCurrency(true) 
+                            : plugin.getDependencies().getCurrency(false)) + ChatColor.GRAY + ")";
                 }
             case 2:
                 if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {

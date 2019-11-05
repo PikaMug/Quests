@@ -3395,24 +3395,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
     }
-
+    
+    /**
+     * @deprecated
+     */
     public String getCurrency(boolean plural) {
-        if (depends.getVaultEconomy() == null) {
-            return Lang.get("money");
-        }
-        if (plural) {
-            if (depends.getVaultEconomy().currencyNamePlural().trim().isEmpty()) {
-                return Lang.get("money");
-            } else {
-                return depends.getVaultEconomy().currencyNamePlural();
-            }
-        } else {
-            if (depends.getVaultEconomy().currencyNameSingular().trim().isEmpty()) {
-                return Lang.get("money");
-            } else {
-                return depends.getVaultEconomy().currencyNameSingular();
-            }
-        }
+        return depends.getCurrency(plural);
     }
 
     public static boolean removeItem(Inventory inventory, ItemStack is) {

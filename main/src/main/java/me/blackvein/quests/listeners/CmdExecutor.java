@@ -388,18 +388,18 @@ public class CmdExecutor implements CommandExecutor {
                                 .getVaultEconomy().getBalance(quester.getOfflinePlayer()) >= reqs.getMoney()) {
                             if (reqs.getMoney() == 1) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + reqs.getMoney() + " " 
-                                        + plugin.getCurrency(false));
+                                        + plugin.getDependencies().getCurrency(false));
                             } else {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + reqs.getMoney() + " " 
-                                        + plugin.getCurrency(true));
+                                        + plugin.getDependencies().getCurrency(true));
                             }
                         } else {
                             if (reqs.getMoney() == 1) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + reqs.getMoney() + " " 
-                                        + plugin.getCurrency(false));
+                                        + plugin.getDependencies().getCurrency(false));
                             } else {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + reqs.getMoney() + " " 
-                                        + plugin.getCurrency(true));
+                                        + plugin.getDependencies().getCurrency(true));
                             }
                         }
                     }

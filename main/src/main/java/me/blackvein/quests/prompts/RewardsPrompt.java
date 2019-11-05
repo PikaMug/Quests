@@ -133,8 +133,8 @@ public class RewardsPrompt extends NumericPrompt {
                 } else {
                     int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyRew + " " 
-                            + (moneyRew > 1 ? plugin.getCurrency(true) : plugin.getCurrency(false)) + ChatColor.GRAY 
-                            + ")";
+                            + (moneyRew > 1 ? plugin.getDependencies().getCurrency(true) 
+                            : plugin.getDependencies().getCurrency(false)) + ChatColor.GRAY + ")";
                 }
             case 2:
                 if (context.getSessionData(CK.REW_QUEST_POINTS) == null) {

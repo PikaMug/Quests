@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import me.blackvein.quests.util.DenizenAPI;
+import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.WorldGuardAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -221,6 +222,25 @@ public class Dependencies {
             permission = permissionProvider.getProvider();
         }
         return (permission != null);
+    }
+    
+    public String getCurrency(boolean plural) {
+        if (getVaultEconomy() == null) {
+            return Lang.get("money");
+        }
+        if (plural) {
+            if (getVaultEconomy().currencyNamePlural().trim().isEmpty()) {
+                return Lang.get("money");
+            } else {
+                return getVaultEconomy().currencyNamePlural();
+            }
+        } else {
+            if (getVaultEconomy().currencyNameSingular().trim().isEmpty()) {
+                return Lang.get("money");
+            } else {
+                return getVaultEconomy().currencyNameSingular();
+            }
+        }
     }
     
     public boolean runDenizenScript(String scriptName, Quester quester) {
