@@ -1340,8 +1340,8 @@ public class ActionFactory implements ConversationAbandonedListener {
             if (context.getSessionData(CK.E_EFFECTS) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("eventEditorAddEffect") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorAddEffectLocation") + " (" 
-                        + Lang.get("eventEditorNoEffects") + ")\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                        + Lang.get("eventEditorAddEffectLocation") + " (" + Lang.get("eventEditorNoEffects") + ")\n";
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("clear") + "\n";
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -1517,8 +1517,8 @@ public class ActionFactory implements ConversationAbandonedListener {
             if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("eventEditorSetWorld") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorSetDuration") + " " 
-                        + Lang.get("eventEditorNoWorld") + "\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
+                        + Lang.get("eventEditorSetDuration") + " " + Lang.get("eventEditorNoWorld") + "\n";
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("clear") + "\n";
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -2218,8 +2218,8 @@ public class ActionFactory implements ConversationAbandonedListener {
             if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("eventEditorSetPotionEffectTypes") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "2 - " + Lang.get("eventEditorSetPotionDurations") + " " + Lang.get("noneSet")
-                        + "\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
+                        + Lang.get("eventEditorSetPotionDurations") + " " + Lang.get("noneSet") + "\n";
                 text += ChatColor.GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " " + Lang.get("noneSet")
                         + "\n";
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - "
