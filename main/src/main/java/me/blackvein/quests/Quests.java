@@ -3719,18 +3719,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public String getNPCName(int id) {
         return depends.getNPCName(id);
     }
-
-    public static int countInv(Inventory inv, Material m, int subtract) {
-        int count = 0;
-        for (ItemStack i : inv.getContents()) {
-            if (i != null) {
-                if (i.getType().equals(m)) {
-                    count += i.getAmount();
-                }
-            }
-        }
-        return count - subtract;
-    }
     
     /**
      * Checks whether an NPC has a quest that the player may accept
