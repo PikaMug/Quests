@@ -359,12 +359,14 @@ public class Quest {
             }
         }
         if (reqs.getHeroesPrimaryClass() != null) {
-            if (plugin.testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId()) == false) {
+            if (plugin.getDependencies()
+                    .testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId()) == false) {
                 return false;
             }
         }
         if (reqs.getHeroesSecondaryClass() != null) {
-            if (plugin.testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId()) == false) {
+            if (plugin.getDependencies()
+                    .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId()) == false) {
                 return false;
             }
         }

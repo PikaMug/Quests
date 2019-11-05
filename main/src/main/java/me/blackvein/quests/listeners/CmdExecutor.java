@@ -343,7 +343,8 @@ public class CmdExecutor implements CommandExecutor {
                         }
                     }
                     if (reqs.getHeroesPrimaryClass() != null) {
-                        if (plugin.testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId())) {
+                        if (plugin.getDependencies()
+                                .testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId())) {
                             cs.sendMessage(ChatColor.BOLD + "" + ChatColor.GREEN + reqs.getHeroesPrimaryClass()
                                 + ChatColor.RESET + "" + ChatColor.DARK_GREEN + " " + Lang.get("heroesClass"));
                         } else {
@@ -352,7 +353,8 @@ public class CmdExecutor implements CommandExecutor {
                         }
                     }
                     if (reqs.getHeroesSecondaryClass() != null) {
-                        if (plugin.testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId())) {
+                        if (plugin.getDependencies()
+                                .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId())) {
                             cs.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + reqs.getHeroesSecondaryClass()
                                 + ChatColor.RESET + "" + ChatColor.RED + " " + Lang.get("heroesClass"));
                         } else {
@@ -362,7 +364,7 @@ public class CmdExecutor implements CommandExecutor {
                     }
                     if (reqs.getMcmmoSkills().isEmpty() == false) {
                         for (String skill : reqs.getMcmmoSkills()) {
-                            int level = Quests.getMCMMOSkillLevel(Quests.getMcMMOSkill(skill), player.getName());
+                            int level = plugin.getDependencies().getMcmmoSkillLevel(Quests.getMcMMOSkill(skill), player.getName());
                             int req = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(skill));
                             String skillName = MiscUtil.getCapitalized(skill);
                             if (level >= req) {

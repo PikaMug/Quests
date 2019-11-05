@@ -72,9 +72,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
-import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 
@@ -3784,30 +3782,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return false;
     }
 
-    public static int getMCMMOSkillLevel(SkillType st, String player) {
-        McMMOPlayer mPlayer = UserManager.getPlayer(player);
-        if (mPlayer == null) {
-            return -1;
-        }
-        return mPlayer.getProfile().getSkillLevel(st);
-    }
-
+    /**
+     * @deprecated Use Dependencies.getHero(UUID)
+     */
     public Hero getHero(UUID uuid) {
-        Player p = getServer().getPlayer(uuid);
-        if (p == null) {
-            return null;
-        }
-        return depends.getHeroes().getCharacterManager().getHero(p);
+        return depends.getHero(uuid);
     }
-
+    
+    /**
+     * @deprecated Use Dependencies.testPrimaryHeroClass(String, UUID)
+     */
     public boolean testPrimaryHeroesClass(String primaryClass, UUID uuid) {
-        Hero hero = getHero(uuid);
-        return hero.getHeroClass().getName().equalsIgnoreCase(primaryClass);
+        return depends.testPrimaryHeroesClass(primaryClass, uuid);
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * @deprecated Use Dependencies.testSecondaryHeroClass(String, UUID)
+     */
     public boolean testSecondaryHeroesClass(String secondaryClass, UUID uuid) {
-        Hero hero = getHero(uuid);
-        return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);
+        return depends.testSecondaryHeroesClass(secondaryClass, uuid);
     }
 }
