@@ -3004,7 +3004,7 @@ public class Quester {
                     LinkedList<EntityType> mobs = new LinkedList<EntityType>();
                     List<Integer> amounts = questSec.getIntegerList("mobs-killed-amounts");
                     for (String s : questSec.getStringList("mobs-killed")) {
-                        EntityType mob = Quests.getMobType(s);
+                        EntityType mob = MiscUtil.getProperMobType(s);
                         if (mob != null) {
                             mobs.add(mob);
                         }

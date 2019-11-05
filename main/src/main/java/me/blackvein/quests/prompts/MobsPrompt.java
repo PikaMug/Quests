@@ -66,7 +66,7 @@ public class MobsPrompt extends FixedSetPrompt {
             if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
                 for (int i = 0; i < mobs.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA 
-                            + MiscUtil.getPrettyMobName(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " 
+                            + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY + " x " 
                             + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
                 }
             } else {
@@ -79,7 +79,7 @@ public class MobsPrompt extends FixedSetPrompt {
                     String msg = Lang.get("blocksWithin");
                     msg = msg.replaceAll("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
-                            + MiscUtil.getPrettyMobName(Quests.getMobType(mobs.get(i))) + ChatColor.GRAY + " x " 
+                            + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY + " x " 
                             + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW 
                             + names.get(i) + " (" + locs.get(i) + ")\n";
                 }
@@ -359,9 +359,9 @@ public class MobsPrompt extends FixedSetPrompt {
             mobArr.removeAll(toRemove);
             for (int i = 0; i < mobArr.size(); i++) {
                 if (i < (mobArr.size() - 1)) {
-                    mobs += MiscUtil.getProperMobName(mobArr.get(i)) + ", ";
+                    mobs += MiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name()) + ", ";
                 } else {
-                    mobs += MiscUtil.getProperMobName(mobArr.get(i)) + "\n";
+                    mobs += MiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name()) + "\n";
                 }
             }
             return mobs + ChatColor.YELLOW + Lang.get("stageEditorMobsPrompt");
@@ -373,7 +373,7 @@ public class MobsPrompt extends FixedSetPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 LinkedList<String> mobTypes = new LinkedList<String>();
                 for (String s : input.split(" ")) {
-                    if (Quests.getMobType(s) != null) {
+                    if (MiscUtil.getProperMobType(s) != null) {
                         mobTypes.add(s);
                         context.setSessionData(pref + CK.S_MOB_TYPES, mobTypes);
                     } else {
@@ -647,7 +647,7 @@ public class MobsPrompt extends FixedSetPrompt {
                 if (type.isAlive() == false || Tameable.class.isAssignableFrom(type.getEntityClass()) == false) {
                     continue;
                 }
-                mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
+                mobs += MiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()) + ", ";
             }
             mobs = mobs.substring(0, mobs.length() - 2) + "\n";
             return mobs + ChatColor.YELLOW + Lang.get("stageEditorMobsPrompt");
@@ -659,8 +659,8 @@ public class MobsPrompt extends FixedSetPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 LinkedList<String> mobTypes = new LinkedList<String>();
                 for (String s : input.split(" ")) {
-                    if (Quests.getMobType(s) != null) {
-                        final EntityType type = Quests.getMobType(s);
+                    if (MiscUtil.getProperMobType(s) != null) {
+                        final EntityType type = MiscUtil.getProperMobType(s);
                         if (type.isAlive() || Tameable.class.isAssignableFrom(type.getEntityClass())) {
                             mobTypes.add(MiscUtil.getPrettyMobName(type));
                             context.setSessionData(pref + CK.S_TAME_TYPES, mobTypes);

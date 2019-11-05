@@ -1464,23 +1464,17 @@ public class ActionFactory implements ConversationAbandonedListener {
         @Override
         public String getPromptText(ConversationContext context) {
             String effects = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorEffectsTitle") + "\n";
-            effects += ChatColor.DARK_PURPLE + "BLAZE_SHOOT " + ChatColor.GRAY + "- " + Lang.get("effBlazeShoot") 
-                + "\n";
-            effects += ChatColor.DARK_PURPLE + "BOW_FIRE " + ChatColor.GRAY + "- " + Lang.get("effBowFire") + "\n";
-            effects += ChatColor.DARK_PURPLE + "CLICK1 " + ChatColor.GRAY + "- " + Lang.get("effClick1") + "\n";
-            effects += ChatColor.DARK_PURPLE + "CLICK2 " + ChatColor.GRAY + "- " + Lang.get("effClick2") + "\n";
-            effects += ChatColor.DARK_PURPLE + "DOOR_TOGGLE " + ChatColor.GRAY + "- " + Lang.get("effDoorToggle") 
-                + "\n";
-            effects += ChatColor.DARK_PURPLE + "EXTINGUISH " + ChatColor.GRAY + "- " + Lang.get("effExtinguish") + "\n";
-            effects += ChatColor.DARK_PURPLE + "GHAST_SHOOT " + ChatColor.GRAY + "- " + Lang.get("effGhastShoot") 
-                + "\n";
-            effects += ChatColor.DARK_PURPLE + "GHAST_SHRIEK " + ChatColor.GRAY + "- " + Lang.get("effGhastShriek") 
-                + "\n";
-            effects += ChatColor.DARK_PURPLE + "ZOMBIE_CHEW_IRON_DOOR " + ChatColor.GRAY + "- " 
-                + Lang.get("effZombieWood") + "\n";
-            effects += ChatColor.DARK_PURPLE + "ZOMBIE_CHEW_WOODEN_DOOR " + ChatColor.GRAY + "- " 
-                + Lang.get("effZombieIron") + "\n";
-            return ChatColor.YELLOW + effects + Lang.get("effEnterName");
+            Effect[] vals = Effect.values();
+            for (int i = 0; i < vals.length; i++) {
+                Effect eff = vals[i];
+                if (i < (vals.length - 1)) {
+                    effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + ", ";
+                } else {
+                    effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + "\n";
+                }
+                
+            }
+            return effects + ChatColor.YELLOW +  Lang.get("effEnterName");
         }
 
         @SuppressWarnings("unchecked")
@@ -1488,7 +1482,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         public Prompt acceptInput(ConversationContext context, String input) {
             Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                if (Effect.valueOf(input.toUpperCase()) != null) {
+                if (getProperEffect(input) != null) {
                     LinkedList<String> effects;
                     if (context.getSessionData(CK.E_EFFECTS) != null) {
                         effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
@@ -2028,9 +2022,9 @@ public class ActionFactory implements ConversationAbandonedListener {
                     continue;
                 }
                 if (i < (mobArr.length - 1)) {
-                    mobs += MiscUtil.getProperMobName(mobArr[i]) + ", ";
+                    mobs += MiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()) + ", ";
                 } else {
-                    mobs += MiscUtil.getProperMobName(mobArr[i]) + "\n";
+                    mobs += MiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()) + "\n";
                 }
             }
             return mobs + ChatColor.YELLOW + Lang.get("eventEditorSetMobTypesPrompt");
@@ -2570,5 +2564,15 @@ public class ActionFactory implements ConversationAbandonedListener {
             }
             return new CreateMenuPrompt();
         }
+    }
+    
+    public Effect getProperEffect(String properName) {
+        properName = properName.replaceAll("_", "").replaceAll(" ", "").toUpperCase();
+        for (Effect eff : Effect.values()) {
+            if (eff.name().replaceAll("_", "").equalsIgnoreCase(properName)) {
+                return eff;
+            }
+        }
+        return null;
     }
 }

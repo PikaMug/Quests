@@ -2682,7 +2682,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     List<String> mobNames = config.getStringList("quests." + questKey + ".stages.ordered." + s2 
                             + ".mobs-to-kill");
                     for (String mob : mobNames) {
-                        EntityType type = getMobType(mob);
+                        EntityType type = MiscUtil.getProperMobType(mob);
                         if (type != null) {
                             mobsToKill.add(type);
                         } else {
@@ -3437,7 +3437,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         info += " " + loc.getZ();
         return info;
     }
-
+    
+    /**
+     * Gets living EntityType from name
+     * 
+     * @deprecated Use MiscUtil.getProperMobType(EntityType)
+     * @param mob Name to get type from
+     * @return EntityType or null if invalid
+     */
     public static EntityType getMobType(String mob) {
         return MiscUtil.getProperMobType(mob);
     }

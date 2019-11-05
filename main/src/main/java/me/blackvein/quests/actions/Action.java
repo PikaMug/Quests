@@ -40,6 +40,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.timers.ActionTimer;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 public class Action {
 
@@ -607,7 +608,7 @@ public class Action {
             for (String s : section.getKeys(false)) {
                 String mobName = section.getString(s + ".name");
                 Location spawnLocation = Quests.getLocation(section.getString(s + ".spawn-location"));
-                EntityType type = Quests.getMobType(section.getString(s + ".mob-type"));
+                EntityType type = MiscUtil.getProperMobType(section.getString(s + ".mob-type"));
                 Integer mobAmount = section.getInt(s + ".spawn-amounts");
                 if (spawnLocation == null) {
                     plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s + ChatColor.GOLD 

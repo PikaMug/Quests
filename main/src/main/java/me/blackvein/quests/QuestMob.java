@@ -21,6 +21,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.MiscUtil;
 
 public class QuestMob {
 
@@ -191,7 +192,7 @@ public class QuestMob {
         String[] args = str.split("::");
         for (String string : args) {
             if (string.startsWith("type-")) {
-                entityType = Quests.getMobType(string.substring(5));
+                entityType = MiscUtil.getProperMobType(string.substring(5));
             } else if (string.startsWith("name-")) {
                 name = string.substring(5);
             } else if (string.startsWith("spawn-")) {

@@ -20,7 +20,13 @@ import org.bukkit.DyeColor;
 import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
-
+    
+    /**
+     * Capitalize first letter of text and set remainder to lowercase
+     * 
+     * @param input
+     * @return
+     */
     public static String getCapitalized(String input) {
         if (input.isEmpty()) {
             return input;
@@ -54,19 +60,44 @@ public class MiscUtil {
         }
         return prettyString;
     }
-
-    public static String getProperMobName(EntityType type) {
-        String name = type.name().toLowerCase();
+    
+    /**
+     * Convert text from snake_case to UpperCamelCase
+     * 
+     * @param type To convert
+     * @return Converted text
+     */
+    public static String snakeCaseToUpperCamelCase(String input) {
+        String name = input.toLowerCase();
         name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        int index = name.indexOf('_');
-        if (index != -1) {
-            name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) 
-                    + name.substring(index + 2);
-            name = name.replaceFirst("_", "");
+        for (int i = 0; i < input.chars().filter(num -> num == '_').count(); i++) {
+            int index = name.indexOf('_');
+            if (index != -1) {
+                name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) 
+                        + name.substring(index + 2);
+                name = name.replaceFirst("_", "");
+            }
         }
         return name;
     }
+    
+    /**
+     * Convert EntityType name from snake_case to UpperCamelCase
+     * 
+     * @deprecated Use {@link #snakeCaseToUpperCamelCase(String)}
+     * @param type To convert
+     * @return Converted text
+     */
+    public static String getProperMobName(EntityType type) {
+        return snakeCaseToUpperCamelCase(type.name());
+    }
 
+    /**
+     * Gets living EntityType from name
+     * 
+     * @param properName Name to get type from
+     * @return EntityType or null if invalid
+     */
     public static EntityType getProperMobType(String properName) {
         properName = properName.replaceAll("_", "").replaceAll(" ", "").toUpperCase();
         for (EntityType et : EntityType.values()) {
