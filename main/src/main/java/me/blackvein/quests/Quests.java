@@ -3180,7 +3180,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     /**
-     * Add possibilty to use fallbacks for customs maps<p>
+     * Add possibility to use fallbacks for customs maps<p>
      * 
      * Avoid null objects in datamap by initialize the entry value with empty string if no fallback present.
      */
@@ -3196,7 +3196,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     /**
-     * Add possibilty to use fallbacks for customs entries<p>
+     * Add possibility to use fallbacks for customs entries<p>
      * 
      * Avoid null objects in datamap by initialize the entry value with empty string if no fallback present.
      */
@@ -3444,7 +3444,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * 
      * @param uuid the entity UUID to be checked
      * @return {@code true} if entity has no permission or is not a player
-     * @deprecated Use #canUseQuests
+     * @deprecated Use {@link #canUseQuests(UUID)}
      */
     public boolean checkQuester(UUID uuid) {
         if (!(Bukkit.getPlayer(uuid) instanceof Player)) {
