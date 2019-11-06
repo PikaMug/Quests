@@ -497,7 +497,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             for (Quest q : plugin.getQuests()) {
                 s += ChatColor.GRAY + "- " + ChatColor.YELLOW + q.getName() + "\n";
             }
-            return s + ChatColor.GOLD + Lang.get("questEditorEditEnterQuestName");
+            return s + ChatColor.GOLD + Lang.get("questEditorEnterQuestName");
         }
 
         @Override
