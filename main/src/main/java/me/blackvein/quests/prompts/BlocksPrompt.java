@@ -313,7 +313,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorBreakBlocksPrompt");
+            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
         }
 
         @Override
@@ -388,7 +388,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetDamageAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " 
                         + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -403,10 +403,10 @@ public class BlocksPrompt extends FixedSetPrompt {
                 }
                 if (context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) == null) {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetDamageAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetDamageAmounts") + "\n";
+                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
                     for (Integer i : getBlockAmounts(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
@@ -550,7 +550,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorDamageBlocksPrompt");
+            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
         }
 
         @Override
@@ -625,7 +625,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetPlaceAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " 
                         + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -640,10 +640,10 @@ public class BlocksPrompt extends FixedSetPrompt {
                 }
                 if (context.getSessionData(pref + CK.S_PLACE_AMOUNTS) == null) {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetPlaceAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetPlaceAmounts") + "\n";
+                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
                     for (Integer i : getBlockAmounts(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
@@ -787,7 +787,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorPlaceBlocksPrompt");
+            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
         }
 
         @Override
@@ -862,7 +862,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetUseAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " 
                         + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -877,10 +877,10 @@ public class BlocksPrompt extends FixedSetPrompt {
                 }
                 if (context.getSessionData(pref + CK.S_USE_AMOUNTS) == null) {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetUseAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetUseAmounts") + "\n";
+                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
                     for (Integer i : getBlockAmounts(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
@@ -1024,7 +1024,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorUseBlocksPrompt");
+            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
         }
 
         @Override
@@ -1099,7 +1099,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
                 text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetCutAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY  + " - " 
                         + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -1114,10 +1114,10 @@ public class BlocksPrompt extends FixedSetPrompt {
                 }
                 if (context.getSessionData(pref + CK.S_CUT_AMOUNTS) == null) {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetCutAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetCutAmounts") + "\n";
+                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
                     for (Integer i : getBlockAmounts(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
@@ -1261,7 +1261,7 @@ public class BlocksPrompt extends FixedSetPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorCutBlocksPrompt");
+            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
         }
 
         @Override
