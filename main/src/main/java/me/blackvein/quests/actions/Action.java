@@ -39,6 +39,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.timers.ActionTimer;
 import me.blackvein.quests.util.ConfigUtil;
+import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -290,7 +291,7 @@ public class Action {
         if (items.isEmpty() == false) {
             for (ItemStack is : items) {
                 try {
-                    Quests.addItem(player, is);
+                    InventoryUtil.addItem(player, is);
                 } catch (Exception e) {
                     plugin.getLogger().severe("Unable to add null item to inventory of " 
                             + player.getName() + " during quest " + quest.getName() + " event " + name);

@@ -42,6 +42,7 @@ import me.blackvein.quests.events.quester.QuesterPreCompleteQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ConfigUtil;
+import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -450,7 +451,7 @@ public class Quest {
         }
         for (ItemStack i : rews.getItems()) {
             try {
-                Quests.addItem(player, i);
+                InventoryUtil.addItem(player, i);
             } catch (Exception e) {
                 plugin.getLogger().severe("Unable to add null reward item to inventory of " 
                         + player.getName() + " upon completion of quest " + name);
@@ -514,7 +515,7 @@ public class Quest {
                 phatLootItems.addAll(lb.getItemList());
                 for (ItemStack is : lb.getItemList()) {
                     try {
-                        Quests.addItem(player, is);
+                        InventoryUtil.addItem(player, is);
                     } catch (Exception e) {
                         plugin.getLogger().severe("Unable to add PhatLoots item to inventory of " + player.getName() 
                                 + " upon completion of quest " + name);

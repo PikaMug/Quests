@@ -67,7 +67,6 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -85,6 +84,7 @@ import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.prompts.QuestOfferPrompt;
 import me.blackvein.quests.util.ConfigUtil;
+import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
@@ -1649,7 +1649,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".rewards.items")) {
             LinkedList<ItemStack> temp = new LinkedList<ItemStack>(); // TODO - should maybe be = rews.getItems() ?
             List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey + ".rewards.items");
-            if (Quests.checkList(stackList, ItemStack.class)) {
+            if (ConfigUtil.checkList(stackList, ItemStack.class)) {
                 for (ItemStack stack : stackList) {
                     if (stack != null) {
                         temp.add(stack);
@@ -1657,7 +1657,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             } else {
                 // Legacy
-                if (Quests.checkList(stackList, String.class)) {
+                if (ConfigUtil.checkList(stackList, String.class)) {
                     List<String> items = config.getStringList("quests." + questKey + ".rewards.items");
                     for (String item : items) {
                         try {
@@ -1691,14 +1691,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
         if (config.contains("quests." + questKey + ".rewards.commands")) {
-            if (Quests.checkList(config.getList("quests." + questKey + ".rewards.commands"), String.class)) {
+            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.commands"), String.class)) {
                 rews.setCommands(config.getStringList("quests." + questKey + ".rewards.commands"));
             } else {
                 skipQuestProcess("commands: Reward in Quest " + quest.getName() + " is not a list of commands!");
             }
         }
         if (config.contains("quests." + questKey + ".rewards.commands-override-display")) {
-            if (Quests.checkList(config.getList("quests." + questKey + ".rewards.commands-override-display"), 
+            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.commands-override-display"), 
                     String.class)) {
                 rews.setCommandsOverrideDisplay(config.getStringList("quests." + questKey 
                         + ".rewards.commands-override-display"));
@@ -1708,7 +1708,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
         if (config.contains("quests." + questKey + ".rewards.permissions")) {
-            if (Quests.checkList(config.getList("quests." + questKey + ".rewards.permissions"), String.class)) {
+            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.permissions"), String.class)) {
                 rews.setPermissions(config.getStringList("quests." + questKey + ".rewards.permissions"));
             } else {
                 skipQuestProcess("permissions: Reward in Quest " + quest.getName() + " is not a list of permissions!");
@@ -1723,9 +1723,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (depends.isPluginAvailable("mcMMO")) {
             if (config.contains("quests." + questKey + ".rewards.mcmmo-skills")) {
-                if (Quests.checkList(config.getList("quests." + questKey + ".rewards.mcmmo-skills"), String.class)) {
+                if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.mcmmo-skills"), 
+                        String.class)) {
                     if (config.contains("quests." + questKey + ".rewards.mcmmo-levels")) {
-                        if (Quests.checkList(config.getList("quests." + questKey + ".rewards.mcmmo-levels"), 
+                        if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.mcmmo-levels"), 
                                 Integer.class)) {
                             for (String skill : config.getStringList("quests." + questKey + ".rewards.mcmmo-skills")) {
                                 if (depends.getMcmmoClassic() == null) {
@@ -1753,10 +1754,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (depends.isPluginAvailable("Heroes")) {
             if (config.contains("quests." + questKey + ".rewards.heroes-exp-classes")) {
-                if (Quests.checkList(config.getList("quests." + questKey + ".rewards.heroes-exp-classes"), 
+                if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.heroes-exp-classes"), 
                         String.class)) {
                     if (config.contains("quests." + questKey + ".rewards.heroes-exp-amounts")) {
-                        if (Quests.checkList(config.getList("quests." + questKey + ".rewards.heroes-exp-amounts"), 
+                        if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.heroes-exp-amounts"), 
                                 Double.class)) {
                             for (String heroClass : config.getStringList("quests." + questKey 
                                     + ".rewards.heroes-exp-classes")) {
@@ -1787,7 +1788,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (depends.isPluginAvailable("PhatLoots")) {
             if (config.contains("quests." + questKey + ".rewards.phat-loots")) {
-                if (Quests.checkList(config.getList("quests." + questKey + ".rewards.phat-loots"), String.class)) {
+                if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.phat-loots"), String.class)) {
                     for (String loot : config.getStringList("quests." + questKey + ".rewards.phat-loots")) {
                         if (depends.getPhatLoots() == null) {
                             skipQuestProcess("" + loot + " in phat-loots: Reward in Quest " + quest.getName() 
@@ -1844,7 +1845,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
             if (config.contains("quests." + questKey + ".requirements.remove-items")) {
-                if (Quests.checkList(config.getList("quests." + questKey + ".requirements.remove-items"), 
+                if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.remove-items"), 
                         Boolean.class)) {
                     reqs.setRemoveItems(config.getBooleanList("quests." + questKey + ".requirements.remove-items"));
                 } else {
@@ -1870,7 +1871,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
         if (config.contains("quests." + questKey + ".requirements.quest-blocks")) {
-            if (Quests.checkList(config.getList("quests." + questKey + ".requirements.quest-blocks"), String.class)) {
+            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.quest-blocks"), 
+                    String.class)) {
                 List<String> names = config.getStringList("quests." + questKey + ".requirements.quest-blocks");
                 boolean failed = false;
                 String failedQuest = "NULL";
@@ -1902,7 +1904,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
         if (config.contains("quests." + questKey + ".requirements.quests")) {
-            if (Quests.checkList(config.getList("quests." + questKey + ".requirements.quests"), String.class)) {
+            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.quests"), String.class)) {
                 List<String> names = config.getStringList("quests." + questKey + ".requirements.quests");
                 boolean failed = false;
                 String failedQuest = "NULL";
@@ -1932,7 +1934,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
         if (config.contains("quests." + questKey + ".requirements.permissions")) {
-            if (Quests.checkList(config.getList("quests." + questKey + ".requirements.permissions"), String.class)) {
+            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.permissions"), 
+                    String.class)) {
                 reqs.setPermissions(config.getStringList("quests." + questKey + ".requirements.permissions"));
             } else {
                 skipQuestProcess("permissions: Requirement for Quest " + quest.getName() 
@@ -1940,9 +1943,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
         if (config.contains("quests." + questKey + ".requirements.mcmmo-skills")) {
-            if (Quests.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-skills"), String.class)) {
+            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-skills"), 
+                    String.class)) {
                 if (config.contains("quests." + questKey + ".requirements.mcmmo-amounts")) {
-                    if (Quests.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-amounts"), 
+                    if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-amounts"), 
                             Integer.class)) {
                         List<String> skills = config.getStringList("quests." + questKey + ".requirements.mcmmo-skills");
                         List<Integer> amounts = config.getIntegerList("quests." + questKey 
@@ -2427,8 +2431,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".enchantments")) {
-                if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 + ".enchantments"), 
-                        String.class)) {
+                if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 
+                        + ".enchantments"), String.class)) {
                     for (String enchant : config.getStringList("quests." + questKey + ".stages.ordered." + s2 
                             + ".enchantments")) {
                         Enchantment e = ItemUtil.getEnchantmentFromProperName(enchant);
@@ -2691,7 +2695,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             + " is not a list of mob names!");
                 }
                 if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".mob-amounts")) {
-                    if (Quests.checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 
+                    if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + s2 
                             + ".mob-amounts"), Integer.class)) {
                         for (int i : config.getIntegerList("quests." + questKey + ".stages.ordered." + s2 
                                 + ".mob-amounts")) {
@@ -3374,32 +3378,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     /**
      * Adds item to player's inventory. If full, item is dropped at player's location.
      * 
+     * @deprecated Use InventoryUtil.addItem(Player, ItemStack)
      * @throws NullPointerException when ItemStack is null
      */
     public static void addItem(Player p, ItemStack i) throws Exception {
-        if (i == null) {
-            throw new NullPointerException("Null item while trying to add to inventory of " + p.getName());
-        }
-        PlayerInventory inv = p.getInventory();
-        if (i != null) {
-            HashMap<Integer, ItemStack> leftover = inv.addItem(i);
-            if (leftover != null) {
-                if (leftover.isEmpty() == false) {
-                    for (ItemStack i2 : leftover.values()) {
-                        p.getWorld().dropItem(p.getLocation(), i2);
-                    }
-                }
-            }
-        }
+        InventoryUtil.addItem(p, i);
     }
     
     /**
-     * @deprecated
+     * @deprecated Use Dependencies.getCurrency(boolean)
      */
     public String getCurrency(boolean plural) {
         return depends.getCurrency(plural);
     }
 
+    /**
+     * @deprecated Use InventoryUtil.removeItem(Inventory, ItemStack)
+     */
     public static boolean removeItem(Inventory inventory, ItemStack is) {
         int amount = is.getAmount();
         HashMap<Integer, ? extends ItemStack> allItems = inventory.all(is.getType());

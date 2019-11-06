@@ -56,6 +56,7 @@ import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.timers.StageTimer;
 import me.blackvein.quests.util.ConfigUtil;
+import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
@@ -495,7 +496,7 @@ public class Quester {
                 }
                 for (ItemStack is : reqs.getItems()) {
                     if (reqs.getRemoveItems().get(reqs.getItems().indexOf(is)) == true) {
-                        Quests.removeItem(player.getInventory(), is);
+                        InventoryUtil.removeItem(player.getInventory(), is);
                     }
                 }
                 String accepted = Lang.get(getPlayer(), "questAccepted");
