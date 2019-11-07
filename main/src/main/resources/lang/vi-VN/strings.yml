@@ -192,7 +192,7 @@ stageEditorCustomAlreadyAdded: "Mục tiêu tùy chỉnh này đã được thê
 stageEditorCustomCleared: "Mục tiêu tùy chỉnh đã được xóa."
 stageEditorCustomDataPrompt: "Nhập giá trị cho <data>:"
 stageEditorEnterBlockNames: "Nhập tên khối, <space>, <cancel>"
-stageEditorEnterBlockAmounts: "Enter block amounts, <space>, <cancel>"
+stageEditorEnterBlockAmounts: "Nhập số lượng khối,<space>,<cancel>"
 stageEditorEnterBlockDurability: "Nhập độ bền của khối (số), <space>, <cancel>"
 stageEditorCatchFishPrompt: "Nhập số lượng cá cần bắt, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "Nhập số lượng người cần giết, <clear>, <cancel>"
