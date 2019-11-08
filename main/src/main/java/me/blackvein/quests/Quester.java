@@ -61,6 +61,7 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 public class Quester {
@@ -2082,7 +2083,10 @@ public class Quester {
         if (getCurrentStage(quest).objectiveOverride != null) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + getCurrentStage(quest)
                     .objectiveOverride;
-            p.sendMessage(ConfigUtil.parseString(message, p));
+            if (plugin.getDependencies().getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(p, message);
+            }
+            p.sendMessage(message);
         } else if (objective.equalsIgnoreCase("password")) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass;
             p.sendMessage(message);

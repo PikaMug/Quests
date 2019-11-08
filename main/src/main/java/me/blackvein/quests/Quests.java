@@ -648,7 +648,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (!ignoreOverrides) {
             if (quester.getCurrentStage(quest) != null) {
                 if (quester.getCurrentStage(quest).objectiveOverride != null) {
-                    quester.getPlayer().sendMessage(ChatColor.GREEN + quester.getCurrentStage(quest).objectiveOverride);
+                    String message = ChatColor.GREEN + quester.getCurrentStage(quest).objectiveOverride;
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    quester.getPlayer().sendMessage(message);
                     return;
                 }
             }
