@@ -1548,7 +1548,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         for (World world : getServer().getWorlds()) {
                             if (getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
                                 if (getDependencies().getWorldGuardApi().getRegionManager(world).hasRegion(region)) {
-                                    quest.region = region;
+                                    quest.regionStart = region;
                                     exists = true;
                                     break;
                                 }

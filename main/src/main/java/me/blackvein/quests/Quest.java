@@ -55,11 +55,11 @@ public class Quest {
     private String name;
     protected String description;
     protected String finished;
-    protected String region = null;
     protected ItemStack guiDisplay = null;
     private LinkedList<Stage> orderedStages = new LinkedList<Stage>();
     protected NPC npcStart;
     protected Location blockStart;
+    protected String regionStart = null;
     protected Action initialAction;
     private Requirements reqs = new Requirements();
     private Planner pln = new Planner();
@@ -94,12 +94,26 @@ public class Quest {
         this.finished = finished;
     }
     
-    public String getRegion() {
-        return region;
+    public String getRegionStart() {
+        return regionStart;
     }
     
+    public void setRegionStart(String regionStart) {
+        this.regionStart = regionStart;
+    }
+    
+    /**
+     * @deprecated Use {@link #getRegionStart()}
+     */
+    public String getRegion() {
+        return getRegionStart();
+    }
+    
+    /**
+     * @deprecated Use {@link #setRegion(String)}
+     */
     public void setRegion(String region) {
-        this.region = region;
+        setRegionStart(region);
     }
     
     public ItemStack getGUIDisplay() {
@@ -781,11 +795,11 @@ public class Quest {
      * @return true if player is in region
      */
     private boolean isInRegion(Player player) {
-        if (region == null) {
+        if (regionStart == null) {
             return false;
         }
         if (plugin.getDependencies().getWorldGuardApi()
-                .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(region)) {
+                .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(regionStart)) {
             return true;
         }
         return false;

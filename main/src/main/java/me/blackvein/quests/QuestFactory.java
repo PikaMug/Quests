@@ -528,8 +528,8 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (q.initialAction != null) {
             cc.setSessionData(CK.Q_INITIAL_EVENT, q.initialAction.getName());
         }
-        if (q.region != null) {
-            cc.setSessionData(CK.Q_REGION, q.region);
+        if (q.regionStart != null) {
+            cc.setSessionData(CK.Q_REGION, q.regionStart);
         }
         if (q.guiDisplay != null) {
             cc.setSessionData(CK.Q_GUIDISPLAY, q.guiDisplay);

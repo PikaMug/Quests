@@ -146,7 +146,7 @@ public class PlayerListener implements Listener {
                                         takeable = false;
                                     }
                                 }
-                                if (quest.getRegion() != null) {
+                                if (quest.getRegionStart() != null) {
                                     if (!quest.isInRegion(quester)) {
                                         String invalidLoc = Lang.get(player, "questInvalidLocation");
                                         invalidLoc = invalidLoc.replace("<quest>", ChatColor.AQUA + quest.getName() 

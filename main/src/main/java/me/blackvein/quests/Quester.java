@@ -3508,7 +3508,7 @@ public class Quester {
             return false;
         }
         if (canAcceptOffer(quest, giveReason)) {
-            if (quest.getRegion() != null) {
+            if (quest.getRegionStart() != null) {
                 if (!quest.isInRegion(this)) {
                     if (giveReason) {
                         String msg = Lang.get(getPlayer(), "questInvalidLocation");
