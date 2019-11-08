@@ -518,7 +518,8 @@ public class Quester {
             plugin.showObjectives(q, this, false);
             String stageStartMessage = stage.startMessage;
             if (stageStartMessage != null) {
-                getPlayer().sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
+                getPlayer().sendMessage(ConfigUtil
+                        .parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
             }
             if (stage.chatEvents.isEmpty() == false) {
                 for (String chatTrigger : stage.chatEvents.keySet()) {
@@ -1915,13 +1916,13 @@ public class Quester {
                                 if (index >= getQuestData(quest).hasReached.size()) {
                                     getQuestData(quest).hasReached.add(true);
                                     finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
-                                            new ItemStack(Material.AIR, 1), null, null, null, null, location, null, null, 
-                                            null);
+                                            new ItemStack(Material.AIR, 1), null, null, null, null, location, null, 
+                                            null, null);
                                 } else if (getQuestData(quest).hasReached.get(index) == false) {
                                     getQuestData(quest).hasReached.set(index, true);
                                     finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
-                                            new ItemStack(Material.AIR, 1), null, null, null, null, location, null, null, 
-                                            null);
+                                            new ItemStack(Material.AIR, 1), null, null, null, null, location, null, 
+                                            null, null);
                                 }
                                 
                                 // Multiplayer

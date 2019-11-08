@@ -382,7 +382,8 @@ public class CmdExecutor implements CommandExecutor {
                     }
                     if (reqs.getMcmmoSkills().isEmpty() == false) {
                         for (String skill : reqs.getMcmmoSkills()) {
-                            int level = plugin.getDependencies().getMcmmoSkillLevel(Quests.getMcMMOSkill(skill), player.getName());
+                            int level = plugin.getDependencies().getMcmmoSkillLevel(Quests
+                                    .getMcMMOSkill(skill), player.getName());
                             int req = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(skill));
                             String skillName = MiscUtil.getCapitalized(skill);
                             if (level >= req) {
