@@ -53,14 +53,16 @@ public class NpcEffectThread implements Runnable {
     }
     
     /**
-     * Display a particle effect above an NPC one time
+     * Display a particle effect above a Citizens NPC one time
      * @param player Target player to let view the effect
      * @param npc Target NPC to place the effect above
      * @param effectType Value of EnumParticle such as NOTE or SMOKE
      */
     public void showEffect(Player player, NPC npc, String effectType) {
-        Location eyeLoc = npc.getEntity().getLocation();
-        eyeLoc.setY(eyeLoc.getY() + 1.5);
-        ParticleProvider.sendToPlayer(player, eyeLoc, effectType);
+        if (plugin.getDependencies().getCitizens() != null) {
+            Location eyeLoc = npc.getEntity().getLocation();
+            eyeLoc.setY(eyeLoc.getY() + 1.5);
+            ParticleProvider.sendToPlayer(player, eyeLoc, effectType);
+        }
     }
 }
