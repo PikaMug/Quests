@@ -2082,7 +2082,7 @@ public class Quester {
         if (getCurrentStage(quest).objectiveOverride != null) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + getCurrentStage(quest)
                     .objectiveOverride;
-            p.sendMessage(message);
+            p.sendMessage(ConfigUtil.parseString(message, p));
         } else if (objective.equalsIgnoreCase("password")) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass;
             p.sendMessage(message);

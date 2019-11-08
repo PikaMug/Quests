@@ -151,6 +151,14 @@ public class ConfigUtil {
         }
         return parsed;
     }
+    
+    public static String parseString(String s, Player player) {
+        String parsed = parseString(s);
+        if (Dependencies.placeholder != null && player != null) {
+            parsed = PlaceholderAPI.setPlaceholders(player, parsed);
+        }
+        return parsed;
+    }
 
     public static String parseString(String s, NPC npc) {
         String parsed = parseString(s);
