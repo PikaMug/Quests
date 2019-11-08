@@ -1914,24 +1914,30 @@ public class Quester {
                                 // TODO - Find proper cause of Github issues #646 and #825
                                 if (index >= getQuestData(quest).hasReached.size()) {
                                     getQuestData(quest).hasReached.add(true);
-                                } else {
+                                    finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
+                                            new ItemStack(Material.AIR, 1), null, null, null, null, location, null, null, 
+                                            null);
+                                } else if (getQuestData(quest).hasReached.get(index) == false) {
                                     getQuestData(quest).hasReached.set(index, true);
+                                    finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
+                                            new ItemStack(Material.AIR, 1), null, null, null, null, location, null, null, 
+                                            null);
                                 }
-                                finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
-                                        new ItemStack(Material.AIR, 1), null, null, null, null, location, null, null, 
-                                        null);
                                 
                                 // Multiplayer
                                 final int finalIndex = index;
                                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
                                     if (finalIndex >= getQuestData(quest).hasReached.size()) {
                                         q.getQuestData(quest).hasReached.add(true);
+                                        q.finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
+                                                new ItemStack(Material.AIR, 1), null, null, null, null, location, null, 
+                                                null, null);
                                     } else {
                                         q.getQuestData(quest).hasReached.set(finalIndex, true);
+                                        q.finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
+                                                new ItemStack(Material.AIR, 1), null, null, null, null, location, null, 
+                                                null, null);
                                     }
-                                    q.finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
-                                            new ItemStack(Material.AIR, 1), null, null, null, null, location, null, 
-                                            null, null);
                                     return null;
                                 });
                             }
