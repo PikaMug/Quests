@@ -223,16 +223,15 @@ public class NpcListener implements Listener {
                             if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() 
                                     || plugin.getSettings().getMaxQuests() < 1) {
                                 quester.setQuestToTake(q.getName());
-                                String s = extracted(quester);
-                                for (String msg : s.split("<br>")) {
-                                    player.sendMessage(msg);
-                                }
                                 if (!plugin.getSettings().canAskConfirmation()) {
                                     quester.takeQuest(q, false);
                                 } else {
                                     if (q.getGUIDisplay() != null) {
                                         quester.showGUIDisplay(evt.getNPC(), npcQuests);
                                     } else {
+                                        for (String msg : extracted(quester).split("<br>")) {
+                                            player.sendMessage(msg);
+                                        }
                                         plugin.getConversationFactory().buildConversation((Conversable) player).begin();
                                     }
                                 }
