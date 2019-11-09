@@ -645,51 +645,45 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     @SuppressWarnings("deprecation")
     public void showObjectives(Quest quest, Quester quester, boolean ignoreOverrides) {
-        if (!ignoreOverrides) {
-            if (quester.getCurrentStage(quest) != null) {
-                if (quester.getCurrentStage(quest).objectiveOverride != null) {
-                    String message = ChatColor.GREEN + quester.getCurrentStage(quest).objectiveOverride;
-                    if (depends.getPlaceholderApi() != null) {
-                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                    }
-                    quester.getPlayer().sendMessage(message);
-                    return;
-                }
-            }
-        }
         if (quester.getQuestData(quest) == null) {
             getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
             return;
+        }
+        if (quester.getCurrentStage(quest) == null) {
+            getLogger().warning("Current stage was null when showing objectives for " + quest.getName());
+            return;
+        }
+        if (!ignoreOverrides) {
+            if (quester.getCurrentStage(quest).objectiveOverride != null) {
+                String message = ChatColor.GREEN + quester.getCurrentStage(quest).objectiveOverride;
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                }
+                quester.getPlayer().sendMessage(message);
+                return;
+            }
         }
         QuestData data = quester.getQuestData(quest);
         Stage stage = quester.getCurrentStage(quest);
         for (ItemStack e : stage.blocksToBreak) {
             for (ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "break") + " <item>" 
-                                + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                    ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "break") + " <item>" 
-                                + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                        message = color + Lang.get(quester.getPlayer(), "break") + " <item>" 
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                    } else {
+                        quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
                 }
             }
@@ -697,30 +691,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (ItemStack e : stage.blocksToDamage) {
             for (ItemStack e2 : data.blocksDamaged) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "damage") + " <item>" 
-                                + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                    ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "damage") + " <item>" 
-                                + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                        message = color + Lang.get(quester.getPlayer(), "damage") + " <item>" 
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                    } else {
+                        quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
                 }
             }
@@ -728,30 +714,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (ItemStack e : stage.blocksToPlace) {
             for (ItemStack e2 : data.blocksPlaced) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "place") + " <item>" 
-                                + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                    ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "place") + " <item>" 
-                                + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                        message = color + Lang.get(quester.getPlayer(), "place") + " <item>" 
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                    } else {
+                        quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
                 }
             }
@@ -759,30 +737,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (ItemStack e : stage.blocksToUse) {
             for (ItemStack e2 : data.blocksUsed) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "use") + " <item>" 
-                                + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                    ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "use") + " <item>" 
-                                + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                        message = color + Lang.get(quester.getPlayer(), "use") + " <item>" 
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                    } else {
+                        quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
                 }
             }
@@ -790,30 +760,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (ItemStack e : stage.blocksToCut) {
             for (ItemStack e2 : data.blocksCut) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "cut") + " <item>" 
-                                + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                    ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "cut") + " <item>" 
-                                + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount();
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        if (getSettings().canTranslateItems() && !e.hasItemMeta() 
-                                && !e.getItemMeta().hasDisplayName()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
-                        }
+                        message = color + Lang.get(quester.getPlayer(), "cut") + " <item>" 
+                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    if (getSettings().canTranslateItems() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
+                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                    } else {
+                        quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
                 }
             }
@@ -824,30 +786,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 crafted = data.itemsCrafted.get(is);
             }
             int amt = is.getAmount();
-            if (crafted < amt) {
-                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "craft") + " <item>" 
-                        + ChatColor.GREEN + ": " + crafted + "/" + is.getAmount();
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments());
-                } else {
-                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                }
+            ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = "";
+            if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                message = color + quester.getCurrentStage(quest).objectiveOverride
+                        + color + ": " + crafted + "/" + is.getAmount();
             } else {
-                String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "craft") + " <item>" 
-                        + ChatColor.GRAY + ": " + crafted + "/" + is.getAmount();
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments());
-                } else {
-                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                }
+                message = color + Lang.get(quester.getPlayer(), "craft") + " <item>" 
+                        + color + ": " + crafted + "/" + is.getAmount();
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments());
+            } else {
+                quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         }
         for (ItemStack is : stage.itemsToSmelt) {
@@ -856,30 +811,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 smelted = data.itemsSmelted.get(is);
             }
             int amt = is.getAmount();
-            if (smelted < amt) {
-                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "smelt") + " <item>" 
-                        + ChatColor.GREEN + ": " + smelted + "/" + is.getAmount();
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments());
-                } else {
-                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                }
+            ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = "";
+            if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                message = color + quester.getCurrentStage(quest).objectiveOverride
+                        + color + ": " + smelted + "/" + is.getAmount();
             } else {
-                String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "smelt") + " <item>" 
-                        + ChatColor.GRAY + ": " + smelted + "/" + is.getAmount();
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments());
-                } else {
-                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                }
+                message = color + Lang.get(quester.getPlayer(), "smelt") + " <item>" 
+                        + color + ": " + smelted + "/" + is.getAmount();
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments());
+            } else {
+                quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         }
         Map<Enchantment, Material> set;
@@ -911,36 +859,26 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     mat = (Material) o;
                 }
                 if (enchantment2 == enchantment) {
-                    if (num1 < num2) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "enchantItem")
-                                + ChatColor.GREEN + ": " + num1 + "/" + num2;
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
-                        enchs.put(enchantment, 1);
-                        if (getSettings().canTranslateItems()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
-                        } else {
-                            quester.getPlayer().sendMessage(message
-                                    .replace("<item>", ItemUtil.getName(new ItemStack(mat)))
-                                    .replace("<enchantment>", enchantment.getName()));
-                        }
+                    ChatColor color = num1 < num2 ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride
+                                + color + ": " + num1 + "/" + num2;
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "enchantItem")
-                                + ChatColor.GRAY + ": " + num1 + "/" + num2;
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
-                        enchs.put(enchantment, 1);
-                        if (getSettings().canTranslateItems()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
-                        } else {
-                            quester.getPlayer().sendMessage(message
-                                    .replace("<item>", ItemUtil.getName(new ItemStack(mat)))
-                                    .replace("<enchantment>", enchantment.getName()));
-                        }
+                        message = color + Lang.get(quester.getPlayer(), "enchantItem")
+                                + color + ": " + num1 + "/" + num2;
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
+                    enchs.put(enchantment, 1);
+                    if (getSettings().canTranslateItems()) {
+                        localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
+                    } else {
+                        quester.getPlayer().sendMessage(message
+                                .replace("<item>", ItemUtil.getName(new ItemStack(mat)))
+                                .replace("<enchantment>", enchantment.getName()));
                     }
                 }
             }
@@ -951,154 +889,100 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 brewed = data.itemsBrewed.get(is);
             }
             int amt = is.getAmount();
-            if (brewed < amt) {
-                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "brew") + " <item>" 
-                        + ChatColor.GREEN + ": " + brewed + "/" + is.getAmount();
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                if (getSettings().canTranslateItems()) {
-                    if (is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                        // Bukkit version is 1.9+
-                        localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                                is.getEnchantments(), is.getItemMeta());
-                    } else if (Material.getMaterial("LINGERING_POTION") == null && !is.hasItemMeta() ) {
-                        // Bukkit version is below 1.9
-                        localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                                is.getEnchantments());
-                    } else {
-                        quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                    }
-                }
+            ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = "";
+            if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                message = color + quester.getCurrentStage(quest).objectiveOverride
+                        + color + ": " + brewed + "/" + is.getAmount();
             } else {
-                String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "brew") + " <item>" 
-                        + ChatColor.GRAY + ": " + brewed + "/" + is.getAmount();
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                if (getSettings().canTranslateItems()) {
-                    if (is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                        // Bukkit version is 1.9+
-                        localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                                is.getEnchantments(), is.getItemMeta());
-                    } else if (Material.getMaterial("LINGERING_POTION") == null && !is.hasItemMeta() ) {
-                        // Bukkit version is below 1.9
-                        localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                                is.getEnchantments());
-                    } else {
-                        quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                    }
+                message = color + Lang.get(quester.getPlayer(), "brew") + " <item>" 
+                        + color + ": " + brewed + "/" + is.getAmount();
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            if (getSettings().canTranslateItems()) {
+                if (is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                    // Bukkit version is 1.9+
+                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                            is.getEnchantments(), is.getItemMeta());
+                } else if (Material.getMaterial("LINGERING_POTION") == null && !is.hasItemMeta() ) {
+                    // Bukkit version is below 1.9
+                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                            is.getEnchantments());
+                } else {
+                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
                 }
             }
         }
         if (stage.fishToCatch != null) {
-            if (data.getFishCaught() < stage.fishToCatch) {
-                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "catchFish")
-                        + ChatColor.GREEN + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                quester.getPlayer().sendMessage(message);
+            ChatColor color = data.getFishCaught() < stage.fishToCatch ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = "";
+            if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                message = color + quester.getCurrentStage(quest).objectiveOverride
+                        + color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
             } else {
-                String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "catchFish")
-                        + ChatColor.GRAY + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                quester.getPlayer().sendMessage(message);
+                message = color + Lang.get(quester.getPlayer(), "catchFish")
+                        + color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            quester.getPlayer().sendMessage(message);
         }
         for (EntityType e : stage.mobsToKill) {
             for (EntityType e2 : data.mobsKilled) {
                 if (e == e2) {
                     if (data.mobNumKilled.size() > data.mobsKilled.indexOf(e2) 
                             && stage.mobNumToKill.size() > stage.mobsToKill.indexOf(e)) {
-                        if (data.mobNumKilled.get(data.mobsKilled.indexOf(e2)) 
-                                < stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))) {
-                            if (stage.locationsToKillWithin.isEmpty()) {
-                                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "kill") + " " 
-                                        + ChatColor.AQUA + "<mob>" + ChatColor.GREEN + ": " 
-                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
-                                        + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
-                                if (depends.getPlaceholderApi() != null) {
-                                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                                }
-                                if (getSettings().canTranslateItems()) {
-                                    localeQuery.sendMessage(quester.getPlayer(), message, e, null);
-                                } else {
-                                    quester.getPlayer().sendMessage(message.replace("<mob>", 
-                                            MiscUtil.getProperMobName(e)));
-                                }
-                            } else {
-                                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "killAtLocation") + " " 
-                                        + ChatColor.AQUA + "<mob>" + ChatColor.GREEN + ": " 
-                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
-                                        + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
-                                message = message.replace("<location>", 
-                                        stage.killNames.get(stage.mobsToKill.indexOf(e)));
-                                if (depends.getPlaceholderApi() != null) {
-                                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                                }
-                                if (getSettings().canTranslateItems()) {
-                                    localeQuery.sendMessage(quester.getPlayer(), message, e, null);
-                                } else {
-                                    quester.getPlayer().sendMessage(message.replace("<mob>", 
-                                            MiscUtil.getProperMobName(e)));
-                                }
-                            }
+                        ChatColor color = data.mobNumKilled.get(data.mobsKilled.indexOf(e2)) 
+                                < stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)) 
+                                ? ChatColor.GREEN : ChatColor.GRAY;
+                        String message = "";
+                        if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                            message = color + quester.getCurrentStage(quest).objectiveOverride
+                                    + color + ": " + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
+                                    + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
                         } else {
                             if (stage.locationsToKillWithin.isEmpty()) {
-                                String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "kill") + " " 
-                                        + ChatColor.AQUA + "<mob>" + ChatColor.GRAY + ": " 
+                                message = color + Lang.get(quester.getPlayer(), "kill") + " " 
+                                        + ChatColor.AQUA + "<mob>" + color + ": " 
                                         + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
                                         + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
-                                if (depends.getPlaceholderApi() != null) {
-                                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                                }
-                                if (getSettings().canTranslateItems()) {
-                                    localeQuery.sendMessage(quester.getPlayer(), message, e, null);
-                                } else {
-                                    quester.getPlayer().sendMessage(message.replace("<mob>", 
-                                            MiscUtil.getProperMobName(e)));
-                                }
                             } else {
-                                String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "killAtLocation") + " " 
-                                        + ChatColor.AQUA + "<mob>" + ChatColor.GRAY + ": " 
+                                message = color + Lang.get(quester.getPlayer(), "killAtLocation") + " " 
+                                        + ChatColor.AQUA + "<mob>" + color + ": " 
                                         + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
                                         + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
-                                message = message.replace("<location>", 
-                                        stage.killNames.get(stage.mobsToKill.indexOf(e)));
-                                if (depends.getPlaceholderApi() != null) {
-                                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                                }
-                                if (getSettings().canTranslateItems()) {
-                                    localeQuery.sendMessage(quester.getPlayer(), message, e, null);
-                                } else {
-                                    quester.getPlayer().sendMessage(message.replace("<mob>", 
-                                            MiscUtil.getProperMobName(e)));
-                                }
                             }
+                        }
+                        if (depends.getPlaceholderApi() != null) {
+                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                        }
+                        if (getSettings().canTranslateItems()) {
+                            localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+                        } else {
+                            quester.getPlayer().sendMessage(message.replace("<mob>", 
+                                    MiscUtil.getProperMobName(e)));
                         }
                     }
                 }
             }
         }
         if (stage.playersToKill != null) {
-            if (data.getPlayersKilled() < stage.playersToKill) {
-                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "killPlayer")
-                        + ChatColor.GREEN + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                quester.getPlayer().sendMessage(message);
+            ChatColor color = data.getPlayersKilled() < stage.playersToKill ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = "";
+            if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                message = color + quester.getCurrentStage(quest).objectiveOverride
+                        + color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
             } else {
-                String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "killPlayer")
-                        + ChatColor.GRAY + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                quester.getPlayer().sendMessage(message);
+                message = color + Lang.get(quester.getPlayer(), "killPlayer")
+                        + color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            quester.getPlayer().sendMessage(message);
         }
         int index = 0;
         for (ItemStack is : stage.itemsToDeliver) {
@@ -1109,52 +993,41 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int amt = is.getAmount();
             Integer npc = stage.itemDeliveryTargets.get(index);
             index++;
-            if (delivered < amt) {
-                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "deliver")
-                        + ChatColor.GREEN + ": " + delivered + "/" + is.getAmount();
-                message = message.replace("<npc>", getNPCName(npc));
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments());
-                } else {
-                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                }
+            ChatColor color = delivered < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = "";
+            if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                message = color + quester.getCurrentStage(quest).objectiveOverride
+                        + color + ": " + delivered + "/" + is.getAmount();
             } else {
-                String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "deliver")
-                        + ChatColor.GREEN + ": " + delivered + "/" + is.getAmount();
-                message = message.replace("<npc>", getNPCName(npc));
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments());
-                } else {
-                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                }
+                message = color + Lang.get(quester.getPlayer(), "deliver")
+                        + color + ": " + delivered + "/" + is.getAmount();
+            }
+            message = message.replace("<npc>", depends.getNPCName(npc));
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            if (getSettings().canTranslateItems() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments());
+            } else {
+                quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         }
         for (Integer n : stage.citizensToInteract) {
             for (Entry<Integer, Boolean> e : data.citizensInteracted.entrySet()) {
                 if (e.getKey().equals(n)) {
-                    if (e.getValue() == false) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "talkTo");
-                        message = message.replace("<npc>", getNPCName(n));
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        quester.getPlayer().sendMessage(message);
+                    ChatColor color = e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride;
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "talkTo");
-                        message = message.replace("<npc>", getNPCName(n));
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        quester.getPlayer().sendMessage(message);
+                        message = color + Lang.get(quester.getPlayer(), "talkTo");
                     }
+                    message = message.replace("<npc>", getNPCName(n));
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    quester.getPlayer().sendMessage(message);
                 }
             }
         }
@@ -1163,26 +1036,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 if (n.equals(n2)) {
                     if (data.citizenNumKilled.size() > data.citizensKilled.indexOf(n2) 
                             && stage.citizenNumToKill.size() > stage.citizensToKill.indexOf(n)) {
-                        if (data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
-                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n))) {
-                            String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "kill") + " " 
-                                    + getNPCName(n) + ChatColor.GREEN + " " 
-                                    + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                        ChatColor color = data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
+                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) == false 
+                                ? ChatColor.GREEN : ChatColor.GRAY;
+                        String message = "";
+                        if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                            message = color + quester.getCurrentStage(quest).objectiveOverride
+                                    + color + " " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
                                     + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
-                            if (depends.getPlaceholderApi() != null) {
-                                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                            }
-                            quester.getPlayer().sendMessage(message);
                         } else {
-                            String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "kill") + " " 
-                                    + getNPCName(n) + ChatColor.GRAY + " " 
-                                    + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                            message = color + Lang.get(quester.getPlayer(), "kill") + " " + depends.getNPCName(n) 
+                                    + color + " " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
                                     + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
-                            if (depends.getPlaceholderApi() != null) {
-                                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                            }
-                            quester.getPlayer().sendMessage(message);
                         }
+                        if (depends.getPlaceholderApi() != null) {
+                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                        }
+                        quester.getPlayer().sendMessage(message);
                     }
                 }
             }
@@ -1190,24 +1060,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
             for (Entry<EntityType, Integer> e2 : data.mobsTamed.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
-                    if (e2.getValue() < e.getValue()) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>" 
-                                + ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue();
-                        if (getSettings().canTranslateItems()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<mob>", 
-                                    MiscUtil.getProperMobName(e.getKey())));
-                        }
+                    ChatColor color = e2.getValue() < e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride
+                                + color + ": " + e2.getValue() + "/" + e.getValue();
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>" 
-                                + ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue();
-                        if (getSettings().canTranslateItems()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
-                        } else {
-                            quester.getPlayer().sendMessage(message.replace("<mob>", 
-                                    MiscUtil.getProperMobName(e.getKey())));
-                        }
+                        message = color + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>" 
+                                + color + ": " + e2.getValue() + "/" + e.getValue();
+                    }
+                    if (getSettings().canTranslateItems()) {
+                        localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
+                    } else {
+                        quester.getPlayer().sendMessage(message.replace("<mob>", 
+                                MiscUtil.getProperMobName(e.getKey())));
                     }
                 }
             }
@@ -1215,17 +1081,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (Entry<DyeColor, Integer> e : stage.sheepToShear.entrySet()) {
             for (Entry<DyeColor, Integer> e2 : data.sheepSheared.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
-                    if (e2.getValue() < e.getValue()) {
-                        String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "shearSheep") 
-                                + ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue();
-                        message = message.replace("<color>", e.getKey().name().toLowerCase());
-                        quester.getPlayer().sendMessage(message);
+                    ChatColor color = e2.getValue() < e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = "";
+                    if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                        message = color + quester.getCurrentStage(quest).objectiveOverride
+                                + color + ": " + e2.getValue() + "/" + e.getValue();
                     } else {
-                        String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "shearSheep") 
-                                + ChatColor.GRAY + ": " + e2.getValue() + "/" + e.getValue();
-                        message = message.replace("<color>", e.getKey().name().toLowerCase());
-                        quester.getPlayer().sendMessage(message);
+                        message = color + Lang.get(quester.getPlayer(), "shearSheep") 
+                                + color + ": " + e2.getValue() + "/" + e.getValue();
                     }
+                    message = message.replace("<color>", e.getKey().name().toLowerCase());
+                    quester.getPlayer().sendMessage(message);
                 }
             }
         }
@@ -1233,17 +1099,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (Location l2 : data.locationsReached) {
                 if (l.equals(l2)) {
                     if (!data.hasReached.isEmpty()) {
-                        if (data.hasReached.get(data.locationsReached.indexOf(l2)) == false) {
-                            String message = ChatColor.GREEN + Lang.get(quester.getPlayer(), "goTo");
-                            message = message.replace("<location>", 
-                                    stage.locationNames.get(stage.locationsToReach.indexOf(l)));
-                            quester.getPlayer().sendMessage(message);
+                        ChatColor color = data.hasReached.get(data.locationsReached.indexOf(l2)) == false 
+                                ? ChatColor.GREEN : ChatColor.GRAY;
+                        String message = "";
+                        if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                            message = color + quester.getCurrentStage(quest).objectiveOverride;
                         } else {
-                            String message = ChatColor.GRAY + Lang.get(quester.getPlayer(), "goTo");
-                            message = message.replace("<location>", 
-                                    stage.locationNames.get(stage.locationsToReach.indexOf(l)));
-                            quester.getPlayer().sendMessage(message);
+                            message = color + Lang.get(quester.getPlayer(), "goTo");
                         }
+                        message = message.replace("<location>", 
+                                stage.locationNames.get(stage.locationsToReach.indexOf(l)));
+                        quester.getPlayer().sendMessage(message);
                     }
                 }
             }
@@ -1251,11 +1117,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (String s : stage.passwordDisplays) {
             if (data.passwordsSaid.containsKey(s)) {
                 Boolean b = data.passwordsSaid.get(s);
-                if (b != null && !b) {
-                    quester.getPlayer().sendMessage(ChatColor.GREEN + s);
+                ChatColor color = b != null && !b == false ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = "";
+                if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                    message = color + quester.getCurrentStage(quest).objectiveOverride;
                 } else {
-                    quester.getPlayer().sendMessage(ChatColor.GRAY + s);
+                    message = color + s;
                 }
+                quester.getPlayer().sendMessage(message);
             }
         }
         for (CustomObjective co : stage.customObjectives) {
