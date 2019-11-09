@@ -663,7 +663,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent evt) {
         if (evt.getWhoClicked() instanceof Player) {
-            if (evt.getInventory().getType() == InventoryType.FURNACE) {
+            if (evt.getInventory().getType() == InventoryType.FURNACE
+                    || evt.getInventory().getType().name().equals("BLAST_FURNACE")
+                    || evt.getInventory().getType().name().equals("SMOKER")) {
                 if (evt.getSlotType() == SlotType.RESULT) {
                     Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
                     for (Quest quest : plugin.getQuests()) {
