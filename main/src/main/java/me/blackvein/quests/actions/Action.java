@@ -37,7 +37,7 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestMob;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.timers.ActionTimer;
+import me.blackvein.quests.tasks.ActionTimer;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;

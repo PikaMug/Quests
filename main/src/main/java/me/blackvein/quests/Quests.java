@@ -83,6 +83,8 @@ import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.prompts.QuestOfferPrompt;
+import me.blackvein.quests.tasks.NpcEffectThread;
+import me.blackvein.quests.tasks.PlayerMoveThread;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
@@ -114,6 +116,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private PlayerListener playerListener;
     private NpcListener npcListener;
     private NpcEffectThread effThread;
+    private PlayerMoveThread moveThread;
     private DungeonsListener dungeonsListener;
     private PartiesListener partiesListener;
     private DenizenTrigger trigger;
@@ -138,6 +141,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         localeQuery.setBukkitVersion(bukkitVersion);
         playerListener = new PlayerListener(this);
         effThread = new NpcEffectThread(this);
+        moveThread = new PlayerMoveThread(this);
         npcListener = new NpcListener(this);
         dungeonsListener = new DungeonsListener();
         partiesListener = new PartiesListener();
@@ -193,6 +197,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             if (settings.canNpcEffects()) {
                 getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
             }
+        }
+        if (settings.getStrictPlayerMovement() > 0) {
+            long ticks = settings.getStrictPlayerMovement() * 20;
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, moveThread, ticks, ticks);
         }
         if (depends.getDungeonsApi() != null) {
             getServer().getPluginManager().registerEvents(dungeonsListener, this);
@@ -321,6 +329,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     
     public ActionFactory getEventFactory() {
         return eventFactory;
+    }
+    
+    public PlayerListener getPlayerListener() {
+        return playerListener;
     }
     
     public DenizenTrigger getDenizenTrigger() {

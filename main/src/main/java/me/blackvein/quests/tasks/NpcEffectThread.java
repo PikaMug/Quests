@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.tasks;
 
 import java.util.List;
 
@@ -18,6 +18,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.particle.ParticleProvider;
 import net.citizensnpcs.api.npc.NPC;
 

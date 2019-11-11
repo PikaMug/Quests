@@ -1023,17 +1023,28 @@ public class PlayerListener implements Listener {
                 return;
             }
         }
-        if (plugin.getQuester(evt.getPlayer().getUniqueId()) != null) {
-            if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-                Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+        playerMove(evt.getPlayer().getUniqueId(), evt.getTo());
+    }
+    
+    /**
+     * Checks if uuid is blacklisted. Updates reach-location objectives
+     * 
+     * @param uuid The UUID of the Player
+     * @param location The current location of the Player
+     * @since 3.8.2
+     */
+    public void playerMove(UUID uuid, Location location) {
+        if (plugin.getQuester(uuid) != null) {
+            if (plugin.canUseQuests(uuid)) {
+                Quester quester = plugin.getQuester(uuid);
                 for (Quest quest : plugin.getQuests()) {
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.containsObjective(quest, "reachLocation")) {
-                        quester.reachLocation(quest, evt.getTo());
+                        quester.reachLocation(quest, location);
                     }
                     
                     quester.dispatchMultiplayerEverything(quest, "reachLocation", (Quester q) -> {
-                        q.reachLocation(quest, evt.getTo());
+                        q.reachLocation(quest, location);
                         return null;
                     });
                 }
