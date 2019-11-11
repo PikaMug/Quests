@@ -987,20 +987,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         int index = 0;
         for (ItemStack is : stage.itemsToDeliver) {
             int delivered = 0;
-            if (data.itemsDelivered.containsKey(is)) {
-                delivered = data.itemsDelivered.get(is);
+            if (data.itemsDelivered.size() > index) {
+                delivered = data.itemsDelivered.get(index).getAmount();
             }
-            int amt = is.getAmount();
+            int toDeliver = is.getAmount();
             Integer npc = stage.itemDeliveryTargets.get(index);
             index++;
-            ChatColor color = delivered < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
             String message = "";
             if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
                 message = color + quester.getCurrentStage(quest).objectiveOverride
-                        + color + ": " + delivered + "/" + is.getAmount();
+                        + color + ": " + delivered + "/" + toDeliver;
             } else {
                 message = color + Lang.get(quester.getPlayer(), "deliver")
-                        + color + ": " + delivered + "/" + is.getAmount();
+                        + color + ": " + delivered + "/" + toDeliver;
             }
             message = message.replace("<npc>", depends.getNPCName(npc));
             if (depends.getPlaceholderApi() != null) {
@@ -2448,9 +2448,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                             if (getDependencies().getCitizens() != null) {
                                                 NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
                                                 if (npc != null) {
-                                                    oStage.getItemsToDeliver().add(stack);
-                                                    oStage.getItemDeliveryTargets().add(npcId);
+                                                    oStage.itemsToDeliver.add(stack);
+                                                    oStage.itemDeliveryTargets.add(npcId);
                                                     oStage.deliverMessages.addAll(deliveryMessages);
+                                                    ItemStack s = oStage.itemsToDeliver.get(index-1);
                                                 } else {
                                                     stageFailed("Citizens was not installed for ID " + npcId 
                                                             + " inside npc-delivery-ids: inside Stage " + s2 
@@ -2479,8 +2480,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                             if (getDependencies().getCitizens() != null) {
                                                 NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
                                                 if (npc != null) {
-                                                    oStage.getItemsToDeliver().add(is);
-                                                    oStage.getItemDeliveryTargets().add(npcId);
+                                                    oStage.itemsToDeliver.add(is);
+                                                    oStage.itemDeliveryTargets.add(npcId);
                                                     oStage.deliverMessages.addAll(deliveryMessages);
                                                 } else {
                                                     stageFailed("" + npcId + " inside npc-delivery-ids: inside Stage " 

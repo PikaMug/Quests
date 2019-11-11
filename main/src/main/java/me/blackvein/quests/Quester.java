@@ -790,23 +790,20 @@ public class Quester {
         }
         int index = 0;
         for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
-            int delivered = 0;
-            if (getQuestData(quest).itemsDelivered.containsKey(is)) {
-                delivered = getQuestData(quest).itemsDelivered.get(is);
-            }
-            int amt = is.getAmount();
+            int delivered = getQuestData(quest).itemsDelivered.get(index).getAmount();
+            int toDeliver = is.getAmount();
             Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(index);
             index++;
-            if (delivered < amt) {
+            if (delivered < toDeliver) {
                 String obj = Lang.get(getPlayer(), "deliver");
                 obj = obj.replace("<item>", ItemUtil.getName(is) + ChatColor.GREEN);
                 obj = obj.replace("<npc>", plugin.getNPCName(npc));
-                unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + delivered + "/" + amt);
+                unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + delivered + "/" + toDeliver);
             } else {
                 String obj = Lang.get(getPlayer(), "deliver");
                 obj = obj.replace("<item>", ItemUtil.getName(is) + ChatColor.GRAY);
                 obj = obj.replace("<npc>", plugin.getNPCName(npc));
-                finishedObjectives.add(ChatColor.GRAY + obj + ": " + delivered + "/" + amt);
+                finishedObjectives.add(ChatColor.GRAY + obj + ": " + delivered + "/" + toDeliver);
             }
         }
         for (Integer n : getCurrentStage(quest).citizensToInteract) {
@@ -1704,9 +1701,12 @@ public class Quester {
      */
     @SuppressWarnings("deprecation")
     public void deliverToNPC(Quest quest, NPC n, ItemStack i) {
+        if (n == null) {
+            return;
+        }
         int currentIndex = -1;
         LinkedList<Integer> matches = new LinkedList<Integer>();
-        for (ItemStack is : getQuestData(quest).itemsDelivered.keySet()) {
+        for (ItemStack is : getQuestData(quest).itemsDelivered) {
             currentIndex++;
             if (ItemUtil.compareItems(i, is, true) == 0) {
                 matches.add(currentIndex);
@@ -1716,27 +1716,28 @@ public class Quester {
         if (!matches.isEmpty()) {
             Player player = getPlayer();
             for (Integer match : matches) {
-                LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsDelivered.keySet());
-                LinkedList<Integer> amounts = new LinkedList<Integer>(getQuestData(quest).itemsDelivered.values());
+                LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsDelivered);
                 if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(n.getId())) {
                     continue;
                 }
                 ItemStack found = items.get(match);
-                int amount = amounts.get(match);
-                int req = getCurrentStage(quest).itemsToDeliver.get(match).getAmount();
+                int amount = found.getAmount();
+                int toDeliver = getCurrentStage(quest).itemsToDeliver.get(match).getAmount();
+                
                 Material m = i.getType();
-                if (amount < req) {
+                if (amount < toDeliver) {
                     int index = player.getInventory().first(i);
                     if (index == -1) {
-                        Bukkit.getLogger().warning("Uh oh! " + i.getType().name() 
-                                + " suddenly disappeared from the inventory of " + player.getName() 
-                                + " when delivering for quest " + quest.getName());
+                        // Already delivered in previous loop
                         return;
                     }
-                    if ((i.getAmount() + amount) >= req) {
-                        getQuestData(quest).itemsDelivered.put(found, req);
-                        if ((i.getAmount() + amount) >= req) {
-                            i.setAmount(i.getAmount() - (req - amount)); // Take away remaining amount to be delivered
+                    if ((i.getAmount() + amount) >= toDeliver) {
+                        ItemStack newStack = found;
+                        found.setAmount(toDeliver);
+                        getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
+                        if ((i.getAmount() + amount) >= toDeliver) {
+                            // Take away remaining amount to be delivered
+                            i.setAmount(i.getAmount() - (toDeliver - amount));
                             player.getInventory().setItem(index, i);
                         } else {
                             player.getInventory().setItem(index, null);
@@ -1747,87 +1748,23 @@ public class Quester {
                         
                         // Multiplayer
                         dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
-                            q.getQuestData(quest).itemsDelivered.put(found, req);
+                            q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
                             q.finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, 
                                     null, null, null, null);
                             return null;
                         });
                     } else {
-                        getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
+                        ItemStack newStack = found;
+                        found.setAmount(amount + i.getAmount());
+                        getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
                         player.getInventory().setItem(index, null);
                         player.updateInventory();
-                        String[] message = Quests.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
+                        String[] message = ConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
                                 .deliverMessages.get(new Random().nextInt(getCurrentStage(quest).deliverMessages
                                 .size())), plugin.getDependencies().getCitizens().getNPCRegistry()
-                                .getById(getCurrentStage(quest).itemDeliveryTargets.get(getCurrentStage(quest)
-                                .itemsToDeliver.indexOf(found))));
+                                .getById(getCurrentStage(quest).itemDeliveryTargets.get(items.indexOf(found))));
                         player.sendMessage(message);
                     }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Mark item as delivered to a NPC if Quester has such an objective
-     * 
-     * @param quest The quest for which the item is being delivered
-     * @param i The item being delivered
-     * @deprecated Use deliverToNPC()
-     */
-    public void deliverItem(Quest quest, ItemStack i) {
-        Player player = getPlayer();
-        ItemStack found = null;
-        for (ItemStack is : getQuestData(quest).itemsDelivered.keySet()) {
-            if (ItemUtil.compareItems(i, is, true) == 0) {
-                found = is;
-                break;
-            }
-        }
-        if (found != null) {
-            int amount = getQuestData(quest).itemsDelivered.get(found);
-            if (getCurrentStage(quest).itemsToDeliver.indexOf(found) < 0) {
-                plugin.getLogger().severe("Index out of bounds while delivering " + found.getType() + " x " 
-                        + found.getAmount() + " for quest " + quest.getName() + " with " + i.getType() + " x " 
-                        + i.getAmount() + " already delivered. List amount reports value of " + amount 
-                        + ". Please report this error on Github!");
-                player.sendMessage("Quests had a problem delivering your item, please contact an administrator!");
-                return;
-            }
-            int req = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))
-                    .getAmount();
-            Material m = i.getType();
-            if (amount < req) {
-                if ((i.getAmount() + amount) > req) {
-                    getQuestData(quest).itemsDelivered.put(found, req);
-                    if ((i.getAmount() + amount) > req) {
-                        int index = player.getInventory().first(i);
-                        i.setAmount(i.getAmount() - (req - amount)); // Take away remaining amount to be delivered
-                        player.getInventory().setItem(index, i);
-                    } else {
-                        player.getInventory().setItem(player.getInventory().first(i), null);
-                    }
-                    player.updateInventory();
-                    finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, 
-                            null, null, null);
-                    
-                    // Multiplayer
-                    final ItemStack finalFound = found;
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
-                        q.getQuestData(quest).itemsDelivered.put(finalFound, req);
-                        q.finishObjective(quest, "deliverItem", new ItemStack(m, 1), finalFound, null, null, null, 
-                                null, null, null, null, null);
-                        return null;
-                    });
-                } else {
-                    getQuestData(quest).itemsDelivered.put(found, (amount + i.getAmount()));
-                    player.getInventory().setItem(player.getInventory().first(i), null);
-                    player.updateInventory();
-                    String[] message = Quests.parseStringWithPossibleLineBreaks(getCurrentStage(quest).deliverMessages
-                            .get(new Random().nextInt(getCurrentStage(quest).deliverMessages.size())), plugin
-                            .getDependencies().getCitizens().getNPCRegistry().getById(getCurrentStage(quest)
-                            .itemDeliveryTargets.get(getCurrentStage(quest).itemsToDeliver.indexOf(found))));
-                    player.sendMessage(message);
                 }
             }
         }
@@ -2300,55 +2237,50 @@ public class Quester {
         data.setDoJournalUpdate(false);
         if (quest.getStage(stage).blocksToBreak.isEmpty() == false) {
             for (ItemStack i : quest.getStage(stage).blocksToBreak) {
+                ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                 if (data.blocksBroken.indexOf(i) != -1) {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksBroken.set(data.blocksBroken.indexOf(temp), temp);
                 } else {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksBroken.add(temp);
                 }
             }
         }
         if (quest.getStage(stage).blocksToDamage.isEmpty() == false) {
             for (ItemStack i : quest.getStage(stage).blocksToDamage) {
+                ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                 if (data.blocksDamaged.indexOf(i) != -1) {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksDamaged.set(data.blocksDamaged.indexOf(temp), temp);
                 } else {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksDamaged.add(temp);
                 }
             }
         }
         if (quest.getStage(stage).blocksToPlace.isEmpty() == false) {
             for (ItemStack i : quest.getStage(stage).blocksToPlace) {
+                ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                 if (data.blocksPlaced.indexOf(i) != -1) {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksPlaced.set(data.blocksPlaced.indexOf(temp), temp);
                 } else {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksPlaced.add(temp);
                 }
             }
         }
         if (quest.getStage(stage).blocksToUse.isEmpty() == false) {
             for (ItemStack i : quest.getStage(stage).blocksToUse) {
+                ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                 if (data.blocksUsed.indexOf(i) != -1) {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksUsed.set(data.blocksUsed.indexOf(temp), temp);
                 } else {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksUsed.add(temp);
                 }
             }
         }
         if (quest.getStage(stage).blocksToCut.isEmpty() == false) {
             for (ItemStack i : quest.getStage(stage).blocksToCut) {
+                ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                 if (data.blocksCut.indexOf(i) != -1) {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksCut.set(data.blocksCut.indexOf(temp), temp);
                 } else {
-                    ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
                     data.blocksCut.add(temp);
                 }
             }
@@ -2390,8 +2322,11 @@ public class Quester {
         data.setFishCaught(0);
         data.setPlayersKilled(0);
         if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
-            for (ItemStack is : quest.getStage(stage).itemsToDeliver) {
-                data.itemsDelivered.put(is, 0);
+            for (ItemStack i : quest.getStage(stage).itemsToDeliver) {
+                ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+                temp.addEnchantments(i.getEnchantments());
+                temp.setItemMeta(i.getItemMeta());
+                data.itemsDelivered.add(temp);
             }
         }
         if (quest.getStage(stage).citizensToInteract.isEmpty() == false) {
@@ -2626,8 +2561,8 @@ public class Quester {
                 }
                 if (questData.itemsDelivered.isEmpty() == false) {
                     LinkedList<Integer> deliveryAmounts = new LinkedList<Integer>();
-                    for (Entry<ItemStack, Integer> e : questData.itemsDelivered.entrySet()) {
-                        deliveryAmounts.add(e.getValue());
+                    for (ItemStack m : questData.itemsDelivered) {
+                        deliveryAmounts.add(m.getAmount());
                     }
                     questSec.set("item-delivery-amounts", deliveryAmounts);
                 }
@@ -3045,11 +2980,14 @@ public class Quester {
                 }
                 if (questSec.contains("item-delivery-amounts")) {
                     List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
-                    for (int i = 0; i < deliveryAmounts.size(); i++) {
-                        if (i < getCurrentStage(quest).itemsToDeliver.size()) {
-                            getQuestData(quest).itemsDelivered.put(getCurrentStage(quest).itemsToDeliver
-                                    .get(i), deliveryAmounts.get(i));
+                    int index = 0;
+                    for (int amt : deliveryAmounts) {
+                        ItemStack is = getCurrentStage(quest).itemsToDeliver.get(index);
+                        is.setAmount(amt);
+                        if (getQuestData(quest).itemsDelivered.size() > 0) {
+                            getQuestData(quest).itemsDelivered.set(index, is);
                         }
+                        index++;
                     }
                 }
                 if (questSec.contains("citizen-ids-to-talk-to")) {

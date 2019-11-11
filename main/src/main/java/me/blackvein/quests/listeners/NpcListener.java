@@ -83,6 +83,7 @@ public class NpcListener implements Listener {
                             if (id.equals(clicked.getId())) {
                                 quester.deliverToNPC(quest, clicked, hand);
                                 delivery = true;
+                                return;
                             }
                         }
                     } else if (!hand.getType().equals(Material.AIR)) {
