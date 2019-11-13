@@ -41,6 +41,8 @@ import me.blackvein.quests.events.quester.QuesterPreChangeStageEvent;
 import me.blackvein.quests.events.quester.QuesterPreCompleteQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
 import me.blackvein.quests.exceptions.InvalidStageException;
+import me.blackvein.quests.util.ConfigUtil;
+import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -53,11 +55,11 @@ public class Quest {
     private String name;
     protected String description;
     protected String finished;
-    protected String region = null;
     protected ItemStack guiDisplay = null;
     private LinkedList<Stage> orderedStages = new LinkedList<Stage>();
     protected NPC npcStart;
     protected Location blockStart;
+    protected String regionStart = null;
     protected Action initialAction;
     private Requirements reqs = new Requirements();
     private Planner pln = new Planner();
@@ -92,12 +94,26 @@ public class Quest {
         this.finished = finished;
     }
     
-    public String getRegion() {
-        return region;
+    public String getRegionStart() {
+        return regionStart;
     }
     
+    public void setRegionStart(String regionStart) {
+        this.regionStart = regionStart;
+    }
+    
+    /**
+     * @deprecated Use {@link #getRegionStart()}
+     */
+    public String getRegion() {
+        return getRegionStart();
+    }
+    
+    /**
+     * @deprecated Use {@link #setRegion(String)}
+     */
     public void setRegion(String region) {
-        this.region = region;
+        setRegionStart(region);
     }
     
     public ItemStack getGUIDisplay() {
@@ -184,7 +200,7 @@ public class Quest {
         }
         String stageCompleteMessage = currentStage.completeMessage;
         if (stageCompleteMessage != null) {
-            quester.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageCompleteMessage, 
+            quester.getPlayer().sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageCompleteMessage, 
                     this, quester.getPlayer()));
         }
         if (plugin.getSettings().canUseCompass()) {
@@ -260,7 +276,7 @@ public class Quest {
         plugin.showObjectives(this, quester, false);
         String stageStartMessage = quester.getCurrentStage(this).startMessage;
         if (stageStartMessage != null) {
-            quester.getPlayer().sendMessage(plugin.parseStringWithPossibleLineBreaks(stageStartMessage, this, 
+            quester.getPlayer().sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, this, 
                     quester.getPlayer()));
         }
         quester.updateJournal();
@@ -289,9 +305,9 @@ public class Quest {
         }
         Location targetLocation = null;
         if (nextStage.citizensToInteract != null && nextStage.citizensToInteract.size() > 0) {
-            targetLocation = plugin.getNPCLocation(nextStage.citizensToInteract.getFirst());
+            targetLocation = plugin.getDependencies().getNPCLocation(nextStage.citizensToInteract.getFirst());
         } else if (nextStage.citizensToKill != null && nextStage.citizensToKill.size() > 0) {
-            targetLocation = plugin.getNPCLocation(nextStage.citizensToKill.getFirst());
+            targetLocation = plugin.getDependencies().getNPCLocation(nextStage.citizensToKill.getFirst());
         } else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0) {
             targetLocation = nextStage.locationsToReach.getFirst();
         } else if (nextStage.itemDeliveryTargets != null && nextStage.itemDeliveryTargets.size() > 0) {
@@ -359,12 +375,14 @@ public class Quest {
             }
         }
         if (reqs.getHeroesPrimaryClass() != null) {
-            if (plugin.testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId()) == false) {
+            if (plugin.getDependencies()
+                    .testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId()) == false) {
                 return false;
             }
         }
         if (reqs.getHeroesSecondaryClass() != null) {
-            if (plugin.testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId()) == false) {
+            if (plugin.getDependencies()
+                    .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId()) == false) {
                 return false;
             }
         }
@@ -447,7 +465,7 @@ public class Quest {
         }
         for (ItemStack i : rews.getItems()) {
             try {
-                Quests.addItem(player, i);
+                InventoryUtil.addItem(player, i);
             } catch (Exception e) {
                 plugin.getLogger().severe("Unable to add null reward item to inventory of " 
                         + player.getName() + " upon completion of quest " + name);
@@ -511,7 +529,7 @@ public class Quest {
                 phatLootItems.addAll(lb.getItemList());
                 for (ItemStack is : lb.getItemList()) {
                     try {
-                        Quests.addItem(player, is);
+                        InventoryUtil.addItem(player, is);
                     } catch (Exception e) {
                         plugin.getLogger().severe("Unable to add PhatLoots item to inventory of " + player.getName() 
                                 + " upon completion of quest " + name);
@@ -653,12 +671,10 @@ public class Quest {
             int index = 0;
             for (String s : rews.getCommands()) {
                 if (rews.getCommandsOverrideDisplay().isEmpty() == false && rews.getCommandsOverrideDisplay().size() 
-                        >= index) {
-                    if (rews.getCommandsOverrideDisplay().size() > index) {
-                        if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
-                            player.sendMessage("- " + ChatColor.DARK_GREEN 
-                                    + rews.getCommandsOverrideDisplay().get(index));
-                        }
+                        > index) {
+                    if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
+                        player.sendMessage("- " + ChatColor.DARK_GREEN 
+                                + rews.getCommandsOverrideDisplay().get(index));
                     }
                 } else {
                     player.sendMessage("- " + ChatColor.DARK_GREEN + s);
@@ -779,11 +795,11 @@ public class Quest {
      * @return true if player is in region
      */
     private boolean isInRegion(Player player) {
-        if (region == null) {
+        if (regionStart == null) {
             return false;
         }
         if (plugin.getDependencies().getWorldGuardApi()
-                .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(region)) {
+                .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(regionStart)) {
             return true;
         }
         return false;

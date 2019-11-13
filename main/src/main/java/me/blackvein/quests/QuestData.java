@@ -398,21 +398,29 @@ public class QuestData {
         }
     };
     
-    public LinkedHashMap<ItemStack, Integer> itemsDelivered = new LinkedHashMap<ItemStack, Integer>() {
+    public LinkedList<ItemStack> itemsDelivered = new LinkedList<ItemStack>() {
 
         private static final long serialVersionUID = 2712497347022734646L;
 
         @Override
-        public Integer put(ItemStack key, Integer val) {
-            Integer data = super.put(key, val);
+        public ItemStack set(int index, ItemStack key) {
+            ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public boolean add(ItemStack key) {
+            boolean data = super.add(key);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return data;
+        }
+
+        @Override
+        public boolean remove(Object key) {
+            boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -426,10 +434,11 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
-            super.putAll(m);
+        public boolean addAll(Collection<? extends ItemStack> m) {
+            boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
+            return i;
         }
     };
     

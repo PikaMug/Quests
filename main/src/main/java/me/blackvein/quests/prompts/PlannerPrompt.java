@@ -23,6 +23,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenPlannerPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -57,7 +58,8 @@ public class PlannerPrompt extends NumericPrompt {
             case 2:
                 return ChatColor.BLUE;
             case 3:
-                if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+                if (context.getSessionData(CK.PLN_START_DATE) == null 
+                        || context.getSessionData(CK.PLN_END_DATE) == null) {
                     return ChatColor.GRAY;
                 } else {
                     return ChatColor.BLUE;
@@ -78,7 +80,8 @@ public class PlannerPrompt extends NumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("plnEnd");
             case 3:
-                if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+                if (context.getSessionData(CK.PLN_START_DATE) == null 
+                        || context.getSessionData(CK.PLN_END_DATE) == null) {
                     return ChatColor.GRAY + Lang.get("plnRepeat");
                 } else {
                     return ChatColor.YELLOW + Lang.get("plnRepeat");
@@ -98,29 +101,35 @@ public class PlannerPrompt extends NumericPrompt {
                 if (context.getSessionData(CK.PLN_START_DATE) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.YELLOW + "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE));
+                    return ChatColor.YELLOW + "     - " 
+                            + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE));
                 }
             case 2:
                 if (context.getSessionData(CK.PLN_END_DATE) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.YELLOW +  "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE));
+                    return ChatColor.YELLOW +  "     - " 
+                            + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE));
                 }
             case 3:
-                if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+                if (context.getSessionData(CK.PLN_START_DATE) == null 
+                        || context.getSessionData(CK.PLN_END_DATE) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
                 } else {
                     if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
-                        return ChatColor.YELLOW + "(" + Quests.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) + ChatColor.RESET + ChatColor.YELLOW + ")";
+                        return ChatColor.YELLOW + "(" 
+                                + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) 
+                                + ChatColor.RESET + ChatColor.YELLOW + ")";
                     }
                 }
             case 4:
                 if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.YELLOW + "(" + Quests.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) + ChatColor.RESET + ChatColor.YELLOW + ")";
+                    return ChatColor.YELLOW + "(" + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) 
+                            + ChatColor.RESET + ChatColor.YELLOW + ")";
                 }
             case 5:
                 return "";
@@ -134,9 +143,12 @@ public class PlannerPrompt extends NumericPrompt {
         QuestsEditorPostOpenPlannerPromptEvent event = new QuestsEditorPostOpenPlannerPromptEvent(factory, context);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context.getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA) + "\n";
+        String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
+                .getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) 
+                + ChatColor.DARK_AQUA) + "\n";
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
         return text;
     }
@@ -190,7 +202,8 @@ public class PlannerPrompt extends NumericPrompt {
                     context.setSessionData(CK.PLN_REPEAT_CYCLE, delay);
                 }
             } catch (NumberFormatException e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                        .replace("<input>", input));
                 return new RepeatPrompt();
             }
             return new PlannerPrompt(plugin, factory);
@@ -223,7 +236,8 @@ public class PlannerPrompt extends NumericPrompt {
                     context.setSessionData(CK.PLN_COOLDOWN, delay);
                 }
             } catch (NumberFormatException e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                        .replace("<input>", input));
                 return new CooldownPrompt();
             }
             return new PlannerPrompt(plugin, factory);
@@ -253,8 +267,9 @@ public class PlannerPrompt extends NumericPrompt {
         Double zhour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         String[] sep = String.valueOf(zhour).replace("-", "").split("\\.");
         DecimalFormat zoneFormat = new DecimalFormat("00");
-        output += ChatColor.LIGHT_PURPLE + " UTC" + (zhour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0])) + ":"
-                + zoneFormat.format(Integer.valueOf(sep[1])) + ChatColor.GREEN + " (" + cal.getTimeZone().getDisplayName(loc) + ")";
+        output += ChatColor.LIGHT_PURPLE + " UTC" + (zhour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0])) 
+                + ":" + zoneFormat.format(Integer.valueOf(sep[1])) + ChatColor.GREEN + " (" 
+                + cal.getTimeZone().getDisplayName(loc) + ")";
         return output;
     }
 }

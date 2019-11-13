@@ -25,7 +25,8 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
 /**
- * This class's imports must exist separately from WorldGuardAPI.java in order to not crash from NoClassDefFoundError at runtime
+ * This class's imports must exist separately from WorldGuardAPI.java in order to not crash from NoClassDefFoundError 
+ * at runtime
  */
 public class WorldGuardAPI_7_0_0 {
 

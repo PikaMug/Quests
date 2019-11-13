@@ -20,7 +20,62 @@ import org.bukkit.DyeColor;
 import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
-
+    
+    public static String getTime(long milliseconds) {
+        String message = "";
+        long days = milliseconds / 86400000;
+        long hours = (milliseconds % 86400000) / 3600000;
+        long minutes = ((milliseconds % 86400000) % 3600000) / 60000;
+        long seconds = (((milliseconds % 86400000) % 3600000) % 60000) / 1000;
+        long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
+        if (days > 0L) {
+            if (days == 1L) {
+                message += " 1 " + Lang.get("timeDay") + ",";
+            } else {
+                message += " " + days + " " + Lang.get("timeDays") + ",";
+            }
+        }
+        if (hours > 0L) {
+            if (hours == 1L) {
+                message += " 1 " + Lang.get("timeHour") + ",";
+            } else {
+                message += " " + hours + " " + Lang.get("timeHours") + ",";
+            }
+        }
+        if (minutes > 0L) {
+            if (minutes == 1L) {
+                message += " 1 " + Lang.get("timeMinute") + ",";
+            } else {
+                message += " " + minutes + " " + Lang.get("timeMinutes") + ",";
+            }
+        }
+        if (seconds > 0L) {
+            if (seconds == 1L) {
+                message += " 1 " + Lang.get("timeSecond") + ",";
+            } else {
+                message += " " + seconds + " " + Lang.get("timeSeconds") + ",";
+            }
+        } else {
+            if (milliSeconds2 > 0L) {
+                if (milliSeconds2 == 1L) {
+                    message += " 1 " + Lang.get("timeMillisecond") + ",";
+                } else {
+                    message += " " + milliSeconds2 + " " + Lang.get("timeMilliseconds") + ",";
+                }
+            }
+        }
+        if (message.length() > 0) {
+            message = message.substring(1, message.length() - 1);
+        }
+        return message;
+    }
+    
+    /**
+     * Capitalize first letter of text and set remainder to lowercase
+     * 
+     * @param input
+     * @return
+     */
     public static String getCapitalized(String input) {
         if (input.isEmpty()) {
             return input;
@@ -54,18 +109,44 @@ public class MiscUtil {
         }
         return prettyString;
     }
-
-    public static String getProperMobName(EntityType type) {
-        String name = type.name().toLowerCase();
+    
+    /**
+     * Convert text from snake_case to UpperCamelCase
+     * 
+     * @param type To convert
+     * @return Converted text
+     */
+    public static String snakeCaseToUpperCamelCase(String input) {
+        String name = input.toLowerCase();
         name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        int index = name.indexOf('_');
-        if (index != -1) {
-            name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) + name.substring(index + 2);
-            name = name.replaceFirst("_", "");
+        for (int i = 0; i < input.chars().filter(num -> num == '_').count(); i++) {
+            int index = name.indexOf('_');
+            if (index != -1) {
+                name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) 
+                        + name.substring(index + 2);
+                name = name.replaceFirst("_", "");
+            }
         }
         return name;
     }
+    
+    /**
+     * Convert EntityType name from snake_case to UpperCamelCase
+     * 
+     * @deprecated Use {@link #snakeCaseToUpperCamelCase(String)}
+     * @param type To convert
+     * @return Converted text
+     */
+    public static String getProperMobName(EntityType type) {
+        return snakeCaseToUpperCamelCase(type.name());
+    }
 
+    /**
+     * Gets living EntityType from name
+     * 
+     * @param properName Name to get type from
+     * @return EntityType or null if invalid
+     */
     public static EntityType getProperMobType(String properName) {
         properName = properName.replaceAll("_", "").replaceAll(" ", "").toUpperCase();
         for (EntityType et : EntityType.values()) {
@@ -120,7 +201,8 @@ public class MiscUtil {
         } else if (s.equalsIgnoreCase("Red") || s.equalsIgnoreCase(Lang.get("COLOR_RED"))) {
             return DyeColor.RED;
         // 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
-        } else if (s.equalsIgnoreCase("Silver") || s.equalsIgnoreCase("LightGray") || s.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
+        } else if (s.equalsIgnoreCase("Silver") || s.equalsIgnoreCase("LightGray") 
+                || s.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
             return DyeColor.getByColor(Color.SILVER);
         } else if (s.equalsIgnoreCase("White") || s.equalsIgnoreCase(Lang.get("COLOR_WHITE"))) {
             return DyeColor.WHITE;

@@ -83,9 +83,12 @@ public class ItemUtil {
                 return -4;
             } else if (one.getItemMeta().hasLore() == false && two.getItemMeta().hasLore()) {
                 return -4;
-            } else if (one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() && ChatColor.stripColor(one.getItemMeta().getDisplayName()).equals(ChatColor.stripColor(two.getItemMeta().getDisplayName())) == false) {
+            } else if (one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() 
+                    && ChatColor.stripColor(one.getItemMeta().getDisplayName())
+                    .equals(ChatColor.stripColor(two.getItemMeta().getDisplayName())) == false) {
                 return -4;
-            } else if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore() && one.getItemMeta().getLore().equals(two.getItemMeta().getLore()) == false) {
+            } else if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore() 
+                    && one.getItemMeta().getLore().equals(two.getItemMeta().getLore()) == false) {
                 return -4;
             }
             try {
@@ -114,10 +117,12 @@ public class ItemUtil {
             if (one.getItemMeta() instanceof PotionMeta) {
                 if (Material.getMaterial("LINGERING_POTION") != null) {
                     // Bukkit version is 1.9+
-                    if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) || one.getType().equals(Material.SPLASH_POTION)) {
+                    if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) 
+                            || one.getType().equals(Material.SPLASH_POTION)) {
                         PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
                         PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
-                        if (pmeta1.getBasePotionData().getType().equals(pmeta2.getBasePotionData().getType()) == false) {
+                        if (pmeta1.getBasePotionData().getType()
+                                .equals(pmeta2.getBasePotionData().getType()) == false) {
                             return -9;
                         }
                     }
@@ -167,7 +172,8 @@ public class ItemUtil {
             return new ItemStack(Material.getMaterial(material.toUpperCase()), amount, durability);
         } catch (Exception e) {
             try {
-                Bukkit.getLogger().warning(material + " is invalid! You may need to update your quests.yml or events.yml "
+                Bukkit.getLogger().warning(material 
+                        + " is invalid! You may need to update your quests.yml or events.yml "
                         + "in accordance with https://bit.ly/2BkBNNN");
                 return new ItemStack(Material.matchMaterial(material, true), amount, durability);
             } catch (Exception e2) {
@@ -181,7 +187,8 @@ public class ItemUtil {
     /**
      * Get ItemStack from formatted string. See serialize() for reverse function.
      * 
-     * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore
+     * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname
+     * :lore-lore
      * <p>May continue with extraneous data such as :ItemFlags-flags:stored-enchants:{enc, level}:internal-hashstring
      * 
      * @param data formatted string
@@ -227,18 +234,21 @@ public class ItemUtil {
                         if (e != null) {
                             enchs.put(e, Integer.parseInt(temp[1]));
                         } else {
-                            Bukkit.getLogger().severe("Legacy enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure it is spelled correctly");
+                            Bukkit.getLogger().severe("Legacy enchantment name \'" + temp[0] + "\' on " + name 
+                                    + " is invalid. Make sure it is spelled correctly");
                         }
                     } else {
                         // Modern enum name
                         if (Enchantment.getByName(temp[0]) != null) {
                             enchs.put(Enchantment.getByName(temp[0]), Integer.parseInt(temp[1]));
                         } else {
-                            Bukkit.getLogger().severe("Enum enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure it is spelled correctly");
+                            Bukkit.getLogger().severe("Enum enchantment name \'" + temp[0] + "\' on " + name 
+                                    + " is invalid. Make sure it is spelled correctly");
                         }
                     }
                 } catch (Exception e) {
-                    Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name + " is invalid. Make sure quests.yml is UTF-8 encoded");
+                    Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name 
+                            + " is invalid. Make sure quests.yml is UTF-8 encoded");
                     return null;
                 }
             } else if (arg.startsWith("displayname-")) {
@@ -393,7 +403,8 @@ public class ItemUtil {
     /**
      * Get formatted string from ItemStack. See readItemStack() for reverse function.
      * 
-     * <p>Returned format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname:lore-lore:
+     * <p>Returned format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname
+     * :lore-lore:
      * 
      * @param is ItemStack
      * @return formatted string, or null if invalid stack
@@ -467,7 +478,8 @@ public class ItemUtil {
             return null;
         }
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
-            text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
+            text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET 
+                    + ChatColor.AQUA + " x " + is.getAmount();
         } else {
             text = ChatColor.AQUA + getName(is);
             if (is.getDurability() != 0) {
@@ -499,7 +511,8 @@ public class ItemUtil {
         }
         String text;
         if (is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
-            text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.AQUA + " x " + is.getAmount();
+            text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName() + ChatColor.RESET 
+                    + ChatColor.AQUA + " x " + is.getAmount();
         } else {
             text = ChatColor.AQUA + getPrettyItemName(is.getType().name());
             if (is.getDurability() != 0) {

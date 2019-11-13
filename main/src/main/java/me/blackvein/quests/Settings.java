@@ -33,6 +33,7 @@ public class Settings {
     private String redoEffect = "angry_villager";
     private boolean showQuestReqs = true;
     private boolean showQuestTitles = true;
+    private int strictPlayerMovement = 0;
     private boolean translateNames = false;
     private boolean translateSubCommands = false;
     private boolean useCompass = true;
@@ -120,6 +121,12 @@ public class Settings {
     public void setShowQuestTitles(boolean showQuestTitles) {
         this.showQuestTitles = showQuestTitles;
     }
+    public int getStrictPlayerMovement() {
+        return strictPlayerMovement;
+    }
+    public void setStrictPlayerMovement(int strictPlayerMovement) {
+        this.strictPlayerMovement = strictPlayerMovement;
+    }
     /**
      * @deprecated As of release 2.6.4, use {@link #canTranslateNames()}
      */
@@ -178,6 +185,7 @@ public class Settings {
         redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
         showQuestReqs = config.getBoolean("show-requirements", true);
         showQuestTitles = config.getBoolean("show-titles", true);
+        strictPlayerMovement = config.getInt("strict-player-movement", 0);
         translateNames = config.getBoolean("translate-names", true);
         translateSubCommands = config.getBoolean("translate-subcommands", false);
         useCompass = config.getBoolean("use-compass", true);

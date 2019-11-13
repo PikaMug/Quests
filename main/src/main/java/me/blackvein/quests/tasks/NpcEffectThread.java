@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests;
+package me.blackvein.quests.tasks;
 
 import java.util.List;
 
@@ -18,6 +18,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.particle.ParticleProvider;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -53,14 +55,16 @@ public class NpcEffectThread implements Runnable {
     }
     
     /**
-     * Display a particle effect above an NPC one time
+     * Display a particle effect above a Citizens NPC one time
      * @param player Target player to let view the effect
      * @param npc Target NPC to place the effect above
      * @param effectType Value of EnumParticle such as NOTE or SMOKE
      */
     public void showEffect(Player player, NPC npc, String effectType) {
-        Location eyeLoc = npc.getEntity().getLocation();
-        eyeLoc.setY(eyeLoc.getY() + 1.5);
-        ParticleProvider.sendToPlayer(player, eyeLoc, effectType);
+        if (plugin.getDependencies().getCitizens() != null) {
+            Location eyeLoc = npc.getEntity().getLocation();
+            eyeLoc.setY(eyeLoc.getY() + 1.5);
+            ParticleProvider.sendToPlayer(player, eyeLoc, effectType);
+        }
     }
 }

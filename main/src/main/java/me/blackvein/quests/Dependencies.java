@@ -12,9 +12,14 @@
 
 package me.blackvein.quests;
 
+import java.util.UUID;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import me.blackvein.quests.util.DenizenAPI;
+import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.WorldGuardAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -27,7 +32,11 @@ import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.codisimus.plugins.phatloots.PhatLoots;
 import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
+import com.herocraftonline.heroes.characters.Hero;
 
 import de.erethon.dungeonsxl.DungeonsXL;
 
@@ -40,7 +49,7 @@ public class Dependencies {
     private static mcMMO mcmmo = null;
     private static Heroes heroes = null;
     private static PhatLoots phatLoots = null;
-    private static PlaceholderAPIPlugin placeholder = null;
+    public static PlaceholderAPIPlugin placeholder = null;
     private static CitizensPlugin citizens = null;
     private static DenizenAPI denizenApi = null;
     private static CitizensBooksAPI citizensBooks = null;
@@ -215,7 +224,61 @@ public class Dependencies {
         return (permission != null);
     }
     
+    public String getCurrency(boolean plural) {
+        if (getVaultEconomy() == null) {
+            return Lang.get("money");
+        }
+        if (plural) {
+            if (getVaultEconomy().currencyNamePlural().trim().isEmpty()) {
+                return Lang.get("money");
+            } else {
+                return getVaultEconomy().currencyNamePlural();
+            }
+        } else {
+            if (getVaultEconomy().currencyNameSingular().trim().isEmpty()) {
+                return Lang.get("money");
+            } else {
+                return getVaultEconomy().currencyNameSingular();
+            }
+        }
+    }
+    
     public boolean runDenizenScript(String scriptName, Quester quester) {
         return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester);
+    }
+    
+    public Location getNPCLocation(int id) {
+        return citizens.getNPCRegistry().getById(id).getStoredLocation();
+    }
+
+    public String getNPCName(int id) {
+        return citizens.getNPCRegistry().getById(id).getName();
+    }
+    
+    public int getMcmmoSkillLevel(SkillType st, String player) {
+        McMMOPlayer mPlayer = UserManager.getPlayer(player);
+        if (mPlayer == null) {
+            return -1;
+        }
+        return mPlayer.getProfile().getSkillLevel(st);
+    }
+
+    public Hero getHero(UUID uuid) {
+        Player p = plugin.getServer().getPlayer(uuid);
+        if (p == null) {
+            return null;
+        }
+        return heroes.getCharacterManager().getHero(p);
+    }
+
+    public boolean testPrimaryHeroesClass(String primaryClass, UUID uuid) {
+        Hero hero = getHero(uuid);
+        return hero.getHeroClass().getName().equalsIgnoreCase(primaryClass);
+    }
+
+    @SuppressWarnings("deprecation")
+    public boolean testSecondaryHeroesClass(String secondaryClass, UUID uuid) {
+        Hero hero = getHero(uuid);
+        return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);
     }
 }

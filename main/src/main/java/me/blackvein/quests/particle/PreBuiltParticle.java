@@ -53,7 +53,8 @@ public enum PreBuiltParticle {
         this.count = count;
     }
 
-    PreBuiltParticle(String identifier, float offsetX, float offsetY, float offsetZ, float speed, int count, Vector vector) {
+    PreBuiltParticle(String identifier, float offsetX, float offsetY, float offsetZ, float speed, int count,
+            Vector vector) {
         this(identifier, offsetX, offsetY, offsetZ, speed, count);
         this.vector = vector;
     }

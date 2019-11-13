@@ -52,46 +52,71 @@ public class NPCsPrompt extends FixedSetPrompt {
         String text = ChatColor.AQUA + "- " + Lang.get("stageEditorNPCs") + " -\n";
         if (plugin.getDependencies().getCitizens() != null) {
             if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorDeliverItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+                        + "- " + Lang.get("stageEditorDeliverItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") 
+                        + ")\n";
             } else {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorDeliverItems") + "\n";
+                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+                        + "- " + Lang.get("stageEditorDeliverItems") + "\n";
                 LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS);
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
+                LinkedList<ItemStack> items 
+                        = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
                 for (int i = 0; i < npcs.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + ChatColor.GRAY + " " + Lang.get("to") + " " + ChatColor.DARK_AQUA + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() + "\n";
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + ChatColor.GRAY + " "
+                            + Lang.get("to") + " " + ChatColor.DARK_AQUA 
+                            + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName()
+                            + "\n";
                 }
             }
         } else {
-            text += ChatColor.GRAY + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("stageEditorDeliverItems") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
+            text += ChatColor.GRAY + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.GRAY + "- " 
+                    + Lang.get("stageEditorDeliverItems") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") 
+                    + ")\n";
         }
         if (plugin.getDependencies().getCitizens() != null) {
             if (context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null) {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorTalkToNPCs") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+                        + "- " + Lang.get("stageEditorTalkToNPCs") + ChatColor.GRAY + " (" + Lang.get("noneSet") 
+                        + ")\n";
             } else {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorTalkToNPCs") + "\n";
+                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+                        + "- " + Lang.get("stageEditorTalkToNPCs") + "\n";
                 LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO);
                 for (int i = 0; i < npcs.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() + "\n";
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
+                            + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() 
+                            + "\n";
                 }
             }
         } else {
-            text += ChatColor.GRAY + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("stageEditorTalkToNPCs") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
+            text += ChatColor.GRAY + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.GRAY + "- " 
+                    + Lang.get("stageEditorTalkToNPCs") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") 
+                    + ")\n";
         }
         if (plugin.getDependencies().getCitizens() != null) {
             if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorKillNPCs") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+                        + "- " + Lang.get("stageEditorKillNPCs") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
             } else {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "- " + Lang.get("stageEditorKillNPCs") + "\n";
+                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+                        + "- " + Lang.get("stageEditorKillNPCs") + "\n";
                 LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL);
-                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
+                LinkedList<Integer> amounts 
+                        = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
                 for (int i = 0; i < npcs.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
+                            + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() 
+                            + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
                 }
             }
         } else {
-            text += ChatColor.GRAY + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.GRAY + "- " + Lang.get("stageEditorKillNPCs") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")\n";
+            text += ChatColor.GRAY + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.GRAY + "- " 
+                    + Lang.get("stageEditorKillNPCs") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") 
+                    + ")\n";
         }
-        text += ChatColor.GREEN + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " + Lang.get("done") + "\n";
+        text += ChatColor.GREEN + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " 
+                + Lang.get("done") + "\n";
         return text;
     }
 
@@ -152,40 +177,52 @@ public class NPCsPrompt extends FixedSetPrompt {
             String text = ChatColor.GOLD + "- " + Lang.get("stageEditorDeliverItems") + " -\n";
             if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
                 text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
+                        + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("noneSet") + ")\n";
                 if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
+                            + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorDeliveryMessages") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
+                            + Lang.get("stageEditorDeliveryMessages") + "\n";
                     for (String s : getDeliveryMessages(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + "\"" + s + "\"";
                     }
                 }
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryAddItem") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
                 for (ItemStack is : getItems(context)) {
                     text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                 }
                 if (context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorDeliveryNPCs") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("stageEditorDeliveryNPCs") + "\n";
                     for (int i : getDeliveryNPCs(context)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + " (" + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() + ")\n";
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + " (" 
+                                + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() + ")\n";
                     }
                 }
                 if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
+                            + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorDeliveryMessages") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
+                            + Lang.get("stageEditorDeliveryMessages") + "\n";
                     for (String s : getDeliveryMessages(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + "\"" + s + "\"\n";
                     }
                 }
             }
-            text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-            text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+            text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("clear") + "\n";
+            text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                    + Lang.get("done");
             return text;
         }
 
@@ -274,11 +311,13 @@ public class NPCsPrompt extends FixedSetPrompt {
                         if (plugin.getDependencies().getCitizens().getNPCRegistry().getById(i) != null) {
                             npcs.add(i);
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " + Lang.get("stageEditorInvalidNPC"));
+                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " 
+                                    + Lang.get("stageEditorInvalidNPC"));
                             return new DeliveryNPCsPrompt();
                         }
                     } catch (NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                                + Lang.get("stageEditorNotListofNumbers"));
                         return new DeliveryNPCsPrompt();
                     }
                 }
@@ -318,12 +357,14 @@ public class NPCsPrompt extends FixedSetPrompt {
             HashSet<Player> temp = questFactory.getSelectingNpcs();
             temp.add((Player) context.getForWhom());
             questFactory.setSelectingNpcs(temp);
-            return ChatColor.YELLOW + Lang.get("stageEditorNPCToTalkToPrompt") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
+            return ChatColor.YELLOW + Lang.get("stageEditorNPCToTalkToPrompt") + "\n" + ChatColor.GOLD 
+                    + Lang.get("npcHint");
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 String[] args = input.split(" ");
                 LinkedList<Integer> npcs = new LinkedList<Integer>();
                 for (String s : args) {
@@ -332,11 +373,13 @@ public class NPCsPrompt extends FixedSetPrompt {
                         if (plugin.getDependencies().getCitizens().getNPCRegistry().getById(i) != null) {
                             npcs.add(i);
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " + Lang.get("stageEditorInvalidNPC"));
+                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " 
+                                    + Lang.get("stageEditorInvalidNPC"));
                             return new NPCIDsToTalkToPrompt();
                         }
                     } catch (NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                                + Lang.get("stageEditorNotListofNumbers"));
                         return new NPCIDsToTalkToPrompt();
                     }
                 }
@@ -361,25 +404,36 @@ public class NPCsPrompt extends FixedSetPrompt {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("stageEditorKillNPCs") + " -\n";
             if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetKillIds") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetKillAmounts") + " (" + Lang.get("noIdsSet") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("cancel") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorSetKillIds") + " (" + Lang.get("noneSet") + ")\n";
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorSetKillAmounts") + " (" + Lang.get("noIdsSet") + ")\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("cancel") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetKillIds") + "\n";
+                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("stageEditorSetKillIds") + "\n";
                 for (Integer i : getNPCIds(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() + ChatColor.DARK_AQUA + " (" + i + ")\n";
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA 
+                            + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() 
+                            + ChatColor.DARK_AQUA + " (" + i + ")\n";
                 }
                 if (context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.BLUE + " - " + Lang.get("stageEditorSetKillAmounts") + " (" + Lang.get("noneSet") + ")\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.BLUE + " - " 
+                            + Lang.get("stageEditorSetKillAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("stageEditorSetKillAmounts") + "\n";
+                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                            + Lang.get("stageEditorSetKillAmounts") + "\n";
                     for (Integer i : getKillAmounts(context)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.BLUE + i + "\n";
                     }
                 }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " + Lang.get("done");
+                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("clear") + "\n";
+                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
+                        + Lang.get("done");
             }
             return text;
         }
@@ -456,11 +510,13 @@ public class NPCsPrompt extends FixedSetPrompt {
                         if (plugin.getDependencies().getCitizens().getNPCRegistry().getById(i) != null) {
                             npcs.add(i);
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " + Lang.get("stageEditorInvalidNPC"));
+                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " 
+                                    + Lang.get("stageEditorInvalidNPC"));
                             return new NpcIdsToKillPrompt();
                         }
                     } catch (NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                                + Lang.get("stageEditorNotListofNumbers"));
                         return new NpcIdsToKillPrompt();
                     }
                 }
@@ -490,11 +546,13 @@ public class NPCsPrompt extends FixedSetPrompt {
                         if (Integer.parseInt(s) > 0) {
                             amounts.add(Integer.parseInt(s));
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
+                                    .replace("<number>", "1"));
                             return new NpcAmountsToKillPrompt();
                         }
                     } catch (NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                                + Lang.get("stageEditorNotListofNumbers"));
                         return new NpcAmountsToKillPrompt();
                     }
                 }

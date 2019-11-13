@@ -20,7 +20,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.MiscUtil;
 
 public class QuestMob {
 
@@ -153,7 +155,7 @@ public class QuestMob {
             string += "::name-" + name;
         }
         if (spawnLocation != null) {
-            string += "::spawn-" + Quests.getLocationInfo(spawnLocation);
+            string += "::spawn-" + ConfigUtil.getLocationInfo(spawnLocation);
         }
         if (spawnAmounts != null) {
             string += "::amounts-" + spawnAmounts;
@@ -191,11 +193,11 @@ public class QuestMob {
         String[] args = str.split("::");
         for (String string : args) {
             if (string.startsWith("type-")) {
-                entityType = Quests.getMobType(string.substring(5));
+                entityType = MiscUtil.getProperMobType(string.substring(5));
             } else if (string.startsWith("name-")) {
                 name = string.substring(5);
             } else if (string.startsWith("spawn-")) {
-                loc = Quests.getLocation(string.substring(6));
+                loc = ConfigUtil.getLocation(string.substring(6));
             } else if (string.startsWith("amounts-")) {
                 amounts = Integer.parseInt(string.substring(8));
             } else if (string.startsWith("hand-")) {

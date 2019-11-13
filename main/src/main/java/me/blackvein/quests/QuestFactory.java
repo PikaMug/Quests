@@ -58,6 +58,7 @@ import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.PlannerPrompt;
 import me.blackvein.quests.prompts.StagesPrompt;
 import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -431,7 +432,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     + ChatColor.GOLD + " -\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-            + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
@@ -496,7 +497,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             for (Quest q : plugin.getQuests()) {
                 s += ChatColor.GRAY + "- " + ChatColor.YELLOW + q.getName() + "\n";
             }
-            return s + ChatColor.GOLD + Lang.get("questEditorEditEnterQuestName");
+            return s + ChatColor.GOLD + Lang.get("questEditorEnterQuestName");
         }
 
         @Override
@@ -510,6 +511,382 @@ public class QuestFactory implements ConversationAbandonedListener {
                 return new SelectEditPrompt();
             } else {
                 return new MainMenuPrompt();
+            }
+        }
+    }
+    
+    @SuppressWarnings("deprecation")
+    public static void loadQuest(ConversationContext cc, Quest q) {
+        cc.setSessionData(CK.ED_QUEST_EDIT, q.getName());
+        cc.setSessionData(CK.Q_NAME, q.getName());
+        if (q.npcStart != null) {
+            cc.setSessionData(CK.Q_START_NPC, q.npcStart.getId());
+        }
+        cc.setSessionData(CK.Q_START_BLOCK, q.blockStart);
+        cc.setSessionData(CK.Q_ASK_MESSAGE, q.description);
+        cc.setSessionData(CK.Q_FINISH_MESSAGE, q.finished);
+        if (q.initialAction != null) {
+            cc.setSessionData(CK.Q_INITIAL_EVENT, q.initialAction.getName());
+        }
+        if (q.regionStart != null) {
+            cc.setSessionData(CK.Q_REGION, q.regionStart);
+        }
+        if (q.guiDisplay != null) {
+            cc.setSessionData(CK.Q_GUIDISPLAY, q.guiDisplay);
+        }
+        Requirements reqs = q.getRequirements();
+        if (reqs.getMoney() != 0) {
+            cc.setSessionData(CK.REQ_MONEY, reqs.getMoney());
+        }
+        if (reqs.getQuestPoints() != 0) {
+            cc.setSessionData(CK.REQ_QUEST_POINTS, reqs.getQuestPoints());
+        }
+        if (reqs.getItems().isEmpty() == false) {
+            cc.setSessionData(CK.REQ_ITEMS, reqs.getItems());
+            cc.setSessionData(CK.REQ_ITEMS_REMOVE, reqs.getRemoveItems());
+        }
+        if (reqs.getNeededQuests().isEmpty() == false) {
+            cc.setSessionData(CK.REQ_QUEST, reqs.getNeededQuests());
+        }
+        if (reqs.getBlockQuests().isEmpty() == false) {
+            cc.setSessionData(CK.REQ_QUEST_BLOCK, reqs.getBlockQuests());
+        }
+        if (reqs.getMcmmoSkills().isEmpty() == false) {
+            cc.setSessionData(CK.REQ_MCMMO_SKILLS, reqs.getMcmmoAmounts());
+            cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, reqs.getMcmmoAmounts());
+        }
+        if (reqs.getPermissions().isEmpty() == false) {
+            cc.setSessionData(CK.REQ_PERMISSION, reqs.getPermissions());
+        }
+        if (reqs.getHeroesPrimaryClass() != null) {
+            cc.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, reqs.getHeroesPrimaryClass());
+        }
+        if (reqs.getHeroesSecondaryClass() != null) {
+            cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, reqs.getHeroesSecondaryClass());
+        }
+        if (reqs.getFailRequirements() != null) {
+            cc.setSessionData(CK.Q_FAIL_MESSAGE, reqs.getFailRequirements());
+        }
+        if (reqs.getCustomRequirements().isEmpty() == false) {
+            LinkedList<String> list = new LinkedList<String>();
+            LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+            for (Entry<String, Map<String, Object>> entry : reqs.getCustomRequirements().entrySet()) {
+                list.add(entry.getKey());
+                datamapList.add(entry.getValue());
+            }
+            cc.setSessionData(CK.REQ_CUSTOM, list);
+            cc.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
+        }
+        Rewards rews = q.getRewards();
+        if (rews.getMoney() != 0) {
+            cc.setSessionData(CK.REW_MONEY, rews.getMoney());
+        }
+        if (rews.getQuestPoints() != 0) {
+            cc.setSessionData(CK.REW_QUEST_POINTS, rews.getQuestPoints());
+        }
+        if (rews.getExp() != 0) {
+            cc.setSessionData(CK.REW_EXP, rews.getExp());
+        }
+        if (rews.getItems().isEmpty() == false) {
+            cc.setSessionData(CK.REW_ITEMS, rews.getItems());
+        }
+        if (rews.getCommands().isEmpty() == false) {
+            cc.setSessionData(CK.REW_COMMAND, rews.getCommands());
+        }
+        if (rews.getCommandsOverrideDisplay().isEmpty() == false) {
+            cc.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, rews.getCommandsOverrideDisplay());
+        }
+        if (rews.getPermissions().isEmpty() == false) {
+            cc.setSessionData(CK.REW_PERMISSION, rews.getPermissions());
+        }
+        if (rews.getMcmmoSkills().isEmpty() == false) {
+            cc.setSessionData(CK.REW_MCMMO_SKILLS, rews.getMcmmoSkills());
+            cc.setSessionData(CK.REW_MCMMO_AMOUNTS, rews.getMcmmoAmounts());
+        }
+        if (rews.getHeroesClasses().isEmpty() == false) {
+            cc.setSessionData(CK.REW_HEROES_CLASSES, rews.getHeroesClasses());
+            cc.setSessionData(CK.REW_HEROES_AMOUNTS, rews.getHeroesAmounts());
+        }
+        if (rews.getPhatLoots().isEmpty() == false) {
+            cc.setSessionData(CK.REW_PHAT_LOOTS, rews.getPhatLoots());
+        }
+        if (rews.getCustomRewards().isEmpty() == false) {
+            cc.setSessionData(CK.REW_CUSTOM, new LinkedList<String>(rews.getCustomRewards().keySet()));
+            cc.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rews.getCustomRewards().values()));
+        }
+        Planner pln = q.getPlanner();
+        if (pln.getStart() != null) {
+            cc.setSessionData(CK.PLN_START_DATE, pln.getStart());
+        }
+        if (pln.getEnd() != null) {
+            cc.setSessionData(CK.PLN_END_DATE, pln.getEnd());
+        }
+        if (pln.getRepeat() != -1) {
+            cc.setSessionData(CK.PLN_REPEAT_CYCLE, pln.getRepeat());
+        }
+        if (pln.getCooldown() != -1) {
+            cc.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
+        }
+        Options opt = q.getOptions();
+        cc.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.getAllowCommands());
+        cc.setSessionData(CK.OPT_ALLOW_QUITTING, opt.getAllowQuitting());
+        cc.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.getUseDungeonsXLPlugin());
+        cc.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.getUsePartiesPlugin());
+        cc.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
+        cc.setSessionData(CK.OPT_REQUIRE_SAME_QUEST, opt.getRequireSameQuest());
+        // Stages (Objectives)
+        int index = 1;
+        for (Stage stage : q.getStages()) {
+            final String pref = "stage" + index;
+            index++;
+            cc.setSessionData(pref, Boolean.TRUE);
+            if (stage.blocksToBreak != null) {
+                LinkedList<String> names = new LinkedList<String>();
+                LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
+                for (ItemStack e : stage.blocksToBreak) {
+                    names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
+                }
+                cc.setSessionData(pref + CK.S_BREAK_NAMES, names);
+                cc.setSessionData(pref + CK.S_BREAK_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_BREAK_DURABILITY, durab);
+            }
+            if (stage.blocksToDamage != null) {
+                LinkedList<String> names = new LinkedList<String>();
+                LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
+                for (ItemStack e : stage.blocksToDamage) {
+                    names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
+                }
+                cc.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
+                cc.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durab);
+            }
+            if (stage.blocksToPlace != null) {
+                LinkedList<String> names = new LinkedList<String>();
+                LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
+                for (ItemStack e : stage.blocksToPlace) {
+                    names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
+                }
+                cc.setSessionData(pref + CK.S_PLACE_NAMES, names);
+                cc.setSessionData(pref + CK.S_PLACE_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_PLACE_DURABILITY, durab);
+            }
+            if (stage.blocksToUse != null) {
+                LinkedList<String> names = new LinkedList<String>();
+                LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
+                for (ItemStack e : stage.blocksToUse) {
+                    names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
+                }
+                cc.setSessionData(pref + CK.S_USE_NAMES, names);
+                cc.setSessionData(pref + CK.S_USE_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_USE_DURABILITY, durab);
+            }
+            if (stage.blocksToCut != null) {
+                LinkedList<String> names = new LinkedList<String>();
+                LinkedList<Integer> amnts = new LinkedList<Integer>();
+                LinkedList<Short> durab = new LinkedList<Short>();
+                for (ItemStack e : stage.blocksToCut) {
+                    names.add(e.getType().name());
+                    amnts.add(e.getAmount());
+                    durab.add(e.getDurability());
+                }
+                cc.setSessionData(pref + CK.S_CUT_NAMES, names);
+                cc.setSessionData(pref + CK.S_CUT_AMOUNTS, amnts);
+                cc.setSessionData(pref + CK.S_CUT_DURABILITY, durab);
+            }
+            if (stage.getItemsToCraft().isEmpty() == false) {
+                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                for (ItemStack is : stage.getItemsToCraft()) {
+                    items.add(is);
+                }
+                cc.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
+            }
+            if (stage.getItemsToSmelt().isEmpty() == false) {
+                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                for (ItemStack is : stage.getItemsToSmelt()) {
+                    items.add(is);
+                }
+                cc.setSessionData(pref + CK.S_SMELT_ITEMS, items);
+            }
+            if (stage.itemsToEnchant.isEmpty() == false) {
+                LinkedList<String> enchants = new LinkedList<String>();
+                LinkedList<String> names = new LinkedList<String>();
+                LinkedList<Integer> amounts = new LinkedList<Integer>();
+                for (Entry<Map<Enchantment, Material>, Integer> e : stage.itemsToEnchant.entrySet()) {
+                    amounts.add(e.getValue());
+                    for (Entry<Enchantment, Material> e2 : e.getKey().entrySet()) {
+                        names.add(e2.getValue().name());
+                        enchants.add(ItemUtil.getPrettyEnchantmentName(e2.getKey()));
+                    }
+                }
+                cc.setSessionData(pref + CK.S_ENCHANT_TYPES, enchants);
+                cc.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
+                cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
+            }
+            if (stage.getItemsToBrew().isEmpty() == false) {
+                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                for (ItemStack is : stage.getItemsToBrew()) {
+                    items.add(is);
+                }
+                cc.setSessionData(pref + CK.S_BREW_ITEMS, items);
+            }
+            if (stage.fishToCatch != null) {
+                cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
+            }
+            if (stage.playersToKill != null) {
+                cc.setSessionData(pref + CK.S_PLAYER_KILL, stage.playersToKill);
+            }
+            if (stage.getItemsToDeliver().isEmpty() == false) {
+                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                LinkedList<Integer> npcs = new LinkedList<Integer>();
+                for (ItemStack is : stage.getItemsToDeliver()) {
+                    items.add(is);
+                }
+                for (Integer n : stage.getItemDeliveryTargets()) {
+                    npcs.add(n);
+                }
+                cc.setSessionData(pref + CK.S_DELIVERY_ITEMS, items);
+                cc.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
+                cc.setSessionData(pref + CK.S_DELIVERY_MESSAGES, stage.deliverMessages);
+            }
+            if (stage.citizensToInteract.isEmpty() == false) {
+                LinkedList<Integer> npcs = new LinkedList<Integer>();
+                for (Integer n : stage.citizensToInteract) {
+                    npcs.add(n);
+                }
+                cc.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
+            }
+            if (stage.citizensToKill.isEmpty() == false) {
+                LinkedList<Integer> npcs = new LinkedList<Integer>();
+                for (Integer n : stage.citizensToKill) {
+                    npcs.add(n);
+                }
+                cc.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
+                cc.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, stage.citizenNumToKill);
+            }
+            if (stage.mobsToKill.isEmpty() == false) {
+                LinkedList<String> mobs = new LinkedList<String>();
+                for (EntityType et : stage.mobsToKill) {
+                    mobs.add(MiscUtil.getPrettyMobName(et));
+                }
+                cc.setSessionData(pref + CK.S_MOB_TYPES, mobs);
+                cc.setSessionData(pref + CK.S_MOB_AMOUNTS, stage.mobNumToKill);
+                if (stage.locationsToKillWithin.isEmpty() == false) {
+                    LinkedList<String> locs = new LinkedList<String>();
+                    for (Location l : stage.locationsToKillWithin) {
+                        locs.add(Quests.getLocationInfo(l));
+                    }
+                    cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
+                    cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.radiiToKillWithin);
+                    cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.killNames);
+                }
+            }
+            if (stage.locationsToReach.isEmpty() == false) {
+                LinkedList<String> locs = new LinkedList<String>();
+                for (Location l : stage.locationsToReach) {
+                    locs.add(Quests.getLocationInfo(l));
+                }
+                cc.setSessionData(pref + CK.S_REACH_LOCATIONS, locs);
+                cc.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, stage.radiiToReachWithin);
+                cc.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, stage.locationNames);
+            }
+            if (stage.mobsToTame.isEmpty() == false) {
+                LinkedList<String> mobs = new LinkedList<String>();
+                LinkedList<Integer> amnts = new LinkedList<Integer>();
+                for (Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
+                    mobs.add(MiscUtil.getPrettyMobName(e.getKey()));
+                    amnts.add(e.getValue());
+                }
+                cc.setSessionData(pref + CK.S_TAME_TYPES, mobs);
+                cc.setSessionData(pref + CK.S_TAME_AMOUNTS, amnts);
+            }
+            if (stage.sheepToShear.isEmpty() == false) {
+                LinkedList<String> colors = new LinkedList<String>();
+                LinkedList<Integer> amnts = new LinkedList<Integer>();
+                for (Entry<DyeColor, Integer> e : stage.sheepToShear.entrySet()) {
+                    colors.add(MiscUtil.getPrettyDyeColorName(e.getKey()));
+                    amnts.add(e.getValue());
+                }
+                cc.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
+                cc.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amnts);
+            }
+            if (stage.passwordDisplays.isEmpty() == false) {
+                cc.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.passwordDisplays);
+                cc.setSessionData(pref + CK.S_PASSWORD_PHRASES, stage.passwordPhrases);
+            }
+            if (stage.customObjectives.isEmpty() == false) {
+                LinkedList<String> list = new LinkedList<String>();
+                LinkedList<Integer> countList = new LinkedList<Integer>();
+                LinkedList<Entry<String, Object>> datamapList = new LinkedList<Entry<String, Object>>();
+                for (int i = 0; i < stage.customObjectives.size(); i++) {
+                    list.add(stage.customObjectives.get(i).getName());
+                    countList.add(stage.customObjectiveCounts.get(i));
+                }
+                datamapList.addAll(stage.customObjectiveData);
+                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
+                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
+                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
+            }
+            if (stage.startEvent != null) {
+                cc.setSessionData(pref + CK.S_START_EVENT, stage.startEvent.getName());
+            }
+            if (stage.finishEvent != null) {
+                cc.setSessionData(pref + CK.S_FINISH_EVENT, stage.finishEvent.getName());
+            }
+            if (stage.deathEvent != null) {
+                cc.setSessionData(pref + CK.S_DEATH_EVENT, stage.deathEvent.getName());
+            }
+            if (stage.disconnectEvent != null) {
+                cc.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.disconnectEvent.getName());
+            }
+            if (stage.chatEvents != null) {
+                LinkedList<String> chatEvents = new LinkedList<String>();
+                LinkedList<String> chatEventTriggers = new LinkedList<String>();
+                for (String s : stage.chatEvents.keySet()) {
+                    chatEventTriggers.add(s);
+                    chatEvents.add(stage.chatEvents.get(s).getName());
+                }
+                cc.setSessionData(pref + CK.S_CHAT_EVENTS, chatEvents);
+                cc.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
+            }
+            if (stage.commandEvents != null) {
+                LinkedList<String> commandEvents = new LinkedList<String>();
+                LinkedList<String> commandEventTriggers = new LinkedList<String>();
+                for (String s : stage.commandEvents.keySet()) {
+                    commandEventTriggers.add(s);
+                    commandEvents.add(stage.commandEvents.get(s).getName());
+                }
+                cc.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
+                cc.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
+            }
+            if (stage.delay != -1) {
+                cc.setSessionData(pref + CK.S_DELAY, stage.delay);
+                if (stage.delayMessage != null) {
+                    cc.setSessionData(pref + CK.S_DELAY_MESSAGE, stage.delayMessage);
+                }
+            }
+            if (stage.script != null) {
+                cc.setSessionData(pref + CK.S_DENIZEN, stage.script);
+            }
+            if (stage.objectiveOverride != null) {
+                cc.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.objectiveOverride);
+            }
+            if (stage.completeMessage != null) {
+                cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.completeMessage);
+            }
+            if (stage.startMessage != null) {
+                cc.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
             }
         }
     }
@@ -1032,7 +1409,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             npcStart = (Integer) cc.getSessionData(CK.Q_START_NPC);
         }
         if (cc.getSessionData(CK.Q_START_BLOCK) != null) {
-            blockStart = Quests.getLocationInfo((Location) cc.getSessionData(CK.Q_START_BLOCK));
+            blockStart = ConfigUtil.getLocationInfo((Location) cc.getSessionData(CK.Q_START_BLOCK));
         }
         if (cc.getSessionData(CK.REQ_MONEY) != null) {
             moneyReq = (Integer) cc.getSessionData(CK.REQ_MONEY);
@@ -1636,382 +2013,6 @@ public class QuestFactory implements ConversationAbandonedListener {
         sch.set("use-parties-plugin", usePartiesPluginOpt);
         sch.set("share-progress-level", shareProgressLevelOpt);
         sch.set("require-same-quest", requireSameQuestOpt);
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void loadQuest(ConversationContext cc, Quest q) {
-        cc.setSessionData(CK.ED_QUEST_EDIT, q.getName());
-        cc.setSessionData(CK.Q_NAME, q.getName());
-        if (q.npcStart != null) {
-            cc.setSessionData(CK.Q_START_NPC, q.npcStart.getId());
-        }
-        cc.setSessionData(CK.Q_START_BLOCK, q.blockStart);
-        cc.setSessionData(CK.Q_ASK_MESSAGE, q.description);
-        cc.setSessionData(CK.Q_FINISH_MESSAGE, q.finished);
-        if (q.initialAction != null) {
-            cc.setSessionData(CK.Q_INITIAL_EVENT, q.initialAction.getName());
-        }
-        if (q.region != null) {
-            cc.setSessionData(CK.Q_REGION, q.region);
-        }
-        if (q.guiDisplay != null) {
-            cc.setSessionData(CK.Q_GUIDISPLAY, q.guiDisplay);
-        }
-        Requirements reqs = q.getRequirements();
-        if (reqs.getMoney() != 0) {
-            cc.setSessionData(CK.REQ_MONEY, reqs.getMoney());
-        }
-        if (reqs.getQuestPoints() != 0) {
-            cc.setSessionData(CK.REQ_QUEST_POINTS, reqs.getQuestPoints());
-        }
-        if (reqs.getItems().isEmpty() == false) {
-            cc.setSessionData(CK.REQ_ITEMS, reqs.getItems());
-            cc.setSessionData(CK.REQ_ITEMS_REMOVE, reqs.getRemoveItems());
-        }
-        if (reqs.getNeededQuests().isEmpty() == false) {
-            cc.setSessionData(CK.REQ_QUEST, reqs.getNeededQuests());
-        }
-        if (reqs.getBlockQuests().isEmpty() == false) {
-            cc.setSessionData(CK.REQ_QUEST_BLOCK, reqs.getBlockQuests());
-        }
-        if (reqs.getMcmmoSkills().isEmpty() == false) {
-            cc.setSessionData(CK.REQ_MCMMO_SKILLS, reqs.getMcmmoAmounts());
-            cc.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, reqs.getMcmmoAmounts());
-        }
-        if (reqs.getPermissions().isEmpty() == false) {
-            cc.setSessionData(CK.REQ_PERMISSION, reqs.getPermissions());
-        }
-        if (reqs.getHeroesPrimaryClass() != null) {
-            cc.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, reqs.getHeroesPrimaryClass());
-        }
-        if (reqs.getHeroesSecondaryClass() != null) {
-            cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, reqs.getHeroesSecondaryClass());
-        }
-        if (reqs.getFailRequirements() != null) {
-            cc.setSessionData(CK.Q_FAIL_MESSAGE, reqs.getFailRequirements());
-        }
-        if (reqs.getCustomRequirements().isEmpty() == false) {
-            LinkedList<String> list = new LinkedList<String>();
-            LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
-            for (Entry<String, Map<String, Object>> entry : reqs.getCustomRequirements().entrySet()) {
-                list.add(entry.getKey());
-                datamapList.add(entry.getValue());
-            }
-            cc.setSessionData(CK.REQ_CUSTOM, list);
-            cc.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
-        }
-        Rewards rews = q.getRewards();
-        if (rews.getMoney() != 0) {
-            cc.setSessionData(CK.REW_MONEY, rews.getMoney());
-        }
-        if (rews.getQuestPoints() != 0) {
-            cc.setSessionData(CK.REW_QUEST_POINTS, rews.getQuestPoints());
-        }
-        if (rews.getExp() != 0) {
-            cc.setSessionData(CK.REW_EXP, rews.getExp());
-        }
-        if (rews.getItems().isEmpty() == false) {
-            cc.setSessionData(CK.REW_ITEMS, rews.getItems());
-        }
-        if (rews.getCommands().isEmpty() == false) {
-            cc.setSessionData(CK.REW_COMMAND, rews.getCommands());
-        }
-        if (rews.getCommandsOverrideDisplay().isEmpty() == false) {
-            cc.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, rews.getCommandsOverrideDisplay());
-        }
-        if (rews.getPermissions().isEmpty() == false) {
-            cc.setSessionData(CK.REW_PERMISSION, rews.getPermissions());
-        }
-        if (rews.getMcmmoSkills().isEmpty() == false) {
-            cc.setSessionData(CK.REW_MCMMO_SKILLS, rews.getMcmmoSkills());
-            cc.setSessionData(CK.REW_MCMMO_AMOUNTS, rews.getMcmmoAmounts());
-        }
-        if (rews.getHeroesClasses().isEmpty() == false) {
-            cc.setSessionData(CK.REW_HEROES_CLASSES, rews.getHeroesClasses());
-            cc.setSessionData(CK.REW_HEROES_AMOUNTS, rews.getHeroesAmounts());
-        }
-        if (rews.getPhatLoots().isEmpty() == false) {
-            cc.setSessionData(CK.REW_PHAT_LOOTS, rews.getPhatLoots());
-        }
-        if (rews.getCustomRewards().isEmpty() == false) {
-            cc.setSessionData(CK.REW_CUSTOM, new LinkedList<String>(rews.getCustomRewards().keySet()));
-            cc.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rews.getCustomRewards().values()));
-        }
-        Planner pln = q.getPlanner();
-        if (pln.getStart() != null) {
-            cc.setSessionData(CK.PLN_START_DATE, pln.getStart());
-        }
-        if (pln.getEnd() != null) {
-            cc.setSessionData(CK.PLN_END_DATE, pln.getEnd());
-        }
-        if (pln.getRepeat() != -1) {
-            cc.setSessionData(CK.PLN_REPEAT_CYCLE, pln.getRepeat());
-        }
-        if (pln.getCooldown() != -1) {
-            cc.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
-        }
-        Options opt = q.getOptions();
-        cc.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.getAllowCommands());
-        cc.setSessionData(CK.OPT_ALLOW_QUITTING, opt.getAllowQuitting());
-        cc.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.getUseDungeonsXLPlugin());
-        cc.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.getUsePartiesPlugin());
-        cc.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
-        cc.setSessionData(CK.OPT_REQUIRE_SAME_QUEST, opt.getRequireSameQuest());
-        // Stages (Objectives)
-        int index = 1;
-        for (Stage stage : q.getStages()) {
-            final String pref = "stage" + index;
-            index++;
-            cc.setSessionData(pref, Boolean.TRUE);
-            if (stage.blocksToBreak != null) {
-                LinkedList<String> names = new LinkedList<String>();
-                LinkedList<Integer> amnts = new LinkedList<Integer>();
-                LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToBreak) {
-                    names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
-                }
-                cc.setSessionData(pref + CK.S_BREAK_NAMES, names);
-                cc.setSessionData(pref + CK.S_BREAK_AMOUNTS, amnts);
-                cc.setSessionData(pref + CK.S_BREAK_DURABILITY, durab);
-            }
-            if (stage.blocksToDamage != null) {
-                LinkedList<String> names = new LinkedList<String>();
-                LinkedList<Integer> amnts = new LinkedList<Integer>();
-                LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToDamage) {
-                    names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
-                }
-                cc.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
-                cc.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amnts);
-                cc.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durab);
-            }
-            if (stage.blocksToPlace != null) {
-                LinkedList<String> names = new LinkedList<String>();
-                LinkedList<Integer> amnts = new LinkedList<Integer>();
-                LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToPlace) {
-                    names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
-                }
-                cc.setSessionData(pref + CK.S_PLACE_NAMES, names);
-                cc.setSessionData(pref + CK.S_PLACE_AMOUNTS, amnts);
-                cc.setSessionData(pref + CK.S_PLACE_DURABILITY, durab);
-            }
-            if (stage.blocksToUse != null) {
-                LinkedList<String> names = new LinkedList<String>();
-                LinkedList<Integer> amnts = new LinkedList<Integer>();
-                LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToUse) {
-                    names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
-                }
-                cc.setSessionData(pref + CK.S_USE_NAMES, names);
-                cc.setSessionData(pref + CK.S_USE_AMOUNTS, amnts);
-                cc.setSessionData(pref + CK.S_USE_DURABILITY, durab);
-            }
-            if (stage.blocksToCut != null) {
-                LinkedList<String> names = new LinkedList<String>();
-                LinkedList<Integer> amnts = new LinkedList<Integer>();
-                LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToCut) {
-                    names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
-                }
-                cc.setSessionData(pref + CK.S_CUT_NAMES, names);
-                cc.setSessionData(pref + CK.S_CUT_AMOUNTS, amnts);
-                cc.setSessionData(pref + CK.S_CUT_DURABILITY, durab);
-            }
-            if (stage.getItemsToCraft().isEmpty() == false) {
-                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                for (ItemStack is : stage.getItemsToCraft()) {
-                    items.add(is);
-                }
-                cc.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
-            }
-            if (stage.getItemsToSmelt().isEmpty() == false) {
-                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                for (ItemStack is : stage.getItemsToSmelt()) {
-                    items.add(is);
-                }
-                cc.setSessionData(pref + CK.S_SMELT_ITEMS, items);
-            }
-            if (stage.itemsToEnchant.isEmpty() == false) {
-                LinkedList<String> enchants = new LinkedList<String>();
-                LinkedList<String> names = new LinkedList<String>();
-                LinkedList<Integer> amounts = new LinkedList<Integer>();
-                for (Entry<Map<Enchantment, Material>, Integer> e : stage.itemsToEnchant.entrySet()) {
-                    amounts.add(e.getValue());
-                    for (Entry<Enchantment, Material> e2 : e.getKey().entrySet()) {
-                        names.add(e2.getValue().name());
-                        enchants.add(ItemUtil.getPrettyEnchantmentName(e2.getKey()));
-                    }
-                }
-                cc.setSessionData(pref + CK.S_ENCHANT_TYPES, enchants);
-                cc.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
-                cc.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
-            }
-            if (stage.getItemsToBrew().isEmpty() == false) {
-                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                for (ItemStack is : stage.getItemsToBrew()) {
-                    items.add(is);
-                }
-                cc.setSessionData(pref + CK.S_BREW_ITEMS, items);
-            }
-            if (stage.fishToCatch != null) {
-                cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
-            }
-            if (stage.playersToKill != null) {
-                cc.setSessionData(pref + CK.S_PLAYER_KILL, stage.playersToKill);
-            }
-            if (stage.getItemsToDeliver().isEmpty() == false) {
-                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (ItemStack is : stage.getItemsToDeliver()) {
-                    items.add(is);
-                }
-                for (Integer n : stage.getItemDeliveryTargets()) {
-                    npcs.add(n);
-                }
-                cc.setSessionData(pref + CK.S_DELIVERY_ITEMS, items);
-                cc.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
-                cc.setSessionData(pref + CK.S_DELIVERY_MESSAGES, stage.deliverMessages);
-            }
-            if (stage.citizensToInteract.isEmpty() == false) {
-                LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (Integer n : stage.citizensToInteract) {
-                    npcs.add(n);
-                }
-                cc.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
-            }
-            if (stage.citizensToKill.isEmpty() == false) {
-                LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (Integer n : stage.citizensToKill) {
-                    npcs.add(n);
-                }
-                cc.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
-                cc.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, stage.citizenNumToKill);
-            }
-            if (stage.mobsToKill.isEmpty() == false) {
-                LinkedList<String> mobs = new LinkedList<String>();
-                for (EntityType et : stage.mobsToKill) {
-                    mobs.add(MiscUtil.getPrettyMobName(et));
-                }
-                cc.setSessionData(pref + CK.S_MOB_TYPES, mobs);
-                cc.setSessionData(pref + CK.S_MOB_AMOUNTS, stage.mobNumToKill);
-                if (stage.locationsToKillWithin.isEmpty() == false) {
-                    LinkedList<String> locs = new LinkedList<String>();
-                    for (Location l : stage.locationsToKillWithin) {
-                        locs.add(Quests.getLocationInfo(l));
-                    }
-                    cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
-                    cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.radiiToKillWithin);
-                    cc.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.killNames);
-                }
-            }
-            if (stage.locationsToReach.isEmpty() == false) {
-                LinkedList<String> locs = new LinkedList<String>();
-                for (Location l : stage.locationsToReach) {
-                    locs.add(Quests.getLocationInfo(l));
-                }
-                cc.setSessionData(pref + CK.S_REACH_LOCATIONS, locs);
-                cc.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, stage.radiiToReachWithin);
-                cc.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, stage.locationNames);
-            }
-            if (stage.mobsToTame.isEmpty() == false) {
-                LinkedList<String> mobs = new LinkedList<String>();
-                LinkedList<Integer> amnts = new LinkedList<Integer>();
-                for (Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
-                    mobs.add(MiscUtil.getPrettyMobName(e.getKey()));
-                    amnts.add(e.getValue());
-                }
-                cc.setSessionData(pref + CK.S_TAME_TYPES, mobs);
-                cc.setSessionData(pref + CK.S_TAME_AMOUNTS, amnts);
-            }
-            if (stage.sheepToShear.isEmpty() == false) {
-                LinkedList<String> colors = new LinkedList<String>();
-                LinkedList<Integer> amnts = new LinkedList<Integer>();
-                for (Entry<DyeColor, Integer> e : stage.sheepToShear.entrySet()) {
-                    colors.add(MiscUtil.getPrettyDyeColorName(e.getKey()));
-                    amnts.add(e.getValue());
-                }
-                cc.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
-                cc.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amnts);
-            }
-            if (stage.passwordDisplays.isEmpty() == false) {
-                cc.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.passwordDisplays);
-                cc.setSessionData(pref + CK.S_PASSWORD_PHRASES, stage.passwordPhrases);
-            }
-            if (stage.customObjectives.isEmpty() == false) {
-                LinkedList<String> list = new LinkedList<String>();
-                LinkedList<Integer> countList = new LinkedList<Integer>();
-                LinkedList<Entry<String, Object>> datamapList = new LinkedList<Entry<String, Object>>();
-                for (int i = 0; i < stage.customObjectives.size(); i++) {
-                    list.add(stage.customObjectives.get(i).getName());
-                    countList.add(stage.customObjectiveCounts.get(i));
-                }
-                datamapList.addAll(stage.customObjectiveData);
-                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
-                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
-                cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
-            }
-            if (stage.startEvent != null) {
-                cc.setSessionData(pref + CK.S_START_EVENT, stage.startEvent.getName());
-            }
-            if (stage.finishEvent != null) {
-                cc.setSessionData(pref + CK.S_FINISH_EVENT, stage.finishEvent.getName());
-            }
-            if (stage.deathEvent != null) {
-                cc.setSessionData(pref + CK.S_DEATH_EVENT, stage.deathEvent.getName());
-            }
-            if (stage.disconnectEvent != null) {
-                cc.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.disconnectEvent.getName());
-            }
-            if (stage.chatEvents != null) {
-                LinkedList<String> chatEvents = new LinkedList<String>();
-                LinkedList<String> chatEventTriggers = new LinkedList<String>();
-                for (String s : stage.chatEvents.keySet()) {
-                    chatEventTriggers.add(s);
-                    chatEvents.add(stage.chatEvents.get(s).getName());
-                }
-                cc.setSessionData(pref + CK.S_CHAT_EVENTS, chatEvents);
-                cc.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
-            }
-            if (stage.commandEvents != null) {
-                LinkedList<String> commandEvents = new LinkedList<String>();
-                LinkedList<String> commandEventTriggers = new LinkedList<String>();
-                for (String s : stage.commandEvents.keySet()) {
-                    commandEventTriggers.add(s);
-                    commandEvents.add(stage.commandEvents.get(s).getName());
-                }
-                cc.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
-                cc.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
-            }
-            if (stage.delay != -1) {
-                cc.setSessionData(pref + CK.S_DELAY, stage.delay);
-                if (stage.delayMessage != null) {
-                    cc.setSessionData(pref + CK.S_DELAY_MESSAGE, stage.delayMessage);
-                }
-            }
-            if (stage.script != null) {
-                cc.setSessionData(pref + CK.S_DENIZEN, stage.script);
-            }
-            if (stage.objectiveOverride != null) {
-                cc.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.objectiveOverride);
-            }
-            if (stage.completeMessage != null) {
-                cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.completeMessage);
-            }
-            if (stage.startMessage != null) {
-                cc.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
-            }
-        }
     }
 
     private class SelectDeletePrompt extends StringPrompt {

@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.timers;
+package me.blackvein.quests.tasks;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -39,7 +39,8 @@ public class ActionTimer extends BukkitRunnable {
             quest.failQuest(quester);
             quester.updateJournal();
         } else {
-            quester.getPlayer().sendMessage(Lang.get(quester.getPlayer(), "timerMessage").replace("<time>", String.valueOf(time)));
+            quester.getPlayer().sendMessage(Lang.get(quester.getPlayer(), "timerMessage")
+                    .replace("<time>", String.valueOf(time)));
         }
     }
 }

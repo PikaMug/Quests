@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -70,9 +70,11 @@ public class ItemStackPrompt extends FixedSetPrompt {
                         for (String key : map.keySet()) {
                             if (key.equals("pages")) {
                                 List<String> pages = (List<String>) map.get(key);
-                                menu += ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" + pages.size() + "\n";
+                                menu += ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" + pages.size() 
+                                        + "\n";
                             } else {
-                                menu += ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" + map.get(key) + "\n";
+                                menu += ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" + map.get(key) 
+                                        + "\n";
                             }
                         }
                     }
@@ -81,24 +83,36 @@ public class ItemStackPrompt extends FixedSetPrompt {
         } else {
             menu += "\n";
         }
-        menu += ChatColor.GOLD + "" + ChatColor.BOLD + "0. " + ChatColor.RESET + "" + ChatColor.YELLOW + Lang.get("itemCreateLoadHand") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "1. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("itemCreateSetName") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "2. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("itemCreateSetAmount") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "3. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("itemCreateSetDurab") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "4. " + ChatColor.RESET + "" + ChatColor.GOLD + Lang.get("itemCreateSetEnchs") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "5. " + ChatColor.RESET + "" + ChatColor.ITALIC + ChatColor.GOLD + Lang.get("itemCreateSetDisplay") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "6. " + ChatColor.RESET + "" + ChatColor.ITALIC + ChatColor.GOLD + Lang.get("itemCreateSetLore") + "\n";
+        menu += ChatColor.GOLD + "" + ChatColor.BOLD + "0. " + ChatColor.RESET + "" + ChatColor.YELLOW 
+                + Lang.get("itemCreateLoadHand") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "1. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("itemCreateSetName") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "2. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("itemCreateSetAmount") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "3. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("itemCreateSetDurab") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "4. " + ChatColor.RESET + "" + ChatColor.GOLD 
+                + Lang.get("itemCreateSetEnchs") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "5. " + ChatColor.RESET + "" + ChatColor.ITALIC 
+                + ChatColor.GOLD + Lang.get("itemCreateSetDisplay") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "6. " + ChatColor.RESET + "" + ChatColor.ITALIC 
+                + ChatColor.GOLD + Lang.get("itemCreateSetLore") + "\n";
         if (map != null) {
             if (!map.isEmpty()) {
-                menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.DARK_GREEN + Lang.get("itemCreateSetClearMeta") + "\n";
+                menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.DARK_GREEN 
+                        + Lang.get("itemCreateSetClearMeta") + "\n";
             } else {
-                menu += ChatColor.GRAY + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GRAY + Lang.get("itemCreateSetClearMeta") + "\n";
+                menu += ChatColor.GRAY + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GRAY 
+                        + Lang.get("itemCreateSetClearMeta") + "\n";
             }
         } else {
-            menu += ChatColor.GRAY + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GRAY + Lang.get("itemCreateSetClearMeta") + "\n";
+            menu += ChatColor.GRAY + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GRAY 
+                    + Lang.get("itemCreateSetClearMeta") + "\n";
         }
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.RED + Lang.get("cancel") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "9. " + ChatColor.RESET + "" + ChatColor.GREEN + Lang.get("done") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.RED 
+                + Lang.get("cancel") + "\n";
+        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "9. " + ChatColor.RESET + "" + ChatColor.GREEN 
+                + Lang.get("done") + "\n";
         return menu;
     }
 
@@ -248,7 +262,8 @@ public class ItemStackPrompt extends FixedSetPrompt {
                 
                 ItemMeta meta = stack.getItemMeta();
                 if ((Map<String, Object>) cc.getSessionData("tempMeta") != null) {
-                    meta = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) cc.getSessionData("tempMeta"));
+                    meta = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) cc
+                            .getSessionData("tempMeta"));
                 }
                 
                 if (enchs != null) {
@@ -344,7 +359,8 @@ public class ItemStackPrompt extends FixedSetPrompt {
 
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
                     int amt = Integer.parseInt(input);
                     if (amt < 1) {
@@ -384,7 +400,8 @@ public class ItemStackPrompt extends FixedSetPrompt {
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
             String s = input.replace(":", "");
-            if (s.equalsIgnoreCase(Lang.get("cmdClear")) == false && s.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+            if (s.equalsIgnoreCase(Lang.get("cmdClear")) == false 
+                    && s.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 Enchantment e = ItemUtil.getEnchantmentFromPrettyName(MiscUtil.getCapitalized(s));
                 if (e != null) {
                     cc.setSessionData("tempEnchant", e);
@@ -419,12 +436,14 @@ public class ItemStackPrompt extends FixedSetPrompt {
                 try {
                     int num = Integer.parseInt(input);
                     if (num < 1) {
-                        cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                        cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
+                                .replace("<number>", "1"));
                         return new LevelPrompt(enchantment);
                     } else {
                         if (cc.getSessionData("tempEnchantments") != null) {
                             @SuppressWarnings("unchecked")
-                            Map<Enchantment, Integer> enchs = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
+                            Map<Enchantment, Integer> enchs 
+                                    = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
                             enchs.put((Enchantment) cc.getSessionData("tempEnchant"), num);
                             cc.setSessionData("tempEnchantments", enchs);
                         } else {
@@ -452,8 +471,9 @@ public class ItemStackPrompt extends FixedSetPrompt {
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
             String s = input.replace(":", "");
-            if (s.equalsIgnoreCase(Lang.get("cmdCancel")) == false && s.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                s = Quests.parseString(s);
+            if (s.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && s.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+                s = ConfigUtil.parseString(s);
                 cc.setSessionData("tempDisplay", s);
             } else if (s.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 cc.setSessionData("tempDisplay", null);
@@ -472,8 +492,9 @@ public class ItemStackPrompt extends FixedSetPrompt {
         @Override
         public Prompt acceptInput(ConversationContext cc, String input) {
             String s = input.replace(":", "");
-            if (s.equalsIgnoreCase(Lang.get("cmdCancel")) == false && s.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                s = Quests.parseString(s);
+            if (s.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && s.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+                s = ConfigUtil.parseString(s);
                 LinkedList<String> lore = new LinkedList<String>();
                 lore.addAll(Arrays.asList(s.split(Lang.get("charSemi"))));
                 cc.setSessionData("tempLore", lore);
@@ -494,7 +515,8 @@ public class ItemStackPrompt extends FixedSetPrompt {
                     item += ":" + ChatColor.BLUE + (Short) cc.getSessionData("tempData");
                 }
             } else {
-                item = ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (String) cc.getSessionData("tempDisplay") + ChatColor.RESET + "" + ChatColor.GRAY + " (";
+                item = ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC + (String) cc.getSessionData("tempDisplay") 
+                        + ChatColor.RESET + "" + ChatColor.GRAY + " (";
                 String name = (String) cc.getSessionData("tempName");
                 item += ChatColor.AQUA + ItemUtil.getPrettyItemName(name);
                 if (cc.getSessionData("tempData") != null) {
@@ -510,9 +532,11 @@ public class ItemStackPrompt extends FixedSetPrompt {
             item += "\n";
             if (cc.getSessionData("tempEnchantments") != null) {
                 @SuppressWarnings("unchecked")
-                Map<Enchantment, Integer> enchantments = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
+                Map<Enchantment, Integer> enchantments 
+                        = (Map<Enchantment, Integer>) cc.getSessionData("tempEnchantments");
                 for (Entry<Enchantment, Integer> e : enchantments.entrySet()) {
-                    item += ChatColor.GRAY + "  - " + ChatColor.RED + ItemUtil.getPrettyEnchantmentName(e.getKey()) + " " + RomanNumeral.getNumeral(e.getValue()) + "\n";
+                    item += ChatColor.GRAY + "  - " + ChatColor.RED + ItemUtil.getPrettyEnchantmentName(e.getKey()) 
+                            + " " + RomanNumeral.getNumeral(e.getValue()) + "\n";
                 }
             }
             if (cc.getSessionData("tempLore") != null) {

@@ -27,7 +27,8 @@ import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer
 import net.citizensnpcs.api.npc.NPC;
 
 /**
- * This class's imports must exist separately from DenizenAPI.java in order to not crash from NoClassDefFoundError at runtime
+ * This class's imports must exist separately from DenizenAPI.java in order to not crash from NoClassDefFoundError at
+ * runtime
  */
 public class DenizenAPI_1_1_0 {
     
