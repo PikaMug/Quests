@@ -207,7 +207,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     if (player.hasPermission("quests.editor.actions.create") 
                             || player.hasPermission("quests.editor.events.create")) {
                         context.setSessionData(CK.E_OLD_EVENT, "");
-                        return new ActionNamePrompt();
+                        return new ActionSelectCreatePrompt();
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                         return new MenuPrompt();
@@ -220,7 +220,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                                     + Lang.get("eventEditorNoneToEdit"));
                             return new MenuPrompt();
                         } else {
-                            return new SelectEditPrompt();
+                            return new ActionSelectEditPrompt();
                         }
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
@@ -234,7 +234,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                                     + Lang.get("eventEditorNoneToDelete"));
                             return new MenuPrompt();
                         } else {
-                            return new SelectDeletePrompt();
+                            return new ActionSelectDeletePrompt();
                         }
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
@@ -363,7 +363,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         public Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch (input.intValue()) {
             case 1:
-                return new SetNamePrompt();
+                return new ActionSetNamePrompt();
             case 2:
                 return new PlayerPrompt();
             case 3:
@@ -395,8 +395,43 @@ public class ActionFactory implements ConversationAbandonedListener {
             }
         }
     }
+    
+    private class ActionSelectCreatePrompt extends StringPrompt {
 
-    private class SelectEditPrompt extends StringPrompt {
+        @Override
+        public String getPromptText(ConversationContext context) {
+            String text = ChatColor.AQUA + Lang.get("eventEditorCreate") + ChatColor.GOLD + " - " 
+                    + Lang.get("eventEditorEnterEventName");
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                for (Action e : plugin.getActions()) {
+                    if (e.getName().equalsIgnoreCase(input)) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
+                        return new ActionSelectCreatePrompt();
+                    }
+                }
+                if (names.contains(input)) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
+                    return new ActionSelectCreatePrompt();
+                }
+                if (StringUtils.isAlphanumeric(input) == false) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAlpha"));
+                    return new ActionSelectCreatePrompt();
+                }
+                context.setSessionData(CK.E_NAME, input);
+                names.add(input);
+                return new CreateMenuPrompt();
+            } else {
+                return new MenuPrompt();
+            }
+        }
+    }
+
+    private class ActionSelectEditPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -420,7 +455,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     return new CreateMenuPrompt();
                 }
                 ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
-                return new SelectEditPrompt();
+                return new ActionSelectEditPrompt();
             } else {
                 return new MenuPrompt();
             }
@@ -521,7 +556,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         }
     }
 
-    private class SelectDeletePrompt extends StringPrompt {
+    private class ActionSelectDeletePrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -551,7 +586,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     }
                     if (used.isEmpty()) {
                         context.setSessionData(CK.ED_EVENT_DELETE, a.getName());
-                        return new DeletePrompt();
+                        return new ActionConfirmDeletePrompt();
                     } else {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorEventInUse") 
                         + " \"" + ChatColor.DARK_PURPLE + a.getName() + ChatColor.RED + "\":");
@@ -560,18 +595,18 @@ public class ActionFactory implements ConversationAbandonedListener {
                         }
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
                                 + Lang.get("eventEditorMustModifyQuests"));
-                        return new SelectDeletePrompt();
+                        return new ActionSelectDeletePrompt();
                     }
                 }
                 ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
-                return new SelectDeletePrompt();
+                return new ActionSelectDeletePrompt();
             } else {
                 return new MenuPrompt();
             }
         }
     }
 
-    private class DeletePrompt extends StringPrompt {
+    private class ActionConfirmDeletePrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -591,7 +626,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 return new MenuPrompt();
             } else {
-                return new DeletePrompt();
+                return new ActionConfirmDeletePrompt();
             }
         }
     }
@@ -1234,41 +1269,6 @@ public class ActionFactory implements ConversationAbandonedListener {
         clearData(context);
     }
 
-    private class ActionNamePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.AQUA + Lang.get("eventEditorCreate") + ChatColor.GOLD + " - " 
-                    + Lang.get("eventEditorEnterEventName");
-            return text;
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (Action e : plugin.getActions()) {
-                    if (e.getName().equalsIgnoreCase(input)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
-                        return new ActionNamePrompt();
-                    }
-                }
-                if (names.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
-                    return new ActionNamePrompt();
-                }
-                if (StringUtils.isAlphanumeric(input) == false) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAlpha"));
-                    return new ActionNamePrompt();
-                }
-                context.setSessionData(CK.E_NAME, input);
-                names.add(input);
-                return new CreateMenuPrompt();
-            } else {
-                return new MenuPrompt();
-            }
-        }
-    }
-
     private class ExplosionPrompt extends StringPrompt {
 
         @Override
@@ -1311,7 +1311,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         }
     }
 
-    private class SetNamePrompt extends StringPrompt {
+    private class ActionSetNamePrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -1324,16 +1324,16 @@ public class ActionFactory implements ConversationAbandonedListener {
                 for (Action e : plugin.getActions()) {
                     if (e.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
-                        return new SetNamePrompt();
+                        return new ActionSetNamePrompt();
                     }
                 }
                 if (names.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
-                    return new SetNamePrompt();
+                    return new ActionSetNamePrompt();
                 }
                 if (StringUtils.isAlphanumeric(input) == false) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAlpha"));
-                    return new SetNamePrompt();
+                    return new ActionSetNamePrompt();
                 }
                 names.remove((String) context.getSessionData(CK.E_NAME));
                 context.setSessionData(CK.E_NAME, input);

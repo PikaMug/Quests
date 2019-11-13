@@ -51,6 +51,7 @@ import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenCreatePrompt
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenExitPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenMainPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenSavePromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenSelectCreatePromptEvent;
 import me.blackvein.quests.prompts.GUIDisplayPrompt;
 import me.blackvein.quests.prompts.OptionsPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
@@ -198,21 +199,21 @@ public class QuestFactory implements ConversationAbandonedListener {
             switch (input.intValue()) {
                 case 1:
                     if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.create")) {
-                        return new QuestNamePrompt();
+                        return new QuestSelectCreatePrompt();
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                         return new MainMenuPrompt();
                     }
                 case 2:
                     if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.edit")) {
-                        return new SelectEditPrompt();
+                        return new QuestSelectEditPrompt();
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                         return new MainMenuPrompt();
                     }
                 case 3:
                     if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.delete")) {
-                        return new SelectDeletePrompt();
+                        return new QuestSelectDeletePrompt();
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                         return new MainMenuPrompt();
@@ -441,7 +442,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch (input.intValue()) {
                 case 1:
-                    return new SetNamePrompt();
+                    return new QuestSetNamePrompt();
                 case 2:
                     return new AskMessagePrompt();
                 case 3:
@@ -488,8 +489,55 @@ public class QuestFactory implements ConversationAbandonedListener {
             }
         }
     }
+    
+    public class QuestSelectCreatePrompt extends StringPrompt {
+        
+        public String getTitle() {
+            return Lang.get("questCreateTitle");
+        }
+        
+        public String getQueryText() {
+            return ChatColor.AQUA + Lang.get("questEditorCreate") + " " + ChatColor.GOLD + "- " 
+                    + Lang.get("questEditorEnterQuestName");
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenSelectCreatePromptEvent event 
+                    = new QuestsEditorPostOpenSelectCreatePromptEvent(context);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.GOLD + getTitle()+ "\n" + getQueryText();
+            return text;
+        }
 
-    private class SelectEditPrompt extends StringPrompt {
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                for (Quest q : plugin.getQuests()) {
+                    if (q.getName().equalsIgnoreCase(input)) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
+                        return new QuestSelectCreatePrompt();
+                    }
+                }
+                if (names.contains(input)) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
+                    return new QuestSelectCreatePrompt();
+                }
+                if (input.contains(".") || input.contains(",")) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
+                    return new QuestSelectCreatePrompt();
+                }
+                context.setSessionData(CK.Q_NAME, input);
+                names.add(input);
+                return new CreateMenuPrompt();
+            } else {
+                return new MainMenuPrompt();
+            }
+        }
+    }
+
+    private class QuestSelectEditPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -508,7 +556,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     loadQuest(context, q);
                     return new CreateMenuPrompt();
                 }
-                return new SelectEditPrompt();
+                return new QuestSelectEditPrompt();
             } else {
                 return new MainMenuPrompt();
             }
@@ -890,44 +938,113 @@ public class QuestFactory implements ConversationAbandonedListener {
             }
         }
     }
-
-    private class QuestNamePrompt extends StringPrompt {
+    
+    private class QuestSelectDeletePrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("questCreateTitle") + "\n";
-            text += ChatColor.AQUA + Lang.get("questEditorCreate") + " " + ChatColor.GOLD + "- " 
-                    + Lang.get("questEditorEnterQuestName");
+            String text = ChatColor.GOLD + Lang.get("questDeleteTitle") + "\n";
+            for (Quest quest : plugin.getQuests()) {
+                text += ChatColor.AQUA + quest.getName() + ChatColor.YELLOW + ",";
+            }
+            text = text.substring(0, text.length() - 1) + "\n";
+            text += ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
             return text;
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (Quest q : plugin.getQuests()) {
-                    if (q.getName().equalsIgnoreCase(input)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
-                        return new QuestNamePrompt();
+                LinkedList<String> used = new LinkedList<String>();
+                Quest found = plugin.getQuest(input);
+                if (found != null) {
+                    for (Quest q : plugin.getQuests()) {
+                        if (q.getRequirements().getNeededQuests().contains(q.getName()) 
+                                || q.getRequirements().getBlockQuests().contains(q.getName())) {
+                            used.add(q.getName());
+                        }
+                    }
+                    if (used.isEmpty()) {
+                        context.setSessionData(CK.ED_QUEST_DELETE, found.getName());
+                        return new QuestConfirmDeletePrompt();
+                    } else {
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
+                                + Lang.get("questEditorQuestAsRequirement1") + " \"" + ChatColor.DARK_PURPLE 
+                                + context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\" " 
+                                + Lang.get("questEditorQuestAsRequirement2"));
+                        for (String s : used) {
+                            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
+                        }
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
+                                + Lang.get("questEditorQuestAsRequirement3"));
+                        return new QuestSelectDeletePrompt();
                     }
                 }
-                if (names.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
-                    return new QuestNamePrompt();
-                }
-                if (input.contains(".") || input.contains(",")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
-                    return new QuestNamePrompt();
-                }
-                context.setSessionData(CK.Q_NAME, input);
-                names.add(input);
-                return new CreateMenuPrompt();
+                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questEditorQuestNotFound"));
+                return new QuestSelectDeletePrompt();
             } else {
                 return new MainMenuPrompt();
             }
         }
     }
 
-    private class SetNamePrompt extends StringPrompt {
+    private class QuestConfirmDeletePrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
+                    + Lang.get("yesWord") + "\n";
+            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
+                    + Lang.get("noWord");
+            return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
+                    + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + ")\n" + text;
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
+                deleteQuest(context);
+                return Prompt.END_OF_CONVERSATION;
+            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
+                return new MainMenuPrompt();
+            } else {
+                return new QuestConfirmDeletePrompt();
+            }
+        }
+    }
+
+    private void deleteQuest(ConversationContext context) {
+        YamlConfiguration data = new YamlConfiguration();
+        try {
+            data.load(questsFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile"));
+            return;
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile"));
+            return;
+        }
+        String quest = (String) context.getSessionData(CK.ED_QUEST_DELETE);
+        ConfigurationSection sec = data.getConfigurationSection("quests");
+        for (String key : sec.getKeys(false)) {
+            if (sec.getString(key + ".name").equalsIgnoreCase(quest)) {
+                sec.set(key, null);
+                break;
+            }
+        }
+        try {
+            data.save(questsFile);
+        } catch (IOException e) {
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
+            return;
+        }
+        plugin.reloadQuests();
+        context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
+    }
+
+    private class QuestSetNamePrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -945,17 +1062,17 @@ public class QuestFactory implements ConversationAbandonedListener {
                         }
                         if (s != null && s.equalsIgnoreCase(input) == false) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
-                            return new SetNamePrompt();
+                            return new QuestSetNamePrompt();
                         }
                     }
                 }
                 if (names.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
-                    return new SetNamePrompt();
+                    return new QuestSetNamePrompt();
                 }
                 if (input.contains(",")) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
-                    return new QuestNamePrompt();
+                    return new QuestSelectCreatePrompt();
                 }
                 names.remove((String) context.getSessionData(CK.Q_NAME));
                 context.setSessionData(CK.Q_NAME, input);
@@ -2013,110 +2130,5 @@ public class QuestFactory implements ConversationAbandonedListener {
         sch.set("use-parties-plugin", usePartiesPluginOpt);
         sch.set("share-progress-level", shareProgressLevelOpt);
         sch.set("require-same-quest", requireSameQuestOpt);
-    }
-
-    private class SelectDeletePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("questDeleteTitle") + "\n";
-            for (Quest quest : plugin.getQuests()) {
-                text += ChatColor.AQUA + quest.getName() + ChatColor.YELLOW + ",";
-            }
-            text = text.substring(0, text.length() - 1) + "\n";
-            text += ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
-            return text;
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                LinkedList<String> used = new LinkedList<String>();
-                Quest found = plugin.getQuest(input);
-                if (found != null) {
-                    for (Quest q : plugin.getQuests()) {
-                        if (q.getRequirements().getNeededQuests().contains(q.getName()) 
-                                || q.getRequirements().getBlockQuests().contains(q.getName())) {
-                            used.add(q.getName());
-                        }
-                    }
-                    if (used.isEmpty()) {
-                        context.setSessionData(CK.ED_QUEST_DELETE, found.getName());
-                        return new DeletePrompt();
-                    } else {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
-                                + Lang.get("questEditorQuestAsRequirement1") + " \"" + ChatColor.DARK_PURPLE 
-                                + context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\" " 
-                                + Lang.get("questEditorQuestAsRequirement2"));
-                        for (String s : used) {
-                            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
-                        }
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
-                                + Lang.get("questEditorQuestAsRequirement3"));
-                        return new SelectDeletePrompt();
-                    }
-                }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questEditorQuestNotFound"));
-                return new SelectDeletePrompt();
-            } else {
-                return new MainMenuPrompt();
-            }
-        }
-    }
-
-    private class DeletePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
-                    + Lang.get("yesWord") + "\n";
-            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
-                    + Lang.get("noWord");
-            return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
-                    + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + ")\n" + text;
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
-                deleteQuest(context);
-                return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new MainMenuPrompt();
-            } else {
-                return new DeletePrompt();
-            }
-        }
-    }
-
-    private void deleteQuest(ConversationContext context) {
-        YamlConfiguration data = new YamlConfiguration();
-        try {
-            data.load(questsFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile"));
-            return;
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile"));
-            return;
-        }
-        String quest = (String) context.getSessionData(CK.ED_QUEST_DELETE);
-        ConfigurationSection sec = data.getConfigurationSection("quests");
-        for (String key : sec.getKeys(false)) {
-            if (sec.getString(key + ".name").equalsIgnoreCase(quest)) {
-                sec.set(key, null);
-                break;
-            }
-        }
-        try {
-            data.save(questsFile);
-        } catch (IOException e) {
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
-            return;
-        }
-        plugin.reloadQuests();
-        context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
     }
 }
