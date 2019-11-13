@@ -745,7 +745,9 @@ public class Quest {
         if (opts.getShareProgressLevel() == 4) {
             List<Quester> mq = q.getMultiplayerQuesters(this);
             for (Quester qq : mq) {
-                completeQuest(qq);
+                if (qq.getQuestData(this) != null) {
+                    completeQuest(qq);
+                }
             }
         }
     }
