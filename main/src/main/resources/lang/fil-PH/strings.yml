@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - Tanggalin ang tapo
 COMMAND_QUESTADMIN_RELOAD: "i-reload"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - I-reload ang lahat ng Pagsusulit"
 questEditorHeader: "Gumawa ng Paghahanap"
-questEditorCreate: "Gumawa ng bagong paghahanap"
 questEditorEdit: "I-edit ang Paghahanap"
 questEditorDelete: "Burahin ang Pagsusulit"
 questEditorName: "Itakda ang pangalan"
