@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - ลบ Quest ท�
 COMMAND_QUESTADMIN_RELOAD: "รีโหลด"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - รีโหลดเควสทั้งหมด"
 questEditorHeader: "สร้างเควส"
-questEditorCreate: "สร้างเควสใหม่"
 questEditorEdit: "แก้ไขการแสวงหา"
 questEditorDelete: "ลบเควส"
 questEditorName: "กำหนดชื่อ"
