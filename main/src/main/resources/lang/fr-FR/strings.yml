@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [joueur] [quest] - Supprimer une quê
 COMMAND_QUESTADMIN_RELOAD: "reload"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Recharger toutes les quêtes"
 questEditorHeader: "Créer une quête"
-questEditorCreate: "Créer une nouvelle quête"
 questEditorEdit: "Modifier une quête"
 questEditorDelete: "Supprimer une quête"
 questEditorName: "Définir le nom"
