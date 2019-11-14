@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] -プレイヤーか�
 COMMAND_QUESTADMIN_RELOAD: "再読み込み"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Questsを再読み込み"
 questEditorHeader: "クエストを作成する"
-questEditorCreate: "新しいクエストを作成する"
 questEditorEdit: "クエストを編集します"
 questEditorDelete: "クエストを削除します"
 questEditorName: "名前を設定"
