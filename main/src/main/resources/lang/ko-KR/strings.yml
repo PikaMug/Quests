@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - 플레이어가 �
 COMMAND_QUESTADMIN_RELOAD: "재 장전하다"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - 플러그인을 안전하게 다시로드."
 questEditorHeader: "퀘스트 생성"
-questEditorCreate: "새로운 퀘스트를 생성합니다."
 questEditorEdit: "퀘스트 수정"
 questEditorDelete: "퀘스트 삭제"
 questEditorName: "이름 설정"
