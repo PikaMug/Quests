@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - Удалить з�
 COMMAND_QUESTADMIN_RELOAD: "reload"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Перезагрузить все квесты"
 questEditorHeader: "Создать квест"
-questEditorCreate: "Создать новый квест"
 questEditorEdit: "Изменить квест"
 questEditorDelete: "Удалить квест"
 questEditorName: "Указать название"
