@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [hráč] [úkol] - Odstraní dokonče
 COMMAND_QUESTADMIN_RELOAD: "reload"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Znovu načte všechny úkoly"
 questEditorHeader: "Vytvořit úkol"
-questEditorCreate: "Vytvořit nový úkol"
 questEditorEdit: "Upravit úkol"
 questEditorDelete: "Smazat úkol"
 questEditorName: "Nastavit jméno"
