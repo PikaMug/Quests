@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - Hapus Quest yang t
 COMMAND_QUESTADMIN_RELOAD: "memuat ulang"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Memuat ulang semua Quests"
 questEditorHeader: "Buat Quest"
-questEditorCreate: "Buat Quest baru"
 questEditorEdit: "Edit sebuah Quest"
 questEditorDelete: "Hapus Quest"
 questEditorName: "Atur nama"
