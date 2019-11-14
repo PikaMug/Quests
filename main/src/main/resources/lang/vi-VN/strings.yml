@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - Loại bỏ một 
 COMMAND_QUESTADMIN_RELOAD: "tảiLại"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Tải lại tất cả các Quest"
 questEditorHeader: "Tạo nhiệm vụ"
-questEditorCreate: "Tạo nhiệm vụ mới"
 questEditorEdit: "Chỉnh sửa một nhiệm vụ"
 questEditorDelete: "Xóa nhiệm vụ"
 questEditorName: "Đặt tên"
