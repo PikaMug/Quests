@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [jugador] [búsqueda] - Remueve una B
 COMMAND_QUESTADMIN_RELOAD: "reload"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Recarga todos los archivos de configuración"
 questEditorHeader: "Crear Misión"
-questEditorCreate: "Crear nueva Misión"
 questEditorEdit: "Editar una Misión"
 questEditorDelete: "Eliminar Misión"
 questEditorName: "Establecer nombre"
