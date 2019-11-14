@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - Remove a completed
 COMMAND_QUESTADMIN_RELOAD: "laeuuesti"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - laadi uuesti kõik questid"
 questEditorHeader: "Tee quest"
-questEditorCreate: "Tee uus quest"
 questEditorEdit: "Muuda questi"
 questEditorDelete: "Kustuta quest"
 questEditorName: "Sea nimi"
