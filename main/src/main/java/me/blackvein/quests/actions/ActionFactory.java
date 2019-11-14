@@ -400,7 +400,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.AQUA + Lang.get("eventEditorCreate") + ChatColor.GOLD + " - " 
+            String text = ChatColor.GOLD + Lang.get("eventEditorCreate") + "\n" + ChatColor.YELLOW
                     + Lang.get("eventEditorEnterEventName");
             return text;
         }
@@ -437,7 +437,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEdit") + " -\n";
             for (Action a : plugin.getActions()) {
-                text += ChatColor.AQUA + a.getName() + ChatColor.YELLOW + ", ";
+                text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ", ";
             }
             text = text.substring(0, text.length() - 2) + "\n";
             text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
@@ -562,7 +562,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("eventEditorDelete") + " -\n";
             for (Action a : plugin.getActions()) {
-                text += ChatColor.AQUA + a.getName() + ChatColor.YELLOW + ",";
+                text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ",";
             }
             text = text.substring(0, text.length() - 1) + "\n";
             text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");

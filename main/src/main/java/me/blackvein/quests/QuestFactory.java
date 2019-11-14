@@ -497,8 +497,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         }
         
         public String getQueryText() {
-            return ChatColor.AQUA + Lang.get("questEditorCreate") + " " + ChatColor.GOLD + "- " 
-                    + Lang.get("questEditorEnterQuestName");
+            return Lang.get("questEditorEnterQuestName");
         }
         
         @Override
@@ -507,7 +506,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     = new QuestsEditorPostOpenSelectCreatePromptEvent(context);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GOLD + getTitle()+ "\n" + getQueryText();
+            String text = ChatColor.GOLD + getTitle()+ "\n" + ChatColor.YELLOW + getQueryText();
             return text;
         }
 
@@ -543,9 +542,9 @@ public class QuestFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String s = ChatColor.GOLD + Lang.get("questEditTitle") + "\n";
             for (Quest q : plugin.getQuests()) {
-                s += ChatColor.GRAY + "- " + ChatColor.YELLOW + q.getName() + "\n";
+                s += ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName() + "\n";
             }
-            return s + ChatColor.GOLD + Lang.get("questEditorEnterQuestName");
+            return s + ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
         }
 
         @Override
@@ -945,7 +944,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("questDeleteTitle") + "\n";
             for (Quest quest : plugin.getQuests()) {
-                text += ChatColor.AQUA + quest.getName() + ChatColor.YELLOW + ",";
+                text += ChatColor.AQUA + quest.getName() + ChatColor.GRAY + ",";
             }
             text = text.substring(0, text.length() - 1) + "\n";
             text += ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
