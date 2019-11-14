@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [spiller] [quest] - Fjerner en fuldf√
 COMMAND_QUESTADMIN_RELOAD: "reload"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Reloader alle Quests"
 questEditorHeader: "Opret Quest"
-questEditorCreate: "Opret ny Quest"
 questEditorEdit: "Redigere en Quest"
 questEditorDelete: "Fjern en Quest"
 questEditorName: "S√¶t navnet"
