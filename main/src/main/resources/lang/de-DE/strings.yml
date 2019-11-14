@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [spieler] [quest] - Entfernt eine abg
 COMMAND_QUESTADMIN_RELOAD: "neuladen"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Alle Quests werden neu geladen"
 questEditorHeader: "Quest erstellen"
-questEditorCreate: "Eine neue Quest erstellen"
 questEditorEdit: "Eine Quest bearbeiten"
 questEditorDelete: "Eine Quest löschen"
 questEditorName: "Name setzen"
