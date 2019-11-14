@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [oyuncu] [görev] - Bir oyuncudan tam
 COMMAND_QUESTADMIN_RELOAD: "yenile"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Güvenli bir biçimde plugini yeniden başlat"
 questEditorHeader: "Görev Oluştur"
-questEditorCreate: "Yeni görev oluştur"
 questEditorEdit: "Bir görevi düzenle"
 questEditorDelete: "Görevi sil"
 questEditorName: "İsim ayarla"
