@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [speler] [quest] - Verwijder een afge
 COMMAND_QUESTADMIN_RELOAD: "herlaad"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Herlaad alle Missies"
 questEditorHeader: "Maak Missie"
-questEditorCreate: "Maak een nieuwe Missie"
 questEditorEdit: "Bewerk een Missie"
 questEditorDelete: "Verwijder Missie"
 questEditorName: "Stel de naam in"
