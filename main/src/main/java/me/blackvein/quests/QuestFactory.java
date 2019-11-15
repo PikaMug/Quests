@@ -47,9 +47,9 @@ import org.bukkit.inventory.ItemStack;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
 import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenCreatePromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenExitPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenMainPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenExitPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenMenuPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenSavePromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenSelectCreatePromptEvent;
 import me.blackvein.quests.prompts.GUIDisplayPrompt;
@@ -82,7 +82,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         questsFile = new File(plugin.getDataFolder(), "quests.yml");
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withFirstPrompt(new MainMenuPrompt()).withTimeout(3600)
+                .withFirstPrompt(new QuestMenuPrompt()).withTimeout(3600)
                 .thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
                 .addConversationAbandonedListener(this);
     }
@@ -142,7 +142,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         selectedReachLocations.remove(player.getUniqueId());
     }
     
-    public class MainMenuPrompt extends NumericPrompt {
+    public class QuestMenuPrompt extends NumericPrompt {
         private final int size = 4;
         
         public int getSize() {
@@ -183,7 +183,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenMainPromptEvent event = new QuestsEditorPostOpenMainPromptEvent(context);
+            QuestsEditorPostOpenMenuPromptEvent event = new QuestsEditorPostOpenMenuPromptEvent(context);
             plugin.getServer().getPluginManager().callEvent(event);
             String text = ChatColor.GOLD + getTitle() + "\n";
             for (int i = 1; i <= size; i++) {
@@ -202,21 +202,21 @@ public class QuestFactory implements ConversationAbandonedListener {
                         return new QuestSelectCreatePrompt();
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                        return new MainMenuPrompt();
+                        return new QuestMenuPrompt();
                     }
                 case 2:
                     if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.edit")) {
                         return new QuestSelectEditPrompt();
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                        return new MainMenuPrompt();
+                        return new QuestMenuPrompt();
                     }
                 case 3:
                     if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.delete")) {
                         return new QuestSelectDeletePrompt();
                     } else {
                         player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                        return new MainMenuPrompt();
+                        return new QuestMenuPrompt();
                     }
                 case 4:
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("exited"));
@@ -228,10 +228,10 @@ public class QuestFactory implements ConversationAbandonedListener {
     }
 
     public Prompt returnToMenu() {
-        return new CreateMenuPrompt();
+        return new QuestMainPrompt();
     }
 
-    public class CreateMenuPrompt extends NumericPrompt {
+    public class QuestMainPrompt extends NumericPrompt {
         private final int size = 15;
         
         public int getSize() {
@@ -426,7 +426,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenCreatePromptEvent event = new QuestsEditorPostOpenCreatePromptEvent(context);
+            QuestsEditorPostOpenMainPromptEvent event = new QuestsEditorPostOpenMainPromptEvent(context);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA) 
@@ -451,7 +451,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     if (plugin.getDependencies().getCitizens() != null) {
                         return new NPCStartPrompt();
                     } else {
-                        return new CreateMenuPrompt();
+                        return new QuestMainPrompt();
                     }
                 case 5:
                     selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
@@ -460,7 +460,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     if (plugin.getDependencies().getWorldGuardApi() != null) {
                         return new RegionPrompt();
                     } else {
-                        return new CreateMenuPrompt();
+                        return new QuestMainPrompt();
                     }
                 case 7:
                     return new InitialActionPrompt();
@@ -468,7 +468,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     if (plugin.getDependencies().getCitizens() != null) {
                         return new GUIDisplayPrompt(plugin, QuestFactory.this);
                     } else {
-                        return new CreateMenuPrompt();
+                        return new QuestMainPrompt();
                     }
                 case 9:
                     return new RequirementsPrompt(plugin, QuestFactory.this);
@@ -529,9 +529,9 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 context.setSessionData(CK.Q_NAME, input);
                 names.add(input);
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             } else {
-                return new MainMenuPrompt();
+                return new QuestMenuPrompt();
             }
         }
     }
@@ -553,11 +553,11 @@ public class QuestFactory implements ConversationAbandonedListener {
                 Quest q = plugin.getQuest(input);
                 if (q != null) {
                     loadQuest(context, q);
-                    return new CreateMenuPrompt();
+                    return new QuestMainPrompt();
                 }
                 return new QuestSelectEditPrompt();
             } else {
-                return new MainMenuPrompt();
+                return new QuestMenuPrompt();
             }
         }
     }
@@ -982,7 +982,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questEditorQuestNotFound"));
                 return new QuestSelectDeletePrompt();
             } else {
-                return new MainMenuPrompt();
+                return new QuestMenuPrompt();
             }
         }
     }
@@ -1005,7 +1005,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 deleteQuest(context);
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new MainMenuPrompt();
+                return new QuestMenuPrompt();
             } else {
                 return new QuestConfirmDeletePrompt();
             }
@@ -1077,7 +1077,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.setSessionData(CK.Q_NAME, input);
                 names.add(input);
             }
-            return new CreateMenuPrompt();
+            return new QuestMainPrompt();
         }
     }
 
@@ -1095,12 +1095,12 @@ public class QuestFactory implements ConversationAbandonedListener {
                     if (context.getSessionData(CK.Q_ASK_MESSAGE) != null) {
                         context.setSessionData(CK.Q_ASK_MESSAGE, context.getSessionData(CK.Q_ASK_MESSAGE) + " " 
                                 + input.substring(2));
-                        return new CreateMenuPrompt();
+                        return new QuestMainPrompt();
                     }
                 }
                 context.setSessionData(CK.Q_ASK_MESSAGE, input);
             }
-            return new CreateMenuPrompt();
+            return new QuestMainPrompt();
         }
     }
 
@@ -1118,12 +1118,12 @@ public class QuestFactory implements ConversationAbandonedListener {
                     if (context.getSessionData(CK.Q_FINISH_MESSAGE) != null) {
                         context.setSessionData(CK.Q_FINISH_MESSAGE, context.getSessionData(CK.Q_FINISH_MESSAGE) + " " 
                                 + input.substring(2));
-                        return new CreateMenuPrompt();
+                        return new QuestMainPrompt();
                     }
                 }
                 context.setSessionData(CK.Q_FINISH_MESSAGE, input);
             }
-            return new CreateMenuPrompt();
+            return new QuestMainPrompt();
         }
     }
 
@@ -1149,7 +1149,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                         }
                         context.setSessionData(CK.Q_START_NPC, i);
                         selectingNpcs.remove((Player) context.getForWhom());
-                        return new CreateMenuPrompt();
+                        return new QuestMainPrompt();
                     }
                 } catch (NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED 
@@ -1160,7 +1160,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.setSessionData(CK.Q_START_NPC, null);
             }
             selectingNpcs.remove((Player) context.getForWhom());
-            return new CreateMenuPrompt();
+            return new QuestMainPrompt();
         }
     }
 
@@ -1188,11 +1188,11 @@ public class QuestFactory implements ConversationAbandonedListener {
                 } else {
                     selectedBlockStarts.remove(player.getUniqueId());
                 }
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 selectedBlockStarts.remove(player.getUniqueId());
                 context.setSessionData(CK.Q_START_BLOCK, null);
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             }
             return new BlockStartPrompt();
         }
@@ -1249,14 +1249,14 @@ public class QuestFactory implements ConversationAbandonedListener {
                     return new RegionPrompt();
                 } else {
                     context.setSessionData(CK.Q_REGION, found);
-                    return new CreateMenuPrompt();
+                    return new QuestMainPrompt();
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.Q_REGION, null);
                 player.sendMessage(ChatColor.YELLOW + Lang.get("questWGRegionCleared"));
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             } else {
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             }
         }
     }
@@ -1284,7 +1284,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 Action a = plugin.getAction(input);
                 if (a != null) {
                     context.setSessionData(CK.Q_INITIAL_EVENT, a.getName());
-                    return new CreateMenuPrompt();
+                    return new QuestMainPrompt();
                 }
                 player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
                         + Lang.get("questEditorInvalidEventName"));
@@ -1292,9 +1292,9 @@ public class QuestFactory implements ConversationAbandonedListener {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.Q_INITIAL_EVENT, null);
                 player.sendMessage(ChatColor.YELLOW + Lang.get("questEditorEventCleared"));
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             } else {
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             }
         }
     }
@@ -1352,13 +1352,13 @@ public class QuestFactory implements ConversationAbandonedListener {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedAskMessage"));
-                    return new CreateMenuPrompt();
+                    return new QuestMainPrompt();
                 } else if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedFinishMessage"));
-                    return new CreateMenuPrompt();
+                    return new QuestMainPrompt();
                 } else if (new StagesPrompt(plugin, QuestFactory.this).getStages(context) == 0) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedStages"));
-                    return new CreateMenuPrompt();
+                    return new QuestMainPrompt();
                 }
                 FileConfiguration data = new YamlConfiguration();
                 try {
@@ -1388,7 +1388,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             } else {
                 return new SavePrompt();
             }
@@ -1448,7 +1448,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.getForWhom().sendRawMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + Lang.get("exited"));
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new CreateMenuPrompt();
+                return new QuestMainPrompt();
             } else {
                 return new ExitPrompt();
             }

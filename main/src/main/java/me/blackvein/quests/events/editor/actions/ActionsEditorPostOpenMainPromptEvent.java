@@ -1,12 +1,12 @@
-package me.blackvein.quests.events.editor.quests;
+package me.blackvein.quests.events.editor.actions;
 
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
-public class QuestsEditorPostOpenCreatePromptEvent extends QuestsEditorEvent {
+public class ActionsEditorPostOpenMainPromptEvent extends ActionsEditorEvent {
     private static final HandlerList handlers = new HandlerList();
 
-    public QuestsEditorPostOpenCreatePromptEvent(ConversationContext context) {
+    public ActionsEditorPostOpenMainPromptEvent(ConversationContext context) {
         super(context);
         this.context = context;
     }
