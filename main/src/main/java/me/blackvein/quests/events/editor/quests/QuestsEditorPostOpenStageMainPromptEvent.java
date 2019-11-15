@@ -5,18 +5,24 @@ import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.QuestFactory;
 
-public class QuestsEditorPostOpenStagesPromptEvent extends QuestsEditorEvent {
+public class QuestsEditorPostOpenStageMainPromptEvent extends QuestsEditorEvent {
     private static final HandlerList handlers = new HandlerList();
     private final QuestFactory factory;
+    private final int stageNum;
 
-    public QuestsEditorPostOpenStagesPromptEvent(QuestFactory factory, ConversationContext context) {
+    public QuestsEditorPostOpenStageMainPromptEvent(QuestFactory factory, int stageNum, ConversationContext context) {
         super(context);
         this.context = context;
         this.factory = factory;
+        this.stageNum = stageNum;
     }
     
     public QuestFactory getQuestFactory() {
         return factory;
+    }
+    
+    public int getStageNumber() {
+        return stageNum;
     }
 
     @Override

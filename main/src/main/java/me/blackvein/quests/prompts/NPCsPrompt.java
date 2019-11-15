@@ -127,25 +127,25 @@ public class NPCsPrompt extends FixedSetPrompt {
                 return new DeliveryListPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         } else if (input.equalsIgnoreCase("2")) {
             if (plugin.getDependencies().getCitizens() != null) {
                 return new NPCIDsToTalkToPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         } else if (input.equalsIgnoreCase("3")) {
             if (plugin.getDependencies().getCitizens() != null) {
                 return new NPCKillListPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         }
         try {
-            return new CreateStagePrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, questFactory);
         } catch (Exception e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;
@@ -390,7 +390,7 @@ public class NPCsPrompt extends FixedSetPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, null);
             }
-            return new CreateStagePrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, questFactory);
         }
     }
 
@@ -469,7 +469,7 @@ public class NPCsPrompt extends FixedSetPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new NPCKillListPrompt();

@@ -19,17 +19,17 @@ import org.bukkit.conversations.Prompt;
 
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStagesPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStageMenuPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
-public class StagesPrompt extends NumericPrompt {
+public class StageMenuPrompt extends NumericPrompt {
 
     private final Quests plugin;
     private final QuestFactory questFactory;
     private int size = 2;
 
-    public StagesPrompt(Quests plugin, QuestFactory qf) {
+    public StageMenuPrompt(Quests plugin, QuestFactory qf) {
         this.plugin = plugin;
         questFactory = qf;
     }
@@ -72,7 +72,7 @@ public class StagesPrompt extends NumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenStagesPromptEvent event = new QuestsEditorPostOpenStagesPromptEvent(questFactory, context);
+        QuestsEditorPostOpenStageMenuPromptEvent event = new QuestsEditorPostOpenStageMenuPromptEvent(questFactory, context);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.LIGHT_PURPLE + "- " + getTitle() + " -\n";
@@ -89,14 +89,14 @@ public class StagesPrompt extends NumericPrompt {
         int stages = getStages(context);
         if (i > 0) {
             if (i < (stages + 1) && i > 0) {
-                return new CreateStagePrompt(plugin, (i), questFactory);
+                return new StageMainPrompt(plugin, (i), questFactory);
             } else if (i == (stages + 1)) {
-                return new CreateStagePrompt(plugin, (stages + 1), questFactory);
+                return new StageMainPrompt(plugin, (stages + 1), questFactory);
             } else if (i == (stages + 2)) {
                 return questFactory.returnToMenu();
             }
         }
-        return new StagesPrompt(plugin, questFactory);
+        return new StageMenuPrompt(plugin, questFactory);
     }
 
     public int getStages(ConversationContext context) {

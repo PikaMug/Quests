@@ -131,7 +131,7 @@ public class BlocksPrompt extends FixedSetPrompt {
             return new CutBlockListPrompt();
         }
         try {
-            return new CreateStagePrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, questFactory);
         } catch (Exception e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;

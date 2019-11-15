@@ -57,7 +57,7 @@ import me.blackvein.quests.prompts.OptionsPrompt;
 import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.PlannerPrompt;
-import me.blackvein.quests.prompts.StagesPrompt;
+import me.blackvein.quests.prompts.StageMenuPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
@@ -475,7 +475,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 case 10:
                     return new PlannerPrompt(plugin, QuestFactory.this);
                 case 11:
-                    return new StagesPrompt(plugin, QuestFactory.this);
+                    return new StageMenuPrompt(plugin, QuestFactory.this);
                 case 12:
                     return new RewardsPrompt(plugin, QuestFactory.this);
                 case 13:
@@ -1356,7 +1356,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 } else if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedFinishMessage"));
                     return new QuestMainPrompt();
-                } else if (new StagesPrompt(plugin, QuestFactory.this).getStages(context) == 0) {
+                } else if (new StageMenuPrompt(plugin, QuestFactory.this).getStages(context) == 0) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedStages"));
                     return new QuestMainPrompt();
                 }
@@ -1754,7 +1754,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         String delayMessage;
         String startMessage;
         String completeMessage;
-        for (int i = 1; i <= new StagesPrompt(plugin, this).getStages(cc); i++) {
+        for (int i = 1; i <= new StageMenuPrompt(plugin, this).getStages(cc); i++) {
             pref = "stage" + i;
             ConfigurationSection stage = ordered.createSection("" + i);
             breakNames = null;

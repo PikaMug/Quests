@@ -138,7 +138,7 @@ public class MobsPrompt extends FixedSetPrompt {
             return new ShearListPrompt();
         }
         try {
-            return new CreateStagePrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, questFactory);
         } catch (Exception e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;
@@ -302,13 +302,13 @@ public class MobsPrompt extends FixedSetPrompt {
                 if (one == two) {
                     if (three != 0 || four != 0 || five != 0) {
                         if (two == three && three == four && four == five) {
-                            return new CreateStagePrompt(plugin, stageNum, questFactory);
+                            return new StageMainPrompt(plugin, stageNum, questFactory);
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                             return new MobListPrompt();
                         }
                     } else {
-                        return new CreateStagePrompt(plugin, stageNum, questFactory);
+                        return new StageMainPrompt(plugin, stageNum, questFactory);
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
@@ -540,7 +540,7 @@ public class MobsPrompt extends FixedSetPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_FISH, null);
             }
-            return new CreateStagePrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, questFactory);
         }
     }
     
@@ -617,7 +617,7 @@ public class MobsPrompt extends FixedSetPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new TameListPrompt();
@@ -787,7 +787,7 @@ public class MobsPrompt extends FixedSetPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new ShearListPrompt();

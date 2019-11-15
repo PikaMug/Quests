@@ -34,13 +34,13 @@ import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenCreateStagePromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStageMainPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-public class CreateStagePrompt extends NumericPrompt {
+public class StageMainPrompt extends NumericPrompt {
 
     private final Quests plugin;
     private final int stageNum;
@@ -49,7 +49,7 @@ public class CreateStagePrompt extends NumericPrompt {
     private boolean hasObjective = false;
     private final int size = 17;
 
-    public CreateStagePrompt(Quests plugin, int stageNum, QuestFactory qf) {
+    public StageMainPrompt(Quests plugin, int stageNum, QuestFactory qf) {
         this.plugin = plugin;
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
@@ -401,8 +401,8 @@ public class CreateStagePrompt extends NumericPrompt {
         context.setSessionData(pref, Boolean.TRUE);
         checkObjective(context);
         
-        QuestsEditorPostOpenCreateStagePromptEvent event 
-                = new QuestsEditorPostOpenCreateStagePromptEvent(questFactory, stageNum, context);
+        QuestsEditorPostOpenStageMainPromptEvent event 
+                = new QuestsEditorPostOpenStageMainPromptEvent(questFactory, stageNum, context);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.AQUA 
@@ -438,32 +438,32 @@ public class CreateStagePrompt extends NumericPrompt {
                     return new EventListPrompt();
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
             case 10:
                 if (hasObjective) {
                     return new DelayPrompt();
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
             case 11:
                 if (context.getSessionData(pref + CK.S_DELAY) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDelaySet"));
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 } else {
                     return new DelayMessagePrompt();
                 }
             case 12:
                 if (plugin.getDependencies().getDenizenAPI() == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDenizen"));
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 } else {
                     if (hasObjective) {
                         return new DenizenPrompt();
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                        return new CreateStagePrompt(plugin, stageNum, questFactory);
+                        return new StageMainPrompt(plugin, stageNum, questFactory);
                     }
                 }
             case 13:
@@ -471,28 +471,28 @@ public class CreateStagePrompt extends NumericPrompt {
                     return new StartMessagePrompt();
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
             case 14:
                 if (hasObjective) {
                     return new CompleteMessagePrompt();
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
             case 15:
                 if (hasObjective) {
                     return new OverrideDisplayPrompt();
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
             case 16:
                 return new DeletePrompt();
             case 17:
-                return new StagesPrompt(plugin, questFactory);
+                return new StageMenuPrompt(plugin, questFactory);
             default:
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
         }
     }
     
@@ -616,7 +616,7 @@ public class CreateStagePrompt extends NumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new PasswordListPrompt();
@@ -713,7 +713,7 @@ public class CreateStagePrompt extends NumericPrompt {
                 context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveOverrideCleared"));
             }
-            return new CreateStagePrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, questFactory);
         }
     }
 
@@ -744,7 +744,7 @@ public class CreateStagePrompt extends NumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_PLAYER_KILL, null);
             }
-            return new CreateStagePrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, questFactory);
         }
     }
 
@@ -850,7 +850,7 @@ public class CreateStagePrompt extends NumericPrompt {
                     three = 0;
                 }
                 if (one == two && two == three) {
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new ReachListPrompt();
@@ -1061,7 +1061,7 @@ public class CreateStagePrompt extends NumericPrompt {
             } else if (input.equalsIgnoreCase("6")) {
                 return new CommandEventPrompt();
             } else if (input.equalsIgnoreCase("7")) {
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else {
                 return new EventListPrompt();
             }
@@ -1451,12 +1451,12 @@ public class CreateStagePrompt extends NumericPrompt {
         public Prompt acceptInput(ConversationContext context, String input) {
             Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
             if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_DELAY, null);
                 player.sendMessage(ChatColor.GREEN + Lang.get("stageEditorDelayCleared"));
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
             long stageDelay;
             try {
@@ -1471,7 +1471,7 @@ public class CreateStagePrompt extends NumericPrompt {
                 return new DelayPrompt();
             } else {
                 context.setSessionData(pref + CK.S_DELAY, stageDelay);
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         }
     }
@@ -1489,11 +1489,11 @@ public class CreateStagePrompt extends NumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 context.setSessionData(pref + CK.S_DELAY_MESSAGE, input);
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_DELAY_MESSAGE, null);
                 player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorMessageCleared"));
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else {
                 return new DelayMessagePrompt();
             }
@@ -1518,7 +1518,7 @@ public class CreateStagePrompt extends NumericPrompt {
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 if (plugin.getDependencies().getDenizenAPI().containsScript(input)) {
                     context.setSessionData(pref + CK.S_DENIZEN, input.toUpperCase());
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidScript"));
                     return new DenizenPrompt();
@@ -1526,9 +1526,9 @@ public class CreateStagePrompt extends NumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_DENIZEN, null);
                 player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDenizenCleared"));
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else {
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         }
     }
@@ -1550,11 +1550,11 @@ public class CreateStagePrompt extends NumericPrompt {
         public Prompt acceptInput(ConversationContext context, String input) {
             Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("Yes")) {
-                new StagesPrompt(plugin, questFactory).deleteStage(context, stageNum);
+                new StageMenuPrompt(plugin, questFactory).deleteStage(context, stageNum);
                 player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDeleteSucces"));
-                return new StagesPrompt(plugin, questFactory);
+                return new StageMenuPrompt(plugin, questFactory);
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("No")) {
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new DeletePrompt();
@@ -1575,13 +1575,13 @@ public class CreateStagePrompt extends NumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 context.setSessionData(pref + CK.S_START_MESSAGE, input);
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_START_MESSAGE, null);
                 player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorMessageCleared"));
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else {
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         }
     }
@@ -1599,13 +1599,13 @@ public class CreateStagePrompt extends NumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, input);
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, null);
                 player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorMessageCleared"));
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             } else {
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         }
     }
@@ -1700,7 +1700,7 @@ public class CreateStagePrompt extends NumericPrompt {
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorCustomCleared"));
             }
-            return new CreateStagePrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, questFactory);
         }
     }
 
@@ -1747,7 +1747,7 @@ public class CreateStagePrompt extends NumericPrompt {
                     context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.getDescriptions());
                     return new ObjectiveCustomDataListPrompt();
                 } else {
-                    return new CreateStagePrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
             } catch (NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
@@ -1841,7 +1841,7 @@ public class CreateStagePrompt extends NumericPrompt {
                     }
                 }
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, null);
-                return new CreateStagePrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         }
     }
