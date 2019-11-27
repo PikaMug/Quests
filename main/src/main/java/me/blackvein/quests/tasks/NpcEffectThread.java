@@ -61,6 +61,9 @@ public class NpcEffectThread implements Runnable {
      * @param effectType Value of EnumParticle such as NOTE or SMOKE
      */
     public void showEffect(Player player, NPC npc, String effectType) {
+        if (player == null || npc == null) {
+            return;
+        }
         if (plugin.getDependencies().getCitizens() != null) {
             Location eyeLoc = npc.getEntity().getLocation();
             eyeLoc.setY(eyeLoc.getY() + 1.5);
