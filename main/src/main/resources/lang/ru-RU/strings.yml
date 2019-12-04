@@ -191,7 +191,7 @@ stageEditorCustomAlreadyAdded: "Эта пользовательская цель
 stageEditorCustomCleared: "Пользовательские цели очищены."
 stageEditorCustomDataPrompt: "Введите значение для <data>:"
 stageEditorEnterBlockNames: "Введите названия блоков, <space>, <cancel>"
-stageEditorEnterBlockAmounts: "Enter block amounts, <space>, <cancel>"
+stageEditorEnterBlockAmounts: "Введите количество блоков, <space>, <cancel>"
 stageEditorEnterBlockDurability: "Введите прочность блока (числа), <space>, <cancel>"
 stageEditorCatchFishPrompt: "Введите количество рыбы, которую необходимо поймать, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "Введите количество игроков, которых необходимо убить, <clear>, <cancel>"
