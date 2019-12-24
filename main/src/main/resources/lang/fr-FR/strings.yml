@@ -2,7 +2,7 @@
 COMMAND_LIST: "liste"
 COMMAND_LIST_HELP: "<command> [page] - Liste des quêtes disponibles"
 COMMAND_TAKE: "prendre"
-COMMAND_TAKE_HELP: "<command> [quest] - Accepte la quête"
+COMMAND_TAKE_HELP: "<command> [quest] - Accepter une quête via une commande"
 COMMAND_TAKE_USAGE: "/quests take [quest]"
 COMMAND_QUIT: "quittez"
 COMMAND_QUIT_HELP: "<command> [quest] - Quitte une quête actuelle"
