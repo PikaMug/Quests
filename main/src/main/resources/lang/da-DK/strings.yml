@@ -191,7 +191,7 @@ stageEditorCustomAlreadyAdded: "Dette håndlavede objekt er allerede blevet tilf
 stageEditorCustomCleared: "Håndlavede objekt ryddet."
 stageEditorCustomDataPrompt: "Skriv værdien for <data>:"
 stageEditorEnterBlockNames: "Skriv blok navne, <space>, <cancel>"
-stageEditorEnterBlockAmounts: "Enter block amounts, <space>, <cancel>"
+stageEditorEnterBlockAmounts: "Skriv blok mængde, <space>, <cancel>"
 stageEditorEnterBlockDurability: "Skriv blok holdbarhed (i tal), <space>, <cancel>"
 stageEditorCatchFishPrompt: "Indtast antal fisk man skal fange, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "Skriv antal spillere man skal dræbe, <clear>, <cancel>"
