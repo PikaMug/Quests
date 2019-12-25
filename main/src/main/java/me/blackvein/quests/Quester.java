@@ -53,6 +53,7 @@ import com.alessiodp.parties.api.interfaces.Party;
 import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.events.quest.QuestTakeEvent;
 import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
+import me.blackvein.quests.events.quester.QuesterPreOpenGUIEvent;
 import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.tasks.StageTimer;
 import me.blackvein.quests.util.ConfigUtil;
@@ -3182,6 +3183,14 @@ public class Quester {
      * @param quests List of quests to use for displaying items
      */
     public void showGUIDisplay(NPC npc, LinkedList<Quest> quests) {
+        if (npc == null || quests == null) {
+            return;
+        }
+        QuesterPreOpenGUIEvent preEvent = new QuesterPreOpenGUIEvent(this, npc, quests);
+        plugin.getServer().getPluginManager().callEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
         Player player = getPlayer();
         int size = ((quests.size() / 9) + 1) * 9;
         Inventory inv = Bukkit.getServer().createInventory(player, size, Lang.get(player, "quests") + " | " 
