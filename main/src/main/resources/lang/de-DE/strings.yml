@@ -191,7 +191,7 @@ stageEditorCustomAlreadyAdded: "Dieses benutzerdefinierte Ziel wurde bereits hin
 stageEditorCustomCleared: "Benutzerdefinierte Ziele gelöscht."
 stageEditorCustomDataPrompt: "Geben Sie den Wert für <data> ein:"
 stageEditorEnterBlockNames: "Gib den Blocknamen ein, <space>, <cancel>"
-stageEditorEnterBlockAmounts: "Enter block amounts, <space>, <cancel>"
+stageEditorEnterBlockAmounts: "Gib den Blockmenge ein, <space>, <cancel>"
 stageEditorEnterBlockDurability: "Gib die Blockhaltbarkeit (zahlen) ein, <space>, <cancel>"
 stageEditorCatchFishPrompt: "Gib die Anzahl der Fische an die gefangen werden müssen, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "Gib die Anzahl Spieler die getötet werden müssen, <clear>, <cancel>"
