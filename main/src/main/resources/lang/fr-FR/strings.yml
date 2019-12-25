@@ -191,7 +191,7 @@ stageEditorCustomAlreadyAdded: "Cet objectif customisé a déjà été ajouté !
 stageEditorCustomCleared: "Objectifs personnalisés effacés."
 stageEditorCustomDataPrompt: "Entrez la valeur pour <data> :"
 stageEditorEnterBlockNames: "Entrez les noms de blocs, <space>, <cancel>"
-stageEditorEnterBlockAmounts: "Enter block amounts, <space>, <cancel>"
+stageEditorEnterBlockAmounts: "Entrez les noms de nombre, <space>, <cancel>"
 stageEditorEnterBlockDurability: "Entrez la durabilité du bloc (nombres), <space>, <cancel>"
 stageEditorCatchFishPrompt: "Entrez le nombre de poisson à pêcher, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "Entrez le nombre de joueurs à tuer, <clear>, <cancel>"
