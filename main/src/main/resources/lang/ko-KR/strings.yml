@@ -191,7 +191,7 @@ stageEditorCustomAlreadyAdded: "그 커스텀 목표는 이미 추가되었습�
 stageEditorCustomCleared: "사용자 정의 목표가 삭제되었습니다."
 stageEditorCustomDataPrompt: "값 입력 <data>:"
 stageEditorEnterBlockNames: "블록 이름 입력, <space>, <cancel>"
-stageEditorEnterBlockAmounts: "Enter block amounts, <space>, <cancel>"
+stageEditorEnterBlockAmounts: "블록 금액을 입력, <space>, <cancel>"
 stageEditorEnterBlockDurability: "블록 내구량 입력 (숫자), <space>, <cancel>"
 stageEditorCatchFishPrompt: "물고기 잡을 수량 입력, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "죽이려는 플레이어 수를 입력하십시오, <clear>, <cancel>"
