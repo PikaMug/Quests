@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [玩家] [任务名] - 移除玩家�
 COMMAND_QUESTADMIN_RELOAD: "重新加载"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - 重载所有任务"
 questEditorHeader: "创建任务"
-questEditorCreate: "创建新任务"
 questEditorEdit: "编辑任务"
 questEditorDelete: "删除任务"
 questEditorName: "设置名称"

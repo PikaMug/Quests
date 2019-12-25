@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - Remove a completed
 COMMAND_QUESTADMIN_RELOAD: "reîncărcare"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Reload all Quests"
 questEditorHeader: "Crează Quest"
-questEditorCreate: "Crează Quest nou"
 questEditorEdit: "Editează un Quest"
 questEditorDelete: "Ştergeţi Quest"
 questEditorName: "Setează nume"

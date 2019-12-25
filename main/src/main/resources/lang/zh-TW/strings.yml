@@ -50,7 +50,6 @@ COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - 移除玩家已完
 COMMAND_QUESTADMIN_RELOAD: "重新載入"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - 重新載入所有任務"
 questEditorHeader: "創建任務"
-questEditorCreate: "創建新的任務"
 questEditorEdit: "編輯任務"
 questEditorDelete: "刪除任務"
 questEditorName: "設定名稱"
