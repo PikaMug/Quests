@@ -2463,7 +2463,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                                     oStage.itemsToDeliver.add(stack);
                                                     oStage.itemDeliveryTargets.add(npcId);
                                                     oStage.deliverMessages.addAll(deliveryMessages);
-                                                    ItemStack s = oStage.itemsToDeliver.get(index-1);
                                                 } else {
                                                     stageFailed("Citizens was not installed for ID " + npcId 
                                                             + " inside npc-delivery-ids: inside Stage " + s2 
