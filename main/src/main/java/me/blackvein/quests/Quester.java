@@ -2984,9 +2984,11 @@ public class Quester {
                     int index = 0;
                     for (int amt : deliveryAmounts) {
                         ItemStack is = getCurrentStage(quest).itemsToDeliver.get(index);
-                        is.setAmount(amt);
+                        ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
+                        temp.addEnchantments(is.getEnchantments());
+                        temp.setItemMeta(is.getItemMeta());
                         if (getQuestData(quest).itemsDelivered.size() > 0) {
-                            getQuestData(quest).itemsDelivered.set(index, is);
+                            getQuestData(quest).itemsDelivered.set(index, temp);
                         }
                         index++;
                     }
