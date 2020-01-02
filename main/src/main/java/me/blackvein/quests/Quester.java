@@ -2325,7 +2325,12 @@ public class Quester {
         if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
             for (ItemStack i : quest.getStage(stage).itemsToDeliver) {
                 ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                temp.addEnchantments(i.getEnchantments());
+                try {
+                    temp.addEnchantments(i.getEnchantments());
+                } catch (Exception e) {
+                    plugin.getLogger().warning("Unable to add enchantment(s) " + i.getEnchantments().toString()
+                            + " to delivery item " + i.getType().name() + " x 0 for quest " + quest.getName());
+                }
                 temp.setItemMeta(i.getItemMeta());
                 data.itemsDelivered.add(temp);
             }
@@ -2985,7 +2990,13 @@ public class Quester {
                     for (int amt : deliveryAmounts) {
                         ItemStack is = getCurrentStage(quest).itemsToDeliver.get(index);
                         ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
-                        temp.addEnchantments(is.getEnchantments());
+                        try {
+                            temp.addEnchantments(is.getEnchantments());
+                        } catch (Exception e) {
+                            plugin.getLogger().warning("Unable to add enchantment(s) " + is.getEnchantments().toString()
+                                    + " to delivery item " + is.getType().name() + " x " + amt + " for quest " 
+                                    + quest.getName());
+                        }
                         temp.setItemMeta(is.getItemMeta());
                         if (getQuestData(quest).itemsDelivered.size() > 0) {
                             getQuestData(quest).itemsDelivered.set(index, temp);
