@@ -885,34 +885,34 @@ public class QuestFactory implements ConversationAbandonedListener {
                 cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
                 cc.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
             }
-            if (stage.startEvent != null) {
-                cc.setSessionData(pref + CK.S_START_EVENT, stage.startEvent.getName());
+            if (stage.startAction != null) {
+                cc.setSessionData(pref + CK.S_START_EVENT, stage.startAction.getName());
             }
-            if (stage.finishEvent != null) {
-                cc.setSessionData(pref + CK.S_FINISH_EVENT, stage.finishEvent.getName());
+            if (stage.finishAction != null) {
+                cc.setSessionData(pref + CK.S_FINISH_EVENT, stage.finishAction.getName());
             }
-            if (stage.deathEvent != null) {
-                cc.setSessionData(pref + CK.S_DEATH_EVENT, stage.deathEvent.getName());
+            if (stage.deathAction != null) {
+                cc.setSessionData(pref + CK.S_DEATH_EVENT, stage.deathAction.getName());
             }
-            if (stage.disconnectEvent != null) {
-                cc.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.disconnectEvent.getName());
+            if (stage.disconnectAction != null) {
+                cc.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.disconnectAction.getName());
             }
-            if (stage.chatEvents != null) {
+            if (stage.chatActions != null) {
                 LinkedList<String> chatEvents = new LinkedList<String>();
                 LinkedList<String> chatEventTriggers = new LinkedList<String>();
-                for (String s : stage.chatEvents.keySet()) {
+                for (String s : stage.chatActions.keySet()) {
                     chatEventTriggers.add(s);
-                    chatEvents.add(stage.chatEvents.get(s).getName());
+                    chatEvents.add(stage.chatActions.get(s).getName());
                 }
                 cc.setSessionData(pref + CK.S_CHAT_EVENTS, chatEvents);
                 cc.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
             }
-            if (stage.commandEvents != null) {
+            if (stage.commandActions != null) {
                 LinkedList<String> commandEvents = new LinkedList<String>();
                 LinkedList<String> commandEventTriggers = new LinkedList<String>();
-                for (String s : stage.commandEvents.keySet()) {
+                for (String s : stage.commandActions.keySet()) {
                     commandEventTriggers.add(s);
-                    commandEvents.add(stage.commandEvents.get(s).getName());
+                    commandEvents.add(stage.commandActions.get(s).getName());
                 }
                 cc.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
                 cc.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);

@@ -208,8 +208,8 @@ public class Quest {
             quester.findCompassTarget();
         }
         if (currentStage.delay < 0) {
-            if (currentStage.finishEvent != null) {
-                currentStage.finishEvent.fire(quester, this);
+            if (currentStage.finishAction != null) {
+                currentStage.finishAction.fire(quester, this);
             }
             if (quester.currentQuests.get(this) == (orderedStages.size() - 1)) {
                 if (currentStage.script != null) {
@@ -266,8 +266,8 @@ public class Quest {
         if (currentStage.script != null) {
             plugin.getDenizenTrigger().runDenizenScript(currentStage.script, quester);
         }
-        if (nextStage.startEvent != null) {
-            nextStage.startEvent.fire(quester, this);
+        if (nextStage.startAction != null) {
+            nextStage.startAction.fire(quester, this);
         }
         updateCompass(quester, nextStage);
         String msg = Lang.get(quester.getPlayer(), "questObjectivesTitle");

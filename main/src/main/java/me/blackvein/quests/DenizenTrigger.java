@@ -18,7 +18,7 @@ public class DenizenTrigger {
     public DenizenTrigger(Quests plugin) {
         this.plugin = plugin;
     }
-    protected boolean runDenizenScript(String scriptName, Quester quester) {
+    public boolean runDenizenScript(String scriptName, Quester quester) {
         if (scriptName == null) {
             return false;
         }

@@ -254,7 +254,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
     
     public class ActionMainPrompt extends NumericPrompt {
-        private final int size = 9;
+        private final int size = 10;
         
         public int getSize() {
             return size;
@@ -273,10 +273,16 @@ public class ActionFactory implements ConversationAbandonedListener {
                 case 5:
                 case 6:
                 case 7:
-                    return ChatColor.BLUE;
+                    if (plugin.getDependencies().getDenizenAPI() == null) {
+                        return ChatColor.GRAY;
+                    } else {
+                        return ChatColor.BLUE;
+                    }
                 case 8:
-                    return ChatColor.GREEN;
+                    return ChatColor.BLUE;
                 case 9:
+                    return ChatColor.GREEN;
+                case 10:
                     return ChatColor.RED;
                 default:
                     return null;
@@ -298,10 +304,16 @@ public class ActionFactory implements ConversationAbandonedListener {
                 case 6:
                     return ChatColor.YELLOW + Lang.get("eventEditorSetMobSpawns");
                 case 7:
-                    return ChatColor.YELLOW + Lang.get("eventEditorFailQuest") + ":";
+                    if (plugin.getDependencies().getDenizenAPI() == null) {
+                        return ChatColor.GRAY + Lang.get("stageEditorDenizenScript");
+                    } else {
+                        return ChatColor.YELLOW + Lang.get("stageEditorDenizenScript");
+                    }
                 case 8:
-                    return ChatColor.GREEN + Lang.get("save");
+                    return ChatColor.YELLOW + Lang.get("eventEditorFailQuest") + ":";
                 case 9:
+                    return ChatColor.GREEN + Lang.get("save");
+                case 10:
                     return ChatColor.RED + Lang.get("exit");
                 default:
                     return null;
@@ -333,12 +345,23 @@ public class ActionFactory implements ConversationAbandonedListener {
                         return text;
                     }
                 case 7:
+                    if (plugin.getDependencies().getDenizenAPI() == null) {
+                        return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+                    } else {
+                        if (context.getSessionData(CK.E_DENIZEN) == null) {
+                            return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                        } else {
+                            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_DENIZEN) 
+                                    + ChatColor.GRAY + ")";
+                        }
+                    }
+                case 8:
                     if (context.getSessionData(CK.E_FAIL_QUEST) == null) {
                         context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
                     }
                     return "" + ChatColor.AQUA + context.getSessionData(CK.E_FAIL_QUEST);
-                case 8:
                 case 9:
+                case 10:
                     return "";
                 default:
                     return null;
@@ -375,6 +398,8 @@ public class ActionFactory implements ConversationAbandonedListener {
             case 6:
                 return new MobPrompt();
             case 7:
+                return new DenizenPrompt();
+            case 8:
                 String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
                 if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                     context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
@@ -382,13 +407,13 @@ public class ActionFactory implements ConversationAbandonedListener {
                     context.setSessionData(CK.E_FAIL_QUEST, Lang.get("yesWord"));
                 }
                 return new ActionMainPrompt();
-            case 8:
+            case 9:
                 if (context.getSessionData(CK.E_OLD_EVENT) != null) {
                     return new SavePrompt((String) context.getSessionData(CK.E_OLD_EVENT));
                 } else {
                     return new SavePrompt(null);
                 }
-            case 9:
+            case 10:
                 return new ExitPrompt();
             default:
                 return null;
@@ -577,8 +602,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 if (a != null) {
                     for (Quest quest : plugin.getQuests()) {
                         for (Stage stage : quest.getStages()) {
-                            if (stage.getFinishEvent() != null 
-                                    && stage.getFinishEvent().getName().equalsIgnoreCase(a.getName())) {
+                            if (stage.getFinishAction() != null 
+                                    && stage.getFinishAction().getName().equalsIgnoreCase(a.getName())) {
                                 used.add(quest.getName());
                                 break;
                             }
@@ -945,8 +970,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                 modName = modifiedName;
                 for (Quest q : plugin.getQuests()) {
                     for (Stage s : q.getStages()) {
-                        if (s.getFinishEvent() != null && s.getFinishEvent().getName() != null) {
-                            if (s.getFinishEvent().getName().equalsIgnoreCase(modifiedName)) {
+                        if (s.getFinishAction() != null && s.getFinishAction().getName() != null) {
+                            if (s.getFinishAction().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());
                                 break;
                             }
@@ -1252,6 +1277,9 @@ public class ActionFactory implements ConversationAbandonedListener {
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("cancel-timer", true);
             }
+        }
+        if (context.getSessionData(CK.E_DENIZEN) != null) {
+            section.set("denizen-script", getCString(context, CK.E_DENIZEN));
         }
         try {
             data.save(actionsFile);
@@ -2672,5 +2700,38 @@ public class ActionFactory implements ConversationAbandonedListener {
             }
         }
         return null;
+    }
+    
+    private class DenizenPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            String text = ChatColor.DARK_AQUA + "- " + Lang.get("stageEditorDenizenScript") + " -\n";
+            for (String s : plugin.getDependencies().getDenizenAPI()._getScriptNames()) {
+                text += ChatColor.AQUA + "- " + s + "\n";
+            }
+            return text + ChatColor.YELLOW + Lang.get("stageEditorScriptPrompt");
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            Player player = (Player) context.getForWhom();
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+                if (plugin.getDependencies().getDenizenAPI().containsScript(input)) {
+                    context.setSessionData(CK.E_DENIZEN, input.toUpperCase());
+                    return new ActionMainPrompt();
+                } else {
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidScript"));
+                    return new DenizenPrompt();
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(CK.E_DENIZEN, null);
+                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDenizenCleared"));
+                return new ActionMainPrompt();
+            } else {
+                return new ActionMainPrompt();
+            }
+        }
     }
 }

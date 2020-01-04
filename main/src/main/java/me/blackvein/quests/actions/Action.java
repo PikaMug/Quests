@@ -89,6 +89,7 @@ public class Action {
     protected float health = -1;
     protected Location teleport;
     protected String book = "";
+    protected String denizenScript;
 
     public Action(final Quests plugin) {
         this.plugin = plugin;
@@ -269,6 +270,14 @@ public class Action {
     public void setBook(String book) {
         this.book = book;
     }
+    
+    public String getDenizenScript() {
+        return book;
+    }
+
+    public void setDenizenScript(String scriptName) {
+        this.denizenScript = scriptName;
+    }
 
     public void fire(Quester quester, Quest quest) {
         Player player = quester.getPlayer();
@@ -398,6 +407,9 @@ public class Action {
                     quester.getTimers().remove(entry.getKey());
                 }
             }
+        }
+        if (denizenScript != null) {
+            plugin.getDenizenTrigger().runDenizenScript(denizenScript, quester);
         }
     }
 
@@ -689,7 +701,8 @@ public class Action {
                 if (data.contains(actionKey + "potion-effect-durations")) {
                     if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-durations"), Integer.class)) {
                         if (data.contains(actionKey + "potion-effect-amplifiers")) {
-                            if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-amplifiers"), Integer.class)) {
+                            if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-amplifiers"), 
+                                    Integer.class)) {
                                 List<String> types = data.getStringList(actionKey + "potion-effect-types");
                                 List<Integer> durations = data.getIntegerList(actionKey + "potion-effect-durations");
                                 List<Integer> amplifiers = data.getIntegerList(actionKey + "potion-effect-amplifiers");
@@ -801,6 +814,9 @@ public class Action {
                         + " is not a boolean!");
                 return null;
             }
+        }
+        if (data.contains(actionKey + "denizen-script")) {
+            action.denizenScript = data.getString(actionKey + "denizen-script");
         }
         return action;
     }

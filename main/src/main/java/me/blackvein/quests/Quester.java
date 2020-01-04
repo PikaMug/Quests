@@ -523,21 +523,21 @@ public class Quester {
                 getPlayer().sendMessage(ConfigUtil
                         .parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
             }
-            if (stage.chatEvents.isEmpty() == false) {
-                for (String chatTrigger : stage.chatEvents.keySet()) {
+            if (stage.chatActions.isEmpty() == false) {
+                for (String chatTrigger : stage.chatActions.keySet()) {
                     questData.get(q).eventFired.put(chatTrigger, false);
                 }
             }
-            if (stage.commandEvents.isEmpty() == false) {
-                for (String commandTrigger : stage.commandEvents.keySet()) {
+            if (stage.commandActions.isEmpty() == false) {
+                for (String commandTrigger : stage.commandActions.keySet()) {
                     questData.get(q).eventFired.put(commandTrigger, false);
                 }
             }
             if (q.initialAction != null) {
                 q.initialAction.fire(this, q);
             }
-            if (stage.startEvent != null) {
-                stage.startEvent.fire(this, q);
+            if (stage.startAction != null) {
+                stage.startAction.fire(this, q);
             }
             q.updateCompass(this, stage);
             saveData();
@@ -3078,8 +3078,8 @@ public class Quester {
                 if (questSec.contains("stage-delay")) {
                     getQuestData(quest).delayTimeLeft = questSec.getLong("stage-delay");
                 }
-                if (getCurrentStage(quest).chatEvents.isEmpty() == false) {
-                    for (String chatTrig : getCurrentStage(quest).chatEvents.keySet()) {
+                if (getCurrentStage(quest).chatActions.isEmpty() == false) {
+                    for (String chatTrig : getCurrentStage(quest).chatActions.keySet()) {
                         getQuestData(quest).eventFired.put(chatTrig, false);
                     }
                 }
@@ -3089,8 +3089,8 @@ public class Quester {
                         getQuestData(quest).eventFired.put(s, true);
                     }
                 }
-                if (getCurrentStage(quest).commandEvents.isEmpty() == false) {
-                    for (String commandTrig : getCurrentStage(quest).commandEvents.keySet()) {
+                if (getCurrentStage(quest).commandActions.isEmpty() == false) {
+                    for (String commandTrig : getCurrentStage(quest).commandActions.keySet()) {
                         getQuestData(quest).eventFired.put(commandTrig, false);
                     }
                 }

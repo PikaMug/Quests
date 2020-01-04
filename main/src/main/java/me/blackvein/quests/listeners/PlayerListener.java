@@ -402,16 +402,16 @@ public class PlayerListener implements Listener {
                                 + " on chat for quest " + quest.getName());
                         continue;
                     }
-                    if (currentStage.getChatEvents().isEmpty() == false) {
+                    if (currentStage.getChatActions().isEmpty() == false) {
                         String chat = evt.getMessage();
-                        for (final String s : currentStage.getChatEvents().keySet()) {
+                        for (final String s : currentStage.getChatActions().keySet()) {
                             if (s.equalsIgnoreCase(chat)) {
                                 if (quester.getQuestData(quest).eventFired.get(s) == null 
                                         || quester.getQuestData(quest).eventFired.get(s) == false) {
                                     new BukkitRunnable() {                        
                                         @Override
                                         public void run() {
-                                            currentStage.getChatEvents().get(s).fire(quester, quest);
+                                            currentStage.getChatActions().get(s).fire(quester, quest);
                                         }
                                         
                                     }.runTask(this.plugin);
@@ -456,13 +456,13 @@ public class PlayerListener implements Listener {
                                + " on command for quest " + quest.getName());
                         continue;
                     }
-                    if (currentStage.getCommandEvents().isEmpty() == false) {
+                    if (currentStage.getCommandActions().isEmpty() == false) {
                         String command = evt.getMessage();
-                        for (String s : currentStage.getCommandEvents().keySet()) {
+                        for (String s : currentStage.getCommandActions().keySet()) {
                             if (command.equalsIgnoreCase("/" + s)) {
                                 if (quester.getQuestData(quest).eventFired.get(s) == null 
                                         || quester.getQuestData(quest).eventFired.get(s) == false) {
-                                    currentStage.getCommandEvents().get(s).fire(quester, quest);
+                                    currentStage.getCommandActions().get(s).fire(quester, quest);
                                     quester.getQuestData(quest).eventFired.put(s, true);
                                 }
                             }
@@ -833,8 +833,8 @@ public class PlayerListener implements Listener {
             Quester quester = plugin.getQuester(target.getUniqueId());
             for (Quest quest : quester.getCurrentQuests().keySet()) {
                 Stage stage = quester.getCurrentStage(quest);
-                if (stage != null && stage.getDeathEvent() != null) {
-                    quester.getCurrentStage(quest).getDeathEvent().fire(quester, quest);
+                if (stage != null && stage.getDeathAction() != null) {
+                    quester.getCurrentStage(quest).getDeathAction().fire(quester, quest);
                 }
             }
         }
@@ -982,8 +982,8 @@ public class PlayerListener implements Listener {
                 if (currentStage.getDelay() > -1) {
                     quester.stopStageTimer(quest);
                 }
-                if (currentStage.getDisconnectEvent() != null) {
-                    currentStage.getDisconnectEvent().fire(quester, quest);
+                if (currentStage.getDisconnectAction() != null) {
+                    currentStage.getDisconnectAction().fire(quester, quest);
                 }
             }
             for (Integer timerId : quester.getTimers().keySet()) {

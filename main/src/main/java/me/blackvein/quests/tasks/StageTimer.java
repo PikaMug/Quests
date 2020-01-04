@@ -48,8 +48,8 @@ public class StageTimer implements Runnable {
                 if (quester.getCurrentStage(quest).getScript() != null) {
                     plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
                 }
-                if (quester.getCurrentStage(quest).getFinishEvent() != null) {
-                    quester.getCurrentStage(quest).getFinishEvent().fire(quester, quest);
+                if (quester.getCurrentStage(quest).getFinishAction() != null) {
+                    quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
                 }
                 quest.completeQuest(quester);
             } else {
@@ -59,8 +59,8 @@ public class StageTimer implements Runnable {
                 if (currentStage.getScript() != null) {
                     plugin.getDependencies().runDenizenScript(currentStage.getScript(), quester);
                 }
-                if (currentStage.getFinishEvent() != null) {
-                    currentStage.getFinishEvent().fire(quester, quest);
+                if (currentStage.getFinishAction() != null) {
+                    currentStage.getFinishAction().fire(quester, quest);
                 }
                 quester.hardStagePut(quest, stageNum);
                 quester.addEmptiesFor(quest, stageNum);
@@ -68,7 +68,7 @@ public class StageTimer implements Runnable {
                 //quester.getCurrentStage(quest).setDelay(-1);
                 quester.getQuestData(quest).delayStartTime = 0;
                 quester.getQuestData(quest).delayTimeLeft = -1;
-                Action stageStartEvent = quester.getCurrentStage(quest).getStartEvent();
+                Action stageStartEvent = quester.getCurrentStage(quest).getStartAction();
                 if (stageStartEvent != null) {
                     stageStartEvent.fire(quester, quest);
                 }

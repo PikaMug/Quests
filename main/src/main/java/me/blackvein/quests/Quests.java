@@ -2829,7 +2829,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + s2 
                         + ".start-event"), this);
                 if (evt != null) {
-                    oStage.startEvent = evt;
+                    oStage.startAction = evt;
                 } else {
                     stageFailed("start-event: in Stage " + s2 + " of Quest " + quest.getName() + " failed to load.");
                 }
@@ -2838,7 +2838,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + s2 
                         + ".finish-event"), this);
                 if (evt != null) {
-                    oStage.finishEvent = evt;
+                    oStage.finishAction = evt;
                 } else {
                     stageFailed("finish-event: in Stage " + s2 + " of Quest " + quest.getName() + " failed to load.");
                 }
@@ -2847,7 +2847,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + s2 
                         + ".death-event"), this);
                 if (evt != null) {
-                    oStage.deathEvent = evt;
+                    oStage.deathAction = evt;
                 } else {
                     stageFailed("death-event: in Stage " + s2 + " of Quest " + quest.getName() + " failed to load.");
                 }
@@ -2856,7 +2856,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + s2 
                         + ".disconnect-event"), this);
                 if (evt != null) {
-                    oStage.disconnectEvent = evt;
+                    oStage.disconnectAction = evt;
                 } else {
                     stageFailed("disconnect-event: in Stage " + s2 + " of Quest " + quest.getName() 
                             + " failed to load.");
@@ -2874,7 +2874,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             for (int i = 0; i < chatEvents.size(); i++) {
                                 Action evt = Action.loadAction(chatEvents.get(i), this);
                                 if (evt != null) {
-                                    oStage.chatEvents.put(chatEventTriggers.get(i), evt);
+                                    oStage.chatActions.put(chatEventTriggers.get(i), evt);
                                 } else {
                                     loadEventFailed = true;
                                     stageFailed("" + chatEvents.get(i) + " inside of chat-events: in Stage " + s2 
@@ -2909,7 +2909,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             for (int i = 0; i < commandEvents.size(); i++) {
                                 Action evt = Action.loadAction(commandEvents.get(i), this);
                                 if (evt != null) {
-                                    oStage.commandEvents.put(commandEventTriggers.get(i), evt);
+                                    oStage.commandActions.put(commandEventTriggers.get(i), evt);
                                 } else {
                                     loadEventFailed = true;
                                     stageFailed("" + commandEvents.get(i) + " inside of command-events: in Stage " + s2

@@ -116,12 +116,12 @@ public class Stage {
     protected LinkedList<String> passwordDisplays = new LinkedList<String>();
     protected LinkedList<LinkedList<String>> passwordPhrases = new LinkedList<LinkedList<String>>();
     protected String script;
-    protected Action startEvent = null;
-    protected Action deathEvent = null;
-    protected Map<String, Action> chatEvents = new HashMap<String, Action>();
-    protected Map<String, Action> commandEvents = new HashMap<String, Action>();
-    protected Action disconnectEvent = null;
-    protected Action finishEvent = null;
+    protected Action startAction = null;
+    protected Action deathAction = null;
+    protected Map<String, Action> chatActions = new HashMap<String, Action>();
+    protected Map<String, Action> commandActions = new HashMap<String, Action>();
+    protected Action disconnectAction = null;
+    protected Action finishAction = null;
     protected long delay = -1;
     protected String delayMessage = null;
     protected String completeMessage = null;
@@ -395,52 +395,52 @@ public class Stage {
         this.script = script;
     }
 
-    public Action getStartEvent() {
-        return startEvent;
+    public Action getStartAction() {
+        return startAction;
     }
 
-    public void setStartEvent(Action startEvent) {
-        this.startEvent = startEvent;
+    public void setStartAction(Action startAction) {
+        this.startAction = startAction;
     }
 
-    public Action getDeathEvent() {
-        return deathEvent;
+    public Action getDeathAction() {
+        return deathAction;
     }
 
-    public void setDeathEvent(Action deathEvent) {
-        this.deathEvent = deathEvent;
+    public void setDeathAction(Action deathAction) {
+        this.deathAction = deathAction;
     }
 
-    public Map<String, Action> getChatEvents() {
-        return chatEvents;
+    public Map<String, Action> getChatActions() {
+        return chatActions;
     }
 
-    public void setChatEvents(Map<String, Action> chatEvents) {
-        this.chatEvents = chatEvents;
+    public void setChatActions(Map<String, Action> chatActions) {
+        this.chatActions = chatActions;
     }
 
-    public Map<String, Action> getCommandEvents() {
-        return commandEvents;
+    public Map<String, Action> getCommandActions() {
+        return commandActions;
     }
 
-    public void setCommandEvents(Map<String, Action> commandEvents) {
-        this.commandEvents = commandEvents;
+    public void setCommandActions(Map<String, Action> commandActions) {
+        this.commandActions = commandActions;
     }
 
-    public Action getDisconnectEvent() {
-        return disconnectEvent;
+    public Action getDisconnectAction() {
+        return disconnectAction;
     }
 
-    public void setDisconnectEvent(Action disconnectEvent) {
-        this.disconnectEvent = disconnectEvent;
+    public void setDisconnectAction(Action disconnectAction) {
+        this.disconnectAction = disconnectAction;
     }
 
-    public Action getFinishEvent() {
-        return finishEvent;
+    public Action getFinishAction() {
+        return finishAction;
     }
 
-    public void setFinishEvent(Action finishEvent) {
-        this.finishEvent = finishEvent;
+    public void setFinishAction(Action finishAction) {
+        this.finishAction = finishAction;
     }
 
     public long getDelay() {

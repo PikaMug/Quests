@@ -47,7 +47,7 @@ public class StageMainPrompt extends NumericPrompt {
     private final String pref;
     private final QuestFactory questFactory;
     private boolean hasObjective = false;
-    private final int size = 17;
+    private final int size = 16;
 
     public StageMainPrompt(Quests plugin, int stageNum, QuestFactory qf) {
         this.plugin = plugin;
@@ -94,16 +94,6 @@ public class StageMainPrompt extends NumericPrompt {
                     return ChatColor.BLUE;
                 }
             case 12:
-                if (plugin.getDependencies().getDenizenAPI() == null) {
-                    return ChatColor.GRAY;
-                } else {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY;
-                    } else {
-                        return ChatColor.BLUE;
-                    }
-                }
-            case 13:
                 if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY;
@@ -113,7 +103,7 @@ public class StageMainPrompt extends NumericPrompt {
                 } else {
                     return ChatColor.BLUE;
                 }
-            case 14:
+            case 13:
                 if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY;
@@ -123,7 +113,7 @@ public class StageMainPrompt extends NumericPrompt {
                 } else {
                     return ChatColor.BLUE;
                 }
-            case 15:
+            case 14:
                 if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY;
@@ -133,14 +123,15 @@ public class StageMainPrompt extends NumericPrompt {
                 } else {
                     return ChatColor.BLUE;
                 }
-            case 16:
+            case 15:
                 return ChatColor.RED;
-            case 17:
+            case 16:
                 return ChatColor.GREEN;
             default:
                 return null;
         }
     }
+    
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
             case 1:
@@ -178,16 +169,6 @@ public class StageMainPrompt extends NumericPrompt {
                     return ChatColor.YELLOW + Lang.get("stageEditorDelayMessage");
                 }
             case 12:
-                if (plugin.getDependencies().getDenizenAPI() == null) {
-                    return ChatColor.GRAY + Lang.get("stageEditorDenizenScript");
-                } else {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY + Lang.get("stageEditorDenizenScript");
-                    } else {
-                        return ChatColor.YELLOW + Lang.get("stageEditorDenizenScript");
-                    }
-                }
-            case 13:
                 if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY + Lang.get("stageEditorStartMessage");
@@ -197,7 +178,7 @@ public class StageMainPrompt extends NumericPrompt {
                 } else {
                     return ChatColor.YELLOW + Lang.get("stageEditorStartMessage");
                 }
-            case 14:
+            case 13:
                 if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY + Lang.get("stageEditorCompleteMessage");
@@ -207,7 +188,7 @@ public class StageMainPrompt extends NumericPrompt {
                 } else {
                     return ChatColor.YELLOW + Lang.get("stageEditorCompleteMessage");
                 }
-            case 15:
+            case 14:
                 if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY + Lang.get("stageEditorObjectiveOverride");
@@ -217,9 +198,9 @@ public class StageMainPrompt extends NumericPrompt {
                 } else {
                     return ChatColor.YELLOW + Lang.get("stageEditorObjectiveOverride");
                 }
-            case 16:
+            case 15:
                 return ChatColor.RED + Lang.get("stageEditorDelete");
-            case 17:
+            case 16:
                 return ChatColor.GREEN + Lang.get("done");
             default:
                 return null;
@@ -341,21 +322,6 @@ public class StageMainPrompt extends NumericPrompt {
                             + context.getSessionData(pref + CK.S_DELAY_MESSAGE) + "\"" + ChatColor.GRAY + ")";
                 }
             case 12:
-                if (plugin.getDependencies().getDenizenAPI() == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
-                } else {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
-                    } else {
-                        if (context.getSessionData(pref + CK.S_DENIZEN) == null) {
-                            return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                        } else {
-                            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(pref + CK.S_DENIZEN) 
-                                    + ChatColor.GRAY + ")";
-                        }
-                    }
-                }
-            case 13:
                 if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
@@ -366,7 +332,7 @@ public class StageMainPrompt extends NumericPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
                             + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + ChatColor.GRAY + ")";
                 }
-            case 14:
+            case 13:
                 if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
@@ -377,7 +343,7 @@ public class StageMainPrompt extends NumericPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
                             + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + ChatColor.GRAY + ")";
                 }
-            case 15:
+            case 14:
                 if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
                     if (!hasObjective) {
                         return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
@@ -388,8 +354,8 @@ public class StageMainPrompt extends NumericPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
                             + context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) + "\"" + ChatColor.GRAY + ")";
                 }
+            case 15:
             case 16:
-            case 17:
                 return "";
             default:
                 return null;
@@ -454,7 +420,7 @@ public class StageMainPrompt extends NumericPrompt {
                 } else {
                     return new DelayMessagePrompt();
                 }
-            case 12:
+            /*case 12:
                 if (plugin.getDependencies().getDenizenAPI() == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDenizen"));
                     return new StageMainPrompt(plugin, stageNum, questFactory);
@@ -465,31 +431,31 @@ public class StageMainPrompt extends NumericPrompt {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                         return new StageMainPrompt(plugin, stageNum, questFactory);
                     }
-                }
-            case 13:
+                }*/
+            case 12:
                 if (hasObjective) {
                     return new StartMessagePrompt();
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                     return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
-            case 14:
+            case 13:
                 if (hasObjective) {
                     return new CompleteMessagePrompt();
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                     return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
-            case 15:
+            case 14:
                 if (hasObjective) {
                     return new OverrideDisplayPrompt();
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                     return new StageMainPrompt(plugin, stageNum, questFactory);
                 }
-            case 16:
+            case 15:
                 return new DeletePrompt();
-            case 17:
+            case 16:
                 return new StageMenuPrompt(plugin, questFactory);
             default:
                 return new StageMainPrompt(plugin, stageNum, questFactory);
@@ -1496,39 +1462,6 @@ public class StageMainPrompt extends NumericPrompt {
                 return new StageMainPrompt(plugin, stageNum, questFactory);
             } else {
                 return new DelayMessagePrompt();
-            }
-        }
-    }
-
-    private class DenizenPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.DARK_AQUA + "- " + Lang.get("stageEditorDenizenScript") + " -\n";
-            for (String s : plugin.getDependencies().getDenizenAPI()._getScriptNames()) {
-                text += ChatColor.AQUA + "- " + s + "\n";
-            }
-            return text + ChatColor.YELLOW + Lang.get("stageEditorScriptPrompt");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
-                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                if (plugin.getDependencies().getDenizenAPI().containsScript(input)) {
-                    context.setSessionData(pref + CK.S_DENIZEN, input.toUpperCase());
-                    return new StageMainPrompt(plugin, stageNum, questFactory);
-                } else {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidScript"));
-                    return new DenizenPrompt();
-                }
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(pref + CK.S_DENIZEN, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDenizenCleared"));
-                return new StageMainPrompt(plugin, stageNum, questFactory);
-            } else {
-                return new StageMainPrompt(plugin, stageNum, questFactory);
             }
         }
     }
