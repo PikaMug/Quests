@@ -53,6 +53,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenMainPromptEvent;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenMenuPromptEvent;
+import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenSelectCreatePromptEvent;
 import me.blackvein.quests.prompts.ItemStackPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
@@ -422,11 +423,22 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
     
     private class ActionSelectCreatePrompt extends StringPrompt {
+        
+        public String getTitle() {
+            return Lang.get("eventEditorCreate");
+        }
+        
+        public String getQueryText() {
+            return Lang.get("eventEditorEnterEventName");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("eventEditorCreate") + "\n" + ChatColor.YELLOW
-                    + Lang.get("eventEditorEnterEventName");
+            ActionsEditorPostOpenSelectCreatePromptEvent event 
+                    = new ActionsEditorPostOpenSelectCreatePromptEvent(context);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.GOLD + getTitle() + "\n" + ChatColor.YELLOW + getQueryText();
             return text;
         }
 
