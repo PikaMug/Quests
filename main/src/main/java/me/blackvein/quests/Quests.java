@@ -962,10 +962,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                         + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
                                         + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
                             } else {
-                                message = color + Lang.get(quester.getPlayer(), "killAtLocation") + " " 
-                                        + ChatColor.AQUA + "<mob>" + color + ": " 
-                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
-                                        + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                                message = color + Lang.get(quester.getPlayer(), "killAtLocation") + color + ": " 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                                message = message.replace("<location>", 
+                                        stage.killNames.get(stage.mobsToKill.indexOf(e)));
                             }
                         }
                         if (depends.getPlaceholderApi() != null) {
@@ -974,8 +975,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         if (getSettings().canTranslateItems()) {
                             localeQuery.sendMessage(quester.getPlayer(), message, e, null);
                         } else {
-                            quester.getPlayer().sendMessage(message.replace("<mob>", 
-                                    MiscUtil.getProperMobName(e)));
+                            quester.getPlayer().sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(e)));
                         }
                     }
                 }
