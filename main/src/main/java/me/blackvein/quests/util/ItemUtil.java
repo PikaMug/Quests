@@ -601,8 +601,17 @@ public class ItemUtil {
      * @return pretty localized name
      */
     public static String getPrettyEnchantmentName(Enchantment e) {
-        String prettyString = getEnchantmentName(e);
-        prettyString = MiscUtil.capitalsToSpaces(prettyString);
+        String baseString = e.getName();
+        String[] substrings = baseString.split("_");
+        String prettyString = "";
+        int size = 1;
+        for (String s : substrings) {
+            prettyString = prettyString.concat(MiscUtil.getCapitalized(s));
+            if (size < substrings.length) {
+                prettyString = prettyString.concat(" ");
+            }
+            size++;
+        }
         return prettyString;
     }
     
@@ -612,7 +621,7 @@ public class ItemUtil {
      * @param e Enchantment to get localized name of
      * @return localized name
      */
-    private static String getEnchantmentName(Enchantment e) {
+    /*private static String getEnchantmentName(Enchantment e) {
         try {
             return (Lang.get("ENCHANTMENT_" + e.getName()));
         } catch (NullPointerException ne) {
@@ -620,15 +629,34 @@ public class ItemUtil {
                     + "update the file or simply add an entry for the enchantment");
             return e.getName().toLowerCase().replace("_", " ");
         }
-    }
+    }*/
     
-    public static Enchantment getEnchantmentFromProperName(String enchant) {
-        String ench = Lang.getKey(enchant.replace(" ", ""));
-        ench = ench.replace("ENCHANTMENT_", "");
-        Enchantment e = Enchantment.getByName(ench);
-        return e != null ? e : getEnchantmentFromProperLegacyName(ench.replace(" ", ""));
+    /**
+     * Gets enchantment from name
+     * 
+     * @param properName Name to get enchantment from
+     * @return Enchantment or null if invalid
+     */
+    public static Enchantment getEnchantmentFromProperName(String properName) {
+        properName = properName.replace(" ", "").toUpperCase();
+        for (Enchantment e : Enchantment.values()) {
+            if (e.getName().replace("_", "").equalsIgnoreCase(properName.replace("_", ""))) {
+                return e;
+            }
+            if (getEnchantmentFromProperLegacyName(properName) != null) {
+                return e;
+            }
+        }
+        return null;
     }
 
+    /**
+     * Gets Enchantment from name as it appears in lang file
+     * 
+     * @deprecated Use {@link #getProperEnchantmentType(String)}
+     * @param enchant Name to match lang value to
+     * @return Enchantment or null if invalid
+     */
     public static Enchantment getEnchantmentFromProperLegacyName(String enchant) {
         if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_DAMAGE"))) {
             return Enchantment.ARROW_DAMAGE;

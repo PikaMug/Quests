@@ -20,6 +20,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -387,15 +388,16 @@ public class ItemsPrompt extends FixedSetPrompt {
 
     private class EnchantTypesPrompt extends StringPrompt {
 
+        @SuppressWarnings("deprecation")
         @Override
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + Lang.get("stageEditorEnchantments") 
                     + ChatColor.LIGHT_PURPLE + " -\n";
             for (int i = 0; i < Enchantment.values().length; i++) {
                 if (i == Enchantment.values().length - 1) {
-                    text += ChatColor.GREEN + ItemUtil.getPrettyEnchantmentName(Enchantment.values()[i]) + " ";
+                    text += ChatColor.GREEN + MiscUtil.snakeCaseToUpperCamelCase(Enchantment.values()[i].getName()) + " ";
                 } else {
-                    text += ChatColor.GREEN + ItemUtil.getPrettyEnchantmentName(Enchantment.values()[i]) + ", ";
+                    text += ChatColor.GREEN + MiscUtil.snakeCaseToUpperCamelCase(Enchantment.values()[i].getName()) + ", ";
                 }
             }
             text = text.substring(0, text.length() - 1);
@@ -405,31 +407,22 @@ public class ItemsPrompt extends FixedSetPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                String[] args = input.split(Lang.get("charSemi"));
-                LinkedList<String> enchs = new LinkedList<String>();
-                boolean valid;
-                for (String s : args) {
-                    s = s.trim();
-                    valid = false;
-                    for (Enchantment e : Enchantment.values()) {
-                        if (ItemUtil.getPrettyEnchantmentName(e).equalsIgnoreCase(s)) {
-                            if (enchs.contains(s) == false) {
-                                enchs.add(ItemUtil.getPrettyEnchantmentName(e));
-                                valid = true;
-                                break;
-                            } else {
-                                context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("listDuplicate"));
-                                return new EnchantTypesPrompt();
-                            }
+                LinkedList<String> enchTypes = new LinkedList<String>();
+                for (String s : input.split(" ")) {
+                    if (ItemUtil.getEnchantmentFromProperName(s) != null) {
+                        if (enchTypes.contains(s) == false) {
+                            enchTypes.add(s);
+                        } else {
+                            context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("listDuplicate"));
+                            return new EnchantTypesPrompt();
                         }
-                    }
-                    if (valid == false) {
+                    } else {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                 + Lang.get("stageEditorInvalidEnchantment"));
                         return new EnchantTypesPrompt();
                     }
                 }
-                context.setSessionData(pref + CK.S_ENCHANT_TYPES, enchs);
+                context.setSessionData(pref + CK.S_ENCHANT_TYPES, enchTypes);
             }
             return new EnchantmentListPrompt();
         }

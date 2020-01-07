@@ -148,9 +148,9 @@ public class MiscUtil {
      * @return EntityType or null if invalid
      */
     public static EntityType getProperMobType(String properName) {
-        properName = properName.replaceAll("_", "").replaceAll(" ", "").toUpperCase();
+        properName = properName.replace("_", "").replace(" ", "").toUpperCase();
         for (EntityType et : EntityType.values()) {
-            if (et.isAlive() && et.name().replaceAll("_", "").equalsIgnoreCase(properName)) {
+            if (et.isAlive() && et.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return et;
             }
         }
@@ -259,6 +259,8 @@ public class MiscUtil {
     
     /**
      * Adds a single space in front of all capital letters
+     * 
+     * Unused internally. Left for external use
      * 
      * @param s string to process
      * @return processed string

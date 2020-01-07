@@ -376,13 +376,13 @@ public class MobsPrompt extends FixedSetPrompt {
                 for (String s : input.split(" ")) {
                     if (MiscUtil.getProperMobType(s) != null) {
                         mobTypes.add(s);
-                        context.setSessionData(pref + CK.S_MOB_TYPES, mobTypes);
                     } else {
                         player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidMob"));
                         return new MobTypesPrompt();
                     }
                 }
+                context.setSessionData(pref + CK.S_MOB_TYPES, mobTypes);
             }
             return new MobListPrompt();
         }
@@ -556,7 +556,7 @@ public class MobsPrompt extends FixedSetPrompt {
             if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("stageEditorSetMobTypes") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY 
+                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - "
                         + Lang.get("stageEditorSetTameAmounts") + " (" + Lang.get("noneSet") + ")\n";
                 text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("clear") + "\n";
@@ -663,7 +663,7 @@ public class MobsPrompt extends FixedSetPrompt {
                     if (MiscUtil.getProperMobType(s) != null) {
                         final EntityType type = MiscUtil.getProperMobType(s);
                         if (type.isAlive() || Tameable.class.isAssignableFrom(type.getEntityClass())) {
-                            mobTypes.add(MiscUtil.getPrettyMobName(type));
+                            mobTypes.add(s);
                             context.setSessionData(pref + CK.S_TAME_TYPES, mobTypes);
                         } else {
                             player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 

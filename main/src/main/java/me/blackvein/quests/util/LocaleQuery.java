@@ -154,7 +154,7 @@ public class LocaleQuery {
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
                 for (Enchantment e : enchantments.keySet()) {
-                    enchKeys[count] = "enchantment.minecraft." + e.toString().toLowerCase();
+                    enchKeys[count] = "enchantment." + e.getKey().toString().toLowerCase().replace(":", ".");
                     count++;
                 }
             }
@@ -162,7 +162,7 @@ public class LocaleQuery {
         String msg = message.replace("<item>", "\",{\"translate\":\"" + matKey + "\"},\"");
         if (enchKeys != null && enchKeys.length > 0) {
             for (String ek : enchKeys) {
-                msg.replaceFirst("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
+                msg = msg.replace("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
             }
         }
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
