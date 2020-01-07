@@ -2705,9 +2705,9 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
     
     public Effect getProperEffect(String properName) {
-        properName = properName.replaceAll("_", "").replaceAll(" ", "").toUpperCase();
+        properName = properName.replace("_", "").replace(" ", "").toUpperCase();
         for (Effect eff : Effect.values()) {
-            if (eff.name().replaceAll("_", "").equalsIgnoreCase(properName)) {
+            if (eff.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return eff;
             }
         }

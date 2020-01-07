@@ -1244,7 +1244,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 if (found == null) {
                     String error = Lang.get("questWGInvalidRegion");
-                    error = error.replaceAll("<region>", ChatColor.RED + input + ChatColor.YELLOW);
+                    error = error.replace("<region>", ChatColor.RED + input + ChatColor.YELLOW);
                     player.sendMessage(ChatColor.YELLOW + error);
                     return new RegionPrompt();
                 } else {
@@ -1379,7 +1379,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     saveQuest(context, newSection);
                     data.save(new File(plugin.getDataFolder(), "quests.yml"));
                     context.getForWhom().sendRawMessage(ChatColor.GREEN
-                            + Lang.get("questEditorSaved").replaceAll("<command>", "/questadmin " 
+                            + Lang.get("questEditorSaved").replace("<command>", "/questadmin " 
                             + Lang.get("COMMAND_QUESTADMIN_RELOAD")));
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -330,7 +330,7 @@ public class Action {
         if (commands.isEmpty() == false) {
             for (String s : commands) {
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), 
-                        s.replaceAll("<player>", quester.getPlayer().getName()));
+                        s.replace("<player>", quester.getPlayer().getName()));
             }
         }
         if (potionEffects.isEmpty() == false) {
@@ -364,7 +364,7 @@ public class Action {
             quest.failQuest(quester);
         }
         if (timer > 0) {
-            player.sendMessage(Lang.get(player, "timerStart").replaceAll("<time>", String.valueOf(timer)));
+            player.sendMessage(Lang.get(player, "timerStart").replace("<time>", String.valueOf(timer)));
             if (timer > 60) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 60, false)
                         .runTaskLater(plugin, (timer-60)*20).getTaskId(), quest);

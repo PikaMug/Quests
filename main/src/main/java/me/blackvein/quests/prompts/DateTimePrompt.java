@@ -350,7 +350,7 @@ public class DateTimePrompt extends FixedSetPrompt {
         public Prompt acceptInput(ConversationContext cc, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    double amt = Double.parseDouble(input.replaceAll("UTC", "").replace(":", "."));
+                    double amt = Double.parseDouble(input.replace("UTC", "").replace(":", "."));
                     if (amt < -12.0 || amt > 14.0) {
                         cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                             .replace("<least>", "-12:00").replace("<greatest>", "14:00"));

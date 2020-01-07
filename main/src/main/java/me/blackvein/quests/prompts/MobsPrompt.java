@@ -78,7 +78,7 @@ public class MobsPrompt extends FixedSetPrompt {
                         = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES);
                 for (int i = 0; i < mobs.size(); i++) {
                     String msg = Lang.get("blocksWithin");
-                    msg = msg.replaceAll("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
+                    msg = msg.replace("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
                             + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY + " x " 
                             + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW 

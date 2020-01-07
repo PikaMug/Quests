@@ -72,7 +72,7 @@ public class GUIDisplayPrompt extends NumericPrompt {
                 if (quest.getGUIDisplay() != null) {
                     if (ItemUtil.compareItems(stack, quest.getGUIDisplay(), false) == 0) {
                         String error = Lang.get("questGUIError");
-                        error = error.replaceAll("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
+                        error = error.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + error);
                         failed = true;
                         break;

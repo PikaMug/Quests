@@ -248,13 +248,15 @@ public class MiscUtil {
      * @param lineColor Color to use at start of each new line
      * @return Converted text
      */
-    public static LinkedList<String> makeLines(String input, String wordDelimiter, int lineLength, ChatColor lineColor) {
+    public static LinkedList<String> makeLines(String input, String wordDelimiter, int lineLength
+            , ChatColor lineColor) {
         LinkedList<String> toReturn = new LinkedList<String>();
         String[] split = input.split(wordDelimiter);
         String line = "";
         int currentLength = 0;
         for (String piece : split) {
             if ((currentLength + piece.length()) > (lineLength + 1)) {
+                // TODO - determine whether replaceAll and carots (^) are necessary here
                 if (lineColor != null) {
                     toReturn.add(lineColor + line.replaceAll("^" + wordDelimiter, ""));
                 } else {

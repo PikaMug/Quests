@@ -1792,7 +1792,7 @@ public class StageMainPrompt extends NumericPrompt {
                 text += ChatColor.GOLD + descriptions.get(temp) + "\n";
             }
             String msg = Lang.get("stageEditorCustomDataPrompt");
-            msg = msg.replaceAll("<data>", ChatColor.BOLD + temp + ChatColor.RESET + ChatColor.YELLOW);
+            msg = msg.replace("<data>", ChatColor.BOLD + temp + ChatColor.RESET + ChatColor.YELLOW);
             text += ChatColor.YELLOW + msg;
             return text;
         }

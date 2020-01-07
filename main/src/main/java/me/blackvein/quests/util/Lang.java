@@ -118,7 +118,7 @@ public class Lang {
     public static String getModified(String key, String[] tokens) {
         String orig = langMap.get(key);
         for (int i = 0; i < tokens.length; i++) {
-            orig = orig.replaceAll("%" + (i + 1), tokens[i]);
+            orig = orig.replace("%" + (i + 1), tokens[i]);
         }
         return orig;
     }
@@ -182,30 +182,30 @@ public class Lang {
         String cmdCancel = allStrings.get("cmdCancel");
         String cmdDone = allStrings.get("cmdDone");
         
-        String strAdd = allStrings.get("strAdd").replaceAll("<command>", cmdAdd);
-        String strClear = allStrings.get("strClear").replaceAll("<command>", cmdClear);
-        String strCancel = allStrings.get("strCancel").replaceAll("<command>", cmdCancel);
-        String strDone = allStrings.get("strDone").replaceAll("<command>", cmdDone);
+        String strAdd = allStrings.get("strAdd").replace("<command>", cmdAdd);
+        String strClear = allStrings.get("strClear").replace("<command>", cmdClear);
+        String strCancel = allStrings.get("strCancel").replace("<command>", cmdCancel);
+        String strDone = allStrings.get("strDone").replace("<command>", cmdDone);
         String strSpace = allStrings.get("strSpace");
         String strSemicolon = allStrings.get("strSemicolon");
         for (Entry<String, String> entry : allStrings.entrySet()) {
             if (entry.getValue().contains("<add>")) {
-                allStrings.put(entry.getKey(), entry.getValue().replaceAll("<add>", strAdd));
+                allStrings.put(entry.getKey(), entry.getValue().replace("<add>", strAdd));
             }
             if (entry.getValue().contains("<clear>")) {
-                allStrings.put(entry.getKey(), entry.getValue().replaceAll("<clear>", strClear));
+                allStrings.put(entry.getKey(), entry.getValue().replace("<clear>", strClear));
             }
             if (entry.getValue().contains("<cancel>")) {
-                allStrings.put(entry.getKey(), entry.getValue().replaceAll("<cancel>", strCancel));
+                allStrings.put(entry.getKey(), entry.getValue().replace("<cancel>", strCancel));
             }
             if (entry.getValue().contains("<done>")) {
-                allStrings.put(entry.getKey(), entry.getValue().replaceAll("<done>", strDone));
+                allStrings.put(entry.getKey(), entry.getValue().replace("<done>", strDone));
             } 
             if (entry.getValue().contains("<space>")) {
-                allStrings.put(entry.getKey(), entry.getValue().replaceAll("<space>", strSpace));
+                allStrings.put(entry.getKey(), entry.getValue().replace("<space>", strSpace));
             }
             if (entry.getValue().contains("<semicolon>")) {
-                allStrings.put(entry.getKey(), entry.getValue().replaceAll("<semicolon>", strSemicolon));
+                allStrings.put(entry.getKey(), entry.getValue().replace("<semicolon>", strSemicolon));
             }
         }
         langMap.putAll(allStrings);

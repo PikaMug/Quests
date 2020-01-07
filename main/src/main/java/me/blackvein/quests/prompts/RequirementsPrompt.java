@@ -367,11 +367,11 @@ public class RequirementsPrompt extends NumericPrompt {
         public String getPromptText(ConversationContext context) {
             String text = Lang.get("reqMoneyPrompt");
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                text = text.replaceAll("<money>", ChatColor.DARK_PURPLE+ ((plugin.getDependencies().getVaultEconomy()
+                text = text.replace("<money>", ChatColor.DARK_PURPLE+ ((plugin.getDependencies().getVaultEconomy()
                         .currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy()
                         .currencyNamePlural())) + ChatColor.YELLOW);
             } else {
-                text = text.replaceAll("<money>", ChatColor.DARK_PURPLE + Lang.get("money") + ChatColor.YELLOW);
+                text = text.replace("<money>", ChatColor.DARK_PURPLE + Lang.get("money") + ChatColor.YELLOW);
             }
             return ChatColor.YELLOW + text;
         }
@@ -468,7 +468,7 @@ public class RequirementsPrompt extends NumericPrompt {
                 for (String s : args) {
                     if (plugin.getQuest(s) == null) {
                         String text = Lang.get("reqNotAQuestName");
-                        text = text.replaceAll("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(text);
                         return new QuestListPrompt(isRequiredQuest);
                     }
@@ -628,7 +628,7 @@ public class RequirementsPrompt extends NumericPrompt {
                         booleans.add(false);
                     } else {
                         String text = Lang.get("reqTrueFalseError");
-                        text = text.replaceAll("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new RemoveItemsPrompt();
                     }
@@ -823,7 +823,7 @@ public class RequirementsPrompt extends NumericPrompt {
                 text += ChatColor.GOLD + descriptions.get(temp) + "\n";
             }
             String lang = Lang.get("stageEditorCustomDataPrompt");
-            lang = lang.replaceAll("<data>", temp);
+            lang = lang.replace("<data>", temp);
             text += ChatColor.YELLOW + lang;
             return text;
         }
@@ -921,7 +921,7 @@ public class RequirementsPrompt extends NumericPrompt {
                         return new mcMMOSkillsPrompt();
                     } else {
                         String text = Lang.get("reqMcMMOError");
-                        text = text.replaceAll("<input>", ChatColor.RED + s + ChatColor.YELLOW);
+                        text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
                         cc.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
                         return new mcMMOSkillsPrompt();
                     }
@@ -957,7 +957,7 @@ public class RequirementsPrompt extends NumericPrompt {
                         amounts.add(i);
                     } catch (NumberFormatException nfe) {
                         String text = Lang.get("reqNotANumber");
-                        text = text.replaceAll("<input>", ChatColor.RED + s + ChatColor.YELLOW);
+                        text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
                         cc.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
                         return new mcMMOAmountsPrompt();
                     }
@@ -1052,7 +1052,7 @@ public class RequirementsPrompt extends NumericPrompt {
                         return new HeroesPrompt();
                     } else {
                         String text = Lang.get("reqHeroesNotPrimary");
-                        text = text.replaceAll("<class>", ChatColor.LIGHT_PURPLE + hc.getName() + ChatColor.RED);
+                        text = text.replace("<class>", ChatColor.LIGHT_PURPLE + hc.getName() + ChatColor.RED);
                         cc.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new HeroesPrimaryPrompt();
                     }
@@ -1104,7 +1104,7 @@ public class RequirementsPrompt extends NumericPrompt {
                         return new HeroesPrompt();
                     } else {
                         String text = Lang.get("reqHeroesNotSecondary");
-                        text = text.replaceAll("<class>", ChatColor.LIGHT_PURPLE + hc.getName() + ChatColor.RED);
+                        text = text.replace("<class>", ChatColor.LIGHT_PURPLE + hc.getName() + ChatColor.RED);
                         cc.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new HeroesSecondaryPrompt();
                     }

@@ -427,7 +427,7 @@ public class ItemStackPrompt extends FixedSetPrompt {
             @Override
             public String getPromptText(ConversationContext cc) {
                 String text = Lang.get("itemCreateEnterLevel");
-                text = text.replaceAll("<enchantment>", enchantment);
+                text = text.replace("<enchantment>", enchantment);
                 return ChatColor.AQUA + text;
             }
 
