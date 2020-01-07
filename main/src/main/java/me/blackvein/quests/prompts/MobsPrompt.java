@@ -815,9 +815,9 @@ public class MobsPrompt extends FixedSetPrompt {
             final DyeColor[] colArr = DyeColor.values();
             for (int i = 0; i < colArr.length; i++) {
                 if (i < (colArr.length - 1)) {
-                    cols += MiscUtil.getDyeString(colArr[i]) + ", ";
+                    cols += MiscUtil.snakeCaseToUpperCamelCase(colArr[i].name()) + ", ";
                 } else {
-                    cols += MiscUtil.getDyeString(colArr[i]) + "\n";
+                    cols += MiscUtil.snakeCaseToUpperCamelCase(colArr[i].name()) + "\n";
                 }
             }
             return cols + ChatColor.YELLOW + Lang.get("stageEditorShearColorsPrompt");
@@ -829,8 +829,8 @@ public class MobsPrompt extends FixedSetPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 LinkedList<String> colors = new LinkedList<String>();
                 for (String s : input.split(" ")) {
-                    if (MiscUtil.getDyeColor(s) != null) {
-                        colors.add(MiscUtil.getDyeString(MiscUtil.getDyeColor(s)));
+                    if (MiscUtil.getProperDyeColor(s) != null) {
+                        colors.add(s);
                         context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
                     } else {
                         player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 

@@ -21,6 +21,12 @@ import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
     
+    /**
+     * Gets a human-readable date and time from milliseconds
+     * 
+     * @param milliseconds Total amount of time to convert
+     * @return Converted time in text
+     */
     public static String getTime(long milliseconds) {
         String message = "";
         long days = milliseconds / 86400000;
@@ -73,8 +79,8 @@ public class MiscUtil {
     /**
      * Capitalize first letter of text and set remainder to lowercase
      * 
-     * @param input
-     * @return
+     * @param input To convert
+     * @return Converted text
      */
     public static String getCapitalized(String input) {
         if (input.isEmpty()) {
@@ -157,22 +163,42 @@ public class MiscUtil {
         return null;
     }
     
+    /**
+     * Gets player-friendly name from type. 'LIGHT_BLUE' becomes 'Light Blue'
+     * 
+     * @param type any dye type, ideally
+     * @return cleaned-up string
+     */
     public static String getPrettyDyeColorName(DyeColor color) {
         return Lang.get("COLOR_" + color.name());
     }
-
-    public static DyeColor getDyeColor(String s) {
-        String col = Lang.getKey(getCapitalized(s));
-        col = col.replace("COLOR_", "");
-        DyeColor color = null;
-        try {
-            color = DyeColor.valueOf(col);
-        } catch (IllegalArgumentException e) {
-            // Do nothing
+    
+    /**
+     * Gets DyeColor from name
+     * 
+     * @param properName Name to get type from
+     * @return DyeColor or null if invalid
+     */
+    public static DyeColor getProperDyeColor(String properName) {
+        properName = properName.replace("_", "").replace(" ", "").toUpperCase();
+        for (DyeColor dc : DyeColor.values()) {
+            if (dc.name().replace("_", "").equalsIgnoreCase(properName)) {
+                return dc;
+            }
+            if (getDyeColorLegacy(properName) != null) {
+                return dc;
+            }
         }
-        return color != null ? color : getDyeColorLegacy(s);
+        return null;
     }
 
+    /**
+     * Gets DyeColor from name as it appears in lang file
+     * 
+     * @deprecated Use {@link #getProperDyeColor(String)}
+     * @param s Name to match lang value to
+     * @return DyeColor or null if invalid
+     */
     public static DyeColor getDyeColorLegacy(String s) {
         if (s.equalsIgnoreCase("Black") || s.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
             return DyeColor.BLACK;
@@ -213,25 +239,18 @@ public class MiscUtil {
         }
     }
 
-    public static String getDyeString(DyeColor dc) {
-        return Lang.get("COLOR_" + dc.name());
-    }
-    
     /**
-     * @deprecated Will be removed in a future version of Quests
+     * Split text into multiple lines
+     * 
+     * @param input Text to convert
+     * @param wordDelimiter Character(s) used to split up text
+     * @param lineLength Maximum number of characters per line
+     * @param lineColor Color to use at start of each new line
+     * @return Converted text
      */
-    public static String concatArgArray(String[] args, int startingIndex, int endingIndex, char delimiter) {
-        String s = "";
-        for (int i = startingIndex; i <= endingIndex; i++) {
-            s += args[i] + delimiter;
-        }
-        s = s.substring(0, s.length());
-        return s.trim().equals("") ? null : s.trim();
-    }
-
-    public static LinkedList<String> makeLines(String s, String wordDelimiter, int lineLength, ChatColor lineColor) {
+    public static LinkedList<String> makeLines(String input, String wordDelimiter, int lineLength, ChatColor lineColor) {
         LinkedList<String> toReturn = new LinkedList<String>();
-        String[] split = s.split(wordDelimiter);
+        String[] split = input.split(wordDelimiter);
         String line = "";
         int currentLength = 0;
         for (String piece : split) {
@@ -265,16 +284,16 @@ public class MiscUtil {
      * @param s string to process
      * @return processed string
      */
-    public static String capitalsToSpaces(String s) {
-        int max = s.length();
+    public static String capitalsToSpaces(String input) {
+        int max = input.length();
         for (int i = 1; i < max; i++) {
-            if (Character.isUpperCase(s.charAt(i))) {
-                s = s.substring(0, i) + " " + s.substring(i);
+            if (Character.isUpperCase(input.charAt(i))) {
+                input = input.substring(0, i) + " " + input.substring(i);
                 i++;
                 max++;
             }
         }
-        return s;
+        return input;
     }
 
     /**
@@ -283,13 +302,14 @@ public class MiscUtil {
      * @param s string to process
      * @return processed string
      */
-    public static String spaceToCapital(String s) {
-        int index = s.indexOf(' ');
+    public static String spaceToCapital(String input) {
+        int index = input.indexOf(' ');
         if (index == -1) {
             return null;
         }
-        s = s.substring(0, (index + 1)) + Character.toUpperCase(s.charAt(index + 1)) + s.substring(index + 2);
-        s = s.replaceFirst(" ", "");
-        return s;
+        input = input.substring(0, (index + 1)) + Character.toUpperCase(input.charAt(index + 1)) 
+                + input.substring(index + 2);
+        input = input.replaceFirst(" ", "");
+        return input;
     }
 }

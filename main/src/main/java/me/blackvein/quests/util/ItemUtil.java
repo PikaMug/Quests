@@ -616,22 +616,6 @@ public class ItemUtil {
     }
     
     /**
-     * Gets name of enchantment exactly as it appears in lang file
-     * 
-     * @param e Enchantment to get localized name of
-     * @return localized name
-     */
-    /*private static String getEnchantmentName(Enchantment e) {
-        try {
-            return (Lang.get("ENCHANTMENT_" + e.getName()));
-        } catch (NullPointerException ne) {
-            Bukkit.getLogger().warning(e.getName() + " was not found in Lang.yml, please ask the developer to " 
-                    + "update the file or simply add an entry for the enchantment");
-            return e.getName().toLowerCase().replace("_", " ");
-        }
-    }*/
-    
-    /**
      * Gets enchantment from name
      * 
      * @param properName Name to get enchantment from

@@ -3057,7 +3057,7 @@ public class Quester {
                     List<String> colors = questSec.getStringList("sheep-to-shear");
                     List<Integer> amounts = questSec.getIntegerList("sheep-sheared");
                     for (String color : colors) {
-                        getQuestData(quest).sheepSheared.put(MiscUtil.getDyeColor(color), amounts.get(colors
+                        getQuestData(quest).sheepSheared.put(MiscUtil.getProperDyeColor(color), amounts.get(colors
                                 .indexOf(color)));
                     }
                 }
