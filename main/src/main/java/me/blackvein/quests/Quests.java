@@ -149,6 +149,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         eventFactory = new ActionFactory(this);
         depends = new Dependencies(this);
         lang = new Lang(this);
+        trigger = new DenizenTrigger(this);
 
         // 2 - Load main config
         settings.init();
@@ -1983,11 +1984,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             List<String> deliveryMessages = new LinkedList<String>();
             List<Integer> npcIdsToKill = new LinkedList<Integer>();
             List<Integer> npcAmountsToKill = new LinkedList<Integer>();
-            // Denizen script load
+            // Legacy Denizen script load
             if (config.contains("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run")) {
                 if (getDependencies().getDenizenAPI().containsScript(config.getString("quests." + questKey 
                         + ".stages.ordered." + s2 + ".script-to-run"))) {
-                    trigger = new DenizenTrigger(this);
                     oStage.script = config.getString("quests." + questKey + ".stages.ordered." + s2 + ".script-to-run");
                 } else {
                     stageFailed("script-to-run: in Stage " + s2 + " of Quest " + quest.getName() 
