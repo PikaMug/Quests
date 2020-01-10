@@ -10,27 +10,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.util;
+package me.blackvein.quests.reflect.denizen;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.denizenscript.denizen.BukkitScriptEntryData;
 import com.denizenscript.denizen.objects.NPCTag;
 import com.denizenscript.denizen.objects.PlayerTag;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
 
+import me.blackvein.quests.Quests;
 import net.citizensnpcs.api.npc.NPC;
 
-/**
- * This class's imports must exist separately from DenizenAPI.java in order to not crash from NoClassDefFoundError at
- * runtime
- */
 public class DenizenAPI_1_1_0 {
+    
+    private static Quests quests = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
+    private static DenizenAPI api = quests.getDependencies().getDenizenAPI();
     
     @Nullable
     public static boolean containsScript(String input) {
@@ -42,9 +46,17 @@ public class DenizenAPI_1_1_0 {
         return ScriptRegistry.getScriptContainer(input).getName();
     }
     
+    @SuppressWarnings("unchecked")
     @Nullable
-    public static Set<String> _getScriptNames() {
-        return ScriptRegistry._getScriptNames();
+    public static Set<String> getScriptNames() {
+        if (api.scriptRegistry == null || api.getScriptNamesMethod == null) return null;
+        Set<String> names = null;
+        try {
+            names = (Set<String>)api.getScriptNamesMethod.invoke(api.scriptRegistry);
+        } catch (Exception e) {
+            quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#_getScriptNames", e);
+        }
+        return names;
     }
     
     @Nullable
@@ -64,8 +76,13 @@ public class DenizenAPI_1_1_0 {
     
     @Nullable
     public static void runTaskScript(String scriptName, Player player) {
-        TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
-        BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);
-        taskScript.runTaskScript(entryData, null);
+        try {
+            Constructor<?> constructor = api.bukkitScriptEntryData.getConstructors()[0];
+            Object tsc = getScriptContainerAs(scriptName);
+            Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
+            runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
+        } catch (Exception e) {
+            quests.getLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
+        }
     }
 }

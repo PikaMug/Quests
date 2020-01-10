@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.util;
+package me.blackvein.quests.reflect.worldguard;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -41,10 +41,6 @@ public class WorldGuardAPI {
     private Constructor<?> vectorConstructor = null;
     private boolean initialized = false;
 
-    public boolean isEnabled() {
-        return worldGuardPlugin != null;
-    }
-
     public WorldGuardAPI(Plugin wg) {
         if (wg instanceof WorldGuardPlugin) {
             worldGuardPlugin = (WorldGuardPlugin)wg;
@@ -57,6 +53,10 @@ public class WorldGuardAPI {
                 // WorldGuard <7
             }
         }
+    }
+    
+    public boolean isEnabled() {
+        return worldGuardPlugin != null;
     }
 
     protected RegionAssociable getAssociable(Player player) {

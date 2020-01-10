@@ -58,12 +58,12 @@ import me.blackvein.quests.prompts.RequirementsPrompt;
 import me.blackvein.quests.prompts.RewardsPrompt;
 import me.blackvein.quests.prompts.PlannerPrompt;
 import me.blackvein.quests.prompts.StageMenuPrompt;
+import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
-import me.blackvein.quests.util.WorldGuardAPI;
 import net.citizensnpcs.api.CitizensAPI;
 
 public class QuestFactory implements ConversationAbandonedListener {

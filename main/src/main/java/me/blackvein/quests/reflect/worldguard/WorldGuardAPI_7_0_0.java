@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.util;
+package me.blackvein.quests.reflect.worldguard;
 
 import java.util.List;
 
@@ -24,10 +24,6 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
-/**
- * This class's imports must exist separately from WorldGuardAPI.java in order to not crash from NoClassDefFoundError 
- * at runtime
- */
 public class WorldGuardAPI_7_0_0 {
 
     @Nullable

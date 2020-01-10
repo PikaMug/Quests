@@ -2719,7 +2719,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         @Override
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.DARK_AQUA + "- " + Lang.get("stageEditorDenizenScript") + " -\n";
-            for (String s : plugin.getDependencies().getDenizenAPI()._getScriptNames()) {
+            for (String s : plugin.getDependencies().getDenizenAPI().getScriptNames()) {
                 text += ChatColor.AQUA + "- " + s + "\n";
             }
             return text + ChatColor.YELLOW + Lang.get("stageEditorScriptPrompt");
