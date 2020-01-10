@@ -532,8 +532,9 @@ public class CmdExecutor implements CommandExecutor {
                     return true;
                 }
             }
-            if (topNumber < 1) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("inputPosNum"));
+            if (topNumber < 1 || topNumber > plugin.getSettings().getTopLimit()) {
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("invalidRange").replace("<least>", "1")
+                        .replace("<greatest>", String.valueOf(plugin.getSettings().getTopLimit())));
                 return true;
             }
             File folder = new File(plugin.getDataFolder(), "data");

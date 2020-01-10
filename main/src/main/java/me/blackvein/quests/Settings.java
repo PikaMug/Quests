@@ -34,6 +34,7 @@ public class Settings {
     private boolean showQuestReqs = true;
     private boolean showQuestTitles = true;
     private int strictPlayerMovement = 0;
+    private int topLimit = 150;
     private boolean translateNames = false;
     private boolean translateSubCommands = false;
     private boolean useCompass = true;
@@ -127,6 +128,12 @@ public class Settings {
     public void setStrictPlayerMovement(int strictPlayerMovement) {
         this.strictPlayerMovement = strictPlayerMovement;
     }
+    public int getTopLimit() {
+        return topLimit;
+    }
+    public void setTopLimit(int topLimit) {
+        this.topLimit = topLimit;
+    }
     /**
      * @deprecated As of release 2.6.4, use {@link #canTranslateNames()}
      */
@@ -186,6 +193,7 @@ public class Settings {
         showQuestReqs = config.getBoolean("show-requirements", true);
         showQuestTitles = config.getBoolean("show-titles", true);
         strictPlayerMovement = config.getInt("strict-player-movement", 0);
+        topLimit = config.getInt("top-limit", 150);
         translateNames = config.getBoolean("translate-names", true);
         translateSubCommands = config.getBoolean("translate-subcommands", false);
         useCompass = config.getBoolean("use-compass", true);
