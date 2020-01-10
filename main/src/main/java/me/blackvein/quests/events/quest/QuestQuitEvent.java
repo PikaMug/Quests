@@ -50,7 +50,6 @@ public class QuestQuitEvent extends QuestEvent implements Cancellable {
         this.cancel = cancel;
     }
 
-    @Override
     public HandlerList getHandlers() {
         return handlers;
     }
