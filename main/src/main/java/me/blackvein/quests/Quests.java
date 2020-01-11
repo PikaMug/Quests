@@ -392,9 +392,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 player.sendMessage(ChatColor.YELLOW + Lang.get("cancelled"));
                 return Prompt.END_OF_CONVERSATION;
             } else {
-                String msg = Lang.get("questInvalidChoice");
-                msg.replace("<yes>", Lang.get(player, "yesWord"));
-                msg.replace("<no>", Lang.get(player, "noWord"));
+                String msg = Lang.get(player, "questInvalidChoice")
+                    .replace("<yes>", Lang.get(player, "yesWord"))
+                    .replace("<no>", Lang.get(player, "noWord"));
                 player.sendMessage(ChatColor.RED + msg);
                 return new QuestAcceptPrompt();
             }
