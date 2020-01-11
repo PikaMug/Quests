@@ -537,47 +537,44 @@ public class CmdExecutor implements CommandExecutor {
                         .replace("<greatest>", String.valueOf(plugin.getSettings().getTopLimit())));
                 return true;
             }
-            File folder = new File(plugin.getDataFolder(), "data");
-            File[] playerFiles = folder.listFiles();
-            Map<String, Integer> questPoints = new HashMap<String, Integer>();
-            if (playerFiles != null) {
-                for (File f : playerFiles) {
-                    if (!f.isDirectory()) {
-                        FileConfiguration data = new YamlConfiguration();
-                        try {
-                            data.load(f);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (InvalidConfigurationException e) {
-                            e.printStackTrace();
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    File folder = new File(plugin.getDataFolder(), "data");
+                    File[] playerFiles = folder.listFiles();
+                    Map<String, Integer> questPoints = new HashMap<String, Integer>();
+                    if (playerFiles != null) {
+                        for (File f : playerFiles) {
+                            if (!f.isDirectory()) {
+                                FileConfiguration data = new YamlConfiguration();
+                                try {
+                                    data.load(f);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (InvalidConfigurationException e) {
+                                    e.printStackTrace();
+                                }
+                                questPoints.put(data.getString("lastKnownName", "Unknown"), 
+                                        data.getInt("quest-points", 0));
+                            }
                         }
-                        String name = f.getName().substring(0, (f.getName().indexOf(".")));
-                        questPoints.put(name, data.getInt("quest-points"));
+                    }
+                    LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
+                    int numPrinted = 0;
+                    String msg = Lang.get("topQuestersTitle");
+                    msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg);
+                    for (Entry<String, Integer> entry : sortedMap.entrySet()) {
+                        numPrinted++;
+                        cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + entry.getKey() + " - " 
+                                + ChatColor.DARK_PURPLE + entry.getValue() + ChatColor.YELLOW + " " 
+                                + Lang.get("questPoints"));
+                        if (numPrinted == topNumber) {
+                            break;
+                        }
                     }
                 }
-            }
-            LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
-            int numPrinted = 0;
-            String msg = Lang.get("topQuestersTitle");
-            msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
-            cs.sendMessage(ChatColor.GOLD + msg);
-            for (String s : sortedMap.keySet()) {
-                int i = (Integer) sortedMap.get(s);
-                s = s.trim();
-                try {
-                    UUID id = UUID.fromString(s);
-                    s = Bukkit.getOfflinePlayer(id).getName();
-                } catch (IllegalArgumentException e) {
-                    plugin.getLogger().warning("File name \"" + s + "\"in /data folder is not a valid player UUID!");
-                    break;
-                }
-                numPrinted++;
-                cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + s + " - " + ChatColor.DARK_PURPLE
-                        + i + ChatColor.YELLOW + " " + Lang.get("questPoints"));
-                if (numPrinted == topNumber) {
-                    break;
-                }
-            }
+            });
         }
         return true;
     }
