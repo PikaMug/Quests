@@ -1202,7 +1202,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     /**
      * Show the player a list of their quests
      * 
-     * @param player Player to show the list
+     * @param quester Quester to show the list
      * @param page Page to display, with 7 quests per page
      */
     public void listQuests(Quester quester, int page) {
