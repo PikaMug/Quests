@@ -1978,7 +1978,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetMobName") + ChatColor.GRAY + " (" 
                     + ((questMob.getName() == null) ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getName()) 
-                    + ")\n";
+                    + ChatColor.GRAY + ")\n";
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetMobType") + ChatColor.GRAY + " (" 
                     + ((questMob.getType() == null) ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getType().name())
