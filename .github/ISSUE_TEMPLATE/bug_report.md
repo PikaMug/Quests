@@ -1,6 +1,6 @@
 ---
 name: Report a bug
-about: if something isn't working right.
+about: when something isn't working right.
 ---
 <!--
   Thanks for submitting a bug report! Please answer the following questions:
