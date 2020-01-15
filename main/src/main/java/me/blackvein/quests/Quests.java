@@ -1335,6 +1335,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     /**
      * Get online Quester from player name
      * 
+     * @deprecated Use {@link #getQuester(UUID)}
      * @param name Player name
      * @return Quester, or null if offline
      */

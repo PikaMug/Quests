@@ -579,6 +579,7 @@ public class CmdExecutor implements CommandExecutor {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     private void questsStats(final CommandSender cs, String[] args) {
         Quester quester;
         if (args != null) {
@@ -1271,6 +1272,7 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminReset(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reset")) {
+            @SuppressWarnings("deprecation")
             Quester quester = plugin.getQuester(args[1]);
             if (quester == null) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
@@ -1324,6 +1326,7 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminRemove(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") && cs.hasPermission("quests.admin.remove")) {
+            @SuppressWarnings("deprecation")
             Quester quester = plugin.getQuester(args[1]);
             if (quester == null) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
