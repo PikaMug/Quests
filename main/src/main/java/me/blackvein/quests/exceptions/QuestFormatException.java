@@ -12,40 +12,26 @@
 
 package me.blackvein.quests.exceptions;
 
-import me.blackvein.quests.Quest;
+public class QuestFormatException extends Exception {
 
-public class InvalidStageException extends Exception {
-
-    private static final long serialVersionUID = 1778748295752972651L;
-    private final Quest quest;
-    private final int stage;
+    private static final long serialVersionUID = -5960613170308750149L;
+    private final String quest;
 
     /**
-     * Create a new instance of this class with the afflicted quest and stage number.
+     * Create a new instance of this class with the afflicted.
      * 
-     * @param quest The quest that an invalid stage id was set within.
-     * @param stage The invalid stage id that was set.
+     * @param quest The quest that an invalid value was set within.
      */
-    public InvalidStageException(Quest quest, int stage) {
+    public QuestFormatException(String quest) {
         this.quest = quest;
-        this.stage = stage;
     }
-
+    
     /**
-     * Get the quest instance associated with this exception.
+     * Get the quest ID associated with this exception.
      * 
-     * @return The quest that an invalid stage id was set within.
+     * @return The quest that an invalid value was set within.
      */
-    public Quest getQuest() {
+    public String getQuestId() {
         return quest;
-    }
-
-    /**
-     * Get the invalid stage id that was attempted to be set within the quest class.
-     * 
-     * @return The invalid stage id that was set.
-     */
-    public int getStage() {
-        return stage;
     }
 }
