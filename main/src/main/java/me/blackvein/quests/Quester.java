@@ -1701,7 +1701,7 @@ public class Quester {
      * @param i The item being delivered
      */
     @SuppressWarnings("deprecation")
-    public void deliverToNPC(Quest quest, NPC n, ItemStack i) {
+    public void deliverToNPC(Quest quest, NPC n, ItemStack i, int handSlot) {
         if (n == null) {
             return;
         }
@@ -1727,8 +1727,8 @@ public class Quester {
                 
                 Material m = i.getType();
                 if (amount < toDeliver) {
-                    int index = player.getInventory().first(i);
-                    if (index == -1) {
+                    ItemStack playerHandItem = player.getInventory().getItem(handSlot);
+                    if (playerHandItem == null) {
                         // Already delivered in previous loop
                         return;
                     }
@@ -1739,9 +1739,9 @@ public class Quester {
                         if ((i.getAmount() + amount) >= toDeliver) {
                             // Take away remaining amount to be delivered
                             i.setAmount(i.getAmount() - (toDeliver - amount));
-                            player.getInventory().setItem(index, i);
+                            player.getInventory().setItem(handSlot, i);
                         } else {
-                            player.getInventory().setItem(index, null);
+                            player.getInventory().setItem(handSlot, null);
                         }
                         player.updateInventory();
                         finishObjective(quest, "deliverItem", new ItemStack(m, 1), found, null, null, null, null, null, 
@@ -1758,7 +1758,7 @@ public class Quester {
                         ItemStack newStack = found;
                         found.setAmount(amount + i.getAmount());
                         getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
-                        player.getInventory().setItem(index, null);
+                        player.getInventory().setItem(handSlot, null);
                         player.updateInventory();
                         String[] message = ConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
                                 .deliverMessages.get(new Random().nextInt(getCurrentStage(quest).deliverMessages

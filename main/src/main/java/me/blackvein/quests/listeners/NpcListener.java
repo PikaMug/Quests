@@ -66,6 +66,7 @@ public class NpcListener implements Listener {
             for (Quest quest : quester.getCurrentQuests().keySet()) {
                 if (quester.containsObjective(quest, "deliverItem") && player.getItemInHand() != null) {
                     ItemStack hand = player.getItemInHand();
+                    int handSlot = player.getInventory().getHeldItemSlot();
                     int currentIndex = -1;
                     LinkedList<Integer> matches = new LinkedList<Integer>();
                     int reasonCode = 0;
@@ -81,7 +82,7 @@ public class NpcListener implements Listener {
                         for (Integer match : matches) {
                             Integer id = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
                             if (id.equals(clicked.getId())) {
-                                quester.deliverToNPC(quest, clicked, hand);
+                                quester.deliverToNPC(quest, clicked, hand, handSlot);
                                 delivery = true;
                                 return;
                             }
