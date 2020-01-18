@@ -1,6 +1,7 @@
 ---
 name: Suggest a feature
 about: once you know all the details.
+labels: enhancement
 ---
 <!--
   Thanks for sharing your new idea! Please answer the following questions:
