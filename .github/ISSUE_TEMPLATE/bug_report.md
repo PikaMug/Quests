@@ -1,6 +1,7 @@
 ---
 name: Report a bug
 about: when something isn't working right.
+labels: bug
 ---
 <!--
   Thanks for submitting a bug report! Please answer the following questions:
