@@ -1738,8 +1738,9 @@ public class Quester {
                         getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
                         if ((i.getAmount() + amount) >= toDeliver) {
                             // Take away remaining amount to be delivered
-                            i.setAmount(i.getAmount() - (toDeliver - amount));
-                            player.getInventory().setItem(index, i);
+                            ItemStack clone = i.clone();
+                            clone.setAmount(i.getAmount() - (toDeliver - amount));
+                            player.getInventory().setItem(index, clone);
                         } else {
                             player.getInventory().setItem(index, null);
                         }
