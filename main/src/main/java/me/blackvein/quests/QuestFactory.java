@@ -788,6 +788,9 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 cc.setSessionData(pref + CK.S_BREW_ITEMS, items);
             }
+            if (stage.cowsToMilk != null) {
+                cc.setSessionData(pref + CK.S_COW_MILK, stage.cowsToMilk);
+            }
             if (stage.fishToCatch != null) {
                 cc.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
             }
@@ -1715,6 +1718,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         LinkedList<Integer> enchantmentIds;
         LinkedList<Integer> enchantmentAmounts;
         LinkedList<ItemStack> brewItems;
+        Integer cows;
         Integer fish;
         Integer players;
         LinkedList<ItemStack> deliveryItems;
@@ -1778,6 +1782,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             enchantmentIds = null;
             enchantmentAmounts = null;
             brewItems = null;
+            cows = null;
             fish = null;
             players = null;
             deliveryItems = null;
@@ -1855,6 +1860,9 @@ public class QuestFactory implements ConversationAbandonedListener {
             }
             if (cc.getSessionData(pref + CK.S_BREW_ITEMS) != null) {
                 brewItems = (LinkedList<ItemStack>) cc.getSessionData(pref + CK.S_BREW_ITEMS);
+            }
+            if (cc.getSessionData(pref + CK.S_COW_MILK) != null) {
+                cows = (Integer) cc.getSessionData(pref + CK.S_COW_MILK);
             }
             if (cc.getSessionData(pref + CK.S_FISH) != null) {
                 fish = (Integer) cc.getSessionData(pref + CK.S_FISH);
@@ -1985,6 +1993,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             } else {
                 stage.set("items-to-brew", null);
             }
+            stage.set("cows-to-milk", cows);
             stage.set("fish-to-catch", fish);
             stage.set("players-to-kill", players);
             if (deliveryItems != null && deliveryItems.isEmpty() == false) {

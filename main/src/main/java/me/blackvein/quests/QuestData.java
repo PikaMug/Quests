@@ -1255,11 +1255,22 @@ public class QuestData {
         }
     };
     
+    private int cowsMilked = 0;
     private int fishCaught = 0;
     private int playersKilled = 0;
     private long delayStartTime = 0;
     private long delayTimeLeft = -1;
     private boolean delayOver = true;
+    
+    public int getCowsMilked() {
+        return cowsMilked;
+    }
+    
+    public void setCowsMilked(int cowsMilked) {
+        this.cowsMilked = cowsMilked;
+        if (doJournalUpdate)
+            quester.updateJournal();
+    }
     
     public int getFishCaught() {
         return fishCaught;

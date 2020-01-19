@@ -35,6 +35,7 @@ public class Stage {
     protected LinkedList<ItemStack> blocksToPlace = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> blocksToUse = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> blocksToCut = new LinkedList<ItemStack>();
+    protected Integer cowsToMilk;
     protected Integer fishToCatch;
     protected Integer playersToKill;
     protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
@@ -170,6 +171,14 @@ public class Stage {
 
     public void setBlocksToCut(LinkedList<ItemStack> blocksToCut) {
         this.blocksToCut = blocksToCut;
+    }
+    
+    public Integer getCowsToMilk() {
+        return cowsToMilk;
+    }
+
+    public void setCowsToMilk(Integer cowsToMilk) {
+        this.cowsToMilk = cowsToMilk;
     }
 
     public Integer getFishToCatch() {
@@ -512,6 +521,7 @@ public class Stage {
         if (blocksToPlace.isEmpty() == false) { return true; }
         if (blocksToUse.isEmpty() == false) { return true; }
         if (blocksToCut.isEmpty() == false) { return true; }
+        if (cowsToMilk != null) { return true; }
         if (fishToCatch != null) { return true; }
         if (playersToKill != null) { return true; }
         if (itemsToCraft.isEmpty() == false) { return true; }

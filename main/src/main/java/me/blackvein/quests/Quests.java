@@ -923,6 +923,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
         }
+        if (stage.cowsToMilk != null) {
+            ChatColor color = data.getCowsMilked() < stage.cowsToMilk ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = "";
+            if (!ignoreOverrides && quester.getCurrentStage(quest).objectiveOverride != null) {
+                message = color + quester.getCurrentStage(quest).objectiveOverride
+                        + color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
+            } else {
+                message = color + Lang.get(quester.getPlayer(), "milkCow")
+                        + color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            quester.getPlayer().sendMessage(message);
+        }
         if (stage.fishToCatch != null) {
             ChatColor color = data.getFishCaught() < stage.fishToCatch ? ChatColor.GREEN : ChatColor.GRAY;
             String message = "";
@@ -2319,6 +2334,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     } else {
                         failStageProcess("items-to-brew has invalid formatting", quest, stageNum);
                     }
+                }
+            }
+            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".cows-to-milk")) {
+                if (config.getInt("quests." + questKey + ".stages.ordered." + stageNum + ".cows-to-milk", -999) != -999) {
+                    oStage.cowsToMilk = config.getInt("quests." + questKey + ".stages.ordered." + stageNum 
+                            + ".cows-to-milk");
+                } else {
+                    failStageProcess("cows-to-milk is not a number", quest, stageNum);
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".fish-to-catch")) {

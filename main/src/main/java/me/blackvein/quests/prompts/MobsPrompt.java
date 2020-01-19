@@ -44,7 +44,7 @@ public class MobsPrompt extends FixedSetPrompt {
     private final QuestFactory questFactory;
 
     public MobsPrompt(Quests plugin, int stageNum, QuestFactory qf) {
-        super("1", "2", "3", "4", "5");
+        super("1", "2", "3", "4", "5", "6");
         this.plugin = plugin;
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
@@ -95,11 +95,20 @@ public class MobsPrompt extends FixedSetPrompt {
                     + "- " + Lang.get("stageEditorCatchFish") + " " + ChatColor.GRAY + "(" + ChatColor.AQUA + fish 
                     + " " + Lang.get("stageEditorFish") + ChatColor.GRAY + ")\n";
         }
-        if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
+        if (context.getSessionData(pref + CK.S_COW_MILK) == null) {
             text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+                    + "- " + Lang.get("stageEditorMilkCows") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
+        } else {
+            Integer cows = (Integer) context.getSessionData(pref + CK.S_COW_MILK);
+            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+                    + "- " + Lang.get("stageEditorMilkCows") + " " + ChatColor.GRAY + "(" + ChatColor.AQUA + cows 
+                    + " " + Lang.get("stageEditorCows") + ChatColor.GRAY + ")\n";
+        }
+        if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
+            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
                     + "- " + Lang.get("stageEditorTameMobs") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
                     + "- " + Lang.get("stageEditorTameMobs") + "\n";
             LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES);
             LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
@@ -109,10 +118,10 @@ public class MobsPrompt extends FixedSetPrompt {
             }
         }
         if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
                     + "- " + Lang.get("stageEditorShearSheep") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
         } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
+            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
                     + "- " + Lang.get("stageEditorShearSheep") + "\n";
             LinkedList<String> colors = (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS);
             LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
@@ -121,7 +130,7 @@ public class MobsPrompt extends FixedSetPrompt {
                         + ChatColor.AQUA + amounts.get(i) + "\n";
             }
         }
-        text += ChatColor.GREEN + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " 
+        text += ChatColor.GREEN + "" + ChatColor.BOLD + "6 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " 
                 + Lang.get("done") + "\n";
         return text;
     }
@@ -133,8 +142,10 @@ public class MobsPrompt extends FixedSetPrompt {
         } else if (input.equalsIgnoreCase("2")) {
             return new FishPrompt();
         } else if (input.equalsIgnoreCase("3")) {
-            return new TameListPrompt();
+            return new CowsPrompt();
         } else if (input.equalsIgnoreCase("4")) {
+            return new TameListPrompt();
+        } else if (input.equalsIgnoreCase("5")) {
             return new ShearListPrompt();
         }
         try {
@@ -539,6 +550,37 @@ public class MobsPrompt extends FixedSetPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_FISH, null);
+            }
+            return new StageMainPrompt(plugin, stageNum, questFactory);
+        }
+    }
+    
+    private class CowsPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            return ChatColor.YELLOW + Lang.get("stageEditorMilkCowsPrompt");
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+                try {
+                    int i = Integer.parseInt(input);
+                    if (i < 0) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
+                        return new CowsPrompt();
+                    } else if (i > 0) {
+                        context.setSessionData(pref + CK.S_COW_MILK, i);
+                    }
+                } catch (NumberFormatException e) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
+                    return new CowsPrompt();
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(pref + CK.S_COW_MILK, null);
             }
             return new StageMainPrompt(plugin, stageNum, questFactory);
         }

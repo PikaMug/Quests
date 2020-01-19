@@ -60,6 +60,7 @@ public class CK {
     public static final String S_CUT_NAMES = "cutNames";
     public static final String S_CUT_AMOUNTS = "cutAmounts";
     public static final String S_CUT_DURABILITY = "cutDurability";
+    public static final String S_COW_MILK = "cowMilk";
     public static final String S_FISH = "fish";
     public static final String S_PLAYER_KILL = "playerKill";
     public static final String S_CRAFT_ITEMS = "craftItems";

@@ -724,6 +724,15 @@ public class Quester {
                 finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + brewed + "/" + amt);
             }
         }
+        if (getCurrentStage(quest).cowsToMilk != null) {
+            if (getQuestData(quest).getCowsMilked() < getCurrentStage(quest).cowsToMilk) {
+                unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "milkCow") + ChatColor.GREEN + ": " 
+            + getQuestData(quest).getCowsMilked() + "/" + getCurrentStage(quest).cowsToMilk);
+            } else {
+                finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "milkCow") + ChatColor.GRAY + ": " 
+            + getQuestData(quest).getCowsMilked() + "/" + getCurrentStage(quest).cowsToMilk);
+            }
+        }
         if (getCurrentStage(quest).fishToCatch != null) {
             if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
                 unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "catchFish") + ChatColor.GREEN + ": " 
@@ -966,7 +975,7 @@ public class Quester {
      * Check if player's current stage has the specified objective<p>
      * 
      * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, catchFish,
+     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, milkCow, catchFish,
      * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
      * shearSheep, password, reachLocation
      * 
@@ -983,7 +992,7 @@ public class Quester {
      * Check if player's current stage has the specified objective<p>
      * 
      * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, catchFish,
+     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, milkCow, catchFish,
      * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
      * shearSheep, password, reachLocation
      * 
@@ -1013,6 +1022,8 @@ public class Quester {
             return !getCurrentStage(quest).itemsToEnchant.isEmpty();
         } else if (s.equalsIgnoreCase("brewItem")) {
             return !getCurrentStage(quest).itemsToBrew.isEmpty();
+        } else if (s.equalsIgnoreCase("milkCow")) {
+            return getCurrentStage(quest).cowsToMilk != null;
         } else if (s.equalsIgnoreCase("catchFish")) {
             return getCurrentStage(quest).fishToCatch != null;
         } else if (s.equalsIgnoreCase("killMob")) {
@@ -1584,6 +1595,31 @@ public class Quester {
     }
     
     /**
+     * Mark cow as milked if Quester has such an objective
+     * 
+     * @param quest The quest for which the fish is being caught
+     */
+    public void milkCow(Quest quest) {
+        final int cowsToMilk = getCurrentStage(quest).cowsToMilk;
+        if (getQuestData(quest).getCowsMilked() < cowsToMilk) {
+            getQuestData(quest).setCowsMilked(getQuestData(quest).getCowsMilked() + 1);
+            
+            if (getQuestData(quest).getCowsMilked() == cowsToMilk) {
+                finishObjective(quest, "milkCow", new ItemStack(Material.AIR, 1), 
+                        new ItemStack(Material.AIR, cowsToMilk), null, null, null, null, null, null, null, null);
+                
+                // Multiplayer
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
+                    q.getQuestData(quest).setCowsMilked(cowsToMilk);
+                    q.finishObjective(quest, "milkCow", new ItemStack(Material.AIR, 1), 
+                            new ItemStack(Material.AIR, cowsToMilk), null, null, null, null, null, null, null, null);
+                    return null;
+                });
+            }
+        }
+    }
+    
+    /**
      * Mark fish as caught if Quester has such an objective
      * 
      * @param quest The quest for which the fish is being caught
@@ -2137,6 +2173,10 @@ public class Quester {
             } else {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
+        } else if (objective.equalsIgnoreCase("milkCow")) {
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "milkCow") + " ";
+            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            p.sendMessage(message);
         } else if (objective.equalsIgnoreCase("catchFish")) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "catchFish") + " ";
             message = message + " " + goal.getAmount() + "/" + goal.getAmount();
@@ -2321,6 +2361,7 @@ public class Quester {
                 }
             }
         }
+        data.setCowsMilked(0);
         data.setFishCaught(0);
         data.setPlayersKilled(0);
         if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
@@ -2535,6 +2576,9 @@ public class Quester {
                         brewAmounts.add(e.getValue());
                     }
                     questSec.set("item-brew-amounts", brewAmounts);
+                }
+                if (getCurrentStage(quest).cowsToMilk != null) {
+                    questSec.set("cows-milked", questData.getCowsMilked());
                 }
                 if (getCurrentStage(quest).fishToCatch != null) {
                     questSec.set("fish-caught", questData.getFishCaught());
@@ -2948,6 +2992,9 @@ public class Quester {
                                     .get(i), brewAmounts.get(i));
                         }
                     }
+                }
+                if (questSec.contains("cows-milked")) {
+                    getQuestData(quest).setCowsMilked(questSec.getInt("cows-milked"));
                 }
                 if (questSec.contains("fish-caught")) {
                     getQuestData(quest).setFishCaught(questSec.getInt("fish-caught"));
@@ -3373,7 +3420,7 @@ public class Quester {
      * Dispatch player event to fellow questers<p>
      * 
      * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, catchFish,
+     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, milkCow, catchFish,
      * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
      * shearSheep, password, reachLocation
      *

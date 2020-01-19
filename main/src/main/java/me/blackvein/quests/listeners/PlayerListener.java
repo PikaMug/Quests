@@ -52,6 +52,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -386,6 +387,26 @@ public class PlayerListener implements Listener {
             if (ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
                 evt.setCancelled(true);
                 evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied"));
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onPlayerBucketFill(PlayerBucketFillEvent evt) {
+        if (evt.getItemStack().getType() == Material.MILK_BUCKET) {
+            Player player = evt.getPlayer();
+            if (plugin.canUseQuests(player.getUniqueId())) {
+                Quester quester = plugin.getQuester(player.getUniqueId());
+                for (Quest quest : plugin.getQuests()) {
+                    if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "milkCow")) {
+                        quester.milkCow(quest);
+                    }
+                    
+                    quester.dispatchMultiplayerEverything(quest, "milkCow", (Quester q) -> {
+                        q.milkCow(quest);
+                        return null;
+                    });
+                }
             }
         }
     }
