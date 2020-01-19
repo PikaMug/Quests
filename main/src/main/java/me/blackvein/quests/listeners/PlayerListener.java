@@ -406,8 +406,8 @@ public class PlayerListener implements Listener {
                         String chat = evt.getMessage();
                         for (final String s : currentStage.getChatActions().keySet()) {
                             if (s.equalsIgnoreCase(chat)) {
-                                if (quester.getQuestData(quest).eventFired.get(s) == null 
-                                        || quester.getQuestData(quest).eventFired.get(s) == false) {
+                                if (quester.getQuestData(quest).actionFired.get(s) == null 
+                                        || quester.getQuestData(quest).actionFired.get(s) == false) {
                                     new BukkitRunnable() {                        
                                         @Override
                                         public void run() {
@@ -415,7 +415,7 @@ public class PlayerListener implements Listener {
                                         }
                                         
                                     }.runTask(this.plugin);
-                                    quester.getQuestData(quest).eventFired.put(s, true);
+                                    quester.getQuestData(quest).actionFired.put(s, true);
                                 }
                             }
                         }
@@ -460,10 +460,10 @@ public class PlayerListener implements Listener {
                         String command = evt.getMessage();
                         for (String s : currentStage.getCommandActions().keySet()) {
                             if (command.equalsIgnoreCase("/" + s)) {
-                                if (quester.getQuestData(quest).eventFired.get(s) == null 
-                                        || quester.getQuestData(quest).eventFired.get(s) == false) {
+                                if (quester.getQuestData(quest).actionFired.get(s) == null 
+                                        || quester.getQuestData(quest).actionFired.get(s) == false) {
                                     currentStage.getCommandActions().get(s).fire(quester, quest);
-                                    quester.getQuestData(quest).eventFired.put(s, true);
+                                    quester.getQuestData(quest).actionFired.put(s, true);
                                 }
                             }
                         }

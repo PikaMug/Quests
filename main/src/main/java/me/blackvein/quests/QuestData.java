@@ -1220,7 +1220,7 @@ public class QuestData {
         }
     };
     
-    public LinkedHashMap<String, Boolean> eventFired = new LinkedHashMap<String, Boolean>() {
+    public LinkedHashMap<String, Boolean> actionFired = new LinkedHashMap<String, Boolean>() {
 
         private static final long serialVersionUID = 7106048037834965123L;
 
