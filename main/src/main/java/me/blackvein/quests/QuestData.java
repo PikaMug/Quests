@@ -1257,27 +1257,57 @@ public class QuestData {
     
     private int fishCaught = 0;
     private int playersKilled = 0;
-    public long delayStartTime = 0;
-    public long delayTimeLeft = -1;
-    public boolean delayOver = true;
-
-    public void setFishCaught(int i) {
-        fishCaught = i;
-        if (doJournalUpdate)
-            quester.updateJournal();
-    }
-
-    public void setPlayersKilled(int i) {
-        playersKilled = i;
-        if (doJournalUpdate)
-            quester.updateJournal();
-    }
-
+    private long delayStartTime = 0;
+    private long delayTimeLeft = -1;
+    private boolean delayOver = true;
+    
     public int getFishCaught() {
         return fishCaught;
     }
-
+    
+    public void setFishCaught(int fishCaught) {
+        this.fishCaught = fishCaught;
+        if (doJournalUpdate)
+            quester.updateJournal();
+    }
+    
     public int getPlayersKilled() {
         return playersKilled;
+    }
+    
+    public void setPlayersKilled(int playersKilled) {
+        this.playersKilled = playersKilled;
+        if (doJournalUpdate)
+            quester.updateJournal();
+    }
+    
+    public long getDelayStartTime() {
+        return delayStartTime;
+    }
+    
+    public void setDelayStartTime(long delayStartTime) {
+        this.delayStartTime = delayStartTime;
+        if (doJournalUpdate)
+            quester.updateJournal();
+    }
+    
+    public long getDelayTimeLeft() {
+        return delayTimeLeft;
+    }
+    
+    public void setDelayTimeLeft(long delayTimeLeft) {
+        this.delayTimeLeft = delayTimeLeft;
+        if (doJournalUpdate)
+            quester.updateJournal();
+    }
+    
+    public boolean isDelayOver() {
+        return delayOver;
+    }
+    
+    public void setDelayOver(boolean delayOver) {
+        this.delayOver = delayOver;
+        if (doJournalUpdate)
+            quester.updateJournal();
     }
 }

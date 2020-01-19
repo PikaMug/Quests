@@ -179,7 +179,7 @@ public class CmdExecutor implements CommandExecutor {
                         for (Quest q : quester.getCurrentQuests().keySet()) {
                             Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
-                            if (plugin.getQuester(player.getUniqueId()).getQuestData(q).delayStartTime == 0) {
+                            if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0) {
                                 String msg = Lang.get(player, "questObjectivesTitle");
                                 msg = msg.replace("<quest>", q.getName());
                                 player.sendMessage(ChatColor.GOLD + msg);

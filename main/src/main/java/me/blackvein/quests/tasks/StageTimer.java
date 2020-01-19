@@ -43,7 +43,7 @@ public class StageTimer implements Runnable {
         if (quester.getQuestData(quest) == null) {
             return;
         }
-        if (quester.getQuestData(quest).delayOver) {
+        if (quester.getQuestData(quest).isDelayOver()) {
             if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
                 if (quester.getCurrentStage(quest).getScript() != null) {
                     plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
@@ -66,8 +66,8 @@ public class StageTimer implements Runnable {
                 quester.addEmptiesFor(quest, stageNum);
                 // Added this line at some point, not sure why. Commented out to fix Github #726
                 //quester.getCurrentStage(quest).setDelay(-1);
-                quester.getQuestData(quest).delayStartTime = 0;
-                quester.getQuestData(quest).delayTimeLeft = -1;
+                quester.getQuestData(quest).setDelayStartTime(0);
+                quester.getQuestData(quest).setDelayTimeLeft(-1);
                 Action stageStartEvent = quester.getCurrentStage(quest).getStartAction();
                 if (stageStartEvent != null) {
                     stageStartEvent.fire(quester, quest);
@@ -84,7 +84,7 @@ public class StageTimer implements Runnable {
                 }
             }
             if (quester.getQuestData(quest) != null) {
-                quester.getQuestData(quest).delayOver = true;
+                quester.getQuestData(quest).setDelayOver(true);
             }
             quester.updateJournal();
         }

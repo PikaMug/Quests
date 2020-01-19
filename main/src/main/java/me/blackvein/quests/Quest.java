@@ -224,8 +224,8 @@ public class Quest {
                 }
             }
             if (quester.getQuestData(this) != null) {
-                quester.getQuestData(this).delayStartTime = 0;
-                quester.getQuestData(this).delayTimeLeft = -1;
+                quester.getQuestData(this).setDelayStartTime(0);
+                quester.getQuestData(this).setDelayTimeLeft(-1);
             }
             
             // Multiplayer

@@ -2648,8 +2648,8 @@ public class Quester {
                     questSec.set("custom-objectives", customObj);
                     questSec.set("custom-objective-counts", customObjCounts);
                 }
-                if (questData.delayTimeLeft > 0) {
-                    questSec.set("stage-delay", questData.delayTimeLeft);
+                if (questData.getDelayTimeLeft() > 0) {
+                    questSec.set("stage-delay", questData.getDelayTimeLeft());
                 }
                 if (questData.actionFired.isEmpty() == false) {
                     LinkedList<String> chatTriggers = new LinkedList<String>();
@@ -3077,7 +3077,7 @@ public class Quester {
                     }
                 }
                 if (questSec.contains("stage-delay")) {
-                    getQuestData(quest).delayTimeLeft = questSec.getLong("stage-delay");
+                    getQuestData(quest).setDelayTimeLeft(questSec.getLong("stage-delay"));
                 }
                 if (getCurrentStage(quest).chatActions.isEmpty() == false) {
                     for (String chatTrig : getCurrentStage(quest).chatActions.keySet()) {
@@ -3111,9 +3111,9 @@ public class Quester {
      * @param quest The quest of which the timer is for
      */
     public void startStageTimer(Quest quest) {
-        if (getQuestData(quest).delayTimeLeft > -1) {
+        if (getQuestData(quest).getDelayTimeLeft() > -1) {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), 
-                    (long) (getQuestData(quest).delayTimeLeft * 0.02));
+                    (long) (getQuestData(quest).getDelayTimeLeft() * 0.02));
         } else {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), 
                     (long) (getCurrentStage(quest).delay * 0.02));
@@ -3123,7 +3123,7 @@ public class Quester {
                         .delayMessage), quest, p));
             }
         }
-        getQuestData(quest).delayStartTime = System.currentTimeMillis();
+        getQuestData(quest).setDelayStartTime(System.currentTimeMillis());
     }
     
     /**
@@ -3131,14 +3131,14 @@ public class Quester {
      * @param quest The quest of which the timer is for
      */
     public void stopStageTimer(Quest quest) {
-        if (getQuestData(quest).delayTimeLeft > -1) {
-            getQuestData(quest).delayTimeLeft = getQuestData(quest).delayTimeLeft - (System.currentTimeMillis() 
-                    - getQuestData(quest).delayStartTime);
+        if (getQuestData(quest).getDelayTimeLeft() > -1) {
+            getQuestData(quest).setDelayTimeLeft(getQuestData(quest).getDelayTimeLeft() - (System.currentTimeMillis() 
+                    - getQuestData(quest).getDelayStartTime()));
         } else {
-            getQuestData(quest).delayTimeLeft = getCurrentStage(quest).delay - (System.currentTimeMillis() 
-                    - getQuestData(quest).delayStartTime);
+            getQuestData(quest).setDelayTimeLeft(getCurrentStage(quest).delay - (System.currentTimeMillis() 
+                    - getQuestData(quest).getDelayStartTime()));
         }
-        getQuestData(quest).delayOver = false;
+        getQuestData(quest).setDelayOver(false);
     }
     
     /**
@@ -3147,11 +3147,11 @@ public class Quester {
      * @return Remaining time in milliseconds
      */
     public long getStageTime(Quest quest) {
-        if (getQuestData(quest).delayTimeLeft > -1) {
-            return getQuestData(quest).delayTimeLeft - (System.currentTimeMillis() 
-                    - getQuestData(quest).delayStartTime);
+        if (getQuestData(quest).getDelayTimeLeft() > -1) {
+            return getQuestData(quest).getDelayTimeLeft() - (System.currentTimeMillis() 
+                    - getQuestData(quest).getDelayStartTime());
         } else {
-            return getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).delayStartTime);
+            return getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).getDelayStartTime());
         }
     }
 
