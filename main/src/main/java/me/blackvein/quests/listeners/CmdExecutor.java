@@ -1050,8 +1050,11 @@ public class CmdExecutor implements CommandExecutor {
                 cs.sendMessage(ChatColor.RED + Lang.get("inputNum"));
                 return;
             }
-            Thread thread = new Thread(new Runnable() {
-
+            cs.sendMessage(ChatColor.YELLOW + Lang.get("settingAllQuestPoints"));
+            for (Quester q : plugin.getQuesters()) {
+                q.setQuestPoints(amount);
+            }
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                 @Override
                 public void run() {
                     File questerFolder = new File(plugin.getDataFolder(), "data");
@@ -1102,11 +1105,6 @@ public class CmdExecutor implements CommandExecutor {
                     }
                 }
             });
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("settingAllQuestPoints"));
-            for (Quester q : plugin.getQuesters()) {
-                q.setQuestPoints(amount);
-            }
-            thread.start();
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
