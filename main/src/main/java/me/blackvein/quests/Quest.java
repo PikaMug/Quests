@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -289,7 +290,7 @@ public class Quest {
      * 
      * Method may be called as often as needed.
      * 
-     * @param quester The quester to have their compass updated
+     * @param quester The online quester to have their compass updated
      * @param nextStage The stage to process for targets
      * @return true if successful
      */
@@ -301,6 +302,9 @@ public class Quest {
             return false;
         }
         if (nextStage == null) {
+            return false;
+        }
+        if (!quester.getOfflinePlayer().isOnline()) {
             return false;
         }
         Location targetLocation = null;
@@ -324,53 +328,36 @@ public class Quest {
     }
     
     /**
-     * Check that a quester has met all Requirements to accept this quest
+     * Check that a quester has met all Requirements to accept this quest<p>
+     * 
+     * Item, permission and custom Requirements are only checked for online players
      * 
      * @param quester The quester to check
      * @return true if all Requirements have been met
      */
     public boolean testRequirements(Quester quester) {
-        return testRequirements(quester.getPlayer());
+        return testRequirements(quester.getOfflinePlayer());
     }
     
     /**
-     * Check that a player has met all Requirements to accept this quest
+     * Check that a player has met all Requirements to accept this quest<p>
+     * 
+     * Item, permission and custom Requirements are only checked for online players
      * 
      * @param player The player to check
      * @return true if all Requirements have been met
      */
-    protected boolean testRequirements(Player player) {
+    protected boolean testRequirements(OfflinePlayer player) {
         Quester quester = plugin.getQuester(player.getUniqueId());
         if (reqs.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
-            if (plugin.getDependencies().getVaultEconomy().getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) 
-                    < reqs.getMoney()) {
-                return false;
-            }
-        }
-        PlayerInventory inventory = player.getInventory();
-        int num = 0;
-        for (ItemStack is : reqs.getItems()) {
-            for (ItemStack stack : inventory.getContents()) {
-                if (stack != null) {
-                    if (ItemUtil.compareItems(is, stack, true) == 0) {
-                        num += stack.getAmount();
-                    }
-                }
-            }
-            if (num < is.getAmount()) {
-                return false;
-            }
-            num = 0;
-        }
-        for (String s : reqs.getPermissions()) {
-            if (player.hasPermission(s) == false) {
+            if (plugin.getDependencies().getVaultEconomy().getBalance(player) < reqs.getMoney()) {
                 return false;
             }
         }
         for (String s : reqs.getMcmmoSkills()) {
             final SkillType st = Quests.getMcMMOSkill(s);
             final int lvl = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(s));
-            if (UserManager.getPlayer(player).getProfile().getSkillLevel(st) < lvl) {
+            if (UserManager.getOfflinePlayer(player).getProfile().getSkillLevel(st) < lvl) {
                 return false;
             }
         }
@@ -386,23 +373,6 @@ public class Quest {
                 return false;
             }
         }
-        for (String s : reqs.getCustomRequirements().keySet()) {
-            CustomRequirement found = null;
-            for (CustomRequirement cr : plugin.getCustomRequirements()) {
-                if (cr.getName().equalsIgnoreCase(s)) {
-                    found = cr;
-                    break;
-                }
-            }
-            if (found != null) {
-                if (found.testRequirement(player, reqs.getCustomRequirements().get(s)) == false) {
-                    return false;
-                }
-            } else {
-                plugin.getLogger().warning("Quester \"" + player.getName() + "\" attempted to take Quest \"" + name 
-                        + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");
-            }
-        }
         if (quester.questPoints < reqs.getQuestPoints()) {
             return false;
         }
@@ -414,6 +384,46 @@ public class Quest {
             questObject.name = q;
             if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(questObject)) {
                 return false;
+            }
+        }
+        if (player.isOnline()) {
+            Player p = (Player)player;
+            PlayerInventory inventory = p.getInventory();
+            int num = 0;
+            for (ItemStack is : reqs.getItems()) {
+                for (ItemStack stack : inventory.getContents()) {
+                    if (stack != null) {
+                        if (ItemUtil.compareItems(is, stack, true) == 0) {
+                            num += stack.getAmount();
+                        }
+                    }
+                }
+                if (num < is.getAmount()) {
+                    return false;
+                }
+                num = 0;
+            }
+            for (String s : reqs.getPermissions()) {
+                if (p.hasPermission(s) == false) {
+                    return false;
+                }
+            }
+            for (String s : reqs.getCustomRequirements().keySet()) {
+                CustomRequirement found = null;
+                for (CustomRequirement cr : plugin.getCustomRequirements()) {
+                    if (cr.getName().equalsIgnoreCase(s)) {
+                        found = cr;
+                        break;
+                    }
+                }
+                if (found != null) {
+                    if (found.testRequirement(p, reqs.getCustomRequirements().get(s)) == false) {
+                        return false;
+                    }
+                } else {
+                    plugin.getLogger().warning("Quester \"" + p.getName() + "\" attempted to take Quest \"" + name 
+                            + "\", but the Custom Requirement \"" + s + "\" could not be found. Does it still exist?");
+                }
             }
         }
         return true;

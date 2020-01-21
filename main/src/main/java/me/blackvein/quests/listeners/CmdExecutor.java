@@ -42,6 +42,7 @@ import me.blackvein.quests.util.MiscUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -986,51 +987,58 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminGive(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.give")) {
-            Player target = getPlayer(args[1]);
+            OfflinePlayer target = getPlayer(args[1]);
             if (target == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                try {
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                    return;
+                }
+            }
+            Quest questToGive;
+            String name = "";
+            if (args.length == 3) {
+                name = args[2].toLowerCase();
             } else {
-                Quest questToGive;
-                String name = "";
-                if (args.length == 3) {
-                    name = args[2].toLowerCase();
-                } else {
-                    for (int i = 2; i < args.length; i++) {
-                        int lastIndex = args.length - 1;
-                        if (i == lastIndex) {
-                            name = name + args[i].toLowerCase();
-                        } else {
-                            name = name + args[i].toLowerCase() + " ";
-                        }
+                for (int i = 2; i < args.length; i++) {
+                    int lastIndex = args.length - 1;
+                    if (i == lastIndex) {
+                        name = name + args[i].toLowerCase();
+                    } else {
+                        name = name + args[i].toLowerCase() + " ";
                     }
                 }
-                questToGive = plugin.getQuest(name);
-                if (questToGive == null) {
-                    cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
-                } else {
-                    Quester quester = plugin.getQuester(target.getUniqueId());
-                    for (Quest q : quester.getCurrentQuests().keySet()) {
-                        if (q.getName().equalsIgnoreCase(questToGive.getName())) {
-                            String msg = Lang.get("questsPlayerHasQuestAlready");
-                            msg = msg.replace("<player>", ChatColor.ITALIC + "" + ChatColor.GREEN + target.getName()
-                                    + ChatColor.RESET + ChatColor.YELLOW);
-                            msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                                    + questToGive.getName() + ChatColor.RESET + ChatColor.YELLOW);
-                            cs.sendMessage(ChatColor.YELLOW + msg);
-                            return;
-                        }
+            }
+            questToGive = plugin.getQuest(name);
+            if (questToGive == null) {
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
+            } else {
+                Quester quester = plugin.getQuester(target.getUniqueId());
+                for (Quest q : quester.getCurrentQuests().keySet()) {
+                    if (q.getName().equalsIgnoreCase(questToGive.getName())) {
+                        String msg = Lang.get("questsPlayerHasQuestAlready");
+                        msg = msg.replace("<player>", ChatColor.ITALIC + "" + ChatColor.GREEN + target.getName()
+                                + ChatColor.RESET + ChatColor.YELLOW);
+                        msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
+                                + questToGive.getName() + ChatColor.RESET + ChatColor.YELLOW);
+                        cs.sendMessage(ChatColor.YELLOW + msg);
+                        return;
                     }
-                    quester.hardQuit(questToGive);
-                    String msg1 = Lang.get("questForceTake");
-                    msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                    msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + questToGive.getName() + ChatColor.GOLD);
-                    cs.sendMessage(ChatColor.GOLD + msg1);
-                    String msg2 = Lang.get(target, "questForcedTake");
+                }
+                quester.hardQuit(questToGive);
+                String msg1 = Lang.get("questForceTake");
+                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + questToGive.getName() + ChatColor.GOLD);
+                cs.sendMessage(ChatColor.GOLD + msg1);
+                if (target.isOnline()) {
+                    Player p = (Player)target;
+                    String msg2 = Lang.get(p, "questForcedTake");
                     msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                     msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + questToGive.getName() + ChatColor.GOLD);
-                    target.sendMessage(ChatColor.GREEN + msg2);
-                    quester.takeQuest(questToGive, true);
+                    p.sendMessage(ChatColor.GREEN + msg2);
                 }
+                quester.takeQuest(questToGive, true);
             }
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
@@ -1474,7 +1482,7 @@ public class CmdExecutor implements CommandExecutor {
     }
     
     /**
-     * Get a Player by name
+     * Get an online Player by name
      * 
      * @param name Name of the player
      * @return Player or null if not found

@@ -412,71 +412,74 @@ public class Quester {
         if (preEvent.isCancelled()) {
             return;
         }
-        Player player = getPlayer();
-        Planner pln = q.getPlanner();
-        long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
-        long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
-        long duration = end - start; // How long the quest can be active for
-        long repeat = pln.getRepeat(); // Length to wait in-between start times
-        if (start != -1) {
-            if (System.currentTimeMillis() < start) {
-                String early = Lang.get("plnTooEarly");
-                early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-                early = early.replace("<time>", ChatColor.DARK_PURPLE
-                        + MiscUtil.getTime(start - System.currentTimeMillis()) + ChatColor.YELLOW);
-                player.sendMessage(ChatColor.YELLOW + early);
-                return;
-            }
-        }
-        if (end != -1 && repeat == -1) {
-            if (System.currentTimeMillis() > end) {
-                String late = Lang.get("plnTooLate");
-                late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
-                late = late.replace("<time>", ChatColor.DARK_PURPLE
-                        + MiscUtil.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
-                player.sendMessage(ChatColor.RED + late);
-                return;
-            }
-        }
-        if (repeat != -1 && start != -1 && end != -1) {
-            // Ensure that we're past the initial duration
-            if (System.currentTimeMillis() > end) {
-                final int maxSize = 2;
-                final LinkedHashMap<Long, Long> cache = new LinkedHashMap<Long, Long>() {
-                    private static final long serialVersionUID = 1L;
-                    
-                    @Override
-                    protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
-                        return size() > maxSize;
-                    }
-                };
-                
-                // Store both the upcoming and most recent period of activity
-                long nextStart = start;
-                long nextEnd = end;
-                while (System.currentTimeMillis() >= nextStart) {
-                    nextStart += repeat;
-                    nextEnd = nextStart + duration;
-                    cache.put(nextStart, nextEnd);
-                }
-                
-                // Check whether the quest is currently active
-                boolean active = false;
-                for (Entry<Long, Long> startEnd : cache.entrySet()) {
-                    if (startEnd.getKey() <= System.currentTimeMillis() && System.currentTimeMillis() 
-                            < startEnd.getValue()) {
-                        active = true;
-                    }
-                }
-                
-                // If quest is not active, inform user of wait time
-                if (!active) {
+        OfflinePlayer player = getOfflinePlayer();
+        if (player.isOnline()) {
+            Player p = getPlayer();
+            Planner pln = q.getPlanner();
+            long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
+            long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
+            long duration = end - start; // How long the quest can be active for
+            long repeat = pln.getRepeat(); // Length to wait in-between start times
+            if (start != -1) {
+                if (System.currentTimeMillis() < start) {
                     String early = Lang.get("plnTooEarly");
                     early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
                     early = early.replace("<time>", ChatColor.DARK_PURPLE
-                            + MiscUtil.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
-                    player.sendMessage(ChatColor.YELLOW + early);
+                            + MiscUtil.getTime(start - System.currentTimeMillis()) + ChatColor.YELLOW);
+                    p.sendMessage(ChatColor.YELLOW + early);
                     return;
+                }
+            }
+            if (end != -1 && repeat == -1) {
+                if (System.currentTimeMillis() > end) {
+                    String late = Lang.get("plnTooLate");
+                    late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
+                    late = late.replace("<time>", ChatColor.DARK_PURPLE
+                            + MiscUtil.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
+                    p.sendMessage(ChatColor.RED + late);
+                    return;
+                }
+            }
+            if (repeat != -1 && start != -1 && end != -1) {
+                // Ensure that we're past the initial duration
+                if (System.currentTimeMillis() > end) {
+                    final int maxSize = 2;
+                    final LinkedHashMap<Long, Long> cache = new LinkedHashMap<Long, Long>() {
+                        private static final long serialVersionUID = 1L;
+                        
+                        @Override
+                        protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
+                            return size() > maxSize;
+                        }
+                    };
+                    
+                    // Store both the upcoming and most recent period of activity
+                    long nextStart = start;
+                    long nextEnd = end;
+                    while (System.currentTimeMillis() >= nextStart) {
+                        nextStart += repeat;
+                        nextEnd = nextStart + duration;
+                        cache.put(nextStart, nextEnd);
+                    }
+                    
+                    // Check whether the quest is currently active
+                    boolean active = false;
+                    for (Entry<Long, Long> startEnd : cache.entrySet()) {
+                        if (startEnd.getKey() <= System.currentTimeMillis() && System.currentTimeMillis() 
+                                < startEnd.getValue()) {
+                            active = true;
+                        }
+                    }
+                    
+                    // If quest is not active, inform user of wait time
+                    if (!active) {
+                        String early = Lang.get("plnTooEarly");
+                        early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+                        early = early.replace("<time>", ChatColor.DARK_PURPLE
+                                + MiscUtil.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
+                        p.sendMessage(ChatColor.YELLOW + early);
+                        return;
+                    }
                 }
             }
         }
@@ -496,32 +499,38 @@ public class Quester {
                         plugin.getDependencies().getVaultEconomy().withdrawPlayer(getOfflinePlayer(), reqs.getMoney());
                     }
                 }
-                for (ItemStack is : reqs.getItems()) {
-                    if (reqs.getRemoveItems().get(reqs.getItems().indexOf(is)) == true) {
-                        InventoryUtil.removeItem(player.getInventory(), is);
+                if (player.isOnline()) {
+                    Player p = getPlayer();
+                    for (ItemStack is : reqs.getItems()) {
+                        if (reqs.getRemoveItems().get(reqs.getItems().indexOf(is)) == true) {
+                            InventoryUtil.removeItem(p.getInventory(), is);
+                        }
+                    }
+                    String accepted = Lang.get(getPlayer(), "questAccepted");
+                    accepted = accepted.replace("<quest>", q.getName());
+                    p.sendMessage(ChatColor.GREEN + accepted);
+                    p.sendMessage("");
+                    if (plugin.getSettings().canShowQuestTitles()) {
+                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " 
+                                + player.getName() + " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest") + " " 
+                                + Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
+                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " 
+                                + player.getName() + " subtitle " + "{\"text\":\"" + q.getName() 
+                                + "\",\"color\":\"yellow\"}");
                     }
                 }
-                String accepted = Lang.get(getPlayer(), "questAccepted");
-                accepted = accepted.replace("<quest>", q.getName());
-                player.sendMessage(ChatColor.GREEN + accepted);
-                player.sendMessage("");
-                if (plugin.getSettings().canShowQuestTitles()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " 
-                            + player.getName() + " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest") + " " 
-                            + Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " 
-                            + player.getName() + " subtitle " + "{\"text\":\"" + q.getName() 
-                            + "\",\"color\":\"yellow\"}");
-                }
             }
-            String msg = Lang.get(getPlayer(), "questObjectivesTitle");
-            msg = msg.replace("<quest>", q.getName());
-            getPlayer().sendMessage(ChatColor.GOLD + msg);
-            plugin.showObjectives(q, this, false);
-            String stageStartMessage = stage.startMessage;
-            if (stageStartMessage != null) {
-                getPlayer().sendMessage(ConfigUtil
-                        .parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
+            if (player.isOnline()) {
+                Player p = getPlayer();
+                String msg = Lang.get(p, "questObjectivesTitle");
+                msg = msg.replace("<quest>", q.getName());
+                p.sendMessage(ChatColor.GOLD + msg);
+                plugin.showObjectives(q, this, false);
+                String stageStartMessage = stage.startMessage;
+                if (stageStartMessage != null) {
+                    p.sendMessage(ConfigUtil
+                            .parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
+                }
             }
             if (stage.chatActions.isEmpty() == false) {
                 for (String chatTrigger : stage.chatActions.keySet()) {
@@ -542,7 +551,9 @@ public class Quester {
             q.updateCompass(this, stage);
             saveData();
         } else {
-            player.sendMessage(q.getRequirements().getFailRequirements());
+            if (player.isOnline()) {
+                ((Player)player).sendMessage(q.getRequirements().getFailRequirements());
+            }
         }
         QuesterPostStartQuestEvent postEvent = new QuesterPostStartQuestEvent(this, q);
         plugin.getServer().getPluginManager().callEvent(postEvent);
