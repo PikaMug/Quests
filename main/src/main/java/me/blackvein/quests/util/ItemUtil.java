@@ -71,11 +71,12 @@ public class ItemUtil {
             }
         }
         if (one.hasItemMeta() || two.hasItemMeta()) {
-            if (one.hasItemMeta() && two.hasItemMeta() == false) {
-                return -4;
-            } else if (one.hasItemMeta() == false && two.hasItemMeta()) {
-                return -4;
-            } else if (one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() == false) {
+            //if (one.hasItemMeta() && two.hasItemMeta() == false) {
+            //    return -4;
+            //} else if (one.hasItemMeta() == false && two.hasItemMeta()) {
+            //    return -4;
+            //} else
+            if (one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() == false) {
                 return -4;
             } else if (one.getItemMeta().hasDisplayName() == false && two.getItemMeta().hasDisplayName()) {
                 return -4;
