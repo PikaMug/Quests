@@ -18,7 +18,7 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 
 /**
- * Called after a quester starts a quest
+ * Called after an online quester starts a quest
  */
 public class QuesterPostStartQuestEvent extends QuesterEvent {
     private static final HandlerList handlers = new HandlerList();

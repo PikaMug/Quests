@@ -555,8 +555,10 @@ public class Quester {
                 ((Player)player).sendMessage(q.getRequirements().getFailRequirements());
             }
         }
-        QuesterPostStartQuestEvent postEvent = new QuesterPostStartQuestEvent(this, q);
-        plugin.getServer().getPluginManager().callEvent(postEvent);
+        if (player.isOnline()) {
+            QuesterPostStartQuestEvent postEvent = new QuesterPostStartQuestEvent(this, q);
+            plugin.getServer().getPluginManager().callEvent(postEvent);
+        }
     }
     
     /**
