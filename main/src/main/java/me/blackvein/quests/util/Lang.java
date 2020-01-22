@@ -81,12 +81,12 @@ public class Lang {
 
     /**
      * Get key for lang string
-     * @param val
+     * @param value The lang string
      * @return key or "NULL" as String
      */
-    public static String getKey(String val) {
+    public static String getKey(String value) {
         for (Entry<String, String> entry : langMap.entrySet()) {
-            if (entry.getValue().equals(val)) {
+            if (entry.getValue().equals(value)) {
                 return entry.getKey();
             }
         }
@@ -94,13 +94,14 @@ public class Lang {
     }
 
     /**
-     * Get key starting with "COMMAND_" for lang string
-     * @param val
-     * @return key or "NULL" as String
+     * Get prefixed key for lang value
+     * @param value The lang string
+     * @param keyPrefix String that the key starts with
+     * @return full key or "NULL" as String
      */
-    public static String getCommandKey(String val) {
+    public static String getKeyFromPrefix(String keyPrefix, String value) {
         for (Entry<String, String> entry : langMap.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase(val) && entry.getKey().toUpperCase().startsWith("COMMAND_")) {
+            if (entry.getValue().equalsIgnoreCase(value) && entry.getKey().toUpperCase().startsWith(keyPrefix)) {
                 return entry.getKey();
             }
         }

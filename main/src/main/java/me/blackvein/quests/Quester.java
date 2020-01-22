@@ -326,8 +326,13 @@ public class Quester {
     }
 
     public void updateJournal() {
-        if (!hasJournal)
+        if (!hasJournal) {
             return;
+        }  
+        if (!getPlayer().isOnline()) {
+            plugin.getLogger().info("Could not update Quests Journal for " + getPlayer().getName() + " while offline");
+            return;
+        }
         Inventory inv = getPlayer().getInventory();
         ItemStack[] arr = inv.getContents();
         int index = -1;

@@ -872,7 +872,7 @@ public class CmdExecutor implements CommandExecutor {
     
     public String getQuestsCommandUsage(String cmd) {
         return ChatColor.RED + Lang.get("usage") + ": " + ChatColor.YELLOW + "/quests "
-                + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
+                + Lang.get(Lang.getKeyFromPrefix("COMMAND_", cmd) + "_HELP");
     }
     
     private void adminHelp(final CommandSender cs) {
@@ -1238,41 +1238,44 @@ public class CmdExecutor implements CommandExecutor {
     }
 
     private void adminQuit(final CommandSender cs, String[] args) {
-        try {
-            if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.quit")) {
-                Player target = getPlayer(args[1]);
-                if (target == null) {
+        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.quit")) {
+            OfflinePlayer target = getPlayer(args[1]);
+            if (target == null) {
+                try {
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
                     cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
-                } else {
-                    Quester quester = plugin.getQuester(target.getUniqueId());
-                    if (quester.getCurrentQuests().isEmpty()) {
-                        String msg = Lang.get("noCurrentQuest");
-                        msg = msg.replace("<player>", target.getName());
-                        cs.sendMessage(ChatColor.YELLOW + msg);
-                    } else {
-                        Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
-                        if (quest == null) {
-                            cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
-                            return;
-                        }
-                        quester.hardQuit(quest);
-                        String msg1 = Lang.get("questForceQuit");
-                        msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                        msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
-                        cs.sendMessage(ChatColor.GOLD + msg1);
-                        String msg2 = Lang.get(target, "questForcedQuit");
-                        msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-                        msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
-                        target.sendMessage(ChatColor.GREEN + msg2);
-                        quester.saveData();
-                        quester.updateJournal();
-                    }
+                    return;
                 }
-            } else {
-                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
             }
-        } catch (NullPointerException npe) {
-            npe.printStackTrace();
+            Quester quester = plugin.getQuester(target.getUniqueId());
+            if (quester.getCurrentQuests().isEmpty()) {
+                String msg = Lang.get("noCurrentQuest");
+                msg = msg.replace("<player>", target.getName());
+                cs.sendMessage(ChatColor.YELLOW + msg);
+            } else {
+                Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
+                if (quest == null) {
+                    cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
+                    return;
+                }
+                quester.hardQuit(quest);
+                String msg1 = Lang.get("questForceQuit");
+                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                cs.sendMessage(ChatColor.GOLD + msg1);
+                if (target.isOnline()) {
+                    Player p = (Player)target;
+                    String msg2 = Lang.get(p, "questForcedQuit");
+                    msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                    msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                    p.sendMessage(ChatColor.GREEN + msg2);
+                }
+                quester.saveData();
+                quester.updateJournal();
+            }
+        } else {
+            cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
     }
 
@@ -1436,7 +1439,7 @@ public class CmdExecutor implements CommandExecutor {
 
     public String getQuestadminCommandUsage(String cmd) {
         return ChatColor.RED + Lang.get("usage") + ": " + ChatColor.YELLOW + "/questadmin "
-                + Lang.get(Lang.getCommandKey(cmd) + "_HELP");
+                + Lang.get(Lang.getKeyFromPrefix("COMMAND_QUESTADMIN_", cmd) + "_HELP");
     }
     
     private static Map<String, Integer> sort(Map<String, Integer> unsortedMap) {
