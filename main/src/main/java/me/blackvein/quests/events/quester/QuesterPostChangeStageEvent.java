@@ -19,7 +19,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Stage;
 
 /**
- * Called after a quester changes stage
+ * Called after an online quester changes stage
  */
 public class QuesterPostChangeStageEvent extends QuesterEvent {
     private static final HandlerList handlers = new HandlerList();

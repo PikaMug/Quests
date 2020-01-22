@@ -28,7 +28,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -304,11 +303,11 @@ public class Quester {
     }
 
     public Player getPlayer() {
-        return Bukkit.getServer().getPlayer(id);
+        return plugin.getServer().getPlayer(id);
     }
 
     public OfflinePlayer getOfflinePlayer() {
-        return Bukkit.getServer().getOfflinePlayer(id);
+        return plugin.getServer().getOfflinePlayer(id);
     }
     
     public Stage getCurrentStage(Quest quest) {
@@ -516,10 +515,10 @@ public class Quester {
                     p.sendMessage(ChatColor.GREEN + accepted);
                     p.sendMessage("");
                     if (plugin.getSettings().canShowQuestTitles()) {
-                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " 
+                        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title " 
                                 + player.getName() + " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest") + " " 
                                 + Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
-                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " 
+                        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title " 
                                 + player.getName() + " subtitle " + "{\"text\":\"" + q.getName() 
                                 + "\",\"color\":\"yellow\"}");
                     }
@@ -3272,7 +3271,7 @@ public class Quester {
         }
         Player player = getPlayer();
         int size = ((quests.size() / 9) + 1) * 9;
-        Inventory inv = Bukkit.getServer().createInventory(player, size, Lang.get(player, "quests") + " | " 
+        Inventory inv = plugin.getServer().createInventory(player, size, Lang.get(player, "quests") + " | " 
                 + npc.getName());
         int inc = 0;
         for (int i = 0; i < quests.size(); i++) {

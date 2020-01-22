@@ -20,7 +20,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Stage;
 
 /**
- * Called before a quester changes stage
+ * Called before an online quester changes stage
  */
 public class QuesterPreChangeStageEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

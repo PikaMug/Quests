@@ -580,23 +580,23 @@ public class CmdExecutor implements CommandExecutor {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
     private void questsStats(final CommandSender cs, String[] args) {
-        Quester quester;
+        OfflinePlayer target;
         if (args != null) {
-            quester = plugin.getQuester(args[1]);
-            if (quester == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
-                return;
-            } else if (Bukkit.getOfflinePlayer(quester.getUUID()).getName() != null) {
-                cs.sendMessage(ChatColor.GOLD + "- " + Bukkit.getOfflinePlayer(quester.getUUID()).getName() + " -");
-            } else {
-                cs.sendMessage(ChatColor.GOLD + "- " + args[1] + " -");
+            target = getPlayer(args[1]);
+            if (target == null) {
+                try {
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                    return;
+                }
             }
         } else {
-            quester = plugin.getQuester(((Player) cs).getUniqueId());
-            cs.sendMessage(ChatColor.GOLD + "- " + ((Player) cs).getName() + " -");
+            target = Bukkit.getOfflinePlayer(((Player)cs).getUniqueId());
         }
+        Quester quester = plugin.getQuester(target.getUniqueId());
+        cs.sendMessage(ChatColor.GOLD + "- " + target.getName() + " -");
         cs.sendMessage(ChatColor.YELLOW + Lang.get("questPointsDisplay") + " " + ChatColor.DARK_PURPLE
                 + quester.getQuestPoints());
         if (quester.getCurrentQuests().isEmpty()) {
@@ -898,28 +898,36 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminGivePoints(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.givepoints")) {
-            Player target = getPlayer(args[1]);
+            OfflinePlayer target = getPlayer(args[1]);
             if (target == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
-            } else {
-                int points;
                 try {
-                    points = Integer.parseInt(args[2]);
-                    Quester quester = plugin.getQuester(target.getUniqueId());
-                    quester.setQuestPoints(quester.getQuestPoints() + Math.abs(points));
-                    String msg1 = Lang.get("giveQuestPoints");
-                    msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                    msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
-                    cs.sendMessage(ChatColor.GOLD + msg1);
-                    String msg2 = Lang.get(target, "questPointsGiven");
-                    msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-                    msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
-                    target.sendMessage(ChatColor.GREEN + msg2);
-                    quester.saveData();
-                } catch (NumberFormatException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                    return;
                 }
             }
+            int points;
+            try {
+                points = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
+                return;
+            }
+            Quester quester = plugin.getQuester(target.getUniqueId());
+            quester.setQuestPoints(quester.getQuestPoints() + Math.abs(points));
+            String msg1 = Lang.get("giveQuestPoints");
+            msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+            msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+            cs.sendMessage(ChatColor.GOLD + msg1);
+            if (target.isOnline()) {
+                Player p = (Player)target;
+                String msg2 = Lang.get(p, "questPointsGiven");
+                msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                p.sendMessage(ChatColor.GREEN + msg2);
+            }
+            quester.saveData();
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
@@ -927,29 +935,36 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminTakePoints(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.takepoints")) {
-            Player target = getPlayer(args[1]);
+            OfflinePlayer target = getPlayer(args[1]);
             if (target == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
-            } else {
-                int points;
                 try {
-                    points = Integer.parseInt(args[2]);
-                } catch (NumberFormatException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
                     return;
                 }
-                Quester quester = plugin.getQuester(target.getUniqueId());
-                quester.setQuestPoints(quester.getQuestPoints() - Math.abs(points));
-                String msg1 = Lang.get("takeQuestPoints");
-                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
-                cs.sendMessage(ChatColor.GOLD + msg1);
-                String msg2 = Lang.get(target, "questPointsTaken");
+            }
+            int points;
+            try {
+                points = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
+                return;
+            }
+            Quester quester = plugin.getQuester(target.getUniqueId());
+            quester.setQuestPoints(quester.getQuestPoints() - Math.abs(points));
+            String msg1 = Lang.get("takeQuestPoints");
+            msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+            msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+            cs.sendMessage(ChatColor.GOLD + msg1);
+            if (target.isOnline()) {
+                Player p = (Player)target;
+                String msg2 = Lang.get(p, "questPointsTaken");
                 msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                 msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
-                target.sendMessage(ChatColor.GREEN + msg2);
-                quester.saveData();
+                p.sendMessage(ChatColor.GREEN + msg2);
             }
+            quester.saveData();
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
@@ -957,29 +972,36 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminPoints(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.points")) {
-            Player target = getPlayer(args[1]);
+            OfflinePlayer target = getPlayer(args[1]);
             if (target == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
-            } else {
-                int points;
                 try {
-                    points = Integer.parseInt(args[2]);
-                } catch (NumberFormatException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
                     return;
                 }
-                Quester quester = plugin.getQuester(target.getUniqueId());
-                quester.setQuestPoints(points);
-                String msg1 = Lang.get("setQuestPoints");
-                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
-                cs.sendMessage(ChatColor.GOLD + msg1);
-                String msg2 = Lang.get("questPointsSet");
+            }
+            int points;
+            try {
+                points = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
+                return;
+            }
+            Quester quester = plugin.getQuester(target.getUniqueId());
+            quester.setQuestPoints(points);
+            String msg1 = Lang.get("setQuestPoints");
+            msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+            msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+            cs.sendMessage(ChatColor.GOLD + msg1);
+            if (target.isOnline()) {
+                Player p = (Player)target;
+                String msg2 = Lang.get(p, "questPointsSet");
                 msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                 msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
-                target.sendMessage(ChatColor.GREEN + msg2);
-                quester.saveData();
+                p.sendMessage(ChatColor.GREEN + msg2);
             }
+            quester.saveData();
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
@@ -1120,32 +1142,39 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminFinish(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {
-            Player target = getPlayer(args[1]);
+            OfflinePlayer target = getPlayer(args[1]);
             if (target == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                try {
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                    return;
+                }
+            }
+            Quester quester = plugin.getQuester(target.getUniqueId());
+            if (quester.getCurrentQuests().isEmpty()) {
+                String msg = Lang.get("noCurrentQuest");
+                msg = msg.replace("<player>", target.getName());
+                cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
-                Quester quester = plugin.getQuester(target.getUniqueId());
-                if (quester.getCurrentQuests().isEmpty()) {
-                    String msg = Lang.get("noCurrentQuest");
-                    msg = msg.replace("<player>", target.getName());
-                    cs.sendMessage(ChatColor.YELLOW + msg);
-                } else {
-                    Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
-                    if (quest == null) {
-                        cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
-                        return;
-                    }
-                    String msg1 = Lang.get("questForceFinish");
-                    msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                    msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
-                    cs.sendMessage(ChatColor.GOLD + msg1);
-                    String msg2 = Lang.get(target, "questForcedFinish");
+                Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
+                if (quest == null) {
+                    cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
+                    return;
+                }
+                String msg1 = Lang.get("questForceFinish");
+                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                cs.sendMessage(ChatColor.GOLD + msg1);
+                if (target.isOnline()) {
+                    Player p = (Player)target;
+                    String msg2 = Lang.get(p, "questForcedFinish");
                     msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                     msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
-                    target.sendMessage(ChatColor.GREEN + msg2);
-                    quest.completeQuest(quester);
-                    quester.saveData();
+                    p.sendMessage(ChatColor.GREEN + msg2);
                 }
+                quest.completeQuest(quester);
+                quester.saveData();
             }
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
@@ -1154,13 +1183,13 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminSetStage(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.setstage")) {
-            Player target = getPlayer(args[1]);
+            OfflinePlayer target = getPlayer(args[1]);
             if (target == null) {
-                for (Player p : plugin.getServer().getOnlinePlayers()) {
-                    if (p.getName().toLowerCase().contains(args[1].toLowerCase())) {
-                        target = p;
-                        break;
-                    }
+                try {
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                    return;
                 }
             }
             int stage = -1;
@@ -1174,29 +1203,25 @@ public class CmdExecutor implements CommandExecutor {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("COMMAND_QUESTADMIN_SETSTAGE_USAGE"));
                 return;
             }
-            if (target == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+            Quester quester = plugin.getQuester(target.getUniqueId());
+            if (quester.getCurrentQuests().isEmpty()) {
+                String msg = Lang.get("noCurrentQuest");
+                msg = msg.replace("<player>", target.getName());
+                cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
-                Quester quester = plugin.getQuester(target.getUniqueId());
-                if (quester.getCurrentQuests().isEmpty()) {
-                    String msg = Lang.get("noCurrentQuest");
-                    msg = msg.replace("<player>", target.getName());
-                    cs.sendMessage(ChatColor.YELLOW + msg);
-                } else {
-                    Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 2, ' '));
-                    if (quest == null) {
-                        cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
-                        return;
-                    }
-                    try {
-                        quest.setStage(quester, stage - 1);
-                    } catch (InvalidStageException e) {
-                        String msg = Lang.get("invalidStageNum");
-                        msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
-                        cs.sendMessage(ChatColor.RED + msg);
-                    }
-                    quester.saveData();
+                Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 2, ' '));
+                if (quest == null) {
+                    cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
+                    return;
                 }
+                try {
+                    quest.setStage(quester, stage - 1);
+                } catch (InvalidStageException e) {
+                    String msg = Lang.get("invalidStageNum");
+                    msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
+                    cs.sendMessage(ChatColor.RED + msg);
+                }
+                quester.saveData();
             }
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
@@ -1205,32 +1230,39 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminNextStage(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.nextstage")) {
-            Player target = getPlayer(args[1]);
+            OfflinePlayer target = getPlayer(args[1]);
             if (target == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                try {
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                    return;
+                }
+            }
+            Quester quester = plugin.getQuester(target.getUniqueId());
+            if (quester.getCurrentQuests().isEmpty()) {
+                String msg = Lang.get("noCurrentQuest");
+                msg = msg.replace("<player>", target.getName());
+                cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
-                Quester quester = plugin.getQuester(target.getUniqueId());
-                if (quester.getCurrentQuests().isEmpty()) {
-                    String msg = Lang.get("noCurrentQuest");
-                    msg = msg.replace("<player>", target.getName());
-                    cs.sendMessage(ChatColor.YELLOW + msg);
-                } else {
-                    Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
-                    if (quest == null) {
-                        cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
-                        return;
-                    }
-                    String msg1 = Lang.get("questForceNextStage");
-                    msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                    msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
-                    cs.sendMessage(ChatColor.GOLD + msg1);
-                    String msg2 = Lang.get(target, "questForcedNextStage");
+                Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
+                if (quest == null) {
+                    cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
+                    return;
+                }
+                String msg1 = Lang.get("questForceNextStage");
+                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                cs.sendMessage(ChatColor.GOLD + msg1);
+                if (target.isOnline()) {
+                    Player p = (Player)target;
+                    String msg2 = Lang.get(p, "questForcedNextStage");
                     msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                     msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
-                    target.sendMessage(ChatColor.GREEN + msg2);
-                    quest.nextStage(quester, false);
-                    quester.saveData();
+                    p.sendMessage(ChatColor.GREEN + msg2);
                 }
+                quest.nextStage(quester, false);
+                quester.saveData();
             }
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
@@ -1281,13 +1313,16 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminReset(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reset")) {
-            @SuppressWarnings("deprecation")
-            Quester quester = plugin.getQuester(args[1]);
-            if (quester == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
-                return;
+            OfflinePlayer target = getPlayer(args[1]);
+            if (target == null) {
+                try {
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                    return;
+                }
             }
-            UUID id = quester.getUUID();
+            UUID id = target.getUniqueId();
             LinkedList<Quester> temp = plugin.getQuesters();
             for(Iterator<Quester> itr = temp.iterator(); itr.hasNext();) {
                 if (itr.next().getUUID().equals(id)) {
@@ -1295,6 +1330,7 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             plugin.setQuesters(temp);
+            Quester quester = plugin.getQuester(target.getUniqueId());
             try {
                 quester.hardClear();
                 quester.saveData();
@@ -1303,9 +1339,8 @@ public class CmdExecutor implements CommandExecutor {
                 final File quest = new File(dataFolder, id + ".yml");
                 quest.delete();
                 String msg = Lang.get("questReset");
-                if (Bukkit.getOfflinePlayer(id).getName() != null) {
-                    msg = msg.replace("<player>", ChatColor.GREEN + Bukkit.getOfflinePlayer(id).getName()
-                            + ChatColor.GOLD);
+                if (target.getName() != null) {
+                    msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
                 } else {
                     msg = msg.replace("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
                 }
@@ -1335,21 +1370,24 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminRemove(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") && cs.hasPermission("quests.admin.remove")) {
-            @SuppressWarnings("deprecation")
-            Quester quester = plugin.getQuester(args[1]);
-            if (quester == null) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
-                return;
+            OfflinePlayer target = getPlayer(args[1]);
+            if (target == null) {
+                try {
+                    target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
+                } catch (IllegalArgumentException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("playerNotFound"));
+                    return;
+                }
             }
             Quest toRemove = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
             if (toRemove == null) {
                 cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                 return;
             }
+            Quester quester = plugin.getQuester(target.getUniqueId());
             String msg = Lang.get("questRemoved");
-            if (Bukkit.getOfflinePlayer(quester.getUUID()).getName() != null) {
-                msg = msg.replace("<player>", ChatColor.GREEN + Bukkit.getOfflinePlayer(quester.getUUID()).getName()
-                        + ChatColor.GOLD);
+            if (target.getName() != null) {
+                msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
             } else {
                 msg = msg.replace("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
             }

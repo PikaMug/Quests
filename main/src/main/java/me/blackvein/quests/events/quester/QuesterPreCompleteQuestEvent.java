@@ -19,7 +19,7 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 
 /**
- * Called before a quester completes a quest
+ * Called before an online quester completes a quest
  */
 public class QuesterPreCompleteQuestEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

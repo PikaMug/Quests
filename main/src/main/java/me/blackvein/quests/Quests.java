@@ -1316,10 +1316,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
 
     /**
-     * Get online Quester from player UUID
+     * Get Quester from player UUID
      * 
      * @param id Player UUID
-     * @return Quester, or null if offline
+     * @return Quester, or null if not found
      */
     public Quester getQuester(UUID id) {
         Quester quester = null;
