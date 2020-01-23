@@ -250,7 +250,7 @@ public class StageMainPrompt extends NumericPrompt {
                 if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "";
+                    String text = "\n";
                     LinkedList<String> locations 
                             = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS);
                     LinkedList<Integer> radii 
@@ -269,7 +269,7 @@ public class StageMainPrompt extends NumericPrompt {
                 if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "";
+                    String text = "\n";
                     LinkedList<LinkedList<String>> passPhrases 
                             = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
                     LinkedList<String> passDisplays 
@@ -287,7 +287,7 @@ public class StageMainPrompt extends NumericPrompt {
                 if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "";
+                    String text = "\n";
                     LinkedList<String> customObjs 
                             = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.DARK_PURPLE + " - "
