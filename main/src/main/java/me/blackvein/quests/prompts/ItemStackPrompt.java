@@ -109,9 +109,9 @@ public class ItemStackPrompt extends FixedSetPrompt {
             menu += ChatColor.GRAY + "" + ChatColor.BOLD + "7. " + ChatColor.RESET + "" + ChatColor.GRAY 
                     + Lang.get("itemCreateSetClearMeta") + "\n";
         }
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.RED 
+        menu += ChatColor.RED + "" + ChatColor.BOLD + "8. " + ChatColor.RESET + "" + ChatColor.RED 
                 + Lang.get("cancel") + "\n";
-        menu += ChatColor.YELLOW + "" + ChatColor.BOLD + "9. " + ChatColor.RESET + "" + ChatColor.GREEN 
+        menu += ChatColor.GREEN + "" + ChatColor.BOLD + "9. " + ChatColor.RESET + "" + ChatColor.GREEN 
                 + Lang.get("done") + "\n";
         return menu;
     }

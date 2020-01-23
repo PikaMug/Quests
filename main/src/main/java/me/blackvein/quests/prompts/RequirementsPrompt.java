@@ -34,6 +34,7 @@ import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenRequirementsItemListPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenRequirementsPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
@@ -173,7 +174,7 @@ public class RequirementsPrompt extends NumericPrompt {
                 if (context.getSessionData(CK.REQ_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "";
+                    String text = "\n";
                     LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
                     for (int i = 0; i < items.size(); i++) {
                         text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
@@ -185,7 +186,7 @@ public class RequirementsPrompt extends NumericPrompt {
                 if (context.getSessionData(CK.REQ_PERMISSION) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "";
+                    String text = "\n";
                     List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
                     for (String s : perms) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
@@ -196,7 +197,7 @@ public class RequirementsPrompt extends NumericPrompt {
                 if (context.getSessionData(CK.REQ_QUEST) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "";
+                    String text = "\n";
                     List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
                     for (String s : qs) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
@@ -207,7 +208,7 @@ public class RequirementsPrompt extends NumericPrompt {
                 if (context.getSessionData(CK.REQ_QUEST_BLOCK) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "";
+                    String text = "\n";
                     List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
                     for (String s : qs) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
@@ -219,7 +220,7 @@ public class RequirementsPrompt extends NumericPrompt {
                     if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
-                        String text = "";
+                        String text = "\n";
                         List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
                         List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
                         for (String s : skills) {
@@ -238,7 +239,7 @@ public class RequirementsPrompt extends NumericPrompt {
                             && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
                     } else {
-                        String text = "";
+                        String text = "\n";
                         if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
                             text += ChatColor.AQUA + "    " + Lang.get("reqHeroesPrimaryDisplay") + " " 
                                     + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
@@ -256,7 +257,7 @@ public class RequirementsPrompt extends NumericPrompt {
                 if (context.getSessionData(CK.REQ_CUSTOM) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "";
+                    String text = "\n";
                     LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
                     for (String s : customReqs) {
                         text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s 
@@ -501,14 +502,95 @@ public class RequirementsPrompt extends NumericPrompt {
         }
     }
 
-    private class ItemListPrompt extends FixedSetPrompt {
+    private class ItemListPrompt extends NumericPrompt {
+        private final int size = 4;
 
-        public ItemListPrompt() {
-            super("1", "2", "3", "4");
+        @SuppressWarnings("unused")
+        public int getSize() {
+            return size;
         }
-
+        
+        public String getTitle() {
+            return Lang.get("itemRequirementsTitle");
+        }
+        
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.BLUE;
+                case 2:
+                    if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                        return ChatColor.GRAY;
+                    } else {
+                        return ChatColor.BLUE;
+                    }
+                case 3:
+                    return ChatColor.RED;
+                case 4:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
+                case 2:
+                    if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                        return ChatColor.GRAY + Lang.get("reqSetRemoveItems");
+                    } else {
+                        return ChatColor.YELLOW + Lang.get("reqSetRemoveItems");
+                    }
+                case 3:
+                    return ChatColor.YELLOW + Lang.get("clear");
+                case 4:
+                    return ChatColor.RED + Lang.get("done");
+                default:
+                    return null;
+            }
+        }
+        
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
+                    if (context.getSessionData(CK.REQ_ITEMS) != null) {
+                        String text = "\n";
+                        for (ItemStack is : getItems(context)) {
+                            text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
+                        }
+                        return text;
+                    }
+                    return "";
+                case 2:
+                    if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                        return ChatColor.GRAY + "(" + Lang.get("reqNoItemsSet") + ")";
+                    } else {
+                        if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
+                            return ChatColor.YELLOW + "(" + Lang.get("reqNoValuesSet") + ")";
+                        } else {
+                            String text = "\n";
+                            for (Boolean b : getRemoveItems(context)) {
+                                text += ChatColor.GRAY + "     - " + ChatColor.AQUA
+                                        + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
+                            }
+                            return text;
+                        }
+                    }
+                case 3:
+                case 4:
+                    return "";
+                default:
+                    return null;
+            }
+        }
+        
         @Override
         public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenRequirementsItemListPromptEvent event 
+                    = new QuestsEditorPostOpenRequirementsItemListPromptEvent(context);
+            plugin.getServer().getPluginManager().callEvent(event);
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
@@ -523,79 +605,54 @@ public class RequirementsPrompt extends NumericPrompt {
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
             }
-            String text = ChatColor.GOLD + Lang.get("itemRequirementsTitle") + "\n";
-            if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - "
-                        + Lang.get("reqSetRemoveItems") + " (" + Lang.get("reqNoItemsSet") + ")\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("done");
-            } else {
-                for (ItemStack is : getItems(context)) {
-                    text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
-                }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                            + Lang.get("reqSetRemoveItems") + " (" + Lang.get("reqNoValuesSet") + ")\n";
-                } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                            + Lang.get("reqSetRemoveItems") + "\n";
-                    for (Boolean b : getRemoveItems(context)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA
-                                + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
-                    }
-                }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("done");
+            String text = ChatColor.GOLD + getTitle() + "\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new ItemStackPrompt(ItemListPrompt.this);
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqMustAddItem"));
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch (input.intValue()) {
+                case 1:
+                    return new ItemStackPrompt(ItemListPrompt.this);
+                case 2:
+                    if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqMustAddItem"));
+                        return new ItemListPrompt();
+                    } else {
+                        return new RemoveItemsPrompt();
+                    }
+                case 3:
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqItemCleared"));
+                    context.setSessionData(CK.REQ_ITEMS, null);
+                    context.setSessionData(CK.REQ_ITEMS_REMOVE, null);
                     return new ItemListPrompt();
-                } else {
-                    return new RemoveItemsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqItemCleared"));
-                context.setSessionData(CK.REQ_ITEMS, null);
-                context.setSessionData(CK.REQ_ITEMS_REMOVE, null);
-                return new ItemListPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
-                int one;
-                int two;
-                if (context.getSessionData(CK.REQ_ITEMS) != null) {
-                    one = ((List<ItemStack>) context.getSessionData(CK.REQ_ITEMS)).size();
-                } else {
-                    one = 0;
-                }
-                if (context.getSessionData(CK.REQ_ITEMS_REMOVE) != null) {
-                    two = ((List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE)).size();
-                } else {
-                    two = 0;
-                }
-                if (one == two) {
-                    return new RequirementsPrompt(plugin, factory);
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new ItemListPrompt();
-                }
+                case 4:
+                    int one;
+                    int two;
+                    if (context.getSessionData(CK.REQ_ITEMS) != null) {
+                        one = ((List<ItemStack>) context.getSessionData(CK.REQ_ITEMS)).size();
+                    } else {
+                        one = 0;
+                    }
+                    if (context.getSessionData(CK.REQ_ITEMS_REMOVE) != null) {
+                        two = ((List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE)).size();
+                    } else {
+                        two = 0;
+                    }
+                    if (one == two) {
+                        return new RequirementsPrompt(plugin, factory);
+                    } else {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
+                        return new ItemListPrompt();
+                    }
+                default:
+                    return null;
             }
-            return null;
         }
 
         @SuppressWarnings("unchecked")
