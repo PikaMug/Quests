@@ -578,7 +578,13 @@ public class Quester {
             if (getCurrentStage(quest) != null) {
                 if (getCurrentStage(quest).objectiveOverride != null) {
                     LinkedList<String> objectives = new LinkedList<String>();
-                    objectives.add(ChatColor.GREEN + getCurrentStage(quest).objectiveOverride);
+                    String message = ChatColor.GREEN + ConfigUtil.parseString(
+                            ChatColor.translateAlternateColorCodes('&', getCurrentStage(quest).objectiveOverride), 
+                            quest, getPlayer());
+                    if (plugin.getDependencies().getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    objectives.add(message);
                     return objectives;
                 }
             }
@@ -2073,8 +2079,9 @@ public class Quester {
             String pass, CustomObjective co) {
         Player p = getPlayer();
         if (getCurrentStage(quest).objectiveOverride != null) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + getCurrentStage(quest)
-                    .objectiveOverride;
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " 
+                    + ConfigUtil.parseString(ChatColor.translateAlternateColorCodes('&', 
+                    getCurrentStage(quest).objectiveOverride), quest, p);
             if (plugin.getDependencies().getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(p, message);
             }
