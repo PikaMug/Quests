@@ -523,9 +523,9 @@ public class RequirementsPrompt extends NumericPrompt {
                         return ChatColor.YELLOW + Lang.get("reqSetRemoveItems");
                     }
                 case 3:
-                    return ChatColor.YELLOW + Lang.get("clear");
+                    return ChatColor.RED + Lang.get("clear");
                 case 4:
-                    return ChatColor.RED + Lang.get("done");
+                    return ChatColor.GREEN + Lang.get("done");
                 default:
                     return null;
             }
