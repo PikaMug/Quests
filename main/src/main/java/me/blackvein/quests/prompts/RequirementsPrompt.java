@@ -268,6 +268,8 @@ public class RequirementsPrompt extends NumericPrompt {
     
     @Override
     public String getPromptText(ConversationContext context) {
+        checkRequirement(context);
+        
         QuestsEditorPostOpenRequirementsPromptEvent event 
                 = new QuestsEditorPostOpenRequirementsPromptEvent(factory, context);
         plugin.getServer().getPluginManager().callEvent(event);
