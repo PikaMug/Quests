@@ -449,7 +449,6 @@ reqHeroesPrimaryCleared: "Heroes 기본 클래스 요구 사항이 삭제되었�
 reqHeroesNotSecondary: "<class> 클래스는 보조 클래스가 아닙니다!"
 reqHeroesSecondaryCleared: "Heroes 보조 클래스 요구 사항이 삭제되었습니다."
 reqHeroesClassNotFound: "클래스를 찾을 수 없습니다!"
-reqNone: "요구사항 설정 안됨"
 reqNotANumber: "<input> 은 숫자가 아닙니다!"
 reqMustAddItem: "먼저 아이템을 하나 이상 추가해야합니다!"
 reqNoMessage: "실패 요구 메시지를 설정해야합니다!"
