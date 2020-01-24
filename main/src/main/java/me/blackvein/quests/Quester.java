@@ -594,11 +594,12 @@ public class Quester {
         LinkedList<String> requirements = new LinkedList<String>();
         OfflinePlayer player = getPlayer();
         if (reqs.getMoney() > 0) {
+            String currency = plugin.getDependencies().getCurrency(reqs.getMoney() == 1 ? false : true);
             if (plugin.getDependencies().getVaultEconomy() != null
                     && plugin.getDependencies().getVaultEconomy().getBalance(player) >= reqs.getMoney()) {
-                unfinishedRequirements.add(ChatColor.GREEN + "" + reqs.getMoney() + " " + Lang.get("money"));
+                unfinishedRequirements.add(ChatColor.GREEN + "" + reqs.getMoney() + " " + currency);
             } else {
-                finishedRequirements.add(ChatColor.GRAY + "" + reqs.getMoney() + " " + Lang.get("money"));
+                finishedRequirements.add(ChatColor.GRAY + "" + reqs.getMoney() + " " + currency);
             }
         }
         if (reqs.getQuestPoints() > 0) {
