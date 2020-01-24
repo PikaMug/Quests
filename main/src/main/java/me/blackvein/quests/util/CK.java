@@ -24,7 +24,6 @@ public class CK {
     public static final String Q_FINISH_MESSAGE = "finishMessage";
     public static final String Q_START_NPC = "npcStart";
     public static final String Q_START_BLOCK = "blockStart";
-    public static final String Q_FAIL_MESSAGE = "failMessage";
     public static final String Q_INITIAL_EVENT = "initialEvent";
     public static final String Q_REGION = "region";
     public static final String Q_GUIDISPLAY = "guiDisplay";
@@ -44,6 +43,7 @@ public class CK {
     public static final String REQ_CUSTOM_DATA = "customReqData";
     public static final String REQ_CUSTOM_DATA_DESCRIPTIONS = "customReqDataDesc";
     public static final String REQ_CUSTOM_DATA_TEMP = "customReqDataTemp";
+    public static final String REQ_FAIL_MESSAGE = "failMessage";
     // Stages
     public static final String S_BREAK_NAMES = "breakNames";
     public static final String S_BREAK_AMOUNTS = "breakAmounts";
@@ -102,7 +102,6 @@ public class CK {
     public static final String S_DENIZEN = "denizen"; // Legacy
     public static final String S_COMPLETE_MESSAGE = "completeMessage";
     public static final String S_START_MESSAGE = "startMessage";
-    public static final String S_OVERRIDE_DISPLAY = "overrideDisplay";
     public static final String S_PASSWORD_DISPLAYS = "passwordDisplays";
     public static final String S_PASSWORD_PHRASES = "passwordPhrases";
     public static final String S_CUSTOM_OBJECTIVES = "customObjectives";
@@ -110,6 +109,7 @@ public class CK {
     public static final String S_CUSTOM_OBJECTIVES_DATA = "customObjectiveData";
     public static final String S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS = "customObjectiveDataDescriptions";
     public static final String S_CUSTOM_OBJECTIVES_DATA_TEMP = "customObjectiveDataTemp";
+    public static final String S_OVERRIDE_DISPLAY = "overrideDisplay";
     // Rewards
     public static final String REW_MONEY = "moneyRew";
     public static final String REW_QUEST_POINTS = "questPointsRew";

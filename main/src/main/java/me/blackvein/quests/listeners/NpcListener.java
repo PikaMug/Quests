@@ -64,7 +64,7 @@ public class NpcListener implements Listener {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             boolean delivery = false;
             for (Quest quest : quester.getCurrentQuests().keySet()) {
-                if (quester.containsObjective(quest, "deliverItem") && player.getItemInHand() != null) {
+                if (quester.getCurrentStage(quest).containsObjective("deliverItem") && player.getItemInHand() != null) {
                     ItemStack hand = player.getItemInHand();
                     int currentIndex = -1;
                     LinkedList<Integer> matches = new LinkedList<Integer>();
@@ -184,7 +184,7 @@ public class NpcListener implements Listener {
             if (plugin.getQuestNpcs().contains(evt.getNPC()) && delivery == false) {
                 boolean hasObjective = false;
                 for (Quest quest : quester.getCurrentQuests().keySet()) {
-                    if (quester.containsObjective(quest, "talkToNPC")) {
+                    if (quester.getCurrentStage(quest).containsObjective("talkToNPC")) {
                         if (quester.getQuestData(quest) != null 
                                 && quester.getQuestData(quest).citizensInteracted.containsKey(evt.getNPC().getId()) 
                                 && quester.getQuestData(quest).citizensInteracted.get(evt.getNPC().getId()) == false) {
@@ -319,7 +319,7 @@ public class NpcListener implements Listener {
                         if (okay) {
                             Quester quester = plugin.getQuester(player.getUniqueId());
                             for (Quest quest : quester.getCurrentQuests().keySet()) {
-                                if (quester.containsObjective(quest, "killNPC")) {
+                                if (quester.getCurrentStage(quest).containsObjective("killNPC")) {
                                     quester.killNPC(quest, evt.getNPC());
                                 }
                             }
@@ -336,7 +336,7 @@ public class NpcListener implements Listener {
                         Player player = (Player) damager;
                         Quester quester = plugin.getQuester(player.getUniqueId());
                         for (Quest quest : quester.getCurrentQuests().keySet()) {
-                            if (quester.containsObjective(quest, "killNPC")) {
+                            if (quester.getCurrentStage(quest).containsObjective("killNPC")) {
                                 quester.killNPC(quest, evt.getNPC());
                             }
                         }

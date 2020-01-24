@@ -364,6 +364,19 @@ public class Quest {
                 return false;
             }
         }
+        if (quester.questPoints < reqs.getQuestPoints()) {
+            return false;
+        }
+        if (quester.completedQuests.containsAll(reqs.getNeededQuests()) == false) {
+            return false;
+        }
+        for (String q : reqs.getBlockQuests()) {
+            Quest questObject = new Quest();
+            questObject.name = q;
+            if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(questObject)) {
+                return false;
+            }
+        }
         for (String s : reqs.getMcmmoSkills()) {
             final SkillType st = Quests.getMcMMOSkill(s);
             final int lvl = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(s));
@@ -380,19 +393,6 @@ public class Quest {
         if (reqs.getHeroesSecondaryClass() != null) {
             if (plugin.getDependencies()
                     .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId()) == false) {
-                return false;
-            }
-        }
-        if (quester.questPoints < reqs.getQuestPoints()) {
-            return false;
-        }
-        if (quester.completedQuests.containsAll(reqs.getNeededQuests()) == false) {
-            return false;
-        }
-        for (String q : reqs.getBlockQuests()) {
-            Quest questObject = new Quest();
-            questObject.name = q;
-            if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(questObject)) {
                 return false;
             }
         }

@@ -1694,10 +1694,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             String questKey) throws QuestFormatException {
         Requirements reqs = quest.getRequirements();
         if (config.contains("quests." + questKey + ".requirements.fail-requirement-message")) {
-            reqs.setFailRequirements(parseString(config.getString("quests." + questKey 
+            reqs.setFailRequirements(ConfigUtil.parseString(config.getString("quests." + questKey 
                     + ".requirements.fail-requirement-message"), quest));
-        } else {
-            skipQuestProcess("Requirement fail-requirement-message is missing", questKey);
         }
         if (config.contains("quests." + questKey + ".requirements.items")) {
             List<ItemStack> temp = reqs.getItems(); // TODO - should maybe be = new LinkedList<ItemStack>() ?

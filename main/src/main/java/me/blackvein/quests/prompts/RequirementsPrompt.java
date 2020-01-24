@@ -45,6 +45,7 @@ public class RequirementsPrompt extends NumericPrompt {
 
     private final Quests plugin;
     private final QuestFactory factory;
+    private boolean hasRequirement = false;
     private final int size = 11;
     
     public RequirementsPrompt(Quests plugin, QuestFactory qf) {
@@ -84,19 +85,8 @@ public class RequirementsPrompt extends NumericPrompt {
             case 9:
                 return ChatColor.BLUE;
             case 10:
-                if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null
-                        && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
-                        && context.getSessionData(CK.REQ_ITEMS) == null 
-                        && context.getSessionData(CK.REQ_PERMISSION) == null 
-                        && context.getSessionData(CK.REQ_QUEST) == null 
-                        && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
-                        && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null 
-                        && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
-                        && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null 
-                        && context.getSessionData(CK.REQ_CUSTOM) == null) {
+                if (!hasRequirement) {
                     return ChatColor.GRAY;
-                } else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
-                    return ChatColor.RED;
                 } else {
                     return ChatColor.BLUE;
                 }
@@ -128,19 +118,8 @@ public class RequirementsPrompt extends NumericPrompt {
             case 9:
                 return ChatColor.DARK_PURPLE + Lang.get("reqSetCustom");
             case 10:
-                if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null
-                    && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
-                        && context.getSessionData(CK.REQ_ITEMS) == null
-                        && context.getSessionData(CK.REQ_PERMISSION) == null
-                        && context.getSessionData(CK.REQ_QUEST) == null 
-                        && context.getSessionData(CK.REQ_QUEST_BLOCK) == null
-                        && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null
-                        && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
-                        && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null
-                        && context.getSessionData(CK.REQ_CUSTOM) == null) {
+                if (!hasRequirement) {
                     return ChatColor.GRAY + Lang.get("reqSetFail");
-                } else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
-                    return ChatColor.RED + Lang.get("reqSetFail");
                 } else {
                     return ChatColor.YELLOW + Lang.get("reqSetFail");
                 }
@@ -266,22 +245,15 @@ public class RequirementsPrompt extends NumericPrompt {
                     return text;
                 }
             case 10:
-                if (context.getSessionData(CK.REQ_MONEY) == null && context.getSessionData(CK.REQ_QUEST_POINTS) == null
-                        && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
-                        && context.getSessionData(CK.REQ_ITEMS) == null
-                        && context.getSessionData(CK.REQ_PERMISSION) == null
-                        && context.getSessionData(CK.REQ_QUEST) == null 
-                        && context.getSessionData(CK.REQ_QUEST_BLOCK) == null 
-                        && context.getSessionData(CK.REQ_MCMMO_SKILLS) == null
-                        && context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
-                        && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null 
-                        && context.getSessionData(CK.REQ_CUSTOM) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("reqNone") + ")";
-                } else if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
-                    return ChatColor.RED + "(" + Lang.get("questRequiredNoneSet") + ")";
+                if (context.getSessionData(CK.REQ_FAIL_MESSAGE) == null) {
+                    if (!hasRequirement) {
+                        return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
+                    } else {
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                    }
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.Q_FAIL_MESSAGE)
-                            + "\"" + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.REQ_FAIL_MESSAGE)
+                    + "\"" + ChatColor.GRAY + ")";
                 }
             case 11:
             case 12:
@@ -340,25 +312,31 @@ public class RequirementsPrompt extends NumericPrompt {
             case 9:
                 return new CustomRequirementsPrompt();
             case 10:
-                return new FailMessagePrompt();
-            case 11:
-                if (context.getSessionData(CK.REQ_MONEY) != null || context.getSessionData(CK.REQ_QUEST_POINTS) != null
-                        || context.getSessionData(CK.REQ_ITEMS) != null
-                        || context.getSessionData(CK.REQ_PERMISSION) != null
-                        || context.getSessionData(CK.REQ_QUEST) != null
-                        || context.getSessionData(CK.REQ_QUEST_BLOCK) != null
-                        || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null 
-                        || context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null
-                        || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null
-                        || context.getSessionData(CK.REQ_CUSTOM) != null) {
-                    if (context.getSessionData(CK.Q_FAIL_MESSAGE) == null) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNoMessage"));
-                        return new RequirementsPrompt(plugin, factory);
-                    }
+                if (hasRequirement) {
+                    return new FailMessagePrompt();
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+                    return new RequirementsPrompt(plugin, factory);
                 }
+            case 11:
                 return factory.returnToMenu();
             default:
                 return null;
+        }
+    }
+    
+    public void checkRequirement(ConversationContext context) {
+        if (context.getSessionData(CK.REQ_MONEY) != null 
+                || context.getSessionData(CK.REQ_QUEST_POINTS) != null
+                || context.getSessionData(CK.REQ_ITEMS) != null
+                || context.getSessionData(CK.REQ_PERMISSION) != null
+                || context.getSessionData(CK.REQ_QUEST) != null
+                || context.getSessionData(CK.REQ_QUEST_BLOCK) != null
+                || context.getSessionData(CK.REQ_MCMMO_SKILLS) != null 
+                || context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null
+                || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null
+                || context.getSessionData(CK.REQ_CUSTOM) != null) {
+            hasRequirement = true;
         }
     }
 
@@ -1189,7 +1167,7 @@ public class RequirementsPrompt extends NumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get(Lang.get("cancel"))) == false) {
-                context.setSessionData(CK.Q_FAIL_MESSAGE, input);
+                context.setSessionData(CK.REQ_FAIL_MESSAGE, input);
             }
             return new RequirementsPrompt(plugin, factory);
         }

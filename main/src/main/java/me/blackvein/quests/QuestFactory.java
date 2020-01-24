@@ -611,9 +611,6 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (reqs.getHeroesSecondaryClass() != null) {
             cc.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, reqs.getHeroesSecondaryClass());
         }
-        if (reqs.getFailRequirements() != null) {
-            cc.setSessionData(CK.Q_FAIL_MESSAGE, reqs.getFailRequirements());
-        }
         if (reqs.getCustomRequirements().isEmpty() == false) {
             LinkedList<String> list = new LinkedList<String>();
             LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
@@ -623,6 +620,9 @@ public class QuestFactory implements ConversationAbandonedListener {
             }
             cc.setSessionData(CK.REQ_CUSTOM, list);
             cc.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
+        }
+        if (reqs.getFailRequirements() != null) {
+            cc.setSessionData(CK.REQ_FAIL_MESSAGE, reqs.getFailRequirements());
         }
         Rewards rews = q.getRewards();
         if (rews.getMoney() != 0) {
@@ -929,14 +929,14 @@ public class QuestFactory implements ConversationAbandonedListener {
             if (stage.script != null) {
                 cc.setSessionData(pref + CK.S_DENIZEN, stage.script);
             }
-            if (stage.objectiveOverride != null) {
-                cc.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.objectiveOverride);
-            }
             if (stage.completeMessage != null) {
                 cc.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.completeMessage);
             }
             if (stage.startMessage != null) {
                 cc.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
+            }
+            if (stage.objectiveOverride != null) {
+                cc.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.objectiveOverride);
             }
         }
     }
@@ -1570,8 +1570,8 @@ public class QuestFactory implements ConversationAbandonedListener {
             customReqs = (LinkedList<String>) cc.getSessionData(CK.REQ_CUSTOM);
             customReqsData = (LinkedList<Map<String, Object>>) cc.getSessionData(CK.REQ_CUSTOM_DATA);
         }
-        if (cc.getSessionData(CK.Q_FAIL_MESSAGE) != null) {
-            failMessage = (String) cc.getSessionData(CK.Q_FAIL_MESSAGE);
+        if (cc.getSessionData(CK.REQ_FAIL_MESSAGE) != null) {
+            failMessage = (String) cc.getSessionData(CK.REQ_FAIL_MESSAGE);
         }
         if (cc.getSessionData(CK.Q_INITIAL_EVENT) != null) {
             initialEvent = (String) cc.getSessionData(CK.Q_INITIAL_EVENT);

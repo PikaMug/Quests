@@ -221,7 +221,7 @@ public class PlayerListener implements Listener {
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
                         for (Quest quest : plugin.getQuests()) {
                             if (quester.getCurrentQuests().containsKey(quest) 
-                                    && quester.containsObjective(quest, "useBlock")) {
+                                    && quester.getCurrentStage(quest).containsObjective("useBlock")) {
                                 quester.useBlock(quest, blockItemStack);
                                 hasObjective = true;
                             }
@@ -398,7 +398,7 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "milkCow")) {
+                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("milkCow")) {
                         quester.milkCow(quest);
                     }
                     
@@ -441,7 +441,7 @@ public class PlayerListener implements Listener {
                             }
                         }
                     }
-                    if (quester.containsObjective(quest, "password")) {
+                    if (quester.getCurrentStage(quest).containsObjective("password")) {
                         quester.sayPassword(quest, evt);
                     }
                 }
@@ -502,7 +502,7 @@ public class PlayerListener implements Listener {
                     .getData().toItemStack().getDurability());
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "damageBlock")) {
+                if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("damageBlock")) {
                     quester.damageBlock(quest, blockItemStack);
                 }
                 
@@ -524,7 +524,7 @@ public class PlayerListener implements Listener {
             for (Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.containsObjective(quest, "placeBlock")) {
+                            && quester.getCurrentStage(quest).containsObjective("placeBlock")) {
                         quester.placeBlock(quest, blockItemStack);
                     }
                     
@@ -547,7 +547,7 @@ public class PlayerListener implements Listener {
             for (Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.containsObjective(quest, "breakBlock")) {
+                            && quester.getCurrentStage(quest).containsObjective("breakBlock")) {
                         if (!evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
                             quester.breakBlock(quest, blockItemStack);
                         }
@@ -559,7 +559,7 @@ public class PlayerListener implements Listener {
                         return null;
                     });
                     if (quester.getCurrentQuests().containsKey(quest)
-                            && quester.containsObjective(quest, "placeBlock")) {
+                            && quester.getCurrentStage(quest).containsObjective("placeBlock")) {
                         for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                 int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
@@ -578,7 +578,7 @@ public class PlayerListener implements Listener {
                         }
                         return null;
                     });
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "cutBlock")) {
+                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("cutBlock")) {
                         if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
                             quester.cutBlock(quest, blockItemStack);
                         }
@@ -602,7 +602,7 @@ public class PlayerListener implements Listener {
                 Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.containsObjective(quest, "shearSheep")) {
+                            && quester.getCurrentStage(quest).containsObjective("shearSheep")) {
                         quester.shearSheep(quest, sheep.getColor());
                     }
                     
@@ -622,7 +622,7 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(p.getUniqueId())) {
                 Quester quester = plugin.getQuester(p.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "tameMob")) {
+                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("tameMob")) {
                         quester.tameMob(quest, evt.getEntityType());
                     }
                     
@@ -645,7 +645,7 @@ public class PlayerListener implements Listener {
                 Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.containsObjective(quest, "craftItem")) {
+                            && quester.getCurrentStage(quest).containsObjective("craftItem")) {
                         quester.craftItem(quest, craftedItem);
                     }
                     
@@ -691,7 +691,7 @@ public class PlayerListener implements Listener {
                     Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
                     for (Quest quest : plugin.getQuests()) {
                         if (quester.getCurrentQuests().containsKey(quest) 
-                                && quester.containsObjective(quest, "smeltItem")) {
+                                && quester.getCurrentStage(quest).containsObjective("smeltItem")) {
                             quester.smeltItem(quest, evt.getCurrentItem());
                         }
                         
@@ -706,7 +706,7 @@ public class PlayerListener implements Listener {
                     Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
                     for (Quest quest : plugin.getQuests()) {
                         if (quester.getCurrentQuests().containsKey(quest) 
-                                && quester.containsObjective(quest, "brewItem")) {
+                                && quester.getCurrentStage(quest).containsObjective("brewItem")) {
                             quester.brewItem(quest, evt.getCurrentItem());
                         }
                         
@@ -725,7 +725,7 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
             Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "enchantItem")) {
+                if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("enchantItem")) {
                     for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
                         quester.enchantItem(quest, e, evt.getItem().getType());
                     }
@@ -789,7 +789,7 @@ public class PlayerListener implements Listener {
             Quester quester = plugin.getQuester(damager.getUniqueId());
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "killNPC")) {
+                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("killNPC")) {
                         quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
                     }
                     
@@ -800,7 +800,7 @@ public class PlayerListener implements Listener {
                 }
             } else {
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "killMob")) {
+                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("killMob")) {
                         quester.killMob(quest, target.getLocation(), target.getType());
                     }
                     
@@ -896,7 +896,7 @@ public class PlayerListener implements Listener {
             }
             Quester quester = plugin.getQuester(damager.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "killPlayer")) {
+                if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("killPlayer")) {
                     quester.killPlayer(quest, (Player)target);
                 }
                 
@@ -914,7 +914,7 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                if (quester.getCurrentQuests().containsKey(quest) && quester.containsObjective(quest, "catchFish") 
+                if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("catchFish") 
                         && evt.getState().equals(State.CAUGHT_FISH)) {
                     quester.catchFish(quest);
                 }
@@ -1061,7 +1061,7 @@ public class PlayerListener implements Listener {
                 Quester quester = plugin.getQuester(uuid);
                 for (Quest quest : plugin.getQuests()) {
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.containsObjective(quest, "reachLocation")) {
+                            && quester.getCurrentStage(quest).containsObjective("reachLocation")) {
                         quester.reachLocation(quest, location);
                     }
                     

@@ -44,10 +44,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.alessiodp.parties.api.interfaces.Party;
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.util.player.UserManager;
 
 import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.events.quest.QuestTakeEvent;
@@ -405,9 +408,9 @@ public class Quester {
      * Start a quest for this Quester
      * 
      * @param q The quest to start
-     * @param override Whether to ignore Requirements
+     * @param ignoreReqs Whether to ignore Requirements
      */
-    public void takeQuest(Quest q, boolean override) {
+    public void takeQuest(Quest q, boolean ignoreReqs) {
         if (q == null) {
             return;
         }
@@ -487,7 +490,7 @@ public class Quester {
                 }
             }
         }
-        if (q.testRequirements(player) == true || override) {
+        if (q.testRequirements(player) == true || ignoreReqs) {
             addEmptiesFor(q, 0);
             try {
                 currentQuests.put(q, 0);
@@ -496,8 +499,8 @@ public class Quester {
                         + ". Consider resetting player data or report on Github");
             }
             Stage stage = q.getStage(0);
-            Requirements reqs = q.getRequirements();
-            if (!override) {
+            if (!ignoreReqs) {
+                Requirements reqs = q.getRequirements();
                 if (reqs.getMoney() > 0) {
                     if (plugin.getDependencies().getVaultEconomy() != null) {
                         plugin.getDependencies().getVaultEconomy().withdrawPlayer(getOfflinePlayer(), reqs.getMoney());
@@ -556,7 +559,10 @@ public class Quester {
             saveData();
         } else {
             if (player.isOnline()) {
-                ((Player)player).sendMessage(q.getRequirements().getFailRequirements());
+                ((Player)player).sendMessage(ChatColor.DARK_AQUA + Lang.get("requirements"));
+                for (String s : getCurrentRequirements(q, false)) {
+                    ((Player)player).sendMessage(ChatColor.GRAY + "- " + s);
+                }
             }
         }
         if (player.isOnline()) {
@@ -565,15 +571,141 @@ public class Quester {
         }
     }
     
+    public LinkedList<String> getCurrentRequirements(Quest quest, boolean ignoreOverrides) {
+        if (quest == null) {
+            return new LinkedList<String>();
+        }
+        Requirements reqs = quest.getRequirements();
+        if (!ignoreOverrides) {
+            if (reqs.getFailRequirements() != null) {
+                LinkedList<String> requirements = new LinkedList<String>();
+                String message = ChatColor.RED + ConfigUtil.parseString(
+                        ChatColor.translateAlternateColorCodes('&', reqs.getFailRequirements()), 
+                        quest, getPlayer());
+                if (plugin.getDependencies().getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                requirements.add(message);
+                return requirements;
+            }
+        }
+        LinkedList<String> unfinishedRequirements = new LinkedList<String>();
+        LinkedList<String> finishedRequirements = new LinkedList<String>();
+        LinkedList<String> requirements = new LinkedList<String>();
+        OfflinePlayer player = getPlayer();
+        if (reqs.getMoney() > 0) {
+            if (plugin.getDependencies().getVaultEconomy() != null
+                    && plugin.getDependencies().getVaultEconomy().getBalance(player) >= reqs.getMoney()) {
+                unfinishedRequirements.add(ChatColor.GREEN + "" + reqs.getMoney() + " " + Lang.get("money"));
+            } else {
+                finishedRequirements.add(ChatColor.GRAY + "" + reqs.getMoney() + " " + Lang.get("money"));
+            }
+        }
+        if (reqs.getQuestPoints() > 0) {
+            if (getQuestPoints() >= reqs.getQuestPoints()) {
+                unfinishedRequirements.add(ChatColor.GREEN + "" + reqs.getQuestPoints() + " " 
+                        + Lang.get("questPoints"));
+            } else {
+                finishedRequirements.add(ChatColor.GRAY + "" + reqs.getQuestPoints() + " " + Lang.get("questPoints"));
+            }
+        }
+        for (String name : reqs.getNeededQuests()) {
+            if (getCompletedQuests().contains(name)) {
+                finishedRequirements.add(ChatColor.GREEN + name);
+            } else {
+                unfinishedRequirements.add(ChatColor.GRAY + name);
+            }
+        }
+        for (String name : reqs.getBlockQuests()) {
+            Quest questObject = new Quest();
+            questObject.setName(name);
+            if (completedQuests.contains(name) || currentQuests.containsKey(questObject)) {
+                requirements.add(ChatColor.RED + name);
+            }
+        }
+        for (String s : reqs.getMcmmoSkills()) {
+            final SkillType st = Quests.getMcMMOSkill(s);
+            final int lvl = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(s));
+            if (UserManager.getOfflinePlayer(player).getProfile().getSkillLevel(st) >= lvl) {
+                finishedRequirements.add(ChatColor.GREEN + "" + lvl + " " + s);
+            } else {
+                unfinishedRequirements.add(ChatColor.GRAY + "" + lvl + " " + s);
+            }
+        }
+        if (reqs.getHeroesPrimaryClass() != null) {
+            if (plugin.getDependencies()
+                    .testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId())) {
+                finishedRequirements.add(ChatColor.GREEN + Lang.get("reqHeroesPrimaryDisplay") + " " 
+                    + reqs.getHeroesPrimaryClass());
+            } else {
+                unfinishedRequirements.add(ChatColor.GRAY + Lang.get("reqHeroesPrimaryDisplay") + " " 
+                        + reqs.getHeroesPrimaryClass());
+            }
+        }
+        if (reqs.getHeroesSecondaryClass() != null) {
+            if (plugin.getDependencies()
+                    .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId())) {
+                finishedRequirements.add(ChatColor.GREEN + Lang.get("reqHeroesSecondaryDisplay") + " " 
+                        + reqs.getHeroesSecondaryClass());
+            } else {
+                finishedRequirements.add(ChatColor.GRAY + Lang.get("reqHeroesSecondaryDisplay") + " " 
+                        + reqs.getHeroesSecondaryClass());
+            }
+        }
+        if (player.isOnline()) {
+            PlayerInventory inventory = getPlayer().getInventory();
+            int num = 0;
+            for (ItemStack is : reqs.getItems()) {
+                for (ItemStack stack : inventory.getContents()) {
+                    if (stack != null) {
+                        if (ItemUtil.compareItems(is, stack, true) == 0) {
+                            num += stack.getAmount();
+                        }
+                    }
+                }
+                if (num >= is.getAmount()) {
+                    finishedRequirements.add(ChatColor.GREEN + "" + is.getAmount() + " " + ItemUtil.getName(is));
+                } else {
+                    unfinishedRequirements.add(ChatColor.GRAY + "" + is.getAmount() + " " + ItemUtil.getName(is));
+                }
+                num = 0;
+            }
+            for (String perm :reqs.getPermissions()) {
+                if (getPlayer().hasPermission(perm)) {
+                    finishedRequirements.add(ChatColor.GREEN + Lang.get("permissionDisplay") + " " + perm);
+                } else {
+                    unfinishedRequirements.add(ChatColor.GRAY + Lang.get("permissionDisplay") + " " + perm);
+                }
+                
+            }
+            for (Entry<String, Map<String, Object>> m : reqs.getCustomRequirements().entrySet()) {
+                for (CustomRequirement cr : plugin.getCustomRequirements()) {
+                    if (cr.getName().equalsIgnoreCase(m.getKey())) {
+                        if (cr != null) {
+                            if (cr.testRequirement(getPlayer(), m.getValue())) {
+                                finishedRequirements.add(ChatColor.GREEN + "" + m.getKey());
+                            } else {
+                                unfinishedRequirements.add(ChatColor.GRAY + "" + m.getKey());
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+        requirements.addAll(unfinishedRequirements);
+        requirements.addAll(finishedRequirements);
+        return requirements;
+    }
+    
     /**
-     * Get all objectives for a quest
+     * Get current objectives for a quest, both finished and unfinished
      * 
      * @param quest The quest to get objectives of
      * @param ignoreOverrides Whether to ignore objective-overrides
      * @return List of detailed objectives
      */
     @SuppressWarnings("deprecation")
-    public LinkedList<String> getObjectives(Quest quest, boolean ignoreOverrides) {
+    public LinkedList<String> getCurrentObjectives(Quest quest, boolean ignoreOverrides) {
         if (!ignoreOverrides) {
             if (getCurrentStage(quest) != null) {
                 if (getCurrentStage(quest).objectiveOverride != null) {
@@ -993,22 +1125,17 @@ public class Quester {
         objectives.addAll(finishedObjectives);
         return objectives;
     }
-
+    
     /**
-     * Check if player's current stage has the specified objective<p>
+     * Get current objectives for a quest, both finished and unfinished
      * 
-     * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, milkCow, catchFish,
-     * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
-     * shearSheep, password, reachLocation
-     * 
-     * @deprecated Use containsObjective() instead
-     * @param quest The quest to check objectives of
-     * @param s The type of objective to check for
-     * @return true if quest contains specified objective
+     * @deprecated Use {@link #getCurrentObjectives(Quest, boolean)}
+     * @param quest The quest to get objectives of
+     * @param ignoreOverrides Whether to ignore objective-overrides
+     * @return List of detailed objectives
      */
-    public boolean hasObjective(Quest quest, String s) {
-        return containsObjective(quest, s);
+    public LinkedList<String> getObjectives(Quest quest, boolean ignoreOverrides) {
+        return getCurrentObjectives(quest, ignoreOverrides);
     }
     
     /**
@@ -1019,57 +1146,13 @@ public class Quester {
      * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
      * shearSheep, password, reachLocation
      * 
+     * @deprecated Use {@link Stage#containsObjective(String)}
      * @param quest The quest to check objectives of
      * @param s The type of objective to check for
      * @return true if quest contains specified objective
      */
     public boolean containsObjective(Quest quest, String s) {
-        if (getCurrentStage(quest) == null) {
-            return false;
-        }
-        if (s.equalsIgnoreCase("breakBlock")) {
-            return !getCurrentStage(quest).blocksToBreak.isEmpty();
-        } else if (s.equalsIgnoreCase("damageBlock")) {
-            return !getCurrentStage(quest).blocksToDamage.isEmpty();
-        } else if (s.equalsIgnoreCase("placeBlock")) {
-            return !getCurrentStage(quest).blocksToPlace.isEmpty();
-        } else if (s.equalsIgnoreCase("useBlock")) {
-            return !getCurrentStage(quest).blocksToUse.isEmpty();
-        } else if (s.equalsIgnoreCase("cutBlock")) {
-            return !getCurrentStage(quest).blocksToCut.isEmpty();
-        } else if (s.equalsIgnoreCase("craftItem")) {
-            return !getCurrentStage(quest).itemsToCraft.isEmpty();
-        } else if (s.equalsIgnoreCase("smeltItem")) {
-            return !getCurrentStage(quest).itemsToSmelt.isEmpty();
-        } else if (s.equalsIgnoreCase("enchantItem")) {
-            return !getCurrentStage(quest).itemsToEnchant.isEmpty();
-        } else if (s.equalsIgnoreCase("brewItem")) {
-            return !getCurrentStage(quest).itemsToBrew.isEmpty();
-        } else if (s.equalsIgnoreCase("milkCow")) {
-            return getCurrentStage(quest).cowsToMilk != null;
-        } else if (s.equalsIgnoreCase("catchFish")) {
-            return getCurrentStage(quest).fishToCatch != null;
-        } else if (s.equalsIgnoreCase("killMob")) {
-            return !getCurrentStage(quest).mobsToKill.isEmpty();
-        } else if (s.equalsIgnoreCase("deliverItem")) {
-            return !getCurrentStage(quest).itemsToDeliver.isEmpty();
-        } else if (s.equalsIgnoreCase("killPlayer")) {
-            return getCurrentStage(quest).playersToKill != null;
-        } else if (s.equalsIgnoreCase("talkToNPC")) {
-            return !getCurrentStage(quest).citizensToInteract.isEmpty();
-        } else if (s.equalsIgnoreCase("killNPC")) {
-            return !getCurrentStage(quest).citizensToKill.isEmpty();
-        } else if (s.equalsIgnoreCase("tameMob")) {
-            return !getCurrentStage(quest).mobsToTame.isEmpty();
-        } else if (s.equalsIgnoreCase("shearSheep")) {
-            return !getCurrentStage(quest).sheepToShear.isEmpty();
-        } else if (s.equalsIgnoreCase("password")) {
-            return !getCurrentStage(quest).passwordPhrases.isEmpty();
-        } else if (s.equalsIgnoreCase("reachLocation")) {
-            return !getCurrentStage(quest).locationsToReach.isEmpty();
-        } else {
-            return false;
-        }
+        return getCurrentStage(quest).containsObjective(s);
     }
 
     public boolean hasCustomObjective(Quest quest, String s) {
