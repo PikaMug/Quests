@@ -449,7 +449,6 @@ reqHeroesPrimaryCleared: "Požadavek na primární třídu hrdiny byl vyčiště
 reqHeroesNotSecondary: "<class> není druhá třída!"
 reqHeroesSecondaryCleared: "Požadavek na druhou třídu Heroes byl vyčištěn."
 reqHeroesClassNotFound: "Třída nenalezena!"
-reqNone: "Žádné požadavky nenastaveny"
 reqNotANumber: "<input> není číslo!"
 reqMustAddItem: "Nejprve musíte přidat alespoň jednu položku!"
 reqNoMessage: "Musíte nastavit zprávu o požadavcích na selhání!"
