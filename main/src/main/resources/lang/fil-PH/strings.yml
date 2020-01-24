@@ -449,7 +449,6 @@ reqHeroesPrimaryCleared: "Pangunahin pangangailangang klase ng mga bayani ay tap
 reqHeroesNotSecondary: "Ang <class> klase ay hindi sekondarya!"
 reqHeroesSecondaryCleared: "Ikalawang pangangailangang klase ng mga bayani ay tapos na."
 reqHeroesClassNotFound: "Hindi matagpuan ang klase!"
-reqNone: "Walang itinakdang pangangailangan"
 reqNotANumber: "<input> ay hindi numero!"
 reqMustAddItem: "Kailangan mo munang magdagdag ng kahit isang gamit!"
 reqNoMessage: "Kailangan mo munang itakda ang pangangailangang pagkakamali na mensahe!"
