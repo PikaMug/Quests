@@ -290,8 +290,6 @@ public class StageMainPrompt extends NumericPrompt {
                     String text = "\n";
                     LinkedList<String> customObjs 
                             = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.DARK_PURPLE + " - "
-                            + Lang.get("stageEditorCustom") + "\n";
                     for (String s : customObjs) {
                         text += ChatColor.LIGHT_PURPLE + "     - " + ChatColor.GOLD + s + "\n";
                     }
@@ -496,7 +494,7 @@ public class StageMainPrompt extends NumericPrompt {
         if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
             hasObjective = true;
         }
-        if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) == null) {
+        if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
             hasObjective = true;
         }
     }
