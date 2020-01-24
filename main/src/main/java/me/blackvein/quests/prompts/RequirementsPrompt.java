@@ -480,10 +480,9 @@ public class RequirementsPrompt extends NumericPrompt {
         }
     }
 
-    private class ItemListPrompt extends NumericPrompt {
+    public class ItemListPrompt extends NumericPrompt {
         private final int size = 4;
 
-        @SuppressWarnings("unused")
         public int getSize() {
             return size;
         }
