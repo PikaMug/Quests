@@ -566,7 +566,7 @@ public class RequirementsPrompt extends NumericPrompt {
         @Override
         public String getPromptText(ConversationContext context) {
             QuestsEditorPostOpenRequirementsItemListPromptEvent event 
-                    = new QuestsEditorPostOpenRequirementsItemListPromptEvent(context);
+                    = new QuestsEditorPostOpenRequirementsItemListPromptEvent(factory, context);
             plugin.getServer().getPluginManager().callEvent(event);
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
