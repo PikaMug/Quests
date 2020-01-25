@@ -286,31 +286,44 @@ public class OptionsPrompt extends NumericPrompt {
         public String getSelectionText(ConversationContext context, int number) {
             switch (number) {
                 case 1:
+                    return ChatColor.YELLOW + Lang.get("optAllowCommands");
+                case 2:
+                    return ChatColor.YELLOW + Lang.get("optAllowQuitting");
+                case 3:
+                    return ChatColor.YELLOW + Lang.get("done");
+                default:
+                    return null;
+            }
+        }
+        
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
                     if (context.getSessionData(CK.OPT_ALLOW_COMMANDS) == null) {
                         boolean defaultOpt = new Options().getAllowCommands();
-                        return ChatColor.YELLOW + Lang.get("optAllowCommands") + " (" + (defaultOpt ? ChatColor.GREEN 
-                                + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.YELLOW + ")";
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
+                            + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
+                            + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                     } else {
                         boolean commandsOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_COMMANDS);
-                        return ChatColor.YELLOW + Lang.get("optAllowCommands") + " (" + (commandsOpt ? ChatColor.GREEN 
+                        return ChatColor.GRAY + "(" + (commandsOpt ? ChatColor.GREEN 
                                 + Lang.get(String.valueOf(commandsOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(commandsOpt))) + ChatColor.YELLOW + ")";
+                                + Lang.get(String.valueOf(commandsOpt))) + ChatColor.GRAY + ")";
                     }
                 case 2:
                     if (context.getSessionData(CK.OPT_ALLOW_QUITTING) == null) {
                         boolean defaultOpt = new Options().getAllowQuitting();
-                        return ChatColor.YELLOW + Lang.get("optAllowQuitting") + " (" + (defaultOpt ? ChatColor.GREEN 
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                                 + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.YELLOW + ")";
+                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                     } else {
                         boolean quittingOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING);
-                        return ChatColor.YELLOW + Lang.get("optAllowQuitting") + " (" + (quittingOpt ? ChatColor.GREEN
+                        return ChatColor.GRAY + "(" + (quittingOpt ? ChatColor.GREEN
                                 + Lang.get(String.valueOf(quittingOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(quittingOpt))) + ChatColor.YELLOW + ")";
+                                + Lang.get(String.valueOf(quittingOpt))) + ChatColor.GRAY + ")";
                     }
                 case 3:
-                    return ChatColor.YELLOW + Lang.get("done");
+                    return "";
                 default:
                     return null;
             }
@@ -325,7 +338,7 @@ public class OptionsPrompt extends NumericPrompt {
             String text = ChatColor.DARK_GREEN + "- " + getTitle() + " -\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - "
-                        + getSelectionText(context, i) + "\n";
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
@@ -388,53 +401,69 @@ public class OptionsPrompt extends NumericPrompt {
         public String getSelectionText(ConversationContext context, int number) {
             switch (number) {
                 case 1:
+                    return ChatColor.YELLOW + Lang.get("optUseDungeonsXLPlugin");
+                case 2:
+                    return ChatColor.YELLOW + Lang.get("optUsePartiesPlugin");
+                case 3:
+                    return ChatColor.YELLOW + Lang.get("optShareProgressLevel");
+                case 4:
+                    return ChatColor.YELLOW + Lang.get("optRequireSameQuest");
+                case 5:
+                    return ChatColor.YELLOW + Lang.get("done");
+                default:
+                    return null;
+            }
+        }
+        
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
                     if (context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) == null) {
                         boolean defaultOpt = new Options().getUseDungeonsXLPlugin();
-                        return ChatColor.YELLOW + Lang.get("optUseDungeonsXLPlugin") + " (" 
-                                + (defaultOpt ? ChatColor.GREEN + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.YELLOW + ")";
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
+                                + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
+                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                     } else {
                         boolean dungeonsOpt = (Boolean) context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN);
-                        return ChatColor.YELLOW + Lang.get("optUseDungeonsXLPlugin") + " (" 
-                                + (dungeonsOpt ? ChatColor.GREEN + Lang.get(String.valueOf(dungeonsOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(dungeonsOpt))) + ChatColor.YELLOW + ")";
+                        return ChatColor.GRAY + "(" + (dungeonsOpt ? ChatColor.GREEN 
+                                + Lang.get(String.valueOf(dungeonsOpt)) : ChatColor.RED 
+                                + Lang.get(String.valueOf(dungeonsOpt))) + ChatColor.GRAY + ")";
                     }
                 case 2:
                     if (context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) == null) {
                         boolean defaultOpt = new Options().getUsePartiesPlugin();
-                        return ChatColor.YELLOW + Lang.get("optUsePartiesPlugin") + " ("
-                                + (defaultOpt ? ChatColor.GREEN + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.YELLOW + ")";
+                        return ChatColor.GRAY + "("+ (defaultOpt ? ChatColor.GREEN 
+                                + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
+                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                     } else {
                         boolean partiesOpt = (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN);
-                        return ChatColor.YELLOW + Lang.get("optUsePartiesPlugin") + " (" 
-                                + (partiesOpt ? ChatColor.GREEN + Lang.get(String.valueOf(partiesOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(partiesOpt))) + ChatColor.YELLOW +  ")";
+                        return ChatColor.GRAY + "(" + (partiesOpt ? ChatColor.GREEN 
+                                + Lang.get(String.valueOf(partiesOpt)) : ChatColor.RED 
+                                + Lang.get(String.valueOf(partiesOpt))) + ChatColor.GRAY +  ")";
                     }
                 case 3:
                     if (context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) == null) {
                         int defaultOpt = new Options().getShareProgressLevel();
-                        return ChatColor.YELLOW + Lang.get("optShareProgressLevel") + " (" 
-                                + ChatColor.AQUA + String.valueOf(defaultOpt) + ChatColor.YELLOW + ")";
+                        return ChatColor.GRAY + "(" + ChatColor.AQUA + String.valueOf(defaultOpt) + ChatColor.GRAY 
+                                + ")";
                     } else {
                         int shareOpt = (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL);
-                        return ChatColor.YELLOW + Lang.get("optShareProgressLevel") + " (" 
-                                + ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.YELLOW + ")";
+                        return ChatColor.GRAY + "(" + ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.GRAY + ")";
                     }
                 case 4:
                     if (context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) == null) {
                         boolean defaultOpt = new Options().getRequireSameQuest();
-                        return ChatColor.YELLOW + Lang.get("optRequireSameQuest") + " (" 
-                                + (defaultOpt ? ChatColor.GREEN + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.YELLOW + ")";
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
+                                + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
+                                + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                     } else {
                         boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST);
-                        return ChatColor.YELLOW + Lang.get("optRequireSameQuest") + " (" 
-                                + (requireOpt ? ChatColor.GREEN + Lang.get(String.valueOf(requireOpt)) : ChatColor.RED 
-                                + Lang.get(String.valueOf(requireOpt))) + ChatColor.YELLOW +  ")";
+                        return ChatColor.GRAY + "(" + (requireOpt ? ChatColor.GREEN 
+                                + Lang.get(String.valueOf(requireOpt)) : ChatColor.RED 
+                                + Lang.get(String.valueOf(requireOpt))) + ChatColor.GRAY +  ")";
                     }
                 case 5:
-                    return ChatColor.YELLOW + Lang.get("done");
+                    return "";
                 default:
                     return null;
             }
@@ -449,7 +478,7 @@ public class OptionsPrompt extends NumericPrompt {
             String text = ChatColor.DARK_GREEN + "- " + getTitle() + " -\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + "\n";
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }

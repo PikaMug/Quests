@@ -567,9 +567,6 @@ public class RequirementsPrompt extends NumericPrompt {
         
         @Override
         public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenRequirementsItemListPromptEvent event 
-                    = new QuestsEditorPostOpenRequirementsItemListPromptEvent(factory, context);
-            plugin.getServer().getPluginManager().callEvent(event);
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
@@ -584,6 +581,11 @@ public class RequirementsPrompt extends NumericPrompt {
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
             }
+            
+            QuestsEditorPostOpenRequirementsItemListPromptEvent event 
+                    = new QuestsEditorPostOpenRequirementsItemListPromptEvent(factory, context);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GOLD + getTitle() + "\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
