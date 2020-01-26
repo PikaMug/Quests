@@ -449,7 +449,6 @@ reqHeroesPrimaryCleared: "ความต้องการหลักของ
 reqHeroesNotSecondary: "คลาส <class> ไม่ใช่เรื่องรอง!"
 reqHeroesSecondaryCleared: "ข้อกำหนดระดับมัธยมศึกษาของ Heroes ถูกล้างออก"
 reqHeroesClassNotFound: "ไม่พบคลาส"
-reqNone: "ไม่ต้องตั้งค่า"
 reqNotANumber: "<input> ไม่ใช่ตัวเลข!"
 reqMustAddItem: "คุณต้องเพิ่มอย่างน้อยหนึ่งรายการก่อน!"
 reqNoMessage: "คุณต้องตั้งค่าข้อความต้องล้มเหลว"
