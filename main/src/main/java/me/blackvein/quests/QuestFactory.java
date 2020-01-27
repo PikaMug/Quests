@@ -1653,7 +1653,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (cc.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null) {
             shareProgressLevelOpt = (Integer) cc.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL);
         }
-        if (cc.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null) {
+        if (cc.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) != null) {
             requireSameQuestOpt = (Boolean) cc.getSessionData(CK.OPT_REQUIRE_SAME_QUEST);
         }
         cs.set("name", name);
