@@ -3278,10 +3278,30 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     /**
+     * Get a Quest by ID
+     * 
+     * @param id ID of the quest
+     * @return Exact match or null if not found
+     * @since 3.8.6
+     */
+    public Quest getQuestById(String id) {
+        if (id == null) {
+            return null;
+        }
+        LinkedList<Quest> qs = quests;
+        for (Quest q : qs) {
+            if (q.getId().equals(id)) {
+                return q;
+            }
+        }
+        return null;  
+    }
+    
+    /**
      * Get a Quest by name
      * 
      * @param name Name of the quest
-     * @return Quest or null if not found
+     * @return Closest match or null if not found
      */
     public Quest getQuest(String name) {
         if (name == null) {
@@ -3310,7 +3330,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * Get an Action by name
      * 
      * @param name Name of the action
-     * @return Action or null if not found
+     * @return Closest match or null if not found
      */
     public Action getAction(String name) {
         if (name == null) {

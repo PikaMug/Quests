@@ -801,28 +801,25 @@ public class Quest {
     /**
      * Force player to quit quest and inform them of their failure
      * 
-     * @param q The quester to be ejected
+     * @param quester The quester to be ejected
      */
     @SuppressWarnings("deprecation")
-    public void failQuest(Quester q) {
-        QuesterPreFailQuestEvent preEvent = new QuesterPreFailQuestEvent(q, this);
+    public void failQuest(Quester quester) {
+        QuesterPreFailQuestEvent preEvent = new QuesterPreFailQuestEvent(quester, this);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
             return;
         }
-        if (plugin.getServer().getPlayer(q.getUUID()) != null) {
-            Player player = plugin.getServer().getPlayer(q.getUUID());
-            player.sendMessage(ChatColor.GOLD + Lang.get(player, "questObjectivesTitle").replace("<quest>", name));
-            player.sendMessage(ChatColor.RED + Lang.get(player, "questFailed"));
-            q.hardQuit(this);
-            q.saveData();
+        Player player = quester.getPlayer();
+        String[] messages = {
+                ChatColor.GOLD + Lang.get(player, "questObjectivesTitle").replace("<quest>", name),
+                ChatColor.RED + Lang.get(player, "questFailed")
+        };
+        quester.quitQuest(this, messages);
+        if (player.isOnline()) {
             player.updateInventory();
-        } else {
-            q.hardQuit(this);
-            q.saveData();
         }
-        q.updateJournal();
-        QuesterPostFailQuestEvent postEvent = new QuesterPostFailQuestEvent(q, this);
+        QuesterPostFailQuestEvent postEvent = new QuesterPostFailQuestEvent(quester, this);
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
     

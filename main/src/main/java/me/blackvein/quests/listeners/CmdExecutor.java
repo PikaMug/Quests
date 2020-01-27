@@ -695,13 +695,9 @@ public class CmdExecutor implements CommandExecutor {
                         if (event.isCancelled()) {
                             return;
                         }
-                        quester.hardQuit(quest);
                         String msg = Lang.get("questQuit");
                         msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
-                        player.sendMessage(ChatColor.YELLOW + msg);
-                        quester.saveData();
-                        quester.loadData();
-                        quester.updateJournal();
+                        quester.quitQuest(quest, msg);
                     } else {
                         player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
                     }
@@ -1291,20 +1287,14 @@ public class CmdExecutor implements CommandExecutor {
                     cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                     return;
                 }
-                quester.hardQuit(quest);
                 String msg1 = Lang.get("questForceQuit");
                 msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
                 msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
                 cs.sendMessage(ChatColor.GOLD + msg1);
-                if (target.isOnline()) {
-                    Player p = (Player)target;
-                    String msg2 = Lang.get(p, "questForcedQuit");
-                    msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-                    msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
-                    p.sendMessage(ChatColor.GREEN + msg2);
-                }
-                quester.saveData();
-                quester.updateJournal();
+                String msg2 = Lang.get((Player)target, "questForcedQuit");
+                msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                quester.quitQuest(quest, msg2);
             }
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));

@@ -571,6 +571,39 @@ public class Quester {
         }
     }
     
+    /**
+     * End a quest for this Quester
+     * 
+     * @param quest The quest to start
+     * @param message Message to inform player, can be left null or empty
+     * @since 3.8.6
+     */
+    public void quitQuest(Quest quest, String message) {
+        quitQuest(quest, new String[] {message});
+    }
+    
+    /**
+     * End a quest for this Quester
+     * 
+     * @param quest The quest to start
+     * @param messages Messages to inform player, can be left null or empty
+     * @since 3.8.6
+     */
+    public void quitQuest(Quest quest, String[] messages) {
+        if (quest == null) {
+            return;
+        }
+        hardQuit(quest);
+        for (String message : messages) {
+            if (message != null && !message.equals("") && getPlayer().isOnline()) {
+                getPlayer().sendMessage(message);
+            }
+        }
+        saveData();
+        loadData();
+        updateJournal();
+    }
+    
     public LinkedList<String> getCurrentRequirements(Quest quest, boolean ignoreOverrides) {
         if (quest == null) {
             return new LinkedList<String>();
@@ -3348,6 +3381,7 @@ public class Quester {
 
     /**
      * Show an inventory GUI with quest items to the specified player
+     * 
      * @param npc The NPC from which the GUI is bound
      * @param quests List of quests to use for displaying items
      */
@@ -3394,9 +3428,9 @@ public class Quester {
     }
 
     /**
-     * Force Quester to quit the specified quest<p>
+     * Force Quester to quit the specified quest (canceling any timers), then update Quest Journal<p>
      * 
-     * Also cancels any timers
+     * Does not save changes to disk. Consider {@link #quitQuest(Quest, String)} or {@link #quitQuest(Quest, String[])}
      * 
      * @param quest The quest to quit
      */
@@ -3420,7 +3454,10 @@ public class Quester {
     }
 
     /**
-     * Forcibly remove quest from Quester's list of completed quests
+     * Forcibly remove quest from Quester's list of completed quests, then update Quest Journal<p>
+     * 
+     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * 
      * @param quest The quest to remove
      */
     public void hardRemove(Quest quest) {
@@ -3432,9 +3469,9 @@ public class Quester {
     }
 
     /**
-     * Forcibly clear Quester's list of current quests<p>
+     * Forcibly clear Quester's list of current quests and data, then update Quest Journal<p>
      * 
-     * Also resets associated quest data
+     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
      */
     public void hardClear() {
         try {
@@ -3447,7 +3484,10 @@ public class Quester {
     }
 
     /**
-     * Forcibly set Quester's current stage
+     * Forcibly set Quester's current stage, then update Quest Journal
+     * 
+     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * 
      * @param key The quest to set stage of
      * @param val The stage number to set
      */
@@ -3460,7 +3500,10 @@ public class Quester {
     }
 
     /**
-     * Forcibly set Quester's quest data
+     * Forcibly set Quester's quest data, then update Quest Journal<p>
+     * 
+     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * 
      * @param key The quest to set stage of
      * @param val The data to set
      */
@@ -3508,6 +3551,7 @@ public class Quester {
     
     /**
      * Check whether the Quester's inventory contains the specified item
+     * 
      * @param is The item with a specified amount to check
      * @return true if the inventory contains at least the amount of the specified stack 
      */
