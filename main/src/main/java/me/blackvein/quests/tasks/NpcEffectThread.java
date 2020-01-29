@@ -61,7 +61,7 @@ public class NpcEffectThread implements Runnable {
      * @param effectType Value of EnumParticle such as NOTE or SMOKE
      */
     public void showEffect(Player player, NPC npc, String effectType) {
-        if (player == null || npc == null) {
+        if (player == null || npc == null || npc.getEntity() == null) {
             return;
         }
         if (plugin.getDependencies().getCitizens() != null) {
