@@ -170,6 +170,7 @@ public class MiscUtil {
      * @return cleaned-up string
      */
     public static String getPrettyDyeColorName(DyeColor color) {
+        // Legacy
         return Lang.get("COLOR_" + color.name());
     }
     

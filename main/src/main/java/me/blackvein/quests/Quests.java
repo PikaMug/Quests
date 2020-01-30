@@ -2656,7 +2656,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             List<Integer> shearAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." 
                                     + stageNum + ".sheep-amounts");
                             for (String color : sheep) {
-                                if (color.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
+                                DyeColor dc = null;
+                                try {
+                                    dc = DyeColor.valueOf(color.toUpperCase()); 
+                                } catch (IllegalArgumentException e) {
+                                    // Fail silently
+                                }
+                                if (dc != null) {
+                                    oStage.sheepToShear.put(dc, shearAmounts.get(sheep.indexOf(color)));
+                                // Legacy start -->
+                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
                                     oStage.sheepToShear.put(DyeColor.BLACK, shearAmounts.get(sheep.indexOf(color)));
                                 } else if (color.equalsIgnoreCase(Lang.get("COLOR_BLUE"))) {
                                     oStage.sheepToShear.put(DyeColor.BLUE, shearAmounts.get(sheep.indexOf(color)));
@@ -2691,6 +2700,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     oStage.sheepToShear.put(DyeColor.WHITE, shearAmounts.get(sheep.indexOf(color)));
                                 } else if (color.equalsIgnoreCase(Lang.get("COLOR_YELLOW"))) {
                                     oStage.sheepToShear.put(DyeColor.YELLOW, shearAmounts.get(sheep.indexOf(color)));
+                                // <-- Legacy end
                                 } else {
                                     failStageProcess("sheep-to-shear has invalid color " + color, quest, stageNum);
                                 }
