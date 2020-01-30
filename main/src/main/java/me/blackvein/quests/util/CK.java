@@ -19,6 +19,7 @@ public class CK {
     public static final String ED_QUEST_DELETE = "delQuest";
     public static final String ED_EVENT_DELETE = "delEvent";
     // Quests
+    public static final String Q_ID = "questId";
     public static final String Q_NAME = "questName";
     public static final String Q_ASK_MESSAGE = "askMessage";
     public static final String Q_FINISH_MESSAGE = "finishMessage";

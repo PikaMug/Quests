@@ -239,7 +239,9 @@ public class QuestFactory implements ConversationAbandonedListener {
         }
         
         public String getTitle(ConversationContext context) {
-            return Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME);
+            return Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME) + " " + ChatColor.GRAY 
+                    + (context.getSessionData(CK.Q_ID) != null ? "(" + Lang.get("id") + ":" 
+                    + context.getSessionData(CK.Q_ID) + ")": "");
         }
         
         public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -429,7 +431,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             QuestsEditorPostOpenMainPromptEvent event = new QuestsEditorPostOpenMainPromptEvent(context);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA) 
+            String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA)
                     + ChatColor.GOLD + " -\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
@@ -565,6 +567,7 @@ public class QuestFactory implements ConversationAbandonedListener {
     @SuppressWarnings("deprecation")
     public static void loadQuest(ConversationContext cc, Quest q) {
         cc.setSessionData(CK.ED_QUEST_EDIT, q.getName());
+        cc.setSessionData(CK.Q_ID, q.getId());
         cc.setSessionData(CK.Q_NAME, q.getName());
         if (q.npcStart != null) {
             cc.setSessionData(CK.Q_START_NPC, q.npcStart.getId());
@@ -1333,7 +1336,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         
         public String getQueryText(ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA 
-                    + context.getSessionData(CK.Q_NAME) + ChatColor.YELLOW + "\"?\n";
+                    + context.getSessionData(CK.Q_NAME) + ChatColor.YELLOW + "\"?";
         }
 
         @Override
@@ -1342,7 +1345,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     = new QuestsEditorPostOpenSavePromptEvent(QuestFactory.this, context);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = getQueryText(context);
+            String text = getQueryText(context) + "\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
                         + getSelectionText(context, i) + "\n";
@@ -1428,7 +1431,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         }
         
         public String getQueryText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("confirmDelete") + "\n";
+            return ChatColor.YELLOW + Lang.get("confirmDelete");
         }
         
         @Override
@@ -1437,7 +1440,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     = new QuestsEditorPostOpenExitPromptEvent(QuestFactory.this, context);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = getQueryText(context);
+            String text = getQueryText(context) + "\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
                         + getSelectionText(context, i) + "\n";
