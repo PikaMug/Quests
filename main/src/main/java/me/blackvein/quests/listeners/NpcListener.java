@@ -13,6 +13,7 @@
 package me.blackvein.quests.listeners;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
@@ -165,12 +166,16 @@ public class NpcListener implements Listener {
                                     if (hand.getType().equals(Material.ENCHANTED_BOOK)) {
                                         EnchantmentStorageMeta esmeta = (EnchantmentStorageMeta) hand.getItemMeta();
                                         if (esmeta.hasStoredEnchants()) {
-                                            // TODO translate enchantment names
+                                            // TODO translate Roman numerals
                                             for (Entry<Enchantment, Integer> e : esmeta.getStoredEnchants()
                                                     .entrySet()) {
-                                                player.sendMessage(ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN 
-                                                        + ItemUtil.getPrettyEnchantmentName(e.getKey()) + " " 
-                                                        + RomanNumeral.getNumeral(e.getValue()) + "\n");
+                                                HashMap<Enchantment, Integer> single 
+                                                        = new HashMap<Enchantment, Integer>();
+                                                single.put(e.getKey(), e.getValue());
+                                                plugin.getLocaleQuery().sendMessage(player, ChatColor.GRAY + "\u2515 " 
+                                                        + ChatColor.DARK_GREEN 
+                                                        + "<enchantment> " + RomanNumeral.getNumeral(e.getValue()) 
+                                                        + "\n", single);
                                             }
                                         }
                                     }
