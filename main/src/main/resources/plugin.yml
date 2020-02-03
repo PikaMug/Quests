@@ -119,12 +119,6 @@ permissions:
     quests.actions.delete:
         description: Ability to delete existing actions
         default: op
-    quests.party.create:
-        description: Ability to create new parties
-        default: true
-    quests.party.join:
-        description: Join parties without invitation
-        default: op
 commands:
     quests:
         description: Quests command
