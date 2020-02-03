@@ -15,12 +15,28 @@ package me.blackvein.quests.events.editor.quests;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
-public class QuestsEditorPostOpenMainPromptEvent extends QuestsEditorEvent {
-    private static final HandlerList handlers = new HandlerList();
+import me.blackvein.quests.prompts.QuestsNumericPrompt;
+import me.blackvein.quests.QuestFactory;
 
-    public QuestsEditorPostOpenMainPromptEvent(ConversationContext context) {
-        super(context);
+public class QuestsEditorPostOpenNumericPromptEvent extends QuestsEditorEvent {
+    private static final HandlerList handlers = new HandlerList();
+    private QuestFactory factory;
+    private QuestsNumericPrompt prompt;
+
+    public QuestsEditorPostOpenNumericPromptEvent(ConversationContext context, QuestFactory factory, 
+            QuestsNumericPrompt prompt) {
+        super(context, prompt);
         this.context = context;
+        this.factory = factory;
+        this.prompt = prompt;
+    }
+
+    public QuestFactory getQuestFactory() {
+        return factory;
+    }
+    
+    public QuestsNumericPrompt getPrompt() {
+        return prompt;
     }
 
     @Override

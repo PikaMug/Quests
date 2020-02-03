@@ -13,6 +13,7 @@
 package me.blackvein.quests.events.editor.quests;
 
 import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
 
 import me.blackvein.quests.events.QuestsEvent;
 
@@ -21,14 +22,17 @@ import me.blackvein.quests.events.QuestsEvent;
  */
 public abstract class QuestsEditorEvent extends QuestsEvent {
     protected ConversationContext context;
+    protected Prompt prompt;
     
-    public QuestsEditorEvent(final ConversationContext context) {
+    public QuestsEditorEvent(final ConversationContext context, final Prompt prompt) {
         this.context = context;
+        this.prompt = prompt;
     }
     
-    public QuestsEditorEvent(final ConversationContext context, boolean async) {
+    public QuestsEditorEvent(final ConversationContext context, final Prompt prompt, boolean async) {
         super(async);
         this.context = context;
+        this.prompt = prompt;
     }
     
     /**
@@ -38,5 +42,14 @@ public abstract class QuestsEditorEvent extends QuestsEvent {
      */
     public final ConversationContext getConversationContext() {
         return context;
+    }
+    
+    /**
+     * Returns the prompt involved in this event
+     * 
+     * @return Prompt which is involved in this event
+     */
+    public Prompt getPrompt() {
+        return prompt;
     }
 }

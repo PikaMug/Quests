@@ -54,7 +54,7 @@ import me.blackvein.quests.Stage;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenMainPromptEvent;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenMenuPromptEvent;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenSelectCreatePromptEvent;
-import me.blackvein.quests.prompts.ItemStackPrompt;
+import me.blackvein.quests.prompts.quests.ItemStackPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;

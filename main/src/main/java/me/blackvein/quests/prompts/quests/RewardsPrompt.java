@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts;
+package me.blackvein.quests.prompts.quests;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,7 +21,6 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
@@ -34,19 +33,21 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenRewardsPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-public class RewardsPrompt extends NumericPrompt {
+public class RewardsPrompt extends QuestsNumericPrompt {
 
     private final Quests plugin;
     private final QuestFactory factory;
     private final int size = 11;
 
-    public RewardsPrompt(Quests plugin, QuestFactory qf) {
+    public RewardsPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
+        super(context, qf);
         this.plugin = plugin;
         factory = qf;
     }
@@ -269,7 +270,8 @@ public class RewardsPrompt extends NumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenRewardsPromptEvent event = new QuestsEditorPostOpenRewardsPromptEvent(factory, context);
+        QuestsEditorPostOpenNumericPromptEvent event 
+                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.LIGHT_PURPLE + getTitle(context).replace((String) context
@@ -301,24 +303,24 @@ public class RewardsPrompt extends NumericPrompt {
                 if (plugin.getDependencies().getMcmmoClassic() != null) {
                     return new mcMMOListPrompt();
                 } else {
-                    return new RewardsPrompt(plugin, factory);
+                    return new RewardsPrompt(plugin, context, factory);
                 }
             case 8:
                 if (plugin.getDependencies().getHeroes() != null) {
                     return new HeroesListPrompt();
                 } else {
-                    return new RewardsPrompt(plugin, factory);
+                    return new RewardsPrompt(plugin, context, factory);
                 }
             case 9:
                 if (plugin.getDependencies().getPhatLoots() != null) {
                     return new PhatLootsPrompt();
                 } else {
-                    return new RewardsPrompt(plugin, factory);
+                    return new RewardsPrompt(plugin, context, factory);
                 }
             case 10:
                 return new CustomRewardsPrompt();
             case 11:
-                return factory.returnToMenu();
+                return factory.returnToMenu(context);
             default:
                 return null;
         }
@@ -358,9 +360,9 @@ public class RewardsPrompt extends NumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_MONEY, null);
-                return new RewardsPrompt(plugin, factory);
+                return new RewardsPrompt(plugin, context, factory);
             }
-            return new RewardsPrompt(plugin, factory);
+            return new RewardsPrompt(plugin, context, factory);
         }
     }
 
@@ -390,9 +392,9 @@ public class RewardsPrompt extends NumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_EXP, null);
-                return new RewardsPrompt(plugin, factory);
+                return new RewardsPrompt(plugin, context, factory);
             }
-            return new RewardsPrompt(plugin, factory);
+            return new RewardsPrompt(plugin, context, factory);
         }
     }
 
@@ -422,9 +424,9 @@ public class RewardsPrompt extends NumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_QUEST_POINTS, null);
-                return new RewardsPrompt(plugin, factory);
+                return new RewardsPrompt(plugin, context, factory);
             }
-            return new RewardsPrompt(plugin, factory);
+            return new RewardsPrompt(plugin, context, factory);
         }
     }
 
@@ -482,7 +484,7 @@ public class RewardsPrompt extends NumericPrompt {
                 context.setSessionData(CK.REW_ITEMS, null);
                 return new ItemListPrompt();
             } else if (input.equalsIgnoreCase("3")) {
-                return new RewardsPrompt(plugin, factory);
+                return new RewardsPrompt(plugin, context, factory);
             }
             return null;
         }
@@ -552,7 +554,7 @@ public class RewardsPrompt extends NumericPrompt {
                 context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, null);
                 return new CommandsListPrompt();
             } else if (input.equalsIgnoreCase("4")) {
-                return new RewardsPrompt(plugin, factory);
+                return new RewardsPrompt(plugin, context, factory);
             }
             return null;
         }
@@ -646,7 +648,7 @@ public class RewardsPrompt extends NumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PERMISSION, null);
             }
-            return new RewardsPrompt(plugin, factory);
+            return new RewardsPrompt(plugin, context, factory);
         }
     }
 
@@ -723,7 +725,7 @@ public class RewardsPrompt extends NumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new RewardsPrompt(plugin, factory);
+                    return new RewardsPrompt(plugin, context, factory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewMcMMOListsNotSameSize"));
                     return new mcMMOListPrompt();
@@ -886,7 +888,7 @@ public class RewardsPrompt extends NumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new RewardsPrompt(plugin, factory);
+                    return new RewardsPrompt(plugin, context, factory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewHeroesListsNotSameSize"));
                     return new HeroesListPrompt();
@@ -998,7 +1000,7 @@ public class RewardsPrompt extends NumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext cc, String input) {
+        public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 String[] arr = input.split(" ");
@@ -1007,19 +1009,19 @@ public class RewardsPrompt extends NumericPrompt {
                     if (PhatLootsAPI.getPhatLoot(s) == null) {
                         String text = Lang.get("rewPhatLootsInvalid");
                         text = text.replace("<input>", ChatColor.DARK_RED + s + ChatColor.RED);
-                        cc.getForWhom().sendRawMessage(ChatColor.RED + text);
+                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new PhatLootsPrompt();
                     }
                 }
                 loots.addAll(Arrays.asList(arr));
-                cc.setSessionData(CK.REW_PHAT_LOOTS, loots);
-                return new RewardsPrompt(plugin, factory);
+                context.setSessionData(CK.REW_PHAT_LOOTS, loots);
+                return new RewardsPrompt(plugin, context, factory);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                cc.setSessionData(CK.REW_PHAT_LOOTS, null);
-                cc.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewPhatLootsCleared"));
-                return new RewardsPrompt(plugin, factory);
+                context.setSessionData(CK.REW_PHAT_LOOTS, null);
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewPhatLootsCleared"));
+                return new RewardsPrompt(plugin, context, factory);
             } else {
-                return new RewardsPrompt(plugin, factory);
+                return new RewardsPrompt(plugin, context, factory);
             }
         }
     }
@@ -1102,7 +1104,7 @@ public class RewardsPrompt extends NumericPrompt {
                 context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomCleared"));
             }
-            return new RewardsPrompt(plugin, factory);
+            return new RewardsPrompt(plugin, context, factory);
         }
     }
 
@@ -1167,7 +1169,7 @@ public class RewardsPrompt extends NumericPrompt {
                     return new RewardCustomDataListPrompt();
                 } else {
                     context.setSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS, null);
-                    return new RewardsPrompt(plugin, factory);
+                    return new RewardsPrompt(plugin, context, factory);
                 }
             }
         }

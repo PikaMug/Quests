@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts;
+package me.blackvein.quests.prompts.quests;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -131,7 +131,7 @@ public class BlocksPrompt extends FixedSetPrompt {
             return new CutBlockListPrompt();
         }
         try {
-            return new StageMainPrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, context, questFactory);
         } catch (Exception e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;

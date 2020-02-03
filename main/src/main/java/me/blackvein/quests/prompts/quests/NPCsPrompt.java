@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts;
+package me.blackvein.quests.prompts.quests;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -127,25 +127,25 @@ public class NPCsPrompt extends FixedSetPrompt {
                 return new DeliveryListPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new StageMainPrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, context, questFactory);
             }
         } else if (input.equalsIgnoreCase("2")) {
             if (plugin.getDependencies().getCitizens() != null) {
                 return new NPCIDsToTalkToPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new StageMainPrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, context, questFactory);
             }
         } else if (input.equalsIgnoreCase("3")) {
             if (plugin.getDependencies().getCitizens() != null) {
                 return new NPCKillListPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new StageMainPrompt(plugin, stageNum, questFactory);
+                return new StageMainPrompt(plugin, stageNum, context, questFactory);
             }
         }
         try {
-            return new StageMainPrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, context, questFactory);
         } catch (Exception e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;
@@ -390,7 +390,7 @@ public class NPCsPrompt extends FixedSetPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, null);
             }
-            return new StageMainPrompt(plugin, stageNum, questFactory);
+            return new StageMainPrompt(plugin, stageNum, context, questFactory);
         }
     }
 
@@ -469,7 +469,7 @@ public class NPCsPrompt extends FixedSetPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new StageMainPrompt(plugin, stageNum, questFactory);
+                    return new StageMainPrompt(plugin, stageNum, context, questFactory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new NPCKillListPrompt();

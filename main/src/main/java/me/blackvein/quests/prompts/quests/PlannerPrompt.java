@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts;
+package me.blackvein.quests.prompts.quests;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -20,23 +20,24 @@ import java.util.TimeZone;
 
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenPlannerPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
-public class PlannerPrompt extends NumericPrompt {
+public class PlannerPrompt extends QuestsNumericPrompt {
     
     private final Quests plugin;
     private final QuestFactory factory;
 
-    public PlannerPrompt(Quests plugin, QuestFactory qf) {
+    public PlannerPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
+        super(context, qf);
         this.plugin = plugin;
         factory = qf;
     }
@@ -140,7 +141,8 @@ public class PlannerPrompt extends NumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenPlannerPromptEvent event = new QuestsEditorPostOpenPlannerPromptEvent(factory, context);
+        QuestsEditorPostOpenNumericPromptEvent event 
+                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
@@ -165,12 +167,12 @@ public class PlannerPrompt extends NumericPrompt {
                 return new RepeatPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new PlannerPrompt(plugin, factory);
+                return new PlannerPrompt(plugin, context, factory);
             }
         case 4:
             return new CooldownPrompt();
         case 5:
-            return factory.returnToMenu();
+            return factory.returnToMenu(context);
         default:
             return null;
         }
@@ -186,11 +188,11 @@ public class PlannerPrompt extends NumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new PlannerPrompt(plugin, factory);
+                return new PlannerPrompt(plugin, context, factory);
             }
             if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.PLN_REPEAT_CYCLE, null);
-                return new PlannerPrompt(plugin, factory);
+                return new PlannerPrompt(plugin, context, factory);
             }
             long delay;
             try {
@@ -206,7 +208,7 @@ public class PlannerPrompt extends NumericPrompt {
                         .replace("<input>", input));
                 return new RepeatPrompt();
             }
-            return new PlannerPrompt(plugin, factory);
+            return new PlannerPrompt(plugin, context, factory);
         }
     }
     
@@ -220,11 +222,11 @@ public class PlannerPrompt extends NumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new PlannerPrompt(plugin, factory);
+                return new PlannerPrompt(plugin, context, factory);
             }
             if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.PLN_COOLDOWN, null);
-                return new PlannerPrompt(plugin, factory);
+                return new PlannerPrompt(plugin, context, factory);
             }
             long delay;
             try {
@@ -240,7 +242,7 @@ public class PlannerPrompt extends NumericPrompt {
                         .replace("<input>", input));
                 return new CooldownPrompt();
             }
-            return new PlannerPrompt(plugin, factory);
+            return new PlannerPrompt(plugin, context, factory);
         }
     }
     

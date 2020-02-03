@@ -10,35 +10,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts;
+package me.blackvein.quests.prompts.quests;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStageMenuPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
-public class StageMenuPrompt extends NumericPrompt {
+public class StageMenuPrompt extends QuestsNumericPrompt {
 
     private final Quests plugin;
-    private final QuestFactory questFactory;
+    private final QuestFactory factory;
     private int size = 2;
 
-    public StageMenuPrompt(Quests plugin, QuestFactory qf) {
+    public StageMenuPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
+        super(context, qf);
         this.plugin = plugin;
-        questFactory = qf;
+        factory = qf;
     }
     
-    public int getSize(ConversationContext context) {
+    public int getSize() {
         return size;
     }
     
-    public String getTitle() {
+    public String getTitle(ConversationContext context) {
         return Lang.get("stageEditorStages");
     }
     
@@ -69,13 +70,18 @@ public class StageMenuPrompt extends NumericPrompt {
         }
         return null;
     }
+    
+    public String getAdditionalText(ConversationContext context, int number) {
+        return null;
+    }
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenStageMenuPromptEvent event = new QuestsEditorPostOpenStageMenuPromptEvent(questFactory, context);
+        QuestsEditorPostOpenNumericPromptEvent event 
+                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.LIGHT_PURPLE + "- " + getTitle() + " -\n";
+        String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -\n";
         for (int i = 1; i <= (getStages(context) + size); i++) {
             text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
                     + getSelectionText(context, i) + "\n";
@@ -89,14 +95,14 @@ public class StageMenuPrompt extends NumericPrompt {
         int stages = getStages(context);
         if (i > 0) {
             if (i < (stages + 1) && i > 0) {
-                return new StageMainPrompt(plugin, (i), questFactory);
+                return new StageMainPrompt(plugin, (i), context, factory);
             } else if (i == (stages + 1)) {
-                return new StageMainPrompt(plugin, (stages + 1), questFactory);
+                return new StageMainPrompt(plugin, (stages + 1), context, factory);
             } else if (i == (stages + 2)) {
-                return questFactory.returnToMenu();
+                return factory.returnToMenu(context);
             }
         }
-        return new StageMenuPrompt(plugin, questFactory);
+        return new StageMenuPrompt(plugin, context, factory);
     }
 
     public int getStages(ConversationContext context) {

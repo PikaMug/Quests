@@ -1,26 +1,27 @@
-package me.blackvein.quests.prompts;
+package me.blackvein.quests.prompts.quests;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenGUIDisplayPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 
-public class GUIDisplayPrompt extends NumericPrompt {
+public class GUIDisplayPrompt extends QuestsNumericPrompt {
     private final Quests plugin;
-    private final QuestFactory questFactory;
+    private final QuestFactory factory;
     
-    public GUIDisplayPrompt(Quests plugin, QuestFactory qf) {
+    public GUIDisplayPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
+        super(context, qf);
         this.plugin = plugin;
-        this.questFactory = qf;
+        this.factory = qf;
     }
     
     private final int size = 3;
@@ -29,7 +30,7 @@ public class GUIDisplayPrompt extends NumericPrompt {
         return size;
     }
     
-    public String getTitle() {
+    public String getTitle(ConversationContext context) {
         return Lang.get("questGUITitle");
     }
     
@@ -58,11 +59,15 @@ public class GUIDisplayPrompt extends NumericPrompt {
                 return null;
         }
     }
+    
+    public String getAdditionalText(ConversationContext context, int number) {
+        return null;
+    }
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenGUIDisplayPromptEvent event 
-                = new QuestsEditorPostOpenGUIDisplayPromptEvent(questFactory, context);
+        QuestsEditorPostOpenNumericPromptEvent event 
+                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         if (context.getSessionData("tempStack") != null) {
@@ -84,7 +89,7 @@ public class GUIDisplayPrompt extends NumericPrompt {
             }
             context.setSessionData("tempStack", null);
         }
-        String text = ChatColor.GOLD + getTitle() + "\n";
+        String text = ChatColor.GOLD + getTitle(context) + "\n";
         if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
             ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
             text += " " + ChatColor.RESET + ItemUtil.getDisplayString(stack) + "\n";
@@ -106,9 +111,9 @@ public class GUIDisplayPrompt extends NumericPrompt {
             case 2:
                 context.setSessionData(CK.Q_GUIDISPLAY, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questGUICleared"));
-                return new GUIDisplayPrompt(plugin, questFactory);
+                return new GUIDisplayPrompt(plugin, context, factory);
             case 3:
-                return questFactory.returnToMenu();
+                return factory.returnToMenu(context);
             default:
                 return null;
         }

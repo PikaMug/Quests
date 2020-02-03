@@ -10,25 +10,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.events.editor.quests;
+package me.blackvein.quests.prompts;
 
+import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.event.HandlerList;
+import org.bukkit.conversations.NumericPrompt;
 
-public class QuestsEditorPostOpenMenuPromptEvent extends QuestsEditorEvent {
-    private static final HandlerList handlers = new HandlerList();
+import me.blackvein.quests.QuestFactory;
 
-    public QuestsEditorPostOpenMenuPromptEvent(ConversationContext context) {
-        super(context);
+public abstract class QuestsNumericPrompt extends NumericPrompt  {
+    private ConversationContext context;
+    private QuestFactory factory;
+    
+    public QuestsNumericPrompt(final ConversationContext context, final QuestFactory factory) {
         this.context = context;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
+        this.factory = factory;
     }
     
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public String getName() {
+        return getClass().getSimpleName();
     }
+    
+    public ConversationContext getConversationContext() {
+        return context;
+    }
+    
+    public QuestFactory getQuestFactory() {
+        return factory;
+    }
+    
+    public abstract int getSize();
+    
+    public abstract String getTitle(ConversationContext context);
+    
+    public abstract ChatColor getNumberColor(ConversationContext context, int number);
+    
+    public abstract String getSelectionText(ConversationContext context, int number);
+    
+    public abstract String getAdditionalText(ConversationContext context, int number);
 }
