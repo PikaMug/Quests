@@ -800,7 +800,7 @@ public class CmdExecutor implements CommandExecutor {
         boolean translateSubCommands = plugin.getSettings().canTranslateSubCommands();
         cs.sendMessage(ChatColor.GOLD + Lang.get("questHelpTitle"));
         cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("questDisplayHelp"));
-        if (cs.hasPermission("quests.list") || cs.hasPermission("quests.list")) {
+        if (cs.hasPermission("quests.list")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests "+ Lang.get("COMMAND_LIST_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_LIST")
                     : "list") + ChatColor.YELLOW));
