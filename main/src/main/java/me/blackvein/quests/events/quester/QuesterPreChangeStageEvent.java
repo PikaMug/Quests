@@ -23,7 +23,7 @@ import me.blackvein.quests.Stage;
  * Called before an online quester changes stage
  */
 public class QuesterPreChangeStageEvent extends QuesterEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
     private Quest quest;
     private Stage current;
     private Stage next;
@@ -64,10 +64,10 @@ public class QuesterPreChangeStageEvent extends QuesterEvent implements Cancella
     }
     
     public HandlerList getHandlers() {
-        return handlers;
+        return HANDLERS;
     }
      
     public static HandlerList getHandlerList() {
-        return handlers;
+        return HANDLERS;
     }
 }

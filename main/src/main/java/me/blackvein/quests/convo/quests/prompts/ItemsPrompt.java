@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts.quests;
+package me.blackvein.quests.convo.quests.prompts;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,14 +35,14 @@ public class ItemsPrompt extends FixedSetPrompt {
     private final Quests plugin;
     private final int stageNum;
     private final String pref;
-    private final QuestFactory questFactory;
+    private final QuestFactory factory;
 
     public ItemsPrompt(Quests plugin, int stageNum, QuestFactory qf) {
         super("1", "2", "3", "4", "5");
         this.plugin = plugin;
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
-        this.questFactory = qf;
+        this.factory = qf;
     }
     
     @SuppressWarnings("unchecked")
@@ -133,7 +133,7 @@ public class ItemsPrompt extends FixedSetPrompt {
             return new BrewListPrompt();
         }
         try {
-            return new StageMainPrompt(plugin, stageNum, context, questFactory);
+            return new StageMainPrompt(plugin, stageNum, context, factory);
         } catch (Exception e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;
@@ -190,7 +190,7 @@ public class ItemsPrompt extends FixedSetPrompt {
                 context.setSessionData(pref + CK.S_CRAFT_ITEMS, null);
                 return new CraftListPrompt();
             } else if (input.equalsIgnoreCase("3")) {
-                return new ItemsPrompt(plugin, stageNum, questFactory);
+                return new ItemsPrompt(plugin, stageNum, factory);
             }
             return null;
         }
@@ -251,7 +251,7 @@ public class ItemsPrompt extends FixedSetPrompt {
                 context.setSessionData(pref + CK.S_SMELT_ITEMS, null);
                 return new SmeltListPrompt();
             } else if (input.equalsIgnoreCase("3")) {
-                return new ItemsPrompt(plugin, stageNum, questFactory);
+                return new ItemsPrompt(plugin, stageNum, factory);
             }
             return null;
         }
@@ -361,7 +361,7 @@ public class ItemsPrompt extends FixedSetPrompt {
                     three = 0;
                 }
                 if (one == two && two == three) {
-                    return new ItemsPrompt(plugin, stageNum, questFactory);
+                    return new ItemsPrompt(plugin, stageNum, factory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new EnchantmentListPrompt();
@@ -549,7 +549,7 @@ public class ItemsPrompt extends FixedSetPrompt {
                 context.setSessionData(pref + CK.S_BREW_ITEMS, null);
                 return new BrewListPrompt();
             } else if (input.equalsIgnoreCase("3")) {
-                return new ItemsPrompt(plugin, stageNum, questFactory);
+                return new ItemsPrompt(plugin, stageNum, factory);
             }
             return null;
         }

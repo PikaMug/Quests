@@ -10,25 +10,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.events.editor.actions;
+package me.blackvein.quests.convo.quests;
 
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.event.HandlerList;
 
-public class ActionsEditorPostOpenSelectCreatePromptEvent extends ActionsEditorEvent {
-    private static final HandlerList handlers = new HandlerList();
+import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.convo.QuestsStringPrompt;
 
-    public ActionsEditorPostOpenSelectCreatePromptEvent(ConversationContext context) {
-        super(context);
+public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
+    private ConversationContext context;
+    private QuestFactory factory;
+    
+    public QuestsEditorStringPrompt(final ConversationContext context, final QuestFactory factory) {
         this.context = context;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
+        this.factory = factory;
     }
     
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public String getName() {
+        return getClass().getSimpleName();
     }
+    
+    public ConversationContext getConversationContext() {
+        return context;
+    }
+    
+    public QuestFactory getQuestFactory() {
+        return factory;
+    }
+    
+    public abstract String getTitle(ConversationContext context);
+    
+    public abstract String getQueryText(ConversationContext context);
 }

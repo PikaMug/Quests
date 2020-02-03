@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts.quests;
+package me.blackvein.quests.convo.quests.prompts;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -33,14 +33,14 @@ import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-public class StageMainPrompt extends QuestsNumericPrompt {
+public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private final int stageNum;
@@ -71,297 +71,297 @@ public class StageMainPrompt extends QuestsNumericPrompt {
     
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+            return ChatColor.BLUE;
+        case 9:
+            if (!hasObjective) {
+                return ChatColor.GRAY;
+            } else {
                 return ChatColor.BLUE;
-            case 9:
+            }
+        case 10:
+            if (!hasObjective) {
+                return ChatColor.GRAY;
+            } else {
+                return ChatColor.BLUE;
+            }
+        case 11:
+            if (context.getSessionData(pref + CK.S_DELAY) == null) {
+                return ChatColor.GRAY;
+            } else {
+                return ChatColor.BLUE;
+            }
+        case 12:
+            if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY;
                 } else {
                     return ChatColor.BLUE;
                 }
-            case 10:
+            } else {
+                return ChatColor.BLUE;
+            }
+        case 13:
+            if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY;
                 } else {
                     return ChatColor.BLUE;
                 }
-            case 11:
-                if (context.getSessionData(pref + CK.S_DELAY) == null) {
+            } else {
+                return ChatColor.BLUE;
+            }
+        case 14:
+            if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
+                if (!hasObjective) {
                     return ChatColor.GRAY;
                 } else {
                     return ChatColor.BLUE;
                 }
-            case 12:
-                if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY;
-                    } else {
-                        return ChatColor.BLUE;
-                    }
-                } else {
-                    return ChatColor.BLUE;
-                }
-            case 13:
-                if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY;
-                    } else {
-                        return ChatColor.BLUE;
-                    }
-                } else {
-                    return ChatColor.BLUE;
-                }
-            case 14:
-                if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY;
-                    } else {
-                        return ChatColor.BLUE;
-                    }
-                } else {
-                    return ChatColor.BLUE;
-                }
-            case 15:
-                return ChatColor.RED;
-            case 16:
-                return ChatColor.GREEN;
-            default:
-                return null;
+            } else {
+                return ChatColor.BLUE;
+            }
+        case 15:
+            return ChatColor.RED;
+        case 16:
+            return ChatColor.GREEN;
+        default:
+            return null;
         }
     }
     
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-                return ChatColor.GOLD + Lang.get("stageEditorBlocks");
-            case 2:
-                return ChatColor.GOLD + Lang.get("stageEditorItems");
-            case 3:
-                return ChatColor.GOLD + Lang.get("stageEditorNPCs");
-            case 4:
-                return ChatColor.GOLD + Lang.get("stageEditorMobs");
-            case 5:
-                return ChatColor.YELLOW + Lang.get("stageEditorKillPlayers");
-            case 6:
-                return ChatColor.YELLOW + Lang.get("stageEditorReachLocs");
-            case 7:
-                return ChatColor.YELLOW + Lang.get("stageEditorPassword");
-            case 8:
-                return ChatColor.DARK_PURPLE + Lang.get("stageEditorCustom");
-            case 9:
+        case 1:
+            return ChatColor.GOLD + Lang.get("stageEditorBlocks");
+        case 2:
+            return ChatColor.GOLD + Lang.get("stageEditorItems");
+        case 3:
+            return ChatColor.GOLD + Lang.get("stageEditorNPCs");
+        case 4:
+            return ChatColor.GOLD + Lang.get("stageEditorMobs");
+        case 5:
+            return ChatColor.YELLOW + Lang.get("stageEditorKillPlayers");
+        case 6:
+            return ChatColor.YELLOW + Lang.get("stageEditorReachLocs");
+        case 7:
+            return ChatColor.YELLOW + Lang.get("stageEditorPassword");
+        case 8:
+            return ChatColor.DARK_PURPLE + Lang.get("stageEditorCustom");
+        case 9:
+            if (!hasObjective) {
+                return ChatColor.GRAY + Lang.get("stageEditorEvents");
+            } else {
+                return ChatColor.AQUA + Lang.get("stageEditorEvents");
+            }
+        case 10:
+            if (!hasObjective) {
+                return ChatColor.GRAY + Lang.get("delay");
+            } else {
+                return ChatColor.YELLOW + Lang.get("delay");
+            }
+        case 11:
+            if (context.getSessionData(pref + CK.S_DELAY) == null) {
+                return ChatColor.GRAY + Lang.get("stageEditorDelayMessage");
+            } else {
+                return ChatColor.YELLOW + Lang.get("stageEditorDelayMessage");
+            }
+        case 12:
+            if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
                 if (!hasObjective) {
-                    return ChatColor.GRAY + Lang.get("stageEditorEvents");
-                } else {
-                    return ChatColor.AQUA + Lang.get("stageEditorEvents");
-                }
-            case 10:
-                if (!hasObjective) {
-                    return ChatColor.GRAY + Lang.get("delay");
-                } else {
-                    return ChatColor.YELLOW + Lang.get("delay");
-                }
-            case 11:
-                if (context.getSessionData(pref + CK.S_DELAY) == null) {
-                    return ChatColor.GRAY + Lang.get("stageEditorDelayMessage");
-                } else {
-                    return ChatColor.YELLOW + Lang.get("stageEditorDelayMessage");
-                }
-            case 12:
-                if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY + Lang.get("stageEditorStartMessage");
-                    } else {
-                        return ChatColor.YELLOW + Lang.get("stageEditorStartMessage");
-                    }
+                    return ChatColor.GRAY + Lang.get("stageEditorStartMessage");
                 } else {
                     return ChatColor.YELLOW + Lang.get("stageEditorStartMessage");
                 }
-            case 13:
-                if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY + Lang.get("stageEditorCompleteMessage");
-                    } else {
-                        return ChatColor.YELLOW + Lang.get("stageEditorCompleteMessage");
-                    }
+            } else {
+                return ChatColor.YELLOW + Lang.get("stageEditorStartMessage");
+            }
+        case 13:
+            if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
+                if (!hasObjective) {
+                    return ChatColor.GRAY + Lang.get("stageEditorCompleteMessage");
                 } else {
                     return ChatColor.YELLOW + Lang.get("stageEditorCompleteMessage");
                 }
-            case 14:
-                if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY + Lang.get("stageEditorObjectiveOverride");
-                    } else {
-                        return ChatColor.YELLOW + Lang.get("stageEditorObjectiveOverride");
-                    }
+            } else {
+                return ChatColor.YELLOW + Lang.get("stageEditorCompleteMessage");
+            }
+        case 14:
+            if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
+                if (!hasObjective) {
+                    return ChatColor.GRAY + Lang.get("stageEditorObjectiveOverride");
                 } else {
                     return ChatColor.YELLOW + Lang.get("stageEditorObjectiveOverride");
                 }
-            case 15:
-                return ChatColor.RED + Lang.get("stageEditorDelete");
-            case 16:
-                return ChatColor.GREEN + Lang.get("done");
-            default:
-                return null;
+            } else {
+                return ChatColor.YELLOW + Lang.get("stageEditorObjectiveOverride");
+            }
+        case 15:
+            return ChatColor.RED + Lang.get("stageEditorDelete");
+        case 16:
+            return ChatColor.GREEN + Lang.get("done");
+        default:
+            return null;
         }
     }
     
     @SuppressWarnings("unchecked")
     public String getAdditionalText(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-                if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null 
-                        && context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null
-                        && context.getSessionData(pref + CK.S_PLACE_NAMES) == null
-                        && context.getSessionData(pref + CK.S_USE_NAMES) == null
-                        && context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+        case 1:
+            if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null 
+                    && context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null
+                    && context.getSessionData(pref + CK.S_PLACE_NAMES) == null
+                    && context.getSessionData(pref + CK.S_USE_NAMES) == null
+                    && context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            }
+        case 2:
+            if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null
+                    && context.getSessionData(pref + CK.S_SMELT_ITEMS) == null 
+                    && context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null 
+                    && context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            }
+        case 3:
+            if (context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null
+                    && context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null 
+                    && context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            }
+        case 4:
+            if (context.getSessionData(pref + CK.S_MOB_TYPES) == null 
+                    && context.getSessionData(pref + CK.S_FISH) == null 
+                    && context.getSessionData(pref + CK.S_TAME_TYPES) == null 
+                    && context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            }
+        case 5:
+            if (context.getSessionData(pref + CK.S_PLAYER_KILL) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                Integer players = (Integer) context.getSessionData(pref + CK.S_PLAYER_KILL);
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + players + " " + Lang.get("stageEditorPlayers") 
+                        + ChatColor.GRAY + ")";
+            }
+        case 6:
+            if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> locations 
+                        = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS);
+                LinkedList<Integer> radii 
+                        = (LinkedList<Integer>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
+                LinkedList<String> names 
+                        = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
+                for (int i = 0; i < locations.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + Lang.get("stageEditorReachRadii1") + " " + ChatColor.BLUE 
+                            + radii.get(i) + ChatColor.GRAY + " " + Lang.get("stageEditorReachRadii2") + " " 
+                            + ChatColor.AQUA + names.get(i) + ChatColor.GRAY + " (" + ChatColor.DARK_AQUA 
+                            + locations.get(i) + ChatColor.GRAY + ")\n";
                 }
-            case 2:
-                if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null
-                        && context.getSessionData(pref + CK.S_SMELT_ITEMS) == null 
-                        && context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null 
-                        && context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                }
-            case 3:
-                if (context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null
-                        && context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null 
-                        && context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                }
-            case 4:
-                if (context.getSessionData(pref + CK.S_MOB_TYPES) == null 
-                        && context.getSessionData(pref + CK.S_FISH) == null 
-                        && context.getSessionData(pref + CK.S_TAME_TYPES) == null 
-                        && context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                }
-            case 5:
-                if (context.getSessionData(pref + CK.S_PLAYER_KILL) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    Integer players = (Integer) context.getSessionData(pref + CK.S_PLAYER_KILL);
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + players + " " + Lang.get("stageEditorPlayers") 
-                            + ChatColor.GRAY + ")";
-                }
-            case 6:
-                if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    LinkedList<String> locations 
-                            = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS);
-                    LinkedList<Integer> radii 
-                            = (LinkedList<Integer>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
-                    LinkedList<String> names 
-                            = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
-                    for (int i = 0; i < locations.size(); i++) {
-                        text += ChatColor.GRAY + "     - " + Lang.get("stageEditorReachRadii1") + " " + ChatColor.BLUE 
-                                + radii.get(i) + ChatColor.GRAY + " " + Lang.get("stageEditorReachRadii2") + " " 
-                                + ChatColor.AQUA + names.get(i) + ChatColor.GRAY + " (" + ChatColor.DARK_AQUA 
-                                + locations.get(i) + ChatColor.GRAY + ")\n";
-                    }
-                    return text;
-                }
-            case 7:
-                if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    LinkedList<LinkedList<String>> passPhrases 
-                            = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
-                    LinkedList<String> passDisplays 
-                            = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
-                    for (int i = 0; i < passPhrases.size(); i++) {
-                        text += ChatColor.AQUA + "     - \"" + passDisplays.get(i) + "\"\n";
-                        LinkedList<String> phrases = passPhrases.get(i);
-                        for (String phrase : phrases) {
-                            text += ChatColor.DARK_AQUA + "          - " + phrase + "\n";
-                        }
-                    }
-                    return text;
-                }
-            case 8:
-                if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    LinkedList<String> customObjs 
-                            = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-                    for (String s : customObjs) {
-                        text += ChatColor.LIGHT_PURPLE + "     - " + ChatColor.GOLD + s + "\n";
-                    }
-                    return text;
-                }
-            case 9:
-                if (!hasObjective) {
-                    return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
-                }
-            case 10:
-                if (!hasObjective) {
-                    return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
-                } else {
-                    if (context.getSessionData(pref + CK.S_DELAY) == null) {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                    } else {
-                        long time = (Long) context.getSessionData(pref + CK.S_DELAY);
-                        return ChatColor.GRAY + "(" + ChatColor.AQUA + MiscUtil.getTime(time) + ChatColor.GRAY + ")";
+                return text;
+            }
+        case 7:
+            if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<LinkedList<String>> passPhrases 
+                        = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+                LinkedList<String> passDisplays 
+                        = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
+                for (int i = 0; i < passPhrases.size(); i++) {
+                    text += ChatColor.AQUA + "     - \"" + passDisplays.get(i) + "\"\n";
+                    LinkedList<String> phrases = passPhrases.get(i);
+                    for (String phrase : phrases) {
+                        text += ChatColor.DARK_AQUA + "          - " + phrase + "\n";
                     }
                 }
-            case 11:
+                return text;
+            }
+        case 8:
+            if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> customObjs 
+                        = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+                for (String s : customObjs) {
+                    text += ChatColor.LIGHT_PURPLE + "     - " + ChatColor.GOLD + s + "\n";
+                }
+                return text;
+            }
+        case 9:
+            if (!hasObjective) {
+                return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
+            }
+        case 10:
+            if (!hasObjective) {
+                return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
+            } else {
                 if (context.getSessionData(pref + CK.S_DELAY) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noDelaySet") + ")";
-                } else if (context.getSessionData(pref + CK.S_DELAY_MESSAGE) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
-                            + context.getSessionData(pref + CK.S_DELAY_MESSAGE) + "\"" + ChatColor.GRAY + ")";
+                    long time = (Long) context.getSessionData(pref + CK.S_DELAY);
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + MiscUtil.getTime(time) + ChatColor.GRAY + ")";
                 }
-            case 12:
-                if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
-                    } else {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                    }
+            }
+        case 11:
+            if (context.getSessionData(pref + CK.S_DELAY) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noDelaySet") + ")";
+            } else if (context.getSessionData(pref + CK.S_DELAY_MESSAGE) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
+                        + context.getSessionData(pref + CK.S_DELAY_MESSAGE) + "\"" + ChatColor.GRAY + ")";
+            }
+        case 12:
+            if (context.getSessionData(pref + CK.S_START_MESSAGE) == null) {
+                if (!hasObjective) {
+                    return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
-                            + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 }
-            case 13:
-                if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
-                    } else {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                    }
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
+                        + context.getSessionData(pref + CK.S_START_MESSAGE) + "\"" + ChatColor.GRAY + ")";
+            }
+        case 13:
+            if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) == null) {
+                if (!hasObjective) {
+                    return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
-                            + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 }
-            case 14:
-                if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
-                    if (!hasObjective) {
-                        return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
-                    } else {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                    }
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
+                        + context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) + "\"" + ChatColor.GRAY + ")";
+            }
+        case 14:
+            if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) == null) {
+                if (!hasObjective) {
+                    return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
-                            + context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) + "\"" + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 }
-            case 15:
-            case 16:
-                return "";
-            default:
-                return null;
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
+                        + context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) + "\"" + ChatColor.GRAY + ")";
+            }
+        case 15:
+        case 16:
+            return "";
+        default:
+            return null;
         }
     }
 
@@ -386,70 +386,70 @@ public class StageMainPrompt extends QuestsNumericPrompt {
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
-            case 1:
-                return new BlocksPrompt(plugin, stageNum, factory);
-            case 2:
-                return new ItemsPrompt(plugin, stageNum, factory);
-            case 3:
-                return new NPCsPrompt(plugin, stageNum, factory);
-            case 4:
-                return new MobsPrompt(plugin, stageNum, factory);
-            case 5:
-                return new KillPlayerPrompt();
-            case 6:
-                return new ReachListPrompt();
-            case 7:
-                return new PasswordListPrompt();
-            case 8:
-                return new CustomObjectivesPrompt();
-            case 9:
-                if (hasObjective) {
-                    return new EventListPrompt();
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new StageMainPrompt(plugin, stageNum, context, factory);
-                }
-            case 10:
-                if (hasObjective) {
-                    return new DelayPrompt();
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new StageMainPrompt(plugin, stageNum, context, factory);
-                }
-            case 11:
-                if (context.getSessionData(pref + CK.S_DELAY) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDelaySet"));
-                    return new StageMainPrompt(plugin, stageNum, context, factory);
-                } else {
-                    return new DelayMessagePrompt();
-                }
-            case 12:
-                if (hasObjective) {
-                    return new StartMessagePrompt();
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new StageMainPrompt(plugin, stageNum, context, factory);
-                }
-            case 13:
-                if (hasObjective) {
-                    return new CompleteMessagePrompt();
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new StageMainPrompt(plugin, stageNum, context, factory);
-                }
-            case 14:
-                if (hasObjective) {
-                    return new OverrideDisplayPrompt();
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new StageMainPrompt(plugin, stageNum, context, factory);
-                }
-            case 15:
-                return new DeletePrompt();
-            case 16:
-                return new StageMenuPrompt(plugin, context, factory);
-            default:
+        case 1:
+            return new BlocksPrompt(plugin, stageNum, context, factory);
+        case 2:
+            return new ItemsPrompt(plugin, stageNum, factory);
+        case 3:
+            return new NPCsPrompt(plugin, stageNum, factory);
+        case 4:
+            return new MobsPrompt(plugin, stageNum, factory);
+        case 5:
+            return new KillPlayerPrompt();
+        case 6:
+            return new ReachListPrompt();
+        case 7:
+            return new PasswordListPrompt();
+        case 8:
+            return new CustomObjectivesPrompt();
+        case 9:
+            if (hasObjective) {
+                return new EventListPrompt();
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new StageMainPrompt(plugin, stageNum, context, factory);
+            }
+        case 10:
+            if (hasObjective) {
+                return new DelayPrompt();
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+                return new StageMainPrompt(plugin, stageNum, context, factory);
+            }
+        case 11:
+            if (context.getSessionData(pref + CK.S_DELAY) == null) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDelaySet"));
+                return new StageMainPrompt(plugin, stageNum, context, factory);
+            } else {
+                return new DelayMessagePrompt();
+            }
+        case 12:
+            if (hasObjective) {
+                return new StartMessagePrompt();
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+                return new StageMainPrompt(plugin, stageNum, context, factory);
+            }
+        case 13:
+            if (hasObjective) {
+                return new CompleteMessagePrompt();
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+                return new StageMainPrompt(plugin, stageNum, context, factory);
+            }
+        case 14:
+            if (hasObjective) {
+                return new OverrideDisplayPrompt();
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+                return new StageMainPrompt(plugin, stageNum, context, factory);
+            }
+        case 15:
+            return new DeletePrompt();
+        case 16:
+            return new StageMenuPrompt(plugin, context, factory);
+        default:
+            return new StageMainPrompt(plugin, stageNum, context, factory);
         }
     }
     

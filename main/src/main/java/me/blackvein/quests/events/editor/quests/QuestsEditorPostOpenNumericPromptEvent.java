@@ -15,36 +15,55 @@ package me.blackvein.quests.events.editor.quests;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
-import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 
 public class QuestsEditorPostOpenNumericPromptEvent extends QuestsEditorEvent {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
     private QuestFactory factory;
-    private QuestsNumericPrompt prompt;
+    private QuestsEditorNumericPrompt prompt;
 
     public QuestsEditorPostOpenNumericPromptEvent(ConversationContext context, QuestFactory factory, 
-            QuestsNumericPrompt prompt) {
-        super(context, prompt);
+            QuestsEditorNumericPrompt prompt) {
+        super(context, factory, prompt);
         this.context = context;
         this.factory = factory;
         this.prompt = prompt;
     }
+    
+    /**
+     * Returns the context involved in this event
+     * 
+     * @return ConversationContext which is involved in this event
+     */
+    public ConversationContext getConversationContext() {
+        return context;
+    }
 
+    /**
+     * Returns the factory involved in this event
+     * 
+     * @return QuestFactory which is involved in this event
+     */
     public QuestFactory getQuestFactory() {
         return factory;
     }
     
-    public QuestsNumericPrompt getPrompt() {
+    /**
+     * Returns the numeric prompt involved in this event
+     * 
+     * @return Prompt which is involved in this event
+     */
+    public QuestsEditorNumericPrompt getPrompt() {
         return prompt;
     }
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
+        return HANDLERS;
     }
     
     public static HandlerList getHandlerList() {
-        return handlers;
+        return HANDLERS;
     }
 }

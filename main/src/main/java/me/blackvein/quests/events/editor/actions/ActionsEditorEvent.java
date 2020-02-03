@@ -13,22 +13,33 @@
 package me.blackvein.quests.events.editor.actions;
 
 import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.event.HandlerList;
 
+import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.events.QuestsEvent;
 
 /**
  * Represents an Actions Editor-related event
  */
 public abstract class ActionsEditorEvent extends QuestsEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
     protected ConversationContext context;
+    protected ActionFactory factory;
+    protected Prompt prompt;
     
-    public ActionsEditorEvent(final ConversationContext context) {
+    public ActionsEditorEvent(final ConversationContext context, ActionFactory factory, final Prompt prompt) {
         this.context = context;
+        this.factory = factory;
+        this.prompt = prompt;
     }
     
-    public ActionsEditorEvent(final ConversationContext context, boolean async) {
+    public ActionsEditorEvent(final ConversationContext context, ActionFactory factory, final Prompt prompt, 
+            boolean async) {
         super(async);
         this.context = context;
+        this.factory = factory;
+        this.prompt = prompt;
     }
     
     /**
@@ -36,7 +47,34 @@ public abstract class ActionsEditorEvent extends QuestsEvent {
      * 
      * @return ConversationContext which is involved in this event
      */
-    public final ConversationContext getConversationContext() {
+    public ConversationContext getConversationContext() {
         return context;
+    }
+    
+    /**
+     * Returns the factory involved in this event
+     * 
+     * @return ActionFactory which is involved in this event
+     */
+    public ActionFactory getActionFactory() {
+        return factory;
+    }
+    
+    /**
+     * Returns the prompt involved in this event
+     * 
+     * @return Prompt which is involved in this event
+     */
+    public Prompt getPrompt() {
+        return prompt;
+    }
+    
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
+    
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
 }

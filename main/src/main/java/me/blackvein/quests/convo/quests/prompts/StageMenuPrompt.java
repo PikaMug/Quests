@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts.quests;
+package me.blackvein.quests.convo.quests.prompts;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -18,12 +18,12 @@ import org.bukkit.conversations.Prompt;
 
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
-public class StageMenuPrompt extends QuestsNumericPrompt {
+public class StageMenuPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private final QuestFactory factory;

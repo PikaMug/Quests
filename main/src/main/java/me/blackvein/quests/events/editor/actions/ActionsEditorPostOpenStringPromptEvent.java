@@ -10,50 +10,59 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.events.quester;
+package me.blackvein.quests.events.editor.actions;
 
-import org.bukkit.event.Cancellable;
+import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.actions.ActionFactory;
+import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 
-/**
- * Called before an online quester completes a quest
- */
-public class QuesterPreCompleteQuestEvent extends QuesterEvent implements Cancellable {
+public class ActionsEditorPostOpenStringPromptEvent extends ActionsEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private Quest quest;
-    private boolean cancel = false;
-    
-    public QuesterPreCompleteQuestEvent(Quester quester, Quest quest) {
-        super(quester);
-        this.quest = quest;
+    private ActionFactory factory;
+    private ActionsEditorStringPrompt prompt;
+
+    public ActionsEditorPostOpenStringPromptEvent(ConversationContext context, ActionFactory factory, 
+            ActionsEditorStringPrompt prompt) {
+        super(context, factory, prompt);
+        this.context = context;
+        this.factory = factory;
+        this.prompt = prompt;
     }
     
     /**
-     * Returns the quest involved in this event
+     * Returns the context involved in this event
      * 
-     * @return Quest who is involved in this event
+     * @return ConversationContext which is involved in this event
      */
-    public Quest getQuest() {
-        return quest;
+    public ConversationContext getConversationContext() {
+        return context;
     }
 
-    @Override
-    public boolean isCancelled() {
-        return cancel;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.cancel = cancel;
+    /**
+     * Returns the factory involved in this event
+     * 
+     * @return ActionFactory which is involved in this event
+     */
+    public ActionFactory getActionFactory() {
+        return factory;
     }
     
+    /**
+     * Returns the string prompt involved in this event
+     * 
+     * @return Prompt which is involved in this event
+     */
+    public ActionsEditorStringPrompt getPrompt() {
+        return prompt;
+    }
+
+    @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }
-     
+    
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

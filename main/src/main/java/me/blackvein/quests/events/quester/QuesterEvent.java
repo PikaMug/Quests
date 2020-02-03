@@ -12,6 +12,8 @@
 
 package me.blackvein.quests.events.quester;
 
+import org.bukkit.event.HandlerList;
+
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.events.QuestsEvent;
 
@@ -19,6 +21,7 @@ import me.blackvein.quests.events.QuestsEvent;
  * Represents a quester-related event
  */
 public abstract class QuesterEvent extends QuestsEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
     protected Quester quester;
     
     public QuesterEvent(final Quester quester) {
@@ -38,5 +41,13 @@ public abstract class QuesterEvent extends QuestsEvent {
      */
     public final Quester getQuester() {
         return quester;
+    }
+    
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
+     
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
 }

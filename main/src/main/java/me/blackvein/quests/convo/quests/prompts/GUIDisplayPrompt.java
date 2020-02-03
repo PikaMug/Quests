@@ -1,4 +1,4 @@
-package me.blackvein.quests.prompts.quests;
+package me.blackvein.quests.convo.quests.prompts;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -8,13 +8,13 @@ import org.bukkit.inventory.ItemStack;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 
-public class GUIDisplayPrompt extends QuestsNumericPrompt {
+public class GUIDisplayPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private final QuestFactory factory;
     
@@ -36,27 +36,27 @@ public class GUIDisplayPrompt extends QuestsNumericPrompt {
     
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-                return ChatColor.BLUE;
-            case 2:
-                return ChatColor.RED;
-            case 3:
-                return ChatColor.GREEN;
-            default:
-                return null;
+        case 1:
+            return ChatColor.BLUE;
+        case 2:
+            return ChatColor.RED;
+        case 3:
+            return ChatColor.GREEN;
+        default:
+            return null;
         }
     }
     
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
-            case 2:
-                return ChatColor.YELLOW + Lang.get("clear");
-            case 3:
-                return ChatColor.YELLOW + Lang.get("done");
-            default:
-                return null;
+        case 1:
+            return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
+        case 2:
+            return ChatColor.YELLOW + Lang.get("clear");
+        case 3:
+            return ChatColor.YELLOW + Lang.get("done");
+        default:
+            return null;
         }
     }
     
@@ -106,16 +106,16 @@ public class GUIDisplayPrompt extends QuestsNumericPrompt {
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
-            case 1:
-                return new ItemStackPrompt(GUIDisplayPrompt.this);
-            case 2:
-                context.setSessionData(CK.Q_GUIDISPLAY, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questGUICleared"));
-                return new GUIDisplayPrompt(plugin, context, factory);
-            case 3:
-                return factory.returnToMenu(context);
-            default:
-                return null;
+        case 1:
+            return new ItemStackPrompt(GUIDisplayPrompt.this);
+        case 2:
+            context.setSessionData(CK.Q_GUIDISPLAY, null);
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questGUICleared"));
+            return new GUIDisplayPrompt(plugin, context, factory);
+        case 3:
+            return factory.returnToMenu(context);
+        default:
+            return null;
         }
     }
 }

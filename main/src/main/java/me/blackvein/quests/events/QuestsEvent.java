@@ -13,12 +13,23 @@
 package me.blackvein.quests.events;
 
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 public abstract class QuestsEvent extends Event {
+    private static final HandlerList HANDLERS = new HandlerList();
+    
     public QuestsEvent() {
     }
     
     public QuestsEvent(boolean async) {
         super(async);
+    }
+    
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
+     
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
 }

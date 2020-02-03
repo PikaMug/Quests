@@ -10,18 +10,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts;
+package me.blackvein.quests.convo.quests;
 
+import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.StringPrompt;
 
 import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.convo.QuestsNumericPrompt;
 
-public abstract class QuestsStringPrompt extends StringPrompt  {
+public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
     private ConversationContext context;
     private QuestFactory factory;
     
-    public QuestsStringPrompt(final ConversationContext context, final QuestFactory factory) {
+    public QuestsEditorNumericPrompt(final ConversationContext context, final QuestFactory factory) {
         this.context = context;
         this.factory = factory;
     }
@@ -38,7 +39,13 @@ public abstract class QuestsStringPrompt extends StringPrompt  {
         return factory;
     }
     
+    public abstract int getSize();
+    
     public abstract String getTitle(ConversationContext context);
     
-    public abstract String getQueryText(ConversationContext context);
+    public abstract ChatColor getNumberColor(ConversationContext context, int number);
+    
+    public abstract String getSelectionText(ConversationContext context, int number);
+    
+    public abstract String getAdditionalText(ConversationContext context, int number);
 }

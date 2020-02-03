@@ -10,13 +10,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts.quests;
+package me.blackvein.quests.convo.quests.prompts;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -28,113 +30,177 @@ import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
-public class BlocksPrompt extends FixedSetPrompt {
+public class BlocksPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private final int stageNum;
     private final String pref;
-    private final QuestFactory questFactory;
+    private final QuestFactory factory;
 
-    public BlocksPrompt(Quests plugin, int stageNum, QuestFactory qf) {
-        super("1", "2", "3", "4", "5", "6");
+    public BlocksPrompt(Quests plugin, int stageNum, ConversationContext context, QuestFactory qf) {
+        super(context, qf);
         this.plugin = plugin;
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
-        this.questFactory = qf;
+        this.factory = qf;
+    }
+    
+    private final int size = 6;
+    
+    public int getSize() {
+        return size;
+    }
+    
+    public String getTitle(ConversationContext context) {
+        return Lang.get("stageEditorBlocks");
+    }
+    
+    public ChatColor getNumberColor(ConversationContext context, int number) {
+        switch (number) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return ChatColor.BLUE;
+            case 6:
+                return ChatColor.GREEN;
+            default:
+                return null;
+        }
+    }
+    
+    public String getSelectionText(ConversationContext context, int number) {
+        switch(number) {
+        case 1:
+            return ChatColor.YELLOW + Lang.get("stageEditorBreakBlocks");
+        case 2:
+            return ChatColor.YELLOW + Lang.get("stageEditorDamageBlocks");
+        case 3:
+            return ChatColor.YELLOW + Lang.get("stageEditorPlaceBlocks");
+        case 4:
+            return ChatColor.YELLOW + Lang.get("stageEditorUseBlocks");
+        case 5:
+            return ChatColor.YELLOW + Lang.get("stageEditorCutBlocks");
+        case 6:
+            return ChatColor.GREEN + Lang.get("done");
+        default:
+            return null;
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public String getAdditionalText(ConversationContext context, int number) {
+        switch(number) {
+        case 1:
+            if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_BREAK_NAMES);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
+                for (int i = 0; i < names.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+                }
+                return text;
+            }
+        case 2:
+            if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_DAMAGE_NAMES);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
+                for (int i = 0; i < names.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+                }
+                return text;
+            }
+        case 3:
+            if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_PLACE_NAMES);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
+                for (int i = 0; i < names.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+                }
+                return text;
+            }
+        case 4:
+            if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_USE_NAMES);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
+                for (int i = 0; i < names.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+                }
+                return text;
+            }
+        case 5:
+            if (context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
+                return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_CUT_NAMES);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS);
+                for (int i = 0; i < names.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+                }
+                return text;
+            }
+        case 6:
+            return "";
+        default:
+            return null;
+        }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public String getPromptText(ConversationContext context) {
         context.setSessionData(pref, Boolean.TRUE);
-        String text = ChatColor.AQUA + "- " + Lang.get("stageEditorBlocks") + " -\n";
-        if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorBreakBlocks") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorBreakBlocks") + "\n";
-            LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_BREAK_NAMES);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
-            for (int i = 0; i < names.size(); i++) {
-                text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
-                        + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
-            }
+        
+        QuestsEditorPostOpenNumericPromptEvent event 
+                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+        plugin.getServer().getPluginManager().callEvent(event);
+
+        String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+        for (int i = 1; i <= size; i++) {
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
-        if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorDamageBlocks") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorDamageBlocks") + "\n";
-            LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_DAMAGE_NAMES);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
-            for (int i = 0; i < names.size(); i++) {
-                text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
-                        + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
-            }
-        }
-        if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorPlaceBlocks") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorPlaceBlocks") + "\n";
-            LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_PLACE_NAMES);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
-            for (int i = 0; i < names.size(); i++) {
-                text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
-                        + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
-            }
-        }
-        if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorUseBlocks") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorUseBlocks") + "\n";
-            LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_USE_NAMES);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
-            for (int i = 0; i < names.size(); i++) {
-                text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
-                        + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
-            }
-        }
-        if (context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorCutBlocks") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorCutBlocks") + "\n";
-            LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_CUT_NAMES);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS);
-            for (int i = 0; i < names.size(); i++) {
-                text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
-                        + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
-            }
-        }
-        text += ChatColor.GREEN + "" + ChatColor.BOLD + "6 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " 
-                + Lang.get("done") + "\n";
         return text;
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("1")) {
+    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        switch(input.intValue()) {
+        case 1:
             return new BreakBlockListPrompt();
-        } else if (input.equalsIgnoreCase("2")) {
+        case 2:
             return new DamageBlockListPrompt();
-        } else if (input.equalsIgnoreCase("3")) {
+        case 3:
             return new PlaceBlockListPrompt();
-        } else if (input.equalsIgnoreCase("4")) {
+        case 4:
             return new UseBlockListPrompt();
-        } else if (input.equalsIgnoreCase("5")) {
+        case 5:
             return new CutBlockListPrompt();
-        }
-        try {
-            return new StageMainPrompt(plugin, stageNum, context, questFactory);
-        } catch (Exception e) {
-            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
-            return Prompt.END_OF_CONVERSATION;
+        case 6:
+            try {
+                return new StageMainPrompt(plugin, stageNum, context, factory);
+            } catch (Exception e) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
+                return Prompt.END_OF_CONVERSATION;
+            }
+        default:
+            return null;
         }
     }
     
@@ -244,7 +310,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_BREAK_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, questFactory);
+                    return new BlocksPrompt(plugin, stageNum, context, factory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new BreakBlockListPrompt();
@@ -481,7 +547,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, questFactory);
+                    return new BlocksPrompt(plugin, stageNum, context, factory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new DamageBlockListPrompt();
@@ -718,7 +784,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_PLACE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, questFactory);
+                    return new BlocksPrompt(plugin, stageNum, context, factory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new PlaceBlockListPrompt();
@@ -955,7 +1021,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_USE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, questFactory);
+                    return new BlocksPrompt(plugin, stageNum, context, factory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new UseBlockListPrompt();
@@ -1192,7 +1258,7 @@ public class BlocksPrompt extends FixedSetPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_CUT_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, questFactory);
+                    return new BlocksPrompt(plugin, stageNum, context, factory);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new CutBlockListPrompt();

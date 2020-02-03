@@ -21,7 +21,7 @@ import me.blackvein.quests.Quester;
  * Called after an online quester starts a quest
  */
 public class QuesterPostStartQuestEvent extends QuesterEvent {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
     private Quest quest;
     
     public QuesterPostStartQuestEvent(Quester quester, Quest quest) {
@@ -39,10 +39,10 @@ public class QuesterPostStartQuestEvent extends QuesterEvent {
     }
     
     public HandlerList getHandlers() {
-        return handlers;
+        return HANDLERS;
     }
      
     public static HandlerList getHandlerList() {
-        return handlers;
+        return HANDLERS;
     }
 }

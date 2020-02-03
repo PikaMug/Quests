@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts.quests;
+package me.blackvein.quests.convo.quests.prompts;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -20,8 +20,8 @@ import java.util.TimeZone;
 
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -31,7 +31,7 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
-public class PlannerPrompt extends QuestsNumericPrompt {
+public class PlannerPrompt extends QuestsEditorNumericPrompt {
     
     private final Quests plugin;
     private final QuestFactory factory;
@@ -54,88 +54,84 @@ public class PlannerPrompt extends QuestsNumericPrompt {
     
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
-            case 1:
+        case 1:
+            return ChatColor.BLUE;
+        case 2:
+            return ChatColor.BLUE;
+        case 3:
+            if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+                return ChatColor.GRAY;
+            } else {
                 return ChatColor.BLUE;
-            case 2:
-                return ChatColor.BLUE;
-            case 3:
-                if (context.getSessionData(CK.PLN_START_DATE) == null 
-                        || context.getSessionData(CK.PLN_END_DATE) == null) {
-                    return ChatColor.GRAY;
-                } else {
-                    return ChatColor.BLUE;
-                }
-            case 4:
-                return ChatColor.BLUE;
-            case 5:
-                return ChatColor.GREEN;
-            default:
-                return null;
+            }
+        case 4:
+            return ChatColor.BLUE;
+        case 5:
+            return ChatColor.GREEN;
+        default:
+            return null;
         }
     }
     
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-                return ChatColor.YELLOW + Lang.get("plnStart");
-            case 2:
-                return ChatColor.YELLOW + Lang.get("plnEnd");
-            case 3:
-                if (context.getSessionData(CK.PLN_START_DATE) == null 
-                        || context.getSessionData(CK.PLN_END_DATE) == null) {
-                    return ChatColor.GRAY + Lang.get("plnRepeat");
-                } else {
-                    return ChatColor.YELLOW + Lang.get("plnRepeat");
-                }
-            case 4:
-                return ChatColor.YELLOW + Lang.get("plnCooldown");
-            case 5:
-                return ChatColor.YELLOW + Lang.get("done");
-            default:
-                return null;
+        case 1:
+            return ChatColor.YELLOW + Lang.get("plnStart");
+        case 2:
+            return ChatColor.YELLOW + Lang.get("plnEnd");
+        case 3:
+            if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+                return ChatColor.GRAY + Lang.get("plnRepeat");
+            } else {
+                return ChatColor.YELLOW + Lang.get("plnRepeat");
+            }
+        case 4:
+            return ChatColor.YELLOW + Lang.get("plnCooldown");
+        case 5:
+            return ChatColor.YELLOW + Lang.get("done");
+        default:
+            return null;
         }
     }
     
     public String getAdditionalText(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-                if (context.getSessionData(CK.PLN_START_DATE) == null) {
+        case 1:
+            if (context.getSessionData(CK.PLN_START_DATE) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.YELLOW + "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE));
+            }
+        case 2:
+            if (context.getSessionData(CK.PLN_END_DATE) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.YELLOW +  "     - " 
+                        + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE));
+            }
+        case 3:
+            if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
+            } else {
+                if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.YELLOW + "     - " 
-                            + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE));
-                }
-            case 2:
-                if (context.getSessionData(CK.PLN_END_DATE) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    return ChatColor.YELLOW +  "     - " 
-                            + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE));
-                }
-            case 3:
-                if (context.getSessionData(CK.PLN_START_DATE) == null 
-                        || context.getSessionData(CK.PLN_END_DATE) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
-                } else {
-                    if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                    } else {
-                        return ChatColor.YELLOW + "(" 
-                                + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) 
-                                + ChatColor.RESET + ChatColor.YELLOW + ")";
-                    }
-                }
-            case 4:
-                if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    return ChatColor.YELLOW + "(" + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) 
+                    return ChatColor.YELLOW + "(" 
+                            + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) 
                             + ChatColor.RESET + ChatColor.YELLOW + ")";
                 }
-            case 5:
-                return "";
-            default:
-                return null;
+            }
+        case 4:
+            if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.YELLOW + "(" + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) 
+                        + ChatColor.RESET + ChatColor.YELLOW + ")";
+            }
+        case 5:
+            return "";
+        default:
+            return null;
         }
     }
 

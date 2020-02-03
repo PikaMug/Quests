@@ -21,7 +21,7 @@ import me.blackvein.quests.Quester;
  * Called after a quester fails a quest
  */
 public class QuesterPostFailQuestEvent extends QuesterEvent {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
     private Quest quest;
     
     public QuesterPostFailQuestEvent(Quester quester, Quest quest) {
@@ -39,10 +39,10 @@ public class QuesterPostFailQuestEvent extends QuesterEvent {
     }
     
     public HandlerList getHandlers() {
-        return handlers;
+        return HANDLERS;
     }
      
     public static HandlerList getHandlerList() {
-        return handlers;
+        return HANDLERS;
     }
 }

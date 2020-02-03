@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.prompts.quests;
+package me.blackvein.quests.convo.quests.prompts;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,14 +33,14 @@ import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.prompts.QuestsNumericPrompt;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-public class RequirementsPrompt extends QuestsNumericPrompt {
+public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private final QuestFactory factory;
@@ -63,206 +63,205 @@ public class RequirementsPrompt extends QuestsNumericPrompt {
     
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+            return ChatColor.BLUE;
+        case 7:
+            if (plugin.getDependencies().getMcmmoClassic() != null) {
                 return ChatColor.BLUE;
-            case 7:
-                if (plugin.getDependencies().getMcmmoClassic() != null) {
-                    return ChatColor.BLUE;
-                } else {
-                    return ChatColor.GRAY;
-                }
-            case 8:
-                if (plugin.getDependencies().getHeroes() != null) {
-                    return ChatColor.BLUE;
-                } else {
-                    return ChatColor.GRAY;
-                }
-            case 9:
+            } else {
+                return ChatColor.GRAY;
+            }
+        case 8:
+            if (plugin.getDependencies().getHeroes() != null) {
                 return ChatColor.BLUE;
-            case 10:
-                if (!hasRequirement) {
-                    return ChatColor.GRAY;
-                } else {
-                    return ChatColor.BLUE;
-                }
-            case 11:
-                return ChatColor.GREEN;
-            default:
-                return null;
+            } else {
+                return ChatColor.GRAY;
+            }
+        case 9:
+            return ChatColor.BLUE;
+        case 10:
+            if (!hasRequirement) {
+                return ChatColor.GRAY;
+            } else {
+                return ChatColor.BLUE;
+            }
+        case 11:
+            return ChatColor.GREEN;
+        default:
+            return null;
         }
     }
     
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-                return ChatColor.YELLOW + Lang.get("reqSetMoney");
-            case 2:
-                return ChatColor.YELLOW + Lang.get("reqSetQuestPoints");
-            case 3:
-                return ChatColor.YELLOW + Lang.get("reqSetItem");
-            case 4:
-                return ChatColor.YELLOW + Lang.get("reqSetPerms");
-            case 5:
-                return ChatColor.YELLOW + Lang.get("reqSetQuest");
-            case 6:
-                return ChatColor.YELLOW + Lang.get("reqSetQuestBlocks");
-            case 7:
-                return ChatColor.YELLOW + Lang.get("reqSetMcMMO");
-            case 8:
-                return ChatColor.YELLOW + Lang.get("reqSetHeroes");
-            case 9:
-                return ChatColor.DARK_PURPLE + Lang.get("reqSetCustom");
-            case 10:
-                if (!hasRequirement) {
-                    return ChatColor.GRAY + Lang.get("reqSetFail");
-                } else {
-                    return ChatColor.YELLOW + Lang.get("reqSetFail");
-                }
-            case 11:
-                return ChatColor.YELLOW + Lang.get("done");
-            default:
-                return null;
+        case 1:
+            return ChatColor.YELLOW + Lang.get("reqSetMoney");
+        case 2:
+            return ChatColor.YELLOW + Lang.get("reqSetQuestPoints");
+        case 3:
+            return ChatColor.YELLOW + Lang.get("reqSetItem");
+        case 4:
+            return ChatColor.YELLOW + Lang.get("reqSetPerms");
+        case 5:
+            return ChatColor.YELLOW + Lang.get("reqSetQuest");
+        case 6:
+            return ChatColor.YELLOW + Lang.get("reqSetQuestBlocks");
+        case 7:
+            return ChatColor.YELLOW + Lang.get("reqSetMcMMO");
+        case 8:
+            return ChatColor.YELLOW + Lang.get("reqSetHeroes");
+        case 9:
+            return ChatColor.DARK_PURPLE + Lang.get("reqSetCustom");
+        case 10:
+            if (!hasRequirement) {
+                return ChatColor.GRAY + Lang.get("reqSetFail");
+            } else {
+                return ChatColor.YELLOW + Lang.get("reqSetFail");
+            }
+        case 11:
+            return ChatColor.YELLOW + Lang.get("done");
+        default:
+            return null;
         }
     }
     
     @SuppressWarnings("unchecked")
     public String getAdditionalText(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-                if (context.getSessionData(CK.REQ_MONEY) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
-                            + (moneyReq > 1 ? plugin.getDependencies().getCurrency(true) 
-                            : plugin.getDependencies().getCurrency(false)) + ChatColor.GRAY + ")";
+        case 1:
+            if (context.getSessionData(CK.REQ_MONEY) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
+                        + (moneyReq > 1 ? plugin.getDependencies().getCurrency(true) 
+                        : plugin.getDependencies().getCurrency(false)) + ChatColor.GRAY + ")";
+            }
+        case 2:
+            if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REQ_QUEST_POINTS) + " " 
+                        + Lang.get("questPoints") + ChatColor.GRAY + ")";
+            }
+        case 3:
+            if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
+                for (int i = 0; i < items.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
                 }
-            case 2:
-                if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REQ_QUEST_POINTS) + " " 
-                            + Lang.get("questPoints") + ChatColor.GRAY + ")";
+                return text;
+            }
+        case 4:
+            if (context.getSessionData(CK.REQ_PERMISSION) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
+                for (String s : perms) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
-            case 3:
-                if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
-                    for (int i = 0; i < items.size(); i++) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
-                                + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
-                    }
-                    return text;
+                return text;
+            }
+        case 5:
+            if (context.getSessionData(CK.REQ_QUEST) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
+                for (String s : qs) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
-            case 4:
-                if (context.getSessionData(CK.REQ_PERMISSION) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
-                    for (String s : perms) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
-                    }
-                    return text;
+                return text;
                 }
-            case 5:
-                if (context.getSessionData(CK.REQ_QUEST) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
-                    for (String s : qs) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
-                    }
-                    return text;
+        case 6:
+            if (context.getSessionData(CK.REQ_QUEST_BLOCK) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
+                for (String s : qs) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
-            case 6:
-                if (context.getSessionData(CK.REQ_QUEST_BLOCK) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
-                    for (String s : qs) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
-                    }
-                    return text;
-                }
-            case 7:
-                if (plugin.getDependencies().getMcmmoClassic() != null) {
-                    if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                    } else {
-                        String text = "\n";
-                        List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
-                        List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
-                        for (String s : skills) {
-                            text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET 
-                                    + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN 
-                                    + amounts.get(skills.indexOf(s)) + "\n";
-                        }
-                        return text;
-                    }
-                } else {
-                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
-                }
-            case 8:
-                if (plugin.getDependencies().getHeroes() != null) {
-                    if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
-                            && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
-                    } else {
-                        String text = "\n";
-                        if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
-                            text += ChatColor.AQUA + "    " + Lang.get("reqHeroesPrimaryDisplay") + " " 
-                                    + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
-                        }
-                        if (context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
-                            text += ChatColor.AQUA + "    " + Lang.get("reqHeroesSecondaryDisplay") + " " 
-                                    + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS);
-                        }
-                        return text;
-                    }
-                } else {
-                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
-                }
-            case 9:
-                if (context.getSessionData(CK.REQ_CUSTOM) == null) {
+                return text;
+            }
+        case 7:
+            if (plugin.getDependencies().getMcmmoClassic() != null) {
+                if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-                    for (String s : customReqs) {
-                        text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s 
-                                + "\n";
+                    List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
+                    List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
+                    for (String s : skills) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET 
+                                + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN 
+                                + amounts.get(skills.indexOf(s)) + "\n";
                     }
                     return text;
                 }
-            case 10:
-                if (context.getSessionData(CK.REQ_FAIL_MESSAGE) == null) {
-                    if (!hasRequirement) {
-                        return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
-                    } else {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                    }
+            } else {
+                return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+            }
+        case 8:
+            if (plugin.getDependencies().getHeroes() != null) {
+                if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null 
+                        && context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.REQ_FAIL_MESSAGE)
-                    + "\"" + ChatColor.GRAY + ")";
+                    String text = "\n";
+                    if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
+                        text += ChatColor.AQUA + "    " + Lang.get("reqHeroesPrimaryDisplay") + " " 
+                                + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
+                    }
+                    if (context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
+                        text += ChatColor.AQUA + "    " + Lang.get("reqHeroesSecondaryDisplay") + " " 
+                                + ChatColor.BLUE + (String) context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS);
+                    }
+                    return text;
                 }
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-                return "";
-            default:
-                return null;
+            } else {
+                return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+            }
+        case 9:
+           if (context.getSessionData(CK.REQ_CUSTOM) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+                for (String s : customReqs) {
+                    text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s + "\n";
+                 }
+                return text;
+            }
+        case 10:
+            if (context.getSessionData(CK.REQ_FAIL_MESSAGE) == null) {
+                if (!hasRequirement) {
+                    return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
+                } else {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                }
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.REQ_FAIL_MESSAGE)+ "\"" 
+                        + ChatColor.GRAY + ")";
+            }
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+            return "";
+        default:
+            return null;
         }
     }
     
@@ -287,43 +286,43 @@ public class RequirementsPrompt extends QuestsNumericPrompt {
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
-            case 1:
-                return new MoneyPrompt();
-            case 2:
-                return new QuestPointsPrompt();
-            case 3:
-                return new ItemListPrompt(plugin, context, factory);
-            case 4:
-                return new PermissionsPrompt();
-            case 5:
-                return new QuestListPrompt(true);
-            case 6:
-                return new QuestListPrompt(false);
-            case 7:
-                if (plugin.getDependencies().getMcmmoClassic() != null) {
-                    return new mcMMOPrompt();
-                } else {
-                    return new RequirementsPrompt(plugin, context, factory);
-                }
-            case 8:
-                if (plugin.getDependencies().getHeroes() != null) {
-                    return new HeroesPrompt();
-                } else {
-                    return new RequirementsPrompt(plugin, context, factory);
-                }
-            case 9:
-                return new CustomRequirementsPrompt();
-            case 10:
-                if (hasRequirement) {
-                    return new FailMessagePrompt();
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                    return new RequirementsPrompt(plugin, context, factory);
-                }
-            case 11:
-                return factory.returnToMenu(context);
-            default:
-                return null;
+        case 1:
+            return new MoneyPrompt();
+        case 2:
+            return new QuestPointsPrompt();
+        case 3:
+            return new ItemListPrompt(plugin, context, factory);
+        case 4:
+            return new PermissionsPrompt();
+        case 5:
+            return new QuestListPrompt(true);
+        case 6:
+            return new QuestListPrompt(false);
+        case 7:
+            if (plugin.getDependencies().getMcmmoClassic() != null) {
+                return new mcMMOPrompt();
+            } else {
+                return new RequirementsPrompt(plugin, context, factory);
+            }
+        case 8:
+            if (plugin.getDependencies().getHeroes() != null) {
+                return new HeroesPrompt();
+            } else {
+                return new RequirementsPrompt(plugin, context, factory);
+            }
+        case 9:
+            return new CustomRequirementsPrompt();
+        case 10:
+            if (hasRequirement) {
+                return new FailMessagePrompt();
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+                return new RequirementsPrompt(plugin, context, factory);
+            }
+        case 11:
+            return factory.returnToMenu(context);
+        default:
+            return null;
         }
     }
     
@@ -482,7 +481,7 @@ public class RequirementsPrompt extends QuestsNumericPrompt {
         }
     }
 
-    public class ItemListPrompt extends QuestsNumericPrompt {
+    public class ItemListPrompt extends QuestsEditorNumericPrompt {
         public ItemListPrompt(Quests plugin, ConversationContext context, QuestFactory factory) {
             super(context, factory);
         }
@@ -499,73 +498,73 @@ public class RequirementsPrompt extends QuestsNumericPrompt {
         
         public ChatColor getNumberColor(ConversationContext context, int number) {
             switch (number) {
-                case 1:
+            case 1:
+                return ChatColor.BLUE;
+            case 2:
+                if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                    return ChatColor.GRAY;
+                } else {
                     return ChatColor.BLUE;
-                case 2:
-                    if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                        return ChatColor.GRAY;
-                    } else {
-                        return ChatColor.BLUE;
-                    }
-                case 3:
-                    return ChatColor.RED;
-                case 4:
-                    return ChatColor.GREEN;
-                default:
-                    return null;
+                }
+            case 3:
+                return ChatColor.RED;
+            case 4:
+                return ChatColor.GREEN;
+            default:
+                return null;
             }
         }
         
         public String getSelectionText(ConversationContext context, int number) {
             switch (number) {
-                case 1:
-                    return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
-                case 2:
-                    if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                        return ChatColor.GRAY + Lang.get("reqSetRemoveItems");
-                    } else {
-                        return ChatColor.YELLOW + Lang.get("reqSetRemoveItems");
-                    }
-                case 3:
-                    return ChatColor.RED + Lang.get("clear");
-                case 4:
-                    return ChatColor.GREEN + Lang.get("done");
-                default:
-                    return null;
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
+            case 2:
+                if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                    return ChatColor.GRAY + Lang.get("reqSetRemoveItems");
+                } else {
+                    return ChatColor.YELLOW + Lang.get("reqSetRemoveItems");
+                }
+            case 3:
+                return ChatColor.RED + Lang.get("clear");
+            case 4:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
             }
         }
         
         public String getAdditionalText(ConversationContext context, int number) {
             switch (number) {
-                case 1:
-                    if (context.getSessionData(CK.REQ_ITEMS) != null) {
+            case 1:
+                if (context.getSessionData(CK.REQ_ITEMS) != null) {
+                    String text = "\n";
+                    for (ItemStack is : getItems(context)) {
+                        text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
+                    }
+                    return text;
+                }
+                return "";
+            case 2:
+                if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("reqNoItemsSet") + ")";
+                } else {
+                    if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
+                        return ChatColor.YELLOW + "(" + Lang.get("reqNoValuesSet") + ")";
+                    } else {
                         String text = "\n";
-                        for (ItemStack is : getItems(context)) {
-                            text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
+                        for (Boolean b : getRemoveItems(context)) {
+                            text += ChatColor.GRAY + "     - " + ChatColor.AQUA
+                                    + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
                         }
                         return text;
                     }
-                    return "";
-                case 2:
-                    if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                        return ChatColor.GRAY + "(" + Lang.get("reqNoItemsSet") + ")";
-                    } else {
-                        if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
-                            return ChatColor.YELLOW + "(" + Lang.get("reqNoValuesSet") + ")";
-                        } else {
-                            String text = "\n";
-                            for (Boolean b : getRemoveItems(context)) {
-                                text += ChatColor.GRAY + "     - " + ChatColor.AQUA
-                                        + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
-                            }
-                            return text;
-                        }
-                    }
-                case 3:
-                case 4:
-                    return "";
-                default:
-                    return null;
+                }
+            case 3:
+            case 4:
+                return "";
+            default:
+                return null;
             }
         }
         
@@ -602,41 +601,41 @@ public class RequirementsPrompt extends QuestsNumericPrompt {
         @Override
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch (input.intValue()) {
-                case 1:
-                    return new ItemStackPrompt(ItemListPrompt.this);
-                case 2:
-                    if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqMustAddItem"));
-                        return new ItemListPrompt(plugin, context, factory);
-                    } else {
-                        return new RemoveItemsPrompt();
-                    }
-                case 3:
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqItemCleared"));
-                    context.setSessionData(CK.REQ_ITEMS, null);
-                    context.setSessionData(CK.REQ_ITEMS_REMOVE, null);
+            case 1:
+                return new ItemStackPrompt(ItemListPrompt.this);
+            case 2:
+                if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqMustAddItem"));
                     return new ItemListPrompt(plugin, context, factory);
-                case 4:
-                    int one;
-                    int two;
-                    if (context.getSessionData(CK.REQ_ITEMS) != null) {
-                        one = ((List<ItemStack>) context.getSessionData(CK.REQ_ITEMS)).size();
-                    } else {
-                        one = 0;
-                    }
-                    if (context.getSessionData(CK.REQ_ITEMS_REMOVE) != null) {
-                        two = ((List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE)).size();
-                    } else {
-                        two = 0;
-                    }
-                    if (one == two) {
-                        return new RequirementsPrompt(plugin, context, factory);
-                    } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                        return new ItemListPrompt(plugin, context, factory);
-                    }
-                default:
-                    return null;
+                } else {
+                    return new RemoveItemsPrompt();
+                }
+            case 3:
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqItemCleared"));
+                context.setSessionData(CK.REQ_ITEMS, null);
+                context.setSessionData(CK.REQ_ITEMS_REMOVE, null);
+                return new ItemListPrompt(plugin, context, factory);
+            case 4:
+                int one;
+                int two;
+                if (context.getSessionData(CK.REQ_ITEMS) != null) {
+                    one = ((List<ItemStack>) context.getSessionData(CK.REQ_ITEMS)).size();
+                } else {
+                    one = 0;
+                }
+                if (context.getSessionData(CK.REQ_ITEMS_REMOVE) != null) {
+                    two = ((List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE)).size();
+                } else {
+                    two = 0;
+                }
+                if (one == two) {
+                    return new RequirementsPrompt(plugin, context, factory);
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
+                    return new ItemListPrompt(plugin, context, factory);
+                }
+            default:
+                return null;
             }
         }
 
