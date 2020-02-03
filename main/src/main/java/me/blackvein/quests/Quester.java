@@ -1186,7 +1186,7 @@ public class Quester {
      * @return true if quest contains specified objective
      */
     public boolean containsObjective(Quest quest, String s) {
-        if (quest == null) {
+        if (quest == null || getCurrentStage(quest) == null) {
             return false;
         }
         return getCurrentStage(quest).containsObjective(s);
