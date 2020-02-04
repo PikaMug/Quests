@@ -1,8 +1,8 @@
 # For non-English characters, this file MUST stay encoded in UTF-8
 quests:
-  Miner:
+  default1:
     name: 'Iron Miner'
-    ask-message: '<yellow>Mine <pink>2<yellow> blocks of <pink>Iron Ore<yellow> and <yellow>gather the <pink>2 pieces of <pink>Iron Ore<yellow>.'
+    ask-message: '<yellow>Mine <pink>2<yellow> blocks of <pink>Iron Ore<yellow>.'
     finish-message: '<yellow>Well done. Here is your reward.'
     redo-delay: 1800
     requirements:
@@ -23,7 +23,7 @@ quests:
     rewards:
       money: 1000
       quest-points: 1
-  Hunter:
+  default2:
     name: 'Mob Hunter'
     ask-message: '<yellow>Kill an assortment of Mobs.'
     finish-message: '<yellow>Excellent. Here is a <pink>Diamond Sword<yellow>.'
@@ -58,7 +58,7 @@ quests:
         - name-DIAMOND_SWORD:amount-1
       exp: 100
       quest-points: 1
-  CatchFish:
+  default3:
     name: 'Catch Fish'
     ask-message: '<yellow>Catch some fish!'
     finish-message: '<yellow>Good job. Here is some <green>experience<yellow>.'
@@ -78,7 +78,7 @@ quests:
           fish-to-catch: 5
     rewards:
       exp: 250
-  TimedQuest:
+  default4:
     name: 'Timed Quest'
     ask-message: '<yellow>Dig up <pink>10<yellow> blocks of <pink>Dirt<yellow> before time runs out!'
     finish-message: '<yellow>You did it in time! Have an <pink>Iron Shovel<yellow> and some <green>experience<yellow>.'
