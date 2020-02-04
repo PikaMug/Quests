@@ -134,18 +134,6 @@ public class Settings {
     public void setTopLimit(int topLimit) {
         this.topLimit = topLimit;
     }
-    /**
-     * @deprecated As of release 2.6.4, use {@link #canTranslateNames()}
-     */
-    public boolean canTranslateItems() {
-        return translateNames;
-    }
-    /**
-     * @deprecated As of release 2.6.4, use {@link #setTranslateNames()}
-     */
-    public void setTranslateItems(boolean translateItems) {
-        this.translateNames = translateItems;
-    }
     public boolean canTranslateNames() {
         return translateNames;
     }

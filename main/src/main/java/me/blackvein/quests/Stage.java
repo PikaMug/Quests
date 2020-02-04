@@ -318,20 +318,6 @@ public class Stage {
         this.killNames = killNames;
     }
 
-    /**
-     * @deprecated use getKillNames()
-     */
-    public LinkedList<String> getAreaNames() {
-        return killNames;
-    }
-
-    /**
-     * @deprecated use setKillNames()
-     */
-    public void setAreaNames(LinkedList<String> killNames) {
-        this.killNames = killNames;
-    }
-
     public LinkedList<Location> getLocationsToReach() {
         return locationsToReach;
     }

@@ -70,30 +70,8 @@ public abstract class CustomObjective implements Listener {
         descriptions.put(title, description);
     }
     
-    /**
-     * Set the title of a prompt
-     * 
-     * @param name Prompt title
-     * @deprecated use addPrompt(name, description)
-     */
-    public void addData(String name) {
-        Entry<String, Object> prompt = new AbstractMap.SimpleEntry<String, Object>(name, null);
-        data.add(prompt);
-    }
-    
     public Map<String, String> getDescriptions() {
         return descriptions;
-    }
-
-    /**
-     * Set the description for the specified prompt
-     * 
-     * @param name Prompt title
-     * @param description Description of expected input
-     * @deprecated use addTaskPrompt(name, description)
-     */
-    public void addDescription(String name, String description) {
-        descriptions.put(name, description);
     }
 
     public int getCount() {
@@ -128,16 +106,6 @@ public abstract class CustomObjective implements Listener {
         this.showCount = showCount;
     }
 
-    /**
-     * Check whether to let user set required amount for objective
-     * 
-     * @param enableCount
-     * @deprecated use setShowCount(boolean)
-     */
-    public void setEnableCount(boolean enableCount) {
-        setShowCount(enableCount);
-    }
-
     public String getDisplay() {
         return display;
     }
@@ -147,19 +115,6 @@ public abstract class CustomObjective implements Listener {
     }
     
     public Map<String, Object> getDataForPlayer(Player player, CustomObjective customObj, Quest quest) {
-        return getDatamap(player, customObj, quest);
-    }
-
-    /**
-     * Get data for specified player's current stage
-     * 
-     * @param player The player to get data for
-     * @param obj The CustomObjective to get data for
-     * @param quest Quest to get player's current stage. Returns null if player is not on quest
-     * @return data map if everything matches, otherwise null
-     * @deprecated use getDataForPlayer()
-     */
-    public Map<String, Object> getDatamap(Player player, CustomObjective obj, Quest quest) {
         Quester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
             Stage currentStage = quester.getCurrentStage(quest);
@@ -168,7 +123,7 @@ public abstract class CustomObjective implements Listener {
             }
             CustomObjective found = null;
             for (me.blackvein.quests.CustomObjective co : currentStage.customObjectives) {
-                if (co.getName().equals(obj.getName())) {
+                if (co.getName().equals(customObj.getName())) {
                     found = co;
                     break;
                 }

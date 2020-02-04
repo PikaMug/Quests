@@ -59,29 +59,8 @@ public abstract class CustomRequirement {
         data.put(title, defaultValue);
         descriptions.put(title, description);
     }
-    
-    /**
-     * Set the title of a prompt
-     * 
-     * @param name Prompt title
-     * @deprecated use addPrompt(name, description)
-     */
-    public void addData(String name) {
-        data.put(name, null);
-    }
 
     public Map<String, String> getDescriptions() {
         return descriptions;
-    }
-
-    /**
-     * Set the description for the specified prompt
-     * 
-     * @param name Prompt title
-     * @param description Description of expected input
-     * @deprecated use addTaskPrompt(name, description)
-     */
-    public void addDescription(String name, String description) {
-        descriptions.put(name, description);
     }
 }

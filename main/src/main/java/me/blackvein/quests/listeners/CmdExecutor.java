@@ -746,7 +746,6 @@ public class CmdExecutor implements CommandExecutor {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void questsList(final CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.list")) {
             if (!(cs instanceof Player)) {
@@ -766,7 +765,7 @@ public class CmdExecutor implements CommandExecutor {
                     return;
                 }
                 
-                plugin.listQuests(player, 1);
+                plugin.listQuests(quester, 1);
             } else if (args.length == 2) {
                 int page = 1;
                 try {
@@ -782,7 +781,7 @@ public class CmdExecutor implements CommandExecutor {
                             return;
                         }
                         
-                        plugin.listQuests(player, page);
+                        plugin.listQuests(quester, page);
                     }
                 } catch (NumberFormatException e) {
                     cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionNum"));

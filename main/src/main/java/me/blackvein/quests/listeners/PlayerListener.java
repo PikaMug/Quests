@@ -353,7 +353,7 @@ public class PlayerListener implements Listener {
                                                     early = early.replace("<quest>", ChatColor.AQUA + q.getName() 
                                                             + ChatColor.YELLOW);
                                                     early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                                            + Quests.getTime(quester.getCooldownDifference(q)) 
+                                                            + MiscUtil.getTime(quester.getCooldownDifference(q)) 
                                                             + ChatColor.YELLOW);
                                                     player.sendMessage(ChatColor.YELLOW + early);
                                                     return;

@@ -103,20 +103,6 @@ public class Quest {
         this.regionStart = regionStart;
     }
     
-    /**
-     * @deprecated Use {@link #getRegionStart()}
-     */
-    public String getRegion() {
-        return getRegionStart();
-    }
-    
-    /**
-     * @deprecated Use {@link #setRegion(String)}
-     */
-    public void setRegion(String region) {
-        setRegionStart(region);
-    }
-    
     public ItemStack getGUIDisplay() {
         return guiDisplay;
     }
@@ -175,16 +161,6 @@ public class Quest {
     
     public Options getOptions() {
         return opts;
-    }
-    
-    /**
-     * Force player to proceed to the next ordered stage
-     * 
-     * @param quester Player to force
-     * @deprecated Use nextStage(Quester, boolean)
-     */
-    public void nextStage(Quester quester) {
-        nextStage(quester, false);
     }
 
     /**
@@ -537,7 +513,7 @@ public class Quest {
         }
         if (player.isOnline()) {
             for (String s : rews.getHeroesClasses()) {
-                Hero hero = plugin.getHero(player.getUniqueId());
+                Hero hero = plugin.getDependencies().getHero(player.getUniqueId());
                 hero.addExp(rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)), 
                         plugin.getDependencies().getHeroes().getClassManager().getClass(s), 
                         ((Player)player).getLocation());
@@ -695,11 +671,11 @@ public class Quest {
             }
             if (rews.getMoney() > 1) {
                 p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE 
-                        + plugin.getCurrency(true));
+                        + plugin.getDependencies().getCurrency(true));
                 none = null;
             } else if (rews.getMoney() == 1) {
                 p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE 
-                        + plugin.getCurrency(false));
+                        + plugin.getDependencies().getCurrency(false));
                 none = null;
             }
             if (rews.getExp() > 0 || phatLootExp > 0) {

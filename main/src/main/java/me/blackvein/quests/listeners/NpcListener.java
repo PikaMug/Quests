@@ -37,6 +37,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
@@ -103,7 +104,7 @@ public class NpcListener implements Listener {
                                     text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
                                 }
                                 text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-                                if (plugin.getSettings().canTranslateItems() && !hasMeta 
+                                if (plugin.getSettings().canTranslateNames() && !hasMeta 
                                         && !hand.getItemMeta().hasDisplayName()) {
                                     plugin.getLocaleQuery().sendMessage(player, Lang
                                             .get(player, "questInvalidDeliveryItem").replace("<item>", text), hand
@@ -252,7 +253,7 @@ public class NpcListener implements Listener {
                                 String early = Lang.get(player, "questTooEarly");
                                 early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
                                 early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                        + Quests.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
+                                        + MiscUtil.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
                                 player.sendMessage(ChatColor.YELLOW + early);
                             } else if (q.getPlanner().getCooldown() < 0) {
                                 String completed = Lang.get(player, "questAlreadyCompleted");

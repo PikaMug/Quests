@@ -853,7 +853,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 if (stage.locationsToKillWithin.isEmpty() == false) {
                     LinkedList<String> locs = new LinkedList<String>();
                     for (Location l : stage.locationsToKillWithin) {
-                        locs.add(Quests.getLocationInfo(l));
+                        locs.add(ConfigUtil.getLocationInfo(l));
                     }
                     context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
                     context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.radiiToKillWithin);
@@ -863,7 +863,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             if (stage.locationsToReach.isEmpty() == false) {
                 LinkedList<String> locs = new LinkedList<String>();
                 for (Location l : stage.locationsToReach) {
-                    locs.add(Quests.getLocationInfo(l));
+                    locs.add(ConfigUtil.getLocationInfo(l));
                 }
                 context.setSessionData(pref + CK.S_REACH_LOCATIONS, locs);
                 context.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, stage.radiiToReachWithin);

@@ -72,15 +72,6 @@ public class Dependencies {
         return worldGuardApi;
     }
     
-    /**
-     * Get mcMMO Classic plugin
-     * 
-     * @deprecated Use {@link #getMcmmoClassic()}
-     */
-    public mcMMO getMcmmo() {
-        return mcmmo;
-    }
-    
     public mcMMO getMcmmoClassic() {
         return mcmmo;
     }
