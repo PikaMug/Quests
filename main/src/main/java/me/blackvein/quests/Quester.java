@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -27,6 +28,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -359,7 +361,10 @@ public class Quester {
                 int currentLength = 0;
                 int currentLines = 0;
                 String page = "";
-                for (Quest quest : currentQuests.keySet()) {
+                List<Quest> sortedList = currentQuests.keySet().stream()
+                        .sorted(Comparator.comparing(Quest::getName))
+                        .collect(Collectors.toList());
+                for (Quest quest : sortedList) {
                     if ((currentLength + quest.getName().length() > 240) || (currentLines 
                             + ((quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19) 
                             : ((quest.getName().length() / 19) + 1))) > 13) {
@@ -373,8 +378,8 @@ public class Quester {
                         currentLength += quest.getName().length();
                         currentLines += (quest.getName().length() / 19);
                     }
-                    if (getObjectives(quest, false) != null) {
-                        for (String obj : getObjectives(quest, false)) {
+                    if (getCurrentObjectives(quest, false) != null) {
+                        for (String obj : getCurrentObjectives(quest, false)) {
                             // Length/Line check
                             if ((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) 
                                     == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
