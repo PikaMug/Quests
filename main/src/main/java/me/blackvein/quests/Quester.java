@@ -3403,23 +3403,26 @@ public class Quester {
             return;
         }
         Player player = getPlayer();
-        int size = ((quests.size() / 9) + 1) * 9;
-        Inventory inv = plugin.getServer().createInventory(player, size, Lang.get(player, "quests") + " | " 
-                + npc.getName());
-        int inc = 0;
-        for (int i = 0; i < quests.size(); i++) {
-            if (quests.get(i).guiDisplay != null) {
-                ItemStack display = quests.get(i).guiDisplay;
+        Inventory inv = plugin.getServer().createInventory(player, ((quests.size() / 9) + 1) * 9, 
+                Lang.get(player, "quests") + " | " + npc.getName());
+        int i = 0;
+        for (Quest quest : quests) {
+            if (quest.guiDisplay != null) {
+                if (i > 53) {
+                    // Protocol-enforced size limit has been exceeded
+                    break;
+                }
+                ItemStack display = quest.guiDisplay;
                 ItemMeta meta = display.getItemMeta();
-                if (completedQuests.contains(quests.get(i).getName())) {
-                    meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quests.get(i).getName()
+                if (completedQuests.contains(quest.getName())) {
+                    meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName()
                             + " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), npc));
                 } else {
-                    meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quests.get(i).getName(), npc));
+                    meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName(), npc));
                 }
                 if (!meta.hasLore()) {
                     LinkedList<String> lines = new LinkedList<String>();
-                    String desc = quests.get(i).description;
+                    String desc = quest.description;
                     if (desc.equals(ChatColor.stripColor(desc))) {
                         lines = MiscUtil.makeLines(desc, " ", 40, ChatColor.DARK_GREEN);
                     } else {
@@ -3428,8 +3431,8 @@ public class Quester {
                     meta.setLore(lines);
                 }
                 display.setItemMeta(meta);
-                inv.setItem(inc, display);
-                inc++;
+                inv.setItem(i, display);
+                i++;
             }
         }
         player.openInventory(inv);
