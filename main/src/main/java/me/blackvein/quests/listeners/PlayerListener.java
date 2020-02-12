@@ -122,47 +122,11 @@ public class PlayerListener implements Listener {
                 for (Quest quest : plugin.getQuests()) {
                     if (quest.getGUIDisplay() != null) {
                         if (ItemUtil.compareItems(clicked, quest.getGUIDisplay(), false) == 0) {
-                            if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() 
-                                    && plugin.getSettings().getMaxQuests() > 0) {
-                                String msg = Lang.get(player, "questMaxAllowed");
-                                msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
-                                player.sendMessage(ChatColor.YELLOW + msg);
-                            } else if (quester.getCompletedQuests().contains(quest.getName()) 
-                                    && quest.getPlanner().getCooldown() < 0) {
-                                String completed = Lang.get(player, "questAlreadyCompleted");
-                                completed = completed.replace("<quest>", ChatColor.AQUA + quest.getName() 
-                                        + ChatColor.YELLOW);
-                                player.sendMessage(ChatColor.YELLOW + completed);
-                            } else {
-                                boolean takeable = true;
-                                if (quester.getCompletedQuests().contains(quest.getName())) {
-                                    if (quester.getCooldownDifference(quest) > 0) {
-                                        String early = Lang.get(player, "questTooEarly");
-                                        early = early.replace("<quest>", ChatColor.AQUA + quest.getName() 
-                                                + ChatColor.YELLOW);
-                                        early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                                + MiscUtil.getTime(quester.getCooldownDifference(quest)) 
-                                                + ChatColor.YELLOW);
-                                        player.sendMessage(ChatColor.YELLOW + early);
-                                        takeable = false;
-                                    }
-                                }
-                                if (quest.getRegionStart() != null) {
-                                    if (!quest.isInRegion(quester)) {
-                                        String invalidLoc = Lang.get(player, "questInvalidLocation");
-                                        invalidLoc = invalidLoc.replace("<quest>", ChatColor.AQUA + quest.getName() 
-                                                + ChatColor.YELLOW);
-                                        player.sendMessage(ChatColor.YELLOW + invalidLoc);
-                                        takeable = false;
-                                    }
-                                }
-                                if (takeable == true) {
-                                    try { 
-                                        quester.takeQuest(quest, false);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    
+                            if (quester.canAcceptOffer(quest, true)) {
+                                try { 
+                                    quester.takeQuest(quest, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                                 evt.getWhoClicked().closeInventory();
                             }

@@ -3683,16 +3683,6 @@ public class Quester {
             return false;
         }
         if (canAcceptOffer(quest, giveReason)) {
-            if (quest.getRegionStart() != null) {
-                if (!quest.isInRegion(this)) {
-                    if (giveReason) {
-                        String msg = Lang.get(getPlayer(), "questInvalidLocation");
-                        msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-                        getPlayer().sendMessage(ChatColor.YELLOW + msg);
-                    }
-                    return false;
-                }
-            }
             if (getPlayer() instanceof Conversable) {
                 if (getPlayer().isConversing() == false) {
                     setQuestToTake(quest.getName());
@@ -3771,6 +3761,15 @@ public class Quester {
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
+        } else if (quest.getRegionStart() != null) {
+            if (!quest.isInRegion(this)) {
+                if (giveReason) {
+                    String msg = Lang.get(getPlayer(), "questInvalidLocation");
+                    msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
+                    getPlayer().sendMessage(ChatColor.YELLOW + msg);
+                }
+                return false;
+            }
         }
         return true;
     }
