@@ -1396,15 +1396,23 @@ public class QuestFactory implements ConversationAbandonedListener {
                     if (questSection == null) {
                         questSection = data.createSection("quests");
                     }
-                    int customNum = 1;
-                    while (true) {
-                        if (questSection.contains("custom" + customNum)) {
-                            customNum++;
-                        } else {
-                            break;
+                    System.out.println("id= " + context.getSessionData(CK.Q_ID));
+                    ConfigurationSection newSection;
+                    if (context.getSessionData(CK.Q_ID) == null) {
+                        // Creating
+                        int customNum = 1;
+                        while (true) {
+                            if (questSection.contains("custom" + customNum)) {
+                                customNum++;
+                            } else {
+                                break;
+                            }
                         }
+                        newSection = questSection.createSection("custom" + customNum);
+                    } else {
+                        // Editing
+                        newSection = questSection.createSection((String)context.getSessionData(CK.Q_ID));
                     }
-                    ConfigurationSection newSection = questSection.createSection("custom" + customNum);
                     saveQuest(context, newSection);
                     data.save(new File(plugin.getDataFolder(), "quests.yml"));
                     context.getForWhom().sendRawMessage(ChatColor.GREEN
