@@ -1396,7 +1396,6 @@ public class QuestFactory implements ConversationAbandonedListener {
                     if (questSection == null) {
                         questSection = data.createSection("quests");
                     }
-                    System.out.println("id= " + context.getSessionData(CK.Q_ID));
                     ConfigurationSection newSection;
                     if (context.getSessionData(CK.Q_ID) == null) {
                         // Creating
