@@ -172,8 +172,8 @@ public class ItemUtil {
             return new ItemStack(Material.getMaterial(material.toUpperCase()), amount, durability);
         } catch (Exception e) {
             try {
-                Bukkit.getLogger().warning(material 
-                        + " is invalid! You may need to update your quests.yml or events.yml "
+                Bukkit.getLogger().warning(material + " x " + amount
+                        + " is invalid! You may need to update your quests.yml or actions.yml "
                         + "in accordance with https://bit.ly/2BkBNNN");
                 return new ItemStack(Material.matchMaterial(material, true), amount, durability);
             } catch (Exception e2) {
