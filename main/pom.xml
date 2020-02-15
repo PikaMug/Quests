@@ -107,7 +107,7 @@
         <dependency>
 	        <groupId>com.github.nicuch</groupId>
 	        <artifactId>CitizensBooks</artifactId>
-	        <version>master-SNAPSHOT</version>
+	        <version>2.5.5</version>
 	        <scope>provided</scope>
 	    </dependency>
         <dependency>
