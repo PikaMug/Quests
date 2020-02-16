@@ -234,7 +234,7 @@ stageEditorObjectiveOverrideHint: "(This override will display your own text as 
 stageEditorObjectiveOverrideCleared: "Objective display override cleared."
 stageEditorDeliveryAddItem: "新增項目"
 stageEditorDeliveryNPCs: "設定NPC ID"
-stageEditorDeliveryMessages: "Set delivery messages"
+stageEditorDeliveryMessages: "設定要傳遞的訊息"
 stageEditorNotSolid: "is not a solid block!"
 stageEditorInvalidBlockName: "並非有效的方塊名稱 ！"
 stageEditorInvalidEnchantment: "並非有效的附魔名稱 ！"
