@@ -128,8 +128,8 @@ public class PlayerListener implements Listener {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                evt.getWhoClicked().closeInventory();
                             }
+                            evt.getWhoClicked().closeInventory();
                         }
                     }
                 }

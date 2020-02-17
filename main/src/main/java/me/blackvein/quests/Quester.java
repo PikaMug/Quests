@@ -3738,7 +3738,9 @@ public class Quester {
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (quest.getNpcStart() != null && plugin.getSettings().canAllowCommandsForNpcQuests() == false) {
+        } else if (quest.getNpcStart() != null && quest.getNpcStart().getEntity() != null 
+                && quest.getNpcStart().getEntity().getLocation().distance(getPlayer().getLocation()) < 5.0
+                && plugin.getSettings().canAllowCommandsForNpcQuests() == false) {
             if (giveReason) {
                 String msg = Lang.get(getPlayer(), "mustSpeakTo");
                 msg = msg.replace("<npc>", ChatColor.DARK_PURPLE + quest.getNpcStart().getName() + ChatColor.YELLOW);
