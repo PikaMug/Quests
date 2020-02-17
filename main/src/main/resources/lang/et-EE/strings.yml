@@ -2,7 +2,7 @@
 COMMAND_LIST: "nimekiri"
 COMMAND_LIST_HELP: "<command> [page] - Saadaval olev list Queste"
 COMMAND_TAKE: "võta"
-COMMAND_TAKE_HELP: "<command> [quest] - aktsepteerida Quest"
+COMMAND_TAKE_HELP: "<command> [quest] - Aktsepteeri otsing käsu kaudu"
 COMMAND_TAKE_USAGE: "Käsklus: /quests take [quest]"
 COMMAND_QUIT: "lahku"
 COMMAND_QUIT_HELP: "<command> [quest] - Lahku hetkesest questist"
