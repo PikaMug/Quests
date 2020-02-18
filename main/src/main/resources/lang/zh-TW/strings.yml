@@ -431,7 +431,7 @@ reqHeroesSecondaryPrompt: "Enter a Heroes Secondary Class name, <clear>, <cancel
 reqFailMessagePrompt: "輸入失敗條件訊息，<cancel>"
 reqAddItem: "添加物品"
 reqSetRemoveItems: "移除物品"
-reqNoItemsSet: "No items set"
+reqNoItemsSet: "未設定物品"
 reqNoValuesSet: "No values set"
 reqHeroesPrimaryDisplay: "Primary Class:"
 reqHeroesSecondaryDisplay: "Secondary Class:"
