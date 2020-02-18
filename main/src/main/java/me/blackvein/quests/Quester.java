@@ -3739,7 +3739,7 @@ public class Quester {
             }
             return false;
         } else if (quest.getNpcStart() != null && quest.getNpcStart().getEntity() != null 
-                && quest.getNpcStart().getEntity().getLocation().distance(getPlayer().getLocation()) < 5.0
+                && quest.getNpcStart().getEntity().getLocation().distance(getPlayer().getLocation()) > 6.0
                 && plugin.getSettings().canAllowCommandsForNpcQuests() == false) {
             if (giveReason) {
                 String msg = Lang.get(getPlayer(), "mustSpeakTo");

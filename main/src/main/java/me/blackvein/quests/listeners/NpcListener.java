@@ -47,7 +47,7 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class NpcListener implements Listener {
 
-    final Quests plugin;
+    private final Quests plugin;
 
     public NpcListener(Quests newPlugin) {
         plugin = newPlugin;

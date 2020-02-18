@@ -80,7 +80,7 @@ import net.citizensnpcs.api.CitizensAPI;
 
 public class PlayerListener implements Listener {
 
-    final Quests plugin;
+    private final Quests plugin;
 
     public PlayerListener(Quests newPlugin) {
         plugin = newPlugin;
