@@ -127,7 +127,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public void onEnable() {
         /****** WARNING: ORDER OF STEPS MATTERS ******/
 
-        // 1 - Intialize variables
+        // 1 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         settings = new Settings(this);
         localeQuery = new LocaleQuery(this);
