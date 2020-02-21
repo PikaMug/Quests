@@ -285,7 +285,7 @@ eventEditorErrorSaving: "保存時發生錯誤。"
 eventEditorDeleted: "事件已刪除！任務及事件已重新載入。"
 eventEditorSaved: "事件已保存！任務及事件已重新載入。"
 eventEditorEnterEventName: "輸入事件名稱，<cancel>"
-eventEditorModifiedNote: '提示： 你已修改了一個以下任務正在使用中的事件：'
+eventEditorModifiedNote: '提示： 你已修改了一個事件，而且正被以下任務使用：'
 eventEditorForcedToQuit: "如果你保存事件，任何正進行這些任務的人將被迫放棄任務。"
 eventEditorEventInUse: "以下任務使用了這個事件"
 eventEditorMustModifyQuests: "您必須先修改這些任務！"
