@@ -462,6 +462,11 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
+            if (input == null) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
+                return new ActionSelectCreatePrompt(context, ActionFactory.this);
+            }
+            input = input.trim();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 for (Action e : plugin.getActions()) {
                     if (e.getName().equalsIgnoreCase(input)) {
@@ -475,6 +480,10 @@ public class ActionFactory implements ConversationAbandonedListener {
                 }
                 if (StringUtils.isAlphanumeric(input) == false) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAlpha"));
+                    return new ActionSelectCreatePrompt(context, ActionFactory.this);
+                }
+                if (input.equals("")) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new ActionSelectCreatePrompt(context, ActionFactory.this);
                 }
                 context.setSessionData(CK.E_NAME, input);

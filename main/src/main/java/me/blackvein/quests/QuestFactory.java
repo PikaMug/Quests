@@ -250,8 +250,8 @@ public class QuestFactory implements ConversationAbandonedListener {
         }
         
         public String getTitle(ConversationContext context) {
-            return Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME) + " " + ChatColor.GRAY 
-                    + (context.getSessionData(CK.Q_ID) != null ? "(" + Lang.get("id") + ":" 
+            return Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME) + "" + ChatColor.GRAY 
+                    + (context.getSessionData(CK.Q_ID) != null ? " (" + Lang.get("id") + ":" 
                     + context.getSessionData(CK.Q_ID) + ")": "");
         }
         
@@ -529,6 +529,11 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
+            if (input == null) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
+                return new QuestSelectCreatePrompt(plugin, context, QuestFactory.this);
+            }
+            input = input.trim();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 for (Quest q : plugin.getQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
@@ -542,6 +547,10 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 if (input.contains(".") || input.contains(",")) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
+                    return new QuestSelectCreatePrompt(plugin, context, QuestFactory.this);
+                }
+                if (input.equals("")) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new QuestSelectCreatePrompt(plugin, context, QuestFactory.this);
                 }
                 context.setSessionData(CK.Q_NAME, input);
