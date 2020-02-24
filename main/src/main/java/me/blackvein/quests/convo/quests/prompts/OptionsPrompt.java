@@ -164,7 +164,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
                     boolean b = Boolean.parseBoolean(input);
-                    if (input.equalsIgnoreCase("t") || input.equalsIgnoreCase(Lang.get("true")) 
+                    if (input.equalsIgnoreCase("t") || input.equalsIgnoreCase("true")
+                            || input.equalsIgnoreCase(Lang.get("true")) 
                             || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                         b = true;
                     }
