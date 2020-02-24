@@ -308,6 +308,10 @@ public class NpcListener implements Listener {
 
     @EventHandler
     public void onNPCDeath(NPCDeathEvent evt) {
+        if (evt.getNPC() == null || evt.getNPC().getEntity() == null 
+                || evt.getNPC().getEntity().getLastDamageCause() == null) {
+            return;
+        }
         if (evt.getNPC().getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent damageEvent 
                     = (EntityDamageByEntityEvent) evt.getNPC().getEntity().getLastDamageCause();
