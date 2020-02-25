@@ -289,7 +289,6 @@ eventEditorForcedToQuit: "If you save the Action, anyone who is actively doing a
 eventEditorEventInUse: "The following Quests use the Action"
 eventEditorMustModifyQuests: "You must modify these Quests first!"
 eventEditorNotANumberList: "Input was not a list of numbers!"
-eventEditorInvalidEntry: "Invalid entry"
 eventEditorGiveItemsTitle: "- Give Items -"
 eventEditorEffectsTitle: "- Sound Effects -"
 eventEditorStormTitle: "- Action Storm -"
