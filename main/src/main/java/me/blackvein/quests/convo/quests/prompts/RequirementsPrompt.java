@@ -663,18 +663,14 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 String[] args = input.split(" ");
                 LinkedList<Boolean> booleans = new LinkedList<Boolean>();
                 for (String s : args) {
-                    if (input.equalsIgnoreCase("t") || input.equalsIgnoreCase("true")
-                            || s.equalsIgnoreCase(Lang.get("true")) 
+                    if (input.startsWith("t") || s.equalsIgnoreCase(Lang.get("true")) 
                             || s.equalsIgnoreCase(Lang.get("yesWord"))) {
                         booleans.add(true);
-                    } else if (input.equalsIgnoreCase("f") || input.equalsIgnoreCase("false")
-                            || s.equalsIgnoreCase(Lang.get("false")) 
+                    } else if (input.startsWith("f") || s.equalsIgnoreCase(Lang.get("false")) 
                             || s.equalsIgnoreCase(Lang.get("noWord"))) {
                         booleans.add(false);
                     } else {
-                        String text = Lang.get("reqTrueFalseError");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
-                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                         return new RemoveItemsPrompt();
                     }
                 }

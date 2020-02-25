@@ -162,16 +162,14 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                try {
-                    boolean b = Boolean.parseBoolean(input);
-                    if (input.equalsIgnoreCase("t") || input.equalsIgnoreCase("true")
-                            || input.equalsIgnoreCase(Lang.get("true")) 
-                            || input.equalsIgnoreCase(Lang.get("yesWord"))) {
-                        b = true;
-                    }
-                    context.setSessionData(tempKey, b);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (input.startsWith("t") || input.equalsIgnoreCase(Lang.get("true")) 
+                        || input.equalsIgnoreCase(Lang.get("yesWord"))) {
+                    context.setSessionData(tempKey, true);
+                } else if (input.startsWith("f") || input.equalsIgnoreCase(Lang.get("false")) 
+                        || input.equalsIgnoreCase(Lang.get("noWord"))) {
+                    context.setSessionData(tempKey, false);
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new TrueFalsePrompt(plugin, context, factory);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
