@@ -703,6 +703,8 @@ journalAlreadyHave: "Bạn đã lấy Nhật ký Nhiệm vụ của bạn ra ngo
 journalNoRoom: "Bạn không có chỗ trong hành trang của bạn để lấy Nhật ký Nhiệm vụ!"
 journalNoQuests: "Bạn chưa nhận nhiệm vụ nào!"
 journalDenied: "Bạn không thể làm thế với Nhật ký Nhiệm vụ của bạn."
+compassSet: "Set compass target to quest <quest>."
+compassReset: "Reset compass target."
 timeZone: "Múi giờ"
 timeDay: "Ngày"
 timeDays: "CácNgày"
