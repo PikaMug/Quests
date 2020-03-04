@@ -183,9 +183,9 @@ public class PlayerListener implements Listener {
                 }
             }
             if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+                final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+                final Player player = evt.getPlayer();
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-                    final Player player = evt.getPlayer();
                     boolean hasObjective = false;
                     if (evt.isCancelled() == false) {
                         final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt
@@ -345,6 +345,19 @@ public class PlayerListener implements Listener {
                                 }
                             }
                         }
+                    }
+                }
+                if (evt.getItem() != null && evt.getItem().getType().equals(Material.COMPASS)) {
+                    if (!player.hasPermission("quests.compass")) {
+                        return;
+                    }
+                    if (evt.getAction().equals(Action.LEFT_CLICK_AIR)
+                            || evt.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+                        quester.resetCompass();
+                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "compassReset"));
+                    } else if (evt.getAction().equals(Action.RIGHT_CLICK_AIR)
+                            || evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                        quester.findNextCompassTarget(true);
                     }
                 }
             }
@@ -935,7 +948,7 @@ public class PlayerListener implements Listener {
             LinkedList<Quester> temp = plugin.getQuesters();
             temp.add(quester);
             plugin.setQuesters(temp);
-            if (plugin.getSettings().canUseCompass()) {
+            if (evt.getPlayer().hasPermission("quests.compass")) {
                 quester.resetCompass();
             }
             for (String s : quester.getCompletedQuests()) {

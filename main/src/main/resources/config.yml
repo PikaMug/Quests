@@ -19,4 +19,3 @@ strict-player-movement: 0
 top-limit: 150
 translate-names: true
 translate-subcommands: false
-use-compass: true

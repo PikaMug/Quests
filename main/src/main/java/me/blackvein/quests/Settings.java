@@ -37,7 +37,6 @@ public class Settings {
     private int topLimit = 150;
     private boolean translateNames = false;
     private boolean translateSubCommands = false;
-    private boolean useCompass = true;
     private boolean useGPS = true;
     
     public Settings(Quests plugin) {
@@ -146,12 +145,6 @@ public class Settings {
     public void setTranslateSubCommands(boolean translateSubCommands) {
         this.translateSubCommands = translateSubCommands;
     }
-    public boolean canUseCompass() {
-        return useCompass;
-    }
-    public void setUseCompass(boolean useCompass) {
-        this.useCompass = useCompass;
-    }
     public boolean canUseGPS() {
         return useGPS;
     }
@@ -184,7 +177,6 @@ public class Settings {
         topLimit = config.getInt("top-limit", 150);
         translateNames = config.getBoolean("translate-names", true);
         translateSubCommands = config.getBoolean("translate-subcommands", false);
-        useCompass = config.getBoolean("use-compass", true);
         useGPS = config.getBoolean("use-gps-plugin", true);
         try {
             config.save(new File(plugin.getDataFolder(), "config.yml"));

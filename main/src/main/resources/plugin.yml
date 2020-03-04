@@ -38,6 +38,9 @@ permissions:
     quests.journal:
         description: Toggle the Quest Journal
         default: true
+    quests.compass:
+        description: Use a Compass to target quests
+        default: true
     quests.admin:
         description: Display administrator help
         default: op

@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -76,6 +77,7 @@ public class Quester {
     private UUID id;
     protected String questToTake;
     protected int questPoints = 0;
+    private String compassTargetQuestId;
     protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<Integer, Quest>();
     protected ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
 
@@ -253,6 +255,24 @@ public class Quester {
 
     public void setQuestPoints(int questPoints) {
         this.questPoints = questPoints;
+    }
+    
+    /**
+     * Get compass target quest. Returns null if not set
+     * 
+     * @return Quest or null
+     */
+    public Quest getCompassTarget() {
+        return compassTargetQuestId != null ? plugin.getQuestById(compassTargetQuestId) : null;
+    }
+    
+    /**
+     * Set compass target quest. Does not update in-game
+     * 
+     * @param quest The target quest
+     */
+    public void setCompassTarget(Quest quest) {
+        compassTargetQuestId = quest.getId();
     }
 
     public ConcurrentHashMap<Integer, Quest> getTimers() {
@@ -3535,8 +3555,9 @@ public class Quester {
      * Will set to Quester's spawn location if bed spawn does not exist
      */
     public void resetCompass() {
-        if (!plugin.getSettings().canUseCompass())
+        if (!getPlayer().hasPermission("quests.compass")) {
             return;
+        }
         Player player = getPlayer();
         if (player == null)
             return;
@@ -3544,23 +3565,62 @@ public class Quester {
         if (defaultLocation == null) {
             defaultLocation = player.getWorld().getSpawnLocation();
         }
+        compassTargetQuestId = null;
         player.setCompassTarget(defaultLocation);
     }
 
     /**
-     * Gets first stage target from current quests, then updates compass accordingly
+     * Update compass target to current stage of first available current quest, if possible
      */
     public void findCompassTarget() {
-        if (!plugin.getSettings().canUseCompass())
+        if (!getPlayer().hasPermission("quests.compass")) {
             return;
-        Player player = getPlayer();
-        if (player == null)
-            return;
+        }
         for (Quest quest : currentQuests.keySet()) {
             Stage stage = getCurrentStage(quest);
-            if (stage != null && quest.updateCompass(this, stage))
+            if (stage != null && quest.updateCompass(this, stage)) {
                 break;
+            }
         }
+    }
+    
+    /**
+     * Update compass target to current stage of next available current quest, if possible
+     * 
+     * @param notify Whether to notify this quester of result
+     */
+    public void findNextCompassTarget(boolean notify) {
+        if (!getPlayer().hasPermission("quests.compass")) {
+            return;
+        }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                LinkedList<String> list = currentQuests.keySet().stream()
+                        .sorted(Comparator.comparing(Quest::getName)).map(Quest::getId)
+                        .collect(Collectors.toCollection(LinkedList::new));
+                int index = 0;
+                if (compassTargetQuestId != null) {
+                    if (!list.contains(compassTargetQuestId) && notify) {
+                        return;
+                    }
+                    index = list.indexOf(compassTargetQuestId) + 1;
+                    if (index >= list.size()) {
+                        index = 0;
+                    }
+                }
+                final Quest quest = plugin.getQuestById(list.get(index));
+                compassTargetQuestId = quest.getId();
+                final Stage stage = getCurrentStage(quest);
+                if (stage != null) {
+                    quest.updateCompass(Quester.this, stage);
+                    if (notify && getPlayer().isOnline()) {
+                        getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "compassSet")
+                                .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.YELLOW));
+                    }
+                }
+            }
+        });
     }
     
     /**

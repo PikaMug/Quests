@@ -182,7 +182,7 @@ public class Quest {
                         this, quester.getPlayer()));
             }
         }
-        if (plugin.getSettings().canUseCompass()) {
+        if (quester.getPlayer().hasPermission("quests.compass")) {
             quester.resetCompass();
             quester.findCompassTarget();
         }
@@ -277,31 +277,31 @@ public class Quest {
      * Method may be called as often as needed.
      * 
      * @param quester The online quester to have their compass updated
-     * @param nextStage The stage to process for targets
+     * @param stage The stage to process for targets
      * @return true if successful
      */
-    public boolean updateCompass(Quester quester, Stage nextStage) {
-        if (!plugin.getSettings().canUseCompass()) {
-            return false;
-        }
+    public boolean updateCompass(Quester quester, Stage stage) {
         if (quester == null) {
             return false;
         }
-        if (nextStage == null) {
+        if (stage == null) {
             return false;
         }
         if (!quester.getOfflinePlayer().isOnline()) {
             return false;
         }
+        if (!quester.getPlayer().hasPermission("quests.compass")) {
+            return false;
+        }
         Location targetLocation = null;
-        if (nextStage.citizensToInteract != null && nextStage.citizensToInteract.size() > 0) {
-            targetLocation = plugin.getDependencies().getNPCLocation(nextStage.citizensToInteract.getFirst());
-        } else if (nextStage.citizensToKill != null && nextStage.citizensToKill.size() > 0) {
-            targetLocation = plugin.getDependencies().getNPCLocation(nextStage.citizensToKill.getFirst());
-        } else if (nextStage.locationsToReach != null && nextStage.locationsToReach.size() > 0) {
-            targetLocation = nextStage.locationsToReach.getFirst();
-        } else if (nextStage.itemDeliveryTargets != null && nextStage.itemDeliveryTargets.size() > 0) {
-            NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(nextStage.itemDeliveryTargets
+        if (stage.citizensToInteract != null && stage.citizensToInteract.size() > 0) {
+            targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToInteract.getFirst());
+        } else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
+            targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToKill.getFirst());
+        } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
+            targetLocation = stage.locationsToReach.getFirst();
+        } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
+            NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
                     .getFirst());
             targetLocation = npc.getStoredLocation();
         }
