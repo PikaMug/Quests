@@ -9,6 +9,6 @@ labels: question
 
 **Where else have you looked for answers to this question?**
 
-**If applicable, which class or method is this in reference to?**
-
 **Share your question with as much detail as possible?**
+
+**If applicable, which class or method is this in reference to?**
