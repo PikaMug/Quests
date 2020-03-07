@@ -498,13 +498,18 @@ public class Quest {
             }
             none = null;
         }
-        if (player.isOnline()) {
-            for (String s : rews.getPermissions()) {
-                if (plugin.getDependencies().getVaultPermission() != null) {
-                    plugin.getDependencies().getVaultPermission().playerAdd((Player)player, s);
-                }
-                none = null;
+        for (int i = 0; i < rews.getPermissions().size(); i++) {
+            if (plugin.getDependencies().getVaultPermission() != null) {
+                String perm = rews.getPermissions().get(i);
+                plugin.getDependencies().getVaultPermission().playerAdd(null, player, perm);
+                /*String world = rews.getPermissionWorlds().get(i);
+                if (world == null) {
+                    plugin.getDependencies().getVaultPermission().playerAdd(null, player, perm);
+                } else {
+                    plugin.getDependencies().getVaultPermission().playerAdd(world, player, perm);
+                }*/
             }
+            none = null;
         }
         for (String s : rews.getMcmmoSkills()) {
             UserManager.getOfflinePlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), 
