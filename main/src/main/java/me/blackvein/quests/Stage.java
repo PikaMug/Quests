@@ -127,7 +127,7 @@ public class Stage {
     protected String delayMessage = null;
     protected String completeMessage = null;
     protected String startMessage = null;
-    protected String objectiveOverride = null;
+    protected LinkedList<String> objectiveOverrides = new LinkedList<String>();
     protected LinkedList<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
     protected LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
     protected LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
@@ -470,12 +470,12 @@ public class Stage {
         this.startMessage = startMessage;
     }
 
-    public String getObjectiveOverride() {
-        return objectiveOverride;
+    public LinkedList<String> getObjectiveOverrides() {
+        return objectiveOverrides;
     }
 
-    public void setObjectiveOverride(String objectiveOverride) {
-        this.objectiveOverride = objectiveOverride;
+    public void setObjectiveOverrides(LinkedList<String> objectiveOverrides) {
+        this.objectiveOverrides = objectiveOverrides;
     }
     
     public LinkedList<CustomObjective> getCustomObjectives() {

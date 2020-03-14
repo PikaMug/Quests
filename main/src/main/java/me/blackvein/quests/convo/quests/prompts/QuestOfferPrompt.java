@@ -127,7 +127,9 @@ public class QuestOfferPrompt extends StringPrompt {
                                 plugin.getConversationFactory().buildConversation((Conversable) player).begin();
                             }
                         } else {
-                            player.sendMessage(q.getRequirements().getFailRequirements());
+                            for (String msg : q.getRequirements().getDetailsOverride()) {
+                                player.sendMessage(msg);
+                            }
                         }
                     } else if (quester.getCurrentQuests().containsKey(q) == false) {
                         String msg = Lang.get("questMaxAllowed");

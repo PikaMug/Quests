@@ -32,7 +32,7 @@ public class Requirements {
     private String heroesPrimaryClass = null;
     private String heroesSecondaryClass = null;
     private Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
-    private String failRequirements = null;
+    private List<String> detailsOverride = new LinkedList<String>();
     
     public int getMoney() {
         return money;
@@ -106,10 +106,10 @@ public class Requirements {
     protected void setCustomRequirements(Map<String, Map<String, Object>> customRequirements) {
         this.customRequirements = customRequirements;
     }
-    public String getFailRequirements() {
-        return failRequirements;
+    public List<String> getDetailsOverride() {
+        return detailsOverride;
     }
-    public void setFailRequirements(String failRequirements) {
-        this.failRequirements = failRequirements;
+    public void setDetailsOverride(List<String> detailsOverride) {
+        this.detailsOverride = detailsOverride;
     }
 }

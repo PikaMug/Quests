@@ -21,6 +21,7 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
     private ConversationContext context;
     private QuestFactory factory;
     
+    //TODO - passing factory may be unnecessary
     public QuestsEditorStringPrompt(final ConversationContext context, final QuestFactory factory) {
         this.context = context;
         this.factory = factory;

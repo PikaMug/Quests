@@ -364,7 +364,8 @@ public class Action {
             quest.failQuest(quester);
         }
         if (timer > 0) {
-            player.sendMessage(Lang.get(player, "timerStart").replace("<time>", String.valueOf(timer)));
+            player.sendMessage(ChatColor.GREEN + Lang.get(player, "timerStart")
+                    .replace("<time>", ChatColor.RED + String.valueOf(timer) + ChatColor.GREEN));
             if (timer > 60) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 60, false)
                         .runTaskLater(plugin, (timer-60)*20).getTaskId(), quest);

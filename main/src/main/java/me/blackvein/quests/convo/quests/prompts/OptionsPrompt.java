@@ -41,14 +41,17 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     
     private final int size = 3;
     
+    @Override
     public int getSize() {
         return size;
     }
     
+    @Override
     public String getTitle(ConversationContext context) {
         return Lang.get("optionsTitle").replace("<quest>", (String) context.getSessionData(CK.Q_NAME));
     }
     
+    @Override
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
         case 1:
@@ -62,6 +65,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
+    @Override
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
         case 1:
@@ -75,6 +79,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
+    @Override
     public String getAdditionalText(ConversationContext context, int number) {
         return null;
     }
@@ -120,10 +125,12 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             return size;
         }
         
+        @Override
         public String getTitle(ConversationContext context) {
             return null;
         }
         
+        @Override
         public String getQueryText(ConversationContext context) {
             String text = "Select '<true>' or '<false>'";
             text = text.replace("<true>", Lang.get("true"));
@@ -191,10 +198,12 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             return size;
         }
         
+        @Override
         public String getTitle(ConversationContext context) {
             return null;
         }
         
+        @Override
         public String getQueryText(ConversationContext context) {
             return "Pick level of progress sharing";
         }
@@ -281,14 +290,17 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
 
         private final int size = 3;
         
+        @Override
         public int getSize() {
             return size;
         }
         
+        @Override
         public String getTitle(ConversationContext context) {
             return ChatColor.DARK_GREEN + Lang.get("optGeneral");
         }
         
+        @Override
         public ChatColor getNumberColor(ConversationContext context, int number) {
             switch (number) {
             case 1:
@@ -302,6 +314,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         public String getSelectionText(ConversationContext context, int number) {
             switch (number) {
             case 1:
@@ -315,6 +328,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         public String getAdditionalText(ConversationContext context, int number) {
             switch (number) {
             case 1:
@@ -395,14 +409,17 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
 
         private final int size = 5;
         
+        @Override
         public int getSize() {
             return size;
         }
         
+        @Override
         public String getTitle(ConversationContext context) {
             return ChatColor.DARK_GREEN + Lang.get("optMultiplayer");
         }
         
+        @Override
         public ChatColor getNumberColor(ConversationContext context, int number) {
             switch (number) {
             case 1:
@@ -420,6 +437,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         public String getSelectionText(ConversationContext context, int number) {
             switch (number) {
             case 1:
@@ -437,6 +455,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         public String getAdditionalText(ConversationContext context, int number) {
             switch (number) {
             case 1:

@@ -43,6 +43,7 @@ import me.blackvein.quests.util.MiscUtil;
 public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
+    private final String classPrefix;
     private final QuestFactory factory;
     private boolean hasRequirement = false;
     private final int size = 11;
@@ -50,6 +51,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     public RequirementsPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
         super(context, qf);
         this.plugin = plugin;
+        this.classPrefix = getClass().getSimpleName();
         this.factory = qf;
     }
     
@@ -91,6 +93,16 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.BLUE;
             }
         case 11:
+            if (context.getSessionData(CK.REQ_FAIL_MESSAGE) == null) {
+                if (!hasRequirement) {
+                    return ChatColor.GRAY;
+                } else {
+                    return ChatColor.BLUE;
+                }
+            } else {
+                return ChatColor.BLUE;
+            }
+        case 12:
             return ChatColor.GREEN;
         default:
             return null;
@@ -119,9 +131,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.DARK_PURPLE + Lang.get("reqSetCustom");
         case 10:
             if (!hasRequirement) {
-                return ChatColor.GRAY + Lang.get("reqSetFail");
+                return ChatColor.GRAY + Lang.get("overrideCreateAdd");
             } else {
-                return ChatColor.YELLOW + Lang.get("reqSetFail");
+                return ChatColor.YELLOW + Lang.get("overrideCreateAdd");
             }
         case 11:
             return ChatColor.YELLOW + Lang.get("done");
@@ -251,22 +263,34 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 }
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" + context.getSessionData(CK.REQ_FAIL_MESSAGE)+ "\"" 
-                        + ChatColor.GRAY + ")";
+                String text = "\n";
+                LinkedList<String> overrides = new LinkedList<String>();
+                overrides.addAll((List<String>) context.getSessionData(CK.REQ_FAIL_MESSAGE));
+                for (int i = 0; i < overrides.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + overrides.get(i) + "\n";
+                }
+                return text;
             }
         case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
             return "";
         default:
             return null;
         }
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public String getPromptText(ConversationContext context) {
+        // Checkadd newly made override
+        if (context.getSessionData(classPrefix + "-override") != null) {
+            LinkedList<String> overrides = new LinkedList<String>();
+            if (context.getSessionData(CK.REQ_FAIL_MESSAGE) != null) {
+                overrides.addAll((List<String>) context.getSessionData(CK.REQ_FAIL_MESSAGE));
+            }
+            overrides.add((String) context.getSessionData(classPrefix + "-override"));
+            context.setSessionData(CK.REQ_FAIL_MESSAGE, overrides);
+            context.setSessionData(classPrefix + "-override", null);
+        }  
         checkRequirement(context);
         
         QuestsEditorPostOpenNumericPromptEvent event 
@@ -314,7 +338,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             return new CustomRequirementsPrompt();
         case 10:
             if (hasRequirement) {
-                return new FailMessagePrompt();
+                return new OverridePrompt.Builder()
+                        .source(this)
+                        .promptText(Lang.get("overrideCreateEnter"))
+                        .build();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new RequirementsPrompt(plugin, context, factory);
@@ -326,7 +353,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public void checkRequirement(ConversationContext context) {
+    public boolean checkRequirement(ConversationContext context) {
         if (context.getSessionData(CK.REQ_MONEY) != null 
                 || context.getSessionData(CK.REQ_QUEST_POINTS) != null
                 || context.getSessionData(CK.REQ_ITEMS) != null
@@ -338,7 +365,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 || context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null
                 || context.getSessionData(CK.REQ_CUSTOM) != null) {
             hasRequirement = true;
+            return true;
         }
+        return false;
     }
 
     private class MoneyPrompt extends StringPrompt {
@@ -573,13 +602,13 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
-                    List<ItemStack> itemRews = getItems(context);
-                    itemRews.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(CK.REQ_ITEMS, itemRews);
+                    List<ItemStack> itemReqs = getItems(context);
+                    itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 } else {
-                    LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
-                    itemRews.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(CK.REQ_ITEMS, itemRews);
+                    LinkedList<ItemStack> itemReqs = new LinkedList<ItemStack>();
+                    itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 }
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
@@ -1160,22 +1189,6 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return new HeroesPrompt();
             }
-        }
-    }
-
-    private class FailMessagePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("reqFailMessagePrompt");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get(Lang.get("cancel"))) == false) {
-                context.setSessionData(CK.REQ_FAIL_MESSAGE, input);
-            }
-            return new RequirementsPrompt(plugin, context, factory);
         }
     }
 }

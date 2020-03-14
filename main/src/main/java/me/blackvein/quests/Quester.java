@@ -638,15 +638,17 @@ public class Quester {
         }
         Requirements reqs = quest.getRequirements();
         if (!ignoreOverrides) {
-            if (reqs.getFailRequirements() != null) {
+            if (reqs.getDetailsOverride() != null) {
                 LinkedList<String> requirements = new LinkedList<String>();
-                String message = ChatColor.RED + ConfigUtil.parseString(
-                        ChatColor.translateAlternateColorCodes('&', reqs.getFailRequirements()), 
-                        quest, getPlayer());
-                if (plugin.getDependencies().getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                for (String s : reqs.getDetailsOverride()) {
+                    String message = ChatColor.RED + ConfigUtil.parseString(
+                            ChatColor.translateAlternateColorCodes('&', s), quest, getPlayer());
+                    if (plugin.getDependencies().getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    requirements.add(message);
+                    
                 }
-                requirements.add(message);
                 return requirements;
             }
         }
@@ -770,15 +772,16 @@ public class Quester {
     public LinkedList<String> getCurrentObjectives(Quest quest, boolean ignoreOverrides) {
         if (!ignoreOverrides) {
             if (getCurrentStage(quest) != null) {
-                if (getCurrentStage(quest).objectiveOverride != null) {
+                if (getCurrentStage(quest).objectiveOverrides.isEmpty() == false) {
                     LinkedList<String> objectives = new LinkedList<String>();
-                    String message = ChatColor.GREEN + ConfigUtil.parseString(
-                            ChatColor.translateAlternateColorCodes('&', getCurrentStage(quest).objectiveOverride), 
-                            quest, getPlayer());
-                    if (plugin.getDependencies().getPlaceholderApi() != null) {
-                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    for (String s: getCurrentStage(quest).objectiveOverrides) {
+                        String message = ChatColor.GREEN + ConfigUtil.parseString(
+                                ChatColor.translateAlternateColorCodes('&', s), quest, getPlayer());
+                        if (plugin.getDependencies().getPlaceholderApi() != null) {
+                            message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                        }
+                        objectives.add(message);
                     }
-                    objectives.add(message);
                     return objectives;
                 }
             }
@@ -2226,14 +2229,15 @@ public class Quester {
             Enchantment enchantment, EntityType mob, String extra, NPC npc, Location location, DyeColor color, 
             String pass, CustomObjective co) {
         Player p = getPlayer();
-        if (getCurrentStage(quest).objectiveOverride != null) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " 
-                    + ConfigUtil.parseString(ChatColor.translateAlternateColorCodes('&', 
-                    getCurrentStage(quest).objectiveOverride), quest, p);
-            if (plugin.getDependencies().getPlaceholderApi() != null) {
-                message = PlaceholderAPI.setPlaceholders(p, message);
+        if (getCurrentStage(quest).objectiveOverrides.isEmpty() == false) {
+            for (String s: getCurrentStage(quest).objectiveOverrides) {
+                String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " 
+                        + ConfigUtil.parseString(ChatColor.translateAlternateColorCodes('&', s), quest, p);
+                if (plugin.getDependencies().getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(p, message);
+                }
+                p.sendMessage(message);
             }
-            p.sendMessage(message);
         } else if (objective.equalsIgnoreCase("password")) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass;
             p.sendMessage(message);

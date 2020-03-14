@@ -648,8 +648,8 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.REQ_CUSTOM, list);
             context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
         }
-        if (reqs.getFailRequirements() != null) {
-            context.setSessionData(CK.REQ_FAIL_MESSAGE, reqs.getFailRequirements());
+        if (reqs.getDetailsOverride().isEmpty() == false) {
+            context.setSessionData(CK.REQ_FAIL_MESSAGE, reqs.getDetailsOverride());
         }
         Rewards rews = q.getRewards();
         if (rews.getMoney() != 0) {
@@ -673,6 +673,9 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (rews.getPermissions().isEmpty() == false) {
             context.setSessionData(CK.REW_PERMISSION, rews.getPermissions());
         }
+        if (rews.getPermissions().isEmpty() == false) {
+            context.setSessionData(CK.REW_PERMISSION_WORLDS, rews.getPermissionWorlds());
+        }
         if (rews.getMcmmoSkills().isEmpty() == false) {
             context.setSessionData(CK.REW_MCMMO_SKILLS, rews.getMcmmoSkills());
             context.setSessionData(CK.REW_MCMMO_AMOUNTS, rews.getMcmmoAmounts());
@@ -687,6 +690,9 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (rews.getCustomRewards().isEmpty() == false) {
             context.setSessionData(CK.REW_CUSTOM, new LinkedList<String>(rews.getCustomRewards().keySet()));
             context.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rews.getCustomRewards().values()));
+        }
+        if (rews.getDetailsOverride().isEmpty() == false) {
+            context.setSessionData(CK.REW_DETAILS_OVERRIDE, rews.getDetailsOverride());
         }
         Planner pln = q.getPlanner();
         if (pln.getStart() != null) {
@@ -962,8 +968,8 @@ public class QuestFactory implements ConversationAbandonedListener {
             if (stage.startMessage != null) {
                 context.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
             }
-            if (stage.objectiveOverride != null) {
-                context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.objectiveOverride);
+            if (stage.objectiveOverrides.isEmpty() == false) {
+                context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.objectiveOverrides);
             }
         }
     }
@@ -1547,7 +1553,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         String heroesSecondaryReq = null;
         LinkedList<String> customReqs = null;
         LinkedList<Map<String, Object>> customReqsData = null;
-        String failMessage = null;
+        List<String> detailsOverrideReqs = null;
         Integer moneyRew = null;
         Integer questPointsRew = null;
         List<ItemStack> itemRews = null;
@@ -1557,6 +1563,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         List<String> commandRews = null;
         List<String> commandDisplayOverrideRews = null;
         List<String> permRews = null;
+        List<String> permWorldRews = null;
         List<String> mcMMOSkillRews = null;
         List<Integer> mcMMOSkillAmounts = null;
         List<String> heroesClassRews = null;
@@ -1564,6 +1571,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         List<String> phatLootRews = null;
         LinkedList<String> customRews = null;
         LinkedList<Map<String, Object>> customRewsData = null;
+        List<String> detailsOverrideRews = null;
         String startDatePln = null;
         String endDatePln = null;
         Long repeatCyclePln = null;
@@ -1621,7 +1629,8 @@ public class QuestFactory implements ConversationAbandonedListener {
             customReqsData = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
         }
         if (context.getSessionData(CK.REQ_FAIL_MESSAGE) != null) {
-            failMessage = (String) context.getSessionData(CK.REQ_FAIL_MESSAGE);
+            detailsOverrideReqs = new LinkedList<String>();
+            detailsOverrideReqs.addAll((List<String>)context.getSessionData(CK.REQ_FAIL_MESSAGE));
         }
         if (context.getSessionData(CK.Q_INITIAL_EVENT) != null) {
             initialEvent = (String) context.getSessionData(CK.Q_INITIAL_EVENT);
@@ -1656,6 +1665,10 @@ public class QuestFactory implements ConversationAbandonedListener {
             permRews = new LinkedList<String>();
             permRews.addAll((List<String>) context.getSessionData(CK.REW_PERMISSION));
         }
+        if (context.getSessionData(CK.REW_PERMISSION_WORLDS) != null) {
+            permWorldRews = new LinkedList<String>();
+            permWorldRews.addAll((List<String>) context.getSessionData(CK.REW_PERMISSION_WORLDS));
+        }
         if (context.getSessionData(CK.REW_MCMMO_SKILLS) != null) {
             mcMMOSkillRews = new LinkedList<String>();
             mcMMOSkillAmounts = new LinkedList<Integer>();
@@ -1675,6 +1688,10 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.REW_CUSTOM) != null) {
             customRews = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
             customRewsData = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
+        }
+        if (context.getSessionData(CK.REW_DETAILS_OVERRIDE) != null) {
+            detailsOverrideRews = new LinkedList<String>();
+            detailsOverrideRews.addAll((List<String>)context.getSessionData(CK.REW_DETAILS_OVERRIDE));
         }
         if (context.getSessionData(CK.PLN_START_DATE) != null) {
             startDatePln = (String) context.getSessionData(CK.PLN_START_DATE);
@@ -1740,7 +1757,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     customReqSec.set("data", customReqsData.get(i));
                 }
             }
-            reqs.set("fail-requirement-message", failMessage);
+            reqs.set("fail-requirement-message", detailsOverrideReqs);
         } else {
             cs.set("requirements", null);
         }
@@ -1804,7 +1821,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         LinkedList<String> commandEvents;
         LinkedList<String> commandEventTriggers;
         Long delay;
-        String overrideDisplay;
+        LinkedList<String> overrideDisplay;
         String delayMessage;
         String startMessage;
         String completeMessage;
@@ -1992,7 +2009,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 script = (String) context.getSessionData(pref + CK.S_DENIZEN);
             }
             if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) != null) {
-                overrideDisplay = (String) context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY);
+                overrideDisplay = (LinkedList<String>) context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY);
             }
             if (context.getSessionData(pref + CK.S_START_MESSAGE) != null) {
                 startMessage = (String) context.getSessionData(pref + CK.S_START_MESSAGE);
@@ -2124,8 +2141,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 stage.set("delay", delay.intValue() / 1000);
             }
             stage.set("delay-message", delayMessage == null ? delayMessage : delayMessage.replace("\\n", "\n"));
-            stage.set("objective-override", overrideDisplay == null ? overrideDisplay 
-                    : overrideDisplay.replace("\\n", "\n"));
+            stage.set("objective-override", overrideDisplay);
             stage.set("start-message", startMessage == null ? startMessage : startMessage.replace("\\n", "\n"));
             stage.set("complete-message", completeMessage == null ? completeMessage 
                     : completeMessage.replace("\\n", "\n"));
@@ -2144,6 +2160,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             rews.set("quest-points", questPointsRew);
             rews.set("exp", expRew);
             rews.set("permissions", permRews);
+            rews.set("permission-worlds", permWorldRews);
             rews.set("commands", commandRews);
             rews.set("commands-override-display", commandDisplayOverrideRews);
             rews.set("mcmmo-skills", mcMMOSkillRews);
@@ -2161,6 +2178,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     customRewSec.set("data", customRewsData.get(i));
                 }
             }
+            rews.set("details-override", detailsOverrideRews);
         } else {
             cs.set("rewards", null);
         }

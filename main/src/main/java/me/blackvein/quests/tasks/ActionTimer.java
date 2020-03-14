@@ -14,6 +14,7 @@ package me.blackvein.quests.tasks;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
+import de.erethon.dungeonsxl.util.commons.chat.ChatColor;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.util.Lang;
@@ -39,8 +40,8 @@ public class ActionTimer extends BukkitRunnable {
             quest.failQuest(quester);
             quester.updateJournal();
         } else {
-            quester.getPlayer().sendMessage(Lang.get(quester.getPlayer(), "timerMessage")
-                    .replace("<time>", String.valueOf(time)));
+            quester.getPlayer().sendMessage(ChatColor.GREEN + Lang.get(quester.getPlayer(), "timerMessage")
+                    .replace("<time>", ChatColor.RED + String.valueOf(time) + ChatColor.GREEN));
         }
     }
 }

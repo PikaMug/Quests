@@ -34,6 +34,7 @@ public class Rewards {
     private List<Double> heroesAmounts = new LinkedList<Double>();
     private List<String> phatLoots = new LinkedList<String>();
     private Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
+    private List<String> detailsOverride = new LinkedList<String>();
     
     public int getMoney() {
         return money;
@@ -118,5 +119,11 @@ public class Rewards {
     }
     protected void setCustomRewards(Map<String, Map<String, Object>> customRewards) {
         this.customRewards = customRewards;
+    }
+    public List<String> getDetailsOverride() {
+        return detailsOverride;
+    }
+    public void setDetailsOverride(List<String> detailsOverride) {
+        this.detailsOverride = detailsOverride;
     }
 }

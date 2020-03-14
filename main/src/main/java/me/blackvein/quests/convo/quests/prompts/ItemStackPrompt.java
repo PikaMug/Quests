@@ -38,16 +38,18 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 
+/**
+ * Stores ItemStack in "tempStack" context data<p>
+ * Stores name in "tempName" context data<p>
+ * Stores amount in "tempAmount" context data<p>
+ * Stores durability in "tempData" context data<p>
+ * Stores enchantments in "tempEnchantments" context data<p>
+ * Stores display name in "tempDisplay" context data<p>
+ * Stores lore in "tempLore" context data<p>
+ * Stores metadata in "tempMeta" context data
+ */
 public class ItemStackPrompt extends FixedSetPrompt {
 
-    // Stores ItemStack in "tempStack" context data
-    // Stores name in "tempName"
-    // Stores amount in "tempAmount"
-    // Stores durability in "tempData"
-    // Stores enchantments in "tempEnchantments"
-    // Stores display name in "tempDisplay"
-    // Stores lore in "tempLore"
-    // Stores metadata in "tempMeta"
     private final Prompt oldPrompt;
 
     public ItemStackPrompt(Prompt old) {
