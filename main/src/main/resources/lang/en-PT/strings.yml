@@ -533,7 +533,7 @@ dateCreateEnterSecond: "Enter a second (max. 59), <cancel>"
 dateCreateEnterOffset: "Enter a UTC time offset (max. 14), <cancel>"
 dateCreateEnterZone: "Enter a UTC time zone, <cancel>"
 dateCreateNoYearAmount: "Ye must set a year first!"
-overrideCreateSet: "Set details list override"
+overrideCreateSet: "Set details list o'erride"
 overrideCreateEnter: "Enter replacement text, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**QUEST COMPLETE MATEY: <quest>**'
