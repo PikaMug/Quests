@@ -3559,18 +3559,22 @@ public class Quester {
      * Will set to Quester's spawn location if bed spawn does not exist
      */
     public void resetCompass() {
+        Player player = getPlayer();
+        if (player == null) {
+            return;
+        }
         if (!getPlayer().hasPermission("quests.compass")) {
             return;
         }
-        Player player = getPlayer();
-        if (player == null)
-            return;
+        
         Location defaultLocation = player.getBedSpawnLocation();
         if (defaultLocation == null) {
             defaultLocation = player.getWorld().getSpawnLocation();
         }
         compassTargetQuestId = null;
-        player.setCompassTarget(defaultLocation);
+        if (defaultLocation != null) {
+            player.setCompassTarget(defaultLocation);
+        }
     }
 
     /**
