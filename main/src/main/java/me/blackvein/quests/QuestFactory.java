@@ -1514,14 +1514,13 @@ public class QuestFactory implements ConversationAbandonedListener {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void saveQuest(ConversationContext context, ConfigurationSection cs) {
+    public void saveQuest(ConversationContext context, ConfigurationSection section) {
         String edit = null;
         if (context.getSessionData(CK.ED_QUEST_EDIT) != null) {
             edit = (String) context.getSessionData(CK.ED_QUEST_EDIT);
         }
         if (edit != null) {
-            ConfigurationSection questList = cs.getParent();
+            ConfigurationSection questList = section.getParent();
             for (String key : questList.getKeys(false)) {
                 String name = questList.getString(key + ".name");
                 if (name != null) {
@@ -1532,561 +1531,170 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
             }
         }
-        String name = (String) context.getSessionData(CK.Q_NAME);
-        String desc = (String) context.getSessionData(CK.Q_ASK_MESSAGE);
-        String finish = (String) context.getSessionData(CK.Q_FINISH_MESSAGE);
-        Integer npcStart = null;
-        String blockStart = null;
-        String initialEvent = null;
-        String region = null;
-        ItemStack guiDisplay = null;
-        Integer moneyReq = null;
-        Integer questPointsReq = null;
-        List<ItemStack> itemReqs = null;
-        List<Boolean> removeItemReqs = null;
-        List<String> permReqs = null;
-        List<String> questReqs = null;
-        List<String> questBlocks = null;
-        List<String> mcMMOSkillReqs = null;
-        List<Integer> mcMMOAmountReqs = null;
-        String heroesPrimaryReq = null;
-        String heroesSecondaryReq = null;
-        LinkedList<String> customReqs = null;
-        LinkedList<Map<String, Object>> customReqsData = null;
-        List<String> detailsOverrideReqs = null;
-        Integer moneyRew = null;
-        Integer questPointsRew = null;
-        List<ItemStack> itemRews = null;
-        List<Integer> RPGItemRews = null;
-        List<Integer> RPGItemAmounts = null;
-        Integer expRew = null;
-        List<String> commandRews = null;
-        List<String> commandDisplayOverrideRews = null;
-        List<String> permRews = null;
-        List<String> permWorldRews = null;
-        List<String> mcMMOSkillRews = null;
-        List<Integer> mcMMOSkillAmounts = null;
-        List<String> heroesClassRews = null;
-        List<Double> heroesExpRews = null;
-        List<String> phatLootRews = null;
-        LinkedList<String> customRews = null;
-        LinkedList<Map<String, Object>> customRewsData = null;
-        List<String> detailsOverrideRews = null;
-        String startDatePln = null;
-        String endDatePln = null;
-        Long repeatCyclePln = null;
-        Long cooldownPln = null;
-        boolean allowCommandsOpt = true;
-        boolean allowQuittingOpt = true;
-        boolean useDungeonsXLPluginOpt = false;
-        boolean usePartiesPluginOpt = true;
-        Integer shareProgressLevelOpt = 1;
-        boolean requireSameQuestOpt = true;
-        if (context.getSessionData(CK.Q_START_NPC) != null) {
-            npcStart = (Integer) context.getSessionData(CK.Q_START_NPC);
-        }
-        if (context.getSessionData(CK.Q_START_BLOCK) != null) {
-            blockStart = ConfigUtil.getLocationInfo((Location) context.getSessionData(CK.Q_START_BLOCK));
-        }
-        if (context.getSessionData(CK.REQ_MONEY) != null) {
-            moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
-        }
-        if (context.getSessionData(CK.REQ_QUEST_POINTS) != null) {
-            questPointsReq = (Integer) context.getSessionData(CK.REQ_QUEST_POINTS);
-        }
-        if (context.getSessionData(CK.REQ_ITEMS) != null) {
-            itemReqs = new LinkedList<ItemStack>();
-            removeItemReqs = new LinkedList<Boolean>();
-            itemReqs.addAll((List<ItemStack>) context.getSessionData(CK.REQ_ITEMS));
-            removeItemReqs.addAll((List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE));
-        }
-        if (context.getSessionData(CK.REQ_PERMISSION) != null) {
-            permReqs = new LinkedList<String>();
-            permReqs.addAll((List<String>) context.getSessionData(CK.REQ_PERMISSION));
-        }
-        if (context.getSessionData(CK.REQ_QUEST) != null) {
-            questReqs = new LinkedList<String>();
-            questReqs.addAll((List<String>) context.getSessionData(CK.REQ_QUEST));
-        }
-        if (context.getSessionData(CK.REQ_QUEST_BLOCK) != null) {
-            questBlocks = new LinkedList<String>();
-            questBlocks.addAll((List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK));
-        }
-        if (context.getSessionData(CK.REQ_MCMMO_SKILLS) != null) {
-            mcMMOSkillReqs = new LinkedList<String>();
-            mcMMOAmountReqs = new LinkedList<Integer>();
-            mcMMOSkillReqs.addAll((List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS));
-            mcMMOAmountReqs.addAll((List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS));
-        }
-        if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null) {
-            heroesPrimaryReq = (String) context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS);
-        }
-        if (context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null) {
-            heroesSecondaryReq = (String) context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS);
-        }
-        if (context.getSessionData(CK.REQ_CUSTOM) != null) {
-            customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-            customReqsData = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-        }
-        if (context.getSessionData(CK.REQ_FAIL_MESSAGE) != null) {
-            detailsOverrideReqs = new LinkedList<String>();
-            detailsOverrideReqs.addAll((List<String>)context.getSessionData(CK.REQ_FAIL_MESSAGE));
-        }
-        if (context.getSessionData(CK.Q_INITIAL_EVENT) != null) {
-            initialEvent = (String) context.getSessionData(CK.Q_INITIAL_EVENT);
-        }
-        if (context.getSessionData(CK.Q_REGION) != null) {
-            region = (String) context.getSessionData(CK.Q_REGION);
-        }
-        if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
-            guiDisplay = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
-        }
-        if (context.getSessionData(CK.REW_MONEY) != null) {
-            moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
-        }
-        if (context.getSessionData(CK.REW_QUEST_POINTS) != null) {
-            questPointsRew = (Integer) context.getSessionData(CK.REW_QUEST_POINTS);
-        }
-        if (context.getSessionData(CK.REW_ITEMS) != null) {
-            itemRews = (List<ItemStack>) context.getSessionData(CK.REW_ITEMS);
-        }
-        if (context.getSessionData(CK.REW_EXP) != null) {
-            expRew = (Integer) context.getSessionData(CK.REW_EXP);
-        }
-        if (context.getSessionData(CK.REW_COMMAND) != null) {
-            commandRews = new LinkedList<String>();
-            commandRews.addAll((List<String>)context.getSessionData(CK.REW_COMMAND));
-        }
-        if (context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) != null) {
-            commandDisplayOverrideRews = new LinkedList<String>();
-            commandDisplayOverrideRews.addAll((List<String>)context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY));
-        }
-        if (context.getSessionData(CK.REW_PERMISSION) != null) {
-            permRews = new LinkedList<String>();
-            permRews.addAll((List<String>) context.getSessionData(CK.REW_PERMISSION));
-        }
-        if (context.getSessionData(CK.REW_PERMISSION_WORLDS) != null) {
-            permWorldRews = new LinkedList<String>();
-            permWorldRews.addAll((List<String>) context.getSessionData(CK.REW_PERMISSION_WORLDS));
-        }
-        if (context.getSessionData(CK.REW_MCMMO_SKILLS) != null) {
-            mcMMOSkillRews = new LinkedList<String>();
-            mcMMOSkillAmounts = new LinkedList<Integer>();
-            mcMMOSkillRews.addAll((List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS));
-            mcMMOSkillAmounts.addAll((List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS));
-        }
-        if (context.getSessionData(CK.REW_HEROES_CLASSES) != null) {
-            heroesClassRews = new LinkedList<String>();
-            heroesExpRews = new LinkedList<Double>();
-            heroesClassRews.addAll((List<String>) context.getSessionData(CK.REW_HEROES_CLASSES));
-            heroesExpRews.addAll((List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS));
-        }
-        if (context.getSessionData(CK.REW_PHAT_LOOTS) != null) {
-            phatLootRews = new LinkedList<String>();
-            phatLootRews.addAll((List<String>) context.getSessionData(CK.REW_PHAT_LOOTS));
-        }
-        if (context.getSessionData(CK.REW_CUSTOM) != null) {
-            customRews = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
-            customRewsData = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
-        }
-        if (context.getSessionData(CK.REW_DETAILS_OVERRIDE) != null) {
-            detailsOverrideRews = new LinkedList<String>();
-            detailsOverrideRews.addAll((List<String>)context.getSessionData(CK.REW_DETAILS_OVERRIDE));
-        }
-        if (context.getSessionData(CK.PLN_START_DATE) != null) {
-            startDatePln = (String) context.getSessionData(CK.PLN_START_DATE);
-        }
-        if (context.getSessionData(CK.PLN_END_DATE) != null) {
-            endDatePln = (String) context.getSessionData(CK.PLN_END_DATE);
-        }
-        if (context.getSessionData(CK.PLN_REPEAT_CYCLE) != null) {
-            repeatCyclePln = (Long) context.getSessionData(CK.PLN_REPEAT_CYCLE);
-        }
-        if (context.getSessionData(CK.PLN_COOLDOWN) != null) {
-            cooldownPln = (Long) context.getSessionData(CK.PLN_COOLDOWN);
-        }
-        if (context.getSessionData(CK.OPT_ALLOW_COMMANDS) != null) {
-            allowCommandsOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_COMMANDS);
-        }
-        if (context.getSessionData(CK.OPT_ALLOW_QUITTING) != null) {
-            allowQuittingOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING);
-        }
-        if (context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) != null) {
-            useDungeonsXLPluginOpt = (Boolean) context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN);
-        }
-        if (context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null) {
-            usePartiesPluginOpt = (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN);
-        }
-        if (context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null) {
-            shareProgressLevelOpt = (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL);
-        }
-        if (context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) != null) {
-            requireSameQuestOpt = (Boolean) context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST);
-        }
-        cs.set("name", name);
-        cs.set("npc-giver-id", npcStart);
-        cs.set("block-start", blockStart);
-        cs.set("ask-message", desc);
-        cs.set("finish-message", finish);
-        cs.set("event", initialEvent);
-        cs.set("region", region);
-        cs.set("gui-display", guiDisplay);
-        if (moneyReq != null || questPointsReq != null || itemReqs != null && itemReqs.isEmpty() == false 
-                || permReqs != null && permReqs.isEmpty() == false 
-                || (questReqs != null && questReqs.isEmpty() == false) 
-                || (questBlocks != null && questBlocks.isEmpty() == false) 
-                || (mcMMOSkillReqs != null && mcMMOSkillReqs.isEmpty() == false) 
-                || heroesPrimaryReq != null || heroesSecondaryReq != null || customReqs != null) {
-            ConfigurationSection reqs = cs.createSection("requirements");
-            reqs.set("items", itemReqs);
-            reqs.set("remove-items", removeItemReqs);
-            reqs.set("money", moneyReq);
-            reqs.set("quest-points", questPointsReq);
-            reqs.set("permissions", permReqs);
-            reqs.set("quests", questReqs);
-            reqs.set("quest-blocks", questBlocks);
-            reqs.set("mcmmo-skills", mcMMOSkillReqs);
-            reqs.set("mcmmo-amounts", mcMMOAmountReqs);
-            reqs.set("heroes-primary-class", heroesPrimaryReq);
-            reqs.set("heroes-secondary-class", heroesSecondaryReq);
-            if (customReqs != null) {
-                ConfigurationSection customReqsSec = reqs.createSection("custom-requirements");
-                for (int i = 0; i < customReqs.size(); i++) {
-                    ConfigurationSection customReqSec = customReqsSec.createSection("req" + (i + 1));
-                    customReqSec.set("name", customReqs.get(i));
-                    customReqSec.set("data", customReqsData.get(i));
-                }
+        section.set("name", context.getSessionData(CK.Q_NAME) != null 
+                ? (String) context.getSessionData(CK.Q_NAME) : null);
+        section.set("ask-message", context.getSessionData(CK.Q_ASK_MESSAGE) != null 
+                ? (String) context.getSessionData(CK.Q_ASK_MESSAGE) : null);
+        section.set("finish-message", context.getSessionData(CK.Q_FINISH_MESSAGE) != null 
+                ? (String) context.getSessionData(CK.Q_FINISH_MESSAGE) : null);
+        section.set("npc-giver-id", context.getSessionData(CK.Q_START_NPC) != null 
+                ? (Integer) context.getSessionData(CK.Q_START_NPC) : null);
+        section.set("block-start", context.getSessionData(CK.Q_START_BLOCK) != null 
+                ? ConfigUtil.getLocationInfo((Location) context.getSessionData(CK.Q_START_BLOCK)) : null);
+        section.set("event", context.getSessionData(CK.Q_INITIAL_EVENT) != null 
+                ? (String) context.getSessionData(CK.Q_INITIAL_EVENT) : null);
+        section.set("region", context.getSessionData(CK.Q_REGION) != null 
+                ? (String) context.getSessionData(CK.Q_REGION) : null);
+        section.set("gui-display", context.getSessionData(CK.Q_GUIDISPLAY) != null 
+                ? (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY) : null);
+        saveRequirements(context, section);
+        saveStages(context, section);
+        saveRewards(context, section);
+        savePlanner(context, section);
+        saveOptions(context, section);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void saveRequirements(ConversationContext context, ConfigurationSection section) {
+        ConfigurationSection reqs = section.createSection("requirements");
+        reqs.set("money", context.getSessionData(CK.REQ_MONEY) != null 
+                ? (Integer) context.getSessionData(CK.REQ_MONEY) : null);
+        reqs.set("quest-points", context.getSessionData(CK.REQ_QUEST_POINTS) != null 
+                ? (Integer) context.getSessionData(CK.REQ_QUEST_POINTS) : null);
+        reqs.set("items", context.getSessionData(CK.REQ_ITEMS) != null 
+                ? (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS) : null);
+        reqs.set("remove-items", context.getSessionData(CK.REQ_ITEMS_REMOVE) != null 
+                ? (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE) : null);
+        reqs.set("permissions", context.getSessionData(CK.REQ_PERMISSION) != null 
+                ? (List<String>) context.getSessionData(CK.REQ_PERMISSION) : null);
+        reqs.set("quests", context.getSessionData(CK.REQ_QUEST) != null 
+                ? (List<String>) context.getSessionData(CK.REQ_QUEST) : null);
+        reqs.set("quest-blocks", context.getSessionData(CK.REQ_QUEST_BLOCK) != null 
+                ? (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK) : null);
+        reqs.set("mcmmo-skills", context.getSessionData(CK.REQ_MCMMO_SKILLS) != null 
+                ? (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS) : null);
+        reqs.set("mcmmo-amounts", context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) != null 
+                ? (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) : null);
+        reqs.set("heroes-primary-class", context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null 
+                ? (String) context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) : null);
+        reqs.set("heroes-secondary-class", context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null 
+                ? (String) context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) : null);
+        LinkedList<String> customReqs = context.getSessionData(CK.REQ_CUSTOM) != null 
+                ? (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM) : null;
+        LinkedList<Map<String, Object>> customReqsData = context.getSessionData(CK.REQ_CUSTOM_DATA) != null 
+                ? (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA) : null;
+        if (customReqs != null) {
+            ConfigurationSection customReqsSec = reqs.createSection("custom-requirements");
+            for (int i = 0; i < customReqs.size(); i++) {
+                ConfigurationSection customReqSec = customReqsSec.createSection("req" + (i + 1));
+                customReqSec.set("name", customReqs.get(i));
+                customReqSec.set("data", customReqsData.get(i));
             }
-            reqs.set("fail-requirement-message", detailsOverrideReqs);
-        } else {
-            cs.set("requirements", null);
         }
-        ConfigurationSection stages = cs.createSection("stages");
+        reqs.set("fail-requirement-message", context.getSessionData(CK.REQ_FAIL_MESSAGE) != null 
+                ? (List<String>)context.getSessionData(CK.REQ_FAIL_MESSAGE) : null);
+        if (reqs.getKeys(false).isEmpty()) {
+            section.set("requirements", null);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void saveStages(ConversationContext context, ConfigurationSection section) {
+        ConfigurationSection stages = section.createSection("stages");
         ConfigurationSection ordered = stages.createSection("ordered");
         String pref;
-        LinkedList<Integer> breakNames;
-        LinkedList<Integer> breakAmounts;
-        LinkedList<Short> breakDurability;
-        LinkedList<Integer> damageNames;
-        LinkedList<Integer> damageAmounts;
-        LinkedList<Short> damageDurability;
-        LinkedList<Integer> placeNames;
-        LinkedList<Integer> placeAmounts;
-        LinkedList<Short> placeDurability;
-        LinkedList<Integer> useNames;
-        LinkedList<Integer> useAmounts;
-        LinkedList<Short> useDurability;
-        LinkedList<Integer> cutNames;
-        LinkedList<Integer> cutAmounts;
-        LinkedList<Short> cutDurability;
-        LinkedList<ItemStack> craftItems;
-        LinkedList<ItemStack> smeltItems;
-        LinkedList<String> enchantments;
-        LinkedList<Integer> enchantmentIds;
-        LinkedList<Integer> enchantmentAmounts;
-        LinkedList<ItemStack> brewItems;
-        Integer cows;
-        Integer fish;
-        Integer players;
-        LinkedList<ItemStack> deliveryItems;
-        LinkedList<Integer> deliveryNPCIds;
-        LinkedList<String> deliveryMessages;
-        LinkedList<Integer> npcTalkIds;
-        LinkedList<Integer> npcKillIds;
-        LinkedList<Integer> npcKillAmounts;
-        LinkedList<String> mobs;
-        LinkedList<Integer> mobAmounts;
-        LinkedList<String> mobLocs;
-        LinkedList<Integer> mobRadii;
-        LinkedList<String> mobLocNames;
-        LinkedList<String> reachLocs;
-        LinkedList<Integer> reachRadii;
-        LinkedList<String> reachNames;
-        LinkedList<String> tames;
-        LinkedList<Integer> tameAmounts;
-        LinkedList<String> shearColors;
-        LinkedList<Integer> shearAmounts;
-        LinkedList<String> passDisplays;
-        LinkedList<LinkedList<String>> passPhrases;
-        LinkedList<String> customObjs;
-        LinkedList<Integer> customObjCounts;
-        LinkedList<Entry<String, Object>> customObjsData;
-        String script;
-        String startEvent;
-        String finishEvent;
-        String deathEvent;
-        String disconnectEvent;
-        LinkedList<String> chatEvents;
-        LinkedList<String> chatEventTriggers;
-        LinkedList<String> commandEvents;
-        LinkedList<String> commandEventTriggers;
-        Long delay;
-        LinkedList<String> overrideDisplay;
-        String delayMessage;
-        String startMessage;
-        String completeMessage;
         for (int i = 1; i <= new StageMenuPrompt(plugin, context, this).getStages(context); i++) {
             pref = "stage" + i;
             ConfigurationSection stage = ordered.createSection("" + i);
-            breakNames = null;
-            breakAmounts = null;
-            breakDurability = null;
-            damageNames = null;
-            damageAmounts = null;
-            damageDurability = null;
-            placeNames = null;
-            placeAmounts = null;
-            placeDurability = null;
-            useNames = null;
-            useAmounts = null;
-            useDurability = null;
-            cutNames = null;
-            cutAmounts = null;
-            cutDurability = null;
-            craftItems = null;
-            smeltItems = null;
-            enchantments = null;
-            enchantmentIds = null;
-            enchantmentAmounts = null;
-            brewItems = null;
-            cows = null;
-            fish = null;
-            players = null;
-            deliveryItems = null;
-            deliveryNPCIds = null;
-            deliveryMessages = null;
-            npcTalkIds = null;
-            npcKillIds = null;
-            npcKillAmounts = null;
-            mobs = null;
-            mobAmounts = null;
-            mobLocs = null;
-            mobRadii = null;
-            mobLocNames = null;
-            reachLocs = null;
-            reachRadii = null;
-            reachNames = null;
-            tames = null;
-            tameAmounts = null;
-            shearColors = null;
-            shearAmounts = null;
-            passDisplays = null;
-            passPhrases = null;
-            customObjs = null;
-            customObjCounts = null;
-            customObjsData = null;
-            script = null;
-            startEvent = null;
-            finishEvent = null;
-            deathEvent = null;
-            disconnectEvent = null;
-            chatEvents = null;
-            chatEventTriggers = null;
-            commandEvents = null;
-            commandEventTriggers = null;
-            delay = null;
-            overrideDisplay = null;
-            delayMessage = null;
-            startMessage = null;
-            completeMessage = null;
-            if (context.getSessionData(pref + CK.S_BREAK_NAMES) != null) {
-                breakNames = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_NAMES);
-                breakAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
-                breakDurability = (LinkedList<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
-            }
-            if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
-                damageNames = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_NAMES);
-                damageAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
-                damageDurability = (LinkedList<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
-            }
-            if (context.getSessionData(pref + CK.S_PLACE_NAMES) != null) {
-                placeNames = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_NAMES);
-                placeAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
-                placeDurability = (LinkedList<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
-            }
-            if (context.getSessionData(pref + CK.S_USE_NAMES) != null) {
-                useNames = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_NAMES);
-                useAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
-                useDurability = (LinkedList<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY);
-            }
-            if (context.getSessionData(pref + CK.S_CUT_NAMES) != null) {
-                cutNames = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_NAMES);
-                cutAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS);
-                cutDurability = (LinkedList<Short>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
-            }
-            if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
-                craftItems = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
-            }
-            if (context.getSessionData(pref + CK.S_SMELT_ITEMS) != null) {
-                smeltItems = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
-            }
-            if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) != null) {
-                enchantments = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES);
-                enchantmentIds = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_NAMES);
-                enchantmentAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
-            }
-            if (context.getSessionData(pref + CK.S_BREW_ITEMS) != null) {
-                brewItems = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
-            }
-            if (context.getSessionData(pref + CK.S_COW_MILK) != null) {
-                cows = (Integer) context.getSessionData(pref + CK.S_COW_MILK);
-            }
-            if (context.getSessionData(pref + CK.S_FISH) != null) {
-                fish = (Integer) context.getSessionData(pref + CK.S_FISH);
-            }
-            if (context.getSessionData(pref + CK.S_PLAYER_KILL) != null) {
-                players = (Integer) context.getSessionData(pref + CK.S_PLAYER_KILL);
-            }
-            if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null) {
-                deliveryItems = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
-                deliveryNPCIds = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS);
-                deliveryMessages = (LinkedList<String>) context.getSessionData(pref + CK.S_DELIVERY_MESSAGES);
-            }
-            if (context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) != null) {
-                npcTalkIds = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO);
-            }
-            if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) != null) {
-                npcKillIds = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL);
-                npcKillAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
-            }
-            if (context.getSessionData(pref + CK.S_MOB_TYPES) != null) {
-                mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_TYPES);
-                mobAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
-                if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) != null) {
-                    mobLocs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS);
-                    mobRadii = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS);
-                    mobLocNames = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES);
-                }
-            }
-            if (context.getSessionData(pref + CK.S_REACH_LOCATIONS) != null) {
-                reachLocs = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS);
-                reachRadii = (LinkedList<Integer>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS);
-                reachNames = (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES);
-            }
-            if (context.getSessionData(pref + CK.S_TAME_TYPES) != null) {
-                tames = (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES);
-                tameAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
-            }
-            if (context.getSessionData(pref + CK.S_SHEAR_COLORS) != null) {
-                shearColors = (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS);
-                shearAmounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
-            }
-            if (context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null) {
-                passDisplays = (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS);
-                passPhrases = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
-            }
-            if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
-                customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-                customObjCounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
-                customObjsData 
-                        = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
-            }
-            if (context.getSessionData(pref + CK.S_START_EVENT) != null) {
-                startEvent = (String) context.getSessionData(pref + CK.S_START_EVENT);
-            }
-            if (context.getSessionData(pref + CK.S_FINISH_EVENT) != null) {
-                finishEvent = (String) context.getSessionData(pref + CK.S_FINISH_EVENT);
-            }
-            if (context.getSessionData(pref + CK.S_DEATH_EVENT) != null) {
-                deathEvent = (String) context.getSessionData(pref + CK.S_DEATH_EVENT);
-            }
-            if (context.getSessionData(pref + CK.S_DISCONNECT_EVENT) != null) {
-                disconnectEvent = (String) context.getSessionData(pref + CK.S_DISCONNECT_EVENT);
-            }
-            if (context.getSessionData(pref + CK.S_CHAT_EVENTS) != null) {
-                chatEvents = (LinkedList<String>) context.getSessionData(pref + CK.S_CHAT_EVENTS);
-                chatEventTriggers = (LinkedList<String>) context.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS);
-            }
-            if (context.getSessionData(pref + CK.S_COMMAND_EVENTS) != null) {
-                commandEvents = (LinkedList<String>) context.getSessionData(pref + CK.S_COMMAND_EVENTS);
-                commandEventTriggers = (LinkedList<String>) context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS);
-            }
-            if (context.getSessionData(pref + CK.S_DELAY) != null) {
-                delay = (Long) context.getSessionData(pref + CK.S_DELAY);
-                delayMessage = (String) context.getSessionData(pref + CK.S_DELAY_MESSAGE);
-            }
-            if (context.getSessionData(pref + CK.S_DENIZEN) != null) {
-                script = (String) context.getSessionData(pref + CK.S_DENIZEN);
-            }
-            if (context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) != null) {
-                overrideDisplay = (LinkedList<String>) context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY);
-            }
-            if (context.getSessionData(pref + CK.S_START_MESSAGE) != null) {
-                startMessage = (String) context.getSessionData(pref + CK.S_START_MESSAGE);
-            }
-            if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) != null) {
-                completeMessage = (String) context.getSessionData(pref + CK.S_COMPLETE_MESSAGE);
-            }
-            if (breakNames != null && breakNames.isEmpty() == false) {
-                stage.set("break-block-names", breakNames);
-                stage.set("break-block-amounts", breakAmounts);
-                stage.set("break-block-durability", breakDurability);
-            }
-            if (damageNames != null && damageNames.isEmpty() == false) {
-                stage.set("damage-block-names", damageNames);
-                stage.set("damage-block-amounts", damageAmounts);
-                stage.set("damage-block-durability", damageDurability);
-            }
-            if (placeNames != null && placeNames.isEmpty() == false) {
-                stage.set("place-block-names", placeNames);
-                stage.set("place-block-amounts", placeAmounts);
-                stage.set("place-block-durability", placeDurability);
-            }
-            if (useNames != null && useNames.isEmpty() == false) {
-                stage.set("use-block-names", useNames);
-                stage.set("use-block-amounts", useAmounts);
-                stage.set("use-block-durability", useDurability);
-            }
-            if (cutNames != null && cutNames.isEmpty() == false) {
-                stage.set("cut-block-names", cutNames);
-                stage.set("cut-block-amounts", cutAmounts);
-                stage.set("cut-block-durability", cutDurability);
-            }
-            if (craftItems != null && craftItems.isEmpty() == false) {
-                stage.set("items-to-craft", craftItems);
-            } else {
-                stage.set("items-to-craft", null);
-            }
-            if (smeltItems != null && smeltItems.isEmpty() == false) {
-                stage.set("items-to-smelt", smeltItems);
-            } else {
-                stage.set("items-to-smelt", null);
-            }
-            stage.set("enchantments", enchantments);
-            stage.set("enchantment-item-names", enchantmentIds);
-            stage.set("enchantment-amounts", enchantmentAmounts);
-            if (brewItems != null && brewItems.isEmpty() == false) {
-                stage.set("items-to-brew", brewItems);
-            } else {
-                stage.set("items-to-brew", null);
-            }
-            stage.set("cows-to-milk", cows);
-            stage.set("fish-to-catch", fish);
-            stage.set("players-to-kill", players);
-            if (deliveryItems != null && deliveryItems.isEmpty() == false) {
-                stage.set("items-to-deliver", deliveryItems);
-            } else {
-                stage.set("items-to-deliver", null);
-            }
-            stage.set("npc-delivery-ids", deliveryNPCIds);
-            stage.set("delivery-messages", deliveryMessages);
-            stage.set("npc-ids-to-talk-to", npcTalkIds);
-            stage.set("npc-ids-to-kill", npcKillIds);
-            stage.set("npc-kill-amounts", npcKillAmounts);
-            stage.set("mobs-to-kill", mobs);
-            stage.set("mob-amounts", mobAmounts);
-            stage.set("locations-to-kill", mobLocs);
-            stage.set("kill-location-radii", mobRadii);
-            stage.set("kill-location-names", mobLocNames);
-            stage.set("locations-to-reach", reachLocs);
-            stage.set("reach-location-radii", reachRadii);
-            stage.set("reach-location-names", reachNames);
-            stage.set("mobs-to-tame", tames);
-            stage.set("mob-tame-amounts", tameAmounts);
-            stage.set("sheep-to-shear", shearColors);
-            stage.set("sheep-amounts", shearAmounts);
-            stage.set("password-displays", passDisplays);
-            if (passPhrases != null) {
+            stage.set("break-block-names", context.getSessionData(pref + CK.S_BREAK_NAMES) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_NAMES) : null);
+            stage.set("break-block-amounts", context.getSessionData(pref + CK.S_BREAK_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS) : null);
+            stage.set("break-block-durability", context.getSessionData(pref + CK.S_BREAK_DURABILITY) != null 
+                    ? (LinkedList<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY) : null);
+            stage.set("damage-block-names", context.getSessionData(pref + CK.S_DAMAGE_NAMES) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_NAMES) : null);
+            stage.set("damage-block-amounts", context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) : null);
+            stage.set("damage-block-durability", context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) != null 
+                    ? (LinkedList<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) : null);
+            stage.set("place-block-names", context.getSessionData(pref + CK.S_PLACE_NAMES) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_NAMES) : null);
+            stage.set("place-block-amounts", context.getSessionData(pref + CK.S_PLACE_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS) : null);
+            stage.set("place-block-durability", context.getSessionData(pref + CK.S_PLACE_DURABILITY) != null 
+                    ? (LinkedList<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY) : null);
+            stage.set("use-block-names", context.getSessionData(pref + CK.S_USE_NAMES) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_NAMES) : null);
+            stage.set("use-block-amounts", context.getSessionData(pref + CK.S_USE_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS) : null);
+            stage.set("use-block-durability", context.getSessionData(pref + CK.S_USE_DURABILITY) != null 
+                    ? (LinkedList<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY) : null);
+            stage.set("cut-block-names", context.getSessionData(pref + CK.S_CUT_NAMES) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_NAMES) : null);
+            stage.set("cut-block-amounts", context.getSessionData(pref + CK.S_CUT_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS) : null);
+            stage.set("cut-block-durability", context.getSessionData(pref + CK.S_CUT_DURABILITY) != null 
+                    ? (LinkedList<Short>) context.getSessionData(pref + CK.S_CUT_DURABILITY) : null);
+            stage.set("items-to-craft", context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null 
+                    ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS) : null);
+            stage.set("items-to-smelt", context.getSessionData(pref + CK.S_SMELT_ITEMS) != null 
+                    ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS) : null);
+            stage.set("enchantments", context.getSessionData(pref + CK.S_ENCHANT_TYPES) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES) : null);
+            stage.set("enchantment-item-names", context.getSessionData(pref + CK.S_ENCHANT_NAMES) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_NAMES) : null);
+            stage.set("enchantment-amounts", context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS) : null);
+            stage.set("items-to-brew", context.getSessionData(pref + CK.S_BREW_ITEMS) != null 
+                    ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS) : null);
+            stage.set("cows-to-milk", context.getSessionData(pref + CK.S_COW_MILK) != null 
+                    ? (Integer) context.getSessionData(pref + CK.S_COW_MILK) : null);
+            stage.set("fish-to-catch", context.getSessionData(pref + CK.S_FISH) != null 
+                    ? (Integer) context.getSessionData(pref + CK.S_FISH) : null);
+            stage.set("players-to-kill", context.getSessionData(pref + CK.S_PLAYER_KILL) != null 
+                    ? (Integer) context.getSessionData(pref + CK.S_PLAYER_KILL) : null);
+            stage.set("items-to-deliver", context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null 
+                    ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS) : null);
+            stage.set("npc-delivery-ids", context.getSessionData(pref + CK.S_DELIVERY_NPCS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS) : null);
+            stage.set("delivery-messages", context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) : null);
+            stage.set("npc-ids-to-talk-to", context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) : null);
+            stage.set("npc-ids-to-kill", context.getSessionData(pref + CK.S_NPCS_TO_KILL) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL) : null);
+            stage.set("npc-kill-amounts", context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) : null);
+            stage.set("mobs-to-kill", context.getSessionData(pref + CK.S_MOB_TYPES) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_TYPES) : null);
+            stage.set("mob-amounts", context.getSessionData(pref + CK.S_MOB_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS) : null);
+            stage.set("locations-to-kill", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) : null);
+            stage.set("kill-location-radii", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS) : null);
+            stage.set("kill-location-names", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES) : null);
+            stage.set("locations-to-reach", context.getSessionData(pref + CK.S_REACH_LOCATIONS) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS) : null);
+            stage.set("reach-location-radii", context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS) : null);
+            stage.set("reach-location-names", context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES) : null);
+            stage.set("mobs-to-tame", context.getSessionData(pref + CK.S_TAME_TYPES) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES) : null);
+            stage.set("mob-tame-amounts", context.getSessionData(pref + CK.S_TAME_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS) : null);
+            stage.set("sheep-to-shear", context.getSessionData(pref + CK.S_SHEAR_COLORS) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS) : null);
+            stage.set("sheep-amounts", context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) != null 
+                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) : null);
+            stage.set("password-displays", context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null 
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) : null);
+            LinkedList<LinkedList<String>> passPhrases 
+                    = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
+            if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
                 LinkedList<String> toPut = new LinkedList<String>();
                 for (LinkedList<String> list : passPhrases) {
                     String combine = "";
@@ -2101,7 +1709,12 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 stage.set("password-phrases", toPut);
             }
-            if (customObjs != null && customObjs.isEmpty() == false) {
+            LinkedList<String> customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+            LinkedList<Integer> customObjCounts 
+                    = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
+            LinkedList<Entry<String, Object>> customObjsData 
+                    = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
+            if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
                 ConfigurationSection sec = stage.createSection("custom-objectives");
                 for (int index = 0; index < customObjs.size(); index++) {
                     ConfigurationSection sec2 = sec.createSection("custom" + (index + 1));
@@ -2124,87 +1737,125 @@ public class QuestFactory implements ConversationAbandonedListener {
                     }
                 }
             }
-            stage.set("script-to-run", script);
-            stage.set("start-event", startEvent);
-            stage.set("finish-event", finishEvent);
-            stage.set("death-event", deathEvent);
-            stage.set("disconnect-event", disconnectEvent);
-            if (chatEvents != null && chatEvents.isEmpty() == false) {
-                stage.set("chat-events", chatEvents);
-                stage.set("chat-event-triggers", chatEventTriggers);
-            }
-            if (commandEvents != null && commandEvents.isEmpty() == false) {
-                stage.set("command-events", commandEvents);
-                stage.set("command-event-triggers", commandEventTriggers);
-            }
-            if (delay != null) {
+            stage.set("script-to-run", context.getSessionData(pref + CK.S_DENIZEN) != null 
+                    ? context.getSessionData(pref + CK.S_DENIZEN) : null);
+            stage.set("start-event", context.getSessionData(pref + CK.S_START_EVENT) != null 
+                    ? context.getSessionData(pref + CK.S_START_EVENT) : null);
+            stage.set("finish-event", context.getSessionData(pref + CK.S_FINISH_EVENT) != null 
+                    ? context.getSessionData(pref + CK.S_FINISH_EVENT) : null);
+            stage.set("death-event", context.getSessionData(pref + CK.S_DEATH_EVENT) != null 
+                    ? context.getSessionData(pref + CK.S_DEATH_EVENT) : null);
+            stage.set("disconnect-event", context.getSessionData(pref + CK.S_DISCONNECT_EVENT) != null 
+                    ? context.getSessionData(pref + CK.S_DISCONNECT_EVENT) : null);
+            stage.set("chat-events", context.getSessionData(pref + CK.S_CHAT_EVENTS) != null 
+                    ? context.getSessionData(pref + CK.S_CHAT_EVENTS) : null);
+            stage.set("chat-event-triggers", context.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS) != null 
+                    ? context.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS) : null);
+            stage.set("command-events", context.getSessionData(pref + CK.S_COMMAND_EVENTS) != null 
+                    ? context.getSessionData(pref + CK.S_COMMAND_EVENTS) : null);
+            stage.set("command-event-triggers", context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS) != null 
+                    ? context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS) : null);
+            Long delay = (Long) context.getSessionData(pref + CK.S_DELAY);
+            if (context.getSessionData(pref + CK.S_DELAY) != null) {
                 stage.set("delay", delay.intValue() / 1000);
             }
-            stage.set("delay-message", delayMessage == null ? delayMessage : delayMessage.replace("\\n", "\n"));
-            stage.set("objective-override", overrideDisplay);
-            stage.set("start-message", startMessage == null ? startMessage : startMessage.replace("\\n", "\n"));
-            stage.set("complete-message", completeMessage == null ? completeMessage 
-                    : completeMessage.replace("\\n", "\n"));
+            String delayMessage = (String) context.getSessionData(pref + CK.S_DELAY_MESSAGE);
+            if (context.getSessionData(pref + CK.S_DELAY_MESSAGE) != null) {
+                stage.set("delay-message", delayMessage == null ? delayMessage : delayMessage.replace("\\n", "\n"));
+            }
+            String startMessage = (String) context.getSessionData(pref + CK.S_START_MESSAGE);
+            if (context.getSessionData(pref + CK.S_START_MESSAGE) != null) {
+                stage.set("start-message", startMessage == null ? startMessage : startMessage.replace("\\n", "\n"));
+            }
+            String completeMessage = (String) context.getSessionData(pref + CK.S_COMPLETE_MESSAGE);
+            if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) != null) {
+                stage.set("complete-message", completeMessage == null ? completeMessage 
+                        : completeMessage.replace("\\n", "\n"));
+            }
+            stage.set("objective-override", context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) != null 
+                    ? context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) : null);
         }
-        if (moneyRew != null || questPointsRew != null || itemRews != null && itemRews.isEmpty() == false 
-                || permRews != null && permRews.isEmpty() == false || expRew != null 
-                || commandRews != null && commandRews.isEmpty() == false 
-                || commandDisplayOverrideRews != null && commandDisplayOverrideRews.isEmpty() == false 
-                || mcMMOSkillRews != null || RPGItemRews != null 
-                || heroesClassRews != null && heroesClassRews.isEmpty() == false 
-                || phatLootRews != null && phatLootRews.isEmpty() == false 
-                || customRews != null && customRews.isEmpty() == false) {
-            ConfigurationSection rews = cs.createSection("rewards");
-            rews.set("items", (itemRews != null && itemRews.isEmpty() == false) ? itemRews : null);
-            rews.set("money", moneyRew);
-            rews.set("quest-points", questPointsRew);
-            rews.set("exp", expRew);
-            rews.set("permissions", permRews);
-            rews.set("permission-worlds", permWorldRews);
-            rews.set("commands", commandRews);
-            rews.set("commands-override-display", commandDisplayOverrideRews);
-            rews.set("mcmmo-skills", mcMMOSkillRews);
-            rews.set("mcmmo-levels", mcMMOSkillAmounts);
-            rews.set("rpgitem-names", RPGItemRews);
-            rews.set("rpgitem-amounts", RPGItemAmounts);
-            rews.set("heroes-exp-classes", heroesClassRews);
-            rews.set("heroes-exp-amounts", heroesExpRews);
-            rews.set("phat-loots", phatLootRews);
-            if (customRews != null) {
-                ConfigurationSection customRewsSec = rews.createSection("custom-rewards");
-                for (int i = 0; i < customRews.size(); i++) {
-                    ConfigurationSection customRewSec = customRewsSec.createSection("req" + (i + 1));
-                    customRewSec.set("name", customRews.get(i));
-                    customRewSec.set("data", customRewsData.get(i));
-                }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void saveRewards(ConversationContext context, ConfigurationSection section) {
+        ConfigurationSection rews = section.createSection("rewards");
+        rews.set("items", context.getSessionData(CK.REW_MONEY) != null 
+                ? (Integer) context.getSessionData(CK.REW_MONEY) : null);
+        rews.set("money", context.getSessionData(CK.REW_QUEST_POINTS) != null 
+                ? (Integer) context.getSessionData(CK.REW_QUEST_POINTS) : null);
+        rews.set("quest-points", context.getSessionData(CK.REW_ITEMS) != null 
+                ? (List<ItemStack>) context.getSessionData(CK.REW_ITEMS) : null);
+        rews.set("exp", context.getSessionData(CK.REW_EXP) != null 
+                ? (Integer) context.getSessionData(CK.REW_EXP) : null);
+        rews.set("permissions", context.getSessionData(CK.REW_COMMAND) != null 
+                ? (List<String>)context.getSessionData(CK.REW_COMMAND) : null);
+        rews.set("permission-worlds", context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) != null 
+                ? (List<String>)context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) : null);
+        rews.set("commands", context.getSessionData(CK.REW_PERMISSION) != null 
+                ? (List<String>) context.getSessionData(CK.REW_PERMISSION) : null);
+        rews.set("commands-override-display", context.getSessionData(CK.REW_PERMISSION_WORLDS) != null 
+                ? (List<String>) context.getSessionData(CK.REW_PERMISSION_WORLDS) : null);
+        rews.set("mcmmo-skills", context.getSessionData(CK.REW_MCMMO_SKILLS) != null 
+                ? (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS) : null);
+        rews.set("mcmmo-levels", context.getSessionData(CK.REW_MCMMO_AMOUNTS) != null 
+                ? (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS) : null);
+        rews.set("heroes-exp-classes", context.getSessionData(CK.REW_HEROES_CLASSES) != null 
+                ? (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES) : null);
+        rews.set("heroes-exp-amounts", context.getSessionData(CK.REW_HEROES_AMOUNTS) != null 
+                ? (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS) : null);
+        rews.set("phat-loots", context.getSessionData(CK.REW_PHAT_LOOTS) != null 
+                ? (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS) : null);
+        LinkedList<String> customRews = context.getSessionData(CK.REW_CUSTOM) != null 
+                ? (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM) : null;
+        LinkedList<Map<String, Object>> customRewsData = context.getSessionData(CK.REW_CUSTOM_DATA) != null 
+                ? (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA) : null;
+        if (customRews != null) {
+            ConfigurationSection customRewsSec = rews.createSection("custom-rewards");
+            for (int i = 0; i < customRews.size(); i++) {
+                ConfigurationSection customRewSec = customRewsSec.createSection("req" + (i + 1));
+                customRewSec.set("name", customRews.get(i));
+                customRewSec.set("data", customRewsData.get(i));
             }
-            rews.set("details-override", detailsOverrideRews);
-        } else {
-            cs.set("rewards", null);
         }
-        if (startDatePln != null || endDatePln != null || repeatCyclePln != null || cooldownPln != null) {
-            ConfigurationSection sch = cs.createSection("planner");
-            if (startDatePln != null) {
-                sch.set("start", startDatePln);
-            }
-            if (endDatePln != null) {
-                sch.set("end", endDatePln);
-            }
-            if (repeatCyclePln != null) {
-                sch.set("repeat", repeatCyclePln.intValue() / 1000);
-            }
-            if (cooldownPln != null) {
-                sch.set("cooldown", cooldownPln.intValue() / 1000);
-            }
-        } else {
-            cs.set("planner", null);
+        rews.set("details-override", context.getSessionData(CK.REW_DETAILS_OVERRIDE) != null 
+                ? (List<String>)context.getSessionData(CK.REW_DETAILS_OVERRIDE) : null);
+        if (rews.getKeys(false).isEmpty()) {
+            section.set("rewards", null);
         }
-        ConfigurationSection sch = cs.createSection("options");
-        sch.set("allow-commands", allowCommandsOpt);
-        sch.set("allow-quitting", allowQuittingOpt);
-        sch.set("use-dungeonsxl-plugin", useDungeonsXLPluginOpt);
-        sch.set("use-parties-plugin", usePartiesPluginOpt);
-        sch.set("share-progress-level", shareProgressLevelOpt);
-        sch.set("require-same-quest", requireSameQuestOpt);
+    }
+    
+    private void savePlanner(ConversationContext context, ConfigurationSection section) {
+        ConfigurationSection pln = section.createSection("planner");
+        pln.set("start", context.getSessionData(CK.PLN_START_DATE) != null 
+                ? (String) context.getSessionData(CK.PLN_START_DATE) : null);
+        pln.set("end", context.getSessionData(CK.PLN_END_DATE) != null 
+                ? (String) context.getSessionData(CK.PLN_END_DATE) : null);
+        pln.set("repeat", context.getSessionData(CK.PLN_REPEAT_CYCLE) != null 
+                ? (Long) context.getSessionData(CK.PLN_REPEAT_CYCLE) : null);
+        pln.set("cooldown", context.getSessionData(CK.PLN_COOLDOWN) != null 
+                ? (Long) context.getSessionData(CK.PLN_COOLDOWN) : null);
+        if (pln.getKeys(false).isEmpty()) {
+            section.set("planner", null);
+        }
+    }
+    
+    private void saveOptions(ConversationContext context, ConfigurationSection section) {
+        ConfigurationSection opts = section.createSection("options");
+        opts.set("allow-commands", context.getSessionData(CK.OPT_ALLOW_COMMANDS) != null 
+                ? (Boolean) context.getSessionData(CK.OPT_ALLOW_COMMANDS) : null);
+        opts.set("allow-quitting", context.getSessionData(CK.OPT_ALLOW_QUITTING) != null 
+                ? (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING) : null);
+        opts.set("use-dungeonsxl-plugin", context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) != null 
+                ? (Boolean) context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) : null);
+        opts.set("use-parties-plugin", context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null 
+                ? (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) : null);
+        opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null 
+                ? (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) : null);
+        opts.set("require-same-quest", context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) != null 
+                ? (Boolean) context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) : null);
+        if (opts.getKeys(false).isEmpty()) {
+            section.set("options", null);
+        }
     }
 }
