@@ -73,11 +73,9 @@ public class ActionFactory implements ConversationAbandonedListener {
     private Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
     private List<String> names = new LinkedList<String>();
     private ConversationFactory convoCreator;
-    private File actionsFile;
 
     public ActionFactory(Quests plugin) {
         this.plugin = plugin;
-        actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
                 .withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new ActionMenuPrompt(plugin, null))
@@ -1140,8 +1138,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 
     private void deleteAction(ConversationContext context) {
         YamlConfiguration data = new YamlConfiguration();
+        File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         try {
-            actionsFile = new File(plugin.getDataFolder(), "actions.yml");
             data.load(actionsFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -1173,8 +1171,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 
     private void saveAction(ConversationContext context) {
         YamlConfiguration data = new YamlConfiguration();
+        File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         try {
-            actionsFile = new File(plugin.getDataFolder(), "actions.yml");
             data.load(actionsFile);
         } catch (IOException e) {
             e.printStackTrace();

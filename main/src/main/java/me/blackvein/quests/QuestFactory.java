@@ -73,11 +73,9 @@ public class QuestFactory implements ConversationAbandonedListener {
     private HashSet<Player> selectingNpcs = new HashSet<Player>();
     private List<String> names = new LinkedList<String>();
     private ConversationFactory convoCreator;
-    private File questsFile;
     
     public QuestFactory(Quests plugin) {
         this.plugin = plugin;
-        questsFile = new File(plugin.getDataFolder(), "quests.yml");
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
                 .withFirstPrompt(new QuestMenuPrompt(plugin, null)).withTimeout(3600)
@@ -1048,6 +1046,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
     private void deleteQuest(ConversationContext context) {
         YamlConfiguration data = new YamlConfiguration();
+        File questsFile = new File(plugin.getDataFolder(), "quests.yml");
         try {
             data.load(questsFile);
         } catch (IOException e) {
