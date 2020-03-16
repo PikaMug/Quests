@@ -18,7 +18,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
@@ -34,12 +33,10 @@ import org.bukkit.conversations.StringPrompt;
 public class PlannerPrompt extends QuestsEditorNumericPrompt {
     
     private final Quests plugin;
-    private final QuestFactory factory;
 
-    public PlannerPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
-        super(context, qf);
+    public PlannerPrompt(Quests plugin, ConversationContext context) {
+        super(context);
         this.plugin = plugin;
-        factory = qf;
     }
     
     private final int size = 5;
@@ -138,7 +135,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
         QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
@@ -155,20 +152,20 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
         case 1:
-            return new DateTimePrompt(plugin, PlannerPrompt.this, "start");
+            return new DateTimePrompt(PlannerPrompt.this, "start");
         case 2:
-            return new DateTimePrompt(plugin, PlannerPrompt.this, "end");
+            return new DateTimePrompt(PlannerPrompt.this, "end");
         case 3:
             if (context.getSessionData(CK.PLN_START_DATE) != null && context.getSessionData(CK.PLN_END_DATE) != null) {
                 return new RepeatPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new PlannerPrompt(plugin, context, factory);
+                return new PlannerPrompt(plugin, context);
             }
         case 4:
             return new CooldownPrompt();
         case 5:
-            return factory.returnToMenu(context);
+            return plugin.getQuestFactory().returnToMenu(context);
         default:
             return null;
         }
@@ -184,11 +181,11 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new PlannerPrompt(plugin, context, factory);
+                return new PlannerPrompt(plugin, context);
             }
             if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.PLN_REPEAT_CYCLE, null);
-                return new PlannerPrompt(plugin, context, factory);
+                return new PlannerPrompt(plugin, context);
             }
             long delay;
             try {
@@ -204,7 +201,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                         .replace("<input>", input));
                 return new RepeatPrompt();
             }
-            return new PlannerPrompt(plugin, context, factory);
+            return new PlannerPrompt(plugin, context);
         }
     }
     
@@ -218,11 +215,11 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new PlannerPrompt(plugin, context, factory);
+                return new PlannerPrompt(plugin, context);
             }
             if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.PLN_COOLDOWN, null);
-                return new PlannerPrompt(plugin, context, factory);
+                return new PlannerPrompt(plugin, context);
             }
             long delay;
             try {
@@ -238,7 +235,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                         .replace("<input>", input));
                 return new CooldownPrompt();
             }
-            return new PlannerPrompt(plugin, context, factory);
+            return new PlannerPrompt(plugin, context);
         }
     }
     
@@ -260,7 +257,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         
         TimeZone tz = TimeZone.getTimeZone(date[6]);
         cal.setTimeZone(tz);
-        String[] iso = plugin.getLang().getISO().split("-");
+        String[] iso = Lang.getISO().split("-");
         Locale loc = new Locale(iso[0], iso[1]);
         Double zhour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         String[] sep = String.valueOf(zhour).replace("-", "").split("\\.");

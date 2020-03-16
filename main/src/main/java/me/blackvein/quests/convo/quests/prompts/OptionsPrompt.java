@@ -17,7 +17,6 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 
 import me.blackvein.quests.Options;
-import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
@@ -27,16 +26,14 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
 public class OptionsPrompt extends QuestsEditorNumericPrompt {
-    
+
     private final Quests plugin;
-    private final QuestFactory factory;
     private String tempKey;
     private Prompt tempPrompt;
 
-    public OptionsPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
-        super(context, qf);
+    public OptionsPrompt(Quests plugin, ConversationContext context) {
+        super(context);
         this.plugin = plugin;
-        factory = qf;
     }
     
     private final int size = 3;
@@ -87,7 +84,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
         QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.DARK_GREEN + getTitle(context)
@@ -104,19 +101,19 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
         case 1:
-            return new GeneralPrompt(plugin, context, factory);
+            return new GeneralPrompt(plugin, context);
         case 2:
-            return new MultiplayerPrompt(plugin, context, factory);
+            return new MultiplayerPrompt(plugin, context);
         case 3:
-            return factory.returnToMenu(context);
+            return plugin.getQuestFactory().returnToMenu(context);
         default:
             return null;
         }
     }
     
     public class TrueFalsePrompt extends QuestsEditorStringPrompt {
-        public TrueFalsePrompt(Quests plugin, ConversationContext context, QuestFactory factory) {
-            super(context, factory);
+        public TrueFalsePrompt(Quests plugin, ConversationContext context) {
+            super(context);
         }
 
         private final int size = 4;
@@ -156,7 +153,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(ConversationContext context) {
             QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, factory, this);
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = Lang.get("optBooleanPrompt");
@@ -177,7 +174,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     context.setSessionData(tempKey, false);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new TrueFalsePrompt(plugin, context, factory);
+                    return new TrueFalsePrompt(plugin, context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(tempKey, null);
@@ -188,8 +185,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     public class LevelPrompt extends QuestsEditorStringPrompt {
-        public LevelPrompt(Quests plugin, ConversationContext context, QuestFactory factory) {
-            super(context, factory);
+        public LevelPrompt(Quests plugin, ConversationContext context) {
+            super(context);
         }
 
         private final int size = 6;
@@ -249,7 +246,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(ConversationContext context) {
             QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, factory, this);
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = Lang.get("optNumberPrompt");
@@ -284,8 +281,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     public class GeneralPrompt extends QuestsEditorNumericPrompt {
-        public GeneralPrompt(Quests plugin, ConversationContext context, QuestFactory factory) {
-            super(context, factory);
+        public GeneralPrompt(Quests plugin, ConversationContext context) {
+            super(context);
         }
 
         private final int size = 3;
@@ -365,7 +362,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(ConversationContext context) {
             QuestsEditorPostOpenNumericPromptEvent event 
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.DARK_GREEN + "- " + getTitle(context) + " -\n";
@@ -381,17 +378,17 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = CK.OPT_ALLOW_COMMANDS;
-                tempPrompt = new GeneralPrompt(plugin, context, factory);
-                return new TrueFalsePrompt(plugin, context, factory);
+                tempPrompt = new GeneralPrompt(plugin, context);
+                return new TrueFalsePrompt(plugin, context);
             case 2:
                 tempKey = CK.OPT_ALLOW_QUITTING;
-                tempPrompt = new GeneralPrompt(plugin, context, factory);
-                return new TrueFalsePrompt(plugin, context, factory);
+                tempPrompt = new GeneralPrompt(plugin, context);
+                return new TrueFalsePrompt(plugin, context);
             case 3:
                 tempKey = null;
                 tempPrompt = null;
                 try {
-                    return new OptionsPrompt(plugin, context, factory);
+                    return new OptionsPrompt(plugin, context);
                 } catch (Exception e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                     return Prompt.END_OF_CONVERSATION;
@@ -403,8 +400,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     public class MultiplayerPrompt extends QuestsEditorNumericPrompt {
-        public MultiplayerPrompt(Quests plugin, ConversationContext context, QuestFactory factory) {
-            super(context, factory);
+        public MultiplayerPrompt(Quests plugin, ConversationContext context) {
+            super(context);
         }
 
         private final int size = 5;
@@ -512,7 +509,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(ConversationContext context) {
             QuestsEditorPostOpenNumericPromptEvent event 
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.DARK_GREEN + "- " + getTitle(context) + " -\n";
@@ -528,25 +525,25 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = CK.OPT_USE_DUNGEONSXL_PLUGIN;
-                tempPrompt = new MultiplayerPrompt(plugin, context, factory);
-                return new TrueFalsePrompt(plugin, context, factory);
+                tempPrompt = new MultiplayerPrompt(plugin, context);
+                return new TrueFalsePrompt(plugin, context);
             case 2:
                 tempKey = CK.OPT_USE_PARTIES_PLUGIN;
-                tempPrompt = new MultiplayerPrompt(plugin, context, factory);
-                return new TrueFalsePrompt(plugin, context, factory);
+                tempPrompt = new MultiplayerPrompt(plugin, context);
+                return new TrueFalsePrompt(plugin, context);
             case 3:
                 tempKey = CK.OPT_SHARE_PROGRESS_LEVEL;
-                tempPrompt = new MultiplayerPrompt(plugin, context, factory);
-                return new LevelPrompt(plugin, context, factory);
+                tempPrompt = new MultiplayerPrompt(plugin, context);
+                return new LevelPrompt(plugin, context);
             case 4:
                 tempKey = CK.OPT_REQUIRE_SAME_QUEST;
-                tempPrompt = new MultiplayerPrompt(plugin, context, factory);
-                return new TrueFalsePrompt(plugin, context, factory);
+                tempPrompt = new MultiplayerPrompt(plugin, context);
+                return new TrueFalsePrompt(plugin, context);
             case 5:
                 tempKey = null;
                 tempPrompt = null;
                 try {
-                    return new OptionsPrompt(plugin, context, factory);
+                    return new OptionsPrompt(plugin, context);
                 } catch (Exception e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                     return Prompt.END_OF_CONVERSATION;

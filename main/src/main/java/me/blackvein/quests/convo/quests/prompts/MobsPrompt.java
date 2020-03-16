@@ -30,7 +30,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 
-import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
@@ -41,14 +40,12 @@ public class MobsPrompt extends FixedSetPrompt {
     private final Quests plugin;
     private final int stageNum;
     private final String pref;
-    private final QuestFactory factory;
 
-    public MobsPrompt(Quests plugin, int stageNum, QuestFactory qf) {
+    public MobsPrompt(Quests plugin, int stageNum) {
         super("1", "2", "3", "4", "5", "6");
         this.plugin = plugin;
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
-        this.factory = qf;
     }
 
     @SuppressWarnings("unchecked")
@@ -149,7 +146,7 @@ public class MobsPrompt extends FixedSetPrompt {
             return new ShearListPrompt();
         }
         try {
-            return new StageMainPrompt(plugin, stageNum, context, factory);
+            return new StageMainPrompt(plugin, stageNum, context);
         } catch (Exception e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;
@@ -252,9 +249,9 @@ public class MobsPrompt extends FixedSetPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoMobTypes"));
                     return new MobListPrompt();
                 } else {
-                    Map<UUID, Block> temp = factory.getSelectedKillLocations();
+                    Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                     temp.put(((Player) context.getForWhom()).getUniqueId(), null);
-                    factory.setSelectedKillLocations(temp);
+                    plugin.getQuestFactory().setSelectedKillLocations(temp);
                     return new MobLocationPrompt();
                 }
             } else if (input.equalsIgnoreCase("4")) {
@@ -313,13 +310,13 @@ public class MobsPrompt extends FixedSetPrompt {
                 if (one == two) {
                     if (three != 0 || four != 0 || five != 0) {
                         if (two == three && three == four && four == five) {
-                            return new StageMainPrompt(plugin, stageNum, context, factory);
+                            return new StageMainPrompt(plugin, stageNum, context);
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                             return new MobListPrompt();
                         }
                     } else {
-                        return new StageMainPrompt(plugin, stageNum, context, factory);
+                        return new StageMainPrompt(plugin, stageNum, context);
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
@@ -443,7 +440,7 @@ public class MobsPrompt extends FixedSetPrompt {
         public Prompt acceptInput(ConversationContext context, String input) {
             Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
-                Block block = factory.getSelectedKillLocations().get(player.getUniqueId());
+                Block block = plugin.getQuestFactory().getSelectedKillLocations().get(player.getUniqueId());
                 if (block != null) {
                     Location loc = block.getLocation();
                     LinkedList<String> locs;
@@ -454,18 +451,18 @@ public class MobsPrompt extends FixedSetPrompt {
                     }
                     locs.add(ConfigUtil.getLocationInfo(loc));
                     context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
-                    Map<UUID, Block> temp = factory.getSelectedKillLocations();
+                    Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                     temp.remove(player.getUniqueId());
-                    factory.setSelectedKillLocations(temp);
+                    plugin.getQuestFactory().setSelectedKillLocations(temp);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("stageEditorNoBlock"));
                     return new MobLocationPrompt();
                 }
                 return new MobListPrompt();
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                Map<UUID, Block> temp = factory.getSelectedKillLocations();
+                Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                 temp.remove(player.getUniqueId());
-                factory.setSelectedKillLocations(temp);
+                plugin.getQuestFactory().setSelectedKillLocations(temp);
                 return new MobListPrompt();
             } else {
                 return new MobLocationPrompt();
@@ -551,7 +548,7 @@ public class MobsPrompt extends FixedSetPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_FISH, null);
             }
-            return new StageMainPrompt(plugin, stageNum, context, factory);
+            return new StageMainPrompt(plugin, stageNum, context);
         }
     }
     
@@ -582,7 +579,7 @@ public class MobsPrompt extends FixedSetPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_COW_MILK, null);
             }
-            return new StageMainPrompt(plugin, stageNum, context, factory);
+            return new StageMainPrompt(plugin, stageNum, context);
         }
     }
     
@@ -659,7 +656,7 @@ public class MobsPrompt extends FixedSetPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new StageMainPrompt(plugin, stageNum, context, factory);
+                    return new StageMainPrompt(plugin, stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new TameListPrompt();
@@ -829,7 +826,7 @@ public class MobsPrompt extends FixedSetPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new StageMainPrompt(plugin, stageNum, context, factory);
+                    return new StageMainPrompt(plugin, stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new ShearListPrompt();

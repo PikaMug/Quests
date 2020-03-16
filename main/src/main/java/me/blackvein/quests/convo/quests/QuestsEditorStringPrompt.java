@@ -15,13 +15,19 @@ package me.blackvein.quests.convo.quests;
 import org.bukkit.conversations.ConversationContext;
 
 import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsStringPrompt;
 
 public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
     private ConversationContext context;
     private QuestFactory factory;
     
-    //TODO - passing factory may be unnecessary
+    public QuestsEditorStringPrompt(final ConversationContext context) {
+        this.context = context;
+        factory = ((Quests)context.getPlugin()).getQuestFactory();
+    }
+    
+    @Deprecated
     public QuestsEditorStringPrompt(final ConversationContext context, final QuestFactory factory) {
         this.context = context;
         this.factory = factory;

@@ -15,6 +15,7 @@ package me.blackvein.quests.events.editor.actions;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 
@@ -23,6 +24,14 @@ public class ActionsEditorPostOpenStringPromptEvent extends ActionsEditorEvent {
     private ActionFactory factory;
     private ActionsEditorStringPrompt prompt;
 
+    public ActionsEditorPostOpenStringPromptEvent(ConversationContext context, ActionsEditorStringPrompt prompt) {
+        super(context, prompt);
+        this.context = context;
+        this.factory = ((Quests)context.getPlugin()).getActionFactory();
+        this.prompt = prompt;
+    }
+    
+    @Deprecated
     public ActionsEditorPostOpenStringPromptEvent(ConversationContext context, ActionFactory factory, 
             ActionsEditorStringPrompt prompt) {
         super(context, factory, prompt);

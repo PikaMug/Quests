@@ -31,7 +31,6 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.CustomReward;
-import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
@@ -44,15 +43,13 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private final String classPrefix;
-    private final QuestFactory factory;
     private boolean hasReward = false;
     private final int size = 12;
 
-    public RewardsPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
-        super(context, qf);
+    public RewardsPrompt(Quests plugin, ConversationContext context) {
+        super(context);
         this.plugin = plugin;
         this.classPrefix = getClass().getSimpleName();
-        factory = qf;
     }
     
     public int getSize() {
@@ -335,7 +332,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         checkReward(context);
         
         QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.LIGHT_PURPLE + getTitle(context).replace((String) context
@@ -355,7 +352,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 return new MoneyPrompt();
             } else {
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
         case 2:
             return new QuestPointsPrompt();
@@ -366,24 +363,24 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         case 5:
             return new CommandsPrompt();
         case 6:
-            return new PermissionsListPrompt(context, factory);
+            return new PermissionsListPrompt(context);
         case 7:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
                 return new mcMMOListPrompt();
             } else {
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
         case 8:
             if (plugin.getDependencies().getHeroes() != null) {
                 return new HeroesListPrompt();
             } else {
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
         case 9:
             if (plugin.getDependencies().getPhatLoots() != null) {
                 return new PhatLootsPrompt();
             } else {
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
         case 10:
             return new CustomRewardsPrompt();
@@ -395,10 +392,10 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         .build();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
         case 12:
-            return factory.returnToMenu(context);
+            return plugin.getQuestFactory().returnToMenu(context);
         default:
             return null;
         }
@@ -455,9 +452,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_MONEY, null);
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
-            return new RewardsPrompt(plugin, context, factory);
+            return new RewardsPrompt(plugin, context);
         }
     }
 
@@ -487,9 +484,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_EXP, null);
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
-            return new RewardsPrompt(plugin, context, factory);
+            return new RewardsPrompt(plugin, context);
         }
     }
 
@@ -519,9 +516,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_QUEST_POINTS, null);
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
-            return new RewardsPrompt(plugin, context, factory);
+            return new RewardsPrompt(plugin, context);
         }
     }
 
@@ -579,7 +576,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.REW_ITEMS, null);
                 return new ItemListPrompt();
             } else if (input.equalsIgnoreCase("3")) {
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
             return null;
         }
@@ -617,14 +614,14 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_COMMAND, null);
             }
-            return new RewardsPrompt(plugin, context, factory);
+            return new RewardsPrompt(plugin, context);
         }
     }
     
     private class PermissionsListPrompt extends QuestsEditorNumericPrompt {
 
-        public PermissionsListPrompt(ConversationContext context, QuestFactory factory) {
-            super(context, factory);
+        public PermissionsListPrompt(ConversationContext context) {
+            super(context);
         }
         
         private final int size = 4;
@@ -718,7 +715,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(ConversationContext context) {
             QuestsEditorPostOpenNumericPromptEvent event 
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
@@ -740,9 +737,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewPermissionsCleared"));
                 context.setSessionData(CK.REW_PERMISSION, null);
                 context.setSessionData(CK.REW_PERMISSION_WORLDS, null);
-                return new PermissionsListPrompt(context, factory);
+                return new PermissionsListPrompt(context);
             case 4:
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             default:
                 return null;
             }
@@ -768,7 +765,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PERMISSION, null);
             }
-            return new PermissionsListPrompt(context, factory);
+            return new PermissionsListPrompt(context);
         }
     }
     
@@ -797,7 +794,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PERMISSION_WORLDS, null);
             }
-            return new PermissionsListPrompt(context, factory);
+            return new PermissionsListPrompt(context);
         }
     }
 
@@ -874,7 +871,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new RewardsPrompt(plugin, context, factory);
+                    return new RewardsPrompt(plugin, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewMcMMOListsNotSameSize"));
                     return new mcMMOListPrompt();
@@ -1037,7 +1034,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new RewardsPrompt(plugin, context, factory);
+                    return new RewardsPrompt(plugin, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewHeroesListsNotSameSize"));
                     return new HeroesListPrompt();
@@ -1164,13 +1161,13 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
                 loots.addAll(Arrays.asList(arr));
                 context.setSessionData(CK.REW_PHAT_LOOTS, loots);
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PHAT_LOOTS, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewPhatLootsCleared"));
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             } else {
-                return new RewardsPrompt(plugin, context, factory);
+                return new RewardsPrompt(plugin, context);
             }
         }
     }
@@ -1253,7 +1250,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomCleared"));
             }
-            return new RewardsPrompt(plugin, context, factory);
+            return new RewardsPrompt(plugin, context);
         }
     }
 
@@ -1318,7 +1315,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     return new RewardCustomDataListPrompt();
                 } else {
                     context.setSessionData(CK.REW_CUSTOM_DATA_DESCRIPTIONS, null);
-                    return new RewardsPrompt(plugin, context, factory);
+                    return new RewardsPrompt(plugin, context);
                 }
             }
         }

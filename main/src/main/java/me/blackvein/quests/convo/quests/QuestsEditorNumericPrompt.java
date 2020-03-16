@@ -16,12 +16,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 
 import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 
 public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
     private ConversationContext context;
     private QuestFactory factory;
     
+    public QuestsEditorNumericPrompt(final ConversationContext context) {
+        this.context = context;
+        factory = ((Quests)context.getPlugin()).getQuestFactory();
+    }
+    
+    @Deprecated
     public QuestsEditorNumericPrompt(final ConversationContext context, final QuestFactory factory) {
         this.context = context;
         this.factory = factory;

@@ -15,6 +15,7 @@ package me.blackvein.quests.events.editor.actions;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 
@@ -22,7 +23,15 @@ public class ActionsEditorPostOpenNumericPromptEvent extends ActionsEditorEvent 
     private static final HandlerList HANDLERS = new HandlerList();
     private ActionFactory factory;
     private ActionsEditorNumericPrompt prompt;
+    
+    public ActionsEditorPostOpenNumericPromptEvent(ConversationContext context, ActionsEditorNumericPrompt prompt) {
+        super(context, prompt);
+        this.context = context;
+        this.factory = ((Quests)context.getPlugin()).getActionFactory();
+        this.prompt = prompt;
+    }
 
+    @Deprecated
     public ActionsEditorPostOpenNumericPromptEvent(ConversationContext context, ActionFactory factory, 
             ActionsEditorNumericPrompt prompt) {
         super(context, factory, prompt);

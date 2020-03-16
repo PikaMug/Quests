@@ -18,7 +18,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
@@ -30,13 +29,11 @@ import org.bukkit.conversations.StringPrompt;
 
 public class DateTimePrompt extends FixedSetPrompt {
     
-    private Quests plugin;
     private final Prompt oldPrompt;
     private String source = "";
 
-    public DateTimePrompt(Quests plugin, Prompt old, String origin) {
+    public DateTimePrompt(Prompt old, String origin) {
         super("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
-        this.plugin = plugin;
         oldPrompt = old;
         source = origin;
     }
@@ -78,7 +75,7 @@ public class DateTimePrompt extends FixedSetPrompt {
         }
         TimeZone tz = TimeZone.getTimeZone((String) cc.getSessionData("tempZone"));
         cal.setTimeZone(tz);
-        String[] iso = plugin.getLang().getISO().split("-");
+        String[] iso = Lang.getISO().split("-");
         Locale loc = new Locale(iso[0], iso[1]);
         Double hour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         String[] sep = String.valueOf(hour).replace("-", "").split("\\.");
@@ -145,10 +142,12 @@ public class DateTimePrompt extends FixedSetPrompt {
             String zone = (String) cc.getSessionData("tempZone");
             String date = day + ":" + month + ":" + year + ":"
                     + hour + ":" + minute + ":" + second + ":" + zone;
-            if (source.equals("start")) {
-                cc.setSessionData(CK.PLN_START_DATE, date);
-            } else if (source.equals("end")) {
-                cc.setSessionData(CK.PLN_END_DATE, date);
+            if (source != null) {
+                if (source.equals("start")) {
+                    cc.setSessionData(CK.PLN_START_DATE, date);
+                } else if (source.equals("end")) {
+                    cc.setSessionData(CK.PLN_END_DATE, date);
+                }
             }
         }
         try {
@@ -177,14 +176,14 @@ public class DateTimePrompt extends FixedSetPrompt {
                         return new DayPrompt();
                     } else {
                         cc.setSessionData("tempDay", Integer.parseInt(input));
-                        return new DateTimePrompt(plugin, oldPrompt, source);
+                        return new DateTimePrompt(oldPrompt, source);
                     }
                 } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new DayPrompt();
                 }
             } else {
-                return new DateTimePrompt(plugin, oldPrompt, source);
+                return new DateTimePrompt(oldPrompt, source);
             }
         }
     }
@@ -207,14 +206,14 @@ public class DateTimePrompt extends FixedSetPrompt {
                         return new MonthPrompt();
                     } else {
                         cc.setSessionData("tempMonth", Integer.parseInt(input) - 1);
-                        return new DateTimePrompt(plugin, oldPrompt, source);
+                        return new DateTimePrompt(oldPrompt, source);
                     }
                 } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new MonthPrompt();
                 }
             } else {
-                return new DateTimePrompt(plugin, oldPrompt, source);
+                return new DateTimePrompt(oldPrompt, source);
             }
         }
     }
@@ -237,14 +236,14 @@ public class DateTimePrompt extends FixedSetPrompt {
                         return new YearPrompt();
                     } else {
                         cc.setSessionData("tempYear", Integer.parseInt(input));
-                        return new DateTimePrompt(plugin, oldPrompt, source);
+                        return new DateTimePrompt(oldPrompt, source);
                     }
                 } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new YearPrompt();
                 }
             } else {
-                return new DateTimePrompt(plugin, oldPrompt, source);
+                return new DateTimePrompt(oldPrompt, source);
             }
         }
     }
@@ -267,14 +266,14 @@ public class DateTimePrompt extends FixedSetPrompt {
                         return new HourPrompt();
                     } else {
                         cc.setSessionData("tempHour", Integer.parseInt(input));
-                        return new DateTimePrompt(plugin, oldPrompt, source);
+                        return new DateTimePrompt(oldPrompt, source);
                     }
                 } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new HourPrompt();
                 }
             } else {
-                return new DateTimePrompt(plugin, oldPrompt, source);
+                return new DateTimePrompt(oldPrompt, source);
             }
         }
     }
@@ -297,14 +296,14 @@ public class DateTimePrompt extends FixedSetPrompt {
                         return new MinutePrompt();
                     } else {
                         cc.setSessionData("tempMinute", Integer.parseInt(input));
-                        return new DateTimePrompt(plugin, oldPrompt, source);
+                        return new DateTimePrompt(oldPrompt, source);
                     }
                 } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new MinutePrompt();
                 }
             } else {
-                return new DateTimePrompt(plugin, oldPrompt, source);
+                return new DateTimePrompt(oldPrompt, source);
             }
         }
     }
@@ -327,14 +326,14 @@ public class DateTimePrompt extends FixedSetPrompt {
                         return new SecondPrompt();
                     } else {
                         cc.setSessionData("tempSecond", Integer.parseInt(input));
-                        return new DateTimePrompt(plugin, oldPrompt, source);
+                        return new DateTimePrompt(oldPrompt, source);
                     }
                 } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new SecondPrompt();
                 }
             } else {
-                return new DateTimePrompt(plugin, oldPrompt, source);
+                return new DateTimePrompt(oldPrompt, source);
             }
         }
     }
@@ -363,16 +362,15 @@ public class DateTimePrompt extends FixedSetPrompt {
                             cc.setSessionData("tempZone", t[0]);
                         }  else {
                             cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                            plugin.getLogger().severe("Unable to get time zone for converted offset " + input);
                         }    
-                        return new DateTimePrompt(plugin, oldPrompt, source);
+                        return new DateTimePrompt(oldPrompt, source);
                     }
                 } catch (NumberFormatException e) {
                     cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new OffsetPrompt();
                 }
             } else {
-                return new DateTimePrompt(plugin, oldPrompt, source);
+                return new DateTimePrompt(oldPrompt, source);
             }
         }
     }
@@ -401,13 +399,13 @@ public class DateTimePrompt extends FixedSetPrompt {
                 for (String z : zones) {
                     if (z.toLowerCase().startsWith(input.toLowerCase())) {
                         cc.setSessionData("tempZone", z);
-                        return new DateTimePrompt(plugin, oldPrompt, source);
+                        return new DateTimePrompt(oldPrompt, source);
                     }
                 }
                 cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                 return new ZonePrompt(zones);
             } else {
-                return new DateTimePrompt(plugin, oldPrompt, source);
+                return new DateTimePrompt(oldPrompt, source);
             }
         }
     }

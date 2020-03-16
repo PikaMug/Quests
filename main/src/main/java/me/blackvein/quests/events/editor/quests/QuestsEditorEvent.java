@@ -17,6 +17,7 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.events.QuestsEvent;
 
 /**
@@ -28,12 +29,27 @@ public abstract class QuestsEditorEvent extends QuestsEvent {
     protected QuestFactory factory;
     protected Prompt prompt;
     
+    public QuestsEditorEvent(final ConversationContext context, final Prompt prompt) {
+        this.context = context;
+        this.factory = ((Quests)context.getPlugin()).getQuestFactory();
+        this.prompt = prompt;
+    }
+    
+    public QuestsEditorEvent(final ConversationContext context, final Prompt prompt, boolean async) {
+        super(async);
+        this.context = context;
+        this.factory = ((Quests)context.getPlugin()).getQuestFactory();
+        this.prompt = prompt;
+    }
+    
+    @Deprecated
     public QuestsEditorEvent(final ConversationContext context, QuestFactory factory, final Prompt prompt) {
         this.context = context;
         this.factory = factory;
         this.prompt = prompt;
     }
     
+    @Deprecated
     public QuestsEditorEvent(final ConversationContext context, QuestFactory factory, final Prompt prompt, 
             boolean async) {
         super(async);

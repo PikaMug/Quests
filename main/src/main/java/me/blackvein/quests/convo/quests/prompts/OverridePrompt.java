@@ -14,7 +14,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
     private String classPrefix;
     
     public OverridePrompt(ConversationContext context, Prompt old, String promptText) {
-        super(context, null);
+        super(context);
         oldPrompt = old;
         classPrefix = old.getClass().getSimpleName();
         this.promptText = promptText;
@@ -38,8 +38,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenStringPromptEvent event 
-                = new QuestsEditorPostOpenStringPromptEvent(context, null, this);
+        QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
 
         String text = ChatColor.YELLOW + promptText + "\n";;

@@ -31,7 +31,6 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.Quest;
-import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
@@ -44,15 +43,13 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private final String classPrefix;
-    private final QuestFactory factory;
     private boolean hasRequirement = false;
     private final int size = 11;
     
-    public RequirementsPrompt(Quests plugin, ConversationContext context, QuestFactory qf) {
-        super(context, qf);
+    public RequirementsPrompt(Quests plugin, ConversationContext context) {
+        super(context);
         this.plugin = plugin;
         this.classPrefix = getClass().getSimpleName();
-        this.factory = qf;
     }
     
     public int getSize() {
@@ -294,7 +291,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         checkRequirement(context);
         
         QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
@@ -315,7 +312,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return new QuestPointsPrompt();
         case 3:
-            return new ItemListPrompt(plugin, context, factory);
+            return new ItemListPrompt(plugin, context);
         case 4:
             return new PermissionsPrompt();
         case 5:
@@ -326,28 +323,29 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getDependencies().getMcmmoClassic() != null) {
                 return new mcMMOPrompt();
             } else {
-                return new RequirementsPrompt(plugin, context, factory);
+                return new RequirementsPrompt(plugin, context);
             }
         case 8:
             if (plugin.getDependencies().getHeroes() != null) {
                 return new HeroesPrompt();
             } else {
-                return new RequirementsPrompt(plugin, context, factory);
+                return new RequirementsPrompt(plugin, context);
             }
         case 9:
             return new CustomRequirementsPrompt();
         case 10:
             if (hasRequirement) {
                 return new OverridePrompt.Builder()
+                        .context(context)
                         .source(this)
                         .promptText(Lang.get("overrideCreateEnter"))
                         .build();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new RequirementsPrompt(plugin, context, factory);
+                return new RequirementsPrompt(plugin, context);
             }
         case 11:
-            return factory.returnToMenu(context);
+            return plugin.getQuestFactory().returnToMenu(context);
         default:
             return null;
         }
@@ -404,9 +402,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_MONEY, null);
-                return new RequirementsPrompt(plugin, context, factory);
+                return new RequirementsPrompt(plugin, context);
             }
-            return new RequirementsPrompt(plugin, context, factory);
+            return new RequirementsPrompt(plugin, context);
         }
     }
 
@@ -436,9 +434,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_QUEST_POINTS, null);
-                return new RequirementsPrompt(plugin, context, factory);
+                return new RequirementsPrompt(plugin, context);
             }
-            return new RequirementsPrompt(plugin, context, factory);
+            return new RequirementsPrompt(plugin, context);
         }
     }
 
@@ -506,13 +504,13 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     context.setSessionData(CK.REQ_QUEST_BLOCK, null);
                 }
             }
-            return new RequirementsPrompt(plugin, context, factory);
+            return new RequirementsPrompt(plugin, context);
         }
     }
 
     public class ItemListPrompt extends QuestsEditorNumericPrompt {
-        public ItemListPrompt(Quests plugin, ConversationContext context, QuestFactory factory) {
-            super(context, factory);
+        public ItemListPrompt(Quests plugin, ConversationContext context) {
+            super(context);
         }
 
         private final int size = 4;
@@ -615,7 +613,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
             
             QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
@@ -635,7 +633,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 if (context.getSessionData(CK.REQ_ITEMS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqMustAddItem"));
-                    return new ItemListPrompt(plugin, context, factory);
+                    return new ItemListPrompt(plugin, context);
                 } else {
                     return new RemoveItemsPrompt();
                 }
@@ -643,7 +641,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqItemCleared"));
                 context.setSessionData(CK.REQ_ITEMS, null);
                 context.setSessionData(CK.REQ_ITEMS_REMOVE, null);
-                return new ItemListPrompt(plugin, context, factory);
+                return new ItemListPrompt(plugin, context);
             case 4:
                 int one;
                 int two;
@@ -658,10 +656,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new RequirementsPrompt(plugin, context, factory);
+                    return new RequirementsPrompt(plugin, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new ItemListPrompt(plugin, context, factory);
+                    return new ItemListPrompt(plugin, context);
                 }
             default:
                 return null;
@@ -705,7 +703,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
                 context.setSessionData(CK.REQ_ITEMS_REMOVE, booleans);
             }
-            return new ItemListPrompt(plugin, context, factory);
+            return new ItemListPrompt(plugin, context);
         }
     }
 
@@ -727,7 +725,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_PERMISSION, null);
             }
-            return new RequirementsPrompt(plugin, context, factory);
+            return new RequirementsPrompt(plugin, context);
         }
     }
 
@@ -809,7 +807,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomCleared"));
             }
-            return new RequirementsPrompt(plugin, context, factory);
+            return new RequirementsPrompt(plugin, context);
         }
     }
 
@@ -874,7 +872,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     return new RequirementCustomDataListPrompt();
                 } else {
                     context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, null);
-                    return new RequirementsPrompt(plugin, context, factory);
+                    return new RequirementsPrompt(plugin, context);
                 }
             }
         }
@@ -955,7 +953,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase("2")) {
                 return new mcMMOAmountsPrompt();
             } else if (input.equalsIgnoreCase("3")) {
-                return new RequirementsPrompt(plugin, context, factory);
+                return new RequirementsPrompt(plugin, context);
             }
             return null;
         }
@@ -1082,7 +1080,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase("2")) {
                 return new HeroesSecondaryPrompt();
             } else if (input.equalsIgnoreCase("3")) {
-                return new RequirementsPrompt(plugin, context, factory);
+                return new RequirementsPrompt(plugin, context);
             }
             return null;
         }

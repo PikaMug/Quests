@@ -17,6 +17,8 @@ import java.io.IOException;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
+import me.blackvein.quests.util.Lang;
+
 public class Settings {
     
     private Quests plugin;
@@ -156,9 +158,9 @@ public class Settings {
         killDelay = config.getInt("kill-delay", 600);
         if (config.getString("language").equalsIgnoreCase("en")) {
             //Legacy
-            plugin.getLang().setISO("en-US");
+            Lang.setISO("en-US");
         } else {
-            plugin.getLang().setISO(config.getString("language", "en-US"));
+            Lang.setISO(config.getString("language", "en-US"));
         }
         maxQuests = config.getInt("max-quests", maxQuests);
         npcEffects = config.getBoolean("npc-effects.enabled", true);

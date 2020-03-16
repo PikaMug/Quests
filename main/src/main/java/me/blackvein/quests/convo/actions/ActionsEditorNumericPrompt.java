@@ -15,6 +15,7 @@ package me.blackvein.quests.convo.actions;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 
@@ -22,6 +23,12 @@ public abstract class ActionsEditorNumericPrompt extends QuestsNumericPrompt {
     private ConversationContext context;
     private ActionFactory factory;
     
+    public ActionsEditorNumericPrompt(final ConversationContext context) {
+        this.context = context;
+        this.factory = ((Quests)context.getPlugin()).getActionFactory();
+    }
+    
+    @Deprecated
     public ActionsEditorNumericPrompt(final ConversationContext context, final ActionFactory factory) {
         this.context = context;
         this.factory = factory;

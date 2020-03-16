@@ -14,6 +14,7 @@ package me.blackvein.quests.convo.actions;
 
 import org.bukkit.conversations.ConversationContext;
 
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.convo.QuestsStringPrompt;
 
@@ -21,6 +22,12 @@ public abstract class ActionsEditorStringPrompt extends QuestsStringPrompt {
     private ConversationContext context;
     private ActionFactory factory;
     
+    public ActionsEditorStringPrompt(final ConversationContext context) {
+        this.context = context;
+        this.factory = ((Quests)context.getPlugin()).getActionFactory();
+    }
+    
+    @Deprecated
     public ActionsEditorStringPrompt(final ConversationContext context, final ActionFactory factory) {
         this.context = context;
         this.factory = factory;

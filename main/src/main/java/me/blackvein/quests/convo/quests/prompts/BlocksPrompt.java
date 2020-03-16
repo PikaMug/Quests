@@ -15,7 +15,6 @@ package me.blackvein.quests.convo.quests.prompts;
 import java.util.LinkedList;
 import java.util.List;
 
-import me.blackvein.quests.QuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
@@ -34,14 +33,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private final int stageNum;
     private final String pref;
-    private final QuestFactory factory;
 
-    public BlocksPrompt(Quests plugin, int stageNum, ConversationContext context, QuestFactory qf) {
-        super(context, qf);
+    public BlocksPrompt(Quests plugin, int stageNum, ConversationContext context) {
+        super(context);
         this.plugin = plugin;
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
-        this.factory = qf;
     }
     
     private final int size = 6;
@@ -168,8 +165,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         context.setSessionData(pref, Boolean.TRUE);
         
         QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, factory, this);
-        plugin.getServer().getPluginManager().callEvent(event);
+                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        context.getPlugin().getServer().getPluginManager().callEvent(event);
 
         String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
         for (int i = 1; i <= size; i++) {
@@ -194,7 +191,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             return new CutBlockListPrompt();
         case 6:
             try {
-                return new StageMainPrompt(plugin, stageNum, context, factory);
+                return new StageMainPrompt(plugin, stageNum, context);
             } catch (Exception e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
@@ -310,7 +307,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_BREAK_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context, factory);
+                    return new BlocksPrompt(plugin, stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new BreakBlockListPrompt();
@@ -547,7 +544,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context, factory);
+                    return new BlocksPrompt(plugin, stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new DamageBlockListPrompt();
@@ -784,7 +781,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_PLACE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context, factory);
+                    return new BlocksPrompt(plugin, stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new PlaceBlockListPrompt();
@@ -1021,7 +1018,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_USE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context, factory);
+                    return new BlocksPrompt(plugin, stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new UseBlockListPrompt();
@@ -1258,7 +1255,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_CUT_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context, factory);
+                    return new BlocksPrompt(plugin, stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new CutBlockListPrompt();

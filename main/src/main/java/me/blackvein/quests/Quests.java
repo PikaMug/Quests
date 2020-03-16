@@ -120,7 +120,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private DungeonsListener dungeonsListener;
     private PartiesListener partiesListener;
     private DenizenTrigger trigger;
-    private Lang lang;
     private LocaleQuery localeQuery;
 
     @Override
@@ -141,7 +140,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         questFactory = new QuestFactory(this);
         eventFactory = new ActionFactory(this);
         depends = new Dependencies(this);
-        lang = new Lang(this);
         trigger = new DenizenTrigger(this);
 
         // 2 - Load main config
@@ -307,6 +305,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return questFactory;
     }
     
+    public ActionFactory getActionFactory() {
+        return eventFactory;
+    }
+    
+    @Deprecated
     public ActionFactory getEventFactory() {
         return eventFactory;
     }
@@ -317,10 +320,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     
     public DenizenTrigger getDenizenTrigger() {
         return trigger;
-    }
-    
-    public Lang getLang() {
-        return lang;
     }
     
     public LocaleQuery getLocaleQuery() {
@@ -411,7 +410,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             jar.close();
         }
         try {
-            lang.loadLang();
+            Lang.loadLang(this);
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
@@ -1155,7 +1154,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         settings.init();
         Lang.clear();
         try {
-            lang.loadLang();
+            Lang.loadLang(this);
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         } catch (IOException e) {

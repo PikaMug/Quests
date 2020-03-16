@@ -16,13 +16,22 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 
 public class QuestsEditorPostOpenStringPromptEvent extends QuestsEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private QuestFactory factory;
     private QuestsEditorStringPrompt prompt;
+    
+    public QuestsEditorPostOpenStringPromptEvent(ConversationContext context, QuestsEditorStringPrompt prompt) {
+        super(context, prompt);
+        this.context = context;
+        this.factory = ((Quests)context.getPlugin()).getQuestFactory();
+        this.prompt = prompt;
+    }
 
+    @Deprecated
     public QuestsEditorPostOpenStringPromptEvent(ConversationContext context, QuestFactory factory, 
             QuestsEditorStringPrompt prompt) {
         super(context, factory, prompt);

@@ -484,7 +484,7 @@ public class CmdExecutor implements CommandExecutor {
                 || cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")) {
             Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
-                plugin.getEventFactory().getConversationFactory().buildConversation(c).begin();
+                plugin.getActionFactory().getConversationFactory().buildConversation(c).begin();
             } else {
                 cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
             }

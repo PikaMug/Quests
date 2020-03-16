@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,31 +31,21 @@ import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quests;
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
 
 public class Lang {
 
-    private String iso = "en-US";
-    private static final LangToken tokens = new LangToken();
+    private static String iso = "en-US";
     private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
-    private final Quests plugin;
-    private static PlaceholderAPIPlugin placeholder;
-
-    public Lang(Quests plugin) {
-        tokens.initTokens();
-        this.plugin = plugin;
-        Lang.placeholder = plugin.getDependencies().getPlaceholderApi();
-    }
     
-    public String getISO() {
+    public static String getISO() {
         return iso;
     }
     
-    public void setISO(String iso) {
-        this.iso = iso;
+    public static void setISO(String iso) {
+        Lang.iso = iso;
     }
     
-    public Collection<String> values() {
+    public static Collection<String> values() {
         return langMap.values();
     }
     
@@ -66,7 +57,7 @@ public class Lang {
      * @return formatted string, plus processing through PlaceholderAPI by clip
      */
     public static String get(Player p, String key) {
-        return langMap.containsKey(key) ? tokens.convertString(p, langMap.get(key)) : "NULL";
+        return langMap.containsKey(key) ? LangToken.convertString(p, langMap.get(key)) : "NULL";
     }
 
     /**
@@ -76,7 +67,7 @@ public class Lang {
      * @return formatted string
      */
     public static String get(String key) {
-        return langMap.containsKey(key) ? tokens.convertString(langMap.get(key)) : "NULL";
+        return langMap.containsKey(key) ? LangToken.convertString(langMap.get(key)) : "NULL";
     }
 
     /**
@@ -124,7 +115,7 @@ public class Lang {
         return orig;
     }
 
-    public void loadLang() throws InvalidConfigurationException, IOException {
+public static void loadLang(Quests plugin) throws InvalidConfigurationException, IOException {
         File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator
                 + "strings.yml");
         File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso
@@ -215,9 +206,9 @@ public class Lang {
 
     private static class LangToken {
 
-        Map<String, String> tokenMap = new HashMap<String, String>();
+        static Map<String, String> tokenMap = new HashMap<String, String>();
 
-        public void initTokens() {
+        public static void init() {
             tokenMap.put("%br%", "\n");
             tokenMap.put("%tab%", "\t");
             tokenMap.put("%rtr%", "\r");
@@ -245,7 +236,10 @@ public class Lang {
             tokenMap.put("%yellow%", ChatColor.YELLOW.toString());
         }
 
-        public String convertString(String s) {
+        public static String convertString(String s) {
+            if (tokenMap.isEmpty()) {
+                LangToken.init();
+            }
             for (String token : tokenMap.keySet()) {
                 s = s.replace(token, tokenMap.get(token));
                 s = s.replace(token.toUpperCase(), tokenMap.get(token));
@@ -253,12 +247,17 @@ public class Lang {
             return s;
         }
         
-        public String convertString(Player p, String s) {
+        public static String convertString(Player p, String s) {
+            if (tokenMap.isEmpty()) {
+                LangToken.init();
+            }
             for (String token : tokenMap.keySet()) {
                 s = s.replace(token, tokenMap.get(token));
                 s = s.replace(token.toUpperCase(), tokenMap.get(token));
-                if (placeholder != null) {
-                    s = PlaceholderAPI.setPlaceholders(p, s);
+                if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null ) {
+                    if (!Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI").isEnabled()) {
+                        s = PlaceholderAPI.setPlaceholders(p, s);
+                    }
                 }
             }
             return s;

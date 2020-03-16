@@ -80,7 +80,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new ActionMenuPrompt(null, this))
+                .withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new ActionMenuPrompt(plugin, null))
                 .withTimeout(3600).thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
                 .addConversationAbandonedListener(this);
     }
@@ -151,8 +151,8 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
 
     public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
-        public ActionMenuPrompt(ConversationContext context, ActionFactory factory) {
-            super(context, factory);
+        public ActionMenuPrompt(Quests plugin, ConversationContext context) {
+            super(context);
         }
 
         private final int size = 4;
@@ -199,9 +199,9 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenNumericPromptEvent event 
+            /*ActionsEditorPostOpenNumericPromptEvent event 
                     = new ActionsEditorPostOpenNumericPromptEvent(context, ActionFactory.this, this);
-            plugin.getServer().getPluginManager().callEvent(event);
+            plugin.getServer().getPluginManager().callEvent(event);*/
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
@@ -218,10 +218,10 @@ public class ActionFactory implements ConversationAbandonedListener {
                 if (player.hasPermission("quests.editor.actions.create") 
                         || player.hasPermission("quests.editor.events.create")) {
                     context.setSessionData(CK.E_OLD_EVENT, "");
-                    return new ActionSelectCreatePrompt(context, ActionFactory.this);
+                    return new ActionSelectCreatePrompt(context);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new ActionMenuPrompt(context, ActionFactory.this);
+                    return new ActionMenuPrompt(plugin, context);
                 }
             case 2:
                 if (player.hasPermission("quests.editor.actions.edit") 
@@ -229,13 +229,13 @@ public class ActionFactory implements ConversationAbandonedListener {
                     if (plugin.getActions().isEmpty()) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
                                 + Lang.get("eventEditorNoneToEdit"));
-                        return new ActionMenuPrompt(context, ActionFactory.this);
+                        return new ActionMenuPrompt(plugin, context);
                     } else {
                         return new ActionSelectEditPrompt();
                     }
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new ActionMenuPrompt(context, ActionFactory.this);
+                    return new ActionMenuPrompt(plugin, context);
                 }
             case 3:
                 if (player.hasPermission("quests.editor.actions.delete") 
@@ -243,13 +243,13 @@ public class ActionFactory implements ConversationAbandonedListener {
                     if (plugin.getActions().isEmpty()) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
                                 + Lang.get("eventEditorNoneToDelete"));
-                        return new ActionMenuPrompt(context, ActionFactory.this);
+                        return new ActionMenuPrompt(plugin, context);
                     } else {
                         return new ActionSelectDeletePrompt();
                     }
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new ActionMenuPrompt(context, ActionFactory.this);
+                    return new ActionMenuPrompt(plugin, context);
                 }
             case 4:
                 ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("exited"));
@@ -261,12 +261,12 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
 
     public Prompt returnToMenu(ConversationContext context) {
-        return new ActionMainPrompt(context, ActionFactory.this);
+        return new ActionMainPrompt(context);
     }
     
     public class ActionMainPrompt extends ActionsEditorNumericPrompt {
-        public ActionMainPrompt(ConversationContext context, ActionFactory factory) {
-            super(context, factory);
+        public ActionMainPrompt(ConversationContext context) {
+            super(context);
         }
 
         private final int size = 10;
@@ -385,8 +385,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenNumericPromptEvent event 
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, ActionFactory.this, this);
+            ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA) 
@@ -422,7 +421,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 } else {
                     context.setSessionData(CK.E_FAIL_QUEST, Lang.get("yesWord"));
                 }
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             case 9:
                 if (context.getSessionData(CK.E_OLD_EVENT) != null) {
                     return new SavePrompt((String) context.getSessionData(CK.E_OLD_EVENT));
@@ -438,8 +437,8 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
     
     public class ActionSelectCreatePrompt extends ActionsEditorStringPrompt {
-        public ActionSelectCreatePrompt(ConversationContext context, ActionFactory factory) {
-            super(context, factory);
+        public ActionSelectCreatePrompt(ConversationContext context) {
+            super(context);
         }
 
         public String getTitle(ConversationContext context) {
@@ -452,8 +451,7 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event 
-                    = new ActionsEditorPostOpenStringPromptEvent(context, ActionFactory.this, this);
+            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n" + ChatColor.YELLOW + getQueryText(context);
@@ -464,33 +462,33 @@ public class ActionFactory implements ConversationAbandonedListener {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input == null) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                return new ActionSelectCreatePrompt(context, ActionFactory.this);
+                return new ActionSelectCreatePrompt(context);
             }
             input = input.trim();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 for (Action e : plugin.getActions()) {
                     if (e.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
-                        return new ActionSelectCreatePrompt(context, ActionFactory.this);
+                        return new ActionSelectCreatePrompt(context);
                     }
                 }
                 if (names.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
-                    return new ActionSelectCreatePrompt(context, ActionFactory.this);
+                    return new ActionSelectCreatePrompt(context);
                 }
                 if (StringUtils.isAlphanumeric(input) == false) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAlpha"));
-                    return new ActionSelectCreatePrompt(context, ActionFactory.this);
+                    return new ActionSelectCreatePrompt(context);
                 }
                 if (input.equals("")) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new ActionSelectCreatePrompt(context, ActionFactory.this);
+                    return new ActionSelectCreatePrompt(context);
                 }
                 context.setSessionData(CK.E_NAME, input);
                 names.add(input);
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else {
-                return new ActionMenuPrompt(context, ActionFactory.this);
+                return new ActionMenuPrompt(plugin, context);
             }
         }
     }
@@ -516,12 +514,12 @@ public class ActionFactory implements ConversationAbandonedListener {
                     context.setSessionData(CK.E_OLD_EVENT, a.getName());
                     context.setSessionData(CK.E_NAME, a.getName());
                     loadData(a, context);
-                    return new ActionMainPrompt(context, ActionFactory.this);
+                    return new ActionMainPrompt(context);
                 }
                 ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
                 return new ActionSelectEditPrompt();
             } else {
-                return new ActionMenuPrompt(context, ActionFactory.this);
+                return new ActionMenuPrompt(plugin, context);
             }
         }
     }
@@ -665,7 +663,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
                 return new ActionSelectDeletePrompt();
             } else {
-                return new ActionMenuPrompt(context, ActionFactory.this);
+                return new ActionMenuPrompt(plugin, context);
             }
         }
     }
@@ -686,9 +684,9 @@ public class ActionFactory implements ConversationAbandonedListener {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 deleteAction(context);
-                return new ActionMenuPrompt(context, ActionFactory.this);
+                return new ActionMenuPrompt(plugin, context);
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new ActionMenuPrompt(context, ActionFactory.this);
+                return new ActionMenuPrompt(plugin, context);
             } else {
                 return new ActionConfirmDeletePrompt();
             }
@@ -807,7 +805,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 } else {
                     context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
                 }
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase("3")) {
                 return new ItemListPrompt();
             } else if (input.equalsIgnoreCase("4")) {
@@ -824,7 +822,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             } else if (input.equalsIgnoreCase("9")) {
                 return new CommandsPrompt();
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
     
@@ -867,9 +865,9 @@ public class ActionFactory implements ConversationAbandonedListener {
                 } else {
                     context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("yesWord"));
                 }
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
     
@@ -920,7 +918,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 return new ExplosionPrompt();
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
     
@@ -981,7 +979,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 return new LightningPrompt();
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
 
@@ -990,7 +988,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         @Override
         protected Prompt acceptValidatedInput(final ConversationContext context, final Number number) {
             context.setSessionData(CK.E_TIMER, number);
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
 
         @Override
@@ -1038,9 +1036,9 @@ public class ActionFactory implements ConversationAbandonedListener {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 saveAction(context);
-                return new ActionMenuPrompt(context, ActionFactory.this);
+                return new ActionMenuPrompt(plugin, context);
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else {
                 return new SavePrompt(modName);
             }
@@ -1064,7 +1062,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 clearData(context);
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else {
                 return new ExitPrompt();
             }
@@ -1364,14 +1362,14 @@ public class ActionFactory implements ConversationAbandonedListener {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
                     return new ExplosionPrompt();
                 }
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_EXPLOSIONS, null);
                 selectedExplosionLocations.remove(player.getUniqueId());
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 selectedExplosionLocations.remove(player.getUniqueId());
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else {
                 return new ExplosionPrompt();
             }
@@ -1406,7 +1404,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 context.setSessionData(CK.E_NAME, input);
                 names.add(input);
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
 
@@ -1425,7 +1423,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_MESSAGE, null);
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
 
@@ -1482,7 +1480,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 context.setSessionData(CK.E_ITEMS, null);
                 return new ItemListPrompt();
             } else if (input.equalsIgnoreCase("3")) {
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             }
             return null;
         }
@@ -1566,7 +1564,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     two = 0;
                 }
                 if (one == two) {
-                    return new ActionMainPrompt(context, ActionFactory.this);
+                    return new ActionMainPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new SoundEffectListPrompt();
@@ -1731,7 +1729,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetStormDuration"));
                     return new StormPrompt();
                 } else {
-                    return new ActionMainPrompt(context, ActionFactory.this);
+                    return new ActionMainPrompt(context);
                 }
             }
             return null;
@@ -1847,7 +1845,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetThunderDuration"));
                     return new ThunderPrompt();
                 } else {
-                    return new ActionMainPrompt(context, ActionFactory.this);
+                    return new ActionMainPrompt(context);
                 }
             }
             return null;
@@ -1945,7 +1943,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     context.setSessionData(CK.E_MOB_TYPES, null);
                     return new MobPrompt();
                 } else if (input.equalsIgnoreCase("3")) {
-                    return new ActionMainPrompt(context, ActionFactory.this);
+                    return new ActionMainPrompt(context);
                 }
             } else {
                 @SuppressWarnings("unchecked")
@@ -1965,7 +1963,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     context.setSessionData(CK.E_MOB_TYPES, null);
                     return new MobPrompt();
                 } else if (inp == types.size() + 3) {
-                    return new ActionMainPrompt(context, ActionFactory.this);
+                    return new ActionMainPrompt(context);
                 } else if (inp > types.size()) {
                     return new MobPrompt();
                 } else {
@@ -2356,14 +2354,14 @@ public class ActionFactory implements ConversationAbandonedListener {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
                     return new LightningPrompt();
                 }
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_LIGHTNING, null);
                 selectedLightningLocations.remove(player.getUniqueId());
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 selectedLightningLocations.remove(player.getUniqueId());
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else {
                 return new LightningPrompt();
             }
@@ -2477,7 +2475,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     three = 0;
                 }
                 if (one == two && two == three) {
-                    return new ActionMainPrompt(context, ActionFactory.this);
+                    return new ActionMainPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorListSizeMismatch"));
                     return new PotionEffectPrompt();
@@ -2608,7 +2606,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             } else {
                 context.setSessionData(CK.E_HUNGER, null);
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
 
@@ -2639,7 +2637,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             } else {
                 context.setSessionData(CK.E_SATURATION, null);
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
 
@@ -2670,7 +2668,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             } else {
                 context.setSessionData(CK.E_HEALTH, null);
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
 
@@ -2694,14 +2692,14 @@ public class ActionFactory implements ConversationAbandonedListener {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
                     return new TeleportPrompt();
                 }
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_TELEPORT, null);
                 selectedTeleportLocations.remove(player.getUniqueId());
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 selectedTeleportLocations.remove(player.getUniqueId());
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else {
                 return new TeleportPrompt();
             }
@@ -2727,7 +2725,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_COMMANDS, null);
             }
-            return new ActionMainPrompt(context, ActionFactory.this);
+            return new ActionMainPrompt(context);
         }
     }
     
@@ -2759,7 +2757,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 if (plugin.getDependencies().getDenizenAPI().containsScript(input)) {
                     context.setSessionData(CK.E_DENIZEN, input.toUpperCase());
-                    return new ActionMainPrompt(context, ActionFactory.this);
+                    return new ActionMainPrompt(context);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidScript"));
                     return new DenizenPrompt();
@@ -2767,9 +2765,9 @@ public class ActionFactory implements ConversationAbandonedListener {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_DENIZEN, null);
                 player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDenizenCleared"));
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             } else {
-                return new ActionMainPrompt(context, ActionFactory.this);
+                return new ActionMainPrompt(context);
             }
         }
     }
