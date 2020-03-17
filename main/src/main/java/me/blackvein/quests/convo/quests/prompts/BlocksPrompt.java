@@ -15,7 +15,6 @@ package me.blackvein.quests.convo.quests.prompts;
 import java.util.LinkedList;
 import java.util.List;
 
-import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -30,13 +29,11 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
 public class BlocksPrompt extends QuestsEditorNumericPrompt {
-    private final Quests plugin;
     private final int stageNum;
     private final String pref;
 
-    public BlocksPrompt(Quests plugin, int stageNum, ConversationContext context) {
+    public BlocksPrompt(int stageNum, ConversationContext context) {
         super(context);
-        this.plugin = plugin;
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
     }
@@ -191,7 +188,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             return new CutBlockListPrompt();
         case 6:
             try {
-                return new StageMainPrompt(plugin, stageNum, context);
+                return new StageMainPrompt(stageNum, context);
             } catch (Exception e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
@@ -307,7 +304,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_BREAK_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context);
+                    return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new BreakBlockListPrompt();
@@ -544,7 +541,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context);
+                    return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new DamageBlockListPrompt();
@@ -781,7 +778,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_PLACE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context);
+                    return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new PlaceBlockListPrompt();
@@ -1018,7 +1015,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_USE_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context);
+                    return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new UseBlockListPrompt();
@@ -1255,7 +1252,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         elements.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_CUT_DURABILITY, elements);
-                    return new BlocksPrompt(plugin, stageNum, context);
+                    return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new CutBlockListPrompt();

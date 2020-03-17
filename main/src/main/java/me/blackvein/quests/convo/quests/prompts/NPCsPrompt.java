@@ -35,9 +35,9 @@ public class NPCsPrompt extends FixedSetPrompt {
     private final int stageNum;
     private final String pref;
 
-    public NPCsPrompt(Quests plugin, int stageNum) {
+    public NPCsPrompt(int stageNum, ConversationContext context) {
         super("1", "2", "3", "4");
-        this.plugin = plugin;
+        this.plugin = (Quests)context.getPlugin();
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
     }
@@ -124,25 +124,25 @@ public class NPCsPrompt extends FixedSetPrompt {
                 return new DeliveryListPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new StageMainPrompt(plugin, stageNum, context);
+                return new StageMainPrompt(stageNum, context);
             }
         } else if (input.equalsIgnoreCase("2")) {
             if (plugin.getDependencies().getCitizens() != null) {
                 return new NPCIDsToTalkToPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new StageMainPrompt(plugin, stageNum, context);
+                return new StageMainPrompt(stageNum, context);
             }
         } else if (input.equalsIgnoreCase("3")) {
             if (plugin.getDependencies().getCitizens() != null) {
                 return new NPCKillListPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
-                return new StageMainPrompt(plugin, stageNum, context);
+                return new StageMainPrompt(stageNum, context);
             }
         }
         try {
-            return new StageMainPrompt(plugin, stageNum, context);
+            return new StageMainPrompt(stageNum, context);
         } catch (Exception e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
             return Prompt.END_OF_CONVERSATION;
@@ -261,7 +261,7 @@ public class NPCsPrompt extends FixedSetPrompt {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDeliveryMessage"));
                         return new DeliveryListPrompt();
                     } else {
-                        return new NPCsPrompt(plugin, stageNum);
+                        return new NPCsPrompt(stageNum, context);
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
@@ -387,7 +387,7 @@ public class NPCsPrompt extends FixedSetPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, null);
             }
-            return new StageMainPrompt(plugin, stageNum, context);
+            return new StageMainPrompt(stageNum, context);
         }
     }
 
@@ -466,7 +466,7 @@ public class NPCsPrompt extends FixedSetPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new StageMainPrompt(plugin, stageNum, context);
+                    return new StageMainPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new NPCKillListPrompt();

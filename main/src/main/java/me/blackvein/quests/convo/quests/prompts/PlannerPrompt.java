@@ -34,9 +34,9 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     
     private final Quests plugin;
 
-    public PlannerPrompt(Quests plugin, ConversationContext context) {
+    public PlannerPrompt(ConversationContext context) {
         super(context);
-        this.plugin = plugin;
+        this.plugin = (Quests)context.getPlugin();
     }
     
     private final int size = 5;
@@ -134,9 +134,8 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-        plugin.getServer().getPluginManager().callEvent(event);
+        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
                 .getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) 
@@ -160,7 +159,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                 return new RepeatPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new PlannerPrompt(plugin, context);
+                return new PlannerPrompt(context);
             }
         case 4:
             return new CooldownPrompt();
@@ -181,11 +180,11 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new PlannerPrompt(plugin, context);
+                return new PlannerPrompt(context);
             }
             if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.PLN_REPEAT_CYCLE, null);
-                return new PlannerPrompt(plugin, context);
+                return new PlannerPrompt(context);
             }
             long delay;
             try {
@@ -201,7 +200,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                         .replace("<input>", input));
                 return new RepeatPrompt();
             }
-            return new PlannerPrompt(plugin, context);
+            return new PlannerPrompt(context);
         }
     }
     
@@ -215,11 +214,11 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new PlannerPrompt(plugin, context);
+                return new PlannerPrompt(context);
             }
             if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.PLN_COOLDOWN, null);
-                return new PlannerPrompt(plugin, context);
+                return new PlannerPrompt(context);
             }
             long delay;
             try {
@@ -235,7 +234,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                         .replace("<input>", input));
                 return new CooldownPrompt();
             }
-            return new PlannerPrompt(plugin, context);
+            return new PlannerPrompt(context);
         }
     }
     

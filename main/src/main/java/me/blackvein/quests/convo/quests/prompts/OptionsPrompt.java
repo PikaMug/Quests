@@ -31,9 +31,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     private String tempKey;
     private Prompt tempPrompt;
 
-    public OptionsPrompt(Quests plugin, ConversationContext context) {
+    public OptionsPrompt(ConversationContext context) {
         super(context);
-        this.plugin = plugin;
+        this.plugin = (Quests)context.getPlugin();
     }
     
     private final int size = 3;
@@ -83,9 +83,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-        plugin.getServer().getPluginManager().callEvent(event);
+        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.DARK_GREEN + getTitle(context)
                 .replace((String) context.getSessionData(CK.Q_NAME), ChatColor.AQUA 
@@ -101,9 +100,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
         case 1:
-            return new GeneralPrompt(plugin, context);
+            return new GeneralPrompt(context);
         case 2:
-            return new MultiplayerPrompt(plugin, context);
+            return new MultiplayerPrompt(context);
         case 3:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
@@ -112,7 +111,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     public class TrueFalsePrompt extends QuestsEditorStringPrompt {
-        public TrueFalsePrompt(Quests plugin, ConversationContext context) {
+        public TrueFalsePrompt(ConversationContext context) {
             super(context);
         }
 
@@ -152,9 +151,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = Lang.get("optBooleanPrompt");
             text = text.replace("<true>", Lang.get("true"));
@@ -174,7 +172,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     context.setSessionData(tempKey, false);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new TrueFalsePrompt(plugin, context);
+                    return new TrueFalsePrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(tempKey, null);
@@ -185,7 +183,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     public class LevelPrompt extends QuestsEditorStringPrompt {
-        public LevelPrompt(Quests plugin, ConversationContext context) {
+        public LevelPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -245,9 +243,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = Lang.get("optNumberPrompt");
             text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "1" + ChatColor.RESET + " = " + ChatColor.GRAY
@@ -281,7 +278,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     public class GeneralPrompt extends QuestsEditorNumericPrompt {
-        public GeneralPrompt(Quests plugin, ConversationContext context) {
+        public GeneralPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -361,9 +358,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenNumericPromptEvent event 
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.DARK_GREEN + "- " + getTitle(context) + " -\n";
             for (int i = 1; i <= size; i++) {
@@ -378,17 +374,17 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = CK.OPT_ALLOW_COMMANDS;
-                tempPrompt = new GeneralPrompt(plugin, context);
-                return new TrueFalsePrompt(plugin, context);
+                tempPrompt = new GeneralPrompt(context);
+                return new TrueFalsePrompt(context);
             case 2:
                 tempKey = CK.OPT_ALLOW_QUITTING;
-                tempPrompt = new GeneralPrompt(plugin, context);
-                return new TrueFalsePrompt(plugin, context);
+                tempPrompt = new GeneralPrompt(context);
+                return new TrueFalsePrompt(context);
             case 3:
                 tempKey = null;
                 tempPrompt = null;
                 try {
-                    return new OptionsPrompt(plugin, context);
+                    return new OptionsPrompt(context);
                 } catch (Exception e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                     return Prompt.END_OF_CONVERSATION;
@@ -400,7 +396,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     public class MultiplayerPrompt extends QuestsEditorNumericPrompt {
-        public MultiplayerPrompt(Quests plugin, ConversationContext context) {
+        public MultiplayerPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -508,9 +504,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenNumericPromptEvent event 
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.DARK_GREEN + "- " + getTitle(context) + " -\n";
             for (int i = 1; i <= size; i++) {
@@ -525,25 +520,25 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = CK.OPT_USE_DUNGEONSXL_PLUGIN;
-                tempPrompt = new MultiplayerPrompt(plugin, context);
-                return new TrueFalsePrompt(plugin, context);
+                tempPrompt = new MultiplayerPrompt(context);
+                return new TrueFalsePrompt(context);
             case 2:
                 tempKey = CK.OPT_USE_PARTIES_PLUGIN;
-                tempPrompt = new MultiplayerPrompt(plugin, context);
-                return new TrueFalsePrompt(plugin, context);
+                tempPrompt = new MultiplayerPrompt(context);
+                return new TrueFalsePrompt(context);
             case 3:
                 tempKey = CK.OPT_SHARE_PROGRESS_LEVEL;
-                tempPrompt = new MultiplayerPrompt(plugin, context);
-                return new LevelPrompt(plugin, context);
+                tempPrompt = new MultiplayerPrompt(context);
+                return new LevelPrompt(context);
             case 4:
                 tempKey = CK.OPT_REQUIRE_SAME_QUEST;
-                tempPrompt = new MultiplayerPrompt(plugin, context);
-                return new TrueFalsePrompt(plugin, context);
+                tempPrompt = new MultiplayerPrompt(context);
+                return new TrueFalsePrompt(context);
             case 5:
                 tempKey = null;
                 tempPrompt = null;
                 try {
-                    return new OptionsPrompt(plugin, context);
+                    return new OptionsPrompt(context);
                 } catch (Exception e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                     return Prompt.END_OF_CONVERSATION;

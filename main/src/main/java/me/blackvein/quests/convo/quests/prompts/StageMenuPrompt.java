@@ -27,9 +27,9 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private int size = 2;
 
-    public StageMenuPrompt(Quests plugin, ConversationContext context) {
+    public StageMenuPrompt(ConversationContext context) {
         super(context);
-        this.plugin = plugin;
+        this.plugin = (Quests)context.getPlugin();
     }
     
     public int getSize() {
@@ -74,9 +74,8 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-        plugin.getServer().getPluginManager().callEvent(event);
+        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -\n";
         for (int i = 1; i <= (getStages(context) + size); i++) {
@@ -92,14 +91,14 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         int stages = getStages(context);
         if (i > 0) {
             if (i < (stages + 1) && i > 0) {
-                return new StageMainPrompt(plugin, (i), context);
+                return new StageMainPrompt((i), context);
             } else if (i == (stages + 1)) {
-                return new StageMainPrompt(plugin, (stages + 1), context);
+                return new StageMainPrompt((stages + 1), context);
             } else if (i == (stages + 2)) {
                 return plugin.getQuestFactory().returnToMenu(context);
             }
         }
-        return new StageMenuPrompt(plugin, context);
+        return new StageMenuPrompt(context);
     }
 
     public int getStages(ConversationContext context) {

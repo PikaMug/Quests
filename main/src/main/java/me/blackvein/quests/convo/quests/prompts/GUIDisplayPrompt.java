@@ -16,9 +16,9 @@ import me.blackvein.quests.util.Lang;
 public class GUIDisplayPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     
-    public GUIDisplayPrompt(Quests plugin, ConversationContext context) {
+    public GUIDisplayPrompt(ConversationContext context) {
         super(context);
-        this.plugin = plugin;
+        this.plugin = (Quests)context.getPlugin();
     }
     
     private final int size = 3;
@@ -63,9 +63,8 @@ public class GUIDisplayPrompt extends QuestsEditorNumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-        plugin.getServer().getPluginManager().callEvent(event);
+        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         if (context.getSessionData("tempStack") != null) {
             ItemStack stack = (ItemStack) context.getSessionData("tempStack");
@@ -108,7 +107,7 @@ public class GUIDisplayPrompt extends QuestsEditorNumericPrompt {
         case 2:
             context.setSessionData(CK.Q_GUIDISPLAY, null);
             context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questGUICleared"));
-            return new GUIDisplayPrompt(plugin, context);
+            return new GUIDisplayPrompt(context);
         case 3:
             return plugin.getQuestFactory().returnToMenu(context);
         default:

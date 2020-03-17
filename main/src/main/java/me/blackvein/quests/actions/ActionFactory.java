@@ -65,20 +65,20 @@ import me.blackvein.quests.util.RomanNumeral;
 
 public class ActionFactory implements ConversationAbandonedListener {
 
-    private Quests plugin;
+    private final Quests plugin;
+    private final ConversationFactory convoCreator;
     private Map<UUID, Block> selectedExplosionLocations = new HashMap<UUID, Block>();
     private Map<UUID, Block> selectedEffectLocations = new HashMap<UUID, Block>();
     private Map<UUID, Block> selectedMobLocations = new HashMap<UUID, Block>();
     private Map<UUID, Block> selectedLightningLocations = new HashMap<UUID, Block>();
     private Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
     private List<String> names = new LinkedList<String>();
-    private ConversationFactory convoCreator;
 
     public ActionFactory(Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new ActionMenuPrompt(plugin, null))
+                .withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new ActionMenuPrompt(null))
                 .withTimeout(3600).thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
                 .addConversationAbandonedListener(this);
     }
@@ -149,7 +149,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
 
     public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
-        public ActionMenuPrompt(Quests plugin, ConversationContext context) {
+        public ActionMenuPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -197,9 +197,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            /*ActionsEditorPostOpenNumericPromptEvent event 
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, ActionFactory.this, this);
-            plugin.getServer().getPluginManager().callEvent(event);*/
+            ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
@@ -219,7 +218,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     return new ActionSelectCreatePrompt(context);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new ActionMenuPrompt(plugin, context);
+                    return new ActionMenuPrompt(context);
                 }
             case 2:
                 if (player.hasPermission("quests.editor.actions.edit") 
@@ -227,13 +226,13 @@ public class ActionFactory implements ConversationAbandonedListener {
                     if (plugin.getActions().isEmpty()) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
                                 + Lang.get("eventEditorNoneToEdit"));
-                        return new ActionMenuPrompt(plugin, context);
+                        return new ActionMenuPrompt(context);
                     } else {
                         return new ActionSelectEditPrompt();
                     }
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new ActionMenuPrompt(plugin, context);
+                    return new ActionMenuPrompt(context);
                 }
             case 3:
                 if (player.hasPermission("quests.editor.actions.delete") 
@@ -241,13 +240,13 @@ public class ActionFactory implements ConversationAbandonedListener {
                     if (plugin.getActions().isEmpty()) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
                                 + Lang.get("eventEditorNoneToDelete"));
-                        return new ActionMenuPrompt(plugin, context);
+                        return new ActionMenuPrompt(context);
                     } else {
                         return new ActionSelectDeletePrompt();
                     }
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new ActionMenuPrompt(plugin, context);
+                    return new ActionMenuPrompt(context);
                 }
             case 4:
                 ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("exited"));
@@ -486,7 +485,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 names.add(input);
                 return new ActionMainPrompt(context);
             } else {
-                return new ActionMenuPrompt(plugin, context);
+                return new ActionMenuPrompt(context);
             }
         }
     }
@@ -517,7 +516,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
                 return new ActionSelectEditPrompt();
             } else {
-                return new ActionMenuPrompt(plugin, context);
+                return new ActionMenuPrompt(context);
             }
         }
     }
@@ -661,7 +660,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
                 return new ActionSelectDeletePrompt();
             } else {
-                return new ActionMenuPrompt(plugin, context);
+                return new ActionMenuPrompt(context);
             }
         }
     }
@@ -682,9 +681,9 @@ public class ActionFactory implements ConversationAbandonedListener {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 deleteAction(context);
-                return new ActionMenuPrompt(plugin, context);
+                return new ActionMenuPrompt(context);
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new ActionMenuPrompt(plugin, context);
+                return new ActionMenuPrompt(context);
             } else {
                 return new ActionConfirmDeletePrompt();
             }
@@ -1034,7 +1033,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 saveAction(context);
-                return new ActionMenuPrompt(plugin, context);
+                return new ActionMenuPrompt(context);
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 return new ActionMainPrompt(context);
             } else {
