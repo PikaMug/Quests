@@ -1024,6 +1024,9 @@ public class PlayerListener implements Listener {
         if (evt.getFrom().getBlock().equals(evt.getTo().getBlock())) {
             return;
         }
+        if (evt.getPlayer() == null) {
+            return;
+        }
         if (plugin.getDependencies().getCitizens() != null) {
             if (CitizensAPI.getNPCRegistry().isNPC(evt.getPlayer())) {
                 return;
