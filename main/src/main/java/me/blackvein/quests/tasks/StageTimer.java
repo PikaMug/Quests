@@ -12,16 +12,10 @@
 
 package me.blackvein.quests.tasks;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.util.ConfigUtil;
-import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.exceptions.InvalidStageException;
 
 public class StageTimer implements Runnable {
 
@@ -29,10 +23,10 @@ public class StageTimer implements Runnable {
     private Quests plugin;
     private Quest quest;
 
-    public StageTimer(Quests quests, Quester q, Quest qu) {
-        quester = q;
-        quest = qu;
-        plugin = quests;
+    public StageTimer(Quests plugin, Quester quester, Quest quest) {
+        this.quester = quester;
+        this.quest = quest;
+        this.plugin = plugin;
     }
 
     @Override
@@ -53,8 +47,8 @@ public class StageTimer implements Runnable {
                 }
                 quest.completeQuest(quester);
             } else {
-                Stage currentStage = quester.getCurrentStage(quest);
                 int stageNum = quester.getCurrentQuests().get(quest) + 1;
+                /*Stage currentStage = quester.getCurrentStage(quest);
                 quester.hardQuit(quest);
                 if (currentStage.getScript() != null) {
                     plugin.getDependencies().runDenizenScript(currentStage.getScript(), quester);
@@ -63,12 +57,10 @@ public class StageTimer implements Runnable {
                     currentStage.getFinishAction().fire(quester, quest);
                 }
                 quester.hardStagePut(quest, stageNum);
-                quester.addEmptiesFor(quest, stageNum);
-                // Added this line at some point, not sure why. Commented out to fix Github #726
-                //quester.getCurrentStage(quest).setDelay(-1);
+                quester.addEmptiesFor(quest, stageNum);*/
                 quester.getQuestData(quest).setDelayStartTime(0);
                 quester.getQuestData(quest).setDelayTimeLeft(-1);
-                Action stageStartEvent = quester.getCurrentStage(quest).getStartAction();
+                /*Action stageStartEvent = quester.getCurrentStage(quest).getStartAction();
                 if (stageStartEvent != null) {
                     stageStartEvent.fire(quester, quest);
                 }
@@ -81,6 +73,13 @@ public class StageTimer implements Runnable {
                 if (stageStartMessage != null) {
                     quester.getPlayer().sendMessage(ConfigUtil
                             .parseStringWithPossibleLineBreaks(stageStartMessage, quest));
+                }*/
+                try {
+                    quest.setStage(quester, stageNum);
+                } catch (InvalidStageException e) {
+                    plugin.getLogger().severe("Unable to set stage of quest " + quest.getName() + " to Stage "
+                            + stageNum + " after delay");
+                    e.printStackTrace();
                 }
             }
             if (quester.getQuestData(quest) != null) {
