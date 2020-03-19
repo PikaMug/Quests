@@ -86,6 +86,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(ConversationContext context, int number) {
         switch(number) {
         case 1:
+            System.out.println("block= " + context.getSessionData(pref + CK.S_BREAK_NAMES));
             if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
