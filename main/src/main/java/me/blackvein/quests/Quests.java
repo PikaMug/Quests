@@ -1273,7 +1273,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             skipQuestProcess("block-start has invalid location format", questKey);
                         }
                     }
-                    if (config.contains("quests." + questKey + ".region")) {
+                    if (config.contains("quests." + questKey + ".region")
+                            && getDependencies().getWorldGuardApi() != null) {
                         String region = config.getString("quests." + questKey + ".region");
                         boolean exists = false;
                         for (World world : getServer().getWorlds()) {
