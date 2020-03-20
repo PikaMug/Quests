@@ -859,14 +859,16 @@ public class PlayerListener implements Listener {
     
     /**
      * Checks if damager is blacklisted. Ensures damager and target are Player and not NPC.
-     * Kills target Player if objective exists
+     * Kills target Player if objective exists<p>
+     * 
+     * As of 3.8.9, damager and target must not be the same entity
      * 
      * @param damager the attacking entity
      * @param target the entity being attacked
      * @since 3.1.4
      */
     public void preKillPlayer(Entity damager, Entity target) {
-        if (damager == null) {
+        if (damager == null || target == null || damager.equals(target)) {
             return;
         }
         if (!plugin.canUseQuests(damager.getUniqueId())) {
