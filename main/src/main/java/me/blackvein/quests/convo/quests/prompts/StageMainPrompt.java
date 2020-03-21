@@ -422,7 +422,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         case 1:
             return new BlocksPrompt(stageNum, context);
         case 2:
-            return new ItemsPrompt(stageNum);
+            return new ItemsPrompt(stageNum, context);
         case 3:
             return new NPCsPrompt(stageNum, context);
         case 4:
