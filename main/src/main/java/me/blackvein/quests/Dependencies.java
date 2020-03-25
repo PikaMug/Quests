@@ -93,6 +93,8 @@ public class Dependencies {
             if (isPluginAvailable("Citizens")) {
                 try {
                     citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+                    plugin.getLogger().info("Sucessfully linked Quests with Citizens " 
+                            + citizens.getDescription().getVersion());
                 } catch (Exception e) {
                     plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
                 }

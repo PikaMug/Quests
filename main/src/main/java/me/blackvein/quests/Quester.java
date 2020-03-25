@@ -3809,7 +3809,8 @@ public class Quester {
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (plugin.getSettings().canAllowCommandsForNpcQuests() == false
+        } else if (plugin.getDependencies().getCitizens() != null
+                && plugin.getSettings().canAllowCommandsForNpcQuests() == false
                 && quest.getNpcStart() != null && quest.getNpcStart().getEntity() != null 
                 && quest.getNpcStart().getEntity().getLocation().getWorld().getName().equals(
                 getPlayer().getLocation().getWorld().getName())
