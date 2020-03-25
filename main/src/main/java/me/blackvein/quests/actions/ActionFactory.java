@@ -72,7 +72,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     private Map<UUID, Block> selectedMobLocations = new HashMap<UUID, Block>();
     private Map<UUID, Block> selectedLightningLocations = new HashMap<UUID, Block>();
     private Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
-    private List<String> names = new LinkedList<String>();
+    private List<String> editingActionNames = new LinkedList<String>();
 
     public ActionFactory(Quests plugin) {
         this.plugin = plugin;
@@ -128,6 +128,14 @@ public class ActionFactory implements ConversationAbandonedListener {
 
     public ConversationFactory getConversationFactory() {
         return convoCreator;
+    }
+    
+    public List<String> getNamesOfActionsBeingEdited() {
+        return editingActionNames;
+    }
+    
+    public void setNamesOfActionsBeingEdited(List<String> actionNames) {
+        this.editingActionNames = actionNames;
     }
 
     @Override
@@ -469,7 +477,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                         return new ActionSelectCreatePrompt(context);
                     }
                 }
-                if (names.contains(input)) {
+                if (editingActionNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
                     return new ActionSelectCreatePrompt(context);
                 }
@@ -482,7 +490,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     return new ActionSelectCreatePrompt(context);
                 }
                 context.setSessionData(CK.E_NAME, input);
-                names.add(input);
+                editingActionNames.add(input);
                 return new ActionMainPrompt(context);
             } else {
                 return new ActionMenuPrompt(context);
@@ -1195,7 +1203,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             plugin.setActions(temp);
         }
         ConfigurationSection section = data.createSection(key + "." + (String) context.getSessionData(CK.E_NAME));
-        names.remove((String) context.getSessionData(CK.E_NAME));
+        editingActionNames.remove((String) context.getSessionData(CK.E_NAME));
         if (context.getSessionData(CK.E_MESSAGE) != null) {
             section.set("message", getCString(context, CK.E_MESSAGE));
         }
@@ -1389,7 +1397,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                         return new ActionSetNamePrompt();
                     }
                 }
-                if (names.contains(input)) {
+                if (editingActionNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
                     return new ActionSetNamePrompt();
                 }
@@ -1397,9 +1405,9 @@ public class ActionFactory implements ConversationAbandonedListener {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAlpha"));
                     return new ActionSetNamePrompt();
                 }
-                names.remove((String) context.getSessionData(CK.E_NAME));
+                editingActionNames.remove((String) context.getSessionData(CK.E_NAME));
                 context.setSessionData(CK.E_NAME, input);
-                names.add(input);
+                editingActionNames.add(input);
             }
             return new ActionMainPrompt(context);
         }

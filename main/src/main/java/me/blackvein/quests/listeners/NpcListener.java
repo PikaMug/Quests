@@ -56,7 +56,7 @@ public class NpcListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(NPCRightClickEvent evt) {
-        if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker())) {
+        if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
             evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + "ID "
                     + evt.getNPC().getId());
             return;
@@ -300,7 +300,7 @@ public class NpcListener implements Listener {
 
     @EventHandler
     public void onNPCLeftClick(NPCLeftClickEvent evt) {
-        if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker())) {
+        if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
             evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN 
                     + Lang.get("id") + " " + evt.getNPC().getId());
         }

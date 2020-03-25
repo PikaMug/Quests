@@ -14,10 +14,10 @@
 package me.blackvein.quests.listeners;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -1005,9 +1005,9 @@ public class PlayerListener implements Listener {
             if (quester.hasData()) {
                 quester.saveData();
             }
-            if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getPlayer())) {
-                HashSet<Player> temp = plugin.getQuestFactory().getSelectingNpcs();
-                temp.remove(evt.getPlayer());
+            if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getPlayer().getUniqueId())) {
+                Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+                temp.remove(evt.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
             LinkedList<Quester> temp = plugin.getQuesters();

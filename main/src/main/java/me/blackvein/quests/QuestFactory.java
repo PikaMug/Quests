@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -71,8 +72,8 @@ public class QuestFactory implements ConversationAbandonedListener {
     private Map<UUID, Block> selectedBlockStarts = new HashMap<UUID, Block>();
     private Map<UUID, Block> selectedKillLocations = new HashMap<UUID, Block>();
     private Map<UUID, Block> selectedReachLocations = new HashMap<UUID, Block>();
-    private HashSet<Player> selectingNpcs = new HashSet<Player>();
-    private List<String> names = new LinkedList<String>();
+    private Set<UUID> selectingNpcs = new HashSet<UUID>();
+    private List<String> editingQuestNames = new LinkedList<String>();
     
     public QuestFactory(Quests plugin) {
         this.plugin = plugin;
@@ -106,21 +107,35 @@ public class QuestFactory implements ConversationAbandonedListener {
     public void setSelectedReachLocations(Map<UUID, Block> selectedReachLocations) {
         this.selectedReachLocations = selectedReachLocations;
     }
-
-    public HashSet<Player> getSelectingNpcs() {
+    
+    public Set<UUID> getSelectingNpcs() {
         return selectingNpcs;
     }
 
-    public void setSelectingNpcs(HashSet<Player> selectingNpcs) {
+    public void setSelectingNpcs(Set<UUID> selectingNpcs) {
         this.selectingNpcs = selectingNpcs;
     }
 
+    /**
+     * @deprecated Use {@link#getNamesOfQuestsBeingEdited}
+     */
     public List<String> getNames() {
-        return names;
+        return editingQuestNames;
     }
 
+    /**
+     * @deprecated Use {@link#setNamesOfQuestsBeingEdited}
+     */
     public void setNames(List<String> names) {
-        this.names = names;
+        this.editingQuestNames = names;
+    }
+    
+    public List<String> getNamesOfQuestsBeingEdited() {
+        return editingQuestNames;
+    }
+    
+    public void setNamesOfQuestsBeingEdited(List<String> questNames) {
+        this.editingQuestNames = questNames;
     }
     
     public ConversationFactory getConversationFactory() {
@@ -130,7 +145,7 @@ public class QuestFactory implements ConversationAbandonedListener {
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
         if (abandonedEvent.getContext().getSessionData(CK.Q_NAME) != null) {
-            names.remove((String) abandonedEvent.getContext().getSessionData(CK.Q_NAME));
+            editingQuestNames.remove((String) abandonedEvent.getContext().getSessionData(CK.Q_NAME));
         }
         Player player = (Player) abandonedEvent.getContext().getForWhom();
         selectedBlockStarts.remove(player.getUniqueId());
@@ -536,7 +551,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                         return new QuestSelectCreatePrompt(plugin, context);
                     }
                 }
-                if (names.contains(input)) {
+                if (editingQuestNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new QuestSelectCreatePrompt(plugin, context);
                 }
@@ -549,7 +564,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     return new QuestSelectCreatePrompt(plugin, context);
                 }
                 context.setSessionData(CK.Q_NAME, input);
-                names.add(input);
+                editingQuestNames.add(input);
                 return new QuestMainPrompt(context);
             } else {
                 return new QuestMenuPrompt(context);
@@ -1097,7 +1112,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                         }
                     }
                 }
-                if (names.contains(input)) {
+                if (editingQuestNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new QuestSetNamePrompt();
                 }
@@ -1105,9 +1120,9 @@ public class QuestFactory implements ConversationAbandonedListener {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new QuestSelectCreatePrompt(plugin, context);
                 }
-                names.remove((String) context.getSessionData(CK.Q_NAME));
+                editingQuestNames.remove((String) context.getSessionData(CK.Q_NAME));
                 context.setSessionData(CK.Q_NAME, input);
-                names.add(input);
+                editingQuestNames.add(input);
             }
             return new QuestMainPrompt(context);
         }
@@ -1163,7 +1178,7 @@ public class QuestFactory implements ConversationAbandonedListener {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            selectingNpcs.add((Player) context.getForWhom());
+            selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
             return ChatColor.YELLOW + Lang.get("questEditorEnterNPCStart") + "\n" 
                     + ChatColor.GOLD + Lang.get("npcHint");
         }
@@ -1180,7 +1195,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                             return new NPCStartPrompt();
                         }
                         context.setSessionData(CK.Q_START_NPC, i);
-                        selectingNpcs.remove((Player) context.getForWhom());
+                        selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
                         return new QuestMainPrompt(context);
                     }
                 } catch (NumberFormatException e) {
@@ -1191,7 +1206,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.Q_START_NPC, null);
             }
-            selectingNpcs.remove((Player) context.getForWhom());
+            selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
             return new QuestMainPrompt(context);
         }
     }

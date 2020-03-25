@@ -13,9 +13,10 @@
 package me.blackvein.quests.convo.quests.prompts;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -291,8 +292,8 @@ public class NPCsPrompt extends FixedSetPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            HashSet<Player> temp = plugin.getQuestFactory().getSelectingNpcs();
-            temp.add((Player) context.getForWhom());
+            Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+            temp.add(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
             return ChatColor.YELLOW + Lang.get("stageEditorNPCPrompt") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
         }
@@ -320,8 +321,8 @@ public class NPCsPrompt extends FixedSetPrompt {
                 }
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
             }
-            HashSet<Player> temp = plugin.getQuestFactory().getSelectingNpcs();
-            temp.remove((Player) context.getForWhom());
+            Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+            temp.remove(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
             return new DeliveryListPrompt();
         }
@@ -351,8 +352,8 @@ public class NPCsPrompt extends FixedSetPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            HashSet<Player> temp = plugin.getQuestFactory().getSelectingNpcs();
-            temp.add((Player) context.getForWhom());
+            Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+            temp.add(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
             return ChatColor.YELLOW + Lang.get("stageEditorNPCToTalkToPrompt") + "\n" + ChatColor.GOLD 
                     + Lang.get("npcHint");
@@ -380,8 +381,8 @@ public class NPCsPrompt extends FixedSetPrompt {
                         return new NPCIDsToTalkToPrompt();
                     }
                 }
-                HashSet<Player> temp = plugin.getQuestFactory().getSelectingNpcs();
-                temp.remove((Player) context.getForWhom());
+                Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+                temp.remove(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -490,8 +491,8 @@ public class NPCsPrompt extends FixedSetPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            HashSet<Player> temp = plugin.getQuestFactory().getSelectingNpcs();
-            temp.add((Player) context.getForWhom());
+            Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+            temp.add(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
             return ChatColor.YELLOW + Lang.get("stageEditorNPCPrompt") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
         }
@@ -519,8 +520,8 @@ public class NPCsPrompt extends FixedSetPrompt {
                 }
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
             }
-            HashSet<Player> temp = plugin.getQuestFactory().getSelectingNpcs();
-            temp.remove((Player) context.getForWhom());
+            Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+            temp.remove(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
             return new NPCKillListPrompt();
         }
