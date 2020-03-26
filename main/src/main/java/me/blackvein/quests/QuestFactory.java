@@ -1789,22 +1789,22 @@ public class QuestFactory implements ConversationAbandonedListener {
     @SuppressWarnings("unchecked")
     private void saveRewards(ConversationContext context, ConfigurationSection section) {
         ConfigurationSection rews = section.createSection("rewards");
-        rews.set("items", context.getSessionData(CK.REW_MONEY) != null 
-                ? (Integer) context.getSessionData(CK.REW_MONEY) : null);
+        rews.set("items", context.getSessionData(CK.REW_ITEMS) != null 
+                ? (Integer) context.getSessionData(CK.REW_ITEMS) : null);
         rews.set("money", context.getSessionData(CK.REW_QUEST_POINTS) != null 
                 ? (Integer) context.getSessionData(CK.REW_QUEST_POINTS) : null);
-        rews.set("quest-points", context.getSessionData(CK.REW_ITEMS) != null 
-                ? (List<ItemStack>) context.getSessionData(CK.REW_ITEMS) : null);
+        rews.set("quest-points", context.getSessionData(CK.REW_MONEY) != null 
+                ? (List<ItemStack>) context.getSessionData(CK.REW_MONEY) : null);
         rews.set("exp", context.getSessionData(CK.REW_EXP) != null 
                 ? (Integer) context.getSessionData(CK.REW_EXP) : null);
-        rews.set("permissions", context.getSessionData(CK.REW_COMMAND) != null 
-                ? (List<String>)context.getSessionData(CK.REW_COMMAND) : null);
-        rews.set("permission-worlds", context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) != null 
-                ? (List<String>)context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) : null);
-        rews.set("commands", context.getSessionData(CK.REW_PERMISSION) != null 
-                ? (List<String>) context.getSessionData(CK.REW_PERMISSION) : null);
-        rews.set("commands-override-display", context.getSessionData(CK.REW_PERMISSION_WORLDS) != null 
-                ? (List<String>) context.getSessionData(CK.REW_PERMISSION_WORLDS) : null);
+        rews.set("commands", context.getSessionData(CK.REW_COMMAND) != null 
+                ? (List<String>) context.getSessionData(CK.REW_COMMAND) : null);
+        rews.set("commands-override-display", context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) != null 
+                ? (List<String>) context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) : null);
+        rews.set("permissions", context.getSessionData(CK.REW_PERMISSION) != null 
+                ? (List<String>)context.getSessionData(CK.REW_PERMISSION) : null);
+        rews.set("permission-worlds", context.getSessionData(CK.REW_PERMISSION_WORLDS) != null 
+                ? (List<String>)context.getSessionData(CK.REW_PERMISSION_WORLDS) : null);
         rews.set("mcmmo-skills", context.getSessionData(CK.REW_MCMMO_SKILLS) != null 
                 ? (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS) : null);
         rews.set("mcmmo-levels", context.getSessionData(CK.REW_MCMMO_AMOUNTS) != null 
