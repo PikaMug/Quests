@@ -679,7 +679,6 @@ questPointsGiven: "<player> dał ci <number> Punktów Misji."
 invalidMinimum: "Dane wejściowe muszą wynosić co najmniej <number>!"
 invalidRange: "Dane wejściowe muszą znajdować się między <least> i <greatest>!"
 invalidOption: "Nie można tego zrobić!"
-invalidStageNum: "Nieprawidłowy etap w zadaniu o nazwie <quest>"
 noCurrentQuest: "<player> nie ma obecnie żadnych aktywnych zadań."
 playerNotFound: "Nie ma gracza o tej nazwie."
 errorNPCID: 'Błąd: Nie ma NPC z ID <number>'
