@@ -612,23 +612,23 @@ public class CmdExecutor implements CommandExecutor {
                     cs.sendMessage(msg);
                 }
             }
-            String completed;
+            cs.sendMessage(ChatColor.YELLOW + Lang.get("completedQuestsTitle"));
+
             if (quester.getCompletedQuests().isEmpty()) {
-                completed = ChatColor.DARK_PURPLE + Lang.get("none");
+                cs.sendMessage(ChatColor.DARK_PURPLE + Lang.get("none"));
             } else {
-                completed = ChatColor.DARK_PURPLE + "";
                 for (String s : quester.getCompletedQuests()) {
-                    completed += s;
+                    StringBuilder completed = new StringBuilder();
+                    completed.append(ChatColor.DARK_PURPLE + s);
                     if (quester.getAmountsCompleted().containsKey(s) && quester.getAmountsCompleted().get(s) > 1) {
-                        completed += ChatColor.LIGHT_PURPLE + " (x" + quester.getAmountsCompleted().get(s) + ")";
+                        completed.append(ChatColor.LIGHT_PURPLE + " (x" + quester.getAmountsCompleted().get(s) + ")");
                     }
                     if (quester.getCompletedQuests().indexOf(s) < (quester.getCompletedQuests().size() - 1)) {
-                        completed += ", ";
+                        completed.append(", ");
                     }
+                    cs.sendMessage(completed.toString());
                 }
             }
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("completedQuestsTitle"));
-            cs.sendMessage(completed);
         }
     }
 
