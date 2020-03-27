@@ -679,7 +679,6 @@ questPointsGiven: "<player> heeft je <number> Quest Punten gegeven."
 invalidMinimum: "Invoer moet minimaal <number> zijn!"
 invalidRange: "Invoer moet tussen <least> en <greatest> zijn!"
 invalidOption: "Ongeldige optie!"
-invalidStageNum: "Ongeldig stadiumnummer voor Quest <quest>"
 noCurrentQuest: "<player> heeft momenteel geen actieve Quests."
 playerNotFound: "Speler niet gevonden."
 errorNPCID: 'Fout: er is geen NPC met ID <number>'
