@@ -679,7 +679,6 @@ questPointsGiven: "<player> binigyan ka ng <number> ng puntos ng pagsusulit."
 invalidMinimum: "Ang input ay dapat na hindi bababa sa <number>!"
 invalidRange: "Ang input ay dapat nasa pagitan ng <least> at <greatest>!"
 invalidOption: "Di wastong pagpipilian!"
-invalidStageNum: "Di wastong numero ng yugto sa pagsusulit <quest>"
 noCurrentQuest: "<player> ay walang kasalukuyang aktibong pagsusulit."
 playerNotFound: "Hindi makita ang manlalaro."
 errorNPCID: 'Error: Ito ay walang NPC kasama ang ID <number>'
