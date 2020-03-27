@@ -679,7 +679,6 @@ questPointsGiven: "<player> te dio <number> Puntos de Misión."
 invalidMinimum: "¡La entrada debe ser al menos <number>!"
 invalidRange: "¡La entrada debe estar entre <least> y <greatest>!"
 invalidOption: "¡opción invalida!"
-invalidStageNum: "Número de escenario para la Misión <quest>"
 noCurrentQuest: "<player> actualmente no tiene ninguna Misiones activa."
 playerNotFound: "Jugador no encontrado."
 errorNPCID: 'Error: No hay un NPC con identificación <number>'
