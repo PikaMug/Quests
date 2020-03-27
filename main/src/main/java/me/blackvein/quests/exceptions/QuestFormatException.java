@@ -15,15 +15,32 @@ package me.blackvein.quests.exceptions;
 public class QuestFormatException extends Exception {
 
     private static final long serialVersionUID = -5960613170308750149L;
-    private final String quest;
+    private final String message;
+    private final String questId;
 
+    public QuestFormatException(String message, String questId) {
+        super(message + ", see quest of ID " + questId);
+        this.message = message + ", see quest of ID " + questId;
+        this.questId = questId;
+    }
     /**
      * Create a new instance of this class with the afflicted.
      * 
+     * @deprecated Use {@link#QuestFormatException(String, String)}
      * @param quest The quest that an invalid value was set within.
      */
-    public QuestFormatException(String quest) {
-        this.quest = quest;
+    public QuestFormatException(String questId) {
+        this.message = "Failed to load quest of ID " + questId;
+        this.questId = questId;
+    }
+    
+    /**
+     * Get the message associated with this exception.
+     * 
+     * @return The message.
+     */
+    public String getMessage() {
+        return message;
     }
     
     /**
@@ -32,6 +49,6 @@ public class QuestFormatException extends Exception {
      * @return The quest that an invalid value was set within.
      */
     public String getQuestId() {
-        return quest;
+        return questId;
     }
 }

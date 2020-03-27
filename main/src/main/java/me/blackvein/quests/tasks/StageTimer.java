@@ -15,7 +15,6 @@ package me.blackvein.quests.tasks;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.exceptions.InvalidStageException;
 
 public class StageTimer implements Runnable {
 
@@ -76,10 +75,9 @@ public class StageTimer implements Runnable {
                 }*/
                 try {
                     quest.setStage(quester, stageNum);
-                } catch (InvalidStageException e) {
+                } catch (IndexOutOfBoundsException e) {
                     plugin.getLogger().severe("Unable to set stage of quest " + quest.getName() + " to Stage "
                             + stageNum + " after delay");
-                    e.printStackTrace();
                 }
             }
             if (quester.getQuestData(quest) != null) {

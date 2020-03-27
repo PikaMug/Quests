@@ -34,7 +34,6 @@ import me.blackvein.quests.events.command.QuestsCommandPreQuestsEditorEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsListEvent;
 import me.blackvein.quests.events.quest.QuestQuitEvent;
-import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -1217,9 +1216,9 @@ public class CmdExecutor implements CommandExecutor {
                 }
                 try {
                     quest.setStage(quester, stage - 1);
-                } catch (InvalidStageException e) {
-                    String msg = Lang.get("invalidStageNum");
-                    msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
+                } catch (IndexOutOfBoundsException e) {
+                    String msg = Lang.get("invalidRange");
+                    msg = msg.replace("<least>", "1").replace("<greatest>", String.valueOf(quest.getStages().size()));
                     cs.sendMessage(ChatColor.RED + msg);
                 }
                 quester.saveData();

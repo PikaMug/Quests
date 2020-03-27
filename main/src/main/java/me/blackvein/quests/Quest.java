@@ -41,7 +41,6 @@ import me.blackvein.quests.events.quester.QuesterPostFailQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreChangeStageEvent;
 import me.blackvein.quests.events.quester.QuesterPreCompleteQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
-import me.blackvein.quests.exceptions.InvalidStageException;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
@@ -196,11 +195,7 @@ public class Quest {
                 }
                 completeQuest(quester);
             } else {
-                try {
-                    setStage(quester, quester.currentQuests.get(this) + 1);
-                } catch (InvalidStageException e) {
-                    e.printStackTrace();
-                }
+                setStage(quester, quester.currentQuests.get(this) + 1);
             }
             if (quester.getQuestData(this) != null) {
                 quester.getQuestData(this).setDelayStartTime(0);
@@ -227,13 +222,15 @@ public class Quest {
      * 
      * @param quester Player to force
      * @param stage Stage number to specify
-     * @throws InvalidStageException if stage does not exist
+     * @throws IndexOutOfBoundsException if stage does not exist
      */
-    public void setStage(Quester quester, int stage) throws InvalidStageException {
-        if (orderedStages.size() - 1 < stage) {
-            throw new InvalidStageException(this, stage);
-        }
+    public void setStage(Quester quester, int stage) throws IndexOutOfBoundsException {
         OfflinePlayer player = quester.getOfflinePlayer();
+        if (orderedStages.size() - 1 < stage) {
+            String msg = "Tried to set invalid stage number of " + stage + " for quest " + getName() + " on " 
+                    + player.getName();
+            throw new IndexOutOfBoundsException(msg);
+        }
         Stage currentStage = quester.getCurrentStage(this);
         Stage nextStage = getStage(stage);
         if (player.isOnline()) {

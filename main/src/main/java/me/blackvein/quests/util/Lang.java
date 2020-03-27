@@ -115,7 +115,7 @@ public class Lang {
         return orig;
     }
 
-public static void loadLang(Quests plugin) throws InvalidConfigurationException, IOException {
+    public static void loadLang(Quests plugin) throws InvalidConfigurationException, IOException {
         File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator
                 + "strings.yml");
         File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso

@@ -17,18 +17,38 @@ import me.blackvein.quests.Quest;
 public class StageFormatException extends Exception {
     
     private static final long serialVersionUID = -8217391053042612896L;
+    private final String message;
     private final Quest quest;
     private final int stage;
+    
+    
+    public StageFormatException(String message, Quest quest, int stage) {
+        super(message + ", see quest " + quest.getName() + " stage " + stage);
+        this.message = message + ", see quest " + quest.getName() + " stage " + stage;
+        this.quest = quest;
+        this.stage = stage;
+    }
 
     /**
      * Create a new instance of this class with the afflicted quest and stage number.
      * 
+     * @deprecated Use {@link#StageFormatException(String, Quest, int)}
      * @param quest The quest that an invalid stage id was set within.
      * @param stage The invalid stage id that was set.
      */
     public StageFormatException(Quest quest, int stage) {
+        this.message = "Failed to load quest " + quest.getName() + " stage " + stage;
         this.quest = quest;
         this.stage = stage;
+    }
+    
+    /**
+     * Get the message associated with this exception.
+     * 
+     * @return The message.
+     */
+    public String getMessage() {
+        return message;
     }
     
     /**
