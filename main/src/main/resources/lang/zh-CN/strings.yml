@@ -679,7 +679,6 @@ questPointsGiven: "<player>给予了你<number>点任务点。"
 invalidMinimum: "必须输入至少 <number>！"
 invalidRange: "输入值必须在 <least> 到 <greatest> 之间！"
 invalidOption: "无效选项！"
-invalidStageNum: "任务 <quest> 的阶段编号无效"
 noCurrentQuest: "玩家 <player> 当前没有任何活动任务。"
 playerNotFound: "未找到玩家。"
 errorNPCID: '错误: 没有ID为 <number> 的NPC'
