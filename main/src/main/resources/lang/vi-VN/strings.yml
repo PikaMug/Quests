@@ -679,7 +679,6 @@ questPointsGiven: "<player> đã cho bạn <number> Điểm Nhiệm vụ."
 invalidMinimum: "Đầu vào phải có ít nhất <number>!"
 invalidRange: "Đầu vào phải nằm giữa <least> và <greatest>!"
 invalidOption: "Tùy chọn không hợp lệ!"
-invalidStageNum: "Số lượng giai đoạn không hợp lệ cho Nhiệm vụ <quest>"
 noCurrentQuest: "<player> hiện nay không làm bất cứ Nhiệm vụ nào."
 playerNotFound: "Không tìm thấy người chơi."
 errorNPCID: 'Lỗi: Ở đó không có NPC với ID <number>'
