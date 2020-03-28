@@ -80,11 +80,11 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         case 1:
             return ChatColor.YELLOW + Lang.get("stageEditorKillMobs");
         case 2:
-            return ChatColor.YELLOW + Lang.get("stageEditorCatchFish");
+            return ChatColor.YELLOW + Lang.get("stageEditorTameMobs"); 
         case 3:
-            return ChatColor.YELLOW + Lang.get("stageEditorMilkCows");
+            return ChatColor.YELLOW + Lang.get("stageEditorCatchFish");
         case 4:
-            return ChatColor.YELLOW + Lang.get("stageEditorTameMobs");
+            return ChatColor.YELLOW + Lang.get("stageEditorMilkCows");
         case 5:
             return ChatColor.YELLOW + Lang.get("stageEditorShearSheep");
         case 6:
@@ -129,22 +129,6 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 return text;
             }
         case 2:
-            if (context.getSessionData(pref + CK.S_FISH) == null) {
-                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-            } else {
-                Integer fish = (Integer) context.getSessionData(pref + CK.S_FISH);
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + fish + " " + Lang.get("stageEditorFish") 
-                        + ChatColor.GRAY + ")\n";
-            }
-        case 3:
-            if (context.getSessionData(pref + CK.S_COW_MILK) == null) {
-                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-            } else {
-                Integer cows = (Integer) context.getSessionData(pref + CK.S_COW_MILK);
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + cows + " " + Lang.get("stageEditorCows") 
-                        + ChatColor.GRAY + ")\n";
-            }
-        case 4:
             if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
@@ -156,6 +140,22 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                             + ChatColor.AQUA + amounts.get(i) + "\n";
                 }
                 return text;
+            }
+        case 3:
+            if (context.getSessionData(pref + CK.S_FISH) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                Integer fish = (Integer) context.getSessionData(pref + CK.S_FISH);
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + fish + " " + Lang.get("stageEditorFish") 
+                        + ChatColor.GRAY + ")\n";
+            }
+        case 4:
+            if (context.getSessionData(pref + CK.S_COW_MILK) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                Integer cows = (Integer) context.getSessionData(pref + CK.S_COW_MILK);
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + cows + " " + Lang.get("stageEditorCows") 
+                        + ChatColor.GRAY + ")\n";
             }
         case 5:
             if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
@@ -198,11 +198,11 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         case 1:
             return new MobListPrompt();
         case 2:
-            return new FishPrompt();
+            return new TameListPrompt(); 
         case 3:
-            return new CowsPrompt();
+            return new FishPrompt();
         case 4:
-            return new TameListPrompt();
+            return new CowsPrompt();
         case 5:
             return new ShearListPrompt();
         case 6:
