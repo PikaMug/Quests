@@ -27,126 +27,178 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 
-public class NPCsPrompt extends FixedSetPrompt {
+public class NPCsPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private final int stageNum;
     private final String pref;
 
     public NPCsPrompt(int stageNum, ConversationContext context) {
-        super("1", "2", "3", "4");
+        super(context);
         this.plugin = (Quests)context.getPlugin();
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
     }
-
+    
+    private final int size = 4;
+    
+    public int getSize() {
+        return size;
+    }
+    
+    public String getTitle(ConversationContext context) {
+        return Lang.get("stageEditorNPCs");
+    }
+    
+    public ChatColor getNumberColor(ConversationContext context, int number) {
+        switch (number) {
+            case 1:
+            case 2:
+            case 3:
+                return ChatColor.BLUE;
+            case 4:
+                return ChatColor.GREEN;
+            default:
+                return null;
+        }
+    }
+    
+    public String getSelectionText(ConversationContext context, int number) {
+        switch(number) {
+        case 1:
+            return ChatColor.YELLOW + Lang.get("stageEditorDeliverItems");
+        case 2:
+            return ChatColor.YELLOW + Lang.get("stageEditorTalkToNPCs");
+        case 3:
+            return ChatColor.YELLOW + Lang.get("stageEditorKillNPCs");
+        case 4:
+            return ChatColor.GREEN + Lang.get("done");
+        default:
+            return null;
+        }
+    }
+    
     @SuppressWarnings("unchecked")
+    public String getAdditionalText(ConversationContext context, int number) {
+        switch(number) {
+        case 1:
+            if (plugin.getDependencies().getCitizens() != null) {
+                if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS);
+                    LinkedList<ItemStack> items 
+                            = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
+                    for (int i = 0; i < npcs.size(); i++) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                                + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + ChatColor.GRAY 
+                                + " " + Lang.get("to") + " " + ChatColor.DARK_AQUA 
+                                + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName()
+                                + "\n";
+                    }
+                    return text;
+                }
+            } else {
+                return ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")";
+            }
+        case 2:
+            if (plugin.getDependencies().getCitizens() != null) {
+                if (context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    LinkedList<Integer> npcs 
+                            = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO);
+                    for (int i = 0; i < npcs.size(); i++) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
+                                + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() 
+                                + "\n";
+                    }
+                    return text;
+                }
+            } else {
+                return ChatColor.GRAY + "(" + Lang.get("questCitNotInstalled") + ")";
+            }
+        case 3:
+            if (plugin.getDependencies().getCitizens() != null) {
+                if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL);
+                    LinkedList<Integer> amounts 
+                            = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
+                    for (int i = 0; i < npcs.size(); i++) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
+                                + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() 
+                                + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
+                    }
+                    return text;
+                }
+            } else {
+                return ChatColor.GRAY + "(" + Lang.get("questCitNotInstalled") + ")";
+            }
+        case 4:
+            return "";
+        default:
+            return null;
+        }
+    }
+
     @Override
     public String getPromptText(ConversationContext context) {
         context.setSessionData(pref, Boolean.TRUE);
-        String text = ChatColor.AQUA + "- " + Lang.get("stageEditorNPCs") + " -\n";
-        if (plugin.getDependencies().getCitizens() != null) {
-            if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                        + "- " + Lang.get("stageEditorDeliverItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") 
-                        + ")\n";
-            } else {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                        + "- " + Lang.get("stageEditorDeliverItems") + "\n";
-                LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS);
-                LinkedList<ItemStack> items 
-                        = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
-                for (int i = 0; i < npcs.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
-                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + ChatColor.GRAY + " "
-                            + Lang.get("to") + " " + ChatColor.DARK_AQUA 
-                            + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName()
-                            + "\n";
-                }
-            }
-        } else {
-            text += ChatColor.GRAY + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.GRAY + "- " 
-                    + Lang.get("stageEditorDeliverItems") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") 
-                    + ")\n";
+
+        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+        String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+        for (int i = 1; i <= size; i++) {
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
-        if (plugin.getDependencies().getCitizens() != null) {
-            if (context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) == null) {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                        + "- " + Lang.get("stageEditorTalkToNPCs") + ChatColor.GRAY + " (" + Lang.get("noneSet") 
-                        + ")\n";
-            } else {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                        + "- " + Lang.get("stageEditorTalkToNPCs") + "\n";
-                LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO);
-                for (int i = 0; i < npcs.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
-                            + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() 
-                            + "\n";
-                }
-            }
-        } else {
-            text += ChatColor.GRAY + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.GRAY + "- " 
-                    + Lang.get("stageEditorTalkToNPCs") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") 
-                    + ")\n";
-        }
-        if (plugin.getDependencies().getCitizens() != null) {
-            if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                        + "- " + Lang.get("stageEditorKillNPCs") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-            } else {
-                text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                        + "- " + Lang.get("stageEditorKillNPCs") + "\n";
-                LinkedList<Integer> npcs = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL);
-                LinkedList<Integer> amounts 
-                        = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
-                for (int i = 0; i < npcs.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
-                            + plugin.getDependencies().getCitizens().getNPCRegistry().getById(npcs.get(i)).getName() 
-                            + ChatColor.GRAY + " x " + ChatColor.AQUA + amounts.get(i) + "\n";
-                }
-            }
-        } else {
-            text += ChatColor.GRAY + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.GRAY + "- " 
-                    + Lang.get("stageEditorKillNPCs") + ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") 
-                    + ")\n";
-        }
-        text += ChatColor.GREEN + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " 
-                + Lang.get("done") + "\n";
         return text;
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("1")) {
+    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        switch(input.intValue()) {
+        case 1:
             if (plugin.getDependencies().getCitizens() != null) {
                 return new DeliveryListPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
             }
-        } else if (input.equalsIgnoreCase("2")) {
+        case 2:
             if (plugin.getDependencies().getCitizens() != null) {
                 return new NPCIDsToTalkToPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
             }
-        } else if (input.equalsIgnoreCase("3")) {
+        case 3:
             if (plugin.getDependencies().getCitizens() != null) {
                 return new NPCKillListPrompt();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
             }
-        }
-        try {
-            return new StageMainPrompt(stageNum, context);
-        } catch (Exception e) {
-            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
-            return Prompt.END_OF_CONVERSATION;
+        case 4:
+            try {
+                return new StageMainPrompt(stageNum, context);
+            } catch (Exception e) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
+                return Prompt.END_OF_CONVERSATION;
+            }
+        default:
+            return null;
         }
     }
     

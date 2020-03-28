@@ -31,125 +31,189 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-public class MobsPrompt extends FixedSetPrompt {
+public class MobsPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private final int stageNum;
     private final String pref;
 
     public MobsPrompt(int stageNum, ConversationContext context) {
-        super("1", "2", "3", "4", "5", "6");
+        super(context);
         this.plugin = (Quests)context.getPlugin();
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
     }
-
+    
+    private final int size = 6;
+    
+    public int getSize() {
+        return size;
+    }
+    
+    public String getTitle(ConversationContext context) {
+        return Lang.get("stageEditorMobs");
+    }
+    
+    public ChatColor getNumberColor(ConversationContext context, int number) {
+        switch (number) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return ChatColor.BLUE;
+            case 6:
+                return ChatColor.GREEN;
+            default:
+                return null;
+        }
+    }
+    
+    public String getSelectionText(ConversationContext context, int number) {
+        switch(number) {
+        case 1:
+            return ChatColor.YELLOW + Lang.get("stageEditorKillMobs");
+        case 2:
+            return ChatColor.YELLOW + Lang.get("stageEditorCatchFish");
+        case 3:
+            return ChatColor.YELLOW + Lang.get("stageEditorMilkCows");
+        case 4:
+            return ChatColor.YELLOW + Lang.get("stageEditorTameMobs");
+        case 5:
+            return ChatColor.YELLOW + Lang.get("stageEditorShearSheep");
+        case 6:
+            return ChatColor.GREEN + Lang.get("done");
+        default:
+            return null;
+        }
+    }
+    
     @SuppressWarnings("unchecked")
+    public String getAdditionalText(ConversationContext context, int number) {
+        switch(number) {
+        case 1:
+            if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_TYPES);
+                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
+                if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
+                    for (int i = 0; i < mobs.size(); i++) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA 
+                                + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY 
+                                + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+                    }
+                } else {
+                    LinkedList<String> locs 
+                            = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS);
+                    LinkedList<Integer> radii 
+                            = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS);
+                    LinkedList<String> names 
+                            = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES);
+                    for (int i = 0; i < mobs.size(); i++) {
+                        String msg = Lang.get("blocksWithin");
+                        msg = msg.replace("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
+                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
+                                + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY 
+                                + " x " + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW 
+                                + names.get(i) + " (" + locs.get(i) + ")\n";
+                    }
+                }
+                return text;
+            }
+        case 2:
+            if (context.getSessionData(pref + CK.S_FISH) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                Integer fish = (Integer) context.getSessionData(pref + CK.S_FISH);
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + fish + " " + Lang.get("stageEditorFish") 
+                        + ChatColor.GRAY + ")\n";
+            }
+        case 3:
+            if (context.getSessionData(pref + CK.S_COW_MILK) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                Integer cows = (Integer) context.getSessionData(pref + CK.S_COW_MILK);
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + cows + " " + Lang.get("stageEditorCows") 
+                        + ChatColor.GRAY + ")\n";
+            }
+        case 4:
+            if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES);
+                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
+                for (int i = 0; i < mobs.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + mobs.get(i) + ChatColor.GRAY + " x " 
+                            + ChatColor.AQUA + amounts.get(i) + "\n";
+                }
+                return text;
+            }
+        case 5:
+            if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                LinkedList<String> colors = (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS);
+                LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
+                for (int i = 0; i < colors.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + colors.get(i) + ChatColor.GRAY + " x " 
+                            + ChatColor.AQUA + amounts.get(i) + "\n";
+                }
+                return text;
+            }
+        case 6:
+            return "";
+        default:
+            return null;
+        }
+    }
+
     @Override
     public String getPromptText(ConversationContext context) {
         context.setSessionData(pref, Boolean.TRUE);
-        String text = ChatColor.AQUA + "- " + Lang.get("stageEditorMobs") + " -\n";
-        if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorKillMobs") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "1 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorKillMobs") + "\n";
-            LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_TYPES);
-            LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
-            if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
-                for (int i = 0; i < mobs.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA 
-                            + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY + " x " 
-                            + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
-                }
-            } else {
-                LinkedList<String> locs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS);
-                LinkedList<Integer> radii 
-                        = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS);
-                LinkedList<String> names 
-                        = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES);
-                for (int i = 0; i < mobs.size(); i++) {
-                    String msg = Lang.get("blocksWithin");
-                    msg = msg.replace("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
-                            + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY + " x " 
-                            + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW 
-                            + names.get(i) + " (" + locs.get(i) + ")\n";
-                }
-            }
+        
+        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+        String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+        for (int i = 1; i <= size; i++) {
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
-        if (context.getSessionData(pref + CK.S_FISH) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorCatchFish") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            Integer fish = (Integer) context.getSessionData(pref + CK.S_FISH);
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "2 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorCatchFish") + " " + ChatColor.GRAY + "(" + ChatColor.AQUA + fish 
-                    + " " + Lang.get("stageEditorFish") + ChatColor.GRAY + ")\n";
-        }
-        if (context.getSessionData(pref + CK.S_COW_MILK) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorMilkCows") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            Integer cows = (Integer) context.getSessionData(pref + CK.S_COW_MILK);
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorMilkCows") + " " + ChatColor.GRAY + "(" + ChatColor.AQUA + cows 
-                    + " " + Lang.get("stageEditorCows") + ChatColor.GRAY + ")\n";
-        }
-        if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorTameMobs") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorTameMobs") + "\n";
-            LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES);
-            LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
-            for (int i = 0; i < mobs.size(); i++) {
-                text += ChatColor.GRAY + "     - " + ChatColor.BLUE + mobs.get(i) + ChatColor.GRAY + " x " 
-                        + ChatColor.AQUA + amounts.get(i) + "\n";
-            }
-        }
-        if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorShearSheep") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "5 " + ChatColor.RESET + ChatColor.LIGHT_PURPLE 
-                    + "- " + Lang.get("stageEditorShearSheep") + "\n";
-            LinkedList<String> colors = (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS);
-            LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
-            for (int i = 0; i < colors.size(); i++) {
-                text += ChatColor.GRAY + "     - " + ChatColor.BLUE + colors.get(i) + ChatColor.GRAY + " x " 
-                        + ChatColor.AQUA + amounts.get(i) + "\n";
-            }
-        }
-        text += ChatColor.GREEN + "" + ChatColor.BOLD + "6 " + ChatColor.RESET + ChatColor.DARK_PURPLE + "- " 
-                + Lang.get("done") + "\n";
         return text;
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("1")) {
+    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        switch(input.intValue()) {
+        case 1:
             return new MobListPrompt();
-        } else if (input.equalsIgnoreCase("2")) {
+        case 2:
             return new FishPrompt();
-        } else if (input.equalsIgnoreCase("3")) {
+        case 3:
             return new CowsPrompt();
-        } else if (input.equalsIgnoreCase("4")) {
+        case 4:
             return new TameListPrompt();
-        } else if (input.equalsIgnoreCase("5")) {
+        case 5:
             return new ShearListPrompt();
-        }
-        try {
-            return new StageMainPrompt(stageNum, context);
-        } catch (Exception e) {
-            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
-            return Prompt.END_OF_CONVERSATION;
+        case 6:
+            try {
+                return new StageMainPrompt(stageNum, context);
+            } catch (Exception e) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
+                return Prompt.END_OF_CONVERSATION;
+            }
+        default:
+            return null;
         }
     }
     

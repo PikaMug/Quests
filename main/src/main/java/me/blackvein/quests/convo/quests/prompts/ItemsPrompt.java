@@ -87,31 +87,31 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         switch(number) {
         case 1:
             if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null) {
-                return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
                 LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY 
-                            + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
                 }
                 return text;
             }
         case 2:
             if (context.getSessionData(pref + CK.S_SMELT_ITEMS) == null) {
-                return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
                 LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY 
-                            + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
                 }
                 return text;
             }
         case 3:
             if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
-                return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
                 LinkedList<String> enchants = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES);
@@ -127,13 +127,13 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         case 4:
             if (context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
-                return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
                 LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) + ChatColor.GRAY 
-                            + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
                 }
                 return text;
             }
@@ -163,8 +163,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
         context.setSessionData(pref, Boolean.TRUE);
         
-        QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";

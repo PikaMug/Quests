@@ -161,8 +161,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
     public String getPromptText(ConversationContext context) {
         context.setSessionData(pref, Boolean.TRUE);
         
-        QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
 
         String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
