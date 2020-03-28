@@ -679,7 +679,6 @@ questPointsGiven: "<player> 給予你 <number> 任務點數。"
 invalidMinimum: "輸入值必須至少為 <number> ！"
 invalidRange: "輸入值必須在 <least> 至 <greatest> 之間 ！"
 invalidOption: "無效的選項 ！"
-invalidStageNum: "無效的任務 <quest> 階段編號"
 noCurrentQuest: "<player> 目前沒有任何進行中的任務。"
 playerNotFound: "找不到玩家。"
 errorNPCID: '錯誤 ︰ 沒有 ID 為 <number> 的 NPC'

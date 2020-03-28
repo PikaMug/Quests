@@ -679,7 +679,6 @@ questPointsGiven: "<player> memberi Anda <number> Poin Pencarian."
 invalidMinimum: "Masukan harus setidaknya <number>!"
 invalidRange: "Masukan harus antara <least> dan <greatest>!"
 invalidOption: "Pilihan tidak sah!"
-invalidStageNum: "Nomor tahap tidak sah untuk Pencarian <quest>"
 noCurrentQuest: "<player> saat ini tidak ada Pencarian aktif."
 playerNotFound: "Pemain tidak ditemukan."
 errorNPCID: 'Kesalahan: Tidak ada NPC dengan ID <number>'

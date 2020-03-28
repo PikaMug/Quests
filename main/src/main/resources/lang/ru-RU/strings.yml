@@ -679,7 +679,6 @@ questPointsGiven: "<player> дал вам <number> квест очков."
 invalidMinimum: "Ввод должен быть не менее <number>!"
 invalidRange: "Входные данные должны находиться между <least> и <greatest>!"
 invalidOption: "Недопустимая опция!"
-invalidStageNum: "Неверный номер этапа квеста <quest>"
 noCurrentQuest: "У игрока <player> нет активных квестов."
 playerNotFound: "Игрок не найден."
 errorNPCID: 'Ошибка: Нет NPC с ID <number>'

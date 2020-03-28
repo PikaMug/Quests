@@ -679,7 +679,6 @@ questPointsGiven: "<player> ti dal <number> bodů z úkolu."
 invalidMinimum: "Vstup musí být alespoň <number>!"
 invalidRange: "Vstup musí být mezi <least> a <greatest>!"
 invalidOption: "Neplatná volba!"
-invalidStageNum: "Neplatné číslo fáze pro úkol <quest>"
 noCurrentQuest: "<player> Nemá nyní žádné aktivní úkoly."
 playerNotFound: "Hráč nebyl nalezen."
 errorNPCID: 'Error: Tady není žádné NPC s ID <number>'

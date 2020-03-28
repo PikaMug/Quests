@@ -679,7 +679,6 @@ questPointsGiven: "<player> adott <number> Küldetés pontokat."
 invalidMinimum: "A bemenetnek legalább <number> kell lennie!"
 invalidRange: "A bemenetnek <least> és <greatest> között kell lennie!"
 invalidOption: "Érvénytelen lehetőség!"
-invalidStageNum: "Érvénytelen szakaszszám a(z) <quest> küldetés számára"
 noCurrentQuest: "<player> Jelenleg nincs aktív küldetése."
 playerNotFound: "A játékos nem található."
 errorNPCID: 'Hiba: Nincs NPC <number> azonosítóval'

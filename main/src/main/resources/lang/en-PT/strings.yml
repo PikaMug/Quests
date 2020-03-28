@@ -679,7 +679,6 @@ questPointsGiven: "<player> gave ye <number> Quest Points."
 invalidMinimum: "Input must be at least <number>!"
 invalidRange: "Input must be between <least> 'n <greatest>!"
 invalidOption: "Invalid option!"
-invalidStageNum: "Invalid stage number fer Quest <quest>"
 noCurrentQuest: "<player> does nah currently 'ave any active Quests."
 playerNotFound: "Player nah found."
 errorNPCID: 'Error: Thar be no NPC wit'' ID <number>'

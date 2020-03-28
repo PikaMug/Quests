@@ -679,7 +679,6 @@ questPointsGiven: "<player> kişisi sana <number> Görev Puanı verdi."
 invalidMinimum: "Girdi en az <number> olmalı!"
 invalidRange: "Girdi <least> ile <greatest> arasında olmalı!"
 invalidOption: "Geçersiz seçenek!"
-invalidStageNum: "<quest> görevi için geçersiz etap sayısı"
 noCurrentQuest: "<player> kişisinin şu anda aktif bir görevi yok."
 playerNotFound: "Oyuncu bulunamadı."
 errorNPCID: 'Hata: <number> IDsine sahip bir NPC bulunamadı'

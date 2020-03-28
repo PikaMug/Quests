@@ -679,7 +679,6 @@ questPointsGiven: "<player> vous a donné <number> Points de quête."
 invalidMinimum: "L'entrée doit être supérieur a <number>!"
 invalidRange: "L'entrée doit être entre <least> et <greatest>!"
 invalidOption: "Option invalide!"
-invalidStageNum: "Nombre d'étape invalide pour la quête <quest>"
 noCurrentQuest: "<player> n'a aucune quête active actuellement."
 playerNotFound: "Joueur introuvable."
 errorNPCID: 'Erreur: Il n''y a pas de NPC avec l''ID <number>'

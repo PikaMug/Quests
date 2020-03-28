@@ -679,7 +679,6 @@ questPointsGiven: "<player> gav dig <number> Quest Point."
 invalidMinimum: "Input skal mindst være <number>!"
 invalidRange: "Input skal være imellem <least> og <greatest>!"
 invalidOption: "Ugyldig indstilling!"
-invalidStageNum: "Ugyldig scene nummer for Quest <quest>"
 noCurrentQuest: "<player> har ikke nogle Quests aktive."
 playerNotFound: "Spiller ikke fundet."
 errorNPCID: 'Fejl: Der er ingen NPC med ID <number>'
