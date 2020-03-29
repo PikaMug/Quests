@@ -1303,6 +1303,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         }
                         if (stack != null) {
                             quest.guiDisplay = stack;
+                        } else {
+                            throw new QuestFormatException("gui-display has invalid item format", questKey);
                         }
                     }
                     if (config.contains("quests." + questKey + ".redo-delay")) {
