@@ -3617,15 +3617,19 @@ public class Quester {
                         index = 0;
                     }
                 }
-                final Quest quest = plugin.getQuestById(list.get(index));
-                compassTargetQuestId = quest.getId();
-                final Stage stage = getCurrentStage(quest);
-                if (stage != null) {
-                    quest.updateCompass(Quester.this, stage);
-                    if (notify && getPlayer().isOnline()) {
-                        getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "compassSet")
-                                .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.YELLOW));
+                if (list.size() > 0) {
+                    final Quest quest = plugin.getQuestById(list.get(index));
+                    compassTargetQuestId = quest.getId();
+                    final Stage stage = getCurrentStage(quest);
+                    if (stage != null) {
+                        quest.updateCompass(Quester.this, stage);
+                        if (notify && getPlayer().isOnline()) {
+                            getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "compassSet")
+                                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.YELLOW));
+                        }
                     }
+                } else {
+                    getPlayer().sendMessage(ChatColor.RED + Lang.get(getPlayer(), "journalNoQuests"));
                 }
             }
         });
