@@ -114,7 +114,11 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
         case 1:
-            return ChatColor.YELLOW + Lang.get("rewSetMoney");
+            if (plugin.getDependencies().getVaultEconomy() != null) {
+                return ChatColor.YELLOW + Lang.get("rewSetMoney");
+            } else {
+                return ChatColor.GRAY + Lang.get("rewSetMoney");
+            }
         case 2:
             return ChatColor.YELLOW + Lang.get("rewSetQuestPoints");
         case 3:
@@ -126,11 +130,23 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         case 6:
             return ChatColor.YELLOW + Lang.get("rewSetPermission");
         case 7:
-            return ChatColor.YELLOW + Lang.get("rewSetMcMMO");
+            if (plugin.getDependencies().getMcmmoClassic() != null) {
+                return ChatColor.YELLOW + Lang.get("rewSetMcMMO");
+            } else {
+                return ChatColor.GRAY + Lang.get("rewSetMcMMO");
+            }
         case 8:
-            return ChatColor.YELLOW + Lang.get("rewSetHeroes");
+            if (plugin.getDependencies().getHeroes() != null) {
+                return ChatColor.YELLOW + Lang.get("rewSetHeroes");
+            } else {
+                return ChatColor.GRAY + Lang.get("rewSetHeroes");
+            }
         case 9:
-            return ChatColor.YELLOW + Lang.get("rewSetPhat");
+            if (plugin.getDependencies().getPhatLoots() != null) {
+                return ChatColor.YELLOW + Lang.get("rewSetPhat");
+            } else {
+                return ChatColor.GRAY + Lang.get("rewSetPhat");
+            }
         case 10:
             return ChatColor.DARK_PURPLE + Lang.get("rewSetCustom");
         case 11:

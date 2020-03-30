@@ -63,6 +63,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
         case 1:
+            if (plugin.getDependencies().getVaultEconomy() != null) {
+                return ChatColor.BLUE;
+            } else {
+                return ChatColor.GRAY;
+            }
         case 2:
         case 3:
         case 4:
@@ -84,12 +89,6 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         case 9:
             return ChatColor.BLUE;
         case 10:
-            if (!hasRequirement) {
-                return ChatColor.GRAY;
-            } else {
-                return ChatColor.BLUE;
-            }
-        case 11:
             if (context.getSessionData(CK.REQ_FAIL_MESSAGE) == null) {
                 if (!hasRequirement) {
                     return ChatColor.GRAY;
@@ -99,7 +98,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.BLUE;
             }
-        case 12:
+        case 11:
             return ChatColor.GREEN;
         default:
             return null;
@@ -109,7 +108,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
         case 1:
-            return ChatColor.YELLOW + Lang.get("reqSetMoney");
+            if (plugin.getDependencies().getVaultEconomy() != null) {
+                return ChatColor.YELLOW + Lang.get("reqSetMoney");
+            } else {
+                return ChatColor.GRAY + Lang.get("reqSetMoney");
+            }
         case 2:
             return ChatColor.YELLOW + Lang.get("reqSetQuestPoints");
         case 3:
@@ -121,9 +124,17 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         case 6:
             return ChatColor.YELLOW + Lang.get("reqSetQuestBlocks");
         case 7:
-            return ChatColor.YELLOW + Lang.get("reqSetMcMMO");
+            if (plugin.getDependencies().getMcmmoClassic() != null) {
+                return ChatColor.YELLOW + Lang.get("reqSetMcMMO");
+            } else {
+                return ChatColor.GRAY + Lang.get("reqSetMcMMO");
+            }
         case 8:
-            return ChatColor.YELLOW + Lang.get("reqSetHeroes");
+            if (plugin.getDependencies().getHeroes() != null) {
+                return ChatColor.YELLOW + Lang.get("reqSetHeroes");
+            } else {
+                return ChatColor.GRAY + Lang.get("reqSetHeroes");
+            }
         case 9:
             return ChatColor.DARK_PURPLE + Lang.get("reqSetCustom");
         case 10:
@@ -307,7 +318,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
         case 1:
-            return new MoneyPrompt();
+            if (plugin.getDependencies().getVaultEconomy() != null) {
+                return new MoneyPrompt();
+            } else {
+                return new RequirementsPrompt(context);
+            }
         case 2:
             return new QuestPointsPrompt();
         case 3:
