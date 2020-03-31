@@ -1791,10 +1791,10 @@ public class QuestFactory implements ConversationAbandonedListener {
         ConfigurationSection rews = section.createSection("rewards");
         rews.set("items", context.getSessionData(CK.REW_ITEMS) != null 
                 ? (List<ItemStack>) context.getSessionData(CK.REW_ITEMS) : null);
-        rews.set("money", context.getSessionData(CK.REW_QUEST_POINTS) != null 
-                ? (Integer) context.getSessionData(CK.REW_QUEST_POINTS) : null);
-        rews.set("quest-points", context.getSessionData(CK.REW_MONEY) != null 
+        rews.set("money", context.getSessionData(CK.REW_MONEY) != null 
                 ? (Integer) context.getSessionData(CK.REW_MONEY) : null);
+        rews.set("quest-points", context.getSessionData(CK.REW_QUEST_POINTS) != null 
+                ? (Integer) context.getSessionData(CK.REW_QUEST_POINTS) : null);
         rews.set("exp", context.getSessionData(CK.REW_EXP) != null 
                 ? (Integer) context.getSessionData(CK.REW_EXP) : null);
         rews.set("commands", context.getSessionData(CK.REW_COMMAND) != null 
