@@ -175,8 +175,15 @@ public class PlayerListener implements Listener {
             // Do nothing, getHand() not present pre-1.9
         }
         if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
-            if (evt.hasBlock() && evt.getClickedBlock().getType().name().equals("LECTERN")) {
-                if (ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
+            if (evt.hasBlock() && ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
+                if (evt.getClickedBlock().getType().name().contains("PORTAL")
+                        && plugin.getSettings().canAllowPranks()) {
+                    evt.setCancelled(true);
+                    evt.getPlayer().sendMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE 
+                            + "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                    return;
+                }
+                if (evt.getClickedBlock().getType().name().equals("LECTERN")) {
                     evt.setCancelled(true);
                     evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied"));
                     return;
