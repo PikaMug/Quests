@@ -291,7 +291,7 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase("3")) {
                 return new DeliveryMessagesPrompt();
             } else if (input.equalsIgnoreCase("4")) {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorDeliveriesCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("Cleared"));
                 context.setSessionData(pref + CK.S_DELIVERY_ITEMS, null);
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, null);
                 context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, null);
