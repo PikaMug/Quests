@@ -35,7 +35,6 @@ import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.ConversationPrefix;
 import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
@@ -78,8 +77,8 @@ public class ActionFactory implements ConversationAbandonedListener {
         this.plugin = plugin;
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withPrefix(new QuestCreatorPrefix()).withFirstPrompt(new ActionMenuPrompt(null))
-                .withTimeout(3600).thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
+                .withFirstPrompt(new ActionMenuPrompt(null)).withTimeout(3600)
+                .thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
                 .addConversationAbandonedListener(this);
     }
     
@@ -146,14 +145,6 @@ public class ActionFactory implements ConversationAbandonedListener {
         selectedMobLocations.remove(player.getUniqueId());
         selectedLightningLocations.remove(player.getUniqueId());
         selectedTeleportLocations.remove(player.getUniqueId());
-    }
-
-    private class QuestCreatorPrefix implements ConversationPrefix {
-
-        @Override
-        public String getPrefix(ConversationContext context) {
-            return "";
-        }
     }
 
     public class ActionMenuPrompt extends ActionsEditorNumericPrompt {

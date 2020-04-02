@@ -173,14 +173,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         getCommand("questadmin").setExecutor(cmdExecutor);
         getCommand("quest").setExecutor(cmdExecutor);
         
-        // 9 - Setup conversation factory after timeout has loaded
-        this.conversationFactory = new ConversationFactory(this).withModality(false).withPrefix(new QuestsPrefix())
+        // 9 - Build conversation factories
+        this.conversationFactory = new ConversationFactory(this).withModality(false)
+                .withPrefix(new ConversationPrefix() {
+                    @Override
+                    public String getPrefix(ConversationContext context) {
+                        return ChatColor.GRAY.toString();
+                    }
+                })
                 .withFirstPrompt(new QuestAcceptPrompt()).withTimeout(settings.getAcceptTimeout())
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                 .addConversationAbandonedListener(this);
         this.npcConversationFactory = new ConversationFactory(this).withModality(false)
-                .withFirstPrompt(new QuestOfferPrompt(this))
-                .withTimeout(settings.getAcceptTimeout()).withLocalEcho(false).addConversationAbandonedListener(this);
+                .withFirstPrompt(new QuestOfferPrompt(this)).withTimeout(settings.getAcceptTimeout())
+                .withLocalEcho(false).addConversationAbandonedListener(this);
         
         // 10 - Register listeners
         getServer().getPluginManager().registerEvents(playerListener, this);
@@ -230,11 +236,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return customRequirements;
     }
 
-    public Optional<CustomRequirement> getCustomRequirement(String class_name) {
-        int size=customRequirements.size();
-        for(int i1=0;i1<size;i1++) {
-            CustomRequirement o1=customRequirements.get(i1);
-            if(o1.getClass().getName().equals(class_name)) return Optional.of(o1);
+    public Optional<CustomRequirement> getCustomRequirement(String className) {
+        for (int i = 0; i < customRequirements.size(); i++) {
+            CustomRequirement cr = customRequirements.get(i);
+            if (cr.getClass().getName().equals(className)) {
+                return Optional.of(cr);
+            }
         }
         return Optional.empty();
     }
@@ -243,11 +250,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return customRewards;
     }
     
-    public Optional<CustomReward> getCustomReward(String class_name) {
-        int size=customRewards.size();
-        for(int i1=0;i1<size;i1++) {
-            CustomReward o1=customRewards.get(i1);
-            if(o1.getClass().getName().equals(class_name)) return Optional.of(o1);
+    public Optional<CustomReward> getCustomReward(String className) {
+        for (int i = 0; i < customRewards.size(); i++) {
+            CustomReward cr = customRewards.get(i);
+            if (cr.getClass().getName().equals(className)) {
+                return Optional.of(cr);
+            }
         }
         return Optional.empty();
     }
@@ -256,11 +264,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return customObjectives;
     }
     
-    public Optional<CustomObjective> getCustomObjective(String class_name) {
-        int size=customObjectives.size();
-        for(int i1=0;i1<size;i1++) {
-            CustomObjective o1=customObjectives.get(i1);
-            if(o1.getClass().getName().equals(class_name)) return Optional.of(o1);
+    public Optional<CustomObjective> getCustomObjective(String className) {
+        for (int i = 0; i < customObjectives.size(); i++) {
+            CustomObjective co = customObjectives.get(i);
+            if (co.getClass().getName().equals(className)) {
+                return Optional.of(co);
+            }
         }
         return Optional.empty();
     }
@@ -376,14 +385,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 player.sendMessage(ChatColor.RED + msg);
                 return new QuestAcceptPrompt();
             }
-        }
-    }
-
-    private class QuestsPrefix implements ConversationPrefix {
-
-        @Override
-        public String getPrefix(ConversationContext context) {
-            return ChatColor.GRAY.toString();
         }
     }
     
