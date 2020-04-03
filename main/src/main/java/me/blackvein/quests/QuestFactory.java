@@ -1843,9 +1843,9 @@ public class QuestFactory implements ConversationAbandonedListener {
         pln.set("end", context.getSessionData(CK.PLN_END_DATE) != null 
                 ? (String) context.getSessionData(CK.PLN_END_DATE) : null);
         pln.set("repeat", context.getSessionData(CK.PLN_REPEAT_CYCLE) != null 
-                ? (Long) context.getSessionData(CK.PLN_REPEAT_CYCLE) : null);
+                ? ((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE) / 1000) : null);
         pln.set("cooldown", context.getSessionData(CK.PLN_COOLDOWN) != null 
-                ? (Long) context.getSessionData(CK.PLN_COOLDOWN) : null);
+                ? ((Long) context.getSessionData(CK.PLN_COOLDOWN) / 1000) : null);
         if (pln.getKeys(false).isEmpty()) {
             section.set("planner", null);
         }

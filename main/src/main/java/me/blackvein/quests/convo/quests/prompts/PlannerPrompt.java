@@ -97,13 +97,13 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.PLN_START_DATE) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return ChatColor.YELLOW + "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE));
+                return "\n" + ChatColor.YELLOW + "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE));
             }
         case 2:
             if (context.getSessionData(CK.PLN_END_DATE) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return ChatColor.YELLOW +  "     - " 
+                return "\n" + ChatColor.YELLOW +  "     - " 
                         + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE));
             }
         case 3:
