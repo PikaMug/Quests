@@ -919,7 +919,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     skillList += ChatColor.GREEN + skills[i].getName() + "\n\n";
                 }
             }
-            return skillList + Lang.get("rewMcMMOPrompt") + "\n" + ChatColor.GOLD + Lang.get("rewMcMMOPromptHint");
+            return skillList + ChatColor.YELLOW + Lang.get("rewMcMMOPrompt");
         }
 
         @Override

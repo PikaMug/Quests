@@ -386,7 +386,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = Lang.get("reqMoneyPrompt");
+            String text = Lang.get("rewMoneyPrompt");
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 text = text.replace("<money>", ChatColor.DARK_PURPLE+ ((plugin.getDependencies().getVaultEconomy()
                         .currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy()
@@ -426,7 +426,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("reqQuestPointsPrompt").replace("<points>", Lang.get("questPoints"));
+            return ChatColor.YELLOW + Lang.get("rewQuestPointsPrompt").replace("<points>", Lang.get("questPoints"));
         }
         
         @Override
@@ -986,7 +986,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     skillList += ChatColor.GREEN + skills[i].getName() + "\n\n";
                 }
             }
-            return skillList + ChatColor.YELLOW + Lang.get("reqMcMMOPrompt");
+            return skillList + ChatColor.YELLOW + Lang.get("rewMcMMOPrompt");
         }
 
         @Override
