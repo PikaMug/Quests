@@ -114,7 +114,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + Lang.get("reqSetMoney");
             }
         case 2:
-            return ChatColor.YELLOW + Lang.get("reqSetQuestPoints");
+            return ChatColor.YELLOW + Lang.get("reqSetQuestPoints").replace("<points>", Lang.get("questPoints"));
         case 3:
             return ChatColor.YELLOW + Lang.get("reqSetItem");
         case 4:
@@ -426,7 +426,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("reqQuestPointsPrompt");
+            return ChatColor.YELLOW + Lang.get("reqQuestPointsPrompt").replace("<points>", Lang.get("questPoints"));
         }
         
         @Override

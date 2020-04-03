@@ -372,14 +372,15 @@ public class Quester {
             }
         }
         if (index != -1) {
+            final String title = Lang.get(getPlayer(), "journalTitle");
             ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(ChatColor.LIGHT_PURPLE + Lang.get(getPlayer(), "journalTitle"));
+            meta.setDisplayName(ChatColor.LIGHT_PURPLE + title);
             BookMeta book = (BookMeta) meta;
-            book.setTitle(ChatColor.LIGHT_PURPLE + Lang.get(getPlayer(), "journalTitle"));
+            book.setTitle(ChatColor.LIGHT_PURPLE + title);
             book.setAuthor(getPlayer().getName());
             if (currentQuests.isEmpty()) {
-                book.addPage(ChatColor.DARK_RED + Lang.get(getPlayer(), "journalNoQuests"));
+                book.addPage(ChatColor.DARK_RED + Lang.get(getPlayer(), "journalNoQuests").replace("<journal>", title));
             } else {
                 int currentLength = 0;
                 int currentLines = 0;
@@ -3629,7 +3630,8 @@ public class Quester {
                         }
                     }
                 } else {
-                    getPlayer().sendMessage(ChatColor.RED + Lang.get(getPlayer(), "journalNoQuests"));
+                    getPlayer().sendMessage(ChatColor.RED + Lang.get(getPlayer(), "journalNoQuests")
+                            .replace("<journal>", Lang.get(getPlayer(), "journalTitle")));
                 }
             }
         });

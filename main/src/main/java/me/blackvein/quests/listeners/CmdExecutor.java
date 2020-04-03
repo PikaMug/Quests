@@ -599,7 +599,7 @@ public class CmdExecutor implements CommandExecutor {
             }
             Quester quester = plugin.getQuester(target.getUniqueId());
             cs.sendMessage(ChatColor.GOLD + "- " + target.getName() + " -");
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("questPointsDisplay") + " " + ChatColor.DARK_PURPLE
+            cs.sendMessage(ChatColor.YELLOW + Lang.get("questPoints") + " - " + ChatColor.DARK_PURPLE
                     + quester.getQuestPoints());
             if (quester.getCurrentQuests().isEmpty()) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest") + " " + ChatColor.DARK_PURPLE+ Lang.get("none"));
@@ -652,7 +652,8 @@ public class CmdExecutor implements CommandExecutor {
                         }
                     }
                 }
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalPutAway"));
+                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalPutAway")
+                        .replace("<journal>", Lang.get(player, "journalTitle")));
                 quester.hasJournal = false;
             } else if (player.getItemInHand() == null || player.getItemInHand().getType().equals(Material.AIR)) {
                 ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
@@ -660,7 +661,8 @@ public class CmdExecutor implements CommandExecutor {
                 meta.setDisplayName(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
                 stack.setItemMeta(meta);
                 player.setItemInHand(stack);
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken"));
+                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken")
+                        .replace("<journal>", Lang.get(player, "journalTitle")));
                 quester.hasJournal = true;
                 quester.updateJournal();
             } else if (inv.firstEmpty() != -1) {
@@ -679,7 +681,8 @@ public class CmdExecutor implements CommandExecutor {
                     }
                 }
             } else {
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalNoRoom"));
+                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalNoRoom")
+                        .replace("<journal>", Lang.get(player, "journalTitle")));
             }
         }
     }
@@ -821,6 +824,7 @@ public class CmdExecutor implements CommandExecutor {
         }
         if (cs instanceof Player && cs.hasPermission("quests.journal")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_JOURNAL_HELP")
+                    .replace("<journal>", Lang.get("journalTitle"))
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_JOURNAL")
                     : "journal") + ChatColor.YELLOW));
         }
@@ -916,13 +920,13 @@ public class CmdExecutor implements CommandExecutor {
             }
             Quester quester = plugin.getQuester(target.getUniqueId());
             quester.setQuestPoints(quester.getQuestPoints() + Math.abs(points));
-            String msg1 = Lang.get("giveQuestPoints");
+            String msg1 = Lang.get("giveQuestPoints").replace("<points>", Lang.get("questPoints"));
             msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
             msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
             cs.sendMessage(ChatColor.GOLD + msg1);
             if (target.isOnline()) {
                 Player p = (Player)target;
-                String msg2 = Lang.get(p, "questPointsGiven");
+                String msg2 = Lang.get(p, "questPointsGiven").replace("<points>", Lang.get("questPoints"));
                 msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                 msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
                 p.sendMessage(ChatColor.GREEN + msg2);
@@ -953,13 +957,13 @@ public class CmdExecutor implements CommandExecutor {
             }
             Quester quester = plugin.getQuester(target.getUniqueId());
             quester.setQuestPoints(quester.getQuestPoints() - Math.abs(points));
-            String msg1 = Lang.get("takeQuestPoints");
+            String msg1 = Lang.get("takeQuestPoints").replace("<points>", Lang.get("questPoints"));
             msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
             msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
             cs.sendMessage(ChatColor.GOLD + msg1);
             if (target.isOnline()) {
                 Player p = (Player)target;
-                String msg2 = Lang.get(p, "questPointsTaken");
+                String msg2 = Lang.get(p, "questPointsTaken").replace("<points>", Lang.get("questPoints"));
                 msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                 msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
                 p.sendMessage(ChatColor.GREEN + msg2);
@@ -990,13 +994,13 @@ public class CmdExecutor implements CommandExecutor {
             }
             Quester quester = plugin.getQuester(target.getUniqueId());
             quester.setQuestPoints(points);
-            String msg1 = Lang.get("setQuestPoints");
+            String msg1 = Lang.get("setQuestPoints").replace("<points>", Lang.get("questPoints"));
             msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
             msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
             cs.sendMessage(ChatColor.GOLD + msg1);
             if (target.isOnline()) {
                 Player p = (Player)target;
-                String msg2 = Lang.get(p, "questPointsSet");
+                String msg2 = Lang.get(p, "questPointsSet").replace("<points>", Lang.get("questPoints"));
                 msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                 msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
                 p.sendMessage(ChatColor.GREEN + msg2);
@@ -1080,7 +1084,8 @@ public class CmdExecutor implements CommandExecutor {
                 cs.sendMessage(ChatColor.RED + Lang.get("inputNum"));
                 return;
             }
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("settingAllQuestPoints"));
+            cs.sendMessage(ChatColor.YELLOW + Lang.get("settingAllQuestPoints")
+                    .replace("<points>", Lang.get("questPoints")));
             for (Quester q : plugin.getQuesters()) {
                 q.setQuestPoints(amount);
             }
@@ -1127,7 +1132,7 @@ public class CmdExecutor implements CommandExecutor {
                             }
                         }
                         cs.sendMessage(ChatColor.GREEN + Lang.get("done"));
-                        String msg = Lang.get("allQuestPointsSet");
+                        String msg = Lang.get("allQuestPointsSet").replace("<points>", Lang.get("questPoints"));
                         msg = msg.replace("<number>", ChatColor.AQUA + "" + amount + ChatColor.GOLD);
                         plugin.getServer().broadcastMessage(ChatColor.YELLOW + "" + ChatColor.GOLD + msg);
                     } else {
@@ -1417,24 +1422,32 @@ public class CmdExecutor implements CommandExecutor {
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.points")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP") .replace("<command>", ChatColor.GOLD
+                    + Lang.get("COMMAND_QUESTADMIN_POINTS_HELP")
+                    .replace("<points>", Lang.get("questPoints"))
+                    .replace("<command>", ChatColor.GOLD
                     + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTS") : "points") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.takepoints")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP") .replace("<command>", ChatColor.GOLD
+                    + Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP")
+                    .replace("<points>", Lang.get("questPoints"))
+                    .replace("<command>", ChatColor.GOLD
                     + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints")
                     + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.givepoints")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP").replace("<command>", ChatColor.GOLD
+                    + Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP")
+                    .replace("<points>", Lang.get("questPoints"))
+                    .replace("<command>", ChatColor.GOLD
                     + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints")
                     + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.pointsall")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP").replace("<command>", ChatColor.GOLD
+                    + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
+                    .replace("<points>", Lang.get("questPoints"))
+                    .replace("<command>", ChatColor.GOLD
                     + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {

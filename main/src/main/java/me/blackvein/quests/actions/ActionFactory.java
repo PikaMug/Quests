@@ -1141,11 +1141,13 @@ public class ActionFactory implements ConversationAbandonedListener {
             data.load(actionsFile);
         } catch (IOException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+                    .replace("<file>", actionsFile.getName()));
             return;
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+                    .replace("<file>", actionsFile.getName()));
             return;
         }
         String event = (String) context.getSessionData(CK.ED_EVENT_DELETE);
@@ -1174,11 +1176,13 @@ public class ActionFactory implements ConversationAbandonedListener {
             data.load(actionsFile);
         } catch (IOException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+                    .replace("<file>", actionsFile.getName()));
             return;
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorReadingFile"));
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+                    .replace("<file>", actionsFile.getName()));
             return;
         }
         String key = "actions";

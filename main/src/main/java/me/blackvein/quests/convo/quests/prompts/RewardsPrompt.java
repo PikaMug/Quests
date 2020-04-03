@@ -120,7 +120,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + Lang.get("rewSetMoney");
             }
         case 2:
-            return ChatColor.YELLOW + Lang.get("rewSetQuestPoints");
+            return ChatColor.YELLOW + Lang.get("rewSetQuestPoints").replace("<points>", Lang.get("questPoints"));
         case 3:
             return ChatColor.YELLOW + Lang.get("rewSetItems");
         case 4:
@@ -509,7 +509,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("rewQuestPointsPrompt");
+            return ChatColor.YELLOW + Lang.get("rewQuestPointsPrompt").replace("<points>", Lang.get("questPoints"));
         }
         
         @Override

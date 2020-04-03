@@ -185,7 +185,8 @@ public class PlayerListener implements Listener {
                 }
                 if (evt.getClickedBlock().getType().name().equals("LECTERN")) {
                     evt.setCancelled(true);
-                    evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied"));
+                    evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied")
+                            .replace("<journal>", Lang.get(evt.getPlayer(), "journalTitle")));
                     return;
                 }
             }
@@ -314,7 +315,8 @@ public class PlayerListener implements Listener {
                                         if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() 
                                                 && plugin.getSettings().getMaxQuests() > 0) {
                                             String msg = Lang.get(player, "questMaxAllowed");
-                                            msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
+                                            msg = msg.replace("<number>", String
+                                                    .valueOf(plugin.getSettings().getMaxQuests()));
                                             player.sendMessage(ChatColor.YELLOW + msg);
                                         } else {
                                             if (quester.getCompletedQuests().contains(q.getName())) {
@@ -377,7 +379,8 @@ public class PlayerListener implements Listener {
         if (evt.getRightClicked().getType() == EntityType.ITEM_FRAME) {
             if (ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
                 evt.setCancelled(true);
-                evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied"));
+                evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied")
+                        .replace("<journal>", Lang.get(evt.getPlayer(), "journalTitle")));
             }
         }
     }
@@ -389,7 +392,8 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("milkCow")) {
+                    if (quester.getCurrentQuests().containsKey(quest) 
+                            && quester.getCurrentStage(quest).containsObjective("milkCow")) {
                         quester.milkCow(quest);
                     }
                     
@@ -493,7 +497,8 @@ public class PlayerListener implements Listener {
                     .getData().toItemStack().getDurability());
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("damageBlock")) {
+                if (quester.getCurrentQuests().containsKey(quest) 
+                        && quester.getCurrentStage(quest).containsObjective("damageBlock")) {
                     quester.damageBlock(quest, blockItemStack);
                 }
                 
@@ -569,7 +574,8 @@ public class PlayerListener implements Listener {
                         }
                         return null;
                     });
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("cutBlock")) {
+                    if (quester.getCurrentQuests().containsKey(quest) 
+                            && quester.getCurrentStage(quest).containsObjective("cutBlock")) {
                         if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
                             quester.cutBlock(quest, blockItemStack);
                         }
@@ -613,7 +619,8 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(p.getUniqueId())) {
                 Quester quester = plugin.getQuester(p.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("tameMob")) {
+                    if (quester.getCurrentQuests().containsKey(quest) 
+                            && quester.getCurrentStage(quest).containsObjective("tameMob")) {
                         quester.tameMob(quest, evt.getEntityType());
                     }
                     
@@ -716,7 +723,8 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
             Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("enchantItem")) {
+                if (quester.getCurrentQuests().containsKey(quest) 
+                        && quester.getCurrentStage(quest).containsObjective("enchantItem")) {
                     for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
                         quester.enchantItem(quest, e, evt.getItem().getType());
                     }
@@ -780,7 +788,8 @@ public class PlayerListener implements Listener {
             Quester quester = plugin.getQuester(damager.getUniqueId());
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("killNPC")) {
+                    if (quester.getCurrentQuests().containsKey(quest) 
+                            && quester.getCurrentStage(quest).containsObjective("killNPC")) {
                         quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
                     }
                     
@@ -791,7 +800,8 @@ public class PlayerListener implements Listener {
                 }
             } else {
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("killMob")) {
+                    if (quester.getCurrentQuests().containsKey(quest) 
+                            && quester.getCurrentStage(quest).containsObjective("killMob")) {
                         quester.killMob(quest, target.getLocation(), target.getType());
                     }
                     
@@ -889,7 +899,8 @@ public class PlayerListener implements Listener {
             }
             Quester quester = plugin.getQuester(damager.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("killPlayer")) {
+                if (quester.getCurrentQuests().containsKey(quest) 
+                        && quester.getCurrentStage(quest).containsObjective("killPlayer")) {
                     quester.killPlayer(quest, (Player)target);
                 }
                 
@@ -907,7 +918,8 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                if (quester.getCurrentQuests().containsKey(quest) && quester.getCurrentStage(quest).containsObjective("catchFish") 
+                if (quester.getCurrentQuests().containsKey(quest) 
+                        && quester.getCurrentStage(quest).containsObjective("catchFish") 
                         && evt.getState().equals(State.CAUGHT_FISH)) {
                     quester.catchFish(quest);
                 }

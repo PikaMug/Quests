@@ -1065,11 +1065,13 @@ public class QuestFactory implements ConversationAbandonedListener {
             data.load(questsFile);
         } catch (IOException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile"));
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+                    .replace("<quest>", questsFile.getName()));
             return;
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile"));
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+                    .replace("<quest>", questsFile.getName()));
             return;
         }
         String quest = (String) context.getSessionData(CK.ED_QUEST_DELETE);
