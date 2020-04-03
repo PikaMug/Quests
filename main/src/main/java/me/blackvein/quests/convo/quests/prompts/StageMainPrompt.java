@@ -194,12 +194,12 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         case 14:
             if (context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY) == null) {
                 if (!hasObjective) {
-                    return ChatColor.GRAY + Lang.get("overrideCreateAdd");
+                    return ChatColor.GRAY + Lang.get("overrideCreateSet");
                 } else {
-                    return ChatColor.YELLOW + Lang.get("overrideCreateAdd");
+                    return ChatColor.YELLOW + Lang.get("overrideCreateSet");
                 }
             } else {
-                return ChatColor.YELLOW + Lang.get("overrideCreateAdd");
+                return ChatColor.YELLOW + Lang.get("overrideCreateSet");
             }
         case 15:
             return ChatColor.RED + Lang.get("stageEditorDelete");

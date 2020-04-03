@@ -151,9 +151,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.DARK_PURPLE + Lang.get("rewSetCustom");
         case 11:
             if (!hasReward) {
-                return ChatColor.GRAY + Lang.get("overrideCreateAdd");
+                return ChatColor.GRAY + Lang.get("overrideCreateSet");
             } else {
-                return ChatColor.YELLOW + Lang.get("overrideCreateAdd");
+                return ChatColor.YELLOW + Lang.get("overrideCreateSet");
             }
         case 12:
             return ChatColor.YELLOW + Lang.get("done");

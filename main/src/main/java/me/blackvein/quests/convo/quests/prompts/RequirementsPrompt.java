@@ -139,9 +139,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.DARK_PURPLE + Lang.get("reqSetCustom");
         case 10:
             if (!hasRequirement) {
-                return ChatColor.GRAY + Lang.get("overrideCreateAdd");
+                return ChatColor.GRAY + Lang.get("overrideCreateSet");
             } else {
-                return ChatColor.YELLOW + Lang.get("overrideCreateAdd");
+                return ChatColor.YELLOW + Lang.get("overrideCreateSet");
             }
         case 11:
             return ChatColor.YELLOW + Lang.get("done");
