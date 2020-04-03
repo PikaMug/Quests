@@ -639,7 +639,7 @@ public class Quester {
         }
         Requirements reqs = quest.getRequirements();
         if (!ignoreOverrides) {
-            if (reqs.getDetailsOverride() != null) {
+            if (reqs.getDetailsOverride() != null && !reqs.getDetailsOverride().isEmpty()) {
                 LinkedList<String> requirements = new LinkedList<String>();
                 for (String s : reqs.getDetailsOverride()) {
                     String message = ChatColor.RED + ConfigUtil.parseString(
