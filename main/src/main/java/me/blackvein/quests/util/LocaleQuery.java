@@ -86,7 +86,7 @@ public class LocaleQuery {
      */
     public boolean sendMessage(Player player, String message, Material material, short durability, 
             Map<Enchantment, Integer> enchantments, ItemMeta meta) {
-        if (material == null) {
+        if (player == null || material == null) {
             return false;
         }
         String matKey = "";
