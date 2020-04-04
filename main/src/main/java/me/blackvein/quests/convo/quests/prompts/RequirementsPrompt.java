@@ -154,13 +154,17 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(ConversationContext context, int number) {
         switch (number) {
         case 1:
-            if (context.getSessionData(CK.REQ_MONEY) == null) {
-                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            if (plugin.getDependencies().getVaultEconomy() != null) {
+                if (context.getSessionData(CK.REQ_MONEY) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
+                            + (moneyReq > 1 ? plugin.getDependencies().getCurrency(true) 
+                            : plugin.getDependencies().getCurrency(false)) + ChatColor.GRAY + ")";
+                }
             } else {
-                int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
-                        + (moneyReq > 1 ? plugin.getDependencies().getCurrency(true) 
-                        : plugin.getDependencies().getCurrency(false)) + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
         case 2:
             if (context.getSessionData(CK.REQ_QUEST_POINTS) == null) {
@@ -289,16 +293,20 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public String getPromptText(ConversationContext context) {
-        // Checkadd newly made override
-        if (context.getSessionData(classPrefix + "-override") != null) {
-            LinkedList<String> overrides = new LinkedList<String>();
-            if (context.getSessionData(CK.REQ_FAIL_MESSAGE) != null) {
-                overrides.addAll((List<String>) context.getSessionData(CK.REQ_FAIL_MESSAGE));
+        final String input = (String) context.getSessionData(classPrefix + "-override");
+        if (input != null && !input.equalsIgnoreCase(Lang.get("cancel"))) {
+            if (input.equalsIgnoreCase(Lang.get("clear"))) {
+                context.setSessionData(CK.REQ_FAIL_MESSAGE, null);
+            } else {
+                LinkedList<String> overrides = new LinkedList<String>();
+                if (context.getSessionData(CK.REQ_FAIL_MESSAGE) != null) {
+                    overrides.addAll((List<String>) context.getSessionData(CK.REQ_FAIL_MESSAGE));
+                }
+                overrides.add(input);
+                context.setSessionData(CK.REQ_FAIL_MESSAGE, overrides);
+                context.setSessionData(classPrefix + "-override", null);
             }
-            overrides.add((String) context.getSessionData(classPrefix + "-override"));
-            context.setSessionData(CK.REQ_FAIL_MESSAGE, overrides);
-            context.setSessionData(classPrefix + "-override", null);
-        }  
+        }
         checkRequirement(context);
         
         QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);

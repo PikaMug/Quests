@@ -18,7 +18,6 @@ import org.bukkit.conversations.Prompt;
 
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
-import me.blackvein.quests.util.Lang;
 
 public class OverridePrompt extends QuestsEditorStringPrompt {
     private final Prompt oldPrompt;
@@ -59,13 +58,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false 
-                && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-            context.setSessionData(classPrefix + "-override", input);
-        } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("cleared"));
-            context.setSessionData(classPrefix + "-override", null);
-        }
+        context.setSessionData(classPrefix + "-override", input);
         return oldPrompt;
     }
     

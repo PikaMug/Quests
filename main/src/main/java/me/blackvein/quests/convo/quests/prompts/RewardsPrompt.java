@@ -166,7 +166,6 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(ConversationContext context, int number) {
         switch (number) {
         case 1:
-            
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 if (context.getSessionData(CK.REW_MONEY) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
