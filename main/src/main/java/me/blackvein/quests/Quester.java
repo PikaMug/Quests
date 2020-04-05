@@ -3675,8 +3675,8 @@ public class Quester {
             }
             for (Quester q : mq) {
                 if (q.getCurrentStage(quest).containsObjective(objectiveType)) {
-                    if (!quest.getOptions().getRequireSameQuest() 
-                            || this.getCurrentStage(quest).containsObjective(objectiveType)) {
+                    if (this.getCurrentStage(quest).containsObjective(objectiveType)
+                            || !quest.getOptions().getRequireSameQuest()) {
                         fun.apply(q);
                     }
                 }
