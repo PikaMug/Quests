@@ -193,6 +193,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             context.setSessionData("tempMinute", null);
             context.setSessionData("tempSecond", null);
             context.setSessionData("tempZone", null);
+            return oldPrompt;
         case 9:
             int day = (Integer) context.getSessionData("tempDay");
             int month = (Integer) context.getSessionData("tempMonth");
@@ -210,6 +211,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     context.setSessionData(CK.PLN_END_DATE, date);
                 }
             }
+            return oldPrompt;
         default:
             return null;
         }
