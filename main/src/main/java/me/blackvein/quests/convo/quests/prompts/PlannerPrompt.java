@@ -151,9 +151,9 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
         case 1:
-            return new DateTimePrompt(PlannerPrompt.this, "start");
+            return new DateTimePrompt(context, PlannerPrompt.this, "start");
         case 2:
-            return new DateTimePrompt(PlannerPrompt.this, "end");
+            return new DateTimePrompt(context, PlannerPrompt.this, "end");
         case 3:
             if (context.getSessionData(CK.PLN_START_DATE) != null && context.getSessionData(CK.PLN_END_DATE) != null) {
                 return new RepeatPrompt();
