@@ -166,7 +166,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         case 5:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
-            return null;
+            return new PlannerPrompt(context);
         }
     }
 

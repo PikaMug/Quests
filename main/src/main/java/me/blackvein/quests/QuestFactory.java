@@ -242,7 +242,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("exited"));
                 return Prompt.END_OF_CONVERSATION;
             default:
-                return null;
+                return new QuestMenuPrompt(context);
             }
         }
     }
@@ -511,7 +511,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             case 15:
                 return new ExitPrompt(context);
             default:
-                return null;
+                return new QuestMainPrompt(context);
             }
         }
     }

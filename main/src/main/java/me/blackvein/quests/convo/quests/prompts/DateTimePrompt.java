@@ -213,7 +213,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             }
             return oldPrompt;
         default:
-            return null;
+            return new DateTimePrompt(context, oldPrompt, source);
         }
     }
     

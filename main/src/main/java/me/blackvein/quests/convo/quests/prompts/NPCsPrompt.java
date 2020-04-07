@@ -198,7 +198,7 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
-            return null;
+            return new NPCsPrompt(stageNum, context);
         }
     }
     

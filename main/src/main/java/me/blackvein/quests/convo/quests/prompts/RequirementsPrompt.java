@@ -369,7 +369,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         case 11:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
-            return null;
+            return new RequirementsPrompt(context);
         }
     }
     

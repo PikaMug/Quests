@@ -415,7 +415,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         case 12:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
-            return null;
+            return new RewardsPrompt(context);
         }
     }
     

@@ -241,9 +241,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return "";
             }
         case 4:
-            if (context.getSessionData(stagePrefix + CK.S_MOB_TYPES) == null 
-                    && context.getSessionData(stagePrefix + CK.S_FISH) == null 
+            if (context.getSessionData(stagePrefix + CK.S_MOB_TYPES) == null
                     && context.getSessionData(stagePrefix + CK.S_TAME_TYPES) == null 
+                    && context.getSessionData(stagePrefix + CK.S_FISH) == null 
+                    && context.getSessionData(stagePrefix + CK.S_COW_MILK) == null
                     && context.getSessionData(stagePrefix + CK.S_SHEAR_COLORS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {

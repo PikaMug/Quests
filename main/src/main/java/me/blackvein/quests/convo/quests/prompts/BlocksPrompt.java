@@ -193,7 +193,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
-            return null;
+            return new BlocksPrompt(stageNum, context);
         }
     }
     

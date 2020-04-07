@@ -111,7 +111,7 @@ public class GUIDisplayPrompt extends QuestsEditorNumericPrompt {
         case 3:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
-            return null;
+            return new GUIDisplayPrompt(context);
         }
     }
 }

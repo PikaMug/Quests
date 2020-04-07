@@ -252,7 +252,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                 ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("exited"));
                 return Prompt.END_OF_CONVERSATION;
             default:
-                return null;
+                return new ActionMenuPrompt(context);
             }
         }
     }
@@ -428,7 +428,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             case 10:
                 return new ExitPrompt();
             default:
-                return null;
+                return new ActionMainPrompt(context);
             }
         }
     }
