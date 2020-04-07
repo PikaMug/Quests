@@ -676,6 +676,7 @@ questErrorReadingFile: "クエスト ファイルの読み取りエラーです�
 errorReading: "Error reading <file>, skipping..."
 errorReadingSuppress: "Error reading <file>, suppressing further errors."
 errorDataFolder: "Error: Unable to read from data folder!"
+errorLoading: "Quests is currently loading. Please try again later!"
 unknownError: "An unknown error occurred. See console output."
 journalTitle: "クエスト ジャーナル"
 journalTaken: "クエスト手帳を手に入れた！"
