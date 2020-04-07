@@ -541,12 +541,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 questsSection = config.getConfigurationSection("quests");
                 for (String questKey : questsSection.getKeys(false)) {
                     try {
-                        Quest quest = new Quest();
                         failedToLoad = false;
-                        if (config.contains("quests." + questKey + ".name")) {
-                            quest = getQuest(ConfigUtil.parseString(config.getString("quests." + questKey + ".name"), 
-                                    quest));
-                            loadCustomSections(quest, config, questKey);
+                        if (config.contains("quests." + questKey)) {
+                            loadCustomSections(getQuestById(questKey), config, questKey);
                         } else {
                             throw new QuestFormatException("Quest block is missing", questKey);
                         }
@@ -1295,7 +1292,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 return;
             }
             for (String questKey : questsSection.getKeys(false)) {
-                try { // main "skip quest" try/catch block
+                try {
                     Quest quest = new Quest();
                     failedToLoad = false;
                     quest.id = questKey;
@@ -1418,8 +1415,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questKey + "\". Skipping.");
                     }
                 } catch (QuestFormatException ex) {
+                    ex.printStackTrace();
                     continue;
                 } catch (StageFormatException ex) {
+                    ex.printStackTrace();
                     continue;
                 }
             }
@@ -2581,9 +2580,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             List<Integer> shearAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." 
                                     + stageNum + ".sheep-amounts");
                             for (String color : sheep) {
-                                DyeColor dc = null;
+                                DyeColor dc = MiscUtil.getProperDyeColor(color);
                                 try {
-                                    dc = DyeColor.valueOf(color.toUpperCase()); 
+                                    if (dc == null) {
+                                        dc = DyeColor.valueOf(color.toUpperCase());
+                                    }
                                 } catch (IllegalArgumentException e) {
                                     // Fail silently
                                 }
@@ -3092,8 +3093,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (id == null) {
             return null;
         }
-        LinkedList<Quest> qs = quests;
-        for (Quest q : qs) {
+        for (Quest q : quests) {
             if (q.getId().equals(id)) {
                 return q;
             }
@@ -3111,18 +3111,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (name == null) {
             return null;
         }
-        LinkedList<Quest> qs = quests;
-        for (Quest q : qs) {
+        for (Quest q : quests) {
             if (q.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return q;
             }
         }
-        for (Quest q : qs) {
+        for (Quest q : quests) {
             if (q.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return q;
             }
         }
-        for (Quest q : qs) {
+        for (Quest q : quests) {
             if (q.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return q;
             }
@@ -3140,18 +3139,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (name == null) {
             return null;
         }
-        LinkedList<Action> as = actions;
-        for (Action a : as) {
+        for (Action a : actions) {
             if (a.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return a;
             }
         }
-        for (Action a : as) {
+        for (Action a : actions) {
             if (a.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
             }
         }
-        for (Action a : as) {
+        for (Action a : actions) {
             if (a.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
             }

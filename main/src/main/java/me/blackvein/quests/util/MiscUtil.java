@@ -15,7 +15,6 @@ package me.blackvein.quests.util;
 import java.util.LinkedList;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.EntityType;
 
@@ -186,58 +185,8 @@ public class MiscUtil {
             if (dc.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return dc;
             }
-            if (getDyeColorLegacy(properName) != null) {
-                return dc;
-            }
         }
         return null;
-    }
-
-    /**
-     * Gets DyeColor from name as it appears in lang file
-     * 
-     * @deprecated Use {@link #getProperDyeColor(String)}
-     * @param s Name to match lang value to
-     * @return DyeColor or null if invalid
-     */
-    public static DyeColor getDyeColorLegacy(String s) {
-        if (s.equalsIgnoreCase("Black") || s.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
-            return DyeColor.BLACK;
-        } else if (s.equalsIgnoreCase("Blue") || s.equalsIgnoreCase(Lang.get("COLOR_BLUE"))) {
-            return DyeColor.BLUE;
-        } else if (s.equalsIgnoreCase("Brown") || s.equalsIgnoreCase(Lang.get("COLOR_BROWN"))) {
-            return DyeColor.BROWN;
-        } else if (s.equalsIgnoreCase("Cyan") || s.equalsIgnoreCase(Lang.get("COLOR_CYAN"))) {
-            return DyeColor.CYAN;
-        } else if (s.equalsIgnoreCase("Gray") || s.equalsIgnoreCase(Lang.get("COLOR_GRAY"))) {
-            return DyeColor.GRAY;
-        } else if (s.equalsIgnoreCase("Green") || s.equalsIgnoreCase(Lang.get("COLOR_GREEN"))) {
-            return DyeColor.GREEN;
-        } else if (s.equalsIgnoreCase("LightBlue") || s.equalsIgnoreCase(Lang.get("COLOR_LIGHT_BLUE"))) {
-            return DyeColor.LIGHT_BLUE;
-        } else if (s.equalsIgnoreCase("Lime") || s.equalsIgnoreCase(Lang.get("COLOR_LIME"))) {
-            return DyeColor.LIME;
-        } else if (s.equalsIgnoreCase("Magenta") || s.equalsIgnoreCase(Lang.get("COLOR_MAGENTA"))) {
-            return DyeColor.MAGENTA;
-        } else if (s.equalsIgnoreCase("Orange") || s.equalsIgnoreCase(Lang.get("COLOR_ORAGE"))) {
-            return DyeColor.ORANGE;
-        } else if (s.equalsIgnoreCase("Pink") || s.equalsIgnoreCase(Lang.get("COLOR_PINK"))) {
-            return DyeColor.PINK;
-        } else if (s.equalsIgnoreCase("Purple") || s.equalsIgnoreCase(Lang.get("COLOR_PURPLE"))) {
-            return DyeColor.PURPLE;
-        } else if (s.equalsIgnoreCase("Red") || s.equalsIgnoreCase(Lang.get("COLOR_RED"))) {
-            return DyeColor.RED;
-        // 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
-        } else if (s.equalsIgnoreCase("Silver") || s.equalsIgnoreCase("LightGray") 
-                || s.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
-            return DyeColor.getByColor(Color.SILVER);
-        } else if (s.equalsIgnoreCase("White") || s.equalsIgnoreCase(Lang.get("COLOR_WHITE"))) {
-            return DyeColor.WHITE;
-        } else if (s.equalsIgnoreCase("Yellow") || s.equalsIgnoreCase(Lang.get("COLOR_YELLOW"))) {
-            return DyeColor.YELLOW;
-        } else {
-            return null;
-        }
     }
 
     /**
