@@ -50,6 +50,7 @@ import me.blackvein.quests.QuestMob;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
+import me.blackvein.quests.Quests.ReloadCallback;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import me.blackvein.quests.convo.quests.prompts.ItemStackPrompt;
@@ -1159,7 +1160,14 @@ public class ActionFactory implements ConversationAbandonedListener {
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorSaving"));
             return;
         }
-        plugin.reloadQuests();
+        ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
+            public void execute(Boolean response) {
+                if (!response) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
+                }
+            }
+        };
+        plugin.reload(callback);
         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorDeleted"));
         for (Quester q : plugin.getQuesters()) {
             for (Quest quest : q.getCurrentQuests().keySet()) {
@@ -1324,7 +1332,14 @@ public class ActionFactory implements ConversationAbandonedListener {
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorSaving"));
             return;
         }
-        plugin.reloadQuests();
+        ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
+            public void execute(Boolean response) {
+                if (!response) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
+                }
+            }
+        };
+        plugin.reload(callback);
         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorSaved"));
         for (Quester q : plugin.getQuesters()) {
             for (Quest quest : q.getCurrentQuests().keySet()) {

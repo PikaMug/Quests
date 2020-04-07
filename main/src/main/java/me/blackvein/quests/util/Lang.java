@@ -114,8 +114,15 @@ public class Lang {
         }
         return orig;
     }
-
+    
+    /**
+     * @deprecated Use {@link #init(Quests)}
+     */
     public static void loadLang(Quests plugin) throws InvalidConfigurationException, IOException {
+        init(plugin);
+    }
+
+    public static void init(Quests plugin) throws InvalidConfigurationException, IOException {
         File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator
                 + "strings.yml");
         File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso
@@ -160,7 +167,7 @@ public class Lang {
             plugin.getLogger()
                     .info("If the plugin has not generated language files, ensure Quests has write permissions");
             plugin.getLogger()
-                    .info("For help, visit https://github.com/FlyingPikachu/Quests/wiki/Casual-%E2%80%90-Translations");
+                    .info("For help, visit https://github.com/PikaMug/Quests/wiki/Casual-%E2%80%90-Translations");
             iso = "en-US";
             FileConfiguration config = YamlConfiguration
                     .loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"));

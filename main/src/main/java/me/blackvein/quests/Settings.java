@@ -21,7 +21,7 @@ import me.blackvein.quests.util.Lang;
 
 public class Settings {
     
-    private Quests plugin;
+    private final Quests plugin;
     private int acceptTimeout = 20;
     private boolean allowCommands = true;
     private boolean allowCommandsForNpcQuests = false;

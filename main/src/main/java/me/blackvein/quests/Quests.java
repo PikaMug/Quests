@@ -98,6 +98,7 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class Quests extends JavaPlugin implements ConversationAbandonedListener {
 
+    private boolean loading = true;
     private String bukkitVersion = "0";
     private Dependencies depends;
     private Settings settings;
@@ -106,7 +107,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private final List<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
     private LinkedList<Quester> questers = new LinkedList<Quester>();
     private LinkedList<Quest> quests = new LinkedList<Quest>();
-    private LinkedList<Action> events = new LinkedList<Action>();
+    private LinkedList<Action> actions = new LinkedList<Action>();
     private LinkedList<NPC> questNpcs = new LinkedList<NPC>();
     private CommandExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
@@ -220,6 +221,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
     }
     
+    public boolean isLoading() {
+        return loading;
+    }
+    
     public String getDetectedBukkitVersion() {
         return bukkitVersion;
     }
@@ -279,11 +284,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     public LinkedList<Action> getActions() {
-        return events;
+        return actions;
     }
     
     public void setActions(LinkedList<Action> actions) {
-        this.events = actions;
+        this.actions = actions;
     }
     
     public LinkedList<Quester> getQuesters() {
@@ -411,7 +416,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             jar.close();
         }
         try {
-            Lang.loadLang(this);
+            Lang.init(this);
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
@@ -470,7 +475,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     /**
      * Load quests, actions, and modules after specified delay<p>
      * 
-     * At startup, this permits Citizens to fully load first
+     * At startup, this lets soft-depends (namely Citizens) fully load first
      */
     private void delayLoadQuestInfo(long ticks) {
         getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
@@ -480,9 +485,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 loadQuests();
                 loadActions();
                 getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s)"
-                        + ", " + events.size() + " Action(s)"
+                        + ", " + actions.size() + " Action(s)"
                         + ", " + Lang.size() + " Phrase(s)");
-                questers.addAll(getOnlineQuesters());
+                for (Player p : getServer().getOnlinePlayers()) {
+                    Quester quester = new Quester(Quests.this);
+                    quester.setUUID(p.getUniqueId());
+                    if (quester.loadData() == false) {
+                        quester.saveData();
+                    }
+                    // Workaround for issues with the compass on fast join
+                    quester.findCompassTarget();
+                    questers.add(quester);
+                }
                 if (depends.getCitizens() != null) {
                     if (depends.getCitizens().getNPCRegistry() == null) {
                         getLogger().log(Level.SEVERE, 
@@ -491,6 +505,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                 }
                 loadModules();
+                loading = false;
             }
         }, ticks);
     }
@@ -525,7 +540,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             if (config.contains("quests")) {
                 questsSection = config.getConfigurationSection("quests");
                 for (String questKey : questsSection.getKeys(false)) {
-                    try { // main "skip quest" try/catch block
+                    try {
                         Quest quest = new Quest();
                         failedToLoad = false;
                         if (config.contains("quests." + questKey + ".name")) {
@@ -535,7 +550,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         } else {
                             throw new QuestFormatException("Quest block is missing", questKey);
                         }
-                        if (failedToLoad == true) {
+                        if (failedToLoad) {
                             getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questKey + "\". Skipping.");
                         }
                     } catch (QuestFormatException ex) {
@@ -1137,37 +1152,71 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
     }
+    
+    public interface ReloadCallback<T> {
+        public void execute(T response);
+    }
+    
+    /**
+     * @deprecated Use {@link #reload(ReloadCallback)}
+     */
+    public void reloadQuests() {
+        reload(null);
+    }
 
     /**
      * Reload quests, actions, config settings, lang and modules, and player data
      */
-    public void reloadQuests() {
-        for (Quester quester : questers) {
-            quester.saveData();
-        }
-        quests.clear();
-        events.clear();
-        
-        loadQuests();
-        loadActions();
-        // Reload config from disc in-case a setting was changed
+    public void reload(final ReloadCallback<Boolean> callback) {
         reloadConfig();
-        settings.init();
-        Lang.clear();
-        try {
-            Lang.loadLang(this);
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        loadModules();
-        for (Quester quester : questers) {
-            quester.loadData();
-            for (Quest q : quester.currentQuests.keySet()) {
-                quester.checkQuest(q);
+        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+
+            @Override
+            public void run() {
+                loading = true;
+                try {
+                    for (Quester quester : questers) {
+                        quester.saveData();
+                    }
+                    quests.clear();
+                    actions.clear();
+                    Lang.clear();
+                    settings.init();
+                    Lang.init(Quests.this);
+                    loadQuests();
+                    loadActions();
+                    for (Quester quester : questers) {
+                        quester.loadData();
+                        for (Quest q : quester.currentQuests.keySet()) {
+                            quester.checkQuest(q);
+                        }
+                    }
+                    loadModules();
+                    
+                    if (callback != null) {
+                        Bukkit.getScheduler().runTask(Quests.this, new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                callback.execute(true);
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (callback != null) {
+                        Bukkit.getScheduler().runTask(Quests.this, new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                callback.execute(false);
+                            }
+                        });
+                    }
+                }
+                loading = false;
             }
-        }
+        });
     }
 
     /**
@@ -1202,6 +1251,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     /**
      * Get a list of all online Questers
      * 
+     * @deprecated Use {@link Bukkit#getOnlinePlayers()} and then {@link #getQuester(UUID)}
      * @return list of online Questers
      */
     public LinkedList<Quester> getOnlineQuesters() {
@@ -2936,7 +2986,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 for (String s : sec.getKeys(false)) {
                     Action event = Action.loadAction(s, this);
                     if (event != null) {
-                        events.add(event);
+                        actions.add(event);
                     } else {
                         getLogger().log(Level.SEVERE, "Failed to load Action \"" + s + "\". Skipping.");
                     }
@@ -3090,7 +3140,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (name == null) {
             return null;
         }
-        LinkedList<Action> as = events;
+        LinkedList<Action> as = actions;
         for (Action a : as) {
             if (a.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return a;

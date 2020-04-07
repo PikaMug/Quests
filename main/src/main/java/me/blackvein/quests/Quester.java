@@ -72,7 +72,7 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class Quester {
 
-    private Quests plugin;
+    private final Quests plugin;
     public boolean hasJournal = false;
     private UUID id;
     protected String questToTake;
@@ -229,8 +229,8 @@ public class Quester {
         }
     };
     
-    public Quester(Quests newPlugin) {
-        plugin = newPlugin;
+    public Quester(Quests plugin) {
+        this.plugin = plugin;
     }
 
     public UUID getUUID() {
@@ -3398,18 +3398,26 @@ public class Quester {
         if (quest != null) {
             boolean exists = false;
             for (Quest q : plugin.getQuests()) {
-                if (q.getName().equalsIgnoreCase(quest.getName())) {
+                if (q.getId().equalsIgnoreCase(quest.getId())) {
                     Stage stage = getCurrentStage(quest);
-                    quest.updateCompass(this, stage);
-                    exists = true;
-                    break;
+                    if (stage != null) {
+                        quest.updateCompass(this, stage);
+                        exists = true;
+                        if (q.equals(quest) == false) {
+                            // TODO - decide whether or not to handle this
+                            /*if (getPlayer() != null && getPlayer().isOnline()) {
+                                quitQuest(quest, ChatColor.GOLD + Lang.get("questModified")
+                                        .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD));
+                            }*/
+                        }
+                        break;
+                    }
                 }
             }
-            if (exists == false) {
-                if (plugin.getServer().getPlayer(id) != null) {
-                    String error = Lang.get("questNotExist");
-                    error = error.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
-                    plugin.getServer().getPlayer(id).sendMessage(ChatColor.GOLD + "[Quests] " + ChatColor.RED + error);
+            if (!exists) {
+                if (getPlayer() != null && getPlayer().isOnline()) {
+                    getPlayer().sendMessage(ChatColor.RED + Lang.get("questNotExist")
+                            .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED));
                 }
             }
         }

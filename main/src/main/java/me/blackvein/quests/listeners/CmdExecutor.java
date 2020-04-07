@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.Quests.ReloadCallback;
 import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsEditorEvent;
@@ -67,6 +68,10 @@ public class CmdExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
+        if (plugin.isLoading()) {
+            cs.sendMessage(ChatColor.RED + Lang.get("errorLoading"));
+            return true;
+        }
         if (cs instanceof Player) {
             if (!plugin.canUseQuests(((Player) cs).getUniqueId())) {
                 cs.sendMessage(ChatColor.RED + Lang.get((Player) cs, "noPermission"));
@@ -889,12 +894,20 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminReload(final CommandSender cs) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
-            plugin.reloadQuests();
-            cs.sendMessage(ChatColor.GOLD + Lang.get("questsReloaded"));
-            String msg = Lang.get("numQuestsLoaded");
-            msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size())
-                    + ChatColor.GOLD);
-            cs.sendMessage(ChatColor.GOLD + msg);
+            ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
+                public void execute(Boolean response) {
+                    if (response) {
+                        cs.sendMessage(ChatColor.GOLD + Lang.get("questsReloaded"));
+                        String msg = Lang.get("numQuestsLoaded");
+                        msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size())
+                                + ChatColor.GOLD);
+                        cs.sendMessage(ChatColor.GOLD + msg);
+                    } else {
+                        cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
+                    }
+                }
+            };
+            plugin.reload(callback);
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }

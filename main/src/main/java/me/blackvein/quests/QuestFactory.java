@@ -46,6 +46,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
+import me.blackvein.quests.Quests.ReloadCallback;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
@@ -1059,7 +1060,7 @@ public class QuestFactory implements ConversationAbandonedListener {
     }
 
     private void deleteQuest(ConversationContext context) {
-        YamlConfiguration data = new YamlConfiguration();
+        FileConfiguration data = new YamlConfiguration();
         File questsFile = new File(plugin.getDataFolder(), "quests.yml");
         try {
             data.load(questsFile);
@@ -1088,7 +1089,14 @@ public class QuestFactory implements ConversationAbandonedListener {
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        plugin.reloadQuests();
+        ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
+            public void execute(Boolean response) {
+                if (!response) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
+                }
+            }
+        };
+        plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
     }
 
