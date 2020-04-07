@@ -390,15 +390,19 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public String getPromptText(ConversationContext context) {
-        // Check/add newly made override
-        if (context.getSessionData(classPrefix + "-override") != null) {
-            LinkedList<String> overrides = new LinkedList<String>();
-            if (context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY) != null) {
-                overrides.addAll((List<String>) context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY));
+        final String input = (String) context.getSessionData(classPrefix + "-override");
+        if (input != null && !input.equalsIgnoreCase(Lang.get("cancel"))) {
+            if (input.equalsIgnoreCase(Lang.get("clear"))) {
+                context.setSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY, null);
+            } else {
+                LinkedList<String> overrides = new LinkedList<String>();
+                if (context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY) != null) {
+                    overrides.addAll((List<String>) context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY));
+                }
+                overrides.add(input);
+                context.setSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY, overrides);
+                context.setSessionData(classPrefix + "-override", null);
             }
-            overrides.add((String) context.getSessionData(classPrefix + "-override"));
-            context.setSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY, overrides);
-            context.setSessionData(classPrefix + "-override", null);
         }
         context.setSessionData(stagePrefix, Boolean.TRUE);
         checkObjective(context);

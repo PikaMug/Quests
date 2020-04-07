@@ -334,16 +334,20 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public String getPromptText(ConversationContext context) {
-        // Check/add newly made override
-        if (context.getSessionData(classPrefix + "-override") != null) {
-            LinkedList<String> overrides = new LinkedList<String>();
-            if (context.getSessionData(CK.REW_DETAILS_OVERRIDE) != null) {
-                overrides.addAll((List<String>) context.getSessionData(CK.REW_DETAILS_OVERRIDE));
+        final String input = (String) context.getSessionData(classPrefix + "-override");
+        if (input != null && !input.equalsIgnoreCase(Lang.get("cancel"))) {
+            if (input.equalsIgnoreCase(Lang.get("clear"))) {
+                context.setSessionData(CK.REW_DETAILS_OVERRIDE, null);
+            } else {
+                LinkedList<String> overrides = new LinkedList<String>();
+                if (context.getSessionData(CK.REW_DETAILS_OVERRIDE) != null) {
+                    overrides.addAll((List<String>) context.getSessionData(CK.REW_DETAILS_OVERRIDE));
+                }
+                overrides.add(input);
+                context.setSessionData(CK.REW_DETAILS_OVERRIDE, overrides);
+                context.setSessionData(classPrefix + "-override", null);
             }
-            overrides.add((String) context.getSessionData(classPrefix + "-override"));
-            context.setSessionData(CK.REW_DETAILS_OVERRIDE, overrides);
-            context.setSessionData(classPrefix + "-override", null);
-        }  
+        }
         checkReward(context);
         
         QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
