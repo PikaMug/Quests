@@ -58,8 +58,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class CmdExecutor implements CommandExecutor {
     private final Quests plugin;
-    public HashMap<String, Integer> commands = new HashMap<String, Integer>();
-    public HashMap<String, Integer> adminCommands = new HashMap<String, Integer>();
+    private Map<String, Integer> commands = new HashMap<String, Integer>();
+    private Map<String, Integer> adminCommands = new HashMap<String, Integer>();
     
     public CmdExecutor(Quests plugin) {
         this.plugin = plugin;
@@ -144,6 +144,14 @@ public class CmdExecutor implements CommandExecutor {
             adminCommands.put("reset", 2); // reset [player]
             adminCommands.put("reload", 1); // reload
         }
+    }
+    
+    public Map<String, Integer> getCommands() {
+        return commands;
+    }
+    
+    public Map<String, Integer> getAdminCommands() {
+        return adminCommands;
     }
 
     public String checkCommand(String cmd, String[] args) {
