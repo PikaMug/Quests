@@ -676,7 +676,7 @@ questErrorReadingFile: "퀘스트 파일을 읽는 중 오류가 발생했습니
 errorReading: "<file> 읽어오기 오류, 건너뛰기.."
 errorReadingSuppress: "<file>을 읽는 중 오류가 발생하여 이후 오류가 표시되지 않습니다."
 errorDataFolder: "오류: 퀘스트 데이터 폴더를 읽을 수 없습니다!"
-errorLoading: "Plugin is currently loading. Please try again later!"
+errorLoading: "플러그인이 현재로드 중입니다. 나중에 다시 시도하십시오!"
 unknownError: "알 수없는 오류가 발생했습니다. 콘솔 출력을 참조하십시오."
 journalTitle: "퀘스트 일지"
 journalTaken: "퀘스트 일지를 꺼냈습니다."
