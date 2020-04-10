@@ -3676,13 +3676,16 @@ public class Quester {
      * @param fun The function to execute, the event call
      */
     public void dispatchMultiplayerEverything(Quest quest, String objectiveType, Function<Quester, Void> fun) {
+        if (quest == null) {
+            return;
+        }
         if (quest.getOptions().getShareProgressLevel() == 1) {
             List<Quester> mq = getMultiplayerQuesters(quest);
             if (mq == null) {
                 return;
             }
             for (Quester q : mq) {
-                if (q.getCurrentStage(quest).containsObjective(objectiveType)) {
+                if (q != null && q.getCurrentStage(quest).containsObjective(objectiveType)) {
                     if (this.getCurrentStage(quest).containsObjective(objectiveType)
                             || !quest.getOptions().getRequireSameQuest()) {
                         fun.apply(q);
@@ -3700,10 +3703,17 @@ public class Quester {
      * @param fun The function to execute, the event call
      */
     public void dispatchMultiplayerObjectives(Quest quest, Stage currentStage, Function<Quester, Void> fun) {
+        if (quest == null) {
+            return;
+        }
         if (quest.getOptions().getShareProgressLevel() == 2) {
             List<Quester> mq = getMultiplayerQuesters(quest);
+            if (mq == null) {
+                return;
+            }
             for (Quester q : mq) {
-                if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))
+                if (q != null 
+                        && (q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))
                         || !quest.getOptions().getRequireSameQuest()) {
                     fun.apply(q);
                 }
