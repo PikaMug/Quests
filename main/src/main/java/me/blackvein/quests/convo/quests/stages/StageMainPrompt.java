@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.convo.quests.prompts;
+package me.blackvein.quests.convo.quests.stages;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -32,7 +32,12 @@ import org.bukkit.entity.Player;
 import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.convo.quests.objectives.BlocksPrompt;
+import me.blackvein.quests.convo.quests.objectives.ItemsPrompt;
+import me.blackvein.quests.convo.quests.objectives.MobsPrompt;
+import me.blackvein.quests.convo.quests.objectives.NPCsPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;

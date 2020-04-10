@@ -27,7 +27,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -38,33 +37,20 @@ import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.sk89q.worldguard.protection.managers.RegionManager;
-
-import me.blackvein.quests.Quests.ReloadCallback;
-import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
-import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
-import me.blackvein.quests.convo.quests.prompts.GUIDisplayPrompt;
-import me.blackvein.quests.convo.quests.prompts.OptionsPrompt;
-import me.blackvein.quests.convo.quests.prompts.PlannerPrompt;
-import me.blackvein.quests.convo.quests.prompts.RequirementsPrompt;
-import me.blackvein.quests.convo.quests.prompts.RewardsPrompt;
-import me.blackvein.quests.convo.quests.prompts.StageMenuPrompt;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
-import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
+import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
+import me.blackvein.quests.convo.quests.menu.QuestMenuPrompt;
+import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
+import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
-import net.citizensnpcs.api.CitizensAPI;
 
 public class QuestFactory implements ConversationAbandonedListener {
 
@@ -154,470 +140,29 @@ public class QuestFactory implements ConversationAbandonedListener {
         selectedReachLocations.remove(player.getUniqueId());
     }
     
-    public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
-        public QuestMenuPrompt(ConversationContext context) {
-            super(context);
-        }
-
-        private final int size = 4;
-        
-        public int getSize() {
-            return size;
-        }
-        
-        public String getTitle(ConversationContext context) {
-            return Lang.get("questEditorTitle");
-        }
-        
-        public ChatColor getNumberColor(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-            case 2:
-            case 3:
-                return ChatColor.BLUE;
-            case 4:
-                return ChatColor.RED;
-            default:
-                return null;
-            }
-        }
-        
-        public String getSelectionText(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-                return ChatColor.YELLOW + Lang.get("questEditorCreate");
-            case 2:
-                return ChatColor.YELLOW + Lang.get("questEditorEdit");
-            case 3:
-                return ChatColor.YELLOW + Lang.get("questEditorDelete");
-            case 4:
-                return ChatColor.RED + Lang.get("exit");
-            default:
-                return null;
-            }
-        }
-        
-        public String getAdditionalText(ConversationContext context, int number) {
-            return null;
-        }
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            String text = ChatColor.GOLD + getTitle(context) + "\n";
-            for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + "\n";
-            }
-            return text;
-        }
-
-        @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-            final Player player = (Player) context.getForWhom();
-            switch (input.intValue()) {
-            case 1:
-                if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.create")) {
-                    return new QuestSelectCreatePrompt(plugin, context);
-                } else {
-                    player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new QuestMenuPrompt(context);
-                }
-            case 2:
-                if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.edit")) {
-                    return new QuestSelectEditPrompt();
-                } else {
-                    player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new QuestMenuPrompt(context);
-                }
-            case 3:
-                if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.delete")) {
-                    return new QuestSelectDeletePrompt();
-                } else {
-                    player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                    return new QuestMenuPrompt(context);
-                }
-            case 4:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("exited"));
-                return Prompt.END_OF_CONVERSATION;
-            default:
-                return new QuestMenuPrompt(context);
-            }
-        }
-    }
-
     public Prompt returnToMenu(ConversationContext context) {
         return new QuestMainPrompt(context);
     }
-
-    public class QuestMainPrompt extends QuestsEditorNumericPrompt {
-        public QuestMainPrompt(ConversationContext context) {
-            super(context);
-        }
-
-        private final int size = 15;
-        
-        public int getSize() {
-            return size;
-        }
-        
-        public String getTitle(ConversationContext context) {
-            return Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME) + "" + ChatColor.GRAY 
-                    + (context.getSessionData(CK.Q_ID) != null ? " (" + Lang.get("id") + ":" 
-                    + context.getSessionData(CK.Q_ID) + ")": "");
-        }
-        
-        public ChatColor getNumberColor(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                return ChatColor.BLUE;
-            case 6:
-                if (plugin.getDependencies().getWorldGuardApi() != null) {
-                    return ChatColor.BLUE;
-                } else {
-                    return ChatColor.GRAY;
-                }
-            case 7:
-                return ChatColor.BLUE;
-            case 8:
-                if (plugin.getDependencies().getCitizens() != null) {
-                    return ChatColor.BLUE;
-                } else {
-                    return ChatColor.GRAY;
-                }
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-                return ChatColor.BLUE;
-            case 14:
-                return ChatColor.GREEN;
-            case 15:
-                return ChatColor.RED;
-            default:
-                return null;
-            }
-        }
-        
-        public String getSelectionText(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-                return ChatColor.YELLOW + Lang.get("questEditorName");
-            case 2:
-                if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
-                    return ChatColor.RED + Lang.get("questEditorAskMessage");
-                } else {
-                    return ChatColor.YELLOW + Lang.get("questEditorAskMessage");
-                }
-            case 3:
-                if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
-                    return ChatColor.RED + Lang.get("questEditorFinishMessage");
-                } else {
-                    return ChatColor.YELLOW + Lang.get("questEditorFinishMessage");
-                }
-            case 4:
-                if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() 
-                        != null) {
-                    return ChatColor.YELLOW + Lang.get("questEditorNPCStart");
-                } else if (plugin.getDependencies().getCitizens() != null) {
-                    return ChatColor.YELLOW + Lang.get("questEditorNPCStart");
-                } else {
-                    return ChatColor.GRAY + Lang.get("questEditorNPCStart");
-                }
-            case 5:
-                return ChatColor.YELLOW + Lang.get("questEditorBlockStart");
-            case 6:
-                if (plugin.getDependencies().getWorldGuardApi() != null) {
-                    if (context.getSessionData(CK.Q_REGION) == null) {
-                        return ChatColor.YELLOW + Lang.get("questWGSetRegion");
-                    } else {
-                        return ChatColor.YELLOW + Lang.get("questWGSetRegion");
-                    }
-                } else {
-                    return ChatColor.GRAY + Lang.get("questWGSetRegion");
-                }
-            case 7:
-                return ChatColor.YELLOW + Lang.get("questEditorInitialEvent");
-            case 8:
-                if (plugin.getDependencies().getCitizens() != null) {
-                    if (context.getSessionData(CK.Q_GUIDISPLAY) == null) {
-                        return ChatColor.YELLOW + Lang.get("questEditorSetGUI");
-                    } else {
-                        return ChatColor.YELLOW + Lang.get("questEditorSetGUI");
-                    }
-                } else {
-                    return ChatColor.GRAY + Lang.get("questEditorSetGUI");
-                }
-            case 9:
-                return ChatColor.DARK_AQUA + Lang.get("questEditorReqs");
-            case 10:
-                return ChatColor.AQUA + Lang.get("questEditorPln");
-            case 11:
-                return ChatColor.LIGHT_PURPLE + Lang.get("questEditorStages");
-            case 12:
-                return ChatColor.DARK_PURPLE + Lang.get("questEditorRews");
-            case 13:
-                return ChatColor.DARK_GREEN + Lang.get("questEditorOpts");
-            case 14:
-                return ChatColor.GREEN + Lang.get("save");
-            case 15:
-                return ChatColor.RED + Lang.get("exit");
-            default:
-                return null;
-            }
-        }
-        
-        public String getAdditionalText(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-                return "";
-            case 2:
-                if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
-                    return ChatColor.DARK_RED + "(" + Lang.get("questRequiredNoneSet") + ")";
-                } else {
-                    return ChatColor.YELLOW + "(" + context.getSessionData(CK.Q_ASK_MESSAGE) + ChatColor.RESET 
-                            + ChatColor.YELLOW + ")";
-                }
-            case 3:
-                if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
-                    return ChatColor.DARK_RED + "(" + Lang.get("questRequiredNoneSet") + ")";
-                } else {
-                    return ChatColor.YELLOW + "(" + context.getSessionData(CK.Q_FINISH_MESSAGE) + ChatColor.RESET 
-                            + ChatColor.YELLOW + ")";
-                }
-            case 4:
-                if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() 
-                        != null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else if (plugin.getDependencies().getCitizens() != null) {
-                    return ChatColor.YELLOW + "(" + CitizensAPI.getNPCRegistry().getById((Integer) context
-                            .getSessionData(CK.Q_START_NPC)).getName() + ChatColor.RESET + ChatColor.YELLOW + ")";
-                } else {
-                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
-                }
-            case 5:
-                if (context.getSessionData(CK.Q_START_BLOCK) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
-                    return ChatColor.YELLOW + "(" + l.getWorld().getName() + ", " + l.getBlockX() + ", " 
-                            + l.getBlockY() + ", " + l.getBlockZ() + ")";
-                }
-            case 6:
-                if (plugin.getDependencies().getWorldGuardApi() != null) {
-                    if (context.getSessionData(CK.Q_REGION) == null) {
-                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                    } else {
-                        return ChatColor.YELLOW + "(" + ChatColor.GREEN 
-                                + (String) context.getSessionData(CK.Q_REGION) + ChatColor.YELLOW + ")";
-                    }
-                } else {
-                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
-                }
-            case 7:
-                if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    return ChatColor.YELLOW + "(" + (String) context.getSessionData(CK.Q_INITIAL_EVENT) + ")";
-                }
-            case 8:
-                if (plugin.getDependencies().getCitizens() != null) {
-                    if (context.getSessionData(CK.Q_GUIDISPLAY) == null) {
-                        return ChatColor.GRAY +  "(" + Lang.get("noneSet") + ")";
-                    } else {
-                        return ChatColor.YELLOW + "(" + ItemUtil.getDisplayString((ItemStack) context
-                                .getSessionData(CK.Q_GUIDISPLAY)) + ChatColor.RESET + ChatColor.YELLOW + ")";
-                    }
-                } else {
-                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
-                }
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-                return "";
-            default:
-                return null;
-            }
-        }
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            
-            String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA)
-                    + ChatColor.GOLD + " -\n";
-            for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
-            }
-            return text;
-        }
-
-        @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-            switch (input.intValue()) {
-            case 1:
-                return new QuestSetNamePrompt();
-            case 2:
-                return new AskMessagePrompt();
-            case 3:
-                return new FinishMessagePrompt();
-            case 4:
-                if (plugin.getDependencies().getCitizens() != null) {
-                    return new NPCStartPrompt();
-                } else {
-                    return new QuestMainPrompt(context);
-                }
-            case 5:
-                selectedBlockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
-                return new BlockStartPrompt();
-            case 6:
-                if (plugin.getDependencies().getWorldGuardApi() != null) {
-                    return new RegionPrompt();
-                } else {
-                    return new QuestMainPrompt(context);
-                }
-            case 7:
-                return new InitialActionPrompt();
-            case 8:
-                if (plugin.getDependencies().getCitizens() != null) {
-                    return new GUIDisplayPrompt(context);
-                } else {
-                    return new QuestMainPrompt(context);
-                }
-            case 9:
-                return new RequirementsPrompt(context);
-            case 10:
-                return new PlannerPrompt(context);
-            case 11:
-                return new StageMenuPrompt(context);
-            case 12:
-                return new RewardsPrompt(context);
-            case 13:
-                return new OptionsPrompt(context);
-            case 14:
-                return new SavePrompt(context);
-            case 15:
-                return new ExitPrompt(context);
-            default:
-                return new QuestMainPrompt(context);
-            }
-        }
-    }
-    
-    public class QuestSelectCreatePrompt extends QuestsEditorStringPrompt {
-        public QuestSelectCreatePrompt(Quests plugin, ConversationContext context) {
-            super(context);
-        }
-
-        public String getTitle(ConversationContext context) {
-            return Lang.get("questCreateTitle");
-        }
-        
-        public String getQueryText(ConversationContext context) {
-            return Lang.get("questEditorEnterQuestName");
-        }
-        
-        @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            
-            String text = ChatColor.GOLD + getTitle(context)+ "\n" + ChatColor.YELLOW + getQueryText(context);
-            return text;
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input == null) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                return new QuestSelectCreatePrompt(plugin, context);
-            }
-            input = input.trim();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (Quest q : plugin.getQuests()) {
-                    if (q.getName().equalsIgnoreCase(input)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
-                        return new QuestSelectCreatePrompt(plugin, context);
-                    }
-                }
-                if (editingQuestNames.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
-                    return new QuestSelectCreatePrompt(plugin, context);
-                }
-                if (input.contains(".") || input.contains(",")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
-                    return new QuestSelectCreatePrompt(plugin, context);
-                }
-                if (input.equals("")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new QuestSelectCreatePrompt(plugin, context);
-                }
-                context.setSessionData(CK.Q_NAME, input);
-                editingQuestNames.add(input);
-                return new QuestMainPrompt(context);
-            } else {
-                return new QuestMenuPrompt(context);
-            }
-        }
-    }
-
-    private class QuestSelectEditPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String s = ChatColor.GOLD + Lang.get("questEditTitle") + "\n";
-            for (Quest q : plugin.getQuests()) {
-                s += ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName() + "\n";
-            }
-            return s + ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                Quest q = plugin.getQuest(input);
-                if (q != null) {
-                    loadQuest(context, q);
-                    return new QuestMainPrompt(context);
-                }
-                return new QuestSelectEditPrompt();
-            } else {
-                return new QuestMenuPrompt(context);
-            }
-        }
-    }
     
     @SuppressWarnings("deprecation")
-    public static void loadQuest(ConversationContext context, Quest q) {
+    public void loadQuest(ConversationContext context, Quest q) {
         context.setSessionData(CK.ED_QUEST_EDIT, q.getName());
         context.setSessionData(CK.Q_ID, q.getId());
         context.setSessionData(CK.Q_NAME, q.getName());
-        if (q.npcStart != null) {
-            context.setSessionData(CK.Q_START_NPC, q.npcStart.getId());
+        if (q.getNpcStart() != null) {
+            context.setSessionData(CK.Q_START_NPC, q.getNpcStart().getId());
         }
-        context.setSessionData(CK.Q_START_BLOCK, q.blockStart);
-        context.setSessionData(CK.Q_ASK_MESSAGE, q.description);
-        context.setSessionData(CK.Q_FINISH_MESSAGE, q.finished);
-        if (q.initialAction != null) {
-            context.setSessionData(CK.Q_INITIAL_EVENT, q.initialAction.getName());
+        context.setSessionData(CK.Q_START_BLOCK, q.getBlockStart());
+        context.setSessionData(CK.Q_ASK_MESSAGE, q.getDescription());
+        context.setSessionData(CK.Q_FINISH_MESSAGE, q.getFinished());
+        if (q.getInitialAction() != null) {
+            context.setSessionData(CK.Q_INITIAL_EVENT, q.getInitialAction().getName());
         }
-        if (q.regionStart != null) {
-            context.setSessionData(CK.Q_REGION, q.regionStart);
+        if (q.getRegionStart() != null) {
+            context.setSessionData(CK.Q_REGION, q.getRegionStart());
         }
-        if (q.guiDisplay != null) {
-            context.setSessionData(CK.Q_GUIDISPLAY, q.guiDisplay);
+        if (q.getGUIDisplay() != null) {
+            context.setSessionData(CK.Q_GUIDISPLAY, q.getGUIDisplay());
         }
         Requirements reqs = q.getRequirements();
         if (reqs.getMoney() != 0) {
@@ -735,7 +280,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
                 LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToBreak) {
+                for (ItemStack e : stage.getBlocksToBreak()) {
                     names.add(e.getType().name());
                     amnts.add(e.getAmount());
                     durab.add(e.getDurability());
@@ -748,7 +293,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
                 LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToDamage) {
+                for (ItemStack e : stage.getBlocksToDamage()) {
                     names.add(e.getType().name());
                     amnts.add(e.getAmount());
                     durab.add(e.getDurability());
@@ -761,7 +306,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
                 LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToPlace) {
+                for (ItemStack e : stage.getBlocksToPlace()) {
                     names.add(e.getType().name());
                     amnts.add(e.getAmount());
                     durab.add(e.getDurability());
@@ -774,7 +319,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
                 LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToUse) {
+                for (ItemStack e : stage.getBlocksToUse()) {
                     names.add(e.getType().name());
                     amnts.add(e.getAmount());
                     durab.add(e.getDurability());
@@ -787,7 +332,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
                 LinkedList<Short> durab = new LinkedList<Short>();
-                for (ItemStack e : stage.blocksToCut) {
+                for (ItemStack e : stage.getBlocksToCut()) {
                     names.add(e.getType().name());
                     amnts.add(e.getAmount());
                     durab.add(e.getDurability());
@@ -814,7 +359,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                 LinkedList<String> enchants = new LinkedList<String>();
                 LinkedList<String> names = new LinkedList<String>();
                 LinkedList<Integer> amounts = new LinkedList<Integer>();
-                for (Entry<Map<Enchantment, Material>, Integer> e : stage.itemsToEnchant.entrySet()) {
+                for (Entry<Map<Enchantment, Material>, Integer> e : stage.getItemsToEnchant().entrySet()) {
                     amounts.add(e.getValue());
                     for (Entry<Enchantment, Material> e2 : e.getKey().entrySet()) {
                         names.add(e2.getValue().name());
@@ -832,16 +377,16 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 context.setSessionData(pref + CK.S_BREW_ITEMS, items);
             }
-            if (stage.cowsToMilk != null) {
-                context.setSessionData(pref + CK.S_COW_MILK, stage.cowsToMilk);
+            if (stage.getCowsToMilk() != null) {
+                context.setSessionData(pref + CK.S_COW_MILK, stage.getCowsToMilk());
             }
-            if (stage.fishToCatch != null) {
-                context.setSessionData(pref + CK.S_FISH, stage.fishToCatch);
+            if (stage.getFishToCatch() != null) {
+                context.setSessionData(pref + CK.S_FISH, stage.getFishToCatch());
             }
-            if (stage.playersToKill != null) {
-                context.setSessionData(pref + CK.S_PLAYER_KILL, stage.playersToKill);
+            if (stage.getPlayersToKill() != null) {
+                context.setSessionData(pref + CK.S_PLAYER_KILL, stage.getPlayersToKill());
             }
-            if (stage.getItemsToDeliver().isEmpty() == false) {
+            if (!stage.getItemsToDeliver().isEmpty()) {
                 LinkedList<ItemStack> items = new LinkedList<ItemStack>();
                 LinkedList<Integer> npcs = new LinkedList<Integer>();
                 for (ItemStack is : stage.getItemsToDeliver()) {
@@ -852,104 +397,104 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 context.setSessionData(pref + CK.S_DELIVERY_ITEMS, items);
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
-                context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, stage.deliverMessages);
+                context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, stage.getDeliverMessages());
             }
-            if (stage.citizensToInteract.isEmpty() == false) {
+            if (!stage.getCitizensToInteract().isEmpty()) {
                 LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (Integer n : stage.citizensToInteract) {
+                for (Integer n : stage.getCitizensToInteract()) {
                     npcs.add(n);
                 }
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
             }
-            if (stage.citizensToKill.isEmpty() == false) {
+            if (!stage.getCitizensToKill().isEmpty()) {
                 LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (Integer n : stage.citizensToKill) {
+                for (Integer n : stage.getCitizensToKill()) {
                     npcs.add(n);
                 }
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
-                context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, stage.citizenNumToKill);
+                context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, stage.getCitizenNumToKill());
             }
-            if (stage.mobsToKill.isEmpty() == false) {
+            if (!stage.getMobsToKill().isEmpty()) {
                 LinkedList<String> mobs = new LinkedList<String>();
-                for (EntityType et : stage.mobsToKill) {
+                for (EntityType et : stage.getMobsToKill()) {
                     mobs.add(MiscUtil.getPrettyMobName(et));
                 }
                 context.setSessionData(pref + CK.S_MOB_TYPES, mobs);
-                context.setSessionData(pref + CK.S_MOB_AMOUNTS, stage.mobNumToKill);
-                if (stage.locationsToKillWithin.isEmpty() == false) {
+                context.setSessionData(pref + CK.S_MOB_AMOUNTS, stage.getMobNumToKill());
+                if (!stage.getLocationsToKillWithin().isEmpty()) {
                     LinkedList<String> locs = new LinkedList<String>();
-                    for (Location l : stage.locationsToKillWithin) {
+                    for (Location l : stage.getLocationsToKillWithin()) {
                         locs.add(ConfigUtil.getLocationInfo(l));
                     }
                     context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
-                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.radiiToKillWithin);
-                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.killNames);
+                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.getRadiiToKillWithin());
+                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.getKillNames());
                 }
             }
-            if (stage.locationsToReach.isEmpty() == false) {
+            if (!stage.getLocationsToReach().isEmpty()) {
                 LinkedList<String> locs = new LinkedList<String>();
-                for (Location l : stage.locationsToReach) {
+                for (Location l : stage.getLocationsToReach()) {
                     locs.add(ConfigUtil.getLocationInfo(l));
                 }
                 context.setSessionData(pref + CK.S_REACH_LOCATIONS, locs);
-                context.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, stage.radiiToReachWithin);
-                context.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, stage.locationNames);
+                context.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, stage.getRadiiToReachWithin());
+                context.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, stage.getLocationNames());
             }
-            if (stage.mobsToTame.isEmpty() == false) {
+            if (!stage.getMobsToTame().isEmpty()) {
                 LinkedList<String> mobs = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
-                for (Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
+                for (Entry<EntityType, Integer> e : stage.getMobsToTame().entrySet()) {
                     mobs.add(MiscUtil.getPrettyMobName(e.getKey()));
                     amnts.add(e.getValue());
                 }
                 context.setSessionData(pref + CK.S_TAME_TYPES, mobs);
                 context.setSessionData(pref + CK.S_TAME_AMOUNTS, amnts);
             }
-            if (stage.sheepToShear.isEmpty() == false) {
+            if (!stage.getSheepToShear().isEmpty()) {
                 LinkedList<String> colors = new LinkedList<String>();
                 LinkedList<Integer> amnts = new LinkedList<Integer>();
-                for (Entry<DyeColor, Integer> e : stage.sheepToShear.entrySet()) {
+                for (Entry<DyeColor, Integer> e : stage.getSheepToShear().entrySet()) {
                     colors.add(MiscUtil.getPrettyDyeColorName(e.getKey()));
                     amnts.add(e.getValue());
                 }
                 context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
                 context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amnts);
             }
-            if (stage.passwordDisplays.isEmpty() == false) {
-                context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.passwordDisplays);
-                context.setSessionData(pref + CK.S_PASSWORD_PHRASES, stage.passwordPhrases);
+            if (!stage.getPasswordDisplays().isEmpty()) {
+                context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.getPasswordDisplays());
+                context.setSessionData(pref + CK.S_PASSWORD_PHRASES, stage.getPasswordPhrases());
             }
-            if (stage.customObjectives.isEmpty() == false) {
+            if (!stage.getCustomObjectives().isEmpty()) {
                 LinkedList<String> list = new LinkedList<String>();
                 LinkedList<Integer> countList = new LinkedList<Integer>();
                 LinkedList<Entry<String, Object>> datamapList = new LinkedList<Entry<String, Object>>();
-                for (int i = 0; i < stage.customObjectives.size(); i++) {
-                    list.add(stage.customObjectives.get(i).getName());
-                    countList.add(stage.customObjectiveCounts.get(i));
+                for (int i = 0; i < stage.getCustomObjectives().size(); i++) {
+                    list.add(stage.getCustomObjectives().get(i).getName());
+                    countList.add(stage.getCustomObjectiveCounts().get(i));
                 }
-                datamapList.addAll(stage.customObjectiveData);
+                datamapList.addAll(stage.getCustomObjectiveData());
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
             }
-            if (stage.startAction != null) {
-                context.setSessionData(pref + CK.S_START_EVENT, stage.startAction.getName());
+            if (stage.getStartAction() != null) {
+                context.setSessionData(pref + CK.S_START_EVENT, stage.getStartAction().getName());
             }
-            if (stage.finishAction != null) {
-                context.setSessionData(pref + CK.S_FINISH_EVENT, stage.finishAction.getName());
+            if (stage.getFinishAction() != null) {
+                context.setSessionData(pref + CK.S_FINISH_EVENT, stage.getFinishAction().getName());
             }
-            if (stage.deathAction != null) {
-                context.setSessionData(pref + CK.S_DEATH_EVENT, stage.deathAction.getName());
+            if (stage.getDeathAction() != null) {
+                context.setSessionData(pref + CK.S_DEATH_EVENT, stage.getDeathAction().getName());
             }
-            if (stage.disconnectAction != null) {
-                context.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.disconnectAction.getName());
+            if (stage.getDisconnectAction() != null) {
+                context.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.getDisconnectAction().getName());
             }
             if (!stage.getChatActions().isEmpty()) {
                 LinkedList<String> chatEvents = new LinkedList<String>();
                 LinkedList<String> chatEventTriggers = new LinkedList<String>();
-                for (String s : stage.chatActions.keySet()) {
+                for (String s : stage.getChatActions().keySet()) {
                     chatEventTriggers.add(s);
-                    chatEvents.add(stage.chatActions.get(s).getName());
+                    chatEvents.add(stage.getChatActions().get(s).getName());
                 }
                 context.setSessionData(pref + CK.S_CHAT_EVENTS, chatEvents);
                 context.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
@@ -957,109 +502,35 @@ public class QuestFactory implements ConversationAbandonedListener {
             if (!stage.getCommandActions().isEmpty()) {
                 LinkedList<String> commandEvents = new LinkedList<String>();
                 LinkedList<String> commandEventTriggers = new LinkedList<String>();
-                for (String s : stage.commandActions.keySet()) {
+                for (String s : stage.getCommandActions().keySet()) {
                     commandEventTriggers.add(s);
-                    commandEvents.add(stage.commandActions.get(s).getName());
+                    commandEvents.add(stage.getCommandActions().get(s).getName());
                 }
                 context.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
                 context.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
             }
-            if (stage.delay != -1) {
-                context.setSessionData(pref + CK.S_DELAY, stage.delay);
-                if (stage.delayMessage != null) {
-                    context.setSessionData(pref + CK.S_DELAY_MESSAGE, stage.delayMessage);
+            if (stage.getDelay() != -1) {
+                context.setSessionData(pref + CK.S_DELAY, stage.getDelay());
+                if (stage.getDelayMessage() != null) {
+                    context.setSessionData(pref + CK.S_DELAY_MESSAGE, stage.getDelayMessage());
                 }
             }
-            if (stage.script != null) {
-                context.setSessionData(pref + CK.S_DENIZEN, stage.script);
+            if (stage.getScript() != null) {
+                context.setSessionData(pref + CK.S_DENIZEN, stage.getScript());
             }
-            if (stage.completeMessage != null) {
-                context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.completeMessage);
+            if (stage.getCompleteMessage() != null) {
+                context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.getCompleteMessage());
             }
-            if (stage.startMessage != null) {
-                context.setSessionData(pref + CK.S_START_MESSAGE, stage.startMessage);
+            if (stage.getStartMessage() != null) {
+                context.setSessionData(pref + CK.S_START_MESSAGE, stage.getStartMessage());
             }
-            if (stage.objectiveOverrides.isEmpty() == false) {
-                context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.objectiveOverrides);
+            if (!stage.getObjectiveOverrides().isEmpty()) {
+                context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.getObjectiveOverrides());
             }
         }
     }
     
-    private class QuestSelectDeletePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("questDeleteTitle") + "\n";
-            for (Quest quest : plugin.getQuests()) {
-                text += ChatColor.AQUA + quest.getName() + ChatColor.GRAY + ",";
-            }
-            text = text.substring(0, text.length() - 1) + "\n";
-            text += ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
-            return text;
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                LinkedList<String> used = new LinkedList<String>();
-                Quest found = plugin.getQuest(input);
-                if (found != null) {
-                    for (Quest q : plugin.getQuests()) {
-                        if (q.getRequirements().getNeededQuests().contains(q.getName()) 
-                                || q.getRequirements().getBlockQuests().contains(q.getName())) {
-                            used.add(q.getName());
-                        }
-                    }
-                    if (used.isEmpty()) {
-                        context.setSessionData(CK.ED_QUEST_DELETE, found.getName());
-                        return new QuestConfirmDeletePrompt();
-                    } else {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
-                                + Lang.get("questEditorQuestAsRequirement1") + " \"" + ChatColor.DARK_PURPLE 
-                                + context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\" " 
-                                + Lang.get("questEditorQuestAsRequirement2"));
-                        for (String s : used) {
-                            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
-                        }
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
-                                + Lang.get("questEditorQuestAsRequirement3"));
-                        return new QuestSelectDeletePrompt();
-                    }
-                }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questEditorQuestNotFound"));
-                return new QuestSelectDeletePrompt();
-            } else {
-                return new QuestMenuPrompt(context);
-            }
-        }
-    }
-
-    private class QuestConfirmDeletePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
-                    + Lang.get("yesWord") + "\n";
-            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
-                    + Lang.get("noWord");
-            return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
-                    + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + ")\n" + text;
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
-                deleteQuest(context);
-                return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new QuestMenuPrompt(context);
-            } else {
-                return new QuestConfirmDeletePrompt();
-            }
-        }
-    }
-
-    private void deleteQuest(ConversationContext context) {
+    public void deleteQuest(ConversationContext context) {
         FileConfiguration data = new YamlConfiguration();
         File questsFile = new File(plugin.getDataFolder(), "quests.yml");
         try {
@@ -1098,439 +569,6 @@ public class QuestFactory implements ConversationAbandonedListener {
         };
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
-    }
-
-    private class QuestSetNamePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (Quest q : plugin.getQuests()) {
-                    if (q.getName().equalsIgnoreCase(input)) {
-                        String s = null;
-                        if (context.getSessionData(CK.ED_QUEST_EDIT) != null) {
-                            s = (String) context.getSessionData(CK.ED_QUEST_EDIT);
-                        }
-                        if (s != null && s.equalsIgnoreCase(input) == false) {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
-                            return new QuestSetNamePrompt();
-                        }
-                    }
-                }
-                if (editingQuestNames.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
-                    return new QuestSetNamePrompt();
-                }
-                if (input.contains(",")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
-                    return new QuestSelectCreatePrompt(plugin, context);
-                }
-                editingQuestNames.remove((String) context.getSessionData(CK.Q_NAME));
-                context.setSessionData(CK.Q_NAME, input);
-                editingQuestNames.add(input);
-            }
-            return new QuestMainPrompt(context);
-        }
-    }
-
-    private class AskMessagePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("questEditorEnterAskMessage");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                if (input.startsWith("++")) {
-                    if (context.getSessionData(CK.Q_ASK_MESSAGE) != null) {
-                        context.setSessionData(CK.Q_ASK_MESSAGE, context.getSessionData(CK.Q_ASK_MESSAGE) + " " 
-                                + input.substring(2));
-                        return new QuestMainPrompt(context);
-                    }
-                }
-                context.setSessionData(CK.Q_ASK_MESSAGE, input);
-            }
-            return new QuestMainPrompt(context);
-        }
-    }
-
-    private class FinishMessagePrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("questEditorEnterFinishMessage");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                if (input.startsWith("++")) {
-                    if (context.getSessionData(CK.Q_FINISH_MESSAGE) != null) {
-                        context.setSessionData(CK.Q_FINISH_MESSAGE, context.getSessionData(CK.Q_FINISH_MESSAGE) + " " 
-                                + input.substring(2));
-                        return new QuestMainPrompt(context);
-                    }
-                }
-                context.setSessionData(CK.Q_FINISH_MESSAGE, input);
-            }
-            return new QuestMainPrompt(context);
-        }
-    }
-
-    private class NPCStartPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
-            return ChatColor.YELLOW + Lang.get("questEditorEnterNPCStart") + "\n" 
-                    + ChatColor.GOLD + Lang.get("npcHint");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
-                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                try {
-                    int i = Integer.parseInt(input);
-                    if (i > -1) {
-                        if (CitizensAPI.getNPCRegistry().getById(i) == null) {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
-                            return new NPCStartPrompt();
-                        }
-                        context.setSessionData(CK.Q_START_NPC, i);
-                        selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
-                        return new QuestMainPrompt(context);
-                    }
-                } catch (NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED 
-                            + Lang.get("reqNotANumber").replace("<input>", input));
-                    return new NPCStartPrompt();
-                }
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(CK.Q_START_NPC, null);
-            }
-            selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
-            return new QuestMainPrompt(context);
-        }
-    }
-
-    private class BlockStartPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("questEditorEnterBlockStart");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdDone")) || input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
-                    Block block = selectedBlockStarts.get(player.getUniqueId());
-                    if (block != null) {
-                        Location loc = block.getLocation();
-                        context.setSessionData(CK.Q_START_BLOCK, loc);
-                        selectedBlockStarts.remove(player.getUniqueId());
-                    } else {
-                        player.sendMessage(ChatColor.RED + Lang.get("questEditorNoStartBlockSelected"));
-                        return new BlockStartPrompt();
-                    }
-                } else {
-                    selectedBlockStarts.remove(player.getUniqueId());
-                }
-                return new QuestMainPrompt(context);
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                selectedBlockStarts.remove(player.getUniqueId());
-                context.setSessionData(CK.Q_START_BLOCK, null);
-                return new QuestMainPrompt(context);
-            }
-            return new BlockStartPrompt();
-        }
-    }
-
-    private class RegionPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.AQUA + Lang.get("questRegionTitle") + "\n";
-            boolean any = false;
-            for (World world : plugin.getServer().getWorlds()) {
-                WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-                RegionManager rm = api.getRegionManager(world);
-                for (String region : rm.getRegions().keySet()) {
-                    any = true;
-                    text += ChatColor.GREEN + region + ", ";
-                }
-            }
-            if (any) {
-                text = text.substring(0, text.length() - 2);
-                text += "\n\n";
-            } else {
-                text += ChatColor.GRAY + "(" + Lang.get("none") + ")\n\n";
-            }
-            return text + ChatColor.YELLOW + Lang.get("questWGPrompt");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
-                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                String found = null;
-                boolean done = false;
-                for (World world : plugin.getServer().getWorlds()) {
-                    WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-                    RegionManager rm = api.getRegionManager(world);
-                    for (String region : rm.getRegions().keySet()) {
-                        if (region.equalsIgnoreCase(input)) {
-                            found = region;
-                            done = true;
-                            break;
-                        }
-                    }
-                    if (done) {
-                        break;
-                    }
-                }
-                if (found == null) {
-                    String error = Lang.get("questWGInvalidRegion");
-                    error = error.replace("<region>", ChatColor.RED + input + ChatColor.YELLOW);
-                    player.sendMessage(ChatColor.YELLOW + error);
-                    return new RegionPrompt();
-                } else {
-                    context.setSessionData(CK.Q_REGION, found);
-                    return new QuestMainPrompt(context);
-                }
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(CK.Q_REGION, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("questWGRegionCleared"));
-                return new QuestMainPrompt(context);
-            } else {
-                return new QuestMainPrompt(context);
-            }
-        }
-    }
-
-    private class InitialActionPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.AQUA + Lang.get("eventTitle") + "\n";
-            if (plugin.getActions().isEmpty()) {
-                text += ChatColor.RED + "- " + Lang.get("none");
-            } else {
-                for (Action e : plugin.getActions()) {
-                    text += ChatColor.GREEN + "- " + e.getName() + "\n";
-                }
-            }
-            return text + ChatColor.YELLOW + Lang.get("questEditorEnterInitialEvent");
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
-                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                Action a = plugin.getAction(input);
-                if (a != null) {
-                    context.setSessionData(CK.Q_INITIAL_EVENT, a.getName());
-                    return new QuestMainPrompt(context);
-                }
-                player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                        + Lang.get("questEditorInvalidEventName"));
-                return new InitialActionPrompt();
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(CK.Q_INITIAL_EVENT, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("questEditorEventCleared"));
-                return new QuestMainPrompt(context);
-            } else {
-                return new QuestMainPrompt(context);
-            }
-        }
-    }
-
-    public class SavePrompt extends QuestsEditorStringPrompt {
-        public SavePrompt(ConversationContext context) {
-            super(context);
-        }
-
-        private final int size = 2;
-        
-        public int getSize() {
-            return size;
-        }
-        
-        public String getTitle(ConversationContext context) {
-            return null;
-        }
-        
-        public ChatColor getNumberColor(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-                return ChatColor.GREEN;
-            case 2:
-                return ChatColor.RED;
-            default:
-                return null;
-            }
-        }
-        
-        public String getSelectionText(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-                return ChatColor.GREEN + Lang.get("yesWord");
-            case 2:
-                return ChatColor.RED + Lang.get("noWord");
-            default:
-                return null;
-            }
-        }
-        
-        public String getQueryText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA 
-                    + context.getSessionData(CK.Q_NAME) + ChatColor.YELLOW + "\"?";
-        }
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            
-            String text = getQueryText(context) + "\n";
-            for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + "\n";
-            }
-            return text;
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
-                if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedAskMessage"));
-                    return new QuestMainPrompt(context);
-                } else if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedFinishMessage"));
-                    return new QuestMainPrompt(context);
-                } else if (new StageMenuPrompt(context).getStages(context) == 0) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedStages"));
-                    return new QuestMainPrompt(context);
-                }
-                FileConfiguration data = new YamlConfiguration();
-                try {
-                    data.load(new File(plugin.getDataFolder(), "quests.yml"));
-                    ConfigurationSection questSection = data.getConfigurationSection("quests");
-                    if (questSection == null) {
-                        questSection = data.createSection("quests");
-                    }
-                    ConfigurationSection newSection;
-                    if (context.getSessionData(CK.Q_ID) == null) {
-                        // Creating
-                        int customNum = 1;
-                        while (true) {
-                            if (questSection.contains("custom" + customNum)) {
-                                customNum++;
-                            } else {
-                                break;
-                            }
-                        }
-                        newSection = questSection.createSection("custom" + customNum);
-                    } else {
-                        // Editing
-                        newSection = questSection.createSection((String)context.getSessionData(CK.Q_ID));
-                    }
-                    saveQuest(context, newSection);
-                    data.save(new File(plugin.getDataFolder(), "quests.yml"));
-                    context.getForWhom().sendRawMessage(ChatColor.GREEN
-                            + Lang.get("questEditorSaved").replace("<command>", "/questadmin " 
-                            + Lang.get("COMMAND_QUESTADMIN_RELOAD")));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InvalidConfigurationException e) {
-                    e.printStackTrace();
-                }
-                return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new QuestMainPrompt(context);
-            } else {
-                return new SavePrompt(context);
-            }
-        }
-    }
-
-    public class ExitPrompt extends QuestsEditorStringPrompt {
-        public ExitPrompt(ConversationContext context) {
-            super(context);
-        }
-
-        private final int size = 2;
-        
-        public int getSize() {
-            return size;
-        }
-        
-        public String getTitle(ConversationContext context) {
-            return null;
-        }
-        
-        public ChatColor getNumberColor(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-                return ChatColor.GREEN;
-            case 2:
-                return ChatColor.RED;
-            default:
-                return null;
-            }
-        }
-        
-        public String getSelectionText(ConversationContext context, int number) {
-            switch (number) {
-            case 1:
-                return ChatColor.GREEN + Lang.get("yesWord");
-            case 2:
-                return ChatColor.RED + Lang.get("noWord");
-            default:
-                return null;
-            }
-        }
-        
-        public String getQueryText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("confirmDelete");
-        }
-        
-        @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            
-            String text = getQueryText(context) + "\n";
-            for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + "\n";
-            }
-            return text;
-        }
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
-                context.getForWhom().sendRawMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + Lang.get("exited"));
-                return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new QuestMainPrompt(context);
-            } else {
-                return new ExitPrompt(context);
-            }
-        }
     }
 
     public void saveQuest(ConversationContext context, ConfigurationSection section) {

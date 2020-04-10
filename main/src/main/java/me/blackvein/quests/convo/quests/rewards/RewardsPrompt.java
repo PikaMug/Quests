@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.convo.quests.prompts;
+package me.blackvein.quests.convo.quests.rewards;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +32,8 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.generic.ItemStackPrompt;
+import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;

@@ -289,7 +289,7 @@ public class NpcListener implements Listener {
                                 quester.showGUIDisplay(evt.getNPC(), npcQuests);
                             } else {
                                 Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
-                                c.getContext().setSessionData("quests", npcQuests);
+                                c.getContext().setSessionData("npcQuests", npcQuests);
                                 c.getContext().setSessionData("npc", evt.getNPC().getName());
                                 c.begin();
                             }
