@@ -3685,7 +3685,13 @@ public class Quester {
                 return;
             }
             for (Quester q : mq) {
-                if (q != null && q.getCurrentStage(quest).containsObjective(objectiveType)) {
+                if (q == null) {
+                    return;
+                }
+                if (q.getCurrentStage(quest) == null) {
+                    return;
+                }
+                if (q.getCurrentStage(quest).containsObjective(objectiveType)) {
                     if (this.getCurrentStage(quest).containsObjective(objectiveType)
                             || !quest.getOptions().getRequireSameQuest()) {
                         fun.apply(q);
@@ -3712,8 +3718,10 @@ public class Quester {
                 return;
             }
             for (Quester q : mq) {
-                if (q != null 
-                        && (q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))
+                if (q == null) {
+                    return;
+                }
+                if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))
                         || !quest.getOptions().getRequireSameQuest()) {
                     fun.apply(q);
                 }
