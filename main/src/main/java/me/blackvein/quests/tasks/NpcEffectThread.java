@@ -66,8 +66,8 @@ public class NpcEffectThread implements Runnable {
         }
         if (plugin.getDependencies().getCitizens() != null) {
             Location eyeLoc = npc.getEntity().getLocation();
-            eyeLoc.setY(eyeLoc.getY() + 1.5);
-            ParticleProvider.sendToPlayer(player, eyeLoc, effectType);
+            eyeLoc.setY(eyeLoc.getY() + 2);
+            ParticleProvider.sendToPlayer(player, eyeLoc, effectType.toUpperCase());
         }
     }
 }
