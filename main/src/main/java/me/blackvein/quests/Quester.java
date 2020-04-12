@@ -345,6 +345,8 @@ public class Quester {
     public QuestData getQuestData(Quest quest) {
         if (questData.containsKey(quest)) {
             return questData.get(quest);
+        } else if (quest != null) {
+            plugin.getLogger().severe("Unable to fetch data for quest " + quest.getId());
         }
         return null;
     }
