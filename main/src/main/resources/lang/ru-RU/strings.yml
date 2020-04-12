@@ -13,7 +13,7 @@ COMMAND_EDITOR_HELP: "<command> - Создать/Редактировать за
 COMMAND_EVENTS_EDITOR: "события"
 COMMAND_EVENTS_EDITOR_HELP: "<command> - Создать/Редактировать события"
 COMMAND_STATS: "статистика"
-COMMAND_STATS_HELP: "<command> - Просмотр статистики квеста"
+COMMAND_STATS_HELP: "<command> - Просмотр Вашей статистики заданий"
 COMMAND_TOP: "вверх"
 COMMAND_TOP_HELP: "<command> [номер] - Просмотреть топ Квесты"
 COMMAND_TOP_USAGE: "Использование: / quests top [число]"
