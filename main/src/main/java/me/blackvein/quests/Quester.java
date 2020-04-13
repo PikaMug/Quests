@@ -345,10 +345,9 @@ public class Quester {
     public QuestData getQuestData(Quest quest) {
         if (questData.containsKey(quest)) {
             return questData.get(quest);
-        } else if (quest != null) {
-            plugin.getLogger().severe("Unable to fetch data for quest " + quest.getId());
         }
-        return null;
+        plugin.getLogger().info("Creating new data for quest " + quest.getId());
+        return new QuestData(this);
     }
 
     public void updateJournal() {
@@ -1114,18 +1113,21 @@ public class Quester {
         for (Location l : getCurrentStage(quest).locationsToReach) {
             for (Location l2 : getQuestData(quest).locationsReached) {
                 if (l.equals(l2)) {
-                    if (!getQuestData(quest).hasReached.isEmpty()) {
-                        if (getQuestData(quest).hasReached.get(getQuestData(quest).locationsReached.indexOf(l2)) 
-                                == false) {
-                            String obj = Lang.get(getPlayer(), "goTo");
-                            obj = obj.replace("<location>", getCurrentStage(quest).locationNames
-                                    .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
-                            unfinishedObjectives.add(ChatColor.GREEN + obj);
-                        } else {
-                            String obj = Lang.get(getPlayer(), "goTo");
-                            obj = obj.replace("<location>", getCurrentStage(quest).locationNames
-                                    .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
-                            finishedObjectives.add(ChatColor.GRAY + obj);
+                    if (getQuestData(quest) != null && getQuestData(quest).hasReached != null) {
+                        if (!getQuestData(quest).hasReached.isEmpty()) {
+                            int r = getQuestData(quest).locationsReached.indexOf(l2);
+                            if (r < getQuestData(quest).hasReached.size()
+                                    && getQuestData(quest).hasReached.get(r) == false) {
+                                String obj = Lang.get(getPlayer(), "goTo");
+                                obj = obj.replace("<location>", getCurrentStage(quest).locationNames
+                                        .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
+                                unfinishedObjectives.add(ChatColor.GREEN + obj);
+                            } else {
+                                String obj = Lang.get(getPlayer(), "goTo");
+                                obj = obj.replace("<location>", getCurrentStage(quest).locationNames
+                                        .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
+                                finishedObjectives.add(ChatColor.GRAY + obj);
+                            }
                         }
                     }
                 }
@@ -2046,10 +2048,7 @@ public class Quester {
      * @param l The location being reached
      */
     public void reachLocation(Quest quest, Location l) {
-        if (getQuestData(quest).locationsReached == null) {
-            return;
-        }
-        if (getQuestData(quest).locationsReached.isEmpty()) {
+        if (getQuestData(quest) == null || getQuestData(quest).locationsReached == null) {
             return;
         }
         int index = 0;
