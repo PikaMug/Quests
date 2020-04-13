@@ -2057,6 +2057,9 @@ public class Quester {
                 if (getCurrentStage(quest).locationsToReach.size() <= index) {
                     return;
                 }
+                if (getCurrentStage(quest).radiiToReachWithin.size() <= index) {
+                    return;
+                }
                 Location locationToReach = getCurrentStage(quest).locationsToReach.get(index);
                 double radius = getQuestData(quest).radiiToReachWithin.get(index);
                 if (l.getX() < (locationToReach.getX() + radius) && l.getX() > (locationToReach.getX() - radius)) {
@@ -2064,7 +2067,7 @@ public class Quester {
                         if (l.getY() < (locationToReach.getY() + radius) && l.getY() 
                                 > (locationToReach.getY() - radius)) {
                             if (l.getWorld().getName().equals(locationToReach.getWorld().getName())) {
-                                // TODO - Find proper cause of Github issues #646 and #825
+                                // TODO - Find proper cause of Github issues #646 and #825 and #1191
                                 if (index >= getQuestData(quest).hasReached.size()) {
                                     getQuestData(quest).hasReached.add(true);
                                     finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
