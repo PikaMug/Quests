@@ -23,6 +23,8 @@ import com.denizenscript.denizen.objects.PlayerTag;
 import com.denizenscript.denizen.utilities.implementation.BukkitScriptEntryData;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 
 import net.citizensnpcs.api.npc.NPC;
 
@@ -62,6 +64,8 @@ public class DenizenAPI_1_1_1 {
     public static void runTaskScript(String scriptName, Player player) {
         TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
         BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);
-        taskScript.runTaskScript(entryData, null);
+        ScriptQueue queue = new InstantQueue(taskScript.getName())
+                .addEntries(taskScript.getBaseEntries(entryData.clone()));
+        queue.start();
     }
 }
