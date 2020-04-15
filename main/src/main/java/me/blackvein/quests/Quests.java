@@ -45,6 +45,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -69,6 +70,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
@@ -77,6 +80,7 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.convo.quests.prompts.QuestOfferPrompt;
+import me.blackvein.quests.exceptions.ActionFormatException;
 import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.listeners.CmdExecutor;
@@ -1376,16 +1380,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         throw new QuestFormatException("ask-message is missing", questKey);
                     }
                     if (config.contains("quests." + questKey + ".action")) {
-                        Action act = Action.loadAction(config.getString("quests." + questKey + ".action"), this);
+                        Action act = loadAction(config.getString("quests." + questKey + ".action"));
                         if (act != null) {
                             quest.initialAction = act;
                         } else {
                             throw new QuestFormatException("action failed to load", questKey);
                         }
                     } else if (config.contains("quests." + questKey + ".event")) {
-                        Action evt = Action.loadAction(config.getString("quests." + questKey + ".event"), this);
-                        if (evt != null) {
-                            quest.initialAction = evt;
+                        Action action = null;
+                                
+                        action = loadAction(config.getString("quests." + questKey + ".event"));
+                        if (action != null) {
+                            quest.initialAction = action;
                         } else {
                             throw new QuestFormatException("action failed to load", questKey);
                         }
@@ -1414,11 +1420,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     if (failedToLoad == true) {
                         getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questKey + "\". Skipping.");
                     }
-                } catch (QuestFormatException ex) {
-                    ex.printStackTrace();
+                } catch (QuestFormatException e) {
+                    e.printStackTrace();
                     continue;
-                } catch (StageFormatException ex) {
-                    ex.printStackTrace();
+                } catch (StageFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (ActionFormatException e) {
+                    e.printStackTrace();
                     continue;
                 }
             }
@@ -1840,7 +1849,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
 
     @SuppressWarnings({ "unchecked", "unused" })
-    private void loadQuestStages(Quest quest, FileConfiguration config, String questKey) throws StageFormatException {
+    private void loadQuestStages(Quest quest, FileConfiguration config, String questKey)
+            throws StageFormatException, ActionFormatException {
         ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
         for (String stage : questStages.getKeys(false)) {
             int stageNum = 0;
@@ -2676,37 +2686,37 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".start-event")) {
-                Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".start-event"), this);
-                if (evt != null) {
-                    oStage.startAction = evt;
+                Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
+                        + ".start-event"));
+                if (action != null) {
+                    oStage.startAction = action;
                 } else {
                     throw new StageFormatException("start-event failed to load", quest, stageNum);
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".finish-event")) {
-                Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".finish-event"), this);
-                if (evt != null) {
-                    oStage.finishAction = evt;
+                Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
+                        + ".finish-event"));
+                if (action != null) {
+                    oStage.finishAction = action;
                 } else {
                     throw new StageFormatException("finish-event failed to load", quest, stageNum);
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".death-event")) {
-                Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".death-event"), this);
-                if (evt != null) {
-                    oStage.deathAction = evt;
+                Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
+                        + ".death-event"));
+                if (action != null) {
+                    oStage.deathAction = action;
                 } else {
                     throw new StageFormatException("death-event failed to load", quest, stageNum);
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".disconnect-event")) {
-                Action evt = Action.loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".disconnect-event"), this);
-                if (evt != null) {
-                    oStage.disconnectAction = evt;
+                Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
+                        + ".disconnect-event"));
+                if (action != null) {
+                    oStage.disconnectAction = action;
                 } else {
                     throw new StageFormatException("disconnect-event failed to load", quest, stageNum);
                 }
@@ -2721,9 +2731,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     + ".stages.ordered." + stageNum + ".chat-event-triggers");
                             boolean loadEventFailed = false;
                             for (int i = 0; i < chatEvents.size(); i++) {
-                                Action evt = Action.loadAction(chatEvents.get(i), this);
-                                if (evt != null) {
-                                    oStage.chatActions.put(chatEventTriggers.get(i), evt);
+                                Action action = loadAction(chatEvents.get(i));
+                                if (action != null) {
+                                    oStage.chatActions.put(chatEventTriggers.get(i), action);
                                 } else {
                                     loadEventFailed = true;
                                     throw new StageFormatException("chat-events failed to load " + chatEvents.get(i), quest, stageNum);
@@ -2752,9 +2762,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     + ".stages.ordered." + stageNum + ".command-event-triggers");
                             boolean loadEventFailed = false;
                             for (int i = 0; i < commandEvents.size(); i++) {
-                                Action evt = Action.loadAction(commandEvents.get(i), this);
-                                if (evt != null) {
-                                    oStage.commandActions.put(commandEventTriggers.get(i), evt);
+                                Action action = loadAction(commandEvents.get(i));
+                                if (action != null) {
+                                    oStage.commandActions.put(commandEventTriggers.get(i), action);
                                 } else {
                                     loadEventFailed = true;
                                     throw new StageFormatException("command-events failed to load " + commandEvents.get(i), quest, stageNum);
@@ -2799,6 +2809,318 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             oStage.citizensToInteract = ids;
             quest.getStages().add(oStage);
         }
+    }
+    
+    protected Action loadAction(String name) throws ActionFormatException {
+        if (name == null) {
+            return null;
+        }
+        File legacy = new File(getDataFolder(), "events.yml");
+        File actions = new File(getDataFolder(), "actions.yml");
+        FileConfiguration data = new YamlConfiguration();
+        try {
+            if (actions.isFile()) {
+                data.load(actions);
+            } else {
+                data.load(legacy);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+        String legacyName = "events." + name;
+        String actionKey = "actions." + name + ".";
+        if (data.contains(legacyName)) {
+            actionKey = legacyName + ".";
+        }
+        Action action = new Action(this);
+        action.setName(name);
+        if (data.contains(actionKey + "message")) {
+            action.setMessage(ConfigUtil.parseString(data.getString(actionKey + "message")));
+        }
+        if (data.contains(actionKey + "open-book")) {
+            action.setBook(data.getString(actionKey + "open-book"));
+        }
+        if (data.contains(actionKey + "clear-inventory")) {
+            if (data.isBoolean(actionKey + "clear-inventory")) {
+                action.setClearInv(data.getBoolean(actionKey + "clear-inventory"));
+            } else {
+                throw new ActionFormatException("clear-inventory is not a true/false value", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "fail-quest")) {
+            if (data.isBoolean(actionKey + "fail-quest")) {
+                action.setFailQuest(data.getBoolean(actionKey + "fail-quest"));
+            } else {
+                throw new ActionFormatException("fail-quest is not a true/false value", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "explosions")) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "explosions"), String.class)) {
+                LinkedList<Location> explosions = new LinkedList<Location>();
+                for (String s : data.getStringList(actionKey + "explosions")) {
+                    Location loc = ConfigUtil.getLocation(s);
+                    if (loc == null) {
+                        throw new ActionFormatException("explosions is not in proper \"WorldName x y z\" format", actionKey);
+                    }
+                    explosions.add(loc);
+                }
+                action.setExplosions(explosions);
+            } else {
+                throw new ActionFormatException("explosions is not a list of locations", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "effects")) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "effects"), String.class)) {
+                if (data.contains(actionKey + "effect-locations")) {
+                    if (ConfigUtil.checkList(data.getList(actionKey + "effect-locations"), String.class)) {
+                        List<String> effectList = data.getStringList(actionKey + "effects");
+                        List<String> effectLocs = data.getStringList(actionKey + "effect-locations");
+                        Map<Location, Effect> effects = new HashMap<Location, Effect>();
+                        for (String s : effectList) {
+                            Effect effect = null;
+                            try {
+                                effect = Effect.valueOf(s.toUpperCase());
+                            } catch (IllegalArgumentException e) {
+                                throw new ActionFormatException("effect-locations is not a valid effect name",
+                                        actionKey);
+                            }
+                            Location l = ConfigUtil.getLocation(effectLocs.get(effectList.indexOf(s)));
+                            if (l == null) {
+                                throw new ActionFormatException("effect-locations is not in proper \"WorldName x y z\""
+                                        + "format", actionKey);
+                            }
+                            effects.put(l, effect);
+                        }
+                        action.setEffects(effects);
+                    } else {
+                        throw new ActionFormatException("effect-locations is not a list of locations", actionKey);
+                    }
+                } else {
+                    throw new ActionFormatException("effect-locations is missing", actionKey);
+                }
+            } else {
+                throw new ActionFormatException("effects is not a list of effects", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "items")) {
+            LinkedList<ItemStack> temp = new LinkedList<ItemStack>();
+            @SuppressWarnings("unchecked")
+            List<ItemStack> stackList = (List<ItemStack>) data.get(actionKey + "items");
+            if (ConfigUtil.checkList(stackList, ItemStack.class)) {
+                for (ItemStack stack : stackList) {
+                    if (stack != null) {
+                        temp.add(stack);
+                    }
+                }
+            } else {
+                // Legacy
+                if (ConfigUtil.checkList(stackList, String.class)) {
+                    List<String> items = data.getStringList(actionKey + "items");
+                    for (String item : items) {
+                        try {
+                            ItemStack stack = ItemUtil.readItemStack(item);
+                            if (stack != null) {
+                                temp.add(stack);
+                            }
+                        } catch (Exception e) {
+                            throw new ActionFormatException("items is not formatted properly", actionKey);
+                        }
+                    }
+                } else {
+                    throw new ActionFormatException("items is not a list of items", actionKey);
+                }
+            }
+            action.setItems(temp);
+        }
+        if (data.contains(actionKey + "storm-world")) {
+            World stormWorld = getServer().getWorld(data.getString(actionKey + "storm-world"));
+            if (stormWorld == null) {
+                throw new ActionFormatException("storm-world is not a valid world name", actionKey);
+            }
+            if (data.contains(actionKey + "storm-duration")) {
+                if (data.getInt(actionKey + "storm-duration", -999) != -999) {
+                    action.setStormDuration(data.getInt(actionKey + "storm-duration") * 1000);
+                } else {
+                    throw new ActionFormatException("storm-duration is not a number", actionKey);
+                }
+                action.setStormWorld(stormWorld);
+            } else {
+                throw new ActionFormatException("storm-duration is missing", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "thunder-world")) {
+            World thunderWorld = getServer().getWorld(data.getString(actionKey + "thunder-world"));
+            if (thunderWorld == null) {
+                throw new ActionFormatException("thunder-world is not a valid world name", actionKey);
+            }
+            if (data.contains(actionKey + "thunder-duration")) {
+                if (data.getInt(actionKey + "thunder-duration", -999) != -999) {
+                    action.setThunderDuration(data.getInt(actionKey + "thunder-duration"));
+                } else {
+                    throw new ActionFormatException("thunder-duration is not a number", actionKey);
+                }
+                action.setThunderWorld(thunderWorld);
+            } else {
+                throw new ActionFormatException("thunder-duration is missing", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "mob-spawns")) {
+            ConfigurationSection section = data.getConfigurationSection(actionKey + "mob-spawns");
+            LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>();
+            for (String s : section.getKeys(false)) {
+                String mobName = section.getString(s + ".name");
+                Location spawnLocation = ConfigUtil.getLocation(section.getString(s + ".spawn-location"));
+                EntityType type = MiscUtil.getProperMobType(section.getString(s + ".mob-type"));
+                Integer mobAmount = section.getInt(s + ".spawn-amounts");
+                if (spawnLocation == null) {
+                    throw new ActionFormatException("mob-spawn-locations is not in proper \"WorldName x y z\" format",
+                            actionKey);
+                }
+                if (type == null) {
+                    throw new ActionFormatException("mob-spawn-types is not a list of mob types", actionKey);
+                }
+                ItemStack[] inventory = new ItemStack[5];
+                Float[] dropChances = new Float[5];
+                inventory[0] = ItemUtil.readItemStack(section.getString(s + ".held-item"));
+                dropChances[0] = (float) section.getDouble(s + ".held-item-drop-chance");
+                inventory[1] = ItemUtil.readItemStack(section.getString(s + ".boots"));
+                dropChances[1] = (float) section.getDouble(s + ".boots-drop-chance");
+                inventory[2] = ItemUtil.readItemStack(section.getString(s + ".leggings"));
+                dropChances[2] = (float) section.getDouble(s + ".leggings-drop-chance");
+                inventory[3] = ItemUtil.readItemStack(section.getString(s + ".chest-plate"));
+                dropChances[3] = (float) section.getDouble(s + ".chest-plate-drop-chance");
+                inventory[4] = ItemUtil.readItemStack(section.getString(s + ".helmet"));
+                dropChances[4] = (float) section.getDouble(s + ".helmet-drop-chance");
+                QuestMob questMob = new QuestMob(type, spawnLocation, mobAmount);
+                questMob.setInventory(inventory);
+                questMob.setDropChances(dropChances);
+                questMob.setName(mobName);
+                mobSpawns.add(questMob);
+            }
+            action.setMobSpawns(mobSpawns);
+        }
+        if (data.contains(actionKey + "lightning-strikes")) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "lightning-strikes"), String.class)) {
+                LinkedList<Location> lightningStrikes = new LinkedList<Location>();
+                for (String s : data.getStringList(actionKey + "lightning-strikes")) {
+                    Location loc = ConfigUtil.getLocation(s);
+                    if (loc == null) {
+                        throw new ActionFormatException("lightning-strikes is not in proper \"WorldName x y z\" format",
+                                actionKey);
+                    }
+                    lightningStrikes.add(loc);
+                }
+                action.setLightningStrikes(lightningStrikes);
+            } else {
+                throw new ActionFormatException("lightning-strikes is not a list of locations", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "commands")) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "commands"), String.class)) {
+                LinkedList<String> commands = new LinkedList<String>();
+                for (String s : data.getStringList(actionKey + "commands")) {
+                    if (s.startsWith("/")) {
+                        s = s.replaceFirst("/", "");
+                    }
+                    commands.add(s);
+                }
+                action.setCommands(commands);
+            } else {
+                throw new ActionFormatException("commands is not a list of commands", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "potion-effect-types")) {
+            if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-types"), String.class)) {
+                if (data.contains(actionKey + "potion-effect-durations")) {
+                    if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-durations"), Integer.class)) {
+                        if (data.contains(actionKey + "potion-effect-amplifiers")) {
+                            if (ConfigUtil.checkList(data.getList(actionKey + "potion-effect-amplifiers"), 
+                                    Integer.class)) {
+                                List<String> types = data.getStringList(actionKey + "potion-effect-types");
+                                List<Integer> durations = data.getIntegerList(actionKey + "potion-effect-durations");
+                                List<Integer> amplifiers = data.getIntegerList(actionKey + "potion-effect-amplifiers");
+                                LinkedList<PotionEffect> potionEffects = new LinkedList<PotionEffect>();
+                                for (String s : types) {
+                                    PotionEffectType type = PotionEffectType.getByName(s);
+                                    if (type == null) {
+                                        throw new ActionFormatException("potion-effect-types is not a list of potion "
+                                                + "effect types", actionKey);
+                                    }
+                                    PotionEffect effect = new PotionEffect(type, durations
+                                            .get(types.indexOf(s)), amplifiers.get(types.indexOf(s)));
+                                    potionEffects.add(effect);
+                                }
+                                action.setPotionEffects(potionEffects);
+                            } else {
+                                throw new ActionFormatException("potion-effect-amplifiers is not a list of numbers",
+                                        actionKey);
+                            }
+                        } else {
+                            throw new ActionFormatException("potion-effect-amplifiers is missing", actionKey);
+                        }
+                    } else {
+                        throw new ActionFormatException("potion-effect-durations is not a list of numbers", actionKey);
+                    }
+                } else {
+                    throw new ActionFormatException("potion-effect-durations is missing", actionKey);
+                }
+            } else {
+                throw new ActionFormatException("potion-effect-types is not a list of potion effects", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "hunger")) {
+            if (data.getInt(actionKey + "hunger", -999) != -999) {
+                action.setHunger(data.getInt(actionKey + "hunger"));
+            } else {
+                throw new ActionFormatException("hunger is not a number", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "saturation")) {
+            if (data.getInt(actionKey + "saturation", -999) != -999) {
+                action.setSaturation(data.getInt(actionKey + "saturation"));
+            } else {
+                throw new ActionFormatException("saturation is not a number", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "health")) {
+            if (data.getInt(actionKey + "health", -999) != -999) {
+                action.setHealth(data.getInt(actionKey + "health"));
+            } else {
+                throw new ActionFormatException("health is not a number", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "teleport-location")) {
+            if (data.isString(actionKey + "teleport-location")) {
+                Location teleport = ConfigUtil.getLocation(data.getString(actionKey + "teleport-location"));
+                if (teleport == null) {
+                    throw new ActionFormatException("teleport-location is not in proper \"WorldName x y z\" format",
+                            actionKey);
+                }
+                action.setTeleport(teleport);
+            } else {
+                throw new ActionFormatException("teleport-location is not a location", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "timer")) {
+            if (data.isInt(actionKey + "timer")) {
+                action.setTimer(data.getInt(actionKey + "timer"));
+            } else {
+                throw new ActionFormatException("timer is not a number", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "cancel-timer")) {
+            if (data.isBoolean(actionKey + "cancel-timer")) {
+                action.setCancelTimer(data.getBoolean(actionKey + "cancel-timer"));
+            } else {
+                throw new ActionFormatException("cancel-timer is not a true/false value", actionKey);
+            }
+        }
+        if (data.contains(actionKey + "denizen-script")) {
+            action.setDenizenScript(data.getString(actionKey + "denizen-script"));
+        }
+        return action;
     }
     
     private void loadCustomSections(Quest quest, FileConfiguration config, String questKey)
@@ -2985,9 +3307,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             if (sec != null) {
                 for (String s : sec.getKeys(false)) {
-                    Action event = Action.loadAction(s, this);
-                    if (event != null) {
-                        actions.add(event);
+                    Action action = null;
+                    try {
+                        action= loadAction(s);
+                    } catch (ActionFormatException e) {
+                        e.printStackTrace();
+                    }
+                    if (action != null) {
+                        actions.add(action);
                     } else {
                         getLogger().log(Level.SEVERE, "Failed to load Action \"" + s + "\". Skipping.");
                     }
