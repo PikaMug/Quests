@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationContext;
@@ -100,7 +99,7 @@ public class NpcOfferQuestPrompt extends StringPrompt {
             }
             if (q == null) {
                 for (Quest quest : quests) {
-                    if (StringUtils.containsIgnoreCase(quest.getName(), input)) {
+                    if (quest.getName().toLowerCase().contains(input.toLowerCase())) {
                         q = quest;
                         break;
                     }

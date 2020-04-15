@@ -3,7 +3,6 @@ package me.blackvein.quests.convo.actions.menu;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -170,12 +169,13 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                         return new ActionSelectCreatePrompt(context);
                     }
                 }
-                if (plugin.getActionFactory().getNamesOfActionsBeingEdited().contains(input)) {
+                List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
+                if (actionNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
                     return new ActionSelectCreatePrompt(context);
                 }
-                if (StringUtils.isAlphanumeric(input) == false) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorAlpha"));
+                if (input.contains(".") || input.contains(",")) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new ActionSelectCreatePrompt(context);
                 }
                 if (input.equals("")) {
@@ -183,7 +183,6 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     return new ActionSelectCreatePrompt(context);
                 }
                 context.setSessionData(CK.E_NAME, input);
-                List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 actionNames.add(input);
                 plugin.getActionFactory().setNamesOfActionsBeingEdited(actionNames);
                 return new ActionMainPrompt(context);
