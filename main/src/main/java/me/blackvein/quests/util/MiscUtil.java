@@ -169,8 +169,23 @@ public class MiscUtil {
      * @return cleaned-up string
      */
     public static String getPrettyDyeColorName(DyeColor color) {
-        // Legacy
-        return Lang.get("COLOR_" + color.name());
+        if (!Lang.get("COLOR_" + color.name()).equals("NULL")) {
+            // Legacy
+            return Lang.get("COLOR_" + color.name());
+        } else {
+            String baseString = color.toString();
+            String[] substrings = baseString.split("_");
+            String prettyString = "";
+            int size = 1;
+            for (String s : substrings) {
+                prettyString = prettyString.concat(getCapitalized(s));
+                if (size < substrings.length) {
+                    prettyString = prettyString.concat(" ");
+                }
+                size++;
+            }
+            return prettyString;
+        }
     }
     
     /**
