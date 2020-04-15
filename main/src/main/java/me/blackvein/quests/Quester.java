@@ -3760,9 +3760,9 @@ public class Quester {
         }
         if (plugin.getDependencies().getDungeonsApi() != null) {
             if (quest.getOptions().getUseDungeonsXLPlugin()) {
-                DGroup group = DGroup.getByPlayer(getPlayer());
+                DGroup group = (DGroup) plugin.getDependencies().getDungeonsApi().getPlayerGroup(getPlayer());
                 if (group != null) {
-                    for (UUID id : group.getPlayers()) {
+                    for (UUID id : group.getMembers()) {
                         if (!id.equals(getUUID())) {
                             mq.add(plugin.getQuester(id));
                         }

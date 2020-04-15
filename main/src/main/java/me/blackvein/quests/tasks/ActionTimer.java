@@ -12,9 +12,9 @@
 
 package me.blackvein.quests.tasks;
 
+import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import de.erethon.dungeonsxl.util.commons.chat.ChatColor;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.util.Lang;
