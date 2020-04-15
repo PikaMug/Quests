@@ -1682,8 +1682,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 List<String> temp = new LinkedList<String>();
                 for (String name : names) {
                     boolean done = false;
-                    for (String string : questsSection.getKeys(false)) {
-                        if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+                    for (String id : questsSection.getKeys(false)) {
+                        String name2 = config.getString("quests." + id + ".name");
+                        if (name2.equalsIgnoreCase(name)
+                                || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name))) {
                             temp.add(name);
                             done = true;
                             break;
@@ -1711,8 +1713,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 List<String> temp = new LinkedList<String>();
                 for (String name : names) {
                     boolean done = false;
-                    for (String string : questsSection.getKeys(false)) {
-                        if (config.getString("quests." + string + ".name").equalsIgnoreCase(name)) {
+                    for (String id : questsSection.getKeys(false)) {
+                        String name2 = config.getString("quests." + id + ".name");
+                        if (name2.equalsIgnoreCase(name)
+                                || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name))) {
                             temp.add(name);
                             done = true;
                             break;
