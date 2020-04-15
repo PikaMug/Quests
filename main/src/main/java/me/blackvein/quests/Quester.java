@@ -346,7 +346,6 @@ public class Quester {
         if (questData.containsKey(quest)) {
             return questData.get(quest);
         }
-        plugin.getLogger().info("Creating new data for quest " + quest.getId());
         return new QuestData(this);
     }
 
@@ -2400,8 +2399,14 @@ public class Quester {
             p.sendMessage(message);
         } else if (objective.equalsIgnoreCase("reachLocation")) {
             String obj = Lang.get(p, "goTo");
-            obj = obj.replace("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest)
-                    .locationsToReach.indexOf(location)));
+            try {
+                obj = obj.replace("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest)
+                        .locationsToReach.indexOf(location)));
+            } catch(IndexOutOfBoundsException e) {
+                plugin.getLogger().severe("Unable to get final location " + location + " for quest ID " 
+                        + quest.getId() + ", please report on Github");
+                obj = obj.replace("<location>", "ERROR");
+            }
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
             p.sendMessage(message);
         } else if (co != null) {
