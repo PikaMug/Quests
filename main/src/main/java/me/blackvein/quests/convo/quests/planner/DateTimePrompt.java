@@ -141,12 +141,41 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(ConversationContext context, int number) {
         switch(number) {
         case 1:
+            if (context.getSessionData("tempDay") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempDay") 
+                        + ChatColor.GRAY + ")";
+            }
         case 2:
+            if (context.getSessionData("tempMonth") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempMonth") 
+                        + ChatColor.GRAY + ")";
+            }
         case 3:
+            if (context.getSessionData("tempYear") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempYear") 
+                        + ChatColor.GRAY + ")";
+            }
         case 4:
+            if (context.getSessionData("tempHour") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempHour") 
+                        + ChatColor.GRAY + ")";
+            }
         case 5:
+            if (context.getSessionData("tempMinute") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempMinute") 
+                        + ChatColor.GRAY + ")";
+            }
         case 6:
+            if (context.getSessionData("tempSecond") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempSecond") 
+                        + ChatColor.GRAY + ")";
+            }
         case 7:
+            if (context.getSessionData("tempZone") != null) {
+                TimeZone tz = TimeZone.getTimeZone((String) context.getSessionData("tempZone"));
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + tz.getDisplayName(false, TimeZone.SHORT) 
+                        + ChatColor.GRAY + ")";
+            }
         case 8:
         case 9:
             return "";
