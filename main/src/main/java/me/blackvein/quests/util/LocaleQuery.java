@@ -1225,6 +1225,8 @@ public class LocaleQuery {
         keys.put("ARMOR_STAND", "entity.ArmorStand.name");
         keys.put("CREEPER", "entity.Creeper.name");
         keys.put("SKELETON", "entity.Skeleton.name");
+        keys.put("WITHER_SKELETON", "entity.WitherSkeleton.name");
+        keys.put("STRAY", "entity.Stray.name");
         keys.put("SPIDER", "entity.Spider.name");
         keys.put("GIANT", "entity.Giant.name");
         keys.put("ZOMBIE", "entity.Zombie.name");

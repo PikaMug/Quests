@@ -6,12 +6,12 @@
     <groupId>me.blackvein.quests</groupId>
 
     <artifactId>quests-parent</artifactId>
-    <version>3.9.2</version>
+    <version>3.9.3</version>
     <name>quests</name>
     <url>https://github.com/PikaMug/Quests/</url>
 
     <properties>
-    	<revision>3.9.2</revision>
+    	<revision>3.9.3</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>

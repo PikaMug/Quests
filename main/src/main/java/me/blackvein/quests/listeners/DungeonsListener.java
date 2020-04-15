@@ -42,7 +42,7 @@ public class DungeonsListener implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(DPlayerJoinDGroupEvent event) {
         if (event.getDGroup() != null && event.getDPlayer() != null) {
-            Player i = event.getDGroup().getCaptain();
+            Player i = event.getDGroup().getLeader();
             Player p = event.getDPlayer().getPlayer();
             if (i != null && p != null) {
                 if (Lang.get("questDungeonsInvite").length() > 0) {
@@ -59,7 +59,7 @@ public class DungeonsListener implements Listener {
     @EventHandler
     public void onPlayerLeaveEvent(DPlayerLeaveDGroupEvent event) {
         if (event.getDGroup() != null && event.getDPlayer() != null) {
-            Player k = event.getDGroup().getCaptain();
+            Player k = event.getDGroup().getLeader();
             Player p = event.getDPlayer().getPlayer();
             if (k != null && p != null) {
                 if (Lang.get("questDungeonsKicked").length() > 0) {

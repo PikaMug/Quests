@@ -228,49 +228,48 @@ public class CmdExecutor implements CommandExecutor {
             questsHelp(cs);
             return true;
         }
-        boolean translateSubCommands = plugin.getSettings().canTranslateSubCommands();
-        if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_LIST") : "list")) {
+        if (args[0].equalsIgnoreCase("list") || args[0].equalsIgnoreCase(Lang.get("COMMAND_LIST"))) {
             questsList(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_TAKE") : "take")) {
+        } else if (args[0].equalsIgnoreCase("take") || args[0].equalsIgnoreCase(Lang.get("COMMAND_TAKE"))) {
             if (!(cs instanceof Player)) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                 return true;
             }
             questsTake((Player) cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUIT") : "quit")) {
+        } else if (args[0].equalsIgnoreCase("quit") || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUIT"))) {
             if (!(cs instanceof Player)) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                 return true;
             }
             questsQuit((Player) cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_STATS") : "stats")) {
+        } else if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
             if (!(cs instanceof Player)) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                 return true;
             }
             questsStats(cs, null);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_JOURNAL") : "journal")) {
+        } else if (args[0].equalsIgnoreCase("journal") || args[0].equalsIgnoreCase(Lang.get("COMMAND_JOURNAL"))) {
             if (!(cs instanceof Player)) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                 return true;
             }
             questsJournal((Player) cs);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_TOP") : "top")) {
+        } else if (args[0].equalsIgnoreCase("top") || args[0].equalsIgnoreCase(Lang.get("COMMAND_TOP"))) {
             questsTop(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EDITOR") : "editor")) {
+        } else if (args[0].equalsIgnoreCase("editor") || args[0].equalsIgnoreCase(Lang.get("COMMAND_EDITOR"))) {
             if (!(cs instanceof Player)) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                 return true;
             }
             questsEditor(cs);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_EVENTS_EDITOR")
-                : "actions") || args[0].equalsIgnoreCase("action") || args[0].equalsIgnoreCase("events")) {
+        } else if (args[0].startsWith("action") || args[0].startsWith("event") 
+                || args[0].startsWith(Lang.get("COMMAND_EVENTS_EDITOR"))) {
             if (!(cs instanceof Player)) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                 return true;
             }
             questsActions(cs);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_INFO") : "info")) {
+        } else if (args[0].equalsIgnoreCase("info") || args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
             questsInfo(cs);
         } else {
             cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownCommand"));
@@ -284,37 +283,41 @@ public class CmdExecutor implements CommandExecutor {
             adminHelp(cs);
             return true;
         }
-        boolean translateSubCommands = plugin.getSettings().canTranslateSubCommands();
-        if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_STATS") : "stats")) {
+        if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_STATS"))) {
             adminStats(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVE") : "give")) {
+        } else if (args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
             adminGive(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_QUIT") : "quit")) {
+        } else if (args[0].equalsIgnoreCase("quit") || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
             adminQuit(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTS") : "points")) {
+        } else if (args[0].equalsIgnoreCase("points") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
             adminPoints(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS")
-                : "takepoints")) {
+        } else if (args[0].equalsIgnoreCase("takepoints") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
             adminTakePoints(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS")
-                : "givepoints")) {
+        } else if (args[0].equalsIgnoreCase("givepoints") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
             adminGivePoints(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_POINTSALL")
-                : "pointsall")) {
+        } else if (args[0].equalsIgnoreCase("pointsall")
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
             adminPointsAll(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_FINISH") : "finish")) {
+        } else if (args[0].equalsIgnoreCase("finish") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
             adminFinish(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE")
-                : "nextstage")) {
+        } else if (args[0].equalsIgnoreCase("nextstage") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
             adminNextStage(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_SETSTAGE")
-                : "setstage")) {
+        } else if (args[0].equalsIgnoreCase("setstage") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
             adminSetStage(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RESET") : "reset")) {
+        } else if (args[0].equalsIgnoreCase("reset") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RESET"))) {
             adminReset(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_REMOVE") : "remove")) {
+        } else if (args[0].equalsIgnoreCase("remove") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_REMOVE"))) {
             adminRemove(cs, args);
-        } else if (args[0].equalsIgnoreCase(translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload")) {
+        } else if (args[0].equalsIgnoreCase("reload") 
+                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
             adminReload(cs);
         } else {
             cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownAdminCommand"));

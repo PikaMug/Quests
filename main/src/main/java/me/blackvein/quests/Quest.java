@@ -822,7 +822,7 @@ public class Quest {
     }
     
     /**
-     * Checks if quester is in WorldGuard region
+     * Checks if quester is in WorldGuard region start
      * 
      * @param quester The quester to check
      * @return true if quester is in region
@@ -832,7 +832,7 @@ public class Quest {
     }
 
     /**
-     * Checks if player is in WorldGuard region
+     * Checks if player is in WorldGuard region start
      * 
      * @param player The player to check
      * @return true if player is in region

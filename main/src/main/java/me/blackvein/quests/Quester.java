@@ -346,7 +346,7 @@ public class Quester {
         if (questData.containsKey(quest)) {
             return questData.get(quest);
         }
-        return null;
+        return new QuestData(this);
     }
 
     public void updateJournal() {
@@ -1112,18 +1112,21 @@ public class Quester {
         for (Location l : getCurrentStage(quest).locationsToReach) {
             for (Location l2 : getQuestData(quest).locationsReached) {
                 if (l.equals(l2)) {
-                    if (!getQuestData(quest).hasReached.isEmpty()) {
-                        if (getQuestData(quest).hasReached.get(getQuestData(quest).locationsReached.indexOf(l2)) 
-                                == false) {
-                            String obj = Lang.get(getPlayer(), "goTo");
-                            obj = obj.replace("<location>", getCurrentStage(quest).locationNames
-                                    .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
-                            unfinishedObjectives.add(ChatColor.GREEN + obj);
-                        } else {
-                            String obj = Lang.get(getPlayer(), "goTo");
-                            obj = obj.replace("<location>", getCurrentStage(quest).locationNames
-                                    .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
-                            finishedObjectives.add(ChatColor.GRAY + obj);
+                    if (getQuestData(quest) != null && getQuestData(quest).hasReached != null) {
+                        if (!getQuestData(quest).hasReached.isEmpty()) {
+                            int r = getQuestData(quest).locationsReached.indexOf(l2);
+                            if (r < getQuestData(quest).hasReached.size()
+                                    && getQuestData(quest).hasReached.get(r) == false) {
+                                String obj = Lang.get(getPlayer(), "goTo");
+                                obj = obj.replace("<location>", getCurrentStage(quest).locationNames
+                                        .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
+                                unfinishedObjectives.add(ChatColor.GREEN + obj);
+                            } else {
+                                String obj = Lang.get(getPlayer(), "goTo");
+                                obj = obj.replace("<location>", getCurrentStage(quest).locationNames
+                                        .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
+                                finishedObjectives.add(ChatColor.GRAY + obj);
+                            }
                         }
                     }
                 }
@@ -2044,16 +2047,16 @@ public class Quester {
      * @param l The location being reached
      */
     public void reachLocation(Quest quest, Location l) {
-        if (getQuestData(quest).locationsReached == null) {
-            return;
-        }
-        if (getQuestData(quest).locationsReached.isEmpty()) {
+        if (getQuestData(quest) == null || getQuestData(quest).locationsReached == null) {
             return;
         }
         int index = 0;
         for (Location location : getQuestData(quest).locationsReached) {
             try {
                 if (getCurrentStage(quest).locationsToReach.size() <= index) {
+                    return;
+                }
+                if (getCurrentStage(quest).radiiToReachWithin.size() <= index) {
                     return;
                 }
                 Location locationToReach = getCurrentStage(quest).locationsToReach.get(index);
@@ -2063,7 +2066,7 @@ public class Quester {
                         if (l.getY() < (locationToReach.getY() + radius) && l.getY() 
                                 > (locationToReach.getY() - radius)) {
                             if (l.getWorld().getName().equals(locationToReach.getWorld().getName())) {
-                                // TODO - Find proper cause of Github issues #646 and #825
+                                // TODO - Find proper cause of Github issues #646 and #825 and #1191
                                 if (index >= getQuestData(quest).hasReached.size()) {
                                     getQuestData(quest).hasReached.add(true);
                                     finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
@@ -2396,8 +2399,14 @@ public class Quester {
             p.sendMessage(message);
         } else if (objective.equalsIgnoreCase("reachLocation")) {
             String obj = Lang.get(p, "goTo");
-            obj = obj.replace("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest)
-                    .locationsToReach.indexOf(location)));
+            try {
+                obj = obj.replace("<location>", getCurrentStage(quest).locationNames.get(getCurrentStage(quest)
+                        .locationsToReach.indexOf(location)));
+            } catch(IndexOutOfBoundsException e) {
+                plugin.getLogger().severe("Unable to get final location " + location + " for quest ID " 
+                        + quest.getId() + ", please report on Github");
+                obj = obj.replace("<location>", "ERROR");
+            }
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
             p.sendMessage(message);
         } else if (co != null) {
@@ -3676,12 +3685,21 @@ public class Quester {
      * @param fun The function to execute, the event call
      */
     public void dispatchMultiplayerEverything(Quest quest, String objectiveType, Function<Quester, Void> fun) {
+        if (quest == null) {
+            return;
+        }
         if (quest.getOptions().getShareProgressLevel() == 1) {
             List<Quester> mq = getMultiplayerQuesters(quest);
             if (mq == null) {
                 return;
             }
             for (Quester q : mq) {
+                if (q == null) {
+                    return;
+                }
+                if (q.getCurrentStage(quest) == null) {
+                    return;
+                }
                 if (q.getCurrentStage(quest).containsObjective(objectiveType)) {
                     if (this.getCurrentStage(quest).containsObjective(objectiveType)
                             || !quest.getOptions().getRequireSameQuest()) {
@@ -3700,9 +3718,18 @@ public class Quester {
      * @param fun The function to execute, the event call
      */
     public void dispatchMultiplayerObjectives(Quest quest, Stage currentStage, Function<Quester, Void> fun) {
+        if (quest == null) {
+            return;
+        }
         if (quest.getOptions().getShareProgressLevel() == 2) {
             List<Quester> mq = getMultiplayerQuesters(quest);
+            if (mq == null) {
+                return;
+            }
             for (Quester q : mq) {
+                if (q == null) {
+                    return;
+                }
                 if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))
                         || !quest.getOptions().getRequireSameQuest()) {
                     fun.apply(q);
@@ -3738,9 +3765,9 @@ public class Quester {
         }
         if (plugin.getDependencies().getDungeonsApi() != null) {
             if (quest.getOptions().getUseDungeonsXLPlugin()) {
-                DGroup group = DGroup.getByPlayer(getPlayer());
+                DGroup group = (DGroup) plugin.getDependencies().getDungeonsApi().getPlayerGroup(getPlayer());
                 if (group != null) {
-                    for (UUID id : group.getPlayers()) {
+                    for (UUID id : group.getMembers()) {
                         if (!id.equals(getUUID())) {
                             mq.add(plugin.getQuester(id));
                         }
