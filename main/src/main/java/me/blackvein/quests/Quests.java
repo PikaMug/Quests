@@ -79,10 +79,11 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.actions.ActionFactory;
-import me.blackvein.quests.convo.quests.prompts.QuestOfferPrompt;
+import me.blackvein.quests.convo.npcs.NpcOfferQuestPrompt;
 import me.blackvein.quests.exceptions.ActionFormatException;
 import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
+import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.listeners.CmdExecutor;
 import me.blackvein.quests.listeners.DungeonsListener;
 import me.blackvein.quests.listeners.NpcListener;
@@ -190,7 +191,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                 .addConversationAbandonedListener(this);
         this.npcConversationFactory = new ConversationFactory(this).withModality(false)
-                .withFirstPrompt(new QuestOfferPrompt(this)).withTimeout(settings.getAcceptTimeout())
+                .withFirstPrompt(new NpcOfferQuestPrompt(this)).withTimeout(settings.getAcceptTimeout())
                 .withLocalEcho(false).addConversationAbandonedListener(this);
         
         // 10 - Register listeners
@@ -1152,10 +1153,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 player.sendMessage(ChatColor.GOLD + msg);
             }
         }
-    }
-    
-    public interface ReloadCallback<T> {
-        public void execute(T response);
     }
     
     /**

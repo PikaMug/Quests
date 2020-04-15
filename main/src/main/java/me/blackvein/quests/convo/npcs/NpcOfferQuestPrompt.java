@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.convo.quests.prompts;
+package me.blackvein.quests.convo.npcs;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -31,24 +31,23 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-public class QuestOfferPrompt extends StringPrompt {
+public class NpcOfferQuestPrompt extends StringPrompt {
 
     private final Quests plugin;
+    // TODO are these hashmaps really necessary?
     private HashMap<UUID, Quester> questerHashMap = new HashMap<>();
     private HashMap<UUID, LinkedList<Quest>> questsHashMap = new HashMap<>();
 
-    public QuestOfferPrompt(Quests plugin) {
+    public NpcOfferQuestPrompt(Quests plugin) {
         this.plugin = plugin;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(ConversationContext cc) {
-        Quester quester;
-        LinkedList<Quest> quests;
-        quests = (LinkedList<Quest>) cc.getSessionData("quests");
-        quester = plugin.getQuester(((Player) cc.getForWhom()).getUniqueId());
-        String npc = (String) cc.getSessionData("npc");
+    public String getPromptText(ConversationContext context) {
+        Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+        LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+        String npc = (String) context.getSessionData("npc");
         String text = Lang.get("questNPCListTitle").replace("<npc>", npc);
         String menu = text + "\n";
         for (int i = 1; i <= quests.size(); i++) {
@@ -65,15 +64,15 @@ public class QuestOfferPrompt extends StringPrompt {
         menu += ChatColor.GOLD + "" + ChatColor.BOLD + "" + (quests.size() + 1) + ". " + ChatColor.RESET + "" 
                 + ChatColor.GRAY + Lang.get("cancel") + "\n";
         menu += ChatColor.WHITE + Lang.get("enterAnOption");
-        questerHashMap.put(((Player) cc.getForWhom()).getUniqueId(), quester);
-        questsHashMap.put(((Player) cc.getForWhom()).getUniqueId(), quests);
+        questerHashMap.put(((Player) context.getForWhom()).getUniqueId(), quester);
+        questsHashMap.put(((Player) context.getForWhom()).getUniqueId(), quests);
         return menu;
     }
 
     @Override
-    public Prompt acceptInput(ConversationContext cc, String input) {
-        Quester quester = questerHashMap.get(((Player) cc.getForWhom()).getUniqueId());
-        LinkedList<Quest> quests = questsHashMap.get(((Player) cc.getForWhom()).getUniqueId());
+    public Prompt acceptInput(ConversationContext context, String input) {
+        Quester quester = questerHashMap.get(((Player) context.getForWhom()).getUniqueId());
+        LinkedList<Quest> quests = questsHashMap.get(((Player) context.getForWhom()).getUniqueId());
         int numInput = -1;
         try {
             numInput = Integer.parseInt(input);
@@ -81,7 +80,7 @@ public class QuestOfferPrompt extends StringPrompt {
             // Continue
         }
         if (input.equalsIgnoreCase(Lang.get("cancel")) || numInput == (quests.size() + 1)) {
-            cc.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("cancelled"));
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("cancelled"));
             return Prompt.END_OF_CONVERSATION;
         } else {
             Quest q = null;
@@ -108,8 +107,8 @@ public class QuestOfferPrompt extends StringPrompt {
                 }
             }
             if (q == null) {
-                cc.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new QuestOfferPrompt(plugin);
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+                return new NpcOfferQuestPrompt(plugin);
             } else {
                 Player player = quester.getPlayer();
                 if (!quester.getCompletedQuests().contains(q.getName())) {

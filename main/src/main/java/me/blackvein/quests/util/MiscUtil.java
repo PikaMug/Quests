@@ -16,6 +16,7 @@ import java.util.LinkedList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
+import org.bukkit.Effect;
 import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
@@ -199,6 +200,22 @@ public class MiscUtil {
         for (DyeColor dc : DyeColor.values()) {
             if (dc.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return dc;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Gets effect from name
+     * 
+     * @param properName Name to get effect from
+     * @return Effect or null if invalid
+     */
+    public static Effect getProperEffect(String properName) {
+        properName = properName.replace("_", "").replace(" ", "").toUpperCase();
+        for (Effect eff : Effect.values()) {
+            if (eff.name().replace("_", "").equalsIgnoreCase(properName)) {
+                return eff;
             }
         }
         return null;
