@@ -493,15 +493,17 @@ public class Action {
                         List<String> effectList = data.getStringList(actionKey + "effects");
                         List<String> effectLocs = data.getStringList(actionKey + "effect-locations");
                         for (String s : effectList) {
-                            Effect effect = Effect.valueOf(s.toUpperCase());
-                            Location l = ConfigUtil.getLocation(effectLocs.get(effectList.indexOf(s)));
-                            if (effect == null) {
+                            Effect effect = null;
+                            try {
+                                effect = Effect.valueOf(s.toUpperCase());
+                            } catch (IllegalArgumentException e) {
                                 plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED + s 
                                         + ChatColor.GOLD + " inside " + ChatColor.GREEN + "effects: " + ChatColor.GOLD 
                                         + "inside Action " + ChatColor.DARK_PURPLE + name + ChatColor.GOLD 
                                         + " is not a valid effect name!");
                                 return null;
                             }
+                            Location l = ConfigUtil.getLocation(effectLocs.get(effectList.indexOf(s)));
                             if (l == null) {
                                 plugin.getLogger().severe(ChatColor.GOLD + "[Quests] " + ChatColor.RED 
                                         + effectLocs.get(effectList.indexOf(s)) + ChatColor.GOLD + " inside " 

@@ -1599,6 +1599,52 @@ public class ActionFactory implements ConversationAbandonedListener {
         }
     }
 
+    private class SoundEffectPrompt extends StringPrompt {
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            String effects = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorEffectsTitle") + "\n";
+            Effect[] vals = Effect.values();
+            for (int i = 0; i < vals.length; i++) {
+                Effect eff = vals[i];
+                if (i < (vals.length - 1)) {
+                    effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + ", ";
+                } else {
+                    effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + "\n";
+                }
+                
+            }
+            return effects + ChatColor.YELLOW +  Lang.get("effEnterName");
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            Player player = (Player) context.getForWhom();
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                if (getProperEffect(input) != null) {
+                    LinkedList<String> effects;
+                    if (context.getSessionData(CK.E_EFFECTS) != null) {
+                        effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
+                    } else {
+                        effects = new LinkedList<String>();
+                    }
+                    effects.add(getProperEffect(input).name());
+                    context.setSessionData(CK.E_EFFECTS, effects);
+                    selectedEffectLocations.remove(player.getUniqueId());
+                    return new SoundEffectListPrompt();
+                } else {
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                            + Lang.get("eventEditorInvalidEffect"));
+                    return new SoundEffectPrompt();
+                }
+            } else {
+                selectedEffectLocations.remove(player.getUniqueId());
+                return new SoundEffectListPrompt();
+            }
+        }
+    }
+    
     private class SoundEffectLocationPrompt extends StringPrompt {
 
         @Override
@@ -1633,52 +1679,6 @@ public class ActionFactory implements ConversationAbandonedListener {
                 return new SoundEffectListPrompt();
             } else {
                 return new SoundEffectLocationPrompt();
-            }
-        }
-    }
-
-    private class SoundEffectPrompt extends StringPrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String effects = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorEffectsTitle") + "\n";
-            Effect[] vals = Effect.values();
-            for (int i = 0; i < vals.length; i++) {
-                Effect eff = vals[i];
-                if (i < (vals.length - 1)) {
-                    effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + ", ";
-                } else {
-                    effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + "\n";
-                }
-                
-            }
-            return effects + ChatColor.YELLOW +  Lang.get("effEnterName");
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                if (getProperEffect(input) != null) {
-                    LinkedList<String> effects;
-                    if (context.getSessionData(CK.E_EFFECTS) != null) {
-                        effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
-                    } else {
-                        effects = new LinkedList<String>();
-                    }
-                    effects.add(input.toUpperCase());
-                    context.setSessionData(CK.E_EFFECTS, effects);
-                    selectedEffectLocations.remove(player.getUniqueId());
-                    return new SoundEffectListPrompt();
-                } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-                            + Lang.get("eventEditorInvalidEffect"));
-                    return new SoundEffectPrompt();
-                }
-            } else {
-                selectedEffectLocations.remove(player.getUniqueId());
-                return new SoundEffectListPrompt();
             }
         }
     }
