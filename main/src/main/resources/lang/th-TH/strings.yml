@@ -273,7 +273,6 @@ eventEditorNoneToDelete: "ไม่มีกิจกรรมที่มีอ
 eventEditorNotFound: "ไม่พบกิจกรรม!"
 eventEditorExists: "มีกิจกรรมอยู่แล้ว!"
 eventEditorSomeone: "มีผู้คนกำลังสร้างหรือแก้ไขกิจกรรมโดยใช้ชื่อดังกล่าว!"
-eventEditorAlpha: "ชื่อต้องเป็นตัวอักษรและตัวเลข!"
 eventEditorErrorSaving: "เกิดข้อผิดพลาดขณะบันทึก"
 eventEditorDeleted: "ลบกิจกรรมที่ถูกลบเควสและกิจกรรมแล้ว"
 eventEditorSaved: "บันทึกกิจกรรมที่สร้างขึ้นภารกิจและกิจกรรมใหม่แล้ว"
