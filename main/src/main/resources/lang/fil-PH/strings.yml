@@ -273,7 +273,6 @@ eventEditorNoneToDelete: "Walang Kaganapan ang kasalukuyang umiiral para burahin
 eventEditorNotFound: "Walang matagpuan na kaganapan!"
 eventEditorExists: "Kasalukuyang umiiral ang kaganapan!"
 eventEditorSomeone: "Meron nang gumawa o nag edit ng kaganapan sa pangalang iyon!"
-eventEditorAlpha: "Ang pangalan ay dapat maging alphanumeric!"
 eventEditorErrorSaving: "Merong error na naganap habang ikaw ay nag save."
 eventEditorDeleted: "Ang Kaganapan ay burado, Pakikipagsapalaran at Kaganapan ay ni reload."
 eventEditorSaved: "Ang Kaganapan ay na save, Pakikipagsapalaran at Kaganapan ay ni reload."
