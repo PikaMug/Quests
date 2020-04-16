@@ -26,7 +26,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Villager.Career;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -251,8 +251,8 @@ public class LocaleQuery {
         }
         String key = "";
         if (oldVersion) {
-            if (type.name().equals("VILLAGER") && Career.valueOf(extra) != null) {
-                key = oldEntities.get(type.name() + "." + Career.valueOf(extra).name());
+            if (type.name().equals("VILLAGER") && Profession.valueOf(extra) != null) {
+                key = oldEntities.get(type.name() + "." + Profession.valueOf(extra).name());
             } else if (type.name().equals("OCELOT") && Ocelot.Type.valueOf(extra) != null) {
                 key = oldEntities.get(type.name() + "." + Ocelot.Type.valueOf(extra).name());
             } else if (type.name().equals("RABBIT") && Rabbit.Type.valueOf(extra) != null) {
