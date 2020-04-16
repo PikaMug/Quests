@@ -66,7 +66,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         this.plugin = plugin;
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withFirstPrompt(new QuestMenuPrompt(null)).withTimeout(3600)
+                .withFirstPrompt(new QuestMenuPrompt(new ConversationContext(plugin, null, null))).withTimeout(3600)
                 .thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
                 .addConversationAbandonedListener(this);
     }
