@@ -273,7 +273,6 @@ eventEditorNoneToDelete: "Нет действия в настоящее врем
 eventEditorNotFound: "Действия не найдено!"
 eventEditorExists: "Действия уже существует!"
 eventEditorSomeone: "Кто-то уже создает или редактирует действие с таким именем!"
-eventEditorAlpha: "Имя должно быть буквенно-цифровым!"
 eventEditorErrorSaving: "Произошла ошибка при сохранении."
 eventEditorDeleted: "Действия удален! Квесты и действия перезагружены."
 eventEditorSaved: "Действия сохранён! Квесты и действия перезагружены."
