@@ -171,7 +171,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 }
                 List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 if (actionNames.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new ActionSelectCreatePrompt(context);
                 }
                 if (input.contains(".") || input.contains(",")) {
