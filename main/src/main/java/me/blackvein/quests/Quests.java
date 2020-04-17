@@ -1008,7 +1008,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     ChatColor color = e2.getValue() < e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
                     String message = color + Lang.get(quester.getPlayer(), "shearSheep") 
                                 + color + ": " + e2.getValue() + "/" + e.getValue();
-                    message = message.replace("<color>", e.getKey().name().toLowerCase());
+                    message = message.replace("<color>", 
+                            MiscUtil.getPrettyDyeColorName(MiscUtil.getProperDyeColor(e.getKey().name())));
                     quester.getPlayer().sendMessage(message);
                 }
             }
@@ -2591,6 +2592,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             List<Integer> shearAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." 
                                     + stageNum + ".sheep-amounts");
                             for (String color : sheep) {
+                                if (color.equalsIgnoreCase("NULL")) {
+                                    color = "WHITE";
+                                }
                                 DyeColor dc = MiscUtil.getProperDyeColor(color);
                                 try {
                                     if (dc == null) {
