@@ -1646,6 +1646,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     throw new QuestFormatException("Requirement items has invalid formatting", questKey);
                 }
             }
+            reqs.setItems(temp);
             if (config.contains("quests." + questKey + ".requirements.remove-items")) {
                 if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.remove-items"), 
                         Boolean.class)) {
