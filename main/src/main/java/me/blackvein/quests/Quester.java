@@ -3721,6 +3721,9 @@ public class Quester {
                         return;
                     }
                     if (q.getCurrentStage(quest).containsObjective(objectiveType)) {
+                        if (this.getCurrentStage(quest) == null) {
+                            return;
+                        }
                         if (this.getCurrentStage(quest).containsObjective(objectiveType)
                                 || !quest.getOptions().getRequireSameQuest()) {
                             fun.apply(q);
