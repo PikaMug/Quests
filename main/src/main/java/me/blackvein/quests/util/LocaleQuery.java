@@ -483,7 +483,7 @@ public class LocaleQuery {
         keys.put("DOUBLE_PLANT.4", "tile.doublePlant.rose.name");
         keys.put("DOUBLE_PLANT.5", "tile.doublePlant.paeonia.name");
         keys.put("BROWN_MUSHROOM", "tile.mushroom.name");
-        keys.put("RED_MUSHROOM", "tile.mushroom.name"); //added
+        keys.put("RED_MUSHROOM", "tile.mushroom.name"); // added
         keys.put("GOLD_BLOCK", "tile.blockGold.name");
         keys.put("IRON_BLOCK", "tile.blockIron.name");
         keys.put("STONE_SLAB", "tile.stoneSlab.name");
@@ -660,6 +660,7 @@ public class LocaleQuery {
         keys.put("NETHER_FENCE", "tile.netherFence.name");
         keys.put("NETHER_BRICK_STAIRS", "tile.stairsNetherBrick.name");
         keys.put("NETHER_STALK", "tile.netherStalk.name");
+        keys.put("NETHER_WARTS", "tile.netherStalk.name"); // added
         keys.put("CAULDRON", "tile.cauldron.name");
         keys.put("ENCHANTMENT_TABLE", "tile.enchantmentTable.name");
         keys.put("ANVIL", "tile.anvil.name");
