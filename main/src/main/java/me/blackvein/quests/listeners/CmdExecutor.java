@@ -1224,7 +1224,7 @@ public class CmdExecutor implements CommandExecutor {
             int stage = -1;
             if (args.length > 3) {
                 try {
-                    stage = Integer.parseInt(args[3]);
+                    stage = Integer.parseInt(args[args.length - 1]);
                 } catch (NumberFormatException e) {
                     cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
                 }

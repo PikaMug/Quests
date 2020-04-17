@@ -1068,9 +1068,11 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(uuid)) {
                 Quester quester = plugin.getQuester(uuid);
                 for (Quest quest : plugin.getQuests()) {
-                    if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective("reachLocation")) {
-                        quester.reachLocation(quest, location);
+                    if (quester.getCurrentQuests().containsKey(quest)) {
+                        if (quester.getCurrentStage(quest) != null 
+                                && quester.getCurrentStage(quest).containsObjective("reachLocation")) {
+                            quester.reachLocation(quest, location);
+                        }
                     }
                     
                     quester.dispatchMultiplayerEverything(quest, "reachLocation", (Quester q) -> {
