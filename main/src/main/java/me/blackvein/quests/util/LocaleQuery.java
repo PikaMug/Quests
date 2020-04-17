@@ -483,6 +483,7 @@ public class LocaleQuery {
         keys.put("DOUBLE_PLANT.4", "tile.doublePlant.rose.name");
         keys.put("DOUBLE_PLANT.5", "tile.doublePlant.paeonia.name");
         keys.put("BROWN_MUSHROOM", "tile.mushroom.name");
+        keys.put("RED_MUSHROOM", "tile.mushroom.name"); //added
         keys.put("GOLD_BLOCK", "tile.blockGold.name");
         keys.put("IRON_BLOCK", "tile.blockIron.name");
         keys.put("STONE_SLAB", "tile.stoneSlab.name");
@@ -546,9 +547,9 @@ public class LocaleQuery {
         keys.put("REDSTONE_TORCH_ON", "tile.notGate.name");
         keys.put("REDSTONE_TORCH_OFF", "tile.notGate.name"); // added
         keys.put("STONE_BUTTON", "tile.button.name");
-        keys.put("WOOD_BUTTON", "tile.button.name"); //added
+        keys.put("WOOD_BUTTON", "tile.button.name"); // added
         keys.put("SNOW", "tile.snow.name");
-        keys.put("SNOW_BLOCK", "tile.snow.name"); //added
+        keys.put("SNOW_BLOCK", "tile.snow.name"); // added
         keys.put("CARPET", "tile.woolCarpet.name");
         keys.put("CARPET.15", "tile.woolCarpet.black.name");
         keys.put("CARPET.14", "tile.woolCarpet.red.name");
@@ -671,7 +672,7 @@ public class LocaleQuery {
         keys.put("WATER_LILY", "tile.waterlily.name");
         keys.put("DRAGON_EGG", "tile.dragonEgg.name");
         keys.put("REDSTONE_LAMP_OFF", "tile.redstoneLight.name");
-        keys.put("REDSTONE_LAMP_ON", "tile.redstoneLight.name"); //added
+        keys.put("REDSTONE_LAMP_ON", "tile.redstoneLight.name"); // added
         keys.put("COCOA", "tile.cocoa.name");
         keys.put("ENDER_CHEST", "tile.enderChest.name");
         keys.put("EMERALD_ORE", "tile.oreEmerald.name");
