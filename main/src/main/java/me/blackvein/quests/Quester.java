@@ -3707,25 +3707,30 @@ public class Quester {
         if (quest == null) {
             return;
         }
-        if (quest.getOptions().getShareProgressLevel() == 1) {
-            List<Quester> mq = getMultiplayerQuesters(quest);
-            if (mq == null) {
-                return;
-            }
-            for (Quester q : mq) {
-                if (q == null) {
+        try {
+            if (quest.getOptions().getShareProgressLevel() == 1) {
+                List<Quester> mq = getMultiplayerQuesters(quest);
+                if (mq == null) {
                     return;
                 }
-                if (q.getCurrentStage(quest) == null) {
-                    return;
-                }
-                if (q.getCurrentStage(quest).containsObjective(objectiveType)) {
-                    if (this.getCurrentStage(quest).containsObjective(objectiveType)
-                            || !quest.getOptions().getRequireSameQuest()) {
-                        fun.apply(q);
+                for (Quester q : mq) {
+                    if (q == null) {
+                        return;
+                    }
+                    if (q.getCurrentStage(quest) == null) {
+                        return;
+                    }
+                    if (q.getCurrentStage(quest).containsObjective(objectiveType)) {
+                        if (this.getCurrentStage(quest).containsObjective(objectiveType)
+                                || !quest.getOptions().getRequireSameQuest()) {
+                            fun.apply(q);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            plugin.getLogger().severe("Error occurred while dispatching " + objectiveType + " for " + quest.getName());
+            e.printStackTrace();
         }
     }
     
