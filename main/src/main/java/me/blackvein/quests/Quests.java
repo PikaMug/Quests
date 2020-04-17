@@ -2593,10 +2593,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             List<Integer> shearAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." 
                                     + stageNum + ".sheep-amounts");
                             for (String color : sheep) {
+                                DyeColor dc = null;
                                 if (color.equalsIgnoreCase("NULL")) {
-                                    color = "WHITE";
+                                    dc = DyeColor.WHITE;
                                 }
-                                DyeColor dc = MiscUtil.getProperDyeColor(color);
                                 try {
                                     if (dc == null) {
                                         dc = DyeColor.valueOf(color.toUpperCase());
