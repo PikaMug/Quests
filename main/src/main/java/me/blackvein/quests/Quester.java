@@ -50,6 +50,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.Crops;
 
 import com.alessiodp.parties.api.interfaces.Party;
 import com.gmail.nossr50.datatypes.skills.SkillType;
@@ -1261,12 +1262,21 @@ public class Quester {
         for (ItemStack is : getQuestData(quest).blocksBroken) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    
                     //Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         broken = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
                         //Ignore durability for 1.13+
+                        broken = is;
+                    }
+                } else if (m.getData() instanceof Crops && is.getData() instanceof Crops) {
+                    if (is.getDurability() > 0) {
+                        // Age is specified so check for durability
+                        if (m.getDurability() == is.getDurability()) {
+                            broken = is;
+                        }
+                    } else {
+                        // Age is unspecified so ignore durability
                         broken = is;
                     }
                 } else {
@@ -1278,7 +1288,6 @@ public class Quester {
         for (ItemStack is : getCurrentStage(quest).blocksToBreak) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    
                     //Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toBreak = is;
@@ -1286,9 +1295,19 @@ public class Quester {
                         //Ignore durability for 1.13+
                         toBreak = is;
                     }
+                } else if (m.getData() instanceof Crops && is.getData() instanceof Crops) {
+                    if (is.getDurability() > 0) {
+                        // Age is specified so check for durability
+                        if (m.getDurability() == is.getDurability()) {
+                            broken = is;
+                        }
+                    } else {
+                        // Age is unspecified so ignore durability
+                        broken = is;
+                    }
                 } else {
                     //Blocks are not solid so ignore durability
-                    toBreak = is;
+                    broken = is;
                 }
             }
         }
