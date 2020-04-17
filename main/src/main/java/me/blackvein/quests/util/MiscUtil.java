@@ -167,9 +167,12 @@ public class MiscUtil {
      * Gets player-friendly name from type. 'LIGHT_BLUE' becomes 'Light Blue'
      * 
      * @param type any dye type, ideally
-     * @return cleaned-up string
+     * @return cleaned-up string, or 'White' if null
      */
     public static String getPrettyDyeColorName(DyeColor color) {
+        if (color == null) {
+            return "White";
+        }
         if (!Lang.get("COLOR_" + color.name()).equals("NULL")) {
             // Legacy
             return Lang.get("COLOR_" + color.name());
