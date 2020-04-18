@@ -117,12 +117,6 @@
 	        <scope>provided</scope>
 	    </dependency>
         <dependency>
-	        <groupId>de.erethon.dungeonsxl</groupId>
-	        <artifactId>dungeonsxl-dist</artifactId>
-	        <version>0.18-SNAPSHOT</version>
-	        <scope>provided</scope>
-	    </dependency>
-        <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
             <version>2.6.3</version>

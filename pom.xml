@@ -35,4 +35,12 @@
             <url>http://erethon.de/repo/</url>
         </repository>
     </repositories>
+    <dependencies>
+        <dependency>
+	        <groupId>de.erethon.dungeonsxl</groupId>
+	        <artifactId>dungeonsxl-dist</artifactId>
+	        <version>0.18-SNAPSHOT</version>
+	        <scope>provided</scope>
+	    </dependency>
+    </dependencies>
 </project>
