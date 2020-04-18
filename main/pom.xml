@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>3.9.3</version>
+        <version>3.9.4</version>
     </parent>
     <artifactId>quests-main</artifactId>
     
@@ -22,11 +22,6 @@
             <!-- Parties -->
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <!-- DungeonsXL -->
-            <id>dre-repo</id>
-            <url>http://erethon.de/repo</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
