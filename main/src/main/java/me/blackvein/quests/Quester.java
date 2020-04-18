@@ -788,7 +788,7 @@ public class Quester {
                 }
             }
         }
-        if (getQuestData(quest) == null) {
+        if (getQuestData(quest) == null || getCurrentStage(quest) == null) {
             return new LinkedList<String>();
         }
         LinkedList<String> unfinishedObjectives = new LinkedList<String>();
