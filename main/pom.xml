@@ -14,7 +14,7 @@
     
     <repositories>
         <repository>
-        	<!-- GPS, PhatLoots, CitizensBooks, mcMMO Classic -->
+        	<!-- GPS, PhatLoots, CitizensBooks, mcMMO Classic, DungeonsXL -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -122,6 +122,12 @@
             <version>2.6.3</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+	        <groupId>com.github.DRE2N</groupId>
+	        <artifactId>DungeonsXL</artifactId>
+	        <version>-SNAPSHOT</version>
+	        <scope>provided</scope>
+	    </dependency>
     </dependencies>
     
     <build>
