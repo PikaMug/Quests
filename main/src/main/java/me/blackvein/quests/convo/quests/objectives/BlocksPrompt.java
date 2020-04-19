@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.convo.quests.stages.StageMainPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -25,9 +26,7 @@ import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 
 public class BlocksPrompt extends QuestsEditorNumericPrompt {
     private final int stageNum;
@@ -177,15 +176,15 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch(input.intValue()) {
         case 1:
-            return new BreakBlockListPrompt();
+            return new BreakBlockListPrompt(context);
         case 2:
-            return new DamageBlockListPrompt();
+            return new DamageBlockListPrompt(context);
         case 3:
-            return new PlaceBlockListPrompt();
+            return new PlaceBlockListPrompt(context);
         case 4:
-            return new UseBlockListPrompt();
+            return new UseBlockListPrompt(context);
         case 5:
-            return new CutBlockListPrompt();
+            return new CutBlockListPrompt(context);
         case 6:
             try {
                 return new StageMainPrompt(stageNum, context);
@@ -198,86 +197,125 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    private class BreakBlockListPrompt extends FixedSetPrompt {
+    public class BreakBlockListPrompt extends QuestsEditorNumericPrompt {
 
-        public BreakBlockListPrompt() {
-            super("1", "2", "3", "4", "5");
+        public BreakBlockListPrompt(ConversationContext context) {
+            super(context);
         }
 
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorBreakBlocks") + " -\n";
-            if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + "\n";
-                for (String s : getBlockNames(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
-                }
-                if (context.getSessionData(pref + CK.S_BREAK_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
+        private final int size = 5;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("stageEditorBreakBlocks");
+        }
+
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1: 
+                case 2:
+                case 3:
+                    return ChatColor.BLUE;
+                case 4:
+                    return ChatColor.RED;
+                case 5:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockNames");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockAmounts");
+            case 3:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockDurability");
+            case 4:
+                return ChatColor.RED + Lang.get("clear");
+            case 5:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(pref + CK.S_BREAK_NAMES) != null) {
+                    String text = "\n";
+                    for (String s : (List<String>) context.getSessionData(pref + CK.S_BREAK_NAMES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
+                    }
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
-                    for (Integer i : getBlockAmounts(context)) {
+                    return "";
+                }
+            case 2:
+                if (context.getSessionData(pref + CK.S_BREAK_AMOUNTS) != null) {
+                    String text = "\n";
+                    for (Integer i : (List<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
-                }
-                if (context.getSessionData(pref + CK.S_BREAK_DURABILITY) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockDurability") + "\n";
-                    for (Short s : getBlockDurability(context)) {
+                    return "";
+                }
+            case 3:
+                if (context.getSessionData(pref + CK.S_BREAK_DURABILITY) != null) {
+                    String text = "\n";
+                    for (Short s : (List<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
+                    return text;
+                } else {
+                    return "";
                 }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            case 4:
+            case 5:
+                return "";
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new BreakBlockNamesPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new BreakBlockListPrompt();
-                } else {
-                    return new BreakBlockAmountsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new BreakBlockListPrompt();
-                } else {
-                    return new BreakBlockDurabilityPrompt();
-                }
-            } else if (input.equalsIgnoreCase("4")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new BreakBlockNamesPrompt(context);
+            case 2:
+                return new BreakBlockAmountsPrompt(context);
+            case 3:
+                return new BreakBlockDurabilityPrompt(context);
+            case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_BREAK_NAMES, null);
                 context.setSessionData(pref + CK.S_BREAK_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_BREAK_DURABILITY, null);
-                return new BreakBlockListPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
+                return new BreakBlockListPrompt(context);
+            case 5:
                 int one;
                 int two;
                 if (context.getSessionData(pref + CK.S_BREAK_NAMES) != null) {
@@ -307,33 +345,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new BreakBlockListPrompt();
+                    return new BreakBlockListPrompt(context);
                 }
+            default:
+                return new BlocksPrompt(stageNum, context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<String> getBlockNames(ConversationContext context) {
-            return (List<String>) context.getSessionData(pref + CK.S_BREAK_NAMES);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getBlockAmounts(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Short> getBlockDurability(ConversationContext context) {
-            return (List<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
         }
     }
 
-    private class BreakBlockNamesPrompt extends StringPrompt {
+    public class BreakBlockNamesPrompt extends QuestsEditorStringPrompt {
+
+        public BreakBlockNamesPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockNames");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockNames");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -350,30 +388,44 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
-                                return new BreakBlockNamesPrompt();
+                                return new BreakBlockNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new BreakBlockNamesPrompt();
+                            return new BreakBlockNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new BreakBlockNamesPrompt();
+                        return new BreakBlockNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_BREAK_NAMES, names);
             }
-            return new BreakBlockListPrompt();
+            return new BreakBlockListPrompt(context);
         }
     }
 
-    private class BreakBlockAmountsPrompt extends StringPrompt {
+    public class BreakBlockAmountsPrompt extends QuestsEditorStringPrompt {
+
+        public BreakBlockAmountsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockAmounts");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -388,25 +440,39 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new BreakBlockAmountsPrompt();
+                            return new BreakBlockAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new BreakBlockAmountsPrompt();
+                        return new BreakBlockAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_BREAK_AMOUNTS, amounts);
             }
-            return new BreakBlockListPrompt();
+            return new BreakBlockListPrompt(context);
         }
     }
 
-    private class BreakBlockDurabilityPrompt extends StringPrompt {
+    public class BreakBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+
+        public BreakBlockDurabilityPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockDurability");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -421,100 +487,139 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new BreakBlockDurabilityPrompt();
+                            return new BreakBlockDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new BreakBlockDurabilityPrompt();
+                        return new BreakBlockDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_BREAK_DURABILITY, durability);
             }
-            return new BreakBlockListPrompt();
+            return new BreakBlockListPrompt(context);
         }
     }
 
-    private class DamageBlockListPrompt extends FixedSetPrompt {
-
-        public DamageBlockListPrompt() {
-            super("1", "2", "3", "4", "5");
+    public class DamageBlockListPrompt extends QuestsEditorNumericPrompt {
+        
+        public DamageBlockListPrompt(ConversationContext context) {
+            super(context);
         }
 
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorDamageBlocks") + " -\n";
-            if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + "\n";
-                for (String s : getBlockNames(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
-                }
-                if (context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
+        private final int size = 5;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("stageEditorDamageBlocks");
+        }
+
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1: 
+                case 2:
+                case 3:
+                    return ChatColor.BLUE;
+                case 4:
+                    return ChatColor.RED;
+                case 5:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockNames");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockAmounts");
+            case 3:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockDurability");
+            case 4:
+                return ChatColor.RED + Lang.get("clear");
+            case 5:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
+                    String text = "\n";
+                    for (String s : (List<String>) context.getSessionData(pref + CK.S_DAMAGE_NAMES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
+                    }
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
-                    for (Integer i : getBlockAmounts(context)) {
+                    return "";
+                }
+            case 2:
+                if (context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) != null) {
+                    String text = "\n";
+                    for (Integer i : (List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
-                }
-                if (context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockDurability") + "\n";
-                    for (Short s : getBlockDurability(context)) {
+                    return "";
+                }
+            case 3:
+                if (context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) != null) {
+                    String text = "\n";
+                    for (Short s : (List<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
+                    return text;
+                } else {
+                    return "";
                 }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            case 4:
+            case 5:
+                return "";
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new DamageBlockNamesPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new DamageBlockListPrompt();
-                } else {
-                    return new DamageBlockAmountsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new DamageBlockListPrompt();
-                } else {
-                    return new DamageBlockDurabilityPrompt();
-                }
-            } else if (input.equalsIgnoreCase("4")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new DamageBlockNamesPrompt(context);
+            case 2:
+                return new DamageBlockAmountsPrompt(context);
+            case 3:
+                return new DamageBlockDurabilityPrompt(context);
+            case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_DAMAGE_NAMES, null);
                 context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, null);
-                return new DamageBlockListPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
+                return new DamageBlockListPrompt(context);
+            case 5:
                 int one;
                 int two;
                 if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
@@ -544,33 +649,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new DamageBlockListPrompt();
+                    return new DamageBlockListPrompt(context);
                 }
+            default:
+                return new BlocksPrompt(stageNum, context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<String> getBlockNames(ConversationContext context) {
-            return (List<String>) context.getSessionData(pref + CK.S_DAMAGE_NAMES);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getBlockAmounts(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Short> getBlockDurability(ConversationContext context) {
-            return (List<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
         }
     }
 
-    private class DamageBlockNamesPrompt extends StringPrompt {
+    public class DamageBlockNamesPrompt extends QuestsEditorStringPrompt {
+
+        public DamageBlockNamesPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockNames");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockNames");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -587,30 +692,44 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
-                                return new DamageBlockNamesPrompt();
+                                return new DamageBlockNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new DamageBlockNamesPrompt();
+                            return new DamageBlockNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new DamageBlockNamesPrompt();
+                        return new DamageBlockNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
             }
-            return new DamageBlockListPrompt();
+            return new DamageBlockListPrompt(context);
         }
     }
 
-    private class DamageBlockAmountsPrompt extends StringPrompt {
+    public class DamageBlockAmountsPrompt extends QuestsEditorStringPrompt {
+
+        public DamageBlockAmountsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockAmounts");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -625,25 +744,39 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new DamageBlockAmountsPrompt();
+                            return new DamageBlockAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new DamageBlockAmountsPrompt();
+                        return new DamageBlockAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amounts);
             }
-            return new DamageBlockListPrompt();
+            return new DamageBlockListPrompt(context);
         }
     }
 
-    private class DamageBlockDurabilityPrompt extends StringPrompt {
+    public class DamageBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+
+        public DamageBlockDurabilityPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockDurability");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -658,100 +791,139 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new DamageBlockDurabilityPrompt();
+                            return new DamageBlockDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new DamageBlockDurabilityPrompt();
+                        return new DamageBlockDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durability);
             }
-            return new DamageBlockListPrompt();
+            return new DamageBlockListPrompt(context);
         }
     }
 
-    private class PlaceBlockListPrompt extends FixedSetPrompt {
+    public class PlaceBlockListPrompt extends QuestsEditorNumericPrompt {
 
-        public PlaceBlockListPrompt() {
-            super("1", "2", "3", "4", "5");
+        public PlaceBlockListPrompt(ConversationContext context) {
+            super(context);
         }
 
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorPlaceBlocks") + " -\n";
-            if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + "\n";
-                for (String s : getBlockNames(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
-                }
-                if (context.getSessionData(pref + CK.S_PLACE_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
+        private final int size = 5;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("stageEditorPlaceBlocks");
+        }
+
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1: 
+                case 2:
+                case 3:
+                    return ChatColor.BLUE;
+                case 4:
+                    return ChatColor.RED;
+                case 5:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockNames");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockAmounts");
+            case 3:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockDurability");
+            case 4:
+                return ChatColor.RED + Lang.get("clear");
+            case 5:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(pref + CK.S_PLACE_NAMES) != null) {
+                    String text = "\n";
+                    for (String s : (List<String>) context.getSessionData(pref + CK.S_PLACE_NAMES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
+                    }
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
-                    for (Integer i : getBlockAmounts(context)) {
+                    return "";
+                }
+            case 2:
+                if (context.getSessionData(pref + CK.S_PLACE_AMOUNTS) != null) {
+                    String text = "\n";
+                    for (Integer i : (List<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
-                }
-                if (context.getSessionData(pref + CK.S_PLACE_DURABILITY) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockDurability") + "\n";
-                    for (Short s : getBlockDurability(context)) {
+                    return "";
+                }
+            case 3:
+                if (context.getSessionData(pref + CK.S_PLACE_DURABILITY) != null) {
+                    String text = "\n";
+                    for (Short s : (List<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
+                    return text;
+                } else {
+                    return "";
                 }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            case 4:
+            case 5:
+                return "";
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new PlaceBlockNamesPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new PlaceBlockListPrompt();
-                } else {
-                    return new PlaceBlockAmountsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new PlaceBlockListPrompt();
-                } else {
-                    return new PlaceBlockDurabilityPrompt();
-                }
-            } else if (input.equalsIgnoreCase("4")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new PlaceBlockNamesPrompt(context);
+            case 2:
+                return new PlaceBlockAmountsPrompt(context);
+            case 3:
+                return new PlaceBlockDurabilityPrompt(context);
+            case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_PLACE_NAMES, null);
                 context.setSessionData(pref + CK.S_PLACE_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_PLACE_DURABILITY, null);
-                return new PlaceBlockListPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
+                return new PlaceBlockListPrompt(context);
+            case 5:
                 int one;
                 int two;
                 if (context.getSessionData(pref + CK.S_PLACE_NAMES) != null) {
@@ -781,33 +953,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new PlaceBlockListPrompt();
+                    return new PlaceBlockListPrompt(context);
                 }
+            default:
+                return new BlocksPrompt(stageNum, context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<String> getBlockNames(ConversationContext context) {
-            return (List<String>) context.getSessionData(pref + CK.S_PLACE_NAMES);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getBlockAmounts(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Short> getBlockDurability(ConversationContext context) {
-            return (List<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
         }
     }
 
-    private class PlaceBlockNamesPrompt extends StringPrompt {
+    public class PlaceBlockNamesPrompt extends QuestsEditorStringPrompt {
+
+        public PlaceBlockNamesPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockNames");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockNames");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -824,30 +996,44 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
-                                return new PlaceBlockNamesPrompt();
+                                return new PlaceBlockNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED 
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new PlaceBlockNamesPrompt();
+                            return new PlaceBlockNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new PlaceBlockNamesPrompt();
+                        return new PlaceBlockNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_PLACE_NAMES, names);
             }
-            return new PlaceBlockListPrompt();
+            return new PlaceBlockListPrompt(context);
         }
     }
 
-    private class PlaceBlockAmountsPrompt extends StringPrompt {
+    public class PlaceBlockAmountsPrompt extends QuestsEditorStringPrompt {
+
+        public PlaceBlockAmountsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockAmounts");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -862,25 +1048,39 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new PlaceBlockAmountsPrompt();
+                            return new PlaceBlockAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new PlaceBlockAmountsPrompt();
+                        return new PlaceBlockAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_PLACE_AMOUNTS, amounts);
             }
-            return new PlaceBlockListPrompt();
+            return new PlaceBlockListPrompt(context);
         }
     }
 
-    private class PlaceBlockDurabilityPrompt extends StringPrompt {
+    public class PlaceBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+
+        public PlaceBlockDurabilityPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockDurability");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -895,100 +1095,139 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new PlaceBlockDurabilityPrompt();
+                            return new PlaceBlockDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new PlaceBlockDurabilityPrompt();
+                        return new PlaceBlockDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_PLACE_DURABILITY, durability);
             }
-            return new PlaceBlockListPrompt();
+            return new PlaceBlockListPrompt(context);
         }
     }
 
-    private class UseBlockListPrompt extends FixedSetPrompt {
+    public class UseBlockListPrompt extends QuestsEditorNumericPrompt {
 
-        public UseBlockListPrompt() {
-            super("1", "2", "3", "4", "5");
+        public UseBlockListPrompt(ConversationContext context) {
+            super(context);
         }
 
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorUseBlocks") + " -\n";
-            if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + "\n";
-                for (String s : getBlockNames(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
-                }
-                if (context.getSessionData(pref + CK.S_USE_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
+        private final int size = 5;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("stageEditorUseBlocks");
+        }
+
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1: 
+                case 2:
+                case 3:
+                    return ChatColor.BLUE;
+                case 4:
+                    return ChatColor.RED;
+                case 5:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockNames");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockAmounts");
+            case 3:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockDurability");
+            case 4:
+                return ChatColor.RED + Lang.get("clear");
+            case 5:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(pref + CK.S_USE_NAMES) != null) {
+                    String text = "\n";
+                    for (String s : (List<String>) context.getSessionData(pref + CK.S_USE_NAMES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
+                    }
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
-                    for (Integer i : getBlockAmounts(context)) {
+                    return "";
+                }
+            case 2:
+                if (context.getSessionData(pref + CK.S_USE_AMOUNTS) != null) {
+                    String text = "\n";
+                    for (Integer i : (List<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
-                }
-                if (context.getSessionData(pref + CK.S_USE_DURABILITY) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockDurability") + "\n";
-                    for (Short s : getBlockDurability(context)) {
+                    return "";
+                }
+            case 3:
+                if (context.getSessionData(pref + CK.S_USE_DURABILITY) != null) {
+                    String text = "\n";
+                    for (Short s : (List<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
+                    return text;
+                } else {
+                    return "";
                 }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            case 4:
+            case 5:
+                return "";
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new UseBlockNamesPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new UseBlockListPrompt();
-                } else {
-                    return new UseBlockAmountsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new UseBlockListPrompt();
-                } else {
-                    return new UseBlockDurabilityPrompt();
-                }
-            } else if (input.equalsIgnoreCase("4")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new UseBlockNamesPrompt(context);
+            case 2:
+                return new UseBlockAmountsPrompt(context);
+            case 3:
+                return new UseBlockDurabilityPrompt(context);
+            case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_USE_NAMES, null);
                 context.setSessionData(pref + CK.S_USE_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_USE_DURABILITY, null);
-                return new UseBlockListPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
+                return new UseBlockListPrompt(context);
+            case 5:
                 int one;
                 int two;
                 if (context.getSessionData(pref + CK.S_USE_NAMES) != null) {
@@ -1018,33 +1257,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new UseBlockListPrompt();
+                    return new UseBlockListPrompt(context);
                 }
+            default:
+                return new BlocksPrompt(stageNum, context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<String> getBlockNames(ConversationContext context) {
-            return (List<String>) context.getSessionData(pref + CK.S_USE_NAMES);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getBlockAmounts(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Short> getBlockDurability(ConversationContext context) {
-            return (List<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY);
         }
     }
 
-    private class UseBlockNamesPrompt extends StringPrompt {
+    public class UseBlockNamesPrompt extends QuestsEditorStringPrompt {
+
+        public UseBlockNamesPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockNames");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockNames");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -1061,30 +1300,44 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
-                                return new UseBlockNamesPrompt();
+                                return new UseBlockNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new UseBlockNamesPrompt();
+                            return new UseBlockNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new UseBlockNamesPrompt();
+                        return new UseBlockNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_USE_NAMES, names);
             }
-            return new UseBlockListPrompt();
+            return new UseBlockListPrompt(context);
         }
     }
 
-    private class UseBlockAmountsPrompt extends StringPrompt {
+    public class UseBlockAmountsPrompt extends QuestsEditorStringPrompt {
+
+        public UseBlockAmountsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockAmounts");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -1099,25 +1352,39 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new UseBlockAmountsPrompt();
+                            return new UseBlockAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new UseBlockAmountsPrompt();
+                        return new UseBlockAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_USE_AMOUNTS, amounts);
             }
-            return new UseBlockListPrompt();
+            return new UseBlockListPrompt(context);
         }
     }
 
-    private class UseBlockDurabilityPrompt extends StringPrompt {
+    public class UseBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+
+        public UseBlockDurabilityPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockDurability");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -1132,100 +1399,139 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new UseBlockDurabilityPrompt();
+                            return new UseBlockDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new UseBlockDurabilityPrompt();
+                        return new UseBlockDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_USE_DURABILITY, durability);
             }
-            return new UseBlockListPrompt();
+            return new UseBlockListPrompt(context);
         }
     }
 
-    private class CutBlockListPrompt extends FixedSetPrompt {
+    public class CutBlockListPrompt extends QuestsEditorNumericPrompt {
 
-        public CutBlockListPrompt() {
-            super("1", "2", "3", "4", "5");
+        public CutBlockListPrompt(ConversationContext context) {
+            super(context);
         }
 
-        @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorCutBlocks") + " -\n";
-            if (context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + " (" + Lang.get("noNamesSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.GRAY  + " - " 
-                        + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetBlockNames") + "\n";
-                for (String s : getBlockNames(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
-                }
-                if (context.getSessionData(pref + CK.S_CUT_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + " (" + Lang.get("noneSet") + ")\n";
+        private final int size = 5;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("stageEditorCutBlocks");
+        }
+
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1: 
+                case 2:
+                case 3:
+                    return ChatColor.BLUE;
+                case 4:
+                    return ChatColor.RED;
+                case 5:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockNames");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockAmounts");
+            case 3:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetBlockDurability");
+            case 4:
+                return ChatColor.RED + Lang.get("clear");
+            case 5:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(pref + CK.S_CUT_NAMES) != null) {
+                    String text = "\n";
+                    for (String s : (List<String>) context.getSessionData(pref + CK.S_CUT_NAMES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
+                    }
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetBlockAmounts") + "\n";
-                    for (Integer i : getBlockAmounts(context)) {
+                    return "";
+                }
+            case 2:
+                if (context.getSessionData(pref + CK.S_CUT_AMOUNTS) != null) {
+                    String text = "\n";
+                    for (Integer i : (List<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
-                }
-                if (context.getSessionData(pref + CK.S_CUT_DURABILITY) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - "
-                            + Lang.get("stageEditorSetBlockDurability") + " (" + Lang.get("noneSet") + ")\n";
+                    return text;
                 } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                            + Lang.get("stageEditorSetBlockDurability") + "\n";
-                    for (Short s : getBlockDurability(context)) {
+                    return "";
+                }
+            case 3:
+                if (context.getSessionData(pref + CK.S_CUT_DURABILITY) != null) {
+                    String text = "\n";
+                    for (Short s : (List<Short>) context.getSessionData(pref + CK.S_CUT_DURABILITY)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
+                    return text;
+                } else {
+                    return "";
                 }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("done");
+            case 4:
+            case 5:
+                return "";
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new CutBlockNamesPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new CutBlockListPrompt();
-                } else {
-                    return new CutBlockAmountsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                if (context.getSessionData(pref + CK.S_CUT_NAMES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoBlockNames"));
-                    return new CutBlockListPrompt();
-                } else {
-                    return new CutBlockDurabilityPrompt();
-                }
-            } else if (input.equalsIgnoreCase("4")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new CutBlockNamesPrompt(context);
+            case 2:
+                return new CutBlockAmountsPrompt(context);
+            case 3:
+                return new CutBlockDurabilityPrompt(context);
+            case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_CUT_NAMES, null);
                 context.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_CUT_DURABILITY, null);
-                return new CutBlockListPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
+                return new CutBlockListPrompt(context);
+            case 5:
                 int one;
                 int two;
                 if (context.getSessionData(pref + CK.S_CUT_NAMES) != null) {
@@ -1255,33 +1561,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new CutBlockListPrompt();
+                    return new CutBlockListPrompt(context);
                 }
+            default:
+                return new BlocksPrompt(stageNum, context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<String> getBlockNames(ConversationContext context) {
-            return (List<String>) context.getSessionData(pref + CK.S_CUT_NAMES);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getBlockAmounts(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + CK.S_CUT_AMOUNTS);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Short> getBlockDurability(ConversationContext context) {
-            return (List<Short>) context.getSessionData(pref + CK.S_CUT_DURABILITY);
         }
     }
 
-    private class CutBlockNamesPrompt extends StringPrompt {
+    public class CutBlockNamesPrompt extends QuestsEditorStringPrompt {
+        
+        public CutBlockNamesPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockNames");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockNames");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -1298,30 +1604,44 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " "
                                         + Lang.get("stageEditorNotSolid"));
-                                return new CutBlockNamesPrompt();
+                                return new CutBlockNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " "
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new CutBlockNamesPrompt();
+                            return new CutBlockNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new CutBlockNamesPrompt();
+                        return new CutBlockNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_CUT_NAMES, names);
             }
-            return new CutBlockListPrompt();
+            return new CutBlockListPrompt(context);
         }
     }
 
-    private class CutBlockAmountsPrompt extends StringPrompt {
+    public class CutBlockAmountsPrompt extends QuestsEditorStringPrompt {
+
+        public CutBlockAmountsPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockAmounts");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockAmounts");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -1336,25 +1656,39 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new CutBlockAmountsPrompt();
+                            return new CutBlockAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new CutBlockAmountsPrompt();
+                        return new CutBlockAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_CUT_AMOUNTS, amounts);
             }
-            return new CutBlockListPrompt();
+            return new CutBlockListPrompt(context);
         }
     }
 
-    private class CutBlockDurabilityPrompt extends StringPrompt {
+    public class CutBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+
+        public CutBlockDurabilityPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorEnterBlockDurability");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorEnterBlockDurability");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -1369,17 +1703,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new CutBlockDurabilityPrompt();
+                            return new CutBlockDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new CutBlockDurabilityPrompt();
+                        return new CutBlockDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_CUT_DURABILITY, durability);
             }
-            return new CutBlockListPrompt();
+            return new CutBlockListPrompt(context);
         }
     }
 }

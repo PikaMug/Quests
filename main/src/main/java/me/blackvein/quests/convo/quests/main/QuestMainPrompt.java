@@ -117,8 +117,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.YELLOW + Lang.get("questEditorFinishMessage");
             }
         case 4:
-            if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() 
-                    != null) {
+            if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() != null) {
                 return ChatColor.YELLOW + Lang.get("questEditorNPCStart");
             } else if (plugin.getDependencies().getCitizens() != null) {
                 return ChatColor.YELLOW + Lang.get("questEditorNPCStart");

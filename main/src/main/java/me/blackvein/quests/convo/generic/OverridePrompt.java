@@ -44,7 +44,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
     
     @Override
     public String getQueryText(ConversationContext context) {
-        return null;
+        return promptText;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
         QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-        String text = ChatColor.YELLOW + promptText + "\n";;
+        String text = ChatColor.YELLOW + getQueryText(context) + "\n";
         return text;
     }
 

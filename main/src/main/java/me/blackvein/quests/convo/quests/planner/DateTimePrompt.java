@@ -38,7 +38,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         source = origin;
     }
     
-    private final int size = 9;
+    private final int size = 10;
     
     public int getSize() {
         return size;
@@ -53,36 +53,14 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        if (context.getSessionData("tempDay") == null) {
-            context.setSessionData("tempDay", cal.get(Calendar.DAY_OF_MONTH));
-        }
-        if (context.getSessionData("tempMonth") == null) {
-            context.setSessionData("tempMonth", cal.get(Calendar.MONTH));
-        }
-        if (context.getSessionData("tempYear") == null) {
-            context.setSessionData("tempYear", cal.get(Calendar.YEAR));
-        }
-
-        if (context.getSessionData("tempHour") == null) {
-            context.setSessionData("tempHour", cal.get(Calendar.HOUR_OF_DAY));
-        }
-        if (context.getSessionData("tempMinute") == null) {
-            context.setSessionData("tempMinute", cal.get(Calendar.MINUTE));
-        }
-        if (context.getSessionData("tempSecond") == null) {
-            context.setSessionData("tempSecond", cal.get(Calendar.SECOND));
-        }
+        
         cal.set((Integer) context.getSessionData("tempYear"), (Integer) context.getSessionData("tempMonth"), 
                 (Integer) context.getSessionData("tempDay"), (Integer) context.getSessionData("tempHour"), 
                 (Integer) context.getSessionData("tempMinute"), (Integer) context.getSessionData("tempSecond"));
         dateData += ChatColor.DARK_AQUA + dateFormat.format(cal.getTime()) + " ";
         dateData += ChatColor.AQUA + timeFormat.format(cal.getTime()) + " ";
         
-        if (context.getSessionData("tempZone") == null) {
-            context.setSessionData("tempZone", cal.getTimeZone().getID());
-        }
-        TimeZone tz = TimeZone.getTimeZone((String) context.getSessionData("tempZone"));
-        cal.setTimeZone(tz);
+        cal.setTimeZone(TimeZone.getTimeZone((String) context.getSessionData("tempZone")));
         String[] iso = Lang.getISO().split("-");
         Locale loc = new Locale(iso[0], iso[1]);
         Double hour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
@@ -96,25 +74,29 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-                return ChatColor.BLUE;
-            case 8:
-                return ChatColor.RED;
-            case 9:
-                return ChatColor.GREEN;
-            default:
-                return null;
+        case 0:
+            return ChatColor.YELLOW;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+            return ChatColor.BLUE;
+        case 8:
+            return ChatColor.RED;
+        case 9:
+            return ChatColor.GREEN;
+        default:
+            return null;
         }
     }
     
     public String getSelectionText(ConversationContext context, int number) {
         switch(number) {
+        case 0:
+            return ChatColor.GOLD + Lang.get("dateCreateLoadTime");
         case 1:
             return ChatColor.YELLOW + Lang.get("timeDay");
         case 2:
@@ -140,6 +122,8 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public String getAdditionalText(ConversationContext context, int number) {
         switch(number) {
+        case 0:
+            return "";
         case 1:
             if (context.getSessionData("tempDay") != null) {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempDay") 
@@ -189,8 +173,14 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
     
-        String text = ChatColor.AQUA + getTitle(context) + "\n" + getDataText(context) + "\n";
-        for (int i = 1; i <= size; i++) {
+        String text = ChatColor.AQUA + getTitle(context) + "\n";
+        if (context.getSessionData("tempDay") != null && context.getSessionData("tempMonth") != null
+                && context.getSessionData("tempYear") != null && context.getSessionData("tempHour") != null
+                && context.getSessionData("tempMinute") != null && context.getSessionData("tempSecond") != null
+                && context.getSessionData("tempZone") != null) {
+            text += getDataText(context) + "\n";
+        }
+        for (int i = 0; i <= size - 1; i++) {
             text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
                     + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
@@ -200,6 +190,16 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch(input.intValue()) {
+        case 0:
+            Calendar cal = Calendar.getInstance();
+            context.setSessionData("tempDay", cal.get(Calendar.DAY_OF_MONTH));
+            context.setSessionData("tempMonth", cal.get(Calendar.MONTH));
+            context.setSessionData("tempYear", cal.get(Calendar.YEAR));
+            context.setSessionData("tempHour", cal.get(Calendar.HOUR_OF_DAY));
+            context.setSessionData("tempMinute", cal.get(Calendar.MINUTE));
+            context.setSessionData("tempSecond", cal.get(Calendar.SECOND));
+            context.setSessionData("tempZone", cal.getTimeZone().getID());
+            return new DateTimePrompt(context, oldPrompt, source);
         case 1:
             return new DayPrompt();
         case 2:
@@ -224,23 +224,43 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             context.setSessionData("tempZone", null);
             return oldPrompt;
         case 9:
-            int day = (Integer) context.getSessionData("tempDay");
-            int month = (Integer) context.getSessionData("tempMonth");
-            int year = (Integer) context.getSessionData("tempYear");
-            int hour = (Integer) context.getSessionData("tempHour");
-            int minute = (Integer) context.getSessionData("tempMinute");
-            int second = (Integer) context.getSessionData("tempSecond");
-            String zone = (String) context.getSessionData("tempZone");
-            String date = day + ":" + month + ":" + year + ":"
-                    + hour + ":" + minute + ":" + second + ":" + zone;
-            if (source != null) {
-                if (source.equals("start")) {
-                    context.setSessionData(CK.PLN_START_DATE, date);
-                } else if (source.equals("end")) {
-                    context.setSessionData(CK.PLN_END_DATE, date);
+            if (context.getSessionData("tempDay") != null && context.getSessionData("tempMonth") != null
+                    && context.getSessionData("tempYear") != null && context.getSessionData("tempHour") != null
+                    && context.getSessionData("tempMinute") != null && context.getSessionData("tempSecond") != null
+                    && context.getSessionData("tempZone") != null) {
+                int day = (Integer) context.getSessionData("tempDay");
+                int month = (Integer) context.getSessionData("tempMonth");
+                int year = (Integer) context.getSessionData("tempYear");
+                int hour = (Integer) context.getSessionData("tempHour");
+                int minute = (Integer) context.getSessionData("tempMinute");
+                int second = (Integer) context.getSessionData("tempSecond");
+                String zone = (String) context.getSessionData("tempZone");
+                String date = day + ":" + month + ":" + year + ":"
+                        + hour + ":" + minute + ":" + second + ":" + zone;
+                if (source != null) {
+                    if (source.equals("start")) {
+                        context.setSessionData(CK.PLN_START_DATE, date);
+                    } else if (source.equals("end")) {
+                        context.setSessionData(CK.PLN_END_DATE, date);
+                    }
                 }
+                context.setSessionData("tempDay", null);
+                context.setSessionData("tempMonth", null);
+                context.setSessionData("tempYear", null);
+                context.setSessionData("tempHour", null);
+                context.setSessionData("tempMinute", null);
+                context.setSessionData("tempSecond", null);
+                context.setSessionData("tempZone", null);
+                return oldPrompt;
+            } else if (context.getSessionData("tempDay") != null || context.getSessionData("tempMonth") != null
+                    || context.getSessionData("tempYear") != null || context.getSessionData("tempHour") != null
+                    || context.getSessionData("tempMinute") != null || context.getSessionData("tempSecond") != null
+                    || context.getSessionData("tempZone") != null) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
+                return new DateTimePrompt(context, oldPrompt, source);
+            } else {
+                return oldPrompt;
             }
-            return oldPrompt;
         default:
             return new DateTimePrompt(context, oldPrompt, source);
         }

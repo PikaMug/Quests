@@ -173,7 +173,6 @@ public class ItemStackPrompt extends FixedSetPrompt {
                         cc.setSessionData("tempMeta", map);
                     }
                 }
-                player.sendMessage(ChatColor.GREEN + Lang.get("itemCreateLoaded"));
                 return new ItemStackPrompt(oldPrompt);
             }
         } else if (input.equalsIgnoreCase("1")) {
