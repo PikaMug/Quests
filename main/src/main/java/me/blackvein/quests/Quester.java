@@ -1299,15 +1299,15 @@ public class Quester {
                     if (is.getDurability() > 0) {
                         // Age is specified so check for durability
                         if (m.getDurability() == is.getDurability()) {
-                            broken = is;
+                            toBreak = is;
                         }
                     } else {
                         // Age is unspecified so ignore durability
-                        broken = is;
+                        toBreak = is;
                     }
                 } else {
                     //Blocks are not solid so ignore durability
-                    broken = is;
+                    toBreak = is;
                 }
             }
         }
