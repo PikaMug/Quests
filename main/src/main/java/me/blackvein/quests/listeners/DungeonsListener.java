@@ -25,6 +25,7 @@ import de.erethon.dungeonsxl.event.dplayer.DPlayerLeaveDGroupEvent;
 import me.blackvein.quests.util.Lang;
 
 public class DungeonsListener implements Listener {
+    
     @EventHandler
     public void onGroupCreate(DGroupCreateEvent event) {
         if (Lang.get("questDungeonsCreate").length() > 0) {

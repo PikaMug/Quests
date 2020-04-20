@@ -49,8 +49,8 @@ public class NpcListener implements Listener {
 
     private final Quests plugin;
 
-    public NpcListener(Quests newPlugin) {
-        plugin = newPlugin;
+    public NpcListener(Quests plugin) {
+        this.plugin = plugin;
     }
 
     @SuppressWarnings("deprecation")

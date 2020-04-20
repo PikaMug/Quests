@@ -84,8 +84,10 @@ import me.blackvein.quests.exceptions.ActionFormatException;
 import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.listeners.BlockListener;
 import me.blackvein.quests.listeners.CmdExecutor;
 import me.blackvein.quests.listeners.DungeonsListener;
+import me.blackvein.quests.listeners.ItemListener;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
@@ -119,8 +121,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private ConversationFactory npcConversationFactory;
     private QuestFactory questFactory;
     private ActionFactory eventFactory;
-    private PlayerListener playerListener;
+    private BlockListener blockListener;
+    private ItemListener itemListener;
     private NpcListener npcListener;
+    private PlayerListener playerListener;
     private NpcEffectThread effThread;
     private PlayerMoveThread moveThread;
     private DungeonsListener dungeonsListener;
@@ -137,12 +141,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         settings = new Settings(this);
         localeQuery = new LocaleQuery(this);
         localeQuery.setBukkitVersion(bukkitVersion);
-        playerListener = new PlayerListener(this);
-        effThread = new NpcEffectThread(this);
-        moveThread = new PlayerMoveThread(this);
+        blockListener = new BlockListener(this);
+        itemListener = new ItemListener(this);
         npcListener = new NpcListener(this);
+        playerListener = new PlayerListener(this);
         dungeonsListener = new DungeonsListener();
         partiesListener = new PartiesListener();
+        effThread = new NpcEffectThread(this);
+        moveThread = new PlayerMoveThread(this);
         questFactory = new QuestFactory(this);
         eventFactory = new ActionFactory(this);
         depends = new Dependencies(this);
@@ -195,13 +201,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 .withLocalEcho(false).addConversationAbandonedListener(this);
         
         // 10 - Register listeners
-        getServer().getPluginManager().registerEvents(playerListener, this);
+        getServer().getPluginManager().registerEvents(blockListener, this);
+        getServer().getPluginManager().registerEvents(itemListener, this);
         if (depends.getCitizens() != null) {
             getServer().getPluginManager().registerEvents(npcListener, this);
             if (settings.canNpcEffects()) {
                 getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
             }
         }
+        getServer().getPluginManager().registerEvents(playerListener, this);
         if (settings.getStrictPlayerMovement() > 0) {
             long ticks = settings.getStrictPlayerMovement() * 20;
             getServer().getScheduler().scheduleSyncRepeatingTask(this, moveThread, ticks, ticks);
@@ -333,8 +341,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return eventFactory;
     }
     
+    public ItemListener getItemListener() {
+        return itemListener;
+    }
+    
+    public NpcListener getNpcListener() {
+        return npcListener;
+    }
+    
     public PlayerListener getPlayerListener() {
         return playerListener;
+    }
+    
+    public DungeonsListener getDungeonsListener() {
+        return dungeonsListener;
+    }
+    
+    public PartiesListener getPartiesListener() {
+        return partiesListener;
     }
     
     public DenizenTrigger getDenizenTrigger() {
