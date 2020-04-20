@@ -377,6 +377,13 @@ public class QuestFactory implements ConversationAbandonedListener {
                 }
                 context.setSessionData(pref + CK.S_BREW_ITEMS, items);
             }
+            if (!stage.getItemsToConsume().isEmpty()) {
+                LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                for (ItemStack is : stage.getItemsToConsume()) {
+                    items.add(is);
+                }
+                context.setSessionData(pref + CK.S_CONSUME_ITEMS, items);
+            }
             if (stage.getCowsToMilk() != null) {
                 context.setSessionData(pref + CK.S_COW_MILK, stage.getCowsToMilk());
             }
@@ -705,6 +712,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                     ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS) : null);
             stage.set("items-to-brew", context.getSessionData(pref + CK.S_BREW_ITEMS) != null 
                     ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS) : null);
+            stage.set("items-to-consume", context.getSessionData(pref + CK.S_CONSUME_ITEMS) != null 
+                    ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS) : null);
             stage.set("cows-to-milk", context.getSessionData(pref + CK.S_COW_MILK) != null 
                     ? (Integer) context.getSessionData(pref + CK.S_COW_MILK) : null);
             stage.set("fish-to-catch", context.getSessionData(pref + CK.S_FISH) != null 

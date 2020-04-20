@@ -43,6 +43,7 @@ public class Stage {
     protected Map<Map<Enchantment, Material>, Integer> itemsToEnchant 
             = new HashMap<Map<Enchantment, Material>, Integer>();
     protected LinkedList<ItemStack> itemsToBrew = new LinkedList<ItemStack>();
+    protected LinkedList<ItemStack> itemsToConsume = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
     protected LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
 
@@ -227,6 +228,14 @@ public class Stage {
     }
 
     public void setItemsToBrew(LinkedList<ItemStack> itemsToBrew) {
+        this.itemsToBrew = itemsToBrew;
+    }
+    
+    public LinkedList<ItemStack> getItemsToConsume() {
+        return itemsToBrew;
+    }
+
+    public void setItemsToConsume(LinkedList<ItemStack> itemsToBrew) {
         this.itemsToBrew = itemsToBrew;
     }
 
@@ -514,6 +523,7 @@ public class Stage {
         if (itemsToSmelt.isEmpty() == false) { return true; }
         if (itemsToEnchant.isEmpty() == false) { return true; }
         if (itemsToBrew.isEmpty() == false) { return true; }
+        if (itemsToConsume.isEmpty() == false) { return true; }
         if (itemsToDeliver.isEmpty() == false) { return true; }
         if (citizensToInteract.isEmpty() == false) { return true; }
         if (citizensToKill.isEmpty() == false) { return true; }
@@ -555,6 +565,8 @@ public class Stage {
             return !itemsToEnchant.isEmpty();
         } else if (type.equalsIgnoreCase("brewItem")) {
             return !itemsToBrew.isEmpty();
+        } else if (type.equalsIgnoreCase("consumeItem")) {
+            return !itemsToConsume.isEmpty();
         } else if (type.equalsIgnoreCase("milkCow")) {
             return cowsToMilk != null;
         } else if (type.equalsIgnoreCase("catchFish")) {

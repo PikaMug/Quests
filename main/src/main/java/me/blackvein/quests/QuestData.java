@@ -398,6 +398,41 @@ public class QuestData {
         }
     };
     
+    public LinkedHashMap<ItemStack, Integer> itemsConsumed = new LinkedHashMap<ItemStack, Integer>() {
+
+        private static final long serialVersionUID = -5475073316902757883L;
+
+        @Override
+        public Integer put(ItemStack key, Integer val) {
+            Integer data = super.put(key, val);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return data;
+        }
+
+        @Override
+        public Integer remove(Object key) {
+            Integer i = super.remove(key);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return i;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
+            super.putAll(m);
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+    };
+    
     public LinkedList<ItemStack> itemsDelivered = new LinkedList<ItemStack>() {
 
         private static final long serialVersionUID = 2712497347022734646L;

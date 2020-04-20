@@ -232,7 +232,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(stagePrefix + CK.S_CRAFT_ITEMS) == null
                     && context.getSessionData(stagePrefix + CK.S_SMELT_ITEMS) == null 
                     && context.getSessionData(stagePrefix + CK.S_ENCHANT_TYPES) == null 
-                    && context.getSessionData(stagePrefix + CK.S_BREW_ITEMS) == null) {
+                    && context.getSessionData(stagePrefix + CK.S_BREW_ITEMS) == null
+                    && context.getSessionData(stagePrefix + CK.S_CONSUME_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return "";
@@ -509,6 +510,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 || context.getSessionData(stagePrefix + CK.S_SMELT_ITEMS) != null 
                 || context.getSessionData(stagePrefix + CK.S_ENCHANT_TYPES) != null 
                 || context.getSessionData(stagePrefix + CK.S_BREW_ITEMS) != null
+                || context.getSessionData(stagePrefix + CK.S_CONSUME_ITEMS) != null
                 || context.getSessionData(stagePrefix + CK.S_DELIVERY_NPCS) != null 
                 || context.getSessionData(stagePrefix + CK.S_NPCS_TO_TALK_TO) != null 
                 || context.getSessionData(stagePrefix + CK.S_NPCS_TO_KILL) != null

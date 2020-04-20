@@ -23,6 +23,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.Quest;
@@ -136,6 +137,27 @@ public class ItemListener implements Listener {
                     for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
                         q.enchantItem(quest, e, evt.getItem().getType());
                     }
+                    return null;
+                });
+            }
+        }
+    }
+    
+    
+    @EventHandler
+    public void onConsumeItem(PlayerItemConsumeEvent evt) {
+        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
+            final ItemStack consumedItem = evt.getItem().clone();
+            consumedItem.setAmount(1);
+            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            for (Quest quest : plugin.getQuests()) {
+                if (quester.getCurrentQuests().containsKey(quest) 
+                        && quester.getCurrentStage(quest).containsObjective("consumeItem")) {
+                    quester.consumeItem(quest, consumedItem);
+                }
+                
+                quester.dispatchMultiplayerEverything(quest, "consumeItem", (Quester q) -> {
+                    quester.consumeItem(quest, consumedItem);
                     return null;
                 });
             }

@@ -946,6 +946,20 @@ public class Quester {
                 finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + brewed + "/" + amt);
             }
         }
+        for (ItemStack is : getCurrentStage(quest).itemsToConsume) {
+            int consumed = 0;
+            if (getQuestData(quest).itemsConsumed.containsKey(is)) {
+                consumed = getQuestData(quest).itemsConsumed.get(is);
+            }
+            int amt = is.getAmount();
+            if (consumed < amt) {
+                String obj = Lang.get(getPlayer(), "consume") + " " + ItemUtil.getName(is);
+                unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + consumed + "/" + amt);
+            } else {
+                String obj = Lang.get(getPlayer(), "consume") + " " + ItemUtil.getName(is);
+                finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + consumed + "/" + amt);
+            }
+        }
         if (getCurrentStage(quest).cowsToMilk != null) {
             if (getQuestData(quest).getCowsMilked() < getCurrentStage(quest).cowsToMilk) {
                 unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "milkCow") + ChatColor.GREEN + ": " 
@@ -1212,9 +1226,9 @@ public class Quester {
      * Check if player's current stage has the specified objective<p>
      * 
      * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, milkCow, catchFish,
-     * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
-     * shearSheep, password, reachLocation
+     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, consumeItem,
+     * milkCow, catchFish, killMob, deliverItem, killPlayer, talkToNPC,
+     * killNPC, tameMob, shearSheep, password, reachLocation
      * 
      * @deprecated Use {@link Stage#containsObjective(String)}
      * @param quest The quest to check objectives of
@@ -1792,6 +1806,56 @@ public class Quester {
     }
     
     /**
+     * Mark item as consumed if Quester has such an objective
+     * 
+     * @param quest The quest for which the item is being consumed
+     * @param i The item being consumed
+     */
+    public void consumeItem(Quest quest, ItemStack i) {
+        Player player = getPlayer();
+        ItemStack found = null;
+        for (ItemStack is : getQuestData(quest).itemsConsumed.keySet()) {
+            if (ItemUtil.compareItems(i, is, true) == 0) {
+                found = is;
+                break;
+            }
+        }
+        if (found != null) {
+            int amount = getQuestData(quest).itemsConsumed.get(found);
+            if (getCurrentStage(quest).itemsToConsume.indexOf(found) < 0) {
+                plugin.getLogger().severe("Index out of bounds while consuming " + found.getType() + " x " 
+                        + found.getAmount() + " for quest " + quest.getName() + " with " + i.getType() + " x " 
+                        + i.getAmount() + " already consumed. List amount reports value of " +  amount 
+                        + ". Please report this error on Github!");
+                player.sendMessage(ChatColor.RED 
+                        + "Quests had a problem consuming your item, please contact an administrator!");
+                return;
+            }
+            int req = getCurrentStage(quest).itemsToConsume.get(getCurrentStage(quest).itemsToConsume.indexOf(found))
+                    .getAmount();
+            Material m = i.getType();
+            if (amount < req) {
+                if ((i.getAmount() + amount) >= req) {
+                    getQuestData(quest).itemsConsumed.put(found, req);
+                    finishObjective(quest, "consumeItem", new ItemStack(m, 1), found, null, null, null, null, null, null, 
+                            null, null);
+                    
+                    // Multiplayer
+                    final ItemStack finalFound = found;
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
+                        q.getQuestData(quest).itemsConsumed.put(finalFound, req);
+                        q.finishObjective(quest, "consumeItem", new ItemStack(m, 1), finalFound, null, null, null, null, 
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    getQuestData(quest).itemsConsumed.put(found, (amount + i.getAmount()));
+                }
+            }
+        }
+    }
+    
+    /**
      * Mark cow as milked if Quester has such an objective
      * 
      * @param quest The quest for which the fish is being caught
@@ -2359,6 +2423,17 @@ public class Quester {
             } else {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
+        } else if (objective.equalsIgnoreCase("consumeItem")) {
+            ItemStack is = getCurrentStage(quest).itemsToConsume.get(getCurrentStage(quest).itemsToConsume
+                    .indexOf(goal));
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "consume") 
+                    + " <item> " + is.getAmount() + "/" + is.getAmount();
+            if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
+                    && !goal.getItemMeta().hasDisplayName()) {
+                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+            } else {
+                p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+            }
         } else if (objective.equalsIgnoreCase("deliverItem")) {
             String obj = Lang.get(p, "deliver");
             obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(getCurrentStage(quest).itemDeliveryTargets
@@ -2551,6 +2626,11 @@ public class Quester {
         if (quest.getStage(stage).itemsToBrew.isEmpty() == false) {
             for (ItemStack is : quest.getStage(stage).itemsToBrew) {
                 data.itemsBrewed.put(is, 0);
+            }
+        }
+        if (quest.getStage(stage).itemsToConsume.isEmpty() == false) {
+            for (ItemStack is : quest.getStage(stage).itemsToConsume) {
+                data.itemsConsumed.put(is, 0);
             }
         }
         if (quest.getStage(stage).mobsToKill.isEmpty() == false) {
@@ -2781,6 +2861,13 @@ public class Quester {
                         brewAmounts.add(e.getValue());
                     }
                     questSec.set("item-brew-amounts", brewAmounts);
+                }
+                if (questData.itemsConsumed.isEmpty() == false) {
+                    LinkedList<Integer> consumeAmounts = new LinkedList<Integer>();
+                    for (Entry<ItemStack, Integer> e : questData.itemsConsumed.entrySet()) {
+                        consumeAmounts.add(e.getValue());
+                    }
+                    questSec.set("item-consume-amounts", consumeAmounts);
                 }
                 if (getCurrentStage(quest).cowsToMilk != null) {
                     questSec.set("cows-milked", questData.getCowsMilked());
@@ -3195,6 +3282,15 @@ public class Quester {
                         if (i < getCurrentStage(quest).itemsToBrew.size()) {
                             getQuestData(quest).itemsBrewed.put(getCurrentStage(quest).itemsToBrew
                                     .get(i), brewAmounts.get(i));
+                        }
+                    }
+                }
+                if (questSec.contains("item-consume-amounts")) {
+                    List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
+                    for (int i = 0; i < consumeAmounts.size(); i++) {
+                        if (i < getCurrentStage(quest).itemsToConsume.size()) {
+                            getQuestData(quest).itemsConsumed.put(getCurrentStage(quest).itemsToConsume
+                                    .get(i), consumeAmounts.get(i));
                         }
                     }
                 }
@@ -3696,9 +3792,9 @@ public class Quester {
      * Dispatch player event to fellow questers<p>
      * 
      * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, milkCow, catchFish,
-     * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
-     * shearSheep, password, reachLocation
+     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, consumeItem,
+     * milkCow, catchFish, killMob, deliverItem, killPlayer, talkToNPC,
+     * killNPC, tameMob, shearSheep, password, reachLocation
      *
      * @param objectiveType The type of objective to progress
      * @param fun The function to execute, the event call
