@@ -20,6 +20,7 @@ import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.convo.quests.stages.StageMainPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -599,6 +600,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         @SuppressWarnings("deprecation")
         @Override
         public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + getTitle(context)
                     + ChatColor.LIGHT_PURPLE + " -\n";
             for (int i = 0; i < Enchantment.values().length; i++) {
@@ -654,6 +658,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -701,6 +708,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 

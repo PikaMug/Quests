@@ -20,15 +20,14 @@ import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.convo.quests.stages.StageMainPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -173,21 +172,21 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
         switch(input.intValue()) {
         case 1:
             if (plugin.getDependencies().getCitizens() != null) {
-                return new DeliveryListPrompt();
+                return new DeliveryListPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
             }
         case 2:
             if (plugin.getDependencies().getCitizens() != null) {
-                return new NPCIDsToTalkToPrompt();
+                return new NPCIDsToTalkToPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
             }
         case 3:
             if (plugin.getDependencies().getCitizens() != null) {
-                return new NPCKillListPrompt();
+                return new NPCKillListPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
@@ -204,18 +203,103 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    private class DeliveryListPrompt extends FixedSetPrompt {
+    public class DeliveryListPrompt extends QuestsEditorNumericPrompt {
 
-        public DeliveryListPrompt() {
-            super("1", "2", "3", "4", "5");
+        public DeliveryListPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        private final int size = 5;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("stageEditorDeliverItems");
+        }
+        
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
+                case 2:
+                case 3:
+                    return ChatColor.BLUE;
+                case 4:
+                    return ChatColor.RED;
+                case 5:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryNPCs");
+            case 3:
+                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryMessages");
+            case 4:
+                return ChatColor.RED + Lang.get("clear");
+            case 5:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS)) {
+                        text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
+                    }
+                    return text;
+                }
+            case 2:
+                if (context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (int i : (List<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + " (" 
+                                + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() + ")\n";
+                    }
+                    return text;
+                }
+            case 3:
+                if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (String s : (List<String>) context.getSessionData(pref + CK.S_DELIVERY_MESSAGES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + "\"" + s + "\"\n";
+                    }
+                    return text;
+                }
+            case 4:
+            case 5:
+                return "";
+            default:
+                return null;
+            }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null) {
-                    List<ItemStack> itemRews = getItems(context);
+                    List<ItemStack> itemRews = (List<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_DELIVERY_ITEMS, itemRews);
                 } else {
@@ -226,79 +310,35 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
             }
-            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorDeliverItems") + " -\n";
-            if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
-                text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("noneSet") + ")\n";
-                if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
-                } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorDeliveryMessages") + "\n";
-                    for (String s : getDeliveryMessages(context)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + "\"" + s + "\"";
-                    }
-                }
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                for (ItemStack is : getItems(context)) {
-                    text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
-                }
-                if (context.getSessionData(pref + CK.S_DELIVERY_NPCS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorDeliveryNPCs") + " (" + Lang.get("noneSet") + ")\n";
-                } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorDeliveryNPCs") + "\n";
-                    for (int i : getDeliveryNPCs(context)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + " (" 
-                                + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() + ")\n";
-                    }
-                }
-                if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorDeliveryMessages") + " (" + Lang.get("noneSet") + ")\n";
-                } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorDeliveryMessages") + "\n";
-                    for (String s : getDeliveryMessages(context)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + "\"" + s + "\"\n";
-                    }
-                }
+            
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+            String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
-            text += ChatColor.RED + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("clear") + "\n";
-            text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("done");
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
                 return new ItemStackPrompt(DeliveryListPrompt.this);
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoItems"));
-                    return new DeliveryListPrompt();
-                } else {
-                    return new DeliveryNPCsPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
-                return new DeliveryMessagesPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
+            case 2:
+                return new DeliveryNPCsPrompt(context);
+            case 3:
+                return new DeliveryMessagesPrompt(context);
+            case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("Cleared"));
                 context.setSessionData(pref + CK.S_DELIVERY_ITEMS, null);
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, null);
                 context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, null);
-                return new DeliveryListPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
+                return new DeliveryListPrompt(context);
+            case 5:
                 int one;
                 int two;
                 if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null) {
@@ -314,42 +354,42 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 if (one == two) {
                     if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null && one != 0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDeliveryMessage"));
-                        return new DeliveryListPrompt();
+                        return new DeliveryListPrompt(context);
                     } else {
                         return new NPCsPrompt(stageNum, context);
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new DeliveryListPrompt();
+                    return new DeliveryListPrompt(context);
                 }
+            default:
+                return new NPCsPrompt(stageNum, context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<ItemStack> getItems(ConversationContext context) {
-            return (List<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getDeliveryNPCs(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<String> getDeliveryMessages(ConversationContext context) {
-            return (List<String>) context.getSessionData(pref + CK.S_DELIVERY_MESSAGES);
         }
     }
 
-    private class DeliveryNPCsPrompt extends StringPrompt {
+    public class DeliveryNPCsPrompt extends QuestsEditorStringPrompt {
+        
+        public DeliveryNPCsPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorNPCPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
             Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
             temp.add(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
-            return ChatColor.YELLOW + Lang.get("stageEditorNPCPrompt") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
+            return ChatColor.YELLOW + getQueryText(context) + "\n" + ChatColor.GOLD + Lang.get("npcHint");
         }
 
         @Override
@@ -365,12 +405,12 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidNPC"));
-                            return new DeliveryNPCsPrompt();
+                            return new DeliveryNPCsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new DeliveryNPCsPrompt();
+                        return new DeliveryNPCsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
@@ -378,16 +418,28 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
             Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
             temp.remove(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
-            return new DeliveryListPrompt();
+            return new DeliveryListPrompt(context);
         }
     }
 
-    private class DeliveryMessagesPrompt extends StringPrompt {
+    public class DeliveryMessagesPrompt extends QuestsEditorStringPrompt {
+        
+        public DeliveryMessagesPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
 
         @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorDeliveryMessagesPrompt");
+        }
+        @Override
         public String getPromptText(ConversationContext context) {
-            String note = ChatColor.GOLD + Lang.get("stageEditorNPCNote");
-            return ChatColor.YELLOW + Lang.get("stageEditorDeliveryMessagesPrompt") + "\n" + note;
+            return ChatColor.YELLOW + getQueryText(context) + "\n" + ChatColor.GOLD + Lang.get("stageEditorNPCNote");
         }
 
         @Override
@@ -398,18 +450,32 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 messages.addAll(Arrays.asList(args));
                 context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, messages);
             }
-            return new DeliveryListPrompt();
+            return new DeliveryListPrompt(context);
         }
     }
 
-    private class NPCIDsToTalkToPrompt extends StringPrompt {
+    public class NPCIDsToTalkToPrompt extends QuestsEditorStringPrompt {
+        
+        public NPCIDsToTalkToPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorNPCToTalkToPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
             Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
             temp.add(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
-            return ChatColor.YELLOW + Lang.get("stageEditorNPCToTalkToPrompt") + "\n" + ChatColor.GOLD 
+            return ChatColor.YELLOW + getQueryText(context) + "\n" + ChatColor.GOLD 
                     + Lang.get("npcHint");
         }
 
@@ -427,12 +493,12 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidNPC"));
-                            return new NPCIDsToTalkToPrompt();
+                            return new NPCIDsToTalkToPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new NPCIDsToTalkToPrompt();
+                        return new NPCIDsToTalkToPrompt(context);
                     }
                 }
                 Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
@@ -446,68 +512,115 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    private class NPCKillListPrompt extends FixedSetPrompt {
+    public class NPCKillListPrompt extends QuestsEditorNumericPrompt {
 
-        public NPCKillListPrompt() {
-            super("1", "2", "3", "4");
+        public NPCKillListPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        private final int size = 4;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("stageEditorNPCs");
+        }
+        
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
+                case 2:
+                    return ChatColor.BLUE;
+                case 3:
+                    return ChatColor.RED;
+                case 4:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetKillIds");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetKillAmounts");
+            case 3:
+                return ChatColor.RED + Lang.get("clear");
+            case 4:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (plugin.getDependencies().getCitizens() != null) {
+                    if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                    } else {
+                        String text = "\n";
+                        for (Integer i : (List<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL)) {
+                            text += ChatColor.GRAY + "     - " + ChatColor.AQUA 
+                                    + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() 
+                                    + ChatColor.DARK_AQUA + " (" + i + ")\n";
+                        }
+                        return text;
+                    }
+                } else {
+                    return ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")";
+                }
+            case 2:
+                if (context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (Integer i : (List<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + i + "\n";
+                    }
+                    return text;
+                }
+            case 3:
+            case 4:
+                return "";
+            default:
+                return null;
+            }
         }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("stageEditorKillNPCs") + " -\n";
-            if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetKillIds") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetKillAmounts") + " (" + Lang.get("noIdsSet") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("cancel") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorSetKillIds") + "\n";
-                for (Integer i : getNPCIds(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA 
-                            + plugin.getDependencies().getCitizens().getNPCRegistry().getById(i).getName() 
-                            + ChatColor.DARK_AQUA + " (" + i + ")\n";
-                }
-                if (context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.BLUE + " - " 
-                            + Lang.get("stageEditorSetKillAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("stageEditorSetKillAmounts") + "\n";
-                    for (Integer i : getKillAmounts(context)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + i + "\n";
-                    }
-                }
-                text += ChatColor.RED + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+            String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new NpcIdsToKillPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
-                if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoNPCs"));
-                    return new NPCKillListPrompt();
-                } else {
-                    return new NpcAmountsToKillPrompt();
-                }
-            } else if (input.equalsIgnoreCase("3")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new NpcIdsToKillPrompt(context);
+            case 2:
+                return new NpcAmountsToKillPrompt(context);
+            case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL, null);
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, null);
-                return new NPCKillListPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
+                return new NPCKillListPrompt(context);
+            case 4:
                 int one;
                 int two;
                 if (context.getSessionData(pref + CK.S_NPCS_TO_KILL) != null) {
@@ -524,31 +637,36 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                     return new StageMainPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new NPCKillListPrompt();
+                    return new NPCKillListPrompt(context);
                 }
+            default:
+                return new NPCsPrompt(stageNum, context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getNPCIds(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getKillAmounts(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
         }
     }
 
-    private class NpcIdsToKillPrompt extends StringPrompt {
+    public class NpcIdsToKillPrompt extends QuestsEditorStringPrompt {
+        
+        public NpcIdsToKillPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
 
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorNPCPrompt");
+        }
+        
         @Override
         public String getPromptText(ConversationContext context) {
             Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
             temp.add(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
-            return ChatColor.YELLOW + Lang.get("stageEditorNPCPrompt") + "\n" + ChatColor.GOLD + Lang.get("npcHint");
+            return ChatColor.YELLOW + getQueryText(context) + "\n" + ChatColor.GOLD + Lang.get("npcHint");
         }
 
         @Override
@@ -564,12 +682,12 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidNPC"));
-                            return new NpcIdsToKillPrompt();
+                            return new NpcIdsToKillPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new NpcIdsToKillPrompt();
+                        return new NpcIdsToKillPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
@@ -577,15 +695,29 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
             Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
             temp.remove(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
-            return new NPCKillListPrompt();
+            return new NPCKillListPrompt(context);
         }
     }
 
-    private class NpcAmountsToKillPrompt extends StringPrompt {
+    public class NpcAmountsToKillPrompt extends QuestsEditorStringPrompt {
+        
+        public NpcAmountsToKillPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorKillNPCsPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("stageEditorKillNPCsPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -600,17 +732,17 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new NpcAmountsToKillPrompt();
+                            return new NpcAmountsToKillPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new NpcAmountsToKillPrompt();
+                        return new NpcAmountsToKillPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, amounts);
             }
-            return new NPCKillListPrompt();
+            return new NPCKillListPrompt(context);
         }
     }
 }
