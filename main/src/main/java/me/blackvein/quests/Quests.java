@@ -1743,7 +1743,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         break;
                     }
                 }
-                reqs.setNeededQuests(temp);
+                reqs.setBlockQuests(temp);
                 if (failed) {
                     throw new QuestFormatException("Requirement quest-blocks has invalid quest name " + failedQuest, questKey);
                 }
