@@ -3246,7 +3246,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
         for (String stageNum : questStages.getKeys(false)) {
             if (quest == null) {
-                getLogger().severe("Unable to load custom objectives because quest for " + questKey + " was null");
+                getLogger().warning("Unable to load custom objectives because quest for " + questKey + " was null");
                 return;
             }
             if (quest.getStage(Integer.valueOf(stageNum) - 1) == null) {
