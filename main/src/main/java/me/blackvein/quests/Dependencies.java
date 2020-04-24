@@ -42,7 +42,7 @@ import de.erethon.dungeonsxl.DungeonsXL;
 
 public class Dependencies {
     
-    private Quests plugin;
+    private final Quests plugin;
     private static Economy economy = null;
     private static Permission permission = null;
     private static WorldGuardAPI worldGuardApi = null;
@@ -61,43 +61,77 @@ public class Dependencies {
     }
     
     public Economy getVaultEconomy() {
+        if (economy == null && isPluginAvailable("Vault")) {
+            if (!setupEconomy()) {
+                plugin.getLogger().warning("Economy not found.");
+            }
+        }
         return economy;
     }
     
     public Permission getVaultPermission() {
+        if (permission == null && isPluginAvailable("Vault")) {
+            if (!setupPermissions()) {
+                plugin.getLogger().warning("Permissions not found.");
+            }
+        }
         return permission;
     }
     
     public WorldGuardAPI getWorldGuardApi() {
+        if (worldGuardApi == null && isPluginAvailable("WorldGuard")) {
+            worldGuardApi = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
+        }
         return worldGuardApi;
     }
     
     public mcMMO getMcmmoClassic() {
+        if (mcmmo == null && isPluginAvailable("Heroes")) {
+            try {
+                Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
+                mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
+            } catch (Exception e) {
+                // Unsupported version
+            }
+        }
         return mcmmo;
     }
     
     public Heroes getHeroes() {
+        if (heroes == null && isPluginAvailable("Heroes")) {
+            heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
+        }
         return heroes;
     }
     
     public PhatLoots getPhatLoots() {
+        if (phatLoots == null && isPluginAvailable("PhatLoots")) {
+            try {
+                phatLoots = (PhatLoots) plugin.getServer().getPluginManager().getPlugin("PhatLoots");
+                plugin.getLogger().info("Sucessfully linked Quests with PhatLoots " 
+                        + phatLoots.getDescription().getVersion());
+            } catch (NoClassDefFoundError e) {
+                plugin.getLogger().warning("Unofficial version of PhatLoots found. PhatLoots in Quests not enabled.");
+            }
+        }
         return phatLoots;
     }
     
     public PlaceholderAPIPlugin getPlaceholderApi() {
+        if (placeholder == null && isPluginAvailable("PlaceholderAPI")) {
+            placeholder = (PlaceholderAPIPlugin) plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI");
+        }
         return placeholder;
     }
     
     public CitizensPlugin getCitizens() {
-        if (citizens == null) {
-            if (isPluginAvailable("Citizens")) {
-                try {
-                    citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
-                    plugin.getLogger().info("Sucessfully linked Quests with Citizens " 
-                            + citizens.getDescription().getVersion());
-                } catch (Exception e) {
-                    plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
-                }
+        if (citizens == null && isPluginAvailable("Citizens")) {
+            try {
+                citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+                plugin.getLogger().info("Sucessfully linked Quests with Citizens " 
+                        + citizens.getDescription().getVersion());
+            } catch (Exception e) {
+                plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
             }
         }
         return citizens;
@@ -107,19 +141,37 @@ public class Dependencies {
         citizens = null;
     }
     
-    public DenizenAPI getDenizenAPI() {
+    public DenizenAPI getDenizenApi() {
+        if (denizenApi == null && isPluginAvailable("Denizen")) {
+            denizenApi = new DenizenAPI();
+        }
         return denizenApi;
     }
     
     public CitizensBooksAPI getCitizensBooksApi() {
+        if (citizensBooks == null && isPluginAvailable("CitizensBooks")) {
+            citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks"))
+                    .getAPI();
+        }
         return citizensBooks;
     }
     
     public DungeonsXL getDungeonsApi() {
+        if (dungeons == null && isPluginAvailable("DungeonsXL")) {
+            dungeons = DungeonsXL.getInstance();
+        }
         return dungeons;
     }
     
     public PartiesAPI getPartiesApi() {
+        if (parties == null && isPluginAvailable("Parties")) {
+            try {
+                Class.forName("com.alessiodp.parties.api.Parties");
+                parties = Parties.getApi();
+            } catch (Exception e) {
+                // Unsupported version
+            }
+        }
         return parties;
     }
     
@@ -136,63 +188,18 @@ public class Dependencies {
     }
     
     void init() {
-        if (isPluginAvailable("Citizens")) {
-            try {
-                citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
-            } catch (Exception e) {
-                plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
-            }
-        }
-        if (isPluginAvailable("WorldGuard")) {
-            worldGuardApi = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
-        }
-        if (isPluginAvailable("Denizen")) {
-            denizenApi = new DenizenAPI();
-        }
-        if (isPluginAvailable("mcMMO")) {
-            try {
-                Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
-                mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
-            } catch (Exception e) {
-                // Unsupported version
-            }
-        }
-        if (isPluginAvailable("Heroes")) {
-            heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
-        }
-        if (isPluginAvailable("PhatLoots")) {
-            try {
-                phatLoots = (PhatLoots) plugin.getServer().getPluginManager().getPlugin("PhatLoots");
-            } catch (NoClassDefFoundError e) {
-                plugin.getLogger().warning("Unofficial version of PhatLoots found. PhatLoots in Quests not enabled.");
-            }
-        }
-        if (isPluginAvailable("PlaceholderAPI")) {
-            placeholder = (PlaceholderAPIPlugin) plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI");
-        }
-        if (isPluginAvailable("CitizensBooks")) {
-            citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks"))
-                    .getAPI();
-        }
-        if (isPluginAvailable("DungeonsXL")) {
-            dungeons = DungeonsXL.getInstance();
-        }
-        if (isPluginAvailable("Parties")) {
-            try {
-                Class.forName("com.alessiodp.parties.api.Parties");
-                parties = Parties.getApi();
-            } catch (Exception e) {
-                // Unsupported version
-            }
-        }
-        if (isPluginAvailable("Vault")) {
-            if (!setupEconomy()) {
-                plugin.getLogger().warning("Economy not found.");
-            }
-            if (!setupPermissions()) {
-                plugin.getLogger().warning("Permissions not found.");
-            }
-        }
+        getCitizens();
+        getWorldGuardApi();
+        getDenizenApi();
+        getMcmmoClassic();
+        getHeroes();
+        getPhatLoots();
+        getPlaceholderApi();
+        getCitizensBooksApi();
+        getDungeonsApi();
+        getPartiesApi();
+        getVaultEconomy();
+        getVaultPermission();
     }
 
     private boolean setupEconomy() {

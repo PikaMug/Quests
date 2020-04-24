@@ -1946,7 +1946,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             List<Integer> npcAmountsToKill = new LinkedList<Integer>();
             // Legacy Denizen script load
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".script-to-run")) {
-                if (getDependencies().getDenizenAPI().containsScript(config.getString("quests." + questKey 
+                if (getDependencies().getDenizenApi().containsScript(config.getString("quests." + questKey 
                         + ".stages.ordered." + stageNum + ".script-to-run"))) {
                     oStage.script = config.getString("quests." + questKey + ".stages.ordered." + stageNum 
                             + ".script-to-run");

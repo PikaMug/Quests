@@ -22,8 +22,8 @@ public class DenizenTrigger {
         if (scriptName == null) {
             return false;
         }
-        if (plugin.getDependencies().getDenizenAPI().containsScript(scriptName)) {
-            plugin.getDependencies().getDenizenAPI().runTaskScript(scriptName, quester.getPlayer());
+        if (plugin.getDependencies().getDenizenApi().containsScript(scriptName)) {
+            plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer());
         }
         return true;
     }

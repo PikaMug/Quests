@@ -34,7 +34,7 @@ import net.citizensnpcs.api.npc.NPC;
 public class DenizenAPI_1_1_0 {
     
     private static Quests quests = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
-    private static DenizenAPI api = quests.getDependencies().getDenizenAPI();
+    private static DenizenAPI api = quests.getDependencies().getDenizenApi();
     
     @Nullable
     public static boolean containsScript(String input) {

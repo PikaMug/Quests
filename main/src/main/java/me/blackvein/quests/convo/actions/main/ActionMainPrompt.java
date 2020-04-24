@@ -74,7 +74,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 5:
         case 6:
         case 7:
-            if (plugin.getDependencies().getDenizenAPI() == null) {
+            if (plugin.getDependencies().getDenizenApi() == null) {
                 return ChatColor.GRAY;
             } else {
                 return ChatColor.BLUE;
@@ -105,7 +105,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 6:
             return ChatColor.YELLOW + Lang.get("eventEditorSetMobSpawns");
         case 7:
-            if (plugin.getDependencies().getDenizenAPI() == null) {
+            if (plugin.getDependencies().getDenizenApi() == null) {
                 return ChatColor.GRAY + Lang.get("stageEditorDenizenScript");
             } else {
                 return ChatColor.YELLOW + Lang.get("stageEditorDenizenScript");
@@ -146,7 +146,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return text;
             }
         case 7:
-            if (plugin.getDependencies().getDenizenAPI() == null) {
+            if (plugin.getDependencies().getDenizenApi() == null) {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             } else {
                 if (context.getSessionData(CK.E_DENIZEN) == null) {
@@ -692,7 +692,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         @Override
         public String getPromptText(ConversationContext context) {
             String text = ChatColor.DARK_AQUA + "- " + Lang.get("stageEditorDenizenScript") + " -\n";
-            for (String s : plugin.getDependencies().getDenizenAPI().getScriptNames()) {
+            for (String s : plugin.getDependencies().getDenizenApi().getScriptNames()) {
                 text += ChatColor.AQUA + "- " + s + "\n";
             }
             return text + ChatColor.YELLOW + Lang.get("stageEditorScriptPrompt");
@@ -703,7 +703,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                if (plugin.getDependencies().getDenizenAPI().containsScript(input)) {
+                if (plugin.getDependencies().getDenizenApi().containsScript(input)) {
                     context.setSessionData(CK.E_DENIZEN, input.toUpperCase());
                     return new ActionMainPrompt(context);
                 } else {
