@@ -818,10 +818,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent evt) {
-        if (evt.getFrom().getBlock().equals(evt.getTo().getBlock())) {
+        if (evt.getPlayer() == null || evt.getTo() == null) {
             return;
         }
-        if (evt.getPlayer() == null) {
+        if (evt.getFrom().getBlock().equals(evt.getTo().getBlock())) {
             return;
         }
         if (plugin.getDependencies().getCitizens() != null) {
