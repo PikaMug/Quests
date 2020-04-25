@@ -526,7 +526,7 @@ dateCreateNoYearAmount: "您必须先设置一年！"
 overrideCreateSet: "设置详细信息列表覆盖"
 overrideCreateEnter: "输入替换文本，<clear>，<cancel>"
 questObjectivesTitle: "---(<quest>)---"
-questCompleteTitle: '**问题待处理： <quest>**'
+questCompleteTitle: '**任务完成： <quest>**'
 questRewardsTitle: "奖励："
 questFailed: "*任务失败*"
 questMaxAllowed: "您可能只有 <number> 任务。"
