@@ -37,7 +37,7 @@ import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.objectives.BlocksPrompt;
 import me.blackvein.quests.convo.quests.objectives.ItemsPrompt;
 import me.blackvein.quests.convo.quests.objectives.MobsPrompt;
-import me.blackvein.quests.convo.quests.objectives.NPCsPrompt;
+import me.blackvein.quests.convo.quests.objectives.NpcsPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
@@ -435,7 +435,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return new ItemsPrompt(stageNum, context);
         case 3:
-            return new NPCsPrompt(stageNum, context);
+            return new NpcsPrompt(stageNum, context);
         case 4:
             return new MobsPrompt(stageNum, context);
         case 5:

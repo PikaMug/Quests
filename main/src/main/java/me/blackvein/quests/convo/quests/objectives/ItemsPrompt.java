@@ -195,15 +195,15 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch(input.intValue()) {
         case 1:
-            return new CraftListPrompt(context);
+            return new ItemsCraftListPrompt(context);
         case 2:
-            return new SmeltListPrompt(context);
+            return new ItemsSmeltListPrompt(context);
         case 3:
-            return new EnchantmentListPrompt(context);
+            return new ItemsEnchantmentListPrompt(context);
         case 4:
-            return new BrewListPrompt(context);
+            return new ItemsBrewListPrompt(context);
         case 5:
-            return new ConsumeListPrompt(context);
+            return new ItemsConsumeListPrompt(context);
         case 6:
             try {
                 return new StageMainPrompt(stageNum, context);
@@ -216,9 +216,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class CraftListPrompt extends QuestsEditorNumericPrompt {
+    public class ItemsCraftListPrompt extends QuestsEditorNumericPrompt {
         
-        public CraftListPrompt(ConversationContext context) {
+        public ItemsCraftListPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -312,11 +312,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(CraftListPrompt.this);
+                return new ItemStackPrompt(ItemsCraftListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_CRAFT_ITEMS, null);
-                return new CraftListPrompt(context);
+                return new ItemsCraftListPrompt(context);
             case 3:
                 return new ItemsPrompt(stageNum, context);
             default:
@@ -325,9 +325,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class SmeltListPrompt extends QuestsEditorNumericPrompt {
+    public class ItemsSmeltListPrompt extends QuestsEditorNumericPrompt {
         
-        public SmeltListPrompt(ConversationContext context) {
+        public ItemsSmeltListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -421,11 +421,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(SmeltListPrompt.this);
+                return new ItemStackPrompt(ItemsSmeltListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_SMELT_ITEMS, null);
-                return new SmeltListPrompt(context);
+                return new ItemsSmeltListPrompt(context);
             case 3:
                 return new ItemsPrompt(stageNum, context);
             default:
@@ -434,9 +434,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class EnchantmentListPrompt extends QuestsEditorNumericPrompt {
+    public class ItemsEnchantmentListPrompt extends QuestsEditorNumericPrompt {
 
-        public EnchantmentListPrompt(ConversationContext context) {
+        public ItemsEnchantmentListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -539,17 +539,17 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new EnchantTypesPrompt(context);
+                return new ItemEnchantTypesPrompt(context);
             case 2:
-                return new EnchantItemsPrompt(context);
+                return new ItemEnchantItemsPrompt(context);
             case 3:
-                return new EnchantAmountsPrompt(context);
+                return new ItemEnchantAmountsPrompt(context);
             case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
                 context.setSessionData(pref + CK.S_ENCHANT_NAMES, null);
                 context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, null);
-                return new EnchantmentListPrompt(context);
+                return new ItemsEnchantmentListPrompt(context);
             case 5:
                 int one;
                 int two;
@@ -573,7 +573,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     return new ItemsPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new EnchantmentListPrompt(context);
+                    return new ItemsEnchantmentListPrompt(context);
                 }
             default:
                 return new ItemsPrompt(stageNum, context);
@@ -581,9 +581,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class EnchantTypesPrompt extends QuestsEditorStringPrompt {
+    public class ItemEnchantTypesPrompt extends QuestsEditorStringPrompt {
 
-        public EnchantTypesPrompt(ConversationContext context) {
+        public ItemEnchantTypesPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -626,23 +626,23 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                             enchTypes.add(s);
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("listDuplicate"));
-                            return new EnchantTypesPrompt(context);
+                            return new ItemEnchantTypesPrompt(context);
                         }
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                 + Lang.get("stageEditorInvalidEnchantment"));
-                        return new EnchantTypesPrompt(context);
+                        return new ItemEnchantTypesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_ENCHANT_TYPES, enchTypes);
             }
-            return new EnchantmentListPrompt(context);
+            return new ItemsEnchantmentListPrompt(context);
         }
     }
 
-    public class EnchantItemsPrompt extends QuestsEditorStringPrompt {
+    public class ItemEnchantItemsPrompt extends QuestsEditorStringPrompt {
 
-        public EnchantItemsPrompt(ConversationContext context) {
+        public ItemEnchantItemsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -676,23 +676,23 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidItemName"));
-                            return new EnchantItemsPrompt(context);
+                            return new ItemEnchantItemsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new EnchantItemsPrompt(context);
+                        return new ItemEnchantItemsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
             }
-            return new EnchantmentListPrompt(context);
+            return new ItemsEnchantmentListPrompt(context);
         }
     }
 
-    public class EnchantAmountsPrompt extends QuestsEditorStringPrompt {
+    public class ItemEnchantAmountsPrompt extends QuestsEditorStringPrompt {
 
-        public EnchantAmountsPrompt(ConversationContext context) {
+        public ItemEnchantAmountsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -726,23 +726,23 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new EnchantAmountsPrompt(context);
+                            return new ItemEnchantAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new EnchantAmountsPrompt(context);
+                        return new ItemEnchantAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
             }
-            return new EnchantmentListPrompt(context);
+            return new ItemsEnchantmentListPrompt(context);
         }
     }
     
-    public class BrewListPrompt extends QuestsEditorNumericPrompt {
+    public class ItemsBrewListPrompt extends QuestsEditorNumericPrompt {
         
-        public BrewListPrompt(ConversationContext context) {
+        public ItemsBrewListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -836,11 +836,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(BrewListPrompt.this);
+                return new ItemStackPrompt(ItemsBrewListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_BREW_ITEMS, null);
-                return new BrewListPrompt(context);
+                return new ItemsBrewListPrompt(context);
             case 3:
                 return new ItemsPrompt(stageNum, context);
             default:
@@ -849,9 +849,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class ConsumeListPrompt extends QuestsEditorNumericPrompt {
+    public class ItemsConsumeListPrompt extends QuestsEditorNumericPrompt {
         
-        public ConsumeListPrompt(ConversationContext context) {
+        public ItemsConsumeListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -945,11 +945,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(ConsumeListPrompt.this);
+                return new ItemStackPrompt(ItemsConsumeListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_CONSUME_ITEMS, null);
-                return new ConsumeListPrompt(context);
+                return new ItemsConsumeListPrompt(context);
             case 3:
                 return new ItemsPrompt(stageNum, context);
             default:

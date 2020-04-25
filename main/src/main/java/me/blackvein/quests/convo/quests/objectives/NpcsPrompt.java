@@ -34,12 +34,12 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 
-public class NPCsPrompt extends QuestsEditorNumericPrompt {
+public class NpcsPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private final int stageNum;
     private final String pref;
 
-    public NPCsPrompt(int stageNum, ConversationContext context) {
+    public NpcsPrompt(int stageNum, ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
         this.stageNum = stageNum;
@@ -172,21 +172,21 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
         switch(input.intValue()) {
         case 1:
             if (plugin.getDependencies().getCitizens() != null) {
-                return new DeliveryListPrompt(context);
+                return new NpcsDeliveryListPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
             }
         case 2:
             if (plugin.getDependencies().getCitizens() != null) {
-                return new NPCIDsToTalkToPrompt(context);
+                return new NpcsIdsToTalkToPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
             }
         case 3:
             if (plugin.getDependencies().getCitizens() != null) {
-                return new NPCKillListPrompt(context);
+                return new NpcsKillListPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoCitizens"));
                 return new StageMainPrompt(stageNum, context);
@@ -199,13 +199,13 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
-            return new NPCsPrompt(stageNum, context);
+            return new NpcsPrompt(stageNum, context);
         }
     }
     
-    public class DeliveryListPrompt extends QuestsEditorNumericPrompt {
+    public class NpcsDeliveryListPrompt extends QuestsEditorNumericPrompt {
 
-        public DeliveryListPrompt(ConversationContext context) {
+        public NpcsDeliveryListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -327,17 +327,17 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(DeliveryListPrompt.this);
+                return new ItemStackPrompt(NpcsDeliveryListPrompt.this);
             case 2:
-                return new DeliveryNPCsPrompt(context);
+                return new NpcDeliveryNpcsPrompt(context);
             case 3:
-                return new DeliveryMessagesPrompt(context);
+                return new NpcDeliveryMessagesPrompt(context);
             case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("Cleared"));
                 context.setSessionData(pref + CK.S_DELIVERY_ITEMS, null);
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, null);
                 context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, null);
-                return new DeliveryListPrompt(context);
+                return new NpcsDeliveryListPrompt(context);
             case 5:
                 int one;
                 int two;
@@ -354,23 +354,23 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 if (one == two) {
                     if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) == null && one != 0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDeliveryMessage"));
-                        return new DeliveryListPrompt(context);
+                        return new NpcsDeliveryListPrompt(context);
                     } else {
-                        return new NPCsPrompt(stageNum, context);
+                        return new NpcsPrompt(stageNum, context);
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new DeliveryListPrompt(context);
+                    return new NpcsDeliveryListPrompt(context);
                 }
             default:
-                return new NPCsPrompt(stageNum, context);
+                return new NpcsPrompt(stageNum, context);
             }
         }
     }
 
-    public class DeliveryNPCsPrompt extends QuestsEditorStringPrompt {
+    public class NpcDeliveryNpcsPrompt extends QuestsEditorStringPrompt {
         
-        public DeliveryNPCsPrompt(ConversationContext context) {
+        public NpcDeliveryNpcsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -405,12 +405,12 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidNPC"));
-                            return new DeliveryNPCsPrompt(context);
+                            return new NpcDeliveryNpcsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new DeliveryNPCsPrompt(context);
+                        return new NpcDeliveryNpcsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
@@ -418,13 +418,13 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
             Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
             temp.remove(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
-            return new DeliveryListPrompt(context);
+            return new NpcsDeliveryListPrompt(context);
         }
     }
 
-    public class DeliveryMessagesPrompt extends QuestsEditorStringPrompt {
+    public class NpcDeliveryMessagesPrompt extends QuestsEditorStringPrompt {
         
-        public DeliveryMessagesPrompt(ConversationContext context) {
+        public NpcDeliveryMessagesPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -450,13 +450,13 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 messages.addAll(Arrays.asList(args));
                 context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, messages);
             }
-            return new DeliveryListPrompt(context);
+            return new NpcsDeliveryListPrompt(context);
         }
     }
 
-    public class NPCIDsToTalkToPrompt extends QuestsEditorStringPrompt {
+    public class NpcsIdsToTalkToPrompt extends QuestsEditorStringPrompt {
         
-        public NPCIDsToTalkToPrompt(ConversationContext context) {
+        public NpcsIdsToTalkToPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -493,12 +493,12 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + i + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidNPC"));
-                            return new NPCIDsToTalkToPrompt(context);
+                            return new NpcsIdsToTalkToPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new NPCIDsToTalkToPrompt(context);
+                        return new NpcsIdsToTalkToPrompt(context);
                     }
                 }
                 Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
@@ -512,9 +512,9 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class NPCKillListPrompt extends QuestsEditorNumericPrompt {
+    public class NpcsKillListPrompt extends QuestsEditorNumericPrompt {
 
-        public NPCKillListPrompt(ConversationContext context) {
+        public NpcsKillListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -619,7 +619,7 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL, null);
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, null);
-                return new NPCKillListPrompt(context);
+                return new NpcsKillListPrompt(context);
             case 4:
                 int one;
                 int two;
@@ -637,10 +637,10 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                     return new StageMainPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new NPCKillListPrompt(context);
+                    return new NpcsKillListPrompt(context);
                 }
             default:
-                return new NPCsPrompt(stageNum, context);
+                return new NpcsPrompt(stageNum, context);
             }
         }
     }
@@ -695,7 +695,7 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
             Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
             temp.remove(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(temp);
-            return new NPCKillListPrompt(context);
+            return new NpcsKillListPrompt(context);
         }
     }
 
@@ -742,7 +742,7 @@ public class NPCsPrompt extends QuestsEditorNumericPrompt {
                 }
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, amounts);
             }
-            return new NPCKillListPrompt(context);
+            return new NpcsKillListPrompt(context);
         }
     }
 }

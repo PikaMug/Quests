@@ -177,15 +177,15 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch(input.intValue()) {
         case 1:
-            return new BreakBlockListPrompt(context);
+            return new BlocksBreakListPrompt(context);
         case 2:
-            return new DamageBlockListPrompt(context);
+            return new BlocksDamageListPrompt(context);
         case 3:
-            return new PlaceBlockListPrompt(context);
+            return new BlocksPlaceListPrompt(context);
         case 4:
-            return new UseBlockListPrompt(context);
+            return new BlocksUseListPrompt(context);
         case 5:
-            return new CutBlockListPrompt(context);
+            return new BlocksShearListPrompt(context);
         case 6:
             try {
                 return new StageMainPrompt(stageNum, context);
@@ -198,9 +198,9 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class BreakBlockListPrompt extends QuestsEditorNumericPrompt {
+    public class BlocksBreakListPrompt extends QuestsEditorNumericPrompt {
 
-        public BreakBlockListPrompt(ConversationContext context) {
+        public BlocksBreakListPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -305,17 +305,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new BreakBlockNamesPrompt(context);
+                return new BlockBreakNamesPrompt(context);
             case 2:
-                return new BreakBlockAmountsPrompt(context);
+                return new BlockBreakAmountsPrompt(context);
             case 3:
-                return new BreakBlockDurabilityPrompt(context);
+                return new BlockBreakDurabilityPrompt(context);
             case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_BREAK_NAMES, null);
                 context.setSessionData(pref + CK.S_BREAK_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_BREAK_DURABILITY, null);
-                return new BreakBlockListPrompt(context);
+                return new BlocksBreakListPrompt(context);
             case 5:
                 int one;
                 int two;
@@ -346,7 +346,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new BreakBlockListPrompt(context);
+                    return new BlocksBreakListPrompt(context);
                 }
             default:
                 return new BlocksPrompt(stageNum, context);
@@ -354,9 +354,9 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class BreakBlockNamesPrompt extends QuestsEditorStringPrompt {
+    public class BlockBreakNamesPrompt extends QuestsEditorStringPrompt {
 
-        public BreakBlockNamesPrompt(ConversationContext context) {
+        public BlockBreakNamesPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -392,28 +392,28 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
-                                return new BreakBlockNamesPrompt(context);
+                                return new BlockBreakNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new BreakBlockNamesPrompt(context);
+                            return new BlockBreakNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new BreakBlockNamesPrompt(context);
+                        return new BlockBreakNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_BREAK_NAMES, names);
             }
-            return new BreakBlockListPrompt(context);
+            return new BlocksBreakListPrompt(context);
         }
     }
 
-    public class BreakBlockAmountsPrompt extends QuestsEditorStringPrompt {
+    public class BlockBreakAmountsPrompt extends QuestsEditorStringPrompt {
 
-        public BreakBlockAmountsPrompt(ConversationContext context) {
+        public BlockBreakAmountsPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -447,23 +447,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new BreakBlockAmountsPrompt(context);
+                            return new BlockBreakAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new BreakBlockAmountsPrompt(context);
+                        return new BlockBreakAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_BREAK_AMOUNTS, amounts);
             }
-            return new BreakBlockListPrompt(context);
+            return new BlocksBreakListPrompt(context);
         }
     }
 
-    public class BreakBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+    public class BlockBreakDurabilityPrompt extends QuestsEditorStringPrompt {
 
-        public BreakBlockDurabilityPrompt(ConversationContext context) {
+        public BlockBreakDurabilityPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -497,23 +497,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new BreakBlockDurabilityPrompt(context);
+                            return new BlockBreakDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new BreakBlockDurabilityPrompt(context);
+                        return new BlockBreakDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_BREAK_DURABILITY, durability);
             }
-            return new BreakBlockListPrompt(context);
+            return new BlocksBreakListPrompt(context);
         }
     }
 
-    public class DamageBlockListPrompt extends QuestsEditorNumericPrompt {
+    public class BlocksDamageListPrompt extends QuestsEditorNumericPrompt {
         
-        public DamageBlockListPrompt(ConversationContext context) {
+        public BlocksDamageListPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -618,17 +618,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new DamageBlockNamesPrompt(context);
+                return new BlockDamageNamesPrompt(context);
             case 2:
-                return new DamageBlockAmountsPrompt(context);
+                return new BlockDamageAmountsPrompt(context);
             case 3:
-                return new DamageBlockDurabilityPrompt(context);
+                return new BlockDamageDurabilityPrompt(context);
             case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_DAMAGE_NAMES, null);
                 context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, null);
-                return new DamageBlockListPrompt(context);
+                return new BlocksDamageListPrompt(context);
             case 5:
                 int one;
                 int two;
@@ -659,7 +659,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new DamageBlockListPrompt(context);
+                    return new BlocksDamageListPrompt(context);
                 }
             default:
                 return new BlocksPrompt(stageNum, context);
@@ -667,9 +667,9 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class DamageBlockNamesPrompt extends QuestsEditorStringPrompt {
+    public class BlockDamageNamesPrompt extends QuestsEditorStringPrompt {
 
-        public DamageBlockNamesPrompt(ConversationContext context) {
+        public BlockDamageNamesPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -705,28 +705,28 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
-                                return new DamageBlockNamesPrompt(context);
+                                return new BlockDamageNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new DamageBlockNamesPrompt(context);
+                            return new BlockDamageNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new DamageBlockNamesPrompt(context);
+                        return new BlockDamageNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
             }
-            return new DamageBlockListPrompt(context);
+            return new BlocksDamageListPrompt(context);
         }
     }
 
-    public class DamageBlockAmountsPrompt extends QuestsEditorStringPrompt {
+    public class BlockDamageAmountsPrompt extends QuestsEditorStringPrompt {
 
-        public DamageBlockAmountsPrompt(ConversationContext context) {
+        public BlockDamageAmountsPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -760,23 +760,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new DamageBlockAmountsPrompt(context);
+                            return new BlockDamageAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new DamageBlockAmountsPrompt(context);
+                        return new BlockDamageAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amounts);
             }
-            return new DamageBlockListPrompt(context);
+            return new BlocksDamageListPrompt(context);
         }
     }
 
-    public class DamageBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+    public class BlockDamageDurabilityPrompt extends QuestsEditorStringPrompt {
 
-        public DamageBlockDurabilityPrompt(ConversationContext context) {
+        public BlockDamageDurabilityPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -810,23 +810,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new DamageBlockDurabilityPrompt(context);
+                            return new BlockDamageDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new DamageBlockDurabilityPrompt(context);
+                        return new BlockDamageDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durability);
             }
-            return new DamageBlockListPrompt(context);
+            return new BlocksDamageListPrompt(context);
         }
     }
 
-    public class PlaceBlockListPrompt extends QuestsEditorNumericPrompt {
+    public class BlocksPlaceListPrompt extends QuestsEditorNumericPrompt {
 
-        public PlaceBlockListPrompt(ConversationContext context) {
+        public BlocksPlaceListPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -931,17 +931,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new PlaceBlockNamesPrompt(context);
+                return new BlockPlaceNamesPrompt(context);
             case 2:
-                return new PlaceBlockAmountsPrompt(context);
+                return new BlockPlaceAmountsPrompt(context);
             case 3:
-                return new PlaceBlockDurabilityPrompt(context);
+                return new BlockPlaceDurabilityPrompt(context);
             case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_PLACE_NAMES, null);
                 context.setSessionData(pref + CK.S_PLACE_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_PLACE_DURABILITY, null);
-                return new PlaceBlockListPrompt(context);
+                return new BlocksPlaceListPrompt(context);
             case 5:
                 int one;
                 int two;
@@ -972,7 +972,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new PlaceBlockListPrompt(context);
+                    return new BlocksPlaceListPrompt(context);
                 }
             default:
                 return new BlocksPrompt(stageNum, context);
@@ -980,9 +980,9 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class PlaceBlockNamesPrompt extends QuestsEditorStringPrompt {
+    public class BlockPlaceNamesPrompt extends QuestsEditorStringPrompt {
 
-        public PlaceBlockNamesPrompt(ConversationContext context) {
+        public BlockPlaceNamesPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1018,28 +1018,28 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
-                                return new PlaceBlockNamesPrompt(context);
+                                return new BlockPlaceNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED 
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new PlaceBlockNamesPrompt(context);
+                            return new BlockPlaceNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new PlaceBlockNamesPrompt(context);
+                        return new BlockPlaceNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_PLACE_NAMES, names);
             }
-            return new PlaceBlockListPrompt(context);
+            return new BlocksPlaceListPrompt(context);
         }
     }
 
-    public class PlaceBlockAmountsPrompt extends QuestsEditorStringPrompt {
+    public class BlockPlaceAmountsPrompt extends QuestsEditorStringPrompt {
 
-        public PlaceBlockAmountsPrompt(ConversationContext context) {
+        public BlockPlaceAmountsPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1073,23 +1073,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new PlaceBlockAmountsPrompt(context);
+                            return new BlockPlaceAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new PlaceBlockAmountsPrompt(context);
+                        return new BlockPlaceAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_PLACE_AMOUNTS, amounts);
             }
-            return new PlaceBlockListPrompt(context);
+            return new BlocksPlaceListPrompt(context);
         }
     }
 
-    public class PlaceBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+    public class BlockPlaceDurabilityPrompt extends QuestsEditorStringPrompt {
 
-        public PlaceBlockDurabilityPrompt(ConversationContext context) {
+        public BlockPlaceDurabilityPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1123,23 +1123,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new PlaceBlockDurabilityPrompt(context);
+                            return new BlockPlaceDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new PlaceBlockDurabilityPrompt(context);
+                        return new BlockPlaceDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_PLACE_DURABILITY, durability);
             }
-            return new PlaceBlockListPrompt(context);
+            return new BlocksPlaceListPrompt(context);
         }
     }
 
-    public class UseBlockListPrompt extends QuestsEditorNumericPrompt {
+    public class BlocksUseListPrompt extends QuestsEditorNumericPrompt {
 
-        public UseBlockListPrompt(ConversationContext context) {
+        public BlocksUseListPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1244,17 +1244,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new UseBlockNamesPrompt(context);
+                return new BlockUseNamesPrompt(context);
             case 2:
-                return new UseBlockAmountsPrompt(context);
+                return new BlockUseAmountsPrompt(context);
             case 3:
-                return new UseBlockDurabilityPrompt(context);
+                return new BlockUseDurabilityPrompt(context);
             case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_USE_NAMES, null);
                 context.setSessionData(pref + CK.S_USE_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_USE_DURABILITY, null);
-                return new UseBlockListPrompt(context);
+                return new BlocksUseListPrompt(context);
             case 5:
                 int one;
                 int two;
@@ -1285,7 +1285,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new UseBlockListPrompt(context);
+                    return new BlocksUseListPrompt(context);
                 }
             default:
                 return new BlocksPrompt(stageNum, context);
@@ -1293,9 +1293,9 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class UseBlockNamesPrompt extends QuestsEditorStringPrompt {
+    public class BlockUseNamesPrompt extends QuestsEditorStringPrompt {
 
-        public UseBlockNamesPrompt(ConversationContext context) {
+        public BlockUseNamesPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1331,28 +1331,28 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
-                                return new UseBlockNamesPrompt(context);
+                                return new BlockUseNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new UseBlockNamesPrompt(context);
+                            return new BlockUseNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new UseBlockNamesPrompt(context);
+                        return new BlockUseNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_USE_NAMES, names);
             }
-            return new UseBlockListPrompt(context);
+            return new BlocksUseListPrompt(context);
         }
     }
 
-    public class UseBlockAmountsPrompt extends QuestsEditorStringPrompt {
+    public class BlockUseAmountsPrompt extends QuestsEditorStringPrompt {
 
-        public UseBlockAmountsPrompt(ConversationContext context) {
+        public BlockUseAmountsPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1386,23 +1386,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new UseBlockAmountsPrompt(context);
+                            return new BlockUseAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new UseBlockAmountsPrompt(context);
+                        return new BlockUseAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_USE_AMOUNTS, amounts);
             }
-            return new UseBlockListPrompt(context);
+            return new BlocksUseListPrompt(context);
         }
     }
 
-    public class UseBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+    public class BlockUseDurabilityPrompt extends QuestsEditorStringPrompt {
 
-        public UseBlockDurabilityPrompt(ConversationContext context) {
+        public BlockUseDurabilityPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1436,23 +1436,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new UseBlockDurabilityPrompt(context);
+                            return new BlockUseDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new UseBlockDurabilityPrompt(context);
+                        return new BlockUseDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_USE_DURABILITY, durability);
             }
-            return new UseBlockListPrompt(context);
+            return new BlocksUseListPrompt(context);
         }
     }
 
-    public class CutBlockListPrompt extends QuestsEditorNumericPrompt {
+    public class BlocksShearListPrompt extends QuestsEditorNumericPrompt {
 
-        public CutBlockListPrompt(ConversationContext context) {
+        public BlocksShearListPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1557,17 +1557,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new CutBlockNamesPrompt(context);
+                return new BlockShearNamesPrompt(context);
             case 2:
-                return new CutBlockAmountsPrompt(context);
+                return new BlockShearAmountsPrompt(context);
             case 3:
-                return new CutBlockDurabilityPrompt(context);
+                return new BlockShearDurabilityPrompt(context);
             case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_CUT_NAMES, null);
                 context.setSessionData(pref + CK.S_CUT_AMOUNTS, null);
                 context.setSessionData(pref + CK.S_CUT_DURABILITY, null);
-                return new CutBlockListPrompt(context);
+                return new BlocksShearListPrompt(context);
             case 5:
                 int one;
                 int two;
@@ -1598,7 +1598,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new CutBlockListPrompt(context);
+                    return new BlocksShearListPrompt(context);
                 }
             default:
                 return new BlocksPrompt(stageNum, context);
@@ -1606,9 +1606,9 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class CutBlockNamesPrompt extends QuestsEditorStringPrompt {
+    public class BlockShearNamesPrompt extends QuestsEditorStringPrompt {
         
-        public CutBlockNamesPrompt(ConversationContext context) {
+        public BlockShearNamesPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -1644,28 +1644,28 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " "
                                         + Lang.get("stageEditorNotSolid"));
-                                return new CutBlockNamesPrompt(context);
+                                return new BlockShearNamesPrompt(context);
                             }
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " "
                                     + Lang.get("stageEditorInvalidBlockName"));
-                            return new CutBlockNamesPrompt(context);
+                            return new BlockShearNamesPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new CutBlockNamesPrompt(context);
+                        return new BlockShearNamesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_CUT_NAMES, names);
             }
-            return new CutBlockListPrompt(context);
+            return new BlocksShearListPrompt(context);
         }
     }
 
-    public class CutBlockAmountsPrompt extends QuestsEditorStringPrompt {
+    public class BlockShearAmountsPrompt extends QuestsEditorStringPrompt {
 
-        public CutBlockAmountsPrompt(ConversationContext context) {
+        public BlockShearAmountsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -1699,23 +1699,23 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new CutBlockAmountsPrompt(context);
+                            return new BlockShearAmountsPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new CutBlockAmountsPrompt(context);
+                        return new BlockShearAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_CUT_AMOUNTS, amounts);
             }
-            return new CutBlockListPrompt(context);
+            return new BlocksShearListPrompt(context);
         }
     }
 
-    public class CutBlockDurabilityPrompt extends QuestsEditorStringPrompt {
+    public class BlockShearDurabilityPrompt extends QuestsEditorStringPrompt {
 
-        public CutBlockDurabilityPrompt(ConversationContext context) {
+        public BlockShearDurabilityPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -1749,17 +1749,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED 
                                     + Lang.get("invalidMinimum").replace("<number>", "0"));
-                            return new CutBlockDurabilityPrompt(context);
+                            return new BlockShearDurabilityPrompt(context);
                         }
                     } catch (NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
-                        return new CutBlockDurabilityPrompt(context);
+                        return new BlockShearDurabilityPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_CUT_DURABILITY, durability);
             }
-            return new CutBlockListPrompt(context);
+            return new BlocksShearListPrompt(context);
         }
     }
 }
