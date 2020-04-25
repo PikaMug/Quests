@@ -1036,7 +1036,7 @@ public class Quester {
         }
         int index = 0;
         for (ItemStack is : getCurrentStage(quest).itemsToDeliver) {
-            int delivered = getQuestData(quest).itemsDelivered.get(index).getAmount();
+            int delivered = 0;
             if (index < getQuestData(quest).itemsDelivered.size()) {
                 delivered = getQuestData(quest).itemsDelivered.get(index).getAmount();
             }
