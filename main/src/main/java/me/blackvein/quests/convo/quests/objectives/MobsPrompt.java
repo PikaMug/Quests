@@ -197,15 +197,15 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch(input.intValue()) {
         case 1:
-            return new MobsListPrompt(context);
+            return new MobsKillListPrompt(context);
         case 2:
-            return new MobTameListPrompt(context); 
+            return new MobsTameListPrompt(context); 
         case 3:
-            return new MobFishPrompt(context);
+            return new MobsFishPrompt(context);
         case 4:
-            return new MobCowsPrompt(context);
+            return new MobsCowsPrompt(context);
         case 5:
-            return new MobShearListPrompt(context);
+            return new MobsShearListPrompt(context);
         case 6:
             try {
                 return new StageMainPrompt(stageNum, context);
@@ -218,9 +218,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class MobsListPrompt extends QuestsEditorNumericPrompt {
+    public class MobsKillListPrompt extends QuestsEditorNumericPrompt {
         
-        public MobsListPrompt(ConversationContext context) {
+        public MobsKillListPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -264,7 +264,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             case 5:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetKillLocationNames");
             case 6:
-                return ChatColor.GREEN + Lang.get("cancel");
+                return ChatColor.GREEN + Lang.get("clear");
             case 7:
                 return ChatColor.GREEN + Lang.get("done");
             default:
@@ -351,18 +351,18 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new MobTypesPrompt(context);
+                return new MobsTypesPrompt(context);
             case 2:
-                return new MobAmountsPrompt(context);
+                return new MobsAmountsPrompt(context);
             case 3:
                 Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                 temp.put(((Player) context.getForWhom()).getUniqueId(), null);
                 plugin.getQuestFactory().setSelectedKillLocations(temp);
-                return new MobLocationPrompt(context);
+                return new MobsLocationPrompt(context);
             case 4:
-                return new MobRadiiPrompt(context);
+                return new MobsRadiiPrompt(context);
             case 5:
-                return new MobLocationNamesPrompt(context);
+                return new MobsLocationNamesPrompt(context);
             case 6:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_MOB_TYPES, null);
@@ -370,7 +370,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, null);
                 context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, null);
                 context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, null);
-                return new MobsListPrompt(context);
+                return new MobsKillListPrompt(context);
             case 7:
                 int one;
                 int two;
@@ -405,17 +405,17 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (one == two) {
                     if (three != 0 || four != 0 || five != 0) {
                         if (two == three && three == four && four == five) {
-                            return new StageMainPrompt(stageNum, context);
+                            return new MobsPrompt(stageNum, context);
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                            return new MobsListPrompt(context);
+                            return new MobsKillListPrompt(context);
                         }
                     } else {
-                        return new StageMainPrompt(stageNum, context);
+                        return new MobsPrompt(stageNum, context);
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new MobsListPrompt(context);
+                    return new MobsKillListPrompt(context);
                 }
             default:
                 return new MobsPrompt(stageNum, context);
@@ -423,9 +423,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class MobTypesPrompt extends QuestsEditorStringPrompt {
+    public class MobsTypesPrompt extends QuestsEditorStringPrompt {
         
-        public MobTypesPrompt(ConversationContext context) {
+        public MobsTypesPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -475,18 +475,18 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     } else {
                         player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidMob"));
-                        return new MobTypesPrompt(context);
+                        return new MobsTypesPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_MOB_TYPES, mobTypes);
             }
-            return new MobsListPrompt(context);
+            return new MobsKillListPrompt(context);
         }
     }
 
-    public class MobAmountsPrompt extends QuestsEditorStringPrompt {
+    public class MobsAmountsPrompt extends QuestsEditorStringPrompt {
         
-        public MobAmountsPrompt(ConversationContext context) {
+        public MobsAmountsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -519,23 +519,23 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         if (i < 1) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new MobAmountsPrompt(context);
+                            return new MobsAmountsPrompt(context);
                         }
                         mobAmounts.add(i);
                     } catch (NumberFormatException e) {
                         player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
-                        return new MobAmountsPrompt(context);
+                        return new MobsAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_MOB_AMOUNTS, mobAmounts);
             }
-            return new MobsListPrompt(context);
+            return new MobsKillListPrompt(context);
         }
     }
 
-    public class MobLocationPrompt extends QuestsEditorStringPrompt {
+    public class MobsLocationPrompt extends QuestsEditorStringPrompt {
 
-        public MobLocationPrompt(ConversationContext context) {
+        public MobsLocationPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -578,23 +578,23 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     plugin.getQuestFactory().setSelectedKillLocations(temp);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("stageEditorNoBlock"));
-                    return new MobLocationPrompt(context);
+                    return new MobsLocationPrompt(context);
                 }
-                return new MobsListPrompt(context);
+                return new MobsKillListPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                 temp.remove(player.getUniqueId());
                 plugin.getQuestFactory().setSelectedKillLocations(temp);
-                return new MobsListPrompt(context);
+                return new MobsKillListPrompt(context);
             } else {
-                return new MobLocationPrompt(context);
+                return new MobsLocationPrompt(context);
             }
         }
     }
 
-    public class MobRadiiPrompt extends QuestsEditorStringPrompt {
+    public class MobsRadiiPrompt extends QuestsEditorStringPrompt {
         
-        public MobRadiiPrompt(ConversationContext context) {
+        public MobsRadiiPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -627,24 +627,24 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         if (i < 1) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new MobRadiiPrompt(context);
+                            return new MobsRadiiPrompt(context);
                         }
                         radii.add(i);
                     } catch (NumberFormatException e) {
                         player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidItemName"));
-                        return new MobRadiiPrompt(context);
+                        return new MobsRadiiPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, radii);
             }
-            return new MobsListPrompt(context);
+            return new MobsKillListPrompt(context);
         }
     }
 
-    public class MobLocationNamesPrompt extends QuestsEditorStringPrompt {
+    public class MobsLocationNamesPrompt extends QuestsEditorStringPrompt {
 
-        public MobLocationNamesPrompt(ConversationContext context) {
+        public MobsLocationNamesPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -673,13 +673,13 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 locNames.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
                 context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, locNames);
             }
-            return new MobsListPrompt(context);
+            return new MobsKillListPrompt(context);
         }
     }
     
-    public class MobFishPrompt extends QuestsEditorStringPrompt {
+    public class MobsFishPrompt extends QuestsEditorStringPrompt {
 
-        public MobFishPrompt(ConversationContext context) {
+        public MobsFishPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -709,25 +709,25 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     int i = Integer.parseInt(input);
                     if (i < 0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
-                        return new MobFishPrompt(context);
+                        return new MobsFishPrompt(context);
                     } else if (i > 0) {
                         context.setSessionData(pref + CK.S_FISH, i);
                     }
                 } catch (NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new MobFishPrompt(context);
+                    return new MobsFishPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_FISH, null);
             }
-            return new StageMainPrompt(stageNum, context);
+            return new MobsPrompt(stageNum, context);
         }
     }
     
-    public class MobCowsPrompt extends QuestsEditorStringPrompt {
+    public class MobsCowsPrompt extends QuestsEditorStringPrompt {
 
-        public MobCowsPrompt(ConversationContext context) {
+        public MobsCowsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -757,25 +757,25 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     int i = Integer.parseInt(input);
                     if (i < 0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
-                        return new MobCowsPrompt(context);
+                        return new MobsCowsPrompt(context);
                     } else if (i > 0) {
                         context.setSessionData(pref + CK.S_COW_MILK, i);
                     }
                 } catch (NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new MobCowsPrompt(context);
+                    return new MobsCowsPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_COW_MILK, null);
             }
-            return new StageMainPrompt(stageNum, context);
+            return new MobsPrompt(stageNum, context);
         }
     }
     
-    public class MobTameListPrompt extends QuestsEditorNumericPrompt {
+    public class MobsTameListPrompt extends QuestsEditorNumericPrompt {
 
-        public MobTameListPrompt(ConversationContext context) {
+        public MobsTameListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -810,7 +810,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetTameAmounts"); 
             case 3:
-                return ChatColor.GREEN + Lang.get("cancel");
+                return ChatColor.GREEN + Lang.get("clear");
             case 4:
                 return ChatColor.GREEN + Lang.get("done");
             default:
@@ -867,14 +867,14 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new MobTameTypesPrompt(context);
+                return new MobsTameTypesPrompt(context);
             case 2:
-                return new MobTameAmountsPrompt(context);
+                return new MobsTameAmountsPrompt(context);
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_TAME_TYPES, null);
                 context.setSessionData(pref + CK.S_TAME_AMOUNTS, null);
-                return new MobTameListPrompt(context);
+                return new MobsTameListPrompt(context);
             case 4:
                 int one;
                 int two;
@@ -889,10 +889,10 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new StageMainPrompt(stageNum, context);
+                    return new MobsPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new MobTameListPrompt(context);
+                    return new MobsTameListPrompt(context);
                 }
             default:
                 return new MobsPrompt(stageNum, context);
@@ -900,9 +900,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class MobTameTypesPrompt extends QuestsEditorStringPrompt {
+    public class MobsTameTypesPrompt extends QuestsEditorStringPrompt {
 
-        public MobTameTypesPrompt(ConversationContext context) {
+        public MobsTameTypesPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -948,22 +948,22 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                     + Lang.get("stageEditorInvalidMob"));
-                            return new MobTameTypesPrompt(context);
+                            return new MobsTameTypesPrompt(context);
                         }
                     } else {
                         player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidMob"));
-                        return new MobTameTypesPrompt(context);
+                        return new MobsTameTypesPrompt(context);
                     }
                 }
             }
-            return new MobTameListPrompt(context);
+            return new MobsTameListPrompt(context);
         }
     }
 
-    public class MobTameAmountsPrompt extends QuestsEditorStringPrompt {
+    public class MobsTameAmountsPrompt extends QuestsEditorStringPrompt {
         
-        public MobTameAmountsPrompt(ConversationContext context) {
+        public MobsTameAmountsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -996,24 +996,24 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         if (i < 1) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new MobTameAmountsPrompt(context);
+                            return new MobsTameAmountsPrompt(context);
                         }
                         mobAmounts.add(i);
                     } catch (NumberFormatException e) {
                         player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber")
                                 .replace("<input>", input));
-                        return new MobTameAmountsPrompt(context);
+                        return new MobsTameAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_TAME_AMOUNTS, mobAmounts);
             }
-            return new MobTameListPrompt(context);
+            return new MobsTameListPrompt(context);
         }
     }
 
-    public class MobShearListPrompt extends QuestsEditorNumericPrompt {
+    public class MobsShearListPrompt extends QuestsEditorNumericPrompt {
 
-        public MobShearListPrompt(ConversationContext context) {
+        public MobsShearListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -1048,7 +1048,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetShearAmounts"); 
             case 3:
-                return ChatColor.GREEN + Lang.get("cancel");
+                return ChatColor.GREEN + Lang.get("clear");
             case 4:
                 return ChatColor.GREEN + Lang.get("done");
             default:
@@ -1105,14 +1105,14 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new MobShearColorsPrompt(context);
+                return new MobsShearColorsPrompt(context);
             case 2:
-                return new MobShearAmountsPrompt(context);
+                return new MobsShearAmountsPrompt(context);
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_SHEAR_COLORS, null);
                 context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, null);
-                return new MobShearListPrompt(context);
+                return new MobsShearListPrompt(context);
             case 4:
                 int one;
                 int two;
@@ -1127,10 +1127,10 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new StageMainPrompt(stageNum, context);
+                    return new MobsPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new MobShearListPrompt(context);
+                    return new MobsShearListPrompt(context);
                 }
             default:
                 return new MobsPrompt(stageNum, context);
@@ -1138,9 +1138,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class MobShearColorsPrompt extends QuestsEditorStringPrompt {
+    public class MobsShearColorsPrompt extends QuestsEditorStringPrompt {
         
-        public MobShearColorsPrompt(ConversationContext context) {
+        public MobsShearColorsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -1183,17 +1183,17 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     } else {
                         player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidDye"));
-                        return new MobShearColorsPrompt(context);
+                        return new MobsShearColorsPrompt(context);
                     }
                 }
             }
-            return new MobShearListPrompt(context);
+            return new MobsShearListPrompt(context);
         }
     }
 
-    public class MobShearAmountsPrompt extends QuestsEditorStringPrompt {
+    public class MobsShearAmountsPrompt extends QuestsEditorStringPrompt {
         
-        public MobShearAmountsPrompt(ConversationContext context) {
+        public MobsShearAmountsPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -1226,17 +1226,17 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         if (i < 1) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new MobShearAmountsPrompt(context);
+                            return new MobsShearAmountsPrompt(context);
                         }
                         shearAmounts.add(i);
                     } catch (NumberFormatException e) {
                         player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
-                        return new MobShearAmountsPrompt(context);
+                        return new MobsShearAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, shearAmounts);
             }
-            return new MobShearListPrompt(context);
+            return new MobsShearListPrompt(context);
         }
     }
 }

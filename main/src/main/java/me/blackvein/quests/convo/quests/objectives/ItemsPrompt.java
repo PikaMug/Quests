@@ -199,7 +199,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return new ItemsSmeltListPrompt(context);
         case 3:
-            return new ItemsEnchantmentListPrompt(context);
+            return new ItemsEnchantListPrompt(context);
         case 4:
             return new ItemsBrewListPrompt(context);
         case 5:
@@ -434,9 +434,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class ItemsEnchantmentListPrompt extends QuestsEditorNumericPrompt {
+    public class ItemsEnchantListPrompt extends QuestsEditorNumericPrompt {
 
-        public ItemsEnchantmentListPrompt(ConversationContext context) {
+        public ItemsEnchantListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -468,9 +468,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(ConversationContext context, int number) {
             switch(number) {
             case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetEnchantments");
             case 2:
+                return ChatColor.YELLOW + Lang.get("stageEditorSetItemNames");
             case 3:
-                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + Lang.get("stageEditorSetEnchantAmounts");
             case 4:
                 return ChatColor.RED + Lang.get("clear");
             case 5:
@@ -549,7 +551,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
                 context.setSessionData(pref + CK.S_ENCHANT_NAMES, null);
                 context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, null);
-                return new ItemsEnchantmentListPrompt(context);
+                return new ItemsEnchantListPrompt(context);
             case 5:
                 int one;
                 int two;
@@ -573,7 +575,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     return new ItemsPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new ItemsEnchantmentListPrompt(context);
+                    return new ItemsEnchantListPrompt(context);
                 }
             default:
                 return new ItemsPrompt(stageNum, context);
@@ -636,7 +638,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 }
                 context.setSessionData(pref + CK.S_ENCHANT_TYPES, enchTypes);
             }
-            return new ItemsEnchantmentListPrompt(context);
+            return new ItemsEnchantListPrompt(context);
         }
     }
 
@@ -686,7 +688,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 }
                 context.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
             }
-            return new ItemsEnchantmentListPrompt(context);
+            return new ItemsEnchantListPrompt(context);
         }
     }
 
@@ -736,7 +738,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 }
                 context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
             }
-            return new ItemsEnchantmentListPrompt(context);
+            return new ItemsEnchantListPrompt(context);
         }
     }
     
