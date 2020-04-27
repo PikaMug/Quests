@@ -844,7 +844,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
         
         public String getQueryText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("confirmDelete");
+            return Lang.get("confirmDelete");
         }
         
         @Override
@@ -852,7 +852,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = getQueryText(context) + "\n";
+            String text = ChatColor.YELLOW + getQueryText(context) + "\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
                         + getSelectionText(context, i) + "\n";
