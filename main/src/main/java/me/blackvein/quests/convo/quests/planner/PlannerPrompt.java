@@ -20,7 +20,9 @@ import java.util.TimeZone;
 
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -28,7 +30,6 @@ import me.blackvein.quests.util.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 
 public class PlannerPrompt extends QuestsEditorNumericPrompt {
     
@@ -156,13 +157,13 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
             return new DateTimePrompt(context, PlannerPrompt.this, "end");
         case 3:
             if (context.getSessionData(CK.PLN_START_DATE) != null && context.getSessionData(CK.PLN_END_DATE) != null) {
-                return new RepeatPrompt();
+                return new PlannerRepeatPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new PlannerPrompt(context);
             }
         case 4:
-            return new CooldownPrompt();
+            return new PlannerCooldownPrompt(context);
         case 5:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
@@ -170,11 +171,28 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    private class RepeatPrompt extends StringPrompt {
+    public class PlannerRepeatPrompt extends QuestsEditorStringPrompt {
+        
+        public PlannerRepeatPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("timePrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("timePrompt");
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -198,17 +216,34 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
             } catch (NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                         .replace("<input>", input));
-                return new RepeatPrompt();
+                return new PlannerRepeatPrompt(context);
             }
             return new PlannerPrompt(context);
         }
     }
     
-    private class CooldownPrompt extends StringPrompt {
+    public class PlannerCooldownPrompt extends QuestsEditorStringPrompt {
+        
+        public PlannerCooldownPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("timePrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("timePrompt");
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -232,7 +267,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
             } catch (NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                         .replace("<input>", input));
-                return new CooldownPrompt();
+                return new PlannerCooldownPrompt(context);
             }
             return new PlannerPrompt(context);
         }

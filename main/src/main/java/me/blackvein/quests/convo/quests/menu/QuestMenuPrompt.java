@@ -18,7 +18,6 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quest;
@@ -107,14 +106,14 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             }
         case 2:
             if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.edit")) {
-                return new QuestSelectEditPrompt();
+                return new QuestSelectEditPrompt(context);
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new QuestMenuPrompt(context);
             }
         case 3:
             if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.delete")) {
-                return new QuestSelectDeletePrompt();
+                return new QuestSelectDeletePrompt(context);
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new QuestMenuPrompt(context);
@@ -187,15 +186,27 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestSelectEditPrompt extends StringPrompt {
+    public class QuestSelectEditPrompt extends QuestsEditorStringPrompt {
+        
+        public QuestSelectEditPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        public String getTitle(ConversationContext context) {
+            return Lang.get("questCreateTitle");
+        }
+        
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("questEditorEnterQuestName");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String s = ChatColor.GOLD + Lang.get("questEditTitle") + "\n";
+            String s = ChatColor.GOLD + getTitle(context) + "\n";
             for (Quest q : plugin.getQuests()) {
                 s += ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName() + "\n";
             }
-            return s + ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
+            return s + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -206,23 +217,35 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     plugin.getQuestFactory().loadQuest(context, q);
                     return new QuestMainPrompt(context);
                 }
-                return new QuestSelectEditPrompt();
+                return new QuestSelectEditPrompt(context);
             } else {
                 return new QuestMenuPrompt(context);
             }
         }
     }
     
-    public class QuestSelectDeletePrompt extends StringPrompt {
+    public class QuestSelectDeletePrompt extends QuestsEditorStringPrompt {
 
+        public QuestSelectDeletePrompt(ConversationContext context) {
+            super(context);
+        }
+
+        public String getTitle(ConversationContext context) {
+            return Lang.get("questCreateTitle");
+        }
+        
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("questEditorEnterQuestName");
+        }
+        
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("questDeleteTitle") + "\n";
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (Quest quest : plugin.getQuests()) {
                 text += ChatColor.AQUA + quest.getName() + ChatColor.GRAY + ",";
             }
             text = text.substring(0, text.length() - 1) + "\n";
-            text += ChatColor.YELLOW + Lang.get("questEditorEnterQuestName");
+            text += ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
@@ -240,7 +263,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     }
                     if (used.isEmpty()) {
                         context.setSessionData(CK.ED_QUEST_DELETE, found.getName());
-                        return new QuestConfirmDeletePrompt();
+                        return new QuestConfirmDeletePrompt(context);
                     } else {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
                                 + Lang.get("questEditorQuestAsRequirement1") + " \"" + ChatColor.DARK_PURPLE 
@@ -251,18 +274,30 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                         }
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
                                 + Lang.get("questEditorQuestAsRequirement3"));
-                        return new QuestSelectDeletePrompt();
+                        return new QuestSelectDeletePrompt(context);
                     }
                 }
                 ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questEditorQuestNotFound"));
-                return new QuestSelectDeletePrompt();
+                return new QuestSelectDeletePrompt(context);
             } else {
                 return new QuestMenuPrompt(context);
             }
         }
     }
     
-    public class QuestConfirmDeletePrompt extends StringPrompt {
+    public class QuestConfirmDeletePrompt extends QuestsEditorStringPrompt {
+        
+        public QuestConfirmDeletePrompt(ConversationContext context) {
+            super(context);
+        }
+
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+        
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("confirmDelete");
+        }
         
         @Override
         public String getPromptText(ConversationContext context) {
@@ -270,7 +305,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     + Lang.get("yesWord") + "\n";
             text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
                     + Lang.get("noWord");
-            return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
+            return ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW 
                     + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + ")\n" + text;
         }
 
@@ -282,7 +317,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 return new QuestMenuPrompt(context);
             } else {
-                return new QuestConfirmDeletePrompt();
+                return new QuestConfirmDeletePrompt(context);
             }
         }
     }

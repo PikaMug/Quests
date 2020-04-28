@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +34,9 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -370,40 +371,40 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         switch (input.intValue()) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                return new MoneyPrompt();
+                return new RewardsMoneyPrompt(context);
             } else {
                 return new RewardsPrompt(context);
             }
         case 2:
-            return new QuestPointsPrompt();
+            return new RewardsQuestPointsPrompt(context);
         case 3:
-            return new ItemListPrompt();
+            return new RewardsItemListPrompt(context);
         case 4:
-            return new ExperiencePrompt();
+            return new RewardsExperiencePrompt(context);
         case 5:
-            return new CommandsPrompt();
+            return new RewardsCommandsPrompt(context);
         case 6:
-            return new PermissionsListPrompt(context);
+            return new RewardsPermissionsListPrompt(context);
         case 7:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
-                return new mcMMOListPrompt();
+                return new RewardsMcMMOListPrompt(context);
             } else {
                 return new RewardsPrompt(context);
             }
         case 8:
             if (plugin.getDependencies().getHeroes() != null) {
-                return new HeroesListPrompt();
+                return new RewardsHeroesListPrompt(context);
             } else {
                 return new RewardsPrompt(context);
             }
         case 9:
             if (plugin.getDependencies().getPhatLoots() != null) {
-                return new PhatLootsPrompt();
+                return new RewardsPhatLootsPrompt(context);
             } else {
                 return new RewardsPrompt(context);
             }
         case 10:
-            return new CustomRewardsPrompt();
+            return new CustomRewardsPrompt(context);
         case 11:
             if (hasReward) {
                 return new OverridePrompt.Builder()
@@ -438,11 +439,28 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         return false;
     }
 
-    private class MoneyPrompt extends StringPrompt {
+    public class RewardsMoneyPrompt extends QuestsEditorStringPrompt {
+        
+        public RewardsMoneyPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewMoneyPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = Lang.get("rewMoneyPrompt");
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = getQueryText(context);
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 text = text.replace("<money>", ChatColor.AQUA + (plugin.getDependencies().getVaultEconomy()
                         .currencyNamePlural().isEmpty() ? Lang.get("money") : plugin.getDependencies().getVaultEconomy()
@@ -463,12 +481,12 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.REW_MONEY, i);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
-                        return new MoneyPrompt();
+                        return new RewardsMoneyPrompt(context);
                     }
                 } catch (NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new MoneyPrompt();
+                    return new RewardsMoneyPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_MONEY, null);
@@ -478,11 +496,28 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    private class ExperiencePrompt extends StringPrompt {
+    public class RewardsExperiencePrompt extends QuestsEditorStringPrompt {
+
+        public RewardsExperiencePrompt(ConversationContext context) {
+            super(context);
+        }
 
         @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewExperiencePrompt");
+        }
+        
+        @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("rewExperiencePrompt");
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
         }
         
         @Override
@@ -495,12 +530,12 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.REW_EXP, i);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
-                        return new ExperiencePrompt();
+                        return new RewardsExperiencePrompt(context);
                     }
                 } catch (NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new ExperiencePrompt();
+                    return new RewardsExperiencePrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_EXP, null);
@@ -510,11 +545,28 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    private class QuestPointsPrompt extends StringPrompt {
+    public class RewardsQuestPointsPrompt extends QuestsEditorStringPrompt {
+        
+        public RewardsQuestPointsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewQuestPointsPrompt").replace("<points>", Lang.get("questPoints"));
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("rewQuestPointsPrompt").replace("<points>", Lang.get("questPoints"));
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
         }
         
         @Override
@@ -527,12 +579,12 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.REW_QUEST_POINTS, i);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
-                        return new QuestPointsPrompt();
+                        return new RewardsQuestPointsPrompt(context);
                     }
                 } catch (NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new QuestPointsPrompt();
+                    return new RewardsQuestPointsPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_QUEST_POINTS, null);
@@ -542,18 +594,76 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    private class ItemListPrompt extends FixedSetPrompt {
+    public class RewardsItemListPrompt extends QuestsEditorNumericPrompt {
 
-        public ItemListPrompt() {
-            super("1", "2", "3");
+        public RewardsItemListPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        private final int size = 3;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("itemRewardsTitle");
+        }
+        
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.BLUE;
+                case 2:
+                    return ChatColor.RED;
+                case 3:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
+            case 2:
+                return ChatColor.RED + Lang.get("clear");
+            case 3:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(CK.REW_ITEMS) == null) {
+                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (ItemStack is : (List<ItemStack>) context.getSessionData(CK.REW_ITEMS)) {
+                        text += ChatColor.GRAY + "- " + ItemUtil.getDisplayString(is) + "\n";
+                    }
+                    return text;
+                }
+            case 2:
+            case 3:
+                return "";
+            default:
+                return null;
+            }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.REW_ITEMS) != null) {
-                    List<ItemStack> itemRews = getItems(context);
+                    List<ItemStack> itemRews = (List<ItemStack>) context.getSessionData(CK.REW_ITEMS);
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.REW_ITEMS, itemRews);
                 } else {
@@ -564,54 +674,57 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
             }
-            String text = ChatColor.GOLD + Lang.get("itemRewardsTitle") + "\n";
-            if (context.getSessionData(CK.REW_ITEMS) == null) {
-                text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                for (ItemStack is : getItems(context)) {
-                    text += ChatColor.GRAY + "- " + ItemUtil.getDisplayString(is) + "\n";
-                }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new ItemStackPrompt(ItemListPrompt.this);
-            } else if (input.equalsIgnoreCase("2")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new ItemStackPrompt(RewardsItemListPrompt.this);
+            case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewItemsCleared"));
                 context.setSessionData(CK.REW_ITEMS, null);
-                return new ItemListPrompt();
-            } else if (input.equalsIgnoreCase("3")) {
+                return new RewardsItemListPrompt(context);
+            case 3:
                 return new RewardsPrompt(context);
+            default:
+                return new RewardsItemListPrompt(context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<ItemStack> getItems(ConversationContext context) {
-            return (List<ItemStack>) context.getSessionData(CK.REW_ITEMS);
         }
     }
     
-    private class CommandsPrompt extends StringPrompt {
+    public class RewardsCommandsPrompt extends QuestsEditorStringPrompt {
+        
+        public RewardsCommandsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewCommandPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String lang1 = Lang.get("rewCommandPrompt");
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String lang1 = getQueryText(context);
             lang1 = lang1.replace("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET 
                     + ChatColor.YELLOW);
             String lang2 = Lang.get("rewCommandPromptHint");
@@ -638,9 +751,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    private class PermissionsListPrompt extends QuestsEditorNumericPrompt {
+    public class RewardsPermissionsListPrompt extends QuestsEditorNumericPrompt {
 
-        public PermissionsListPrompt(ConversationContext context) {
+        public RewardsPermissionsListPrompt(ConversationContext context) {
             super(context);
         }
         
@@ -750,14 +863,14 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch (input.intValue()) {
             case 1:
-                return new PermissionsPrompt();
+                return new PermissionsPrompt(context);
             case 2:
-                return new PermissionsWorldsPrompt();
+                return new PermissionsWorldsPrompt(context);
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewPermissionsCleared"));
                 context.setSessionData(CK.REW_PERMISSION, null);
                 context.setSessionData(CK.REW_PERMISSION_WORLDS, null);
-                return new PermissionsListPrompt(context);
+                return new RewardsPermissionsListPrompt(context);
             case 4:
                 return new RewardsPrompt(context);
             default:
@@ -767,11 +880,28 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         
     }
 
-    private class PermissionsPrompt extends StringPrompt {
+    public class PermissionsPrompt extends QuestsEditorStringPrompt {
+        
+        public PermissionsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewPermissionsPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("rewPermissionsPrompt");
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -785,15 +915,32 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PERMISSION, null);
             }
-            return new PermissionsListPrompt(context);
+            return new RewardsPermissionsListPrompt(context);
         }
     }
     
-    private class PermissionsWorldsPrompt extends StringPrompt {
+    public class PermissionsWorldsPrompt extends QuestsEditorStringPrompt {
+        
+        public PermissionsWorldsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewPermissionsWorldPrompt");
+        }
         
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("rewPermissionsWorldPrompt");
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -807,77 +954,124 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     if (!w.equals("null") && w != null && context.getPlugin().getServer().getWorld(w) == null) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + w + " " 
                                 + Lang.get("eventEditorInvalidWorld"));
-                        return new PermissionsWorldsPrompt();
+                        return new PermissionsWorldsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.REW_PERMISSION_WORLDS, worlds);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PERMISSION_WORLDS, null);
             }
-            return new PermissionsListPrompt(context);
+            return new RewardsPermissionsListPrompt(context);
         }
     }
 
-    private class mcMMOListPrompt extends FixedSetPrompt {
+    public class RewardsMcMMOListPrompt extends QuestsEditorNumericPrompt {
 
-        public mcMMOListPrompt() {
-            super("1", "2", "3", "4");
+        public RewardsMcMMOListPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        private final int size = 4;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("mcMMORewardsTitle");
+        }
+        
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
+                case 2:
+                    return ChatColor.BLUE;
+                case 3:
+                    return ChatColor.RED;
+                case 4:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("reqSetSkills");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("reqSetSkillAmounts");
+            case 3:
+                return ChatColor.RED + Lang.get("clear");
+            case 4:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
+                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (String s : (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                    }
+                    return text;
+                }
+            case 2:
+                if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
+                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (Integer i : (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
+                    }
+                    return text;
+                }
+            case 3:
+                return "";
+            default:
+                return null;
+            }
         }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("mcMMORewardsTitle") + "\n";
-            if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("reqSetSkills") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("rewNoMcMMOSkills") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("reqSetSkills") + "\n";
-                for (String s : getSkills(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
-                }
-                if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("reqSetSkillAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("reqSetSkillAmounts") + "\n";
-                    for (Integer i : getSkillAmounts(context)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
-                    }
-                }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new mcMMOSkillsPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new McMMOSkillsPrompt(context);
+            case 2:
                 if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewSetMcMMOSkillsFirst"));
-                    return new mcMMOListPrompt();
+                    return new RewardsMcMMOListPrompt(context);
                 } else {
-                    return new mcMMOAmountsPrompt();
+                    return new McMMOAmountsPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase("3")) {
+            case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewMcMMOCleared"));
                 context.setSessionData(CK.REW_MCMMO_SKILLS, null);
                 context.setSessionData(CK.REW_MCMMO_AMOUNTS, null);
-                return new mcMMOListPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
+                return new RewardsMcMMOListPrompt(context);
+            case 4:
                 int one;
                 int two;
                 if (context.getSessionData(CK.REW_MCMMO_SKILLS) != null) {
@@ -894,28 +1088,36 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     return new RewardsPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewMcMMOListsNotSameSize"));
-                    return new mcMMOListPrompt();
+                    return new RewardsMcMMOListPrompt(context);
                 }
+            default:
+                return new RewardsMcMMOListPrompt(context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<String> getSkills(ConversationContext context) {
-            return (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Integer> getSkillAmounts(ConversationContext context) {
-            return (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
         }
     }
 
-    private class mcMMOSkillsPrompt extends StringPrompt {
+    public class McMMOSkillsPrompt extends QuestsEditorStringPrompt {
+        
+        public McMMOSkillsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return Lang.get("skillListTitle");
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewMcMMOPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String skillList = ChatColor.DARK_GREEN + Lang.get("skillListTitle") + "\n";
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String skillList = ChatColor.DARK_GREEN + getTitle(context) + "\n";
             SkillType[] skills = SkillType.values();
             for (int i = 0; i < skills.length; i++) {
                 if (i == (skills.length - 1)) {
@@ -924,7 +1126,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     skillList += ChatColor.GREEN + skills[i].getName() + "\n\n";
                 }
             }
-            return skillList + ChatColor.YELLOW + Lang.get("rewMcMMOPrompt");
+            return skillList + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -938,26 +1140,43 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                             skills.add(MiscUtil.getCapitalized(s));
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
-                            return new mcMMOSkillsPrompt();
+                            return new McMMOSkillsPrompt(context);
                         }
                     } else {
                         String text = Lang.get("reqMcMMOError");
                         text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new mcMMOSkillsPrompt();
+                        return new McMMOSkillsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.REW_MCMMO_SKILLS, skills);
             }
-            return new mcMMOListPrompt();
+            return new RewardsMcMMOListPrompt(context);
         }
     }
 
-    private class mcMMOAmountsPrompt extends StringPrompt {
+    public class McMMOAmountsPrompt extends QuestsEditorStringPrompt {
+        
+        public McMMOAmountsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("reqMcMMOAmountsPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("reqMcMMOAmountsPrompt");
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -972,75 +1191,123 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         String text = Lang.get("reqNotANumber");
                         text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new mcMMOAmountsPrompt();
+                        return new McMMOAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.REW_MCMMO_AMOUNTS, amounts);
             }
-            return new mcMMOListPrompt();
+            return new RewardsMcMMOListPrompt(context);
         }
     }
 
-    private class HeroesListPrompt extends FixedSetPrompt {
+    public class RewardsHeroesListPrompt extends QuestsEditorNumericPrompt {
 
-        public HeroesListPrompt() {
-            super("1", "2", "3", "4");
+        public RewardsHeroesListPrompt(ConversationContext context) {
+            super(context);
+        }
+        
+        private final int size = 4;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        public String getTitle(ConversationContext context) {
+            return Lang.get("heroesRewardsTitle");
+        }
+        
+        public ChatColor getNumberColor(ConversationContext context, int number) {
+            switch (number) {
+                case 1:
+                case 2:
+                    return ChatColor.BLUE;
+                case 3:
+                    return ChatColor.RED;
+                case 4:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("rewSetHeroesClasses");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("rewSetHeroesAmounts");
+            case 3:
+                return ChatColor.RED + Lang.get("clear");
+            case 4:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(ConversationContext context, int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
+                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (String s : (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                    }
+                    return text;
+                }
+            case 2:
+                if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
+                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (Double d : (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + d + "\n";
+                    }
+                    return text;
+                }
+            case 3:
+            case 4:
+                return "";
+            default:
+                return null;
+            }
         }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("heroesRewardsTitle") + "\n";
-            if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("rewSetHeroesClasses") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.GRAY + " - " 
-                        + Lang.get("rewSetHeroesAmounts") + "(" + Lang.get("rewNoHeroesClasses") + ")\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("rewSetHeroesClasses") + "\n";
-                for (String s : getClasses(context)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
-                }
-                if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("rewSetHeroesAmounts") + " (" + Lang.get("noneSet") + ")\n";
-                } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                            + Lang.get("rewSetHeroesAmounts") + "\n";
-                    for (Double d : getClassAmounts(context)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + d + "\n";
-                    }
-                }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+
+            String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
-
+        
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new HeroesClassesPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
+        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new HeroesClassesPrompt(context);
+            case 2:
                 if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewSetHeroesClassesFirst"));
-                    return new HeroesListPrompt();
+                    return new RewardsHeroesListPrompt(context);
                 } else {
-                    return new HeroesExperiencePrompt();
+                    return new HeroesExperiencePrompt(context);
                 }
-            } else if (input.equalsIgnoreCase("3")) {
+            case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewHeroesCleared"));
                 context.setSessionData(CK.REW_HEROES_CLASSES, null);
                 context.setSessionData(CK.REW_HEROES_AMOUNTS, null);
-                return new HeroesListPrompt();
-            } else if (input.equalsIgnoreCase("4")) {
+                return new RewardsHeroesListPrompt(context);
+            case 4:
                 int one;
                 int two;
                 if (context.getSessionData(CK.REW_HEROES_CLASSES) != null) {
@@ -1057,28 +1324,36 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     return new RewardsPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewHeroesListsNotSameSize"));
-                    return new HeroesListPrompt();
+                    return new RewardsHeroesListPrompt(context);
                 }
+            default:
+                return new RewardsHeroesListPrompt(context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<String> getClasses(ConversationContext context) {
-            return (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<Double> getClassAmounts(ConversationContext context) {
-            return (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
         }
     }
 
-    private class HeroesClassesPrompt extends StringPrompt {
+    public class HeroesClassesPrompt extends QuestsEditorStringPrompt {
+        
+        public HeroesClassesPrompt(ConversationContext context) {
+            super(context);
+        }
 
         @Override
-        public String getPromptText(ConversationContext cc) {
-            String text = ChatColor.DARK_PURPLE + Lang.get("heroesClassesTitle") + "\n";
+        public String getTitle(ConversationContext context) {
+            return Lang.get("heroesClassesTitle");
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewHeroesClassesPrompt");
+        }
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.DARK_PURPLE + getTitle(context) + "\n";
             List<String> list = new LinkedList<String>();
             for (HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
                 list.add(hc.getName());
@@ -1092,12 +1367,12 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
                 text = text.substring(0, text.length() - 2) + "\n";
             }
-            text += ChatColor.YELLOW + Lang.get("rewHeroesClassesPrompt");
+            text += ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext cc, String input) {
+        public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 String[] arr = input.split(" ");
                 List<String> classes = new LinkedList<String>();
@@ -1106,31 +1381,48 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     if (hc == null) {
                         String text = Lang.get("rewHeroesInvalidClass");
                         text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
-                        cc.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new HeroesClassesPrompt();
+                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
+                        return new HeroesClassesPrompt(context);
                     } else {
                         classes.add(hc.getName());
                     }
                 }
-                cc.setSessionData(CK.REW_HEROES_CLASSES, classes);
-                return new HeroesListPrompt();
+                context.setSessionData(CK.REW_HEROES_CLASSES, classes);
+                return new RewardsHeroesListPrompt(context);
             } else {
-                return new HeroesListPrompt();
+                return new RewardsHeroesListPrompt(context);
             }
         }
     }
 
-    private class HeroesExperiencePrompt extends StringPrompt {
+    public class HeroesExperiencePrompt extends QuestsEditorStringPrompt {
+        
+        public HeroesExperiencePrompt(ConversationContext context) {
+            super(context);
+        }
 
         @Override
-        public String getPromptText(ConversationContext cc) {
-            String text = Lang.get("heroesExperienceTitle") + "\n";
-            text += ChatColor.YELLOW + Lang.get("rewHeroesExperiencePrompt");
+        public String getTitle(ConversationContext context) {
+            return Lang.get("heroesExperienceTitle");
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewHeroesExperiencePrompt");
+        }
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = getTitle(context) + "\n";
+            text += ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext cc, String input) {
+        public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 String[] arr = input.split(" ");
                 List<Double> amounts = new LinkedList<Double>();
@@ -1141,27 +1433,44 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     } catch (NumberFormatException nfe) {
                         String text = Lang.get("reqNotANumber");
                         text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
-                        cc.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new HeroesExperiencePrompt();
+                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
+                        return new HeroesExperiencePrompt(context);
                     }
                 }
-                cc.setSessionData(CK.REW_HEROES_AMOUNTS, amounts);
-                return new HeroesListPrompt();
+                context.setSessionData(CK.REW_HEROES_AMOUNTS, amounts);
+                return new RewardsHeroesListPrompt(context);
             } else {
-                return new HeroesListPrompt();
+                return new RewardsHeroesListPrompt(context);
             }
         }
     }
 
-    private class PhatLootsPrompt extends StringPrompt {
+    public class RewardsPhatLootsPrompt extends QuestsEditorStringPrompt {
+        
+        public RewardsPhatLootsPrompt(ConversationContext context) {
+            super(context);
+        }
 
         @Override
-        public String getPromptText(ConversationContext cc) {
-            String text = ChatColor.DARK_AQUA + Lang.get("phatLootsRewardsTitle") + "\n";
+        public String getTitle(ConversationContext context) {
+            return Lang.get("phatLootsRewardsTitle");
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewPhatLootsPrompt");
+        }
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.DARK_AQUA + getTitle(context) + "\n";
             for (PhatLoot pl : PhatLootsAPI.getAllPhatLoots()) {
                 text += ChatColor.GRAY + "- " + ChatColor.BLUE + pl.name + "\n";
             }
-            text += ChatColor.YELLOW + Lang.get("rewPhatLootsPrompt");
+            text += ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
@@ -1176,7 +1485,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         String text = Lang.get("rewPhatLootsInvalid");
                         text = text.replace("<input>", ChatColor.DARK_RED + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new PhatLootsPrompt();
+                        return new RewardsPhatLootsPrompt(context);
                     }
                 }
                 loots.addAll(Arrays.asList(arr));
@@ -1192,11 +1501,28 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    private class CustomRewardsPrompt extends StringPrompt {
+    public class CustomRewardsPrompt extends QuestsEditorStringPrompt {
+        
+        public CustomRewardsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return Lang.get("customRewardsTitle");
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("rewCustomRewardPrompt");
+        }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.LIGHT_PURPLE + Lang.get("customRewardsTitle") + "\n";
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
             if (plugin.getCustomRewards().isEmpty()) {
                 text += ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
             } else {
@@ -1204,7 +1530,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     text += ChatColor.DARK_PURPLE + "  - " + cr.getName() + "\n";
                 }
             }
-            return text + ChatColor.YELLOW + Lang.get("rewCustomRewardPrompt");
+            return text + ChatColor.YELLOW + getQueryText(context);
         }
 
         @SuppressWarnings("unchecked")
@@ -1244,7 +1570,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             // Already added, so inform user
                             context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomAlreadyAdded"));
-                            return new CustomRewardsPrompt();
+                            return new CustomRewardsPrompt(context);
                         }
                     } else {
                         // The custom reward hasn't been added yet, so let's do it
@@ -1262,7 +1588,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomNotFound"));
-                    return new CustomRewardsPrompt();
+                    return new CustomRewardsPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_CUSTOM, null);

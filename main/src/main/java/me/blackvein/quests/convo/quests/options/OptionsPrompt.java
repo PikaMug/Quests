@@ -100,9 +100,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch (input.intValue()) {
         case 1:
-            return new GeneralPrompt(context);
+            return new OptionsGeneralPrompt(context);
         case 2:
-            return new MultiplayerPrompt(context);
+            return new OptionsMultiplayerPrompt(context);
         case 3:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
@@ -277,8 +277,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class GeneralPrompt extends QuestsEditorNumericPrompt {
-        public GeneralPrompt(ConversationContext context) {
+    public class OptionsGeneralPrompt extends QuestsEditorNumericPrompt {
+        public OptionsGeneralPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -374,11 +374,11 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = CK.OPT_ALLOW_COMMANDS;
-                tempPrompt = new GeneralPrompt(context);
+                tempPrompt = new OptionsGeneralPrompt(context);
                 return new TrueFalsePrompt(context);
             case 2:
                 tempKey = CK.OPT_ALLOW_QUITTING;
-                tempPrompt = new GeneralPrompt(context);
+                tempPrompt = new OptionsGeneralPrompt(context);
                 return new TrueFalsePrompt(context);
             case 3:
                 tempKey = null;
@@ -395,8 +395,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class MultiplayerPrompt extends QuestsEditorNumericPrompt {
-        public MultiplayerPrompt(ConversationContext context) {
+    public class OptionsMultiplayerPrompt extends QuestsEditorNumericPrompt {
+        public OptionsMultiplayerPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -520,19 +520,19 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = CK.OPT_USE_DUNGEONSXL_PLUGIN;
-                tempPrompt = new MultiplayerPrompt(context);
+                tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new TrueFalsePrompt(context);
             case 2:
                 tempKey = CK.OPT_USE_PARTIES_PLUGIN;
-                tempPrompt = new MultiplayerPrompt(context);
+                tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new TrueFalsePrompt(context);
             case 3:
                 tempKey = CK.OPT_SHARE_PROGRESS_LEVEL;
-                tempPrompt = new MultiplayerPrompt(context);
+                tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new LevelPrompt(context);
             case 4:
                 tempKey = CK.OPT_REQUIRE_SAME_QUEST;
-                tempPrompt = new MultiplayerPrompt(context);
+                tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new TrueFalsePrompt(context);
             case 5:
                 tempKey = null;
