@@ -2843,7 +2843,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             for (int i = 0; i < chatEvents.size(); i++) {
                                 Action action = loadAction(chatEvents.get(i));
                                 if (action != null) {
-                                    oStage.chatActions.put(chatEventTriggers.get(i), action);
+                                    if (i < chatEventTriggers.size()) {
+                                        oStage.chatActions.put(chatEventTriggers.get(i), action);
+                                    } else {
+                                        throw new StageFormatException("chat-event-triggers list is too small", 
+                                                quest, stageNum);
+                                    }
                                 } else {
                                     loadEventFailed = true;
                                     throw new StageFormatException("chat-events failed to load " + chatEvents.get(i),
@@ -2878,7 +2883,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             for (int i = 0; i < commandEvents.size(); i++) {
                                 Action action = loadAction(commandEvents.get(i));
                                 if (action != null) {
-                                    oStage.commandActions.put(commandEventTriggers.get(i), action);
+                                    if (i < commandEventTriggers.size()) {
+                                        oStage.commandActions.put(commandEventTriggers.get(i), action);
+                                    } else {
+                                        throw new StageFormatException("command-event-triggers list is too small", 
+                                                quest, stageNum);
+                                    }
                                 } else {
                                     loadEventFailed = true;
                                     throw new StageFormatException("command-events failed to load " 
