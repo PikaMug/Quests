@@ -1879,6 +1879,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
+    // TODO - should be a Numeric prompt
     public class DeletePrompt extends QuestsEditorStringPrompt {
         
         public DeletePrompt(ConversationContext context) {
@@ -1900,9 +1901,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
+            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + " - " + ChatColor.GREEN
                     + Lang.get("yesWord") + "\n";
-            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
+            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + " - " + ChatColor.RED 
                     + Lang.get("noWord");
             return ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW + Lang.get("stageEditorStage") 
                     + " " + stageNum + ChatColor.RED + ")\n" + ChatColor.GOLD + "(" 

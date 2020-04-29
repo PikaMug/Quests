@@ -110,8 +110,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class TrueFalsePrompt extends QuestsEditorStringPrompt {
-        public TrueFalsePrompt(ConversationContext context) {
+    public class OptionsTrueFalsePrompt extends QuestsEditorStringPrompt {
+        public OptionsTrueFalsePrompt(ConversationContext context) {
             super(context);
         }
 
@@ -172,7 +172,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     context.setSessionData(tempKey, false);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new TrueFalsePrompt(context);
+                    return new OptionsTrueFalsePrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(tempKey, null);
@@ -182,8 +182,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class LevelPrompt extends QuestsEditorStringPrompt {
-        public LevelPrompt(ConversationContext context) {
+    public class OptionsLevelPrompt extends QuestsEditorStringPrompt {
+        public OptionsLevelPrompt(ConversationContext context) {
             super(context);
         }
 
@@ -375,11 +375,11 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 tempKey = CK.OPT_ALLOW_COMMANDS;
                 tempPrompt = new OptionsGeneralPrompt(context);
-                return new TrueFalsePrompt(context);
+                return new OptionsTrueFalsePrompt(context);
             case 2:
                 tempKey = CK.OPT_ALLOW_QUITTING;
                 tempPrompt = new OptionsGeneralPrompt(context);
-                return new TrueFalsePrompt(context);
+                return new OptionsTrueFalsePrompt(context);
             case 3:
                 tempKey = null;
                 tempPrompt = null;
@@ -521,19 +521,19 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 tempKey = CK.OPT_USE_DUNGEONSXL_PLUGIN;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new TrueFalsePrompt(context);
+                return new OptionsTrueFalsePrompt(context);
             case 2:
                 tempKey = CK.OPT_USE_PARTIES_PLUGIN;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new TrueFalsePrompt(context);
+                return new OptionsTrueFalsePrompt(context);
             case 3:
                 tempKey = CK.OPT_SHARE_PROGRESS_LEVEL;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new LevelPrompt(context);
+                return new OptionsLevelPrompt(context);
             case 4:
                 tempKey = CK.OPT_REQUIRE_SAME_QUEST;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new TrueFalsePrompt(context);
+                return new OptionsTrueFalsePrompt(context);
             case 5:
                 tempKey = null;
                 tempPrompt = null;

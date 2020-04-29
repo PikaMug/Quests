@@ -724,11 +724,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String lang1 = getQueryText(context);
-            lang1 = lang1.replace("<comma>", ChatColor.BOLD + "" + ChatColor.RED + "comma" + ChatColor.RESET 
-                    + ChatColor.YELLOW);
-            String lang2 = Lang.get("rewCommandPromptHint");
-            return ChatColor.YELLOW + lang1 + "\n" + ChatColor.GOLD + lang2;
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
