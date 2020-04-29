@@ -89,6 +89,10 @@ public enum PreBuiltParticle {
      * @return the PreBuiltParticle represented by the specified identifier
      */
     public static PreBuiltParticle fromIdentifier(String identifier) {
-        return valueOf(identifier);
+        try {
+            return valueOf(identifier);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }
