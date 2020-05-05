@@ -499,7 +499,10 @@ public class Quest {
         for (int i = 0; i < rews.getPermissions().size(); i++) {
             if (plugin.getDependencies().getVaultPermission() != null) {
                 String perm = rews.getPermissions().get(i);
-                String world = rews.getPermissionWorlds().get(i);
+                String world = null;
+                if (i < rews.getPermissionWorlds().size()) {
+                    world = rews.getPermissionWorlds().get(i);
+                }
                 if (world == null || world.equals("null")) {
                     plugin.getDependencies().getVaultPermission().playerAdd(null, player, perm);
                 } else {
