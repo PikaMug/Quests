@@ -3586,6 +3586,9 @@ public class Quester {
                 if (!meta.hasLore()) {
                     LinkedList<String> lines = new LinkedList<String>();
                     String desc = quest.description;
+                    if (plugin.getDependencies().getPlaceholderApi() != null) {
+                        desc = PlaceholderAPI.setPlaceholders(player, desc);
+                    }
                     if (desc.equals(ChatColor.stripColor(desc))) {
                         lines = MiscUtil.makeLines(desc, " ", 40, ChatColor.DARK_GREEN);
                     } else {
