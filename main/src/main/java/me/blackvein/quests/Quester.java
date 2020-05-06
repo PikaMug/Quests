@@ -480,43 +480,50 @@ public class Quester {
             if (repeat != -1 && start != -1 && end != -1) {
                 // Ensure that we're past the initial duration
                 if (System.currentTimeMillis() > end) {
-                    final int maxSize = 2;
-                    final LinkedHashMap<Long, Long> cache = new LinkedHashMap<Long, Long>() {
-                        private static final long serialVersionUID = 1L;
-                        
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                         @Override
-                        protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
-                            return size() > maxSize;
+                        public void run() {
+                            final int maxSize = 2;
+                            final LinkedHashMap<Long, Long> cache = new LinkedHashMap<Long, Long>() {
+                                private static final long serialVersionUID = 3046838061019897713L;
+
+                                @Override
+                                protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
+                                    return size() > maxSize;
+                                }
+                            };
+                            
+                            // Store both the upcoming and most recent period of activity
+                            long nextStart = start;
+                            long nextEnd = end;
+                            while (System.currentTimeMillis() >= nextStart) {
+                                nextStart += repeat;
+                                nextEnd = nextStart + duration;
+                                cache.put(nextStart, nextEnd);
+                            }
+                            
+                            // Check whether the quest is currently active
+                            boolean active = false;
+                            for (Entry<Long, Long> startEnd : cache.entrySet()) {
+                                if (startEnd.getKey() <= System.currentTimeMillis() && System.currentTimeMillis() 
+                                        < startEnd.getValue()) {
+                                    active = true;
+                                }
+                            }
+                            
+                            // If quest is not active, inform user of wait time
+                            if (!active) {
+                                final String early = Lang.get("plnTooEarly")
+                                        .replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW)
+                                        .replace("<time>", ChatColor.DARK_PURPLE
+                                        + MiscUtil.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
+                                if (p.isOnline()) {
+                                    p.sendMessage(ChatColor.YELLOW + early);
+                                }
+                                return;
+                            }
                         }
-                    };
-                    
-                    // Store both the upcoming and most recent period of activity
-                    long nextStart = start;
-                    long nextEnd = end;
-                    while (System.currentTimeMillis() >= nextStart) {
-                        nextStart += repeat;
-                        nextEnd = nextStart + duration;
-                        cache.put(nextStart, nextEnd);
-                    }
-                    
-                    // Check whether the quest is currently active
-                    boolean active = false;
-                    for (Entry<Long, Long> startEnd : cache.entrySet()) {
-                        if (startEnd.getKey() <= System.currentTimeMillis() && System.currentTimeMillis() 
-                                < startEnd.getValue()) {
-                            active = true;
-                        }
-                    }
-                    
-                    // If quest is not active, inform user of wait time
-                    if (!active) {
-                        String early = Lang.get("plnTooEarly");
-                        early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-                        early = early.replace("<time>", ChatColor.DARK_PURPLE
-                                + MiscUtil.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
-                        p.sendMessage(ChatColor.YELLOW + early);
-                        return;
-                    }
+                    });
                 }
             }
         }
