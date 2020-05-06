@@ -2152,6 +2152,9 @@ public class Quester {
                 if (getCurrentStage(quest).radiiToReachWithin.size() <= index) {
                     return;
                 }
+                if (getQuestData(quest).radiiToReachWithin.size() <= index) {
+                    return;
+                }
                 Location locationToReach = getCurrentStage(quest).locationsToReach.get(index);
                 double radius = getQuestData(quest).radiiToReachWithin.get(index);
                 if (l.getX() < (locationToReach.getX() + radius) && l.getX() > (locationToReach.getX() - radius)) {
@@ -2160,7 +2163,7 @@ public class Quester {
                                 > (locationToReach.getY() - radius)) {
                             if (l.getWorld().getName().equals(locationToReach.getWorld().getName())) {
                                 // TODO - Find proper cause of Github issues #646 and #825 and #1191
-                                if (index >= getQuestData(quest).hasReached.size()) {
+                                if (getQuestData(quest).hasReached.size() <= index) {
                                     getQuestData(quest).hasReached.add(true);
                                     finishObjective(quest, "reachLocation", new ItemStack(Material.AIR, 1), 
                                             new ItemStack(Material.AIR, 1), null, null, null, null, location, null, 
@@ -2193,7 +2196,6 @@ public class Quester {
                     }
                 }
                 index++;
-                
             } catch (IndexOutOfBoundsException e) {
                 plugin.getLogger().severe("An error has occurred with Quests. Please report on Github with info below");
                 plugin.getLogger().warning("index = " + index);
