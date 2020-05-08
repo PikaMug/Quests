@@ -2446,28 +2446,33 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     // Legacy
                                     for (String item : items) {
                                         ItemStack is = ItemUtil.readItemStack("" + item);
-                                        int npcId = itemDeliveryTargetIds.get(index);
-                                        index++;
-                                        if (is != null) {
-                                            if (getDependencies().getCitizens() != null) {
-                                                NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
-                                                if (npc != null) {
-                                                    oStage.itemsToDeliver.add(is);
-                                                    oStage.itemDeliveryTargets.add(npcId);
-                                                    oStage.deliverMessages.addAll(deliveryMessages);
+                                        if (index <= itemDeliveryTargetIds.size()) {
+                                            int npcId = itemDeliveryTargetIds.get(index);
+                                            index++;
+                                            if (is != null) {
+                                                if (getDependencies().getCitizens() != null) {
+                                                    NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
+                                                    if (npc != null) {
+                                                        oStage.itemsToDeliver.add(is);
+                                                        oStage.itemDeliveryTargets.add(npcId);
+                                                        oStage.deliverMessages.addAll(deliveryMessages);
+                                                    } else {
+                                                        throw new StageFormatException(
+                                                                "npc-delivery-ids has invalid NPC ID of " + npcId, quest, 
+                                                                stageNum);
+                                                    }
                                                 } else {
                                                     throw new StageFormatException(
-                                                            "npc-delivery-ids has invalid NPC ID of " + npcId, quest, 
+                                                            "Citizens was not found installed for npc-delivery-ids", quest,
                                                             stageNum);
                                                 }
                                             } else {
-                                                throw new StageFormatException(
-                                                        "Citizens was not found installed for npc-delivery-ids", quest,
-                                                        stageNum);
+                                                throw new StageFormatException("items-to-deliver has invalid formatting " 
+                                                        + item, quest, stageNum);
                                             }
                                         } else {
-                                            throw new StageFormatException("items-to-deliver has invalid formatting " 
-                                                    + item, quest, stageNum);
+                                            throw new StageFormatException("items-to-deliver is missing target IDs"
+                                                    , quest, stageNum);
                                         }
                                     }
                                 } else {
