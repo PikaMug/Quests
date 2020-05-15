@@ -1054,11 +1054,13 @@ public class Quester {
                 String obj = Lang.get(getPlayer(), "deliver");
                 obj = obj.replace("<item>", ItemUtil.getName(is) + ChatColor.GREEN);
                 obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(npc));
+                obj = obj.replace("<itemsremaining>", toDeliver.toString());
                 unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + delivered + "/" + toDeliver);
             } else {
                 String obj = Lang.get(getPlayer(), "deliver");
                 obj = obj.replace("<item>", ItemUtil.getName(is) + ChatColor.GRAY);
                 obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(npc));
+                obj = obj.replace("<itemsremaining>", toDeliver.toString());
                 finishedObjectives.add(ChatColor.GRAY + obj + ": " + delivered + "/" + toDeliver);
             }
         }
