@@ -721,7 +721,7 @@ public class Quest {
                 if (rews.getPermissions().isEmpty() == false) {
                     int index = 0;
                     for (String s : rews.getPermissions()) {
-                        if (rews.getPermissionWorlds() != null) {
+                        if (rews.getPermissionWorlds() != null && rews.getPermissionWorlds().size() > index) {
                             p.sendMessage("- " + ChatColor.DARK_GREEN + s + " (" + rews.getPermissionWorlds().get(index)
                                     + ")");
                         } else {
