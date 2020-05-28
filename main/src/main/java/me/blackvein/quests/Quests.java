@@ -3508,30 +3508,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * @return {@code true} if entity is a Player that has permission
      */
     public boolean canUseQuests(UUID uuid) {
-        return !checkQuester(uuid);
-    }
-    
-    /**
-     * Checks if player CANNOT use Quests
-     * 
-     * @param uuid the entity UUID to be checked
-     * @return {@code true} if entity has no permission or is not a player
-     * @deprecated Use {@link #canUseQuests(UUID)}
-     */
-    public boolean checkQuester(UUID uuid) {
         if (!(Bukkit.getPlayer(uuid) instanceof Player)) {
-            return true;
+            return false;
         }
         Player p = Bukkit.getPlayer(uuid);
         if (p.isOp()) {
-            return false;
+            return true;
         }
         try {
             for (PermissionAttachmentInfo pm : p.getEffectivePermissions()) {
                 if (pm.getPermission().startsWith("quests")
                         || pm.getPermission().equals("*")
                         || pm.getPermission().equals("*.*")) {
-                    return false;
+                    return true;
                 }
             }
         } catch (NullPointerException ne) {
@@ -3539,7 +3528,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         } catch (ConcurrentModificationException cme) {
             // Bummer. Not much we can do about it
         }
-        return true;
+        return false;
     }
     
     /**

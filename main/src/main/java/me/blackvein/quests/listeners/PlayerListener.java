@@ -183,7 +183,7 @@ public class PlayerListener implements Listener {
                     return;
                 }
             }
-            if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+            if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
                 final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
                 final Player player = evt.getPlayer();
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {

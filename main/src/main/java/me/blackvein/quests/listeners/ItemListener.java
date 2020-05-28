@@ -38,11 +38,10 @@ public class ItemListener implements Listener {
         this.plugin = plugin;
     }
     
-    @SuppressWarnings("deprecation")
     @EventHandler
     public void onCraftItem(CraftItemEvent evt) {
         if (evt.getWhoClicked() instanceof Player) {
-            if (plugin.checkQuester(evt.getWhoClicked().getUniqueId()) == false) {
+            if (plugin.canUseQuests(evt.getWhoClicked().getUniqueId())) {
                 final ItemStack craftedItem = getCraftedItem(evt);
                 Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
                 for (Quest quest : plugin.getQuests()) {

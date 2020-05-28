@@ -41,7 +41,7 @@ public class BlockListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent evt) {
-        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
@@ -99,7 +99,7 @@ public class BlockListener implements Listener {
     @SuppressWarnings("deprecation") // since 1.13
     @EventHandler
     public void onBlockDamage(BlockDamageEvent evt) {
-        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
@@ -120,7 +120,7 @@ public class BlockListener implements Listener {
     @SuppressWarnings("deprecation") // since 1.13
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent evt) {
-        if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
             Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
@@ -150,7 +150,7 @@ public class BlockListener implements Listener {
             // Do nothing, getHand() not present pre-1.9
         }
         if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
-            if (plugin.checkQuester(evt.getPlayer().getUniqueId()) == false) {
+            if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
                 final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (evt.isCancelled() == false) {
