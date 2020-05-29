@@ -277,9 +277,14 @@ public class ActionFactory implements ConversationAbandonedListener {
                     .replace("<file>", actionsFile.getName()));
             return;
         }
-        String event = (String) context.getSessionData(CK.ED_EVENT_DELETE);
-        ConfigurationSection sec = data.getConfigurationSection("events");
-        sec.set(event, null);
+        String action = (String) context.getSessionData(CK.ED_EVENT_DELETE);
+        String key = "actions";
+        ConfigurationSection sec = data.getConfigurationSection(key);
+        if (sec == null) {
+            key = "events";
+            sec = data.getConfigurationSection(key);
+        }
+        sec.set(action, null);
         try {
             data.save(actionsFile);
         } catch (IOException e) {
