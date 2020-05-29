@@ -301,7 +301,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 plugin.getActionFactory().deleteAction(context);
-                return new ActionMenuPrompt(context);
+                return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 return new ActionMenuPrompt(context);
             } else {
