@@ -193,7 +193,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         }
 
         public String getTitle(ConversationContext context) {
-            return Lang.get("questCreateTitle");
+            return Lang.get("questEditTitle");
         }
         
         public String getQueryText(ConversationContext context) {
@@ -231,7 +231,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         }
 
         public String getTitle(ConversationContext context) {
-            return Lang.get("questCreateTitle");
+            return Lang.get("questDeleteTitle");
         }
         
         public String getQueryText(ConversationContext context) {
