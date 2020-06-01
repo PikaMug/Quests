@@ -26,7 +26,6 @@ import java.net.URLClassLoader;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.ConcurrentModificationException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,7 +67,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -3508,25 +3507,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * @return {@code true} if entity is a Player that has permission
      */
     public boolean canUseQuests(UUID uuid) {
-        if (!(Bukkit.getPlayer(uuid) instanceof Player)) {
-            return false;
-        }
         Player p = Bukkit.getPlayer(uuid);
-        if (p.isOp()) {
-            return true;
-        }
-        try {
-            for (PermissionAttachmentInfo pm : p.getEffectivePermissions()) {
-                if (pm.getPermission().startsWith("quests")
-                        || pm.getPermission().equals("*")
-                        || pm.getPermission().equals("*.*")) {
+        if (p != null) {
+            for (Permission perm : getDescription().getPermissions()) {
+                if (p.hasPermission(perm.getName())) {
                     return true;
                 }
             }
-        } catch (NullPointerException ne) {
-            // User has no permissions
-        } catch (ConcurrentModificationException cme) {
-            // Bummer. Not much we can do about it
         }
         return false;
     }
