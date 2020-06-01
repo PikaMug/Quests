@@ -264,7 +264,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             case 5:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetKillLocationNames");
             case 6:
-                return ChatColor.GREEN + Lang.get("clear");
+                return ChatColor.RED + Lang.get("clear");
             case 7:
                 return ChatColor.GREEN + Lang.get("done");
             default:
@@ -810,7 +810,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetTameAmounts"); 
             case 3:
-                return ChatColor.GREEN + Lang.get("clear");
+                return ChatColor.RED + Lang.get("clear");
             case 4:
                 return ChatColor.GREEN + Lang.get("done");
             default:
@@ -1048,7 +1048,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetShearAmounts"); 
             case 3:
-                return ChatColor.GREEN + Lang.get("clear");
+                return ChatColor.RED + Lang.get("clear");
             case 4:
                 return ChatColor.GREEN + Lang.get("done");
             default:
