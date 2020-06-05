@@ -268,7 +268,6 @@ eventEditorNoneToEdit: "Es existieren keine Events die bearbeitet werden können
 eventEditorNoneToDelete: "Es existieren keine Events die gelöscht werden können!"
 eventEditorNotFound: "Event nicht gefunden!"
 eventEditorExists: "Event existiert bereits!"
-eventEditorErrorSaving: "Beim Speichern ist ein Fehler aufgetreten."
 eventEditorDeleted: "Event wurde gelöscht, Quests und Events sind automatisch neu geladen worden."
 eventEditorSaved: "Event gespeichert, Quests und Events wurden automatisch neu geladen."
 eventEditorEnterEventName: "Event Name eingeben, <cancel>"
