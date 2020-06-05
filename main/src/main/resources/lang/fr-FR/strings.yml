@@ -268,7 +268,6 @@ eventEditorNoneToEdit: "Aucun Événements n’existe actuellement pour être é
 eventEditorNoneToDelete: "Aucun Événements n’existe actuellement pour être supprimé !"
 eventEditorNotFound: "Événement introuvable!"
 eventEditorExists: "Événement existe déjà!"
-eventEditorErrorSaving: "Une erreur s’est produite lors de la sauvegarde."
 eventEditorDeleted: "Événement supprimée ! Les Quêtes et les Événements ont été rechargés."
 eventEditorSaved: "Événement sauvegardés, les Quêtes et les Événements ont été rechargés."
 eventEditorEnterEventName: "Entrez un nom d'événement, <cancel>"
