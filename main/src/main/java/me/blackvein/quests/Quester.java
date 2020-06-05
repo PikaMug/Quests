@@ -2717,16 +2717,21 @@ public class Quester {
         hardDataPut(quest, data);
     }
     
+
     /**
      * Save data of the Quester to file
+     * 
+     * @return true if successful
      */
-    public void saveData() {
+    public boolean saveData() {
         FileConfiguration data = getBaseData();
         try {
             data.save(new File(plugin.getDataFolder(), "data" + File.separator + id + ".yml"));
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
     
     /**
@@ -3072,6 +3077,11 @@ public class Quester {
         return data;
     }
 
+    /**
+     * Load data of the Quester from file
+     * 
+     * @return true if successful
+     */
     @SuppressWarnings("deprecation")
     public boolean loadData() {
         FileConfiguration data = new YamlConfiguration();

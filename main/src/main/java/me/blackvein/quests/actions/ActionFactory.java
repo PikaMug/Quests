@@ -288,7 +288,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         try {
             data.save(actionsFile);
         } catch (IOException e) {
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorSaving"));
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
         ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
@@ -445,7 +445,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         try {
             data.save(actionsFile);
         } catch (IOException e) {
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorErrorSaving"));
+            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
         ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {

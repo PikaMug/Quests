@@ -396,9 +396,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         @Override
         public Prompt acceptInput(ConversationContext context, String s) {
-            Player player = (Player) context.getForWhom();
+            final Player player = (Player) context.getForWhom();
             if (s.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
-                String questToTake = getQuester(player.getUniqueId()).questToTake;
+                Quester quester = getQuester(player.getUniqueId());
+                if (quester == null) {
+                    // Must be new player
+                    quester = new Quester(Quests.this);
+                    quester.setUUID(player.getUniqueId());
+                    if (quester.saveData()) {
+                        getLogger().info("Created new data for player " + player.getName());
+                    } else {
+                        player.sendMessage(ChatColor.RED + Lang.get(player, "questSaveError"));
+                    }
+                }
+                final String questToTake = quester.questToTake;
                 try {
                     if (getQuest(questToTake) == null) {
                         getLogger().info(player.getName() + " attempted to take quest \"" + questToTake 
