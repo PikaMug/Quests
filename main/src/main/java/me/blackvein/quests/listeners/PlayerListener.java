@@ -167,7 +167,7 @@ public class PlayerListener implements Listener {
         } catch (NoSuchMethodError err) {
             // Do nothing, getHand() not present pre-1.9
         }
-        if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
+        if (e == null || e.equals(EquipmentSlot.HAND)) { // If the event is fired by HAND (main hand)
             if (evt.hasBlock() && ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
                 if (evt.getClickedBlock().getType().name().contains("PORTAL")
                         && plugin.getSettings().canAllowPranks()) {
