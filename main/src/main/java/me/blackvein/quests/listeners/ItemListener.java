@@ -62,13 +62,12 @@ public class ItemListener implements Listener {
     @SuppressWarnings("deprecation")
     private ItemStack getCraftedItem(CraftItemEvent evt) {
         if (evt.isShiftClick()) {
-            ItemStack recipeResult = evt.getRecipe().getResult();
-            int resultAmt = recipeResult.getAmount(); // Bread = 1, Cookie = 8, etc.
-            
+            final ItemStack recipeResult = evt.getRecipe().getResult();
+            final int resultAmt = recipeResult.getAmount(); // Bread = 1, Cookie = 8, etc.
             int leastIngredient = 1;
             for (ItemStack item : evt.getInventory().getMatrix()) {
                 if (item != null && !item.getType().equals(Material.AIR)) {
-                    leastIngredient = Math.min(leastIngredient * resultAmt, item.getAmount() * resultAmt);
+                    leastIngredient = item.getAmount() * resultAmt;
                 }
             }
             return new ItemStack(recipeResult.getType(), leastIngredient, recipeResult.getDurability());
