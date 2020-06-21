@@ -117,17 +117,9 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 1:
             return ChatColor.YELLOW + Lang.get("questEditorName");
         case 2:
-            if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
-                return ChatColor.RED + Lang.get("questEditorAskMessage");
-            } else {
-                return ChatColor.YELLOW + Lang.get("questEditorAskMessage");
-            }
+            return ChatColor.YELLOW + Lang.get("questEditorAskMessage");
         case 3:
-            if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
-                return ChatColor.RED + Lang.get("questEditorFinishMessage");
-            } else {
-                return ChatColor.YELLOW + Lang.get("questEditorFinishMessage");
-            }
+            return ChatColor.YELLOW + Lang.get("questEditorFinishMessage");
         case 4:
             if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() != null) {
                 return ChatColor.YELLOW + Lang.get("questEditorNPCStart");
@@ -184,26 +176,18 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 1:
             return "";
         case 2:
-            if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
-                return ChatColor.DARK_RED + "(" + Lang.get("questRequiredNoneSet") + ")";
-            } else {
-                return ChatColor.YELLOW + "(" + context.getSessionData(CK.Q_ASK_MESSAGE) + ChatColor.RESET 
-                        + ChatColor.YELLOW + ")";
-            }
+            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.Q_ASK_MESSAGE) + ChatColor.RESET 
+                    + ChatColor.GRAY + ")";
         case 3:
-            if (context.getSessionData(CK.Q_FINISH_MESSAGE) == null) {
-                return ChatColor.DARK_RED + "(" + Lang.get("questRequiredNoneSet") + ")";
-            } else {
-                return ChatColor.YELLOW + "(" + context.getSessionData(CK.Q_FINISH_MESSAGE) + ChatColor.RESET 
-                        + ChatColor.YELLOW + ")";
-            }
+            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.Q_FINISH_MESSAGE) 
+                    + ChatColor.RESET + ChatColor.GRAY + ")";
         case 4:
             if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() 
                     != null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else if (plugin.getDependencies().getCitizens() != null) {
-                return ChatColor.YELLOW + "(" + CitizensAPI.getNPCRegistry().getById((Integer) context
-                        .getSessionData(CK.Q_START_NPC)).getName() + ChatColor.RESET + ChatColor.YELLOW + ")";
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + CitizensAPI.getNPCRegistry().getById((Integer) context
+                        .getSessionData(CK.Q_START_NPC)).getName() + ChatColor.RESET + ChatColor.GRAY + ")";
             } else {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
@@ -212,16 +196,16 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
-                return ChatColor.YELLOW + "(" + l.getWorld().getName() + ", " + l.getBlockX() + ", " 
-                        + l.getBlockY() + ", " + l.getBlockZ() + ")";
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + l.getWorld().getName() + ", " + l.getBlockX() + ", " 
+                        + l.getBlockY() + ", " + l.getBlockZ() + ChatColor.RESET + ChatColor.GRAY + ")";
             }
         case 6:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 if (context.getSessionData(CK.Q_REGION) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.YELLOW + "(" + ChatColor.GREEN 
-                            + (String) context.getSessionData(CK.Q_REGION) + ChatColor.YELLOW + ")";
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + (String) context.getSessionData(CK.Q_REGION) 
+                            + ChatColor.RESET + ChatColor.GRAY + ")";
                 }
             } else {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
@@ -230,15 +214,16 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.Q_INITIAL_EVENT) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return ChatColor.YELLOW + "(" + (String) context.getSessionData(CK.Q_INITIAL_EVENT) + ")";
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + (String) context.getSessionData(CK.Q_INITIAL_EVENT) 
+                        + ChatColor.RESET + ChatColor.GRAY + ")";
             }
         case 8:
             if (plugin.getDependencies().getCitizens() != null) {
                 if (context.getSessionData(CK.Q_GUIDISPLAY) == null) {
                     return ChatColor.GRAY +  "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.YELLOW + "(" + ItemUtil.getDisplayString((ItemStack) context
-                            .getSessionData(CK.Q_GUIDISPLAY)) + ChatColor.RESET + ChatColor.YELLOW + ")";
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + ItemUtil.getDisplayString((ItemStack) context
+                            .getSessionData(CK.Q_GUIDISPLAY)) + ChatColor.RESET + ChatColor.GRAY + ")";
                 }
             } else {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";

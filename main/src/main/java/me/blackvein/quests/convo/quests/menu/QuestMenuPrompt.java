@@ -177,6 +177,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     return new QuestSelectCreatePrompt(context);
                 }
                 context.setSessionData(CK.Q_NAME, input);
+                context.setSessionData(CK.Q_ASK_MESSAGE, Lang.get("questEditorDefaultAskMessage"));
+                context.setSessionData(CK.Q_FINISH_MESSAGE, Lang.get("questEditorDefaultFinishMessage"));
                 questNames.add(input);
                 plugin.getQuestFactory().setNamesOfQuestsBeingEdited(questNames);
                 return new QuestMainPrompt(context);

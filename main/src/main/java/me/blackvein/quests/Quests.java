@@ -335,7 +335,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return eventFactory;
     }
     
-    @Deprecated
+    /**
+     * @deprecated Use {@link #getActionFactory()}
+     */
     public ActionFactory getEventFactory() {
         return eventFactory;
     }
@@ -1358,7 +1360,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     if (config.contains("quests." + questKey + ".name")) {
                         quest.setName(ConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
                     } else {
-                        throw new QuestFormatException("Quest block is missing", questKey);
+                        throw new QuestFormatException("name is missing", questKey);
+                    }
+                    if (config.contains("quests." + questKey + ".ask-message")) {
+                        quest.description = ConfigUtil.parseString(config.getString("quests." + questKey 
+                                + ".ask-message"), quest);
+                    } else {
+                        throw new QuestFormatException("ask-message is missing", questKey);
+                    }
+                    if (config.contains("quests." + questKey + ".finish-message")) {
+                        quest.finished = ConfigUtil.parseString(config.getString("quests." + questKey 
+                                + ".finish-message"), quest);
+                    } else {
+                        throw new QuestFormatException("finish-message is missing", questKey);
                     }
                     if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
                         if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey + ".npc-giver-id")) 
@@ -1421,18 +1435,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         } else {
                             throw new QuestFormatException("redo-delay is not a number", questKey);
                         }
-                    }
-                    if (config.contains("quests." + questKey + ".finish-message")) {
-                        quest.finished = ConfigUtil.parseString(config.getString("quests." + questKey 
-                                + ".finish-message"), quest);
-                    } else {
-                        throw new QuestFormatException("finish-message is missing", questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".ask-message")) {
-                        quest.description = ConfigUtil.parseString(config.getString("quests." + questKey 
-                                + ".ask-message"), quest);
-                    } else {
-                        throw new QuestFormatException("ask-message is missing", questKey);
                     }
                     if (config.contains("quests." + questKey + ".action")) {
                         Action act = loadAction(config.getString("quests." + questKey + ".action"));

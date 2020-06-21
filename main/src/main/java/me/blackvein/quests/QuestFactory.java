@@ -149,12 +149,12 @@ public class QuestFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.ED_QUEST_EDIT, q.getName());
         context.setSessionData(CK.Q_ID, q.getId());
         context.setSessionData(CK.Q_NAME, q.getName());
+        context.setSessionData(CK.Q_ASK_MESSAGE, q.getDescription());
+        context.setSessionData(CK.Q_FINISH_MESSAGE, q.getFinished());
         if (q.getNpcStart() != null) {
             context.setSessionData(CK.Q_START_NPC, q.getNpcStart().getId());
         }
         context.setSessionData(CK.Q_START_BLOCK, q.getBlockStart());
-        context.setSessionData(CK.Q_ASK_MESSAGE, q.getDescription());
-        context.setSessionData(CK.Q_FINISH_MESSAGE, q.getFinished());
         if (q.getInitialAction() != null) {
             context.setSessionData(CK.Q_INITIAL_EVENT, q.getInitialAction().getName());
         }
