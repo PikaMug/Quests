@@ -950,18 +950,19 @@ public class LocaleQuery {
         keys.put("RAW_FISH.2", "item.fish.clownfish.raw.name");
         keys.put("COOKED_FISH", "item.fish.cod.cooked.name");
         keys.put("COOKED_FISH.1", "item.fish.salmon.cooked.name");
-        keys.put("GOLD_RECORD", "item.record.name"); // added
-        keys.put("GREEN_RECORD", "item.record.name"); // added
-        keys.put("RECORD_6", "item.record.name"); // added
-        keys.put("RECORD_4", "item.record.name"); // added
-        keys.put("RECORD_5", "item.record.name"); // added
-        keys.put("RECORD_6", "item.record.name"); // added
-        keys.put("RECORD_7", "item.record.name"); // added
-        keys.put("RECORD_8", "item.record.name"); // added
-        keys.put("RECORD_9", "item.record.name"); // added
-        keys.put("RECORD_10", "item.record.name"); // added
-        keys.put("RECORD_11", "item.record.name"); // added
-        keys.put("RECORD_12", "item.record.name"); // added
+        keys.put("GOLD_RECORD", "item.record.13.desc"); // added
+        keys.put("GREEN_RECORD", "item.record.cat.desc"); // added
+        keys.put("RECORD_3", "item.record.blocks.desc"); // added
+        keys.put("RECORD_4", "item.record.chirp.desc"); // added
+        keys.put("RECORD_5", "item.record.far.desc"); // added
+        keys.put("RECORD_6", "item.record.mall.desc"); // added
+        keys.put("RECORD_7", "item.record.mellohi.desc"); // added
+        keys.put("RECORD_8", "item.record.stal.desc"); // added
+        keys.put("RECORD_9", "item.record.strad.desc"); // added
+        keys.put("RECORD_10", "item.record.ward.desc"); // added
+        keys.put("RECORD_11", "item.record.11.desc"); // added
+        keys.put("RECORD_12", "item.record.wait.desc"); // added
+        keys.put("RECORD", "item.record.name"); // added
         keys.put("BONE", "item.bone.name");
         keys.put("INK_SACK", "item.dyePowder.black.name");
         keys.put("INK_SACK.1", "item.dyePowder.red.name");
