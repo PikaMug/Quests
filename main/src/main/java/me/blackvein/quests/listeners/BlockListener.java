@@ -39,7 +39,7 @@ public class BlockListener implements Listener {
     }
     
     @SuppressWarnings("deprecation")
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH) // Because HIGHEST conflicts with AutoSell by extendedclip
     public void onBlockBreak(BlockBreakEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
