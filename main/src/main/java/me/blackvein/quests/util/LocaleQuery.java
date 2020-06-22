@@ -385,8 +385,8 @@ public class LocaleQuery {
         keys.put("SAPLING.1", "tile.sapling.spruce.name");
         keys.put("SAPLING.2", "tile.sapling.birch.name");
         keys.put("SAPLING.3", "tile.sapling.jungle.name");
-        keys.put("SAPLING.3", "tile.sapling.acacia.name");
-        keys.put("SAPLING.4", "tile.sapling.big_oak.name");
+        keys.put("SAPLING.4", "tile.sapling.acacia.name");
+        keys.put("SAPLING.5", "tile.sapling.big_oak.name");
         keys.put("DEAD_BUSH", "tile.deadbush.name");
         keys.put("BEDROCK", "tile.bedrock.name");
         keys.put("WATER", "tile.water.name");
