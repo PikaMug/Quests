@@ -421,9 +421,9 @@ public class LocaleQuery {
         keys.put("LEAVES_2.0", "tile.leaves.acacia.name");
         keys.put("LEAVES2.1", "tile.leaves.big_oak.name");
         keys.put("LONG_GRASS", "tile.tallgrass.name");
-        keys.put("LONG_GRASS.2", "tile.tallgrass.shrub.name");
-        keys.put("LONG_GRASS.0", "tile.tallgrass.grass.name");
-        keys.put("LONG_GRASS.1", "tile.tallgrass.fern.name");
+        keys.put("LONG_GRASS.0", "tile.tallgrass.shrub.name");
+        keys.put("LONG_GRASS.1", "tile.tallgrass.grass.name");
+        keys.put("LONG_GRASS.2", "tile.tallgrass.fern.name");
         keys.put("SPONGE", "tile.sponge.dry.name");
         keys.put("SPONGE.1", "tile.sponge.wet.name");
         keys.put("GLASS", "tile.glass.name");
