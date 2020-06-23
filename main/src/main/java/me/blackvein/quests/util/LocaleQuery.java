@@ -255,10 +255,9 @@ public class LocaleQuery {
                 key = oldEntities.get(type.name() + "." + Profession.valueOf(extra).name());
             } else if (type.name().equals("OCELOT") && Ocelot.Type.valueOf(extra) != null) {
                 key = oldEntities.get(type.name() + "." + Ocelot.Type.valueOf(extra).name());
-            } else if (type.name().equals("RABBIT") && Rabbit.Type.valueOf(extra) != null) {
-                if (Rabbit.Type.valueOf(extra).equals(Rabbit.Type.THE_KILLER_BUNNY)) {
-                    key = oldEntities.get(type.name() + "." + Rabbit.Type.valueOf(extra).name());
-                }
+            } else if (type.name().equals("RABBIT") && Rabbit.Type.valueOf(extra) != null 
+                    && Rabbit.Type.valueOf(extra).equals(Rabbit.Type.THE_KILLER_BUNNY)) {
+                key = oldEntities.get(type.name() + "." + Rabbit.Type.valueOf(extra).name());
             } else {
                 key = oldEntities.get(type.name());
             }
