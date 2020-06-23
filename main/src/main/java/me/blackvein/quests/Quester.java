@@ -547,7 +547,13 @@ public class Quester {
                     Player p = getPlayer();
                     for (ItemStack is : reqs.getItems()) {
                         if (reqs.getRemoveItems().get(reqs.getItems().indexOf(is)) == true) {
-                            InventoryUtil.removeItem(p.getInventory(), is);
+                            if (InventoryUtil.removeItem(p.getInventory(), is) == false) {
+                                if (InventoryUtil.stripItem(p.getEquipment(), is) == false) {
+                                    p.sendMessage(Lang.get(p, "requirementsItemFail"));
+                                    hardQuit(q);
+                                    return;
+                                }
+                            }
                         }
                     }
                     String accepted = Lang.get(getPlayer(), "questAccepted");

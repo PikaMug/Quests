@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -78,6 +79,54 @@ public class InventoryUtil {
                 } else {
                     i.setAmount(i.getAmount() - toRemove.getValue());
                     inventory.setItem(toRemove.getKey(), i);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Removes item from entity's equipment.
+     * 
+     * @param equipment EntityEquipment to remove from
+     * @param item Item with amount to remove
+     * @return true if successful
+     */
+    public static boolean stripItem(EntityEquipment equipment, ItemStack item) {
+        int amount = item.getAmount();
+        ItemStack[] allItems = equipment.getArmorContents();
+        HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
+        int foundAmount = 0;
+        
+        int index = 0;
+        for (ItemStack i : allItems) {
+            if (i == null) {
+                index++;
+                continue;
+            }
+            if (ItemUtil.compareItems(item, i, true) == 0) {
+                if (i.getAmount() >= amount - foundAmount) {
+                    removeFrom.put(index, amount - foundAmount);
+                    foundAmount = amount;
+                } else {
+                    foundAmount += i.getAmount();
+                    removeFrom.put(index, i.getAmount());
+                }
+                if (foundAmount >= amount) {
+                    break;
+                }
+            }
+            index++;
+        }
+        if (foundAmount == amount) {
+            for (Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
+                ItemStack i = allItems[toRemove.getKey()];
+                if (i.getAmount() - toRemove.getValue() <= 0) {
+                    allItems[toRemove.getKey()] = null;
+                } else {
+                    i.setAmount(i.getAmount() - toRemove.getValue());
+                    allItems[toRemove.getKey()] = i;
                 }
             }
             return true;
