@@ -1292,11 +1292,11 @@ public class Quester {
         for (ItemStack is : getQuestData(quest).blocksBroken) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         broken = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
                         broken = is;
                     }
                 } else if (m.getData() instanceof Crops && is.getData() instanceof Crops) {
@@ -1309,8 +1309,13 @@ public class Quester {
                         // Age is unspecified so ignore durability
                         broken = is;
                     }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
+                        broken = is;
+                    }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     broken = is;
                 }
             }
@@ -1318,11 +1323,11 @@ public class Quester {
         for (ItemStack is : getCurrentStage(quest).blocksToBreak) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toBreak = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
                         toBreak = is;
                     }
                 } else if (m.getData() instanceof Crops && is.getData() instanceof Crops) {
@@ -1335,8 +1340,13 @@ public class Quester {
                         // Age is unspecified so ignore durability
                         toBreak = is;
                     }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
+                        toBreak = is;
+                    }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     toBreak = is;
                 }
             }
@@ -1379,15 +1389,20 @@ public class Quester {
         for (ItemStack is : getQuestData(quest).blocksDamaged) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         damaged = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
+                        damaged = is;
+                    }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
                         damaged = is;
                     }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     damaged = is;
                 }
             }
@@ -1395,15 +1410,20 @@ public class Quester {
         for (ItemStack is : getCurrentStage(quest).blocksToDamage) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toDamage = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
+                        toDamage = is;
+                    }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
                         toDamage = is;
                     }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     toDamage = is;
                 }
             }
@@ -1446,15 +1466,20 @@ public class Quester {
         for (ItemStack is : getQuestData(quest).blocksPlaced) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         placed = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
+                        placed = is;
+                    }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
                         placed = is;
                     }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     placed = is;
                 }
             }
@@ -1462,15 +1487,20 @@ public class Quester {
         for (ItemStack is : getCurrentStage(quest).blocksToPlace) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toPlace = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
+                        toPlace = is;
+                    }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
                         toPlace = is;
                     }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     toPlace = is;
                 }
             }
@@ -1513,15 +1543,20 @@ public class Quester {
         for (ItemStack is : getQuestData(quest).blocksUsed) {
             if (m.getType() == is.getType() ) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         used = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
+                        used = is;
+                    }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
                         used = is;
                     }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     used = is;
                 }
             }
@@ -1529,15 +1564,20 @@ public class Quester {
         for (ItemStack is : getCurrentStage(quest).blocksToUse) {
             if (m.getType() == is.getType() ) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid, so check durability
+                    // Blocks are solid, so check durability
                     if (m.getDurability() == is.getDurability()) {
                         toUse = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
+                        toUse = is;
+                    }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
                         toUse = is;
                     }
                 } else {
-                    //Blocks are not solid, so ignore durability
+                    // Blocks are not solid, so ignore durability
                     toUse = is;
                 }
             }
@@ -1580,15 +1620,20 @@ public class Quester {
         for (ItemStack is : getQuestData(quest).blocksCut) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         cut = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
+                        cut = is;
+                    }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
                         cut = is;
                     }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     cut = is;
                 }
             }
@@ -1596,15 +1641,20 @@ public class Quester {
         for (ItemStack is : getCurrentStage(quest).blocksToCut) {
             if (m.getType() == is.getType()) {
                 if (m.getType().isSolid() && is.getType().isSolid()) {
-                    //Blocks are solid so check for durability
+                    // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toCut = is;
                     } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
-                        //Ignore durability for 1.13+
+                        // Ignore durability for 1.13+
+                        toCut = is;
+                    }
+                } else if (m.getType().name().equals("RED_ROSE")) {
+                    // Flowers are unique so check for durability
+                    if (m.getDurability() == is.getDurability()) {
                         toCut = is;
                     }
                 } else {
-                    //Blocks are not solid so ignore durability
+                    // Blocks are not solid so ignore durability
                     toCut = is;
                 }
             }
