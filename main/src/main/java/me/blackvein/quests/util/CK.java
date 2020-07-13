@@ -18,6 +18,7 @@ public class CK {
     public static final String ED_QUEST_EDIT = "edit";
     public static final String ED_QUEST_DELETE = "delQuest";
     public static final String ED_EVENT_DELETE = "delEvent";
+    public static final String ED_CONDITION_DELETE = "delCondition";
     // Quests
     public static final String Q_ID = "questId";
     public static final String Q_NAME = "questName";
@@ -99,6 +100,7 @@ public class CK {
     public static final String S_COMMAND_TEMP_EVENT = "commandTempEvent";
     public static final String S_DEATH_EVENT = "deathEvent";
     public static final String S_DISCONNECT_EVENT = "disconnectEvent";
+    public static final String S_CONDITION = "condition";
     public static final String S_DELAY = "delay";
     public static final String S_DELAY_MESSAGE = "delayMessage";
     public static final String S_DENIZEN = "denizen"; // Legacy
@@ -143,7 +145,7 @@ public class CK {
     public static final String OPT_USE_PARTIES_PLUGIN = "usePartiesPluginOpt";
     public static final String OPT_SHARE_PROGRESS_LEVEL = "shareProgressLevelOpt";
     public static final String OPT_REQUIRE_SAME_QUEST = "requireSameQuestOpt";
-    // Events
+    // Actions
     public static final String E_OLD_EVENT = "oldEvent";
     public static final String E_NAME = "evtName";
     public static final String E_MESSAGE = "evtMessage";
@@ -171,4 +173,9 @@ public class CK {
     public static final String E_TIMER = "evtTimer";
     public static final String E_CANCEL_TIMER = "evtCancelTimer";
     public static final String E_DENIZEN = "evtDenizen";
+    // Conditions
+    public static final String C_OLD_CONDITION = "oldCondition";
+    public static final String C_NAME = "conName";
+    public static final String C_FAIL_QUEST = "conFailQuest";
+    public static final String C_ITEMS_WHILE_HOLDING_MAIN_HAND = "conItemsMainHand";
 }

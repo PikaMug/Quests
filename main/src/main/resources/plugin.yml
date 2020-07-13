@@ -27,6 +27,7 @@ permissions:
       quests.editor.*: true
       quests.events.*: true
       quests.actions.*: true
+      quests.conditions.*: true
   quests.quest:
     description: View current quest objectives
     default: true
@@ -182,6 +183,26 @@ permissions:
     default: op
   quests.actions.delete:
     description: Ability to delete existing actions
+    default: op
+  quests.conditions.*:
+    description: Access all Conditions Editor functionality
+    default: op
+    children:
+      quests.conditions.editor: true
+      quests.conditions.create: true
+      quests.conditions.edit: true
+      quests.conditions.delete: true
+  quests.conditions.editor:
+    description: Ability to open Conditions Editor
+    default: op
+  quests.conditions.create:
+    description: Ability to create new conditions
+    default: op
+  quests.conditions.edit:
+    description: Ability to edit existing conditions
+    default: op
+  quests.conditions.delete:
+    description: Ability to delete existing conditions
     default: op
 commands:
   quests:

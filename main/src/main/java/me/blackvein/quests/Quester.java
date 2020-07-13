@@ -57,6 +57,7 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 
 import de.erethon.dungeonsxl.player.DGroup;
+import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.events.quest.QuestTakeEvent;
 import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreOpenGUIEvent;
@@ -572,14 +573,25 @@ public class Quester {
             }
             if (player.isOnline()) {
                 Player p = getPlayer();
-                String msg = Lang.get(p, "questObjectivesTitle");
-                msg = msg.replace("<quest>", q.getName());
-                p.sendMessage(ChatColor.GOLD + msg);
+                String title = Lang.get(p, "questObjectivesTitle");
+                title = title.replace("<quest>", q.getName());
+                p.sendMessage(ChatColor.GOLD + title);
                 plugin.showObjectives(q, this, false);
                 String stageStartMessage = stage.startMessage;
                 if (stageStartMessage != null) {
                     p.sendMessage(ConfigUtil
                             .parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
+                }
+                Condition c = stage.getCondition();
+                if (c != null) {
+                    p.sendMessage(ChatColor.LIGHT_PURPLE + Lang.get("stageEditorConditions") + ":");
+                    if (c.getItemsWhileHoldingMainHand() != null) {
+                        String msg = "- " + Lang.get("conditionEditorItemsInMainHand");
+                        for (ItemStack is : c.getItemsWhileHoldingMainHand()) {
+                            msg += ChatColor.AQUA + "\n   - " + ItemUtil.getPrettyItemName(is.getType().name());
+                        }
+                        p.sendMessage(ChatColor.YELLOW + msg);
+                    }
                 }
             }
             if (stage.chatActions.isEmpty() == false) {

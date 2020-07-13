@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>3.9.5</version>
+        <version>3.9.6</version>
     </parent>
     <artifactId>quests-main</artifactId>
     
@@ -141,11 +141,11 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>lang/**/*.*</include>
+                    <include>actions.yml</include>
+                    <include>conditions.yml</include>
                     <include>config.yml</include>
                     <include>plugin.yml</include>
-                    <include>actions.yml</include>
                     <include>quests.yml</include>
-                    <include>data.yml</include>
                     <include>strings.yml</include>
                 </includes>
             </resource>

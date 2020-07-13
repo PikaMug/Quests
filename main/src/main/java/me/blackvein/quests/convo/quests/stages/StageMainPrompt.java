@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
@@ -51,7 +52,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
     private final String stagePrefix;
     private final String classPrefix;
     private boolean hasObjective = false;
-    private final int size = 16;
+    private final int size = 17;
 
     public StageMainPrompt(int stageNum, ConversationContext context) {
         super(context);
@@ -95,14 +96,20 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY;
             } else {
                 return ChatColor.BLUE;
-            }
+            }   
         case 11:
-            if (context.getSessionData(stagePrefix + CK.S_DELAY) == null) {
+            if (!hasObjective) {
                 return ChatColor.GRAY;
             } else {
                 return ChatColor.BLUE;
             }
         case 12:
+            if (context.getSessionData(stagePrefix + CK.S_DELAY) == null) {
+                return ChatColor.GRAY;
+            } else {
+                return ChatColor.BLUE;
+            }
+        case 13:
             if (context.getSessionData(stagePrefix + CK.S_START_MESSAGE) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY;
@@ -112,7 +119,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.BLUE;
             }
-        case 13:
+        case 14:
             if (context.getSessionData(stagePrefix + CK.S_COMPLETE_MESSAGE) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY;
@@ -122,7 +129,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.BLUE;
             }
-        case 14:
+        case 15:
             if (context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY;
@@ -132,9 +139,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.BLUE;
             }
-        case 15:
-            return ChatColor.RED;
         case 16:
+            return ChatColor.RED;
+        case 17:
             return ChatColor.GREEN;
         default:
             return null;
@@ -167,17 +174,23 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             }
         case 10:
             if (!hasObjective) {
+                return ChatColor.GRAY + Lang.get("stageEditorConditions") + ChatColor.RED + " ALPHA";
+            } else {
+                return ChatColor.AQUA + Lang.get("stageEditorConditions") + ChatColor.RED + " ALPHA";
+            }
+        case 11:
+            if (!hasObjective) {
                 return ChatColor.GRAY + Lang.get("delay");
             } else {
                 return ChatColor.YELLOW + Lang.get("delay");
             }
-        case 11:
+        case 12:
             if (context.getSessionData(stagePrefix + CK.S_DELAY) == null) {
                 return ChatColor.GRAY + Lang.get("stageEditorDelayMessage");
             } else {
                 return ChatColor.YELLOW + Lang.get("stageEditorDelayMessage");
             }
-        case 12:
+        case 13:
             if (context.getSessionData(stagePrefix + CK.S_START_MESSAGE) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY + Lang.get("stageEditorStartMessage");
@@ -187,7 +200,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.YELLOW + Lang.get("stageEditorStartMessage");
             }
-        case 13:
+        case 14:
             if (context.getSessionData(stagePrefix + CK.S_COMPLETE_MESSAGE) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY + Lang.get("stageEditorCompleteMessage");
@@ -197,7 +210,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.YELLOW + Lang.get("stageEditorCompleteMessage");
             }
-        case 14:
+        case 15:
             if (context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY + Lang.get("overrideCreateSet");
@@ -207,9 +220,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.YELLOW + Lang.get("overrideCreateSet");
             }
-        case 15:
-            return ChatColor.RED + Lang.get("stageEditorDelete");
         case 16:
+            return ChatColor.RED + Lang.get("stageEditorDelete");
+        case 17:
             return ChatColor.GREEN + Lang.get("done");
         default:
             return null;
@@ -330,6 +343,14 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         case 10:
             if (!hasObjective) {
                 return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
+            } else if (context.getSessionData(stagePrefix + CK.S_CONDITION) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return "";
+            }
+        case 11:
+            if (!hasObjective) {
+                return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
             } else {
                 if (context.getSessionData(stagePrefix + CK.S_DELAY) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
@@ -338,7 +359,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + MiscUtil.getTime(time) + ChatColor.GRAY + ")";
                 }
             }
-        case 11:
+        case 12:
             if (!hasObjective) {
                 return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
             } else if (context.getSessionData(stagePrefix + CK.S_DELAY) == null) {
@@ -349,7 +370,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
                         + context.getSessionData(stagePrefix + CK.S_DELAY_MESSAGE) + "\"" + ChatColor.GRAY + ")";
             }
-        case 12:
+        case 13:
             if (context.getSessionData(stagePrefix + CK.S_START_MESSAGE) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
@@ -360,7 +381,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
                         + context.getSessionData(stagePrefix + CK.S_START_MESSAGE) + "\"" + ChatColor.GRAY + ")";
             }
-        case 13:
+        case 14:
             if (context.getSessionData(stagePrefix + CK.S_COMPLETE_MESSAGE) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
@@ -371,7 +392,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + "\"" 
                         + context.getSessionData(stagePrefix + CK.S_COMPLETE_MESSAGE) + "\"" + ChatColor.GRAY + ")";
             }
-        case 14:
+        case 15:
             if (context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY) == null) {
                 if (!hasObjective) {
                     return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
@@ -387,8 +408,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 }
                 return text;
             }
-        case 15:
         case 16:
+        case 17:
             return "";
         default:
             return null;
@@ -456,33 +477,40 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             }
         case 10:
             if (hasObjective) {
-                return new DelayPrompt(context);
+                return new ConditionListPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new StageMainPrompt(stageNum, context);
             }
         case 11:
+            if (hasObjective) {
+                return new DelayPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
+                return new StageMainPrompt(stageNum, context);
+            }
+        case 12:
             if (context.getSessionData(stagePrefix + CK.S_DELAY) == null) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNoDelaySet"));
                 return new StageMainPrompt(stageNum, context);
             } else {
                 return new DelayMessagePrompt(context);
             }
-        case 12:
+        case 13:
             if (hasObjective) {
                 return new StartMessagePrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new StageMainPrompt(stageNum, context);
             }
-        case 13:
+        case 14:
             if (hasObjective) {
                 return new CompleteMessagePrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new StageMainPrompt(stageNum, context);
             }
-        case 14:
+        case 15:
             if (hasObjective) {
                 return new OverridePrompt.Builder()
                         .source(this)
@@ -492,9 +520,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new StageMainPrompt(stageNum, context);
             }
-        case 15:
-            return new DeletePrompt(context);
         case 16:
+            return new DeletePrompt(context);
+        case 17:
             return new StageMenuPrompt(context);
         default:
             return new StageMainPrompt(stageNum, context);
@@ -1296,10 +1324,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
             if (plugin.getActions().isEmpty()) {
-                text += ChatColor.RED + "- None";
+                text += ChatColor.RED + "- " + Lang.get("none") + "\n";
             } else {
-                for (Action e : plugin.getActions()) {
-                    text += ChatColor.GREEN + "- " + e.getName() + "\n";
+                for (Action a : plugin.getActions()) {
+                    text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
             return text + ChatColor.YELLOW + getQueryText(context);
@@ -1311,9 +1339,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (Action e : plugin.getActions()) {
-                    if (e.getName().equalsIgnoreCase(input)) {
-                        found = e;
+                for (Action a : plugin.getActions()) {
+                    if (a.getName().equalsIgnoreCase(input)) {
+                        found = a;
                         break;
                     }
                 }
@@ -1362,8 +1390,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (Action e : plugin.getActions()) {
-                    text += ChatColor.GREEN + "- " + e.getName() + "\n";
+                for (Action a : plugin.getActions()) {
+                    text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
             return text + ChatColor.YELLOW + getQueryText(context);
@@ -1375,9 +1403,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (Action e : plugin.getActions()) {
-                    if (e.getName().equalsIgnoreCase(input)) {
-                        found = e;
+                for (Action a : plugin.getActions()) {
+                    if (a.getName().equalsIgnoreCase(input)) {
+                        found = a;
                         break;
                     }
                 }
@@ -1424,10 +1452,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
             if (plugin.getActions().isEmpty()) {
-                text += ChatColor.RED + "- None";
+                text += ChatColor.RED + "- " + Lang.get("none") + "\n";
             } else {
-                for (Action e : plugin.getActions()) {
-                    text += ChatColor.GREEN + "- " + e.getName() + "\n";
+                for (Action a : plugin.getActions()) {
+                    text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
             return text + ChatColor.YELLOW + getQueryText(context);
@@ -1439,9 +1467,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (Action e : plugin.getActions()) {
-                    if (e.getName().equalsIgnoreCase(input)) {
-                        found = e;
+                for (Action a : plugin.getActions()) {
+                    if (a.getName().equalsIgnoreCase(input)) {
+                        found = a;
                         break;
                     }
                 }
@@ -1490,8 +1518,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (Action e : plugin.getActions()) {
-                    text += ChatColor.GREEN + "- " + e.getName() + "\n";
+                for (Action a : plugin.getActions()) {
+                    text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
             return text + ChatColor.YELLOW + getQueryText(context);
@@ -1503,9 +1531,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (Action e : plugin.getActions()) {
-                    if (e.getName().equalsIgnoreCase(input)) {
-                        found = e;
+                for (Action a : plugin.getActions()) {
+                    if (a.getName().equalsIgnoreCase(input)) {
+                        found = a;
                         break;
                     }
                 }
@@ -1554,8 +1582,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (Action e : plugin.getActions()) {
-                    text += ChatColor.GREEN + "- " + e.getName() + "\n";
+                for (Action a : plugin.getActions()) {
+                    text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
             return text + ChatColor.YELLOW + getQueryText(context);
@@ -1567,9 +1595,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (Action e : plugin.getActions()) {
-                    if (e.getName().equalsIgnoreCase(input)) {
-                        found = e;
+                for (Action a : plugin.getActions()) {
+                    if (a.getName().equalsIgnoreCase(input)) {
+                        found = a;
                         break;
                     }
                 }
@@ -1682,8 +1710,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (Action e : plugin.getActions()) {
-                    text += ChatColor.GREEN + "- " + e.getName() + "\n";
+                for (Action a : plugin.getActions()) {
+                    text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
             return text + ChatColor.YELLOW + getQueryText(context);
@@ -1695,9 +1723,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (Action e : plugin.getActions()) {
-                    if (e.getName().equalsIgnoreCase(input)) {
-                        found = e;
+                for (Action a : plugin.getActions()) {
+                    if (a.getName().equalsIgnoreCase(input)) {
+                        found = a;
                         break;
                     }
                 }
@@ -1785,6 +1813,70 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
+    public class ConditionListPrompt extends QuestsEditorStringPrompt {
+
+        public ConditionListPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return Lang.get("stageEditorConditions");
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("stageEditorConditionsPrompt");
+        }
+
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+            if (plugin.getConditions().isEmpty()) {
+                text += ChatColor.RED + "- " + Lang.get("none") + "\n";
+            } else {
+                for (Condition c : plugin.getConditions()) {
+                    text += ChatColor.GREEN + "- " + c.getName() + "\n";
+                }
+            }
+            return text + ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            Player player = (Player) context.getForWhom();
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+                Condition found = null;
+                for (Condition c : plugin.getConditions()) {
+                    if (c.getName().equalsIgnoreCase(input)) {
+                        found = c;
+                        break;
+                    }
+                }
+                if (found == null) {
+                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
+                            + Lang.get("stageEditorInvalidCondition"));
+                    return new ConditionListPrompt(context);
+                } else {
+                    context.setSessionData(stagePrefix + CK.S_CONDITION, found.getName());
+                    return new StageMainPrompt(stageNum, context);
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                return new StageMainPrompt(stageNum, context);
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(stagePrefix + CK.S_CONDITION, null);
+                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorConditionCleared"));
+                return new StageMainPrompt(stageNum, context);
+            } else {
+                return new ConditionListPrompt(context);
+            }
+        }
+    }
+    
     public class DelayPrompt extends QuestsEditorStringPrompt {
         
         public DelayPrompt(ConversationContext context) {

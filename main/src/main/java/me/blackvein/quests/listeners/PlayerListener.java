@@ -209,61 +209,61 @@ public class PlayerListener implements Listener {
                                     + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN 
                                     + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             evt.setCancelled(true);
-                        } else if (plugin.getEventFactory().getSelectedExplosionLocations().containsKey(evt.getPlayer()
+                        } else if (plugin.getActionFactory().getSelectedExplosionLocations().containsKey(evt.getPlayer()
                                 .getUniqueId())) {
                             Block block = evt.getClickedBlock();
                             Location loc = block.getLocation();
-                            Map<UUID, Block> temp = plugin.getEventFactory().getSelectedExplosionLocations();
+                            Map<UUID, Block> temp = plugin.getActionFactory().getSelectedExplosionLocations();
                             temp.put(evt.getPlayer().getUniqueId(), block);
-                            plugin.getEventFactory().setSelectedExplosionLocations(temp);
+                            plugin.getActionFactory().setSelectedExplosionLocations(temp);
                             evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " "
                                     + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() 
                                     + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN 
                                     + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             evt.setCancelled(true);
-                        } else if (plugin.getEventFactory().getSelectedEffectLocations().containsKey(evt.getPlayer()
+                        } else if (plugin.getActionFactory().getSelectedEffectLocations().containsKey(evt.getPlayer()
                                 .getUniqueId())) {
                             Block block = evt.getClickedBlock();
                             Location loc = block.getLocation();
-                            Map<UUID, Block> temp = plugin.getEventFactory().getSelectedEffectLocations();
+                            Map<UUID, Block> temp = plugin.getActionFactory().getSelectedEffectLocations();
                             temp.put(evt.getPlayer().getUniqueId(), block);
-                            plugin.getEventFactory().setSelectedEffectLocations(temp);
+                            plugin.getActionFactory().setSelectedEffectLocations(temp);
                             evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " "
                                     + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() 
                                     + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN 
                                     + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             evt.setCancelled(true);
-                        } else if (plugin.getEventFactory().getSelectedMobLocations().containsKey(evt.getPlayer()
+                        } else if (plugin.getActionFactory().getSelectedMobLocations().containsKey(evt.getPlayer()
                                 .getUniqueId())) {
                             Block block = evt.getClickedBlock();
                             Location loc = block.getLocation();
-                            Map<UUID, Block> temp = plugin.getEventFactory().getSelectedMobLocations();
+                            Map<UUID, Block> temp = plugin.getActionFactory().getSelectedMobLocations();
                             temp.put(evt.getPlayer().getUniqueId(), block);
-                            plugin.getEventFactory().setSelectedMobLocations(temp);
+                            plugin.getActionFactory().setSelectedMobLocations(temp);
                             evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " "
                                     + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() 
                                     + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN 
                                     + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             evt.setCancelled(true);
-                        } else if (plugin.getEventFactory().getSelectedLightningLocations().containsKey(evt.getPlayer()
+                        } else if (plugin.getActionFactory().getSelectedLightningLocations().containsKey(evt.getPlayer()
                                 .getUniqueId())) {
                             Block block = evt.getClickedBlock();
                             Location loc = block.getLocation();
-                            Map<UUID, Block> temp = plugin.getEventFactory().getSelectedLightningLocations();
+                            Map<UUID, Block> temp = plugin.getActionFactory().getSelectedLightningLocations();
                             temp.put(evt.getPlayer().getUniqueId(), block);
-                            plugin.getEventFactory().setSelectedLightningLocations(temp);
+                            plugin.getActionFactory().setSelectedLightningLocations(temp);
                             evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " "
                                     + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() 
                                     + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN 
                                     + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             evt.setCancelled(true);
-                        } else if (plugin.getEventFactory().getSelectedTeleportLocations().containsKey(evt.getPlayer()
+                        } else if (plugin.getActionFactory().getSelectedTeleportLocations().containsKey(evt.getPlayer()
                                 .getUniqueId())) {
                             Block block = evt.getClickedBlock();
                             Location loc = block.getLocation();
-                            Map<UUID, Block> temp = plugin.getEventFactory().getSelectedTeleportLocations();
+                            Map<UUID, Block> temp = plugin.getActionFactory().getSelectedTeleportLocations();
                             temp.put(evt.getPlayer().getUniqueId(), block);
-                            plugin.getEventFactory().setSelectedTeleportLocations(temp);
+                            plugin.getActionFactory().setSelectedTeleportLocations(temp);
                             evt.getPlayer().sendMessage(ChatColor.GOLD + Lang.get(player, "questSelectedLocation") + " "
                                     + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", " + loc.getY() 
                                     + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN 
@@ -576,6 +576,15 @@ public class PlayerListener implements Listener {
                 }
             } else {
                 for (Quest quest : plugin.getQuests()) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        damager.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("killMob")) {
                         quester.killMob(quest, target.getLocation(), target.getType());

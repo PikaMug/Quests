@@ -239,7 +239,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 }
                 List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 if (actionNames.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSomeone"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new ActionNamePrompt();
                 }
                 if (input.contains(",")) {

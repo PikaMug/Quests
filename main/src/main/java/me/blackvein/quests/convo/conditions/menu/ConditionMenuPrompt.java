@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************************************/
 
-package me.blackvein.quests.convo.actions.menu;
+package me.blackvein.quests.convo.conditions.menu;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,20 +24,20 @@ import org.bukkit.entity.Player;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
-import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
-import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
-import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
-import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
+import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
+import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
+import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
+import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
-public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
+public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public ActionMenuPrompt(ConversationContext context) {
+    public ConditionMenuPrompt(ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
@@ -49,7 +49,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
     }
     
     public String getTitle(ConversationContext context) {
-        return Lang.get("eventEditorTitle");
+        return Lang.get("conditionEditorTitle");
     }
     
     public ChatColor getNumberColor(ConversationContext context, int number) {
@@ -68,11 +68,11 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
     public String getSelectionText(ConversationContext context, int number) {
         switch (number) {
         case 1:
-            return ChatColor.YELLOW + Lang.get("eventEditorCreate");
+            return ChatColor.YELLOW + Lang.get("conditionEditorCreate");
         case 2:
-            return ChatColor.YELLOW + Lang.get("eventEditorEdit");
+            return ChatColor.YELLOW + Lang.get("conditionEditorEdit");
         case 3:
-            return ChatColor.YELLOW + Lang.get("eventEditorDelete");
+            return ChatColor.YELLOW + Lang.get("conditionEditorDelete");
         case 4:
             return ChatColor.RED + Lang.get("exit");
         default:
@@ -86,7 +86,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+        ConditionsEditorPostOpenNumericPromptEvent event = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         String text = ChatColor.GOLD + getTitle(context) + "\n";
         for (int i = 1; i <= size; i++) {
@@ -101,66 +101,63 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         final Player player = (Player) context.getForWhom();
         switch (input.intValue()) {
         case 1:
-            if (player.hasPermission("quests.editor.actions.create") 
-                    || player.hasPermission("quests.editor.events.create")) {
-                context.setSessionData(CK.E_OLD_EVENT, "");
-                return new ActionSelectCreatePrompt(context);
+            if (player.hasPermission("quests.conditions.create")) {
+                context.setSessionData(CK.C_OLD_CONDITION, "");
+                return new ConditionSelectCreatePrompt(context);
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                return new ActionMenuPrompt(context);
+                return new ConditionMenuPrompt(context);
             }
         case 2:
-            if (player.hasPermission("quests.editor.actions.edit") 
-                    || player.hasPermission("quests.editor.events.edit")) {
-                if (plugin.getActions().isEmpty()) {
+            if (player.hasPermission("quests.conditions.edit")) {
+                if (plugin.getConditions().isEmpty()) {
                     ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
-                            + Lang.get("eventEditorNoneToEdit"));
-                    return new ActionMenuPrompt(context);
+                            + Lang.get("conditionEditorNoneToEdit"));
+                    return new ConditionMenuPrompt(context);
                 } else {
-                    return new ActionSelectEditPrompt();
+                    return new ConditionSelectEditPrompt();
                 }
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                return new ActionMenuPrompt(context);
+                return new ConditionMenuPrompt(context);
             }
         case 3:
-            if (player.hasPermission("quests.editor.actions.delete") 
-                    || player.hasPermission("quests.editor.events.delete")) {
-                if (plugin.getActions().isEmpty()) {
+            if (player.hasPermission("quests.conditions.delete")) {
+                if (plugin.getConditions().isEmpty()) {
                     ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
-                            + Lang.get("eventEditorNoneToDelete"));
-                    return new ActionMenuPrompt(context);
+                            + Lang.get("conditionEditorNoneToDelete"));
+                    return new ConditionMenuPrompt(context);
                 } else {
-                    return new ActionSelectDeletePrompt();
+                    return new ConditionSelectDeletePrompt();
                 }
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
-                return new ActionMenuPrompt(context);
+                return new ConditionMenuPrompt(context);
             }
         case 4:
             ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("exited"));
             return Prompt.END_OF_CONVERSATION;
         default:
-            return new ActionMenuPrompt(context);
+            return new ConditionMenuPrompt(context);
         }
     }
     
-    public class ActionSelectCreatePrompt extends ActionsEditorStringPrompt {
-        public ActionSelectCreatePrompt(ConversationContext context) {
+    public class ConditionSelectCreatePrompt extends ConditionsEditorStringPrompt {
+        public ConditionSelectCreatePrompt(ConversationContext context) {
             super(context);
         }
 
         public String getTitle(ConversationContext context) {
-            return Lang.get("eventEditorCreate");
+            return Lang.get("conditionEditorCreate");
         }
         
         public String getQueryText(ConversationContext context) {
-            return Lang.get("eventEditorEnterEventName");
+            return Lang.get("conditionEditorEnterName");
         }
 
         @Override
         public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            ConditionsEditorPostOpenStringPromptEvent event = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n" + ChatColor.YELLOW + getQueryText(context);
@@ -171,80 +168,80 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input == null) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                return new ActionSelectCreatePrompt(context);
+                return new ConditionSelectCreatePrompt(context);
             }
             input = input.trim();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (Action a : plugin.getActions()) {
-                    if (a.getName().equalsIgnoreCase(input)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
-                        return new ActionSelectCreatePrompt(context);
+                for (Condition c : plugin.getConditions()) {
+                    if (c.getName().equalsIgnoreCase(input)) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
+                        return new ConditionSelectCreatePrompt(context);
                     }
                 }
-                List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
+                List<String> actionNames = plugin.getConditionFactory().getNamesOfConditionsBeingEdited();
                 if (actionNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
-                    return new ActionSelectCreatePrompt(context);
+                    return new ConditionSelectCreatePrompt(context);
                 }
                 if (input.contains(".") || input.contains(",")) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
-                    return new ActionSelectCreatePrompt(context);
+                    return new ConditionSelectCreatePrompt(context);
                 }
                 if (input.equals("")) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new ActionSelectCreatePrompt(context);
+                    return new ConditionSelectCreatePrompt(context);
                 }
-                context.setSessionData(CK.E_NAME, input);
+                context.setSessionData(CK.C_NAME, input);
                 actionNames.add(input);
-                plugin.getActionFactory().setNamesOfActionsBeingEdited(actionNames);
-                return new ActionMainPrompt(context);
+                plugin.getConditionFactory().setNamesOfConditionsBeingEdited(actionNames);
+                return new ConditionMainPrompt(context);
             } else {
-                return new ActionMenuPrompt(context);
+                return new ConditionMenuPrompt(context);
             }
         }
     }
 
-    private class ActionSelectEditPrompt extends StringPrompt {
+    private class ConditionSelectEditPrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEdit") + " -\n";
-            for (Action a : plugin.getActions()) {
+            String text = ChatColor.GOLD + "- " + Lang.get("conditionEditorEdit") + " -\n";
+            for (Condition a : plugin.getConditions()) {
                 text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ", ";
             }
             text = text.substring(0, text.length() - 2) + "\n";
-            text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
+            text += ChatColor.YELLOW + Lang.get("conditionEditorEnterName");
             return text;
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                Action a = plugin.getAction(input);
-                if (a != null) {
-                    context.setSessionData(CK.E_OLD_EVENT, a.getName());
-                    context.setSessionData(CK.E_NAME, a.getName());
-                    plugin.getActionFactory().loadData(a, context);
-                    return new ActionMainPrompt(context);
+                Condition c = plugin.getCondition(input);
+                if (c != null) {
+                    context.setSessionData(CK.C_OLD_CONDITION, c.getName());
+                    context.setSessionData(CK.C_NAME, c.getName());
+                    plugin.getConditionFactory().loadData(c, context);
+                    return new ConditionMainPrompt(context);
                 }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
-                return new ActionSelectEditPrompt();
+                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("conditionEditorNotFound"));
+                return new ConditionSelectEditPrompt();
             } else {
-                return new ActionMenuPrompt(context);
+                return new ConditionMenuPrompt(context);
             }
         }
     }
     
-    private class ActionSelectDeletePrompt extends StringPrompt {
+    private class ConditionSelectDeletePrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("eventEditorDelete") + " -\n";
-            for (Action a : plugin.getActions()) {
-                text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ",";
+            String text = ChatColor.GOLD + "- " + Lang.get("conditionEditorDelete") + " -\n";
+            for (Condition c : plugin.getConditions()) {
+                text += ChatColor.AQUA + c.getName() + ChatColor.GRAY + ",";
             }
             text = text.substring(0, text.length() - 1) + "\n";
-            text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
+            text += ChatColor.YELLOW + Lang.get("conditionEditorEnterName");
             return text;
         }
 
@@ -252,40 +249,40 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 LinkedList<String> used = new LinkedList<String>();
-                Action a = plugin.getAction(input);
-                if (a != null) {
+                Condition c = plugin.getCondition(input);
+                if (c != null) {
                     for (Quest quest : plugin.getQuests()) {
                         for (Stage stage : quest.getStages()) {
-                            if (stage.getFinishAction() != null 
-                                    && stage.getFinishAction().getName().equalsIgnoreCase(a.getName())) {
+                            if (stage.getCondition() != null 
+                                    && stage.getCondition().getName().equalsIgnoreCase(c.getName())) {
                                 used.add(quest.getName());
                                 break;
                             }
                         }
                     }
                     if (used.isEmpty()) {
-                        context.setSessionData(CK.ED_EVENT_DELETE, a.getName());
-                        return new ActionConfirmDeletePrompt();
+                        context.setSessionData(CK.ED_CONDITION_DELETE, c.getName());
+                        return new ConditionConfirmDeletePrompt();
                     } else {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorEventInUse") 
-                        + " \"" + ChatColor.DARK_PURPLE + a.getName() + ChatColor.RED + "\":");
+                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("conditionEditorInUse") 
+                        + " \"" + ChatColor.DARK_PURPLE + c.getName() + ChatColor.RED + "\":");
                         for (String s : used) {
                             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
                                 + Lang.get("eventEditorMustModifyQuests"));
-                        return new ActionSelectDeletePrompt();
+                        return new ConditionSelectDeletePrompt();
                     }
                 }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
-                return new ActionSelectDeletePrompt();
+                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("conditionEditorNotFound"));
+                return new ConditionSelectDeletePrompt();
             } else {
-                return new ActionMenuPrompt(context);
+                return new ConditionMenuPrompt(context);
             }
         }
     }
 
-    private class ActionConfirmDeletePrompt extends StringPrompt {
+    private class ConditionConfirmDeletePrompt extends StringPrompt {
 
         @Override
         public String getPromptText(ConversationContext context) {
@@ -294,18 +291,18 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
         + Lang.get("noWord");
             return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
-                    + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")\n" + text;
+                    + (String) context.getSessionData(CK.ED_CONDITION_DELETE) + ChatColor.RED + ")\n" + text;
         }
 
         @Override
         public Prompt acceptInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
-                plugin.getActionFactory().deleteAction(context);
+                plugin.getConditionFactory().deleteCondition(context);
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
-                return new ActionMenuPrompt(context);
+                return new ConditionMenuPrompt(context);
             } else {
-                return new ActionConfirmDeletePrompt();
+                return new ConditionConfirmDeletePrompt();
             }
         }
     }

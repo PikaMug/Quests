@@ -27,6 +27,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.conditions.Condition;
 
 public class Stage {
 
@@ -124,6 +125,7 @@ public class Stage {
     protected Map<String, Action> commandActions = new HashMap<String, Action>();
     protected Action disconnectAction = null;
     protected Action finishAction = null;
+    protected Condition condition = null;
     protected long delay = -1;
     protected String delayMessage = null;
     protected String completeMessage = null;
@@ -445,6 +447,14 @@ public class Stage {
 
     public void setFinishAction(Action finishAction) {
         this.finishAction = finishAction;
+    }
+    
+    public Condition getCondition() {
+        return condition;
+    }
+    
+    public void setCondition(Condition condition) {
+        this.condition = condition;
     }
 
     public long getDelay() {
