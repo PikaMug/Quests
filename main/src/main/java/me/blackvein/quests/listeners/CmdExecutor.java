@@ -101,7 +101,8 @@ public class CmdExecutor implements CommandExecutor {
             commands.put(Lang.get("COMMAND_TAKE"), 2); // take [quest]
             commands.put(Lang.get("COMMAND_QUIT"), 2); // quit [quest]
             commands.put(Lang.get("COMMAND_EDITOR"), 1); // editor
-            commands.put(Lang.get("COMMAND_EVENTS_EDITOR"), 1); // events
+            commands.put(Lang.get("COMMAND_EVENTS_EDITOR"), 1); // actions
+            commands.put(Lang.get("COMMAND_CONDITIONS_EDITOR"), 1); // conditions
             commands.put(Lang.get("COMMAND_STATS"), 1); // stats
             commands.put(Lang.get("COMMAND_TOP"), 2); // top {number}
             commands.put(Lang.get("COMMAND_INFO"), 1); // info
@@ -126,6 +127,7 @@ public class CmdExecutor implements CommandExecutor {
             commands.put("editor", 1); // editor
             commands.put("actions", 1); // actions
             commands.put("events", 1); // LEGACY - events
+            commands.put("conditions", 1); // conditions
             commands.put("stats", 1); // stats
             commands.put("top", 2); // top [number]
             commands.put("info", 1); // info
@@ -269,6 +271,12 @@ public class CmdExecutor implements CommandExecutor {
                 return true;
             }
             questsActions(cs);
+        } else if (args[0].startsWith("condition") || args[0].startsWith(Lang.get("COMMAND_CONDITIONS_EDITOR"))) {
+            if (!(cs instanceof Player)) {
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
+                return true;
+            }
+            questsConditions(cs);
         } else if (args[0].equalsIgnoreCase("info") || args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
             questsInfo(cs);
         } else {
@@ -500,6 +508,20 @@ public class CmdExecutor implements CommandExecutor {
             Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 plugin.getActionFactory().getConversationFactory().buildConversation(c).begin();
+            } else {
+                cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
+            }
+        } else {
+            cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+        }
+        return true;
+    }
+    
+    private boolean questsConditions(final CommandSender cs) {
+        if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")) {
+            Conversable c = (Conversable) cs;
+            if (!c.isConversing()) {
+                plugin.getConditionFactory().getConversationFactory().buildConversation(c).begin();
             } else {
                 cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
             }
@@ -854,6 +876,12 @@ public class CmdExecutor implements CommandExecutor {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EVENTS_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands
                     ? Lang.get("COMMAND_EVENTS_EDITOR") : "actions") + ChatColor.YELLOW));
+        }
+        if (cs instanceof Player && (cs.hasPermission("quests.conditions.*") 
+                || cs.hasPermission("quests.conditions.editor"))) {
+            cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_CONDITIONS_EDITOR_HELP")
+                    .replace("<command>", ChatColor.GOLD + (translateSubCommands
+                    ? Lang.get("COMMAND_CONDITIONS_EDITOR") : "conditions") + ChatColor.YELLOW));
         }
         if (cs.hasPermission("quests.stats")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_STATS_HELP")

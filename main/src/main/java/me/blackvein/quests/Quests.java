@@ -78,8 +78,11 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.actions.ActionFactory;
+import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.conditions.ConditionFactory;
 import me.blackvein.quests.convo.npcs.NpcOfferQuestPrompt;
 import me.blackvein.quests.exceptions.ActionFormatException;
+import me.blackvein.quests.exceptions.ConditionFormatException;
 import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
@@ -114,12 +117,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private LinkedList<Quester> questers = new LinkedList<Quester>();
     private LinkedList<Quest> quests = new LinkedList<Quest>();
     private LinkedList<Action> actions = new LinkedList<Action>();
+    private LinkedList<Condition> conditions = new LinkedList<Condition>();
     private LinkedList<NPC> questNpcs = new LinkedList<NPC>();
     private CommandExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
     private ConversationFactory npcConversationFactory;
     private QuestFactory questFactory;
-    private ActionFactory eventFactory;
+    private ActionFactory actionFactory;
+    private ConditionFactory conditionFactory;
     private BlockListener blockListener;
     private ItemListener itemListener;
     private NpcListener npcListener;
@@ -149,7 +154,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         effThread = new NpcEffectThread(this);
         moveThread = new PlayerMoveThread(this);
         questFactory = new QuestFactory(this);
-        eventFactory = new ActionFactory(this);
+        actionFactory = new ActionFactory(this);
+        conditionFactory = new ConditionFactory(this);
         depends = new Dependencies(this);
         trigger = new DenizenTrigger(this);
 
@@ -174,6 +180,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 6 - Save resources from jar
         saveResourceAs("quests.yml", "quests.yml", false);
         saveResourceAs("actions.yml", "actions.yml", false);
+        saveResourceAs("conditions.yml", "conditions.yml", false);
         
         // 7 - Save config with any new options
         getConfig().options().copyDefaults(true);
@@ -303,6 +310,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         this.actions = actions;
     }
     
+    public LinkedList<Condition> getConditions() {
+        return conditions;
+    }
+    
+    public void setConditions(LinkedList<Condition> conditions) {
+        this.conditions = conditions;
+    }
+    
     public LinkedList<Quester> getQuesters() {
         return questers;
     }
@@ -332,14 +347,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     public ActionFactory getActionFactory() {
-        return eventFactory;
+        return actionFactory;
     }
     
-    /**
-     * @deprecated Use {@link #getActionFactory()}
-     */
-    public ActionFactory getEventFactory() {
-        return eventFactory;
+    public ConditionFactory getConditionFactory() {
+        return conditionFactory;
     }
     
     public BlockListener getBlockListener() {
@@ -529,9 +541,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             public void run() {
                 loadQuests();
                 loadActions();
-                getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s)"
-                        + ", " + actions.size() + " Action(s)"
-                        + ", " + Lang.size() + " Phrase(s)");
+                loadConditions();
+                getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
+                        + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
                 for (Player p : getServer().getOnlinePlayers()) {
                     Quester quester = new Quester(Quests.this);
                     quester.setUUID(p.getUniqueId());
@@ -1238,11 +1250,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                     quests.clear();
                     actions.clear();
+                    conditions.clear();
                     Lang.clear();
                     settings.init();
                     Lang.init(Quests.this);
                     loadQuests();
                     loadActions();
+                    loadConditions();
                     for (Quester quester : questers) {
                         quester.loadData();
                         for (Quest q : quester.currentQuests.keySet()) {
@@ -1484,6 +1498,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     e.printStackTrace();
                     continue;
                 } catch (ActionFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (ConditionFormatException e) {
                     e.printStackTrace();
                     continue;
                 }
@@ -1912,7 +1929,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     @SuppressWarnings({ "unchecked", "unused" })
     private void loadQuestStages(Quest quest, FileConfiguration config, String questKey)
-            throws StageFormatException, ActionFormatException {
+            throws StageFormatException, ActionFormatException, ConditionFormatException {
         ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
         for (String stage : questStages.getKeys(false)) {
             int stageNum = 0;
@@ -2926,6 +2943,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     throw new StageFormatException("command-events is not in list format", quest, stageNum);
                 }
             }
+            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".condition")) {
+                Condition condition = loadCondition(config.getString("quests." + questKey + ".stages.ordered." 
+                        + stageNum + ".condition"));
+                if (condition != null) {
+                    oStage.condition = condition;
+                } else {
+                    throw new StageFormatException("condition failed to load", quest, stageNum);
+                }
+            }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".delay")) {
                 if (config.getLong("quests." + questKey + ".stages.ordered." + stageNum + ".delay", -999) != -999) {
                     oStage.delay = config.getInt("quests." + questKey + ".stages.ordered." + stageNum + ".delay")
@@ -3268,6 +3294,47 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return action;
     }
     
+    protected Condition loadCondition(String name) throws ConditionFormatException {
+        if (name == null) {
+            return null;
+        }
+        File conditions = new File(getDataFolder(), "conditions.yml");
+        FileConfiguration data = new YamlConfiguration();
+        try {
+            if (conditions.isFile()) {
+                data.load(conditions);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+        String conditionKey = "conditions." + name + ".";
+        Condition condition = new Condition(this);
+        condition.setName(name);
+        if (data.contains(conditionKey + "fail-quest")) {
+            if (data.isBoolean(conditionKey + "fail-quest")) {
+                condition.setFailQuest(data.getBoolean(conditionKey + "fail-quest"));
+            } else {
+                throw new ConditionFormatException("fail-quest is not a true/false value", conditionKey);
+            }
+        }
+        if (data.contains(conditionKey + "hold-main-hand")) {
+            LinkedList<ItemStack> temp = new LinkedList<ItemStack>();
+            @SuppressWarnings("unchecked")
+            List<ItemStack> stackList = (List<ItemStack>) data.get(conditionKey + "hold-main-hand");
+            if (ConfigUtil.checkList(stackList, ItemStack.class)) {
+                for (ItemStack stack : stackList) {
+                    if (stack != null) {
+                        temp.add(stack);
+                    }
+                }
+            }
+            condition.setItemsWhileHoldingMainHand(temp);
+        }
+        return condition;
+    }
+    
     private void loadCustomSections(Quest quest, FileConfiguration config, String questKey)
             throws StageFormatException, QuestFormatException {
         ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
@@ -3454,7 +3521,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 for (String s : sec.getKeys(false)) {
                     Action action = null;
                     try {
-                        action= loadAction(s);
+                        action = loadAction(s);
                     } catch (ActionFormatException e) {
                         e.printStackTrace();
                     }
@@ -3469,6 +3536,46 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         } else {
             getLogger().log(Level.WARNING, "Empty file actions.yml was not loaded.");
+        }
+    }
+    
+    /**
+     * Load conditions from file
+     */
+    public void loadConditions() {
+        YamlConfiguration config = new YamlConfiguration();
+        File conditionsFile = new File(this.getDataFolder(), "conditions.yml");
+        // Using isFile() because exists() and renameTo() can return false positives
+        if (conditionsFile.length() != 0) {
+            try {
+                if (conditionsFile.isFile()) {
+                    config.load(conditionsFile);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+            ConfigurationSection sec = config.getConfigurationSection("conditions");
+            if (sec != null) {
+                for (String s : sec.getKeys(false)) {
+                    Condition condition = null;
+                    try {
+                        condition = loadCondition(s);
+                    } catch (ConditionFormatException e) {
+                        e.printStackTrace();
+                    }
+                    if (condition != null) {
+                        conditions.add(condition);
+                    } else {
+                        getLogger().log(Level.SEVERE, "Failed to load Condition \"" + s + "\". Skipping.");
+                    }
+                }
+            } else {
+                getLogger().log(Level.SEVERE, "Could not find beginning section from conditions.yml. Skipping.");
+            }
+        } else {
+            getLogger().log(Level.WARNING, "Empty file conditions.yml was not loaded.");
         }
     }
 
@@ -3601,6 +3708,34 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (Action a : actions) {
             if (a.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get a Condition by name
+     * 
+     * @param name Name of the condition
+     * @return Closest match or null if not found
+     */
+    public Condition getCondition(String name) {
+        if (name == null) {
+            return null;
+        }
+        for (Condition c : conditions) {
+            if (c.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
+                return c;
+            }
+        }
+        for (Condition c : conditions) {
+            if (c.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
+                return c;
+            }
+        }
+        for (Condition c : conditions) {
+            if (c.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
+                return c;
             }
         }
         return null;

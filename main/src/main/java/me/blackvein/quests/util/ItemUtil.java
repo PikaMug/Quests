@@ -159,6 +159,127 @@ public class ItemUtil {
     }
     
     /**
+     * Compare two stacks by name, amount, durability, display name, lore, enchantments, stored enchants and item flags
+     *
+     *
+     * @param one first ItemStack to compare against second
+     * @param two second ItemStack to compare against first
+     * @param ignoreAmount whether to ignore stack amounts
+     * @param ignoreDurability whether to ignore stack durabilities
+     * @return 1 if either stack is null<br>
+     * 0 if stacks are equal<br>
+     * -1 if stack names are unequal<br>
+     * -2 if stack amounts are unequal<br>
+     * -3 if stack durability is unequal<br>
+     * -4 if stack display name/lore is unequal<br>
+     * -5 if stack enchantments are unequal<br>
+     * -6 if stack stored enchants are unequal<br>
+     * -7 if stack item flags are unequal
+     * -8 if stack Written Book data is unequal
+     * -9 if stack Potion type is unequal
+     */
+    public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount, boolean ignoreDurability) {
+        if (one == null || two == null) {
+            return 1;
+        }
+        if (one.getType().name().equals(two.getType().name()) == false) {
+            return -1;
+        } else if ((one.getAmount() != two.getAmount()) && ignoreAmount == false) {
+            return -2;
+        } else if ((one.getDurability() != two.getDurability()) && ignoreDurability == false) {
+            if (one.getDurability() < 999 && two.getDurability() < 999) { // wildcard value
+                return -3;
+            }
+        }
+        if (one.hasItemMeta() || two.hasItemMeta()) {
+            if (one.hasItemMeta() && two.hasItemMeta() == false) {
+                return -4;
+            } else if (one.hasItemMeta() == false && two.hasItemMeta()) {
+                return -4;
+            } else if (one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() == false) {
+                return -4;
+            } else if (one.getItemMeta().hasDisplayName() == false && two.getItemMeta().hasDisplayName()) {
+                return -4;
+            } else if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore() == false) {
+                return -4;
+            } else if (one.getItemMeta().hasLore() == false && two.getItemMeta().hasLore()) {
+                return -4;
+            } else if (one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() 
+                    && ChatColor.stripColor(one.getItemMeta().getDisplayName())
+                    .equals(ChatColor.stripColor(two.getItemMeta().getDisplayName())) == false) {
+                return -4;
+            } else if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore() 
+                    && one.getItemMeta().getLore().equals(two.getItemMeta().getLore()) == false) {
+                return -4;
+            }
+            try {
+                ItemMeta test = one.getItemMeta();
+                test.setUnbreakable(true);
+                // We're on 1.11+ so check ItemFlags
+                for (ItemFlag flag : ItemFlag.values()) {
+                    if (one.getItemMeta().hasItemFlag(flag) == false && two.getItemMeta().hasItemFlag(flag)) {
+                        return -7;
+                    }
+                }
+            } catch (Throwable tr) {
+                // We're below 1.11 so don't check ItemFlags
+            }
+            if (one.getType().equals(Material.WRITTEN_BOOK)) {
+                BookMeta bmeta1 = (BookMeta) one.getItemMeta();
+                BookMeta bmeta2 = (BookMeta) two.getItemMeta();
+                if (bmeta1.getTitle().equals(bmeta2.getTitle()) == false) {
+                    if (bmeta1.getAuthor().equals(bmeta2.getAuthor()) == false) {
+                        if (bmeta1.getPages().equals(bmeta2.getPages()) == false) {
+                            return -8;
+                        }
+                    }
+                }
+            }
+            if (one.getItemMeta() instanceof PotionMeta) {
+                if (Material.getMaterial("LINGERING_POTION") != null) {
+                    // Bukkit version is 1.9+
+                    if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) 
+                            || one.getType().equals(Material.SPLASH_POTION)) {
+                        PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
+                        PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
+                        if (pmeta1.getBasePotionData().getType()
+                                .equals(pmeta2.getBasePotionData().getType()) == false) {
+                            return -9;
+                        }
+                    }
+                }
+            }
+        }
+        if (Material.getMaterial("LINGERING_POTION") == null) {
+            if (one.getType().equals(Material.POTION)) {
+                // Bukkit version is below 1.9
+                Potion pot1 = new Potion(one.getDurability());
+                Potion pot2 = new Potion(two.getDurability());
+                if (pot1.getType() == null || pot2.getType() == null) {
+                    return -9;
+                }
+                if (!pot1.getType().equals(pot2.getType())) {
+                    return -9;
+                }
+            }
+        }
+        if (one.getEnchantments().equals(two.getEnchantments()) == false) {
+            return -5;
+        }
+        if (one.getType().equals(Material.ENCHANTED_BOOK)) {
+            EnchantmentStorageMeta esmeta1 = (EnchantmentStorageMeta) one.getItemMeta();
+            EnchantmentStorageMeta esmeta2 = (EnchantmentStorageMeta) two.getItemMeta();
+            if (esmeta1.hasStoredEnchants() && esmeta2.hasStoredEnchants() == false) {
+                return -6;
+            }
+            if (esmeta1.getStoredEnchants().equals(esmeta2.getStoredEnchants()) == false) {
+                return -6;
+            }
+        }
+        return 0;
+    }
+    
+    /**
      * Returns an ItemStack based on given values. Checks for legacy pre-1.13 names. Other traits such as
      * enchantments and lore cannot be added via this method and must be done separately.
      * 

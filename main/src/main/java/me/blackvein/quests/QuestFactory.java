@@ -516,6 +516,9 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
                 context.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
             }
+            if (stage.getCondition() != null) {
+                context.setSessionData(pref + CK.S_CONDITION, stage.getCondition().getName());
+            }
             if (stage.getDelay() != -1) {
                 context.setSessionData(pref + CK.S_DELAY, stage.getDelay());
                 if (stage.getDelayMessage() != null) {
@@ -821,6 +824,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                     ? context.getSessionData(pref + CK.S_COMMAND_EVENTS) : null);
             stage.set("command-event-triggers", context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS) != null 
                     ? context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS) : null);
+            stage.set("condition", context.getSessionData(pref + CK.S_CONDITION) != null 
+                    ? context.getSessionData(pref + CK.S_CONDITION) : null);
             Long delay = (Long) context.getSessionData(pref + CK.S_DELAY);
             if (context.getSessionData(pref + CK.S_DELAY) != null) {
                 stage.set("delay", delay.intValue() / 1000);

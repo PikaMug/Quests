@@ -1,0 +1,10 @@
+conditions:
+  HoldMainHand:
+    fail-quest: true
+    hold-main-hand:
+      - ==: org.bukkit.inventory.ItemStack
+        v: 2230
+        type: DIAMOND_SWORD
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
