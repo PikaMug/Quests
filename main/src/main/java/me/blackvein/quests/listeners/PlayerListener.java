@@ -107,8 +107,8 @@ public class PlayerListener implements Listener {
                 return;
             }
         }
-        Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
-        Player player = (Player) evt.getWhoClicked();
+        final Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+        final Player player = (Player) evt.getWhoClicked();
         if (evt.getView().getTitle().contains(Lang.get(player, "quests"))) {
             ItemStack clicked = evt.getCurrentItem();
             if (clicked != null) {
@@ -373,10 +373,19 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerBucketFill(PlayerBucketFillEvent evt) {
         if (evt.getItemStack().getType() == Material.MILK_BUCKET) {
-            Player player = evt.getPlayer();
+            final Player player = evt.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
-                Quester quester = plugin.getQuester(player.getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("milkCow")) {
                         quester.milkCow(quest);
@@ -396,6 +405,15 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             for (final Quest quest : plugin.getQuests()) {
+                final Stage stage = quester.getCurrentStage(quest);
+                if (stage != null && !stage.getCondition().check(quester, quest)) {
+                    evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                    if (stage.getCondition().isFailQuest()) {
+                        quester.hardQuit(quest);
+                    }
+                    return;
+                }
+                
                 if (quester.getCurrentQuests().containsKey(quest)) {
                     final Stage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
@@ -437,7 +455,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             if (quester.getCurrentQuests().isEmpty() == false) {
                 for (Quest quest : quester.getCurrentQuests().keySet()) {
                     if (!quest.getOptions().getAllowCommands()) {
@@ -477,10 +495,20 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerShearEntity(PlayerShearEntityEvent evt) {
         if (evt.getEntity().getType() == EntityType.SHEEP) {
-            if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-                Sheep sheep = (Sheep) evt.getEntity();
-                Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            final Player player = evt.getPlayer();
+            if (plugin.canUseQuests(player.getUniqueId())) {
+                final Sheep sheep = (Sheep) evt.getEntity();
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("shearSheep")) {
                         quester.shearSheep(quest, sheep.getColor());
@@ -498,10 +526,19 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onEntityTame(EntityTameEvent evt) {
         if (evt.getOwner() instanceof Player) {
-            Player p = (Player) evt.getOwner();
-            if (plugin.canUseQuests(p.getUniqueId())) {
-                Quester quester = plugin.getQuester(p.getUniqueId());
+            final Player player = (Player) evt.getOwner();
+            if (plugin.canUseQuests(player.getUniqueId())) {
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("tameMob")) {
                         quester.tameMob(quest, evt.getEntityType());
@@ -520,7 +557,7 @@ public class PlayerListener implements Listener {
     public void onEntityDeath(EntityDeathEvent evt) {
         if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
-            Entity damager = damageEvent.getDamager();
+            final Entity damager = damageEvent.getDamager();
                 
             if (damager != null) {
                 if (damager instanceof Projectile) {
@@ -537,7 +574,7 @@ public class PlayerListener implements Listener {
                 } else if (damager instanceof Wolf) {
                     Wolf wolf = (Wolf) damager;
                     if (wolf.isTamed() && wolf.getOwner() != null) {
-                        Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
+                        final Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
                         if (quester != null) {
                             preKillPlayer(quester.getPlayer(), evt.getEntity());
                         }
@@ -561,9 +598,18 @@ public class PlayerListener implements Listener {
             return;
         }
         if (damager instanceof Player) {
-            Quester quester = plugin.getQuester(damager.getUniqueId());
+            final Quester quester = plugin.getQuester(damager.getUniqueId());
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 for (Quest quest : plugin.getQuests()) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        damager.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("killNPC")) {
                         quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
@@ -603,7 +649,7 @@ public class PlayerListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent evt) {
         if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
-            Entity damager = damageEvent.getDamager();
+            final Entity damager = damageEvent.getDamager();
 
             if (damager != null) {
                 //Ignore suicide
@@ -626,7 +672,7 @@ public class PlayerListener implements Listener {
                 } else if (damager instanceof Wolf) {
                     Wolf wolf = (Wolf) damager;
                     if (wolf.isTamed()) {
-                        Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
+                        final Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
                         preKillPlayer(quester.getPlayer(), evt.getEntity());
                     }
                 } else {
@@ -635,9 +681,9 @@ public class PlayerListener implements Listener {
             }
         }
             
-        Player target = evt.getEntity();
+        final Player target = evt.getEntity();
         if (plugin.canUseQuests(target.getUniqueId())) {
-            Quester quester = plugin.getQuester(target.getUniqueId());
+            final Quester quester = plugin.getQuester(target.getUniqueId());
             for (Quest quest : quester.getCurrentQuests().keySet()) {
                 Stage stage = quester.getCurrentStage(quest);
                 if (stage != null && stage.getDeathAction() != null) {
@@ -653,7 +699,7 @@ public class PlayerListener implements Listener {
             }
         }
         if (found != null) {
-            Quester quester = plugin.getQuester(target.getUniqueId());
+            final Quester quester = plugin.getQuester(target.getUniqueId());
             evt.getDrops().remove(found);
             quester.hasJournal = false;
         }
@@ -682,8 +728,17 @@ public class PlayerListener implements Listener {
                     return;
                 }
             }
-            Quester quester = plugin.getQuester(damager.getUniqueId());
+            final Quester quester = plugin.getQuester(damager.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
+                final Stage stage = quester.getCurrentStage(quest);
+                if (stage != null && !stage.getCondition().check(quester, quest)) {
+                    damager.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                    if (stage.getCondition().isFailQuest()) {
+                        quester.hardQuit(quest);
+                    }
+                    return;
+                }
+                
                 if (quester.getCurrentQuests().containsKey(quest) 
                         && quester.getCurrentStage(quest).containsObjective("killPlayer")) {
                     quester.killPlayer(quest, (Player)target);
@@ -699,10 +754,19 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerFish(PlayerFishEvent evt) {
-        Player player = evt.getPlayer();
+        final Player player = evt.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            Quester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
+                final Stage stage = quester.getCurrentStage(quest);
+                if (stage != null && !stage.getCondition().check(quester, quest)) {
+                    player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                    if (stage.getCondition().isFailQuest()) {
+                        quester.hardQuit(quest);
+                    }
+                    return;
+                }
+                
                 if (quester.getCurrentQuests().containsKey(quest) 
                         && quester.getCurrentStage(quest).containsObjective("catchFish") 
                         && evt.getState().equals(State.CAUGHT_FISH)) {
@@ -719,16 +783,16 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            Quester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             quester.findCompassTarget();
         }
     }
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
@@ -744,7 +808,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            Quester quester = new Quester(plugin);
+            final Quester quester = new Quester(plugin);
             quester.setUUID(evt.getPlayer().getUniqueId());
             if (new File(plugin.getDataFolder(), "data" + File.separator + quester.getUUID() + ".yml").exists()) {
                 quester.loadData();
@@ -783,7 +847,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             for (Quest quest : quester.getCurrentQuests().keySet()) {
                 Stage currentStage = quester.getCurrentStage(quest);
                 if (currentStage == null) {
@@ -851,8 +915,17 @@ public class PlayerListener implements Listener {
     public void playerMove(UUID uuid, Location location) {
         if (plugin.getQuester(uuid) != null) {
             if (plugin.canUseQuests(uuid)) {
-                Quester quester = plugin.getQuester(uuid);
+                final Quester quester = plugin.getQuester(uuid);
                 for (Quest quest : plugin.getQuests()) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        quester.getPlayer().sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest)) {
                         if (quester.getCurrentStage(quest) != null 
                                 && quester.getCurrentStage(quest).containsObjective("reachLocation")) {

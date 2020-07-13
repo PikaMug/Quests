@@ -13,8 +13,10 @@
 
 package me.blackvein.quests.listeners;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,6 +31,8 @@ import org.bukkit.inventory.ItemStack;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.Stage;
+import me.blackvein.quests.util.Lang;
 
 public class BlockListener implements Listener {
     
@@ -41,20 +45,30 @@ public class BlockListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGH) // Because HIGHEST conflicts with AutoSell by extendedclip
     public void onBlockBreak(BlockBreakEvent evt) {
-        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
+        final Player player = evt.getPlayer();
+        if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("breakBlock")) {
-                        if (!evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+                        if (!player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
                             quester.breakBlock(quest, blockItemStack);
                         }
                     }
                     quester.dispatchMultiplayerEverything(quest, "breakBlock", (Quester q) -> {
-                        if (!evt.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+                        if (!player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
                             q.breakBlock(quest, blockItemStack);
                         }
                         return null;
@@ -81,12 +95,12 @@ public class BlockListener implements Listener {
                     });
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("cutBlock")) {
-                        if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
+                        if (player.getItemInHand().getType().equals(Material.SHEARS)) {
                             quester.cutBlock(quest, blockItemStack);
                         }
                     }
                     quester.dispatchMultiplayerEverything(quest, "cutBlock", (Quester q) -> {
-                        if (evt.getPlayer().getItemInHand().getType().equals(Material.SHEARS)) {
+                        if (player.getItemInHand().getType().equals(Material.SHEARS)) {
                             q.cutBlock(quest, blockItemStack);
                         }
                         return null;
@@ -99,11 +113,21 @@ public class BlockListener implements Listener {
     @SuppressWarnings("deprecation") // since 1.13
     @EventHandler
     public void onBlockDamage(BlockDamageEvent evt) {
-        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
+        final Player player = evt.getPlayer();
+        if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
+                final Stage stage = quester.getCurrentStage(quest);
+                if (stage != null && !stage.getCondition().check(quester, quest)) {
+                    player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                    if (stage.getCondition().isFailQuest()) {
+                        quester.hardQuit(quest);
+                    }
+                    return;
+                }
+                
                 if (quester.getCurrentQuests().containsKey(quest) 
                         && quester.getCurrentStage(quest).containsObjective("damageBlock")) {
                     quester.damageBlock(quest, blockItemStack);
@@ -120,12 +144,22 @@ public class BlockListener implements Listener {
     @SuppressWarnings("deprecation") // since 1.13
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent evt) {
-        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
+        final Player player = evt.getPlayer();
+        if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("placeBlock")) {
                         quester.placeBlock(quest, blockItemStack);
@@ -150,13 +184,23 @@ public class BlockListener implements Listener {
             // Do nothing, getHand() not present pre-1.9
         }
         if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
+            final Player player = evt.getPlayer();
             if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-                final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (evt.isCancelled() == false) {
                         final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
                         for (Quest quest : plugin.getQuests()) {
+                            final Stage stage = quester.getCurrentStage(quest);
+                            if (stage != null && !stage.getCondition().check(quester, quest)) {
+                                player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
+                                if (stage.getCondition().isFailQuest()) {
+                                    quester.hardQuit(quest);
+                                }
+                                return;
+                            }
+                            
                             if (quester.getCurrentQuests().containsKey(quest) 
                                     && quester.getCurrentStage(quest).containsObjective("useBlock")) {
                                 quester.useBlock(quest, blockItemStack);

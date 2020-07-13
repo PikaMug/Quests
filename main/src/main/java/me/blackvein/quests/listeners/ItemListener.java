@@ -13,6 +13,7 @@
 
 package me.blackvein.quests.listeners;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -29,6 +30,8 @@ import org.bukkit.inventory.ItemStack;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.Stage;
+import me.blackvein.quests.util.Lang;
 
 public class ItemListener implements Listener {
     
@@ -41,10 +44,20 @@ public class ItemListener implements Listener {
     @EventHandler
     public void onCraftItem(CraftItemEvent evt) {
         if (evt.getWhoClicked() instanceof Player) {
-            if (plugin.canUseQuests(evt.getWhoClicked().getUniqueId())) {
+            final Player player = (Player) evt.getWhoClicked();
+            if (plugin.canUseQuests(player.getUniqueId())) {
                 final ItemStack craftedItem = getCraftedItem(evt);
-                Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
+                    final Stage stage = quester.getCurrentStage(quest);
+                    if (stage != null && !stage.getCondition().check(quester, quest)) {
+                        player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
+                        if (stage.getCondition().isFailQuest()) {
+                            quester.hardQuit(quest);
+                        }
+                        return;
+                    }
+                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("craftItem")) {
                         quester.craftItem(quest, craftedItem);
@@ -78,12 +91,22 @@ public class ItemListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent evt) {
         if (evt.getWhoClicked() instanceof Player) {
+            final Player player = (Player) evt.getWhoClicked();
             if (evt.getInventory().getType() == InventoryType.FURNACE
                     || evt.getInventory().getType().name().equals("BLAST_FURNACE")
                     || evt.getInventory().getType().name().equals("SMOKER")) {
                 if (evt.getSlotType() == SlotType.RESULT) {
-                    Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+                    final Quester quester = plugin.getQuester(player.getUniqueId());
                     for (Quest quest : plugin.getQuests()) {
+                        final Stage stage = quester.getCurrentStage(quest);
+                        if (stage != null && !stage.getCondition().check(quester, quest)) {
+                            player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
+                            if (stage.getCondition().isFailQuest()) {
+                                quester.hardQuit(quest);
+                            }
+                            return;
+                        }
+                        
                         if (quester.getCurrentQuests().containsKey(quest) 
                                 && quester.getCurrentStage(quest).containsObjective("smeltItem")) {
                             quester.smeltItem(quest, evt.getCurrentItem());
@@ -97,8 +120,17 @@ public class ItemListener implements Listener {
                 }
             } else if (evt.getInventory().getType() == InventoryType.BREWING) {
                 if (evt.getSlotType() == SlotType.CRAFTING) {
-                    Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+                    final Quester quester = plugin.getQuester(player.getUniqueId());
                     for (Quest quest : plugin.getQuests()) {
+                        final Stage stage = quester.getCurrentStage(quest);
+                        if (stage != null && !stage.getCondition().check(quester, quest)) {
+                            player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
+                            if (stage.getCondition().isFailQuest()) {
+                                quester.hardQuit(quest);
+                            }
+                            return;
+                        }
+                        
                         if (quester.getCurrentQuests().containsKey(quest) 
                                 && quester.getCurrentStage(quest).containsObjective("brewItem")) {
                             quester.brewItem(quest, evt.getCurrentItem());
@@ -116,9 +148,19 @@ public class ItemListener implements Listener {
     
     @EventHandler
     public void onEnchantItem(EnchantItemEvent evt) {
-        if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
-            Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
+        final Player player = evt.getEnchanter();
+        if (plugin.canUseQuests(player.getUniqueId())) {
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
+                final Stage stage = quester.getCurrentStage(quest);
+                if (stage != null && !stage.getCondition().check(quester, quest)) {
+                    player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
+                    if (stage.getCondition().isFailQuest()) {
+                        quester.hardQuit(quest);
+                    }
+                    return;
+                }
+                
                 if (quester.getCurrentQuests().containsKey(quest) 
                         && quester.getCurrentStage(quest).containsObjective("enchantItem")) {
                     for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
@@ -142,8 +184,18 @@ public class ItemListener implements Listener {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final ItemStack consumedItem = evt.getItem().clone();
             consumedItem.setAmount(1);
-            Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            final Player player = evt.getPlayer();
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
+                final Stage stage = quester.getCurrentStage(quest);
+                if (stage != null && !stage.getCondition().check(quester, quest)) {
+                    player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
+                    if (stage.getCondition().isFailQuest()) {
+                        quester.hardQuit(quest);
+                    }
+                    return;
+                }
+                
                 if (quester.getCurrentQuests().containsKey(quest) 
                         && quester.getCurrentStage(quest).containsObjective("consumeItem")) {
                     quester.consumeItem(quest, consumedItem);
