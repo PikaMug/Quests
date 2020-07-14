@@ -21,6 +21,7 @@ public abstract class CustomRequirement {
 
     private String name = null;
     private String author = null;
+    private String display = null;
     private Map<String, Object> data = new HashMap<String, Object>();
     private Map<String, String> descriptions = new HashMap<String, String>();
 
@@ -40,6 +41,14 @@ public abstract class CustomRequirement {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+    
+    public String getDisplay() {
+        return display;
+    }
+    
+    public void setDisplay(String display) {
+        display = name;
     }
 
     public Map<String, Object> getData() {

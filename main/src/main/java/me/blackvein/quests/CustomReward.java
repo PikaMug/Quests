@@ -21,7 +21,7 @@ public abstract class CustomReward {
 
     private String name = null;
     private String author = null;
-    private String rewardName = null;
+    private String display = null;
     private Map<String, Object> data = new HashMap<String, Object>();
     private Map<String, String> descriptions = new HashMap<String, String>();
 
@@ -41,6 +41,28 @@ public abstract class CustomReward {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+    
+    public String getDisplay() {
+        return display;
+    }
+    
+    public void setDisplay(String display) {
+        this.display = display;
+    }
+    
+    /**
+     * @deprecated Use {@link #getDisplay()}
+     */
+    public String getRewardName() {
+        return display;
+    }
+
+    /**
+     * @deprecated Use {@link #setDisplay(String)}
+     */
+    public void setRewardName(String name) {
+        display = name;
     }
     
     public Map<String, Object> getData() {
@@ -63,13 +85,5 @@ public abstract class CustomReward {
 
     public Map<String, String> getDescriptions() {
         return descriptions;
-    }
-    
-    public String getRewardName() {
-        return rewardName;
-    }
-
-    public void setRewardName(String name) {
-        rewardName = name;
     }
 }

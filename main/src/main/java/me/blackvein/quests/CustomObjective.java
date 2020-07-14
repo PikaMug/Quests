@@ -28,10 +28,10 @@ public abstract class CustomObjective implements Listener {
     private Quests plugin = Quests.getPlugin(Quests.class);
     private String name = null;
     private String author = null;
+    private String display = "Progress: %count%";
     private LinkedList<Entry<String, Object>> data = new LinkedList<Entry<String, Object>>();
     private Map<String, String> descriptions = new HashMap<String, String>();
     private String countPrompt = "Enter number";
-    private String display = "Progress: %count%";
     private boolean showCount = true;
     private int count = 1;
 
@@ -49,6 +49,14 @@ public abstract class CustomObjective implements Listener {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+    
+    public String getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(String display) {
+        this.display = display;
     }
         
     public LinkedList<Entry<String, Object>> getData() {
@@ -104,14 +112,6 @@ public abstract class CustomObjective implements Listener {
      */
     public void setShowCount(boolean showCount) {
         this.showCount = showCount;
-    }
-
-    public String getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(String display) {
-        this.display = display;
     }
     
     public Map<String, Object> getDataForPlayer(Player player, CustomObjective customObj, Quest quest) {

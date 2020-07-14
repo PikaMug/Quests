@@ -774,9 +774,11 @@ public class Quester {
                     if (cr.getName().equalsIgnoreCase(m.getKey())) {
                         if (cr != null) {
                             if (cr.testRequirement(getPlayer(), m.getValue())) {
-                                finishedRequirements.add(ChatColor.GREEN + "" + m.getKey());
+                                finishedRequirements.add(ChatColor.GREEN + "" 
+                                        + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
                             } else {
-                                unfinishedRequirements.add(ChatColor.GRAY + "" + m.getKey());
+                                unfinishedRequirements.add(ChatColor.GRAY + "" 
+                                        + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
                             }
                         }
                     }

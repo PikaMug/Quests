@@ -734,8 +734,8 @@ public class Quest {
                 if (rews.getMcmmoSkills().isEmpty() == false) {
                     for (String s : rews.getMcmmoSkills()) {
                         p.sendMessage("- " + ChatColor.DARK_GREEN 
-                                + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " + ChatColor.DARK_PURPLE 
-                                + s + " " + Lang.get(p, "experience"));
+                                + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " 
+                                + ChatColor.DARK_PURPLE + s + " " + Lang.get(p, "experience"));
                     }
                 }
                 if (rews.getHeroesClasses().isEmpty() == false) {
@@ -760,14 +760,15 @@ public class Quest {
                     }
                     if (found != null) {
                         Map<String, Object> datamap = rews.getCustomRewards().get(found.getName());
-                        String message = found.getRewardName();
+                        String message = found.getDisplay();
                         if (message != null) {
                             for (String key : datamap.keySet()) {
                                 message = message.replace("%" + key + "%", datamap.get(key).toString());
                             }
                             p.sendMessage("- " + ChatColor.GOLD + message);
                         } else {
-                            plugin.getLogger().warning("Failed to notify player: Custom Reward does not have an assigned name");
+                            plugin.getLogger().warning("Failed to notify player: " 
+                                    + "Custom Reward does not have an assigned name");
                         }
                         found.giveReward(p, rews.getCustomRewards().get(s));
                     } else {
