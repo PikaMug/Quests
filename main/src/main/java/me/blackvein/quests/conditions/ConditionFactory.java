@@ -85,6 +85,12 @@ public class ConditionFactory implements ConversationAbandonedListener {
             items.addAll(condition.getItemsWhileHoldingMainHand());
             context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
         }
+        if (condition.getBiomesWhileStayingWithin() != null 
+                && condition.getBiomesWhileStayingWithin().isEmpty() == false) {
+            LinkedList<String> biomes = new LinkedList<String>();
+            biomes.addAll(condition.getBiomesWhileStayingWithin());
+            context.setSessionData(CK.C_WHILE_WITHIN_BIOME, biomes);
+        }
     }
 
     public void clearData(ConversationContext context) {
@@ -92,6 +98,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.C_NAME, null);
         context.setSessionData(CK.C_FAIL_QUEST, null);
         context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
+        context.setSessionData(CK.C_WHILE_WITHIN_BIOME, null);
     }
 
     public void deleteCondition(ConversationContext context) {
@@ -170,6 +177,10 @@ public class ConditionFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
             section.set("hold-main-hand", 
                     (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND));
+        }
+        if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) != null) {
+            section.set("stay-within-biome", 
+                    (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_WITHIN_BIOME));
         }
         try {
             data.save(conditionsFile);

@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 
 public class MiscUtil {
@@ -158,6 +159,22 @@ public class MiscUtil {
         for (EntityType et : EntityType.values()) {
             if (et.isAlive() && et.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return et;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Gets Biome from name
+     * 
+     * @param properName Name to get biome from
+     * @return Biome or null if invalid
+     */
+    public static Biome getProperBiome(String properName) {
+        properName = properName.replace("_", "").replace(" ", "").toUpperCase();
+        for (Biome b : Biome.values()) {
+            if (b.name().replace("_", "").equalsIgnoreCase(properName)) {
+                return b;
             }
         }
         return null;

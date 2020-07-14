@@ -21,13 +21,16 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.MiscUtil;
 
 public class Condition {
 
+    @SuppressWarnings("unused")
     private Quests plugin;
     private String name = "";
     private boolean failQuest = false;
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<ItemStack>();
+    private LinkedList<String> biomesWhileStayingWithin = new LinkedList<String>();
 
     public Condition(final Quests plugin) {
         this.plugin = plugin;
@@ -56,10 +59,18 @@ public class Condition {
     public void setItemsWhileHoldingMainHand(LinkedList<ItemStack> itemsWhileHoldingMainHand) {
         this.itemsWhileHoldingMainHand = itemsWhileHoldingMainHand;
     }
+    
+    public LinkedList<String> getBiomesWhileStayingWithin() {
+        return biomesWhileStayingWithin;
+    }
+    
+    public void setBiomesWhileStayingWithin(LinkedList<String> biomesWhileStayingWithin) {
+        this.biomesWhileStayingWithin = biomesWhileStayingWithin;
+    }
 
     @SuppressWarnings("deprecation")
     public boolean check(Quester quester, Quest quest) {
-        Player player = quester.getPlayer();
+        final Player player = quester.getPlayer();
         if (itemsWhileHoldingMainHand.isEmpty() == false) {
             for (ItemStack is : itemsWhileHoldingMainHand) {
                 if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) == 0) {
@@ -67,6 +78,16 @@ public class Condition {
                 } else {
                     System.out.println("DEBUG: condition item does not match with code= " 
                             + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
+                }
+            }
+        } else if (biomesWhileStayingWithin.isEmpty() == false) {
+            for (String b : biomesWhileStayingWithin) {
+                if (player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
+                        .name().equalsIgnoreCase(MiscUtil.getProperBiome(b).name())) {
+                    return true;
+                } else {
+                    System.out.println("DEBUG: condition biome does not match for= " 
+                            + MiscUtil.getProperBiome(b));
                 }
             }
         }

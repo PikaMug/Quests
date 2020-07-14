@@ -48,6 +48,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -3331,6 +3332,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
             condition.setItemsWhileHoldingMainHand(temp);
+        }
+        if (data.contains(conditionKey + "stay-within-biome")) {
+            if (ConfigUtil.checkList(data.getList(conditionKey + "stay-within-biome"), String.class)) {
+                LinkedList<String> biomes = new LinkedList<String>();
+                for (String s : data.getStringList(conditionKey + "stay-within-biome")) {
+                    Biome b = MiscUtil.getProperBiome(s);
+                    if (b == null) {
+                        throw new ConditionFormatException("stay-within-biome is not a valid biome",
+                                conditionKey);
+                    }
+                    biomes.add(s);
+                }
+                condition.setBiomesWhileStayingWithin(biomes);
+            } else {
+                throw new ConditionFormatException("stay-within-biome is not a list of biomes", conditionKey);
+            }
         }
         return condition;
     }

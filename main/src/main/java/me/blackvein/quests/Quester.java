@@ -591,6 +591,12 @@ public class Quester {
                             msg += ChatColor.AQUA + "\n   - " + ItemUtil.getPrettyItemName(is.getType().name());
                         }
                         p.sendMessage(ChatColor.YELLOW + msg);
+                    } else if (c.getBiomesWhileStayingWithin() != null) {
+                        String msg = "- " + Lang.get("conditionEditorStayingWithinBiome");
+                        for (String b : c.getBiomesWhileStayingWithin()) {
+                            msg += ChatColor.AQUA + "\n   - " + MiscUtil.snakeCaseToUpperCamelCase(b);
+                        }
+                        p.sendMessage(ChatColor.YELLOW + msg);
                     }
                 }
             }
