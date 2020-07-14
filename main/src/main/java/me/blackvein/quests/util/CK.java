@@ -177,5 +177,5 @@ public class CK {
     public static final String C_OLD_CONDITION = "oldCondition";
     public static final String C_NAME = "conName";
     public static final String C_FAIL_QUEST = "conFailQuest";
-    public static final String C_ITEMS_WHILE_HOLDING_MAIN_HAND = "conItemsMainHand";
+    public static final String C_WHILE_HOLDING_MAIN_HAND = "conHoldingMainHand";
 }

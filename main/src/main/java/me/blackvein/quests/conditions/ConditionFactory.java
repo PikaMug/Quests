@@ -83,7 +83,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
                 && condition.getItemsWhileHoldingMainHand().isEmpty() == false) {
             LinkedList<ItemStack> items = new LinkedList<ItemStack>();
             items.addAll(condition.getItemsWhileHoldingMainHand());
-            context.setSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND, items);
+            context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
         }
     }
 
@@ -91,7 +91,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.C_OLD_CONDITION, null);
         context.setSessionData(CK.C_NAME, null);
         context.setSessionData(CK.C_FAIL_QUEST, null);
-        context.setSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND, null);
+        context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
     }
 
     public void deleteCondition(ConversationContext context) {
@@ -167,9 +167,9 @@ public class ConditionFactory implements ConversationAbandonedListener {
                 section.set("fail-quest", true);
             }
         }
-        if (context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND) != null) {
+        if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
             section.set("hold-main-hand", 
-                    (LinkedList<ItemStack>) context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND));
+                    (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND));
         }
         try {
             data.save(conditionsFile);

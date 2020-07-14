@@ -70,11 +70,11 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(ConversationContext context, int number) {
         switch(number) {
         case 1:
-            if (context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND) == null) {
+            if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND);
+                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
                 for (int i = 0; i < items.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
                             + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
@@ -93,10 +93,10 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
     public String getPromptText(ConversationContext context) {
         // Check/add newly made item
         if (context.getSessionData("newItem") != null) {
-            if (context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND) != null) {
-                List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND);
+            if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
+                List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
                 items.add((ItemStack) context.getSessionData("tempStack"));
-                context.setSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND, items);
+                context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
             }
             context.setSessionData("newItem", null);
             context.setSessionData("tempStack", null);
@@ -176,11 +176,11 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         public String getAdditionalText(ConversationContext context, int number) {
             switch(number) {
             case 1:
-                if (context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND) == null) {
+                if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (ItemStack is : (List<ItemStack>) context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND)) {
+                    for (ItemStack is : (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND)) {
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
@@ -198,14 +198,14 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         public String getPromptText(ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
-                if (context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND) != null) {
-                    List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND);
+                if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
+                    List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
                     items.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND, items);
+                    context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
                 } else {
                     LinkedList<ItemStack> items = new LinkedList<ItemStack>();
                     items.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND, items);
+                    context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
                 }
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
@@ -229,7 +229,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
                 return new ItemStackPrompt(ItemsInMainHandListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorConditionCleared"));
-                context.setSessionData(CK.C_ITEMS_WHILE_HOLDING_MAIN_HAND, null);
+                context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
                 return new ItemsInMainHandListPrompt(context);
             case 3:
                 return new PlayerPrompt(context);
