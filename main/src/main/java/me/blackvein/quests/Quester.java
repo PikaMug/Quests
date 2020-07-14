@@ -1531,7 +1531,7 @@ public class Quester {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (Quester q) -> {
                         q.getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced
                                 .indexOf(finalPlaced), newplaced);
-                        q.finishObjective(quest, "damageBlock", m, finalToPlace, null, null, null, null, null, null, 
+                        q.finishObjective(quest, "placeBlock", m, finalToPlace, null, null, null, null, null, null, 
                                 null, null);
                         return null;
                     });
