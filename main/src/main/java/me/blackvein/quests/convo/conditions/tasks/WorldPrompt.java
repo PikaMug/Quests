@@ -16,7 +16,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -37,21 +39,22 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         super(context);
     }
     
-    private final int size = 2;
+    private final int size = 3;
     
     public int getSize() {
         return size;
     }
     
     public String getTitle(ConversationContext context) {
-        return Lang.get("eventEditorPlayer");
+        return Lang.get("conditionEditorWorld");
     }
     
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
             case 1:
-                return ChatColor.BLUE;
             case 2:
+                return ChatColor.BLUE;
+            case 3:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -61,8 +64,10 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(ConversationContext context, int number) {
         switch(number) {
         case 1:
-            return ChatColor.YELLOW + Lang.get("conditionEditorStayingWithinBiome");
+            return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinWorld");
         case 2:
+            return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinBiome");
+        case 3:
             return ChatColor.GREEN + Lang.get("done");
         default:
             return null;
@@ -73,6 +78,16 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(ConversationContext context, int number) {
         switch(number) {
         case 1:
+            if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                for (String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_WORLD)) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
+                }
+                return text;
+            }
+        case 2:
             if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
@@ -82,7 +97,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 }
                 return text;
             }
-        case 2:
+        case 3:
             return "";
         default:
             return null;
@@ -106,8 +121,10 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         switch(input.intValue()) {
         case 1:
-            return new BiomesPrompt(context);
+            return new WorldsPrompt(context);
         case 2:
+            return new BiomesPrompt(context);
+        case 3:
             try {
                 return new ConditionMainPrompt(context);
             } catch (Exception e) {
@@ -115,6 +132,59 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
+            return new WorldPrompt(context);
+        }
+    }
+    
+    public class WorldsPrompt extends QuestsEditorStringPrompt {
+        
+        public WorldsPrompt(ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(ConversationContext context) {
+            return Lang.get("conditionEditorWorldsTitle");
+        }
+
+        @Override
+        public String getQueryText(ConversationContext context) {
+            return Lang.get("conditionEditorWorldsPrompt");
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String worlds = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
+            List<World> worldArr = Bukkit.getWorlds();
+            for (int i = 0; i < worldArr.size(); i++) {
+                if (i < (worldArr.size() - 1)) {
+                    worlds += MiscUtil.snakeCaseToUpperCamelCase(worldArr.get(i).getName()) + ", ";
+                } else {
+                    worlds += MiscUtil.snakeCaseToUpperCamelCase(worldArr.get(i).getName()) + "\n";
+                }
+            }
+            return worlds + ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            Player player = (Player) context.getForWhom();
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                LinkedList<String> worlds = new LinkedList<String>();
+                for (String s : input.split(" ")) {
+                    if (Bukkit.getWorld(s) != null) {
+                        worlds.add(s);
+                    } else {
+                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                                + Lang.get("conditionEditorInvalidWorld"));
+                        return new WorldsPrompt(context);
+                    }
+                }
+                context.setSessionData(CK.C_WHILE_WITHIN_WORLD, worlds);
+            }
             return new WorldPrompt(context);
         }
     }

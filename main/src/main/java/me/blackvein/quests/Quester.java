@@ -585,14 +585,20 @@ public class Quester {
                 Condition c = stage.getCondition();
                 if (c != null) {
                     p.sendMessage(ChatColor.LIGHT_PURPLE + Lang.get("stageEditorConditions") + ":");
-                    if (c.getItemsWhileHoldingMainHand() != null) {
+                    if (!c.getItemsWhileHoldingMainHand().isEmpty()) {
                         String msg = "- " + Lang.get("conditionEditorItemsInMainHand");
                         for (ItemStack is : c.getItemsWhileHoldingMainHand()) {
                             msg += ChatColor.AQUA + "\n   - " + ItemUtil.getPrettyItemName(is.getType().name());
                         }
                         p.sendMessage(ChatColor.YELLOW + msg);
-                    } else if (c.getBiomesWhileStayingWithin() != null) {
-                        String msg = "- " + Lang.get("conditionEditorStayingWithinBiome");
+                    } else if (!c.getWorldsWhileStayingWithin().isEmpty()) {
+                        String msg = "- " + Lang.get("conditionEditorStayWithinWorld");
+                        for (String w : c.getWorldsWhileStayingWithin()) {
+                            msg += ChatColor.AQUA + "\n   - " + w;
+                        }
+                        p.sendMessage(ChatColor.YELLOW + msg);
+                    } else if (!c.getBiomesWhileStayingWithin().isEmpty()) {
+                        String msg = "- " + Lang.get("conditionEditorStayWithinBiome");
                         for (String b : c.getBiomesWhileStayingWithin()) {
                             msg += ChatColor.AQUA + "\n   - " + MiscUtil.snakeCaseToUpperCamelCase(b);
                         }
@@ -4112,6 +4118,24 @@ public class Quester {
                 }
                 return false;
             }
+        }
+        return true;
+    }
+    
+    public boolean meetsCondition(Quest quest, boolean giveReason) {
+        final Stage stage = getCurrentStage(quest);
+        if (stage != null && !stage.getCondition().check(this, quest)) {
+            if (stage.getCondition().isFailQuest()) {
+                if (giveReason) {
+                    getPlayer().sendMessage(ChatColor.RED + Lang.get(getPlayer(), "conditionFailQuit")
+                        .replace("<quest>", quest.getName()));
+                }
+                hardQuit(quest);
+            } else if (giveReason) {
+                getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "conditionFailRetry")
+                        .replace("<quest>", quest.getName()));
+            }
+            return false;
         }
         return true;
     }

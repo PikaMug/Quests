@@ -30,6 +30,7 @@ public class Condition {
     private String name = "";
     private boolean failQuest = false;
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<ItemStack>();
+    private LinkedList<String> worldsWhileStayingWithin = new LinkedList<String>();
     private LinkedList<String> biomesWhileStayingWithin = new LinkedList<String>();
 
     public Condition(final Quests plugin) {
@@ -60,6 +61,14 @@ public class Condition {
         this.itemsWhileHoldingMainHand = itemsWhileHoldingMainHand;
     }
     
+    public LinkedList<String> getWorldsWhileStayingWithin() {
+        return worldsWhileStayingWithin;
+    }
+    
+    public void setWorldsWhileStayingWithin(LinkedList<String> worldsWhileStayingWithin) {
+        this.worldsWhileStayingWithin = worldsWhileStayingWithin;
+    }
+    
     public LinkedList<String> getBiomesWhileStayingWithin() {
         return biomesWhileStayingWithin;
     }
@@ -80,14 +89,21 @@ public class Condition {
                             + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
                 }
             }
+        } else if (worldsWhileStayingWithin.isEmpty() == false) {
+            for (String w : worldsWhileStayingWithin) {
+                if (player.getWorld().getName().equalsIgnoreCase(w)) {
+                    return true;
+                } else {
+                    System.out.println("DEBUG: condition world does not match for= " + w);
+                }
+            }
         } else if (biomesWhileStayingWithin.isEmpty() == false) {
             for (String b : biomesWhileStayingWithin) {
                 if (player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
                         .name().equalsIgnoreCase(MiscUtil.getProperBiome(b).name())) {
                     return true;
                 } else {
-                    System.out.println("DEBUG: condition biome does not match for= " 
-                            + MiscUtil.getProperBiome(b));
+                    System.out.println("DEBUG: condition biome does not match for= " + MiscUtil.getProperBiome(b));
                 }
             }
         }

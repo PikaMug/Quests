@@ -377,12 +377,7 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
@@ -405,12 +400,7 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             for (final Quest quest : plugin.getQuests()) {
-                final Stage stage = quester.getCurrentStage(quest);
-                if (stage != null && !stage.getCondition().check(quester, quest)) {
-                    evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                    if (stage.getCondition().isFailQuest()) {
-                        quester.hardQuit(quest);
-                    }
+                if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 
@@ -500,12 +490,7 @@ public class PlayerListener implements Listener {
                 final Sheep sheep = (Sheep) evt.getEntity();
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
@@ -530,12 +515,7 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
@@ -601,12 +581,7 @@ public class PlayerListener implements Listener {
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 for (Quest quest : plugin.getQuests()) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        damager.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
@@ -622,12 +597,7 @@ public class PlayerListener implements Listener {
                 }
             } else {
                 for (Quest quest : plugin.getQuests()) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        damager.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
@@ -730,12 +700,7 @@ public class PlayerListener implements Listener {
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                final Stage stage = quester.getCurrentStage(quest);
-                if (stage != null && !stage.getCondition().check(quester, quest)) {
-                    damager.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                    if (stage.getCondition().isFailQuest()) {
-                        quester.hardQuit(quest);
-                    }
+                if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 
@@ -758,12 +723,7 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                final Stage stage = quester.getCurrentStage(quest);
-                if (stage != null && !stage.getCondition().check(quester, quest)) {
-                    player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                    if (stage.getCondition().isFailQuest()) {
-                        quester.hardQuit(quest);
-                    }
+                if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 
@@ -787,6 +747,11 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             quester.findCompassTarget();
+            for (Quest quest : plugin.getQuests()) {
+                if (!quester.meetsCondition(quest, true)) {
+                    return;
+                }
+            }
         }
     }
 
@@ -917,12 +882,7 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(uuid)) {
                 final Quester quester = plugin.getQuester(uuid);
                 for (Quest quest : plugin.getQuests()) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        quester.getPlayer().sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, false)) {
                         return;
                     }
                     

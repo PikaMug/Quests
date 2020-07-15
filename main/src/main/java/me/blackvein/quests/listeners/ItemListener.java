@@ -13,7 +13,6 @@
 
 package me.blackvein.quests.listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -30,8 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.util.Lang;
 
 public class ItemListener implements Listener {
     
@@ -49,12 +46,7 @@ public class ItemListener implements Listener {
                 final ItemStack craftedItem = getCraftedItem(evt);
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (Quest quest : plugin.getQuests()) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
@@ -98,12 +90,7 @@ public class ItemListener implements Listener {
                 if (evt.getSlotType() == SlotType.RESULT) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     for (Quest quest : plugin.getQuests()) {
-                        final Stage stage = quester.getCurrentStage(quest);
-                        if (stage != null && !stage.getCondition().check(quester, quest)) {
-                            player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
-                            if (stage.getCondition().isFailQuest()) {
-                                quester.hardQuit(quest);
-                            }
+                        if (!quester.meetsCondition(quest, true)) {
                             return;
                         }
                         
@@ -122,12 +109,7 @@ public class ItemListener implements Listener {
                 if (evt.getSlotType() == SlotType.CRAFTING) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     for (Quest quest : plugin.getQuests()) {
-                        final Stage stage = quester.getCurrentStage(quest);
-                        if (stage != null && !stage.getCondition().check(quester, quest)) {
-                            player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
-                            if (stage.getCondition().isFailQuest()) {
-                                quester.hardQuit(quest);
-                            }
+                        if (!quester.meetsCondition(quest, true)) {
                             return;
                         }
                         
@@ -152,12 +134,7 @@ public class ItemListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                final Stage stage = quester.getCurrentStage(quest);
-                if (stage != null && !stage.getCondition().check(quester, quest)) {
-                    player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
-                    if (stage.getCondition().isFailQuest()) {
-                        quester.hardQuit(quest);
-                    }
+                if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 
@@ -187,12 +164,7 @@ public class ItemListener implements Listener {
             final Player player = evt.getPlayer();
             final Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                final Stage stage = quester.getCurrentStage(quest);
-                if (stage != null && !stage.getCondition().check(quester, quest)) {
-                    player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
-                    if (stage.getCondition().isFailQuest()) {
-                        quester.hardQuit(quest);
-                    }
+                if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 

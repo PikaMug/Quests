@@ -13,7 +13,6 @@
 
 package me.blackvein.quests.listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -31,8 +30,6 @@ import org.bukkit.inventory.ItemStack;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.util.Lang;
 
 public class BlockListener implements Listener {
     
@@ -52,12 +49,7 @@ public class BlockListener implements Listener {
             Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
@@ -119,12 +111,7 @@ public class BlockListener implements Listener {
                     .getData().toItemStack().getDurability());
             Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
-                final Stage stage = quester.getCurrentStage(quest);
-                if (stage != null && !stage.getCondition().check(quester, quest)) {
-                    player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                    if (stage.getCondition().isFailQuest()) {
-                        quester.hardQuit(quest);
-                    }
+                if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 
@@ -151,12 +138,7 @@ public class BlockListener implements Listener {
             Quester quester = plugin.getQuester(player.getUniqueId());
             for (Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
-                    final Stage stage = quester.getCurrentStage(quest);
-                    if (stage != null && !stage.getCondition().check(quester, quest)) {
-                        player.sendMessage(ChatColor.RED + Lang.get(quester.getPlayer(), "conditionFail"));
-                        if (stage.getCondition().isFailQuest()) {
-                            quester.hardQuit(quest);
-                        }
+                    if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
@@ -192,12 +174,7 @@ public class BlockListener implements Listener {
                         final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
                         for (Quest quest : plugin.getQuests()) {
-                            final Stage stage = quester.getCurrentStage(quest);
-                            if (stage != null && !stage.getCondition().check(quester, quest)) {
-                                player.sendMessage(ChatColor.RED + Lang.get(player, "conditionFail"));
-                                if (stage.getCondition().isFailQuest()) {
-                                    quester.hardQuit(quest);
-                                }
+                            if (!quester.meetsCondition(quest, true)) {
                                 return;
                             }
                             

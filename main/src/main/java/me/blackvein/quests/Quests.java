@@ -3333,6 +3333,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             condition.setItemsWhileHoldingMainHand(temp);
         }
+        if (data.contains(conditionKey + "stay-within-world")) {
+            if (ConfigUtil.checkList(data.getList(conditionKey + "stay-within-world"), String.class)) {
+                LinkedList<String> worlds = new LinkedList<String>();
+                for (String s : data.getStringList(conditionKey + "stay-within-world")) {
+                    World w = getServer().getWorld(s);
+                    if (w == null) {
+                        throw new ConditionFormatException("stay-within-world is not a valid world",
+                                conditionKey);
+                    }
+                    worlds.add(s);
+                }
+                condition.setWorldsWhileStayingWithin(worlds);
+            } else {
+                throw new ConditionFormatException("stay-within-world is not a list of worlds", conditionKey);
+            }
+        }
         if (data.contains(conditionKey + "stay-within-biome")) {
             if (ConfigUtil.checkList(data.getList(conditionKey + "stay-within-biome"), String.class)) {
                 LinkedList<String> biomes = new LinkedList<String>();
