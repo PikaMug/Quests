@@ -1932,6 +1932,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private void loadQuestStages(Quest quest, FileConfiguration config, String questKey)
             throws StageFormatException, ActionFormatException, ConditionFormatException {
         ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
+        if (questStages == null) {
+            getLogger().severe(ChatColor.RED + questKey + " must have at least one stage!");
+            return;
+        }
         for (String stage : questStages.getKeys(false)) {
             int stageNum = 0;
             try {
