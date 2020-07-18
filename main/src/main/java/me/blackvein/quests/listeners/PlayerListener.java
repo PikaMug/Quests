@@ -783,11 +783,8 @@ public class PlayerListener implements Listener {
             LinkedList<Quester> temp = plugin.getQuesters();
             temp.add(quester);
             plugin.setQuesters(temp);
-            if (evt.getPlayer().hasPermission("quests.compass")) {
-                quester.resetCompass();
-            }
             for (String s : quester.getCompletedQuests()) {
-                Quest q = plugin.getQuest(s);
+                final Quest q = plugin.getQuest(s);
                 if (q != null) {
                     if (quester.getCompletedTimes().containsKey(q.getName()) == false 
                             && q.getPlanner().getCooldown() > -1) {
@@ -804,8 +801,18 @@ public class PlayerListener implements Listener {
                     quester.startStageTimer(quest);
                 }
             }
-            if (quester.hasJournal)
-                quester.updateJournal();
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                @Override
+                public void run() {
+                    if (quester.hasJournal) {
+                        quester.updateJournal();
+                    }
+                    if (evt.getPlayer().hasPermission("quests.compass")) {
+                        quester.resetCompass();
+                    }
+                }
+            }, 40L);
         }
     }
 

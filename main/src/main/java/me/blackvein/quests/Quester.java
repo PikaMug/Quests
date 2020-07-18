@@ -3799,7 +3799,7 @@ public class Quester {
      * Will set to Quester's spawn location if bed spawn does not exist
      */
     public void resetCompass() {
-        Player player = getPlayer();
+        final Player player = getPlayer();
         if (player == null) {
             return;
         }
