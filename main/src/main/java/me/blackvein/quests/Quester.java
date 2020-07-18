@@ -4124,7 +4124,7 @@ public class Quester {
     
     public boolean meetsCondition(Quest quest, boolean giveReason) {
         final Stage stage = getCurrentStage(quest);
-        if (stage != null && !stage.getCondition().check(this, quest)) {
+        if (stage != null && stage.getCondition() != null && !stage.getCondition().check(this, quest)) {
             if (stage.getCondition().isFailQuest()) {
                 if (giveReason) {
                     getPlayer().sendMessage(ChatColor.RED + Lang.get(getPlayer(), "conditionFailQuit")
