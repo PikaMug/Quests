@@ -1,5 +1,5 @@
 ---
-COMMAND_LIST: "list"
+COMMAND_LIST: "popis"
 COMMAND_LIST_HELP: "<command> [page] - List available quests"
 COMMAND_TAKE: "take"
 COMMAND_TAKE_HELP: "<command> [quest] - Accept a quest via command"
