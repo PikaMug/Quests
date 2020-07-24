@@ -1174,7 +1174,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     if (q.testRequirements(player)) {
                         available.add(q);
                     }
-                } else if (q.getPlanner().hasCooldown() && quester.getCooldownDifference(q) < 0) {
+                } else if (q.getPlanner().hasCooldown() && quester.getRemainingCooldown(q) < 0) {
                     if (q.testRequirements(player)) {
                         available.add(q);
                     }
@@ -1899,6 +1899,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             } else {
                 throw new QuestFormatException("Requirement cooldown is not a number", questKey);
             }
+        }
+        if (config.contains("quests." + questKey + ".planner.override")) {
+            pln.setOverride(config.getBoolean("quests." + questKey + ".planner.override"));
         }
     }
     

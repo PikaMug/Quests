@@ -450,16 +450,17 @@ public class Quester {
         if (preEvent.isCancelled()) {
             return;
         }
-        OfflinePlayer player = getOfflinePlayer();
+        final OfflinePlayer player = getOfflinePlayer();
         if (player.isOnline()) {
-            Player p = getPlayer();
-            Planner pln = q.getPlanner();
-            long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
-            long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
-            long duration = end - start; // How long the quest can be active for
-            long repeat = pln.getRepeat(); // Length to wait in-between start times
+            final Player p = getPlayer();
+            final Planner pln = q.getPlanner();
+            final long currentTime = System.currentTimeMillis();
+            final long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
+            final long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
+            final long duration = end - start; // How long the quest can be active for
+            final long repeat = pln.getRepeat(); // Length to wait in-between start times
             if (start != -1) {
-                if (System.currentTimeMillis() < start) {
+                if (currentTime < start) {
                     String early = Lang.get("plnTooEarly");
                     early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
                     early = early.replace("<time>", ChatColor.DARK_PURPLE
@@ -469,7 +470,7 @@ public class Quester {
                 }
             }
             if (end != -1 && repeat == -1) {
-                if (System.currentTimeMillis() > end) {
+                if (currentTime > end) {
                     String late = Lang.get("plnTooLate");
                     late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
                     late = late.replace("<time>", ChatColor.DARK_PURPLE
@@ -480,51 +481,46 @@ public class Quester {
             }
             if (repeat != -1 && start != -1 && end != -1) {
                 // Ensure that we're past the initial duration
-                if (System.currentTimeMillis() > end) {
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                        @Override
-                        public void run() {
-                            final int maxSize = 2;
-                            final LinkedHashMap<Long, Long> cache = new LinkedHashMap<Long, Long>() {
-                                private static final long serialVersionUID = 3046838061019897713L;
+                if (currentTime > end) {
+                    final int maxSize = 2;
+                    final LinkedHashMap<Long, Long> cache = new LinkedHashMap<Long, Long>() {
+                        private static final long serialVersionUID = 3046838061019897713L;
 
-                                @Override
-                                protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
-                                    return size() > maxSize;
-                                }
-                            };
-                            
-                            // Store both the upcoming and most recent period of activity
-                            long nextStart = start;
-                            long nextEnd = end;
-                            while (System.currentTimeMillis() >= nextStart) {
-                                nextStart += repeat;
-                                nextEnd = nextStart + duration;
-                                cache.put(nextStart, nextEnd);
-                            }
-                            
-                            // Check whether the quest is currently active
-                            boolean active = false;
-                            for (Entry<Long, Long> startEnd : cache.entrySet()) {
-                                if (startEnd.getKey() <= System.currentTimeMillis() && System.currentTimeMillis() 
-                                        < startEnd.getValue()) {
-                                    active = true;
-                                }
-                            }
-                            
-                            // If quest is not active, inform user of wait time
-                            if (!active) {
-                                final String early = Lang.get("plnTooEarly")
-                                        .replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW)
-                                        .replace("<time>", ChatColor.DARK_PURPLE
-                                        + MiscUtil.getTime(nextStart - System.currentTimeMillis()) + ChatColor.YELLOW);
-                                if (p.isOnline()) {
-                                    p.sendMessage(ChatColor.YELLOW + early);
-                                }
-                                return;
-                            }
+                        @Override
+                        protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
+                            return size() > maxSize;
                         }
-                    });
+                    };
+                    
+                    // Store both the upcoming and most recent period of activity
+                    long nextStart = start;
+                    long nextEnd = end;
+                    while (currentTime >= nextStart) {
+                        nextStart += repeat;
+                        nextEnd = nextStart + duration;
+                        cache.put(nextStart, nextEnd);
+                    }
+                    
+                    // Check whether the quest is currently active
+                    boolean active = false;
+                    for (Entry<Long, Long> startEnd : cache.entrySet()) {
+                        if (startEnd.getKey() <= currentTime && currentTime < startEnd.getValue()) {
+                            active = true;
+                        }
+                    }
+                    
+                    // If quest is not active, or new period of activity should override player cooldown, inform user
+                    if (!active || (q.getPlanner().getOverride() && getCompletedTimes().containsKey(q.getName()) 
+                                && currentTime < (getCompletedTimes().get(q.getName()) + duration))) {
+                        if (p.isOnline()) {
+                            final String early = Lang.get("plnTooEarly")
+                                .replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW)
+                                .replace("<time>", ChatColor.DARK_PURPLE
+                                + MiscUtil.getTime(nextStart - currentTime) + ChatColor.YELLOW);
+                            p.sendMessage(ChatColor.YELLOW + early);
+                        }
+                        return;
+                    }
                 }
             }
         }
@@ -2819,21 +2815,40 @@ public class Quester {
     /**
      * Get the difference between Sytem.currentTimeMillis() and the last completed time for a quest
      * 
-     * @param q The quest to get the last completed time of
+     * @param quest The quest to get the last completed time of
      * @return Difference between now and then in milliseconds
      */
-    public long getCooldownDifference(Quest q) {
+    public long getCompletionDifference(Quest quest) {
         long currentTime = System.currentTimeMillis();
         long lastTime;
-        if (completedTimes.containsKey(q.getName()) == false) {
+        if (completedTimes.containsKey(quest.getName()) == false) {
             lastTime = System.currentTimeMillis();
-            completedTimes.put(q.getName(), System.currentTimeMillis());
+            completedTimes.put(quest.getName(), System.currentTimeMillis());
         } else {
-            lastTime = completedTimes.get(q.getName());
+            lastTime = completedTimes.get(quest.getName());
         }
-        long comparator = q.getPlanner().getCooldown();
-        long difference = (comparator - (currentTime - lastTime));
-        return difference;
+        return currentTime - lastTime;
+    }
+    
+    /**
+     * Get the difference between player cooldown and time since last completion of a quest
+     * 
+     * @deprecated Use {@link #getRemainingCooldown(Quest)}
+     * @param quest The quest to get the last completed time of
+     * @return Difference between now and then in milliseconds
+     */
+    public long getCooldownDifference(Quest quest) {
+        return quest.getPlanner().getCooldown() - getCompletionDifference(quest);
+    }
+    
+    /**
+     * Get the amount of time left before Quester may take a completed quest again
+     * 
+     * @param quest The quest to calculate the cooldown for
+     * @return Length of time in milliseconds
+     */
+    public long getRemainingCooldown(Quest quest) {
+        return quest.getPlanner().getCooldown() - getCompletionDifference(quest);
     }
 
     @SuppressWarnings("deprecation")
@@ -4100,11 +4115,12 @@ public class Quester {
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuests().contains(quest.getName()) && getCooldownDifference(quest) > 0) {
+        } else if (getCompletedQuests().contains(quest.getName()) && getRemainingCooldown(quest) > 0 
+                && !quest.getPlanner().getOverride()) {
             if (giveReason) {
                 String msg = Lang.get(getPlayer(), "questTooEarly");
                 msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-                msg = msg.replace("<time>", ChatColor.DARK_PURPLE + MiscUtil.getTime(getCooldownDifference(quest)) 
+                msg = msg.replace("<time>", ChatColor.DARK_PURPLE + MiscUtil.getTime(getRemainingCooldown(quest)) 
                         + ChatColor.YELLOW);
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }

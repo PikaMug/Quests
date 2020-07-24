@@ -263,6 +263,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (pln.getCooldown() != -1) {
             context.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
         }
+        context.setSessionData(CK.PLN_OVERRIDE, pln.getOverride());
         Options opt = q.getOptions();
         context.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.getAllowCommands());
         context.setSessionData(CK.OPT_ALLOW_QUITTING, opt.getAllowQuitting());
@@ -906,6 +907,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? ((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE) / 1000) : null);
         pln.set("cooldown", context.getSessionData(CK.PLN_COOLDOWN) != null 
                 ? ((Long) context.getSessionData(CK.PLN_COOLDOWN) / 1000) : null);
+        pln.set("override", context.getSessionData(CK.PLN_OVERRIDE) != null 
+                ? (Boolean) context.getSessionData(CK.PLN_OVERRIDE) : null);
         if (pln.getKeys(false).isEmpty()) {
             section.set("planner", null);
         }

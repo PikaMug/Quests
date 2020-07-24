@@ -20,6 +20,7 @@ public class Planner {
     public String end = null;
     public long repeat = -1;
     public long cooldown = -1;
+    public boolean override = false;
     
     public String getStart() {
         return start;
@@ -80,5 +81,11 @@ public class Planner {
     }
     public void setCooldown(long cooldown) {
         this.cooldown = cooldown;
+    }
+    public boolean getOverride() {
+        return override;
+    }
+    public void setOverride(boolean override) {
+        this.override = override;
     }
 }

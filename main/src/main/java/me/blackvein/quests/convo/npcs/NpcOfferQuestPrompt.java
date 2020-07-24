@@ -137,11 +137,11 @@ public class NpcOfferQuestPrompt extends StringPrompt {
                 } else if (quester.getCompletedQuests().contains(q.getName())) {
                     if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() 
                             || plugin.getSettings().getMaxQuests() < 1) {
-                        if (quester.getCooldownDifference(q) > 0) {
+                        if (quester.getRemainingCooldown(q) > 0 && !q.getPlanner().getOverride()) {
                             String early = Lang.get("questTooEarly");
                             early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
                             early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                    + MiscUtil.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
+                                    + MiscUtil.getTime(quester.getRemainingCooldown(q)) + ChatColor.YELLOW);
                             player.sendMessage(ChatColor.YELLOW + early);
                         } else if (q.getPlanner().getCooldown() < 0) {
                             String completed = Lang.get("questAlreadyCompleted");

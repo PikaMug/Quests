@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import me.blackvein.quests.Planner;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
@@ -40,7 +41,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         this.plugin = (Quests)context.getPlugin();
     }
     
-    private final int size = 5;
+    private final int size = 6;
     
     public int getSize() {
         return size;
@@ -53,7 +54,6 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     public ChatColor getNumberColor(ConversationContext context, int number) {
         switch (number) {
         case 1:
-            return ChatColor.BLUE;
         case 2:
             return ChatColor.BLUE;
         case 3:
@@ -63,8 +63,9 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.BLUE;
             }
         case 4:
-            return ChatColor.BLUE;
         case 5:
+            return ChatColor.BLUE;
+        case 6:
             return ChatColor.GREEN;
         default:
             return null;
@@ -86,6 +87,8 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         case 4:
             return ChatColor.YELLOW + Lang.get("plnCooldown");
         case 5:
+            return ChatColor.YELLOW + Lang.get("plnOverride");
+        case 6:
             return ChatColor.YELLOW + Lang.get("done");
         default:
             return null;
@@ -127,6 +130,18 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                         + ChatColor.RESET + ChatColor.YELLOW + ")";
             }
         case 5:
+            if (context.getSessionData(CK.PLN_OVERRIDE) == null) {
+                boolean defaultOpt = new Planner().getOverride();
+                return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
+                        + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
+                        + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+            } else {
+               boolean quittingOpt = (Boolean) context.getSessionData(CK.PLN_OVERRIDE);
+                return ChatColor.GRAY + "(" + (quittingOpt ? ChatColor.GREEN
+                        + Lang.get(String.valueOf(quittingOpt)) : ChatColor.RED 
+                        + Lang.get(String.valueOf(quittingOpt))) + ChatColor.GRAY + ")";
+            }
+        case 6:
             return "";
         default:
             return null;
@@ -165,6 +180,8 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         case 4:
             return new PlannerCooldownPrompt(context);
         case 5:
+            return new PlannerOverridePrompt(context);
+        case 6:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
             return new PlannerPrompt(context);
@@ -268,6 +285,78 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                         .replace("<input>", input));
                 return new PlannerCooldownPrompt(context);
+            }
+            return new PlannerPrompt(context);
+        }
+    }
+    
+    public class PlannerOverridePrompt extends QuestsEditorStringPrompt {
+        public PlannerOverridePrompt(ConversationContext context) {
+            super(context);
+        }
+
+        private final int size = 4;
+        
+        public int getSize() {
+            return size;
+        }
+        
+        @Override
+        public String getTitle(ConversationContext context) {
+            return null;
+        }
+        
+        @Override
+        public String getQueryText(ConversationContext context) {
+            String text = "Select '<true>' or '<false>'";
+            text = text.replace("<true>", Lang.get("true"));
+            text = text.replace("<false>", Lang.get("false"));
+            return text;
+        }
+        
+        public String getSelectionText(ConversationContext context, int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("true");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("false");
+            case 3:
+                return ChatColor.RED + Lang.get("cmdClear");
+            case 4:
+                return ChatColor.RED + Lang.get("cmdCancel");
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getPromptText(ConversationContext context) {
+            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = Lang.get("optBooleanPrompt");
+            text = text.replace("<true>", Lang.get("true"));
+            text = text.replace("<false>", Lang.get("false"));
+            return ChatColor.YELLOW + text;
+        }
+        
+        @Override
+        public Prompt acceptInput(ConversationContext context, String input) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+                if (input.startsWith("t") || input.equalsIgnoreCase(Lang.get("true")) 
+                        || input.equalsIgnoreCase(Lang.get("yesWord"))) {
+                    context.setSessionData(CK.PLN_OVERRIDE, true);
+                } else if (input.startsWith("f") || input.equalsIgnoreCase(Lang.get("false")) 
+                        || input.equalsIgnoreCase(Lang.get("noWord"))) {
+                    context.setSessionData(CK.PLN_OVERRIDE, false);
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
+                    return new PlannerOverridePrompt(context);
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(CK.PLN_OVERRIDE, null);
+                return new PlannerPrompt(context);
             }
             return new PlannerPrompt(context);
         }
