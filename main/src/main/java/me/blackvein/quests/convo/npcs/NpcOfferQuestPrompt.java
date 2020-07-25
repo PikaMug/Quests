@@ -13,9 +13,7 @@
 package me.blackvein.quests.convo.npcs;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
@@ -33,9 +31,6 @@ import me.blackvein.quests.util.MiscUtil;
 public class NpcOfferQuestPrompt extends StringPrompt {
 
     private final Quests plugin;
-    // TODO are these hashmaps really necessary?
-    private HashMap<UUID, Quester> questerHashMap = new HashMap<>();
-    private HashMap<UUID, LinkedList<Quest>> questsHashMap = new HashMap<>();
 
     public NpcOfferQuestPrompt(Quests plugin) {
         this.plugin = plugin;
@@ -63,15 +58,14 @@ public class NpcOfferQuestPrompt extends StringPrompt {
         menu += ChatColor.GOLD + "" + ChatColor.BOLD + "" + (quests.size() + 1) + ". " + ChatColor.RESET + "" 
                 + ChatColor.GRAY + Lang.get("cancel") + "\n";
         menu += ChatColor.WHITE + Lang.get("enterAnOption");
-        questerHashMap.put(((Player) context.getForWhom()).getUniqueId(), quester);
-        questsHashMap.put(((Player) context.getForWhom()).getUniqueId(), quests);
         return menu;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        Quester quester = questerHashMap.get(((Player) context.getForWhom()).getUniqueId());
-        LinkedList<Quest> quests = questsHashMap.get(((Player) context.getForWhom()).getUniqueId());
+        Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+        LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         int numInput = -1;
         try {
             numInput = Integer.parseInt(input);
