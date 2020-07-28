@@ -464,7 +464,7 @@ public class Quester {
                     String early = Lang.get("plnTooEarly");
                     early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
                     early = early.replace("<time>", ChatColor.DARK_PURPLE
-                            + MiscUtil.getTime(start - System.currentTimeMillis()) + ChatColor.YELLOW);
+                            + MiscUtil.getTime(start - currentTime) + ChatColor.YELLOW);
                     p.sendMessage(ChatColor.YELLOW + early);
                     return;
                 }
@@ -474,7 +474,7 @@ public class Quester {
                     String late = Lang.get("plnTooLate");
                     late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
                     late = late.replace("<time>", ChatColor.DARK_PURPLE
-                            + MiscUtil.getTime(System.currentTimeMillis() - end) + ChatColor.RED);
+                            + MiscUtil.getTime(currentTime - end) + ChatColor.RED);
                     p.sendMessage(ChatColor.RED + late);
                     return;
                 }
@@ -483,7 +483,7 @@ public class Quester {
                 // Ensure that we're past the initial duration
                 if (currentTime > end) {
                     final int maxSize = 2;
-                    final LinkedHashMap<Long, Long> cache = new LinkedHashMap<Long, Long>() {
+                    final LinkedHashMap<Long, Long> mostRecent = new LinkedHashMap<Long, Long>() {
                         private static final long serialVersionUID = 3046838061019897713L;
 
                         @Override
@@ -492,31 +492,41 @@ public class Quester {
                         }
                     };
                     
-                    // Store both the upcoming and most recent period of activity
+                    // Get last completed time
+                    long completedTime = 0L;
+                    if (getCompletedTimes().containsKey(q.getName())) {
+                        completedTime = getCompletedTimes().get(q.getName());
+                    }
+                    long completedEnd = 0L;
+                    
+                    // Store last completed, upcoming, and most recent periods of activity
                     long nextStart = start;
                     long nextEnd = end;
                     while (currentTime >= nextStart) {
+                        if (nextStart < completedTime && completedTime < nextEnd) {
+                            completedEnd = nextEnd;
+                        }
                         nextStart += repeat;
                         nextEnd = nextStart + duration;
-                        cache.put(nextStart, nextEnd);
+                        mostRecent.put(nextStart, nextEnd);
                     }
                     
                     // Check whether the quest is currently active
                     boolean active = false;
-                    for (Entry<Long, Long> startEnd : cache.entrySet()) {
+                    for (Entry<Long, Long> startEnd : mostRecent.entrySet()) {
                         if (startEnd.getKey() <= currentTime && currentTime < startEnd.getValue()) {
                             active = true;
                         }
                     }
                     
                     // If quest is not active, or new period of activity should override player cooldown, inform user
-                    if (!active || (q.getPlanner().getOverride() && getCompletedTimes().containsKey(q.getName()) 
-                                && currentTime < (getCompletedTimes().get(q.getName()) + duration))) {
+                    if (!active | (q.getPlanner().getOverride() && completedEnd > 0L
+                            && currentTime < (completedEnd + repeat))) {
                         if (p.isOnline()) {
                             final String early = Lang.get("plnTooEarly")
                                 .replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW)
                                 .replace("<time>", ChatColor.DARK_PURPLE
-                                + MiscUtil.getTime(nextStart - currentTime) + ChatColor.YELLOW);
+                                + MiscUtil.getTime((completedEnd + repeat) - currentTime) + ChatColor.YELLOW);
                             p.sendMessage(ChatColor.YELLOW + early);
                         }
                         return;

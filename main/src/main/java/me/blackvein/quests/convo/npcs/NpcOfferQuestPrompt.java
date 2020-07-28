@@ -26,19 +26,13 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.MiscUtil;
 
 public class NpcOfferQuestPrompt extends StringPrompt {
-
-    private final Quests plugin;
-
-    public NpcOfferQuestPrompt(Quests plugin) {
-        this.plugin = plugin;
-    }
 
     @SuppressWarnings("unchecked")
     @Override
     public String getPromptText(ConversationContext context) {
+        Quests plugin = (Quests)context.getPlugin();
         Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
         LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         String npc = (String) context.getSessionData("npc");
@@ -64,6 +58,7 @@ public class NpcOfferQuestPrompt extends StringPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
+        Quests plugin = (Quests)context.getPlugin();
         Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
         LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         int numInput = -1;
@@ -101,15 +96,28 @@ public class NpcOfferQuestPrompt extends StringPrompt {
             }
             if (q == null) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new NpcOfferQuestPrompt(plugin);
+                return new NpcOfferQuestPrompt();
             } else {
                 Player player = quester.getPlayer();
+                if (quester.canAcceptOffer(q, true)) {
+                    quester.setQuestToTake(q.getName());
+                    String s = extracted(plugin, quester);
+                    for (String msg : s.split("<br>")) {
+                        player.sendMessage(msg);
+                    }
+                    if (!plugin.getSettings().canAskConfirmation()) {
+                        quester.takeQuest(q, false);
+                    } else {
+                        plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+                    }
+                }
+                /*Player player = quester.getPlayer();
                 if (!quester.getCompletedQuests().contains(q.getName())) {
                     if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() 
                             || plugin.getSettings().getMaxQuests() < 1) {
                         if (q.testRequirements(quester)) {
                             quester.setQuestToTake(q.getName());
-                            String s = extracted(quester);
+                            String s = extracted(plugin, quester);
                             for (String msg : s.split("<br>")) {
                                 player.sendMessage(msg);
                             }
@@ -143,7 +151,7 @@ public class NpcOfferQuestPrompt extends StringPrompt {
                             player.sendMessage(ChatColor.YELLOW + completed);
                         } else {
                             quester.setQuestToTake(q.getName());
-                            String s = extracted(quester);
+                            String s = extracted(plugin, quester);
                             for (String msg : s.split("<br>")) {
                                 player.sendMessage(msg);
                             }
@@ -158,13 +166,13 @@ public class NpcOfferQuestPrompt extends StringPrompt {
                         msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
                         player.sendMessage(ChatColor.YELLOW + msg);
                     }
-                }
+                }*/
                 return Prompt.END_OF_CONVERSATION;
             }
         }
     }
 
-    private String extracted(final Quester quester) {
+    private String extracted(final Quests plugin, final Quester quester) {
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quester.getQuestToTake(), ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.getQuestToTake())
                 .getDescription());
