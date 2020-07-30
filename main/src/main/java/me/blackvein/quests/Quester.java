@@ -521,12 +521,12 @@ public class Quester {
                     
                     // If quest is not active, or new period of activity should override player cooldown, inform user
                     if (!active | (q.getPlanner().getOverride() && completedEnd > 0L
-                            && currentTime < (completedEnd + repeat))) {
+                            && currentTime < (completedEnd /*+ repeat*/))) {
                         if (p.isOnline()) {
                             final String early = Lang.get("plnTooEarly")
                                 .replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW)
                                 .replace("<time>", ChatColor.DARK_PURPLE
-                                + MiscUtil.getTime((completedEnd + repeat) - currentTime) + ChatColor.YELLOW);
+                                + MiscUtil.getTime((completedEnd /*+ repeat*/) - currentTime) + ChatColor.YELLOW);
                             p.sendMessage(ChatColor.YELLOW + early);
                         }
                         return;
