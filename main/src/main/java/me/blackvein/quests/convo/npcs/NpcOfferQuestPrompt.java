@@ -101,8 +101,7 @@ public class NpcOfferQuestPrompt extends StringPrompt {
                 Player player = quester.getPlayer();
                 if (quester.canAcceptOffer(q, true)) {
                     quester.setQuestToTake(q.getName());
-                    String s = extracted(plugin, quester);
-                    for (String msg : s.split("<br>")) {
+                    for (String msg : extracted(plugin, quester).split("<br>")) {
                         player.sendMessage(msg);
                     }
                     if (!plugin.getSettings().canAskConfirmation()) {

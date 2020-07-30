@@ -37,7 +37,6 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
@@ -230,7 +229,36 @@ public class NpcListener implements Listener {
                     }
                     if (npcQuests.isEmpty() == false && npcQuests.size() == 1) {
                         Quest q = npcQuests.get(0);
-                        if (!quester.getCompletedQuests().contains(q.getName())) {
+                        if (quester.canAcceptOffer(q, true)) {
+                            quester.setQuestToTake(q.getName());
+                            if (!plugin.getSettings().canAskConfirmation()) {
+                                quester.takeQuest(q, false);
+                            } else {
+                                if (q.getGUIDisplay() != null) {
+                                    quester.showGUIDisplay(evt.getNPC(), npcQuests);
+                                } else {
+                                    for (String msg : extracted(quester).split("<br>")) {
+                                        player.sendMessage(msg);
+                                    }
+                                    plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+                                }
+                            }
+                        }
+                    } else if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
+                            if (hasAtLeastOneGUI) {
+                                quester.showGUIDisplay(evt.getNPC(), npcQuests);
+                            } else {
+                                Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
+                                c.getContext().setSessionData("npcQuests", npcQuests);
+                                c.getContext().setSessionData("npc", evt.getNPC().getName());
+                                c.begin();
+                            }
+                            return;
+                    } else if (npcQuests.isEmpty()) {
+                        evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
+                    }
+                        
+                      /*if (!quester.getCompletedQuests().contains(q.getName())) {
                             if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() 
                                     || plugin.getSettings().getMaxQuests() < 1) {
                                 quester.setQuestToTake(q.getName());
@@ -296,7 +324,7 @@ public class NpcListener implements Listener {
                             return;
                     } else if (npcQuests.isEmpty()) {
                         evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
-                    }
+                    }*/
                 }
             }
         }
