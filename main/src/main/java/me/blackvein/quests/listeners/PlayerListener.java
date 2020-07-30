@@ -342,7 +342,7 @@ public class PlayerListener implements Listener {
                     }
                 }
                 if (evt.getItem() != null && evt.getItem().getType().equals(Material.COMPASS)) {
-                    if (!player.hasPermission("quests.compass")) {
+                    if (!quester.canUseCompass()) {
                         return;
                     }
                     if (evt.getAction().equals(Action.LEFT_CLICK_AIR)
@@ -808,7 +808,7 @@ public class PlayerListener implements Listener {
                     if (quester.hasJournal) {
                         quester.updateJournal();
                     }
-                    if (evt.getPlayer().hasPermission("quests.compass")) {
+                    if (quester.canUseCompass()) {
                         quester.resetCompass();
                     }
                 }

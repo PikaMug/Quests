@@ -3817,6 +3817,15 @@ public class Quester {
             ex.printStackTrace();
         }
     }
+    
+    public boolean canUseCompass() {
+        if (!getPlayer().hasPermission("worldedit.navigation.jumpto")) {
+            if (getPlayer().hasPermission("quests.compass")) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Reset compass target to Quester's bed spawn location<p>
@@ -3828,7 +3837,7 @@ public class Quester {
         if (player == null) {
             return;
         }
-        if (!getPlayer().hasPermission("quests.compass")) {
+        if (!canUseCompass()) {
             return;
         }
         
@@ -3846,7 +3855,7 @@ public class Quester {
      * Update compass target to current stage of first available current quest, if possible
      */
     public void findCompassTarget() {
-        if (!getPlayer().hasPermission("quests.compass")) {
+        if (!canUseCompass()) {
             return;
         }
         for (Quest quest : currentQuests.keySet()) {
@@ -3863,7 +3872,7 @@ public class Quester {
      * @param notify Whether to notify this quester of result
      */
     public void findNextCompassTarget(boolean notify) {
-        if (!getPlayer().hasPermission("quests.compass")) {
+        if (!canUseCompass()) {
             return;
         }
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
