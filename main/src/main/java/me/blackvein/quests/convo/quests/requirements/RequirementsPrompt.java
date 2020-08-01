@@ -582,6 +582,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     }
 
     public class RequirementsItemListPrompt extends QuestsEditorNumericPrompt {
+        
         public RequirementsItemListPrompt(ConversationContext context) {
             super(context);
         }
