@@ -327,7 +327,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(NpcsDeliveryListPrompt.this);
+                return new ItemStackPrompt(context, NpcsDeliveryListPrompt.this);
             case 2:
                 return new NpcDeliveryNpcsPrompt(context);
             case 3:

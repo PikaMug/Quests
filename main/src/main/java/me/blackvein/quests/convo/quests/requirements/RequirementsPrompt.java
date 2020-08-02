@@ -703,7 +703,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch (input.intValue()) {
             case 1:
-                return new ItemStackPrompt(RequirementsItemListPrompt.this);
+                return new ItemStackPrompt(context, RequirementsItemListPrompt.this);
             case 2:
                 if (context.getSessionData(CK.REQ_ITEMS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqMustAddItem"));

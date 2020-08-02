@@ -783,7 +783,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch (input.intValue()) {
             case 1:
-                return new ItemStackPrompt(QuestGuiDisplayPrompt.this);
+                return new ItemStackPrompt(context, QuestGuiDisplayPrompt.this);
             case 2:
                 context.setSessionData(CK.Q_GUIDISPLAY, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("questGUICleared"));

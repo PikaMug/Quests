@@ -312,7 +312,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(ItemsCraftListPrompt.this);
+                return new ItemStackPrompt(context, ItemsCraftListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_CRAFT_ITEMS, null);
@@ -421,7 +421,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(ItemsSmeltListPrompt.this);
+                return new ItemStackPrompt(context, ItemsSmeltListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_SMELT_ITEMS, null);
@@ -838,7 +838,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(ItemsBrewListPrompt.this);
+                return new ItemStackPrompt(context, ItemsBrewListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_BREW_ITEMS, null);
@@ -947,7 +947,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(ItemsConsumeListPrompt.this);
+                return new ItemStackPrompt(context, ItemsConsumeListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_CONSUME_ITEMS, null);

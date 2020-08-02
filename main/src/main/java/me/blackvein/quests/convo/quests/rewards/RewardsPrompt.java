@@ -690,7 +690,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(RewardsItemListPrompt.this);
+                return new ItemStackPrompt(context, RewardsItemListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewItemsCleared"));
                 context.setSessionData(CK.REW_ITEMS, null);

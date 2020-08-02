@@ -242,7 +242,7 @@ public class PlayerPrompt extends FixedSetPrompt {
         @Override
         protected Prompt acceptValidatedInput(ConversationContext context, String input) {
             if (input.equalsIgnoreCase("1")) {
-                return new ItemStackPrompt(ItemListPrompt.this);
+                return new ItemStackPrompt(context, ItemListPrompt.this);
             } else if (input.equalsIgnoreCase("2")) {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorItemsCleared"));
                 context.setSessionData(CK.E_ITEMS, null);

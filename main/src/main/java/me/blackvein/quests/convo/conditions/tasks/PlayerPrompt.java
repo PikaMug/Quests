@@ -226,7 +226,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(ItemsInMainHandListPrompt.this);
+                return new ItemStackPrompt(context, ItemsInMainHandListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorConditionCleared"));
                 context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
