@@ -878,34 +878,43 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * Checks if uuid is blacklisted. Updates reach-location objectives
+     * Checks if uuid is blacklisted. Updates reach-location objectives<p>
+     * 
+     * Runs asynchronously since 3.9.6
      * 
      * @param uuid The UUID of the Player
      * @param location The current location of the Player
      * @since 3.8.2
      */
     public void playerMove(UUID uuid, Location location) {
-        if (plugin.getQuester(uuid) != null) {
-            if (plugin.canUseQuests(uuid)) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+            @Override
+            public void run() {
                 final Quester quester = plugin.getQuester(uuid);
-                for (Quest quest : plugin.getQuests()) {
-                    if (!quester.meetsCondition(quest, false)) {
-                        return;
-                    }
-                    
-                    if (quester.getCurrentQuests().containsKey(quest)) {
-                        if (quester.getCurrentStage(quest) != null 
-                                && quester.getCurrentStage(quest).containsObjective("reachLocation")) {
-                            quester.reachLocation(quest, location);
+                if (quester != null) {
+                    if (plugin.canUseQuests(uuid)) {
+                        for (Quest quest : plugin.getQuests()) {
+                            // TODO - make sure this can be run asynchronously
+                            if (!quester.meetsCondition(quest, false)) {
+                                return;
+                            }
+                            
+                            if (quester.getCurrentQuests().containsKey(quest)) {
+                                if (quester.getCurrentStage(quest) != null 
+                                        && quester.getCurrentStage(quest).containsObjective("reachLocation")) {
+                                    quester.reachLocation(quest, location);
+                                }
+                            }
+                            
+                            quester.dispatchMultiplayerEverything(quest, "reachLocation", (Quester q) -> {
+                                q.reachLocation(quest, location);
+                                return null;
+                            });
                         }
                     }
-                    
-                    quester.dispatchMultiplayerEverything(quest, "reachLocation", (Quester q) -> {
-                        q.reachLocation(quest, location);
-                        return null;
-                    });
                 }
             }
-        }
+        });
     }
 }
